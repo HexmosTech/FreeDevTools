@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gmres - generalized minimum residual algorithm (rheolef-7.2)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librheolef-dev">librheolef-dev_7.2-4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gmres - generalized minimum residual algorithm (rheolef-7.2)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       template &lt;class Matrix, class Vector, class Preconditioner,
+                 class SmallMatrix, class SmallVector&gt;
+       int gmres (const Matrix &amp;A, Vector &amp;x, const Vector &amp;b, const Preconditioner &amp;M,
+                  SmallMatrix &amp;H, const SmallVector&amp; V, const solver_option&amp; sopt = solver_option())
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           solver_option sopt;
+           sopt.tol = 1e-7;
+           sopt.max_iter = 100;
+           size_t m = sopt.krylov_dimension = 6;
+           Eigen::Matrix&lt;T,Eigen::Dynamic,Eigen::Dynamic&gt; H(m+1,m+1);
+           Eigen::Matrix&lt;T,Eigen::Dynamic,1&gt;              <a href="../manm/V.m.html">V</a>(m);
+           int status = gmres (A, x, b, ilut(a), H, V, sopt);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This function solves the <u>unsymmetric</u> linear system A*x=b with the generalized minimum residual algorithm.
+       The gmres function follows the algorithm described on p. 20 in
+
+           R. Barrett, M. Berry, T. F. Chan, J. Demmel, J. Donato,
+           J. Dongarra, V. Eijkhout, R. Pozo, C. Romine and H. Van der Vorst,
+           Templates for the solution of linear systems: building blocks for iterative methods,
+           SIAM, 1994.
+
+        The fourth argument of gmres is a preconditionner: here, the <b><a href="../man5/ilut.5.html">ilut</a>(5)</b> one is used, for simplicity.
+
+       Next, H specifies a matrix to hold the coefficients of the upper Hessenberg matrix constructed by the
+       gmres iterations, m specifies the number of iterations for each restart. We have used here the eigen
+       dense matrix and vector types for the H and V vectors, with sizes related to the Krylov space dimension
+       m. Finally, the <b><a href="../man4/solver_option.4.html">solver_option</a>(4)</b> variable sopt transmits the stopping criterion with sopt.tol and
+       sopt.max_iter.
+
+       On return, the sopt.residue and sopt.n_iter indicate the reached residue and the number of iterations
+       effectively performed. The return status is zero when the prescribed tolerance tol has been obtained, and
+       non-zero otherwise. Also, the x variable contains the approximate solution. See also the <b><a href="../man4/solver_option.4.html">solver_option</a>(4)</b>
+       for more controls upon the stopping criterion.
+
+</pre><h4><b>REMARKS</b></h4><pre>
+       gmres requires two matrices as input: A and H. The A matrix, which will typically be <u>sparse</u>, corresponds
+       to the matrix involved in the linear system A*x=b. Conversely, the H matrix, which will typically be
+       <u>dense</u>, corresponds to the upper Hessenberg matrix that is constructed during the gmres iterations. Within
+       gmres, H is used in a different way than A, so its class must supply different functionality. That is, A
+       is only accessed though its matrix-vector and transpose-matrix-vector multiplication functions. On the
+       other hand, gmres solves a dense upper triangular linear system of equations on H. Therefore, the class
+       to which H belongs must provide H(i,j) accessors.
+
+       It is important to remember that we use the convention that indices are 0-based. That is H(0,0) is the
+       first component of the matrix. Also, the type of the matrix must be compatible with the type of single
+       vector entry. That is, operations such as H(i,j)*x(j) must be able to be carried out.
+
+</pre><h4><b>IMPLEMENTATION</b></h4><pre>
+       This documentation has been generated from file linalg/lib/gmres.h
+
+       The present template implementation is inspired from the IML++ 1.2 iterative method library,
+       <a href="http://math.nist.gov/iml">http://math.nist.gov/iml</a>++
+
+       template &lt;class Matrix, class Vector, class Preconditioner,
+                 class SmallMatrix, class SmallVector&gt;
+       int gmres (const Matrix &amp;A, Vector &amp;x, const Vector &amp;b, const Preconditioner &amp;M,
+                  SmallMatrix &amp;H, const SmallVector&amp; V, const solver_option&amp; sopt = solver_option())
+
+       {
+         typedef typename Vector::size_type  Size;
+         typedef typename Vector::float_type Real;
+         std::string label = (sopt.label != "" ? sopt.label : "gmres");
+         Size m = sopt.krylov_dimension;
+         Vector w;
+         SmallVector s(m+1), cs(m+1), sn(m+1);
+         Real residue;
+         Real norm_b = norm(M.solve(b));
+         Vector r = M.solve(b - A * x);
+         Real beta = norm(r);
+         if (sopt.p_err) (*sopt.p_err) &lt;&lt; "[" &lt;&lt; label &lt;&lt; "] # norm_b=" &lt;&lt; norm_b &lt;&lt; std::endl
+                                       &lt;&lt; "[" &lt;&lt; label &lt;&lt; "] #iteration residue" &lt;&lt; std::endl;
+         if (sopt.absolute_stopping || norm_b == <a href="../man0/Real.0.html">Real</a>(0)) norm_b = 1;
+         sopt.n_iter  = 0;
+         sopt.residue = norm(r)/norm_b;
+         if (sopt.residue &lt;= sopt.tol) return 0;
+         std::vector&lt;Vector&gt; v (m+1);
+         for (sopt.n_iter = 1; sopt.n_iter &lt;= sopt.max_iter; ) {
+           v[0] = r/beta;
+           for (Size i = 0; i &lt; m+1; i++) s(i) = 0; // std::numeric_limits&lt;Float&gt;::max();
+           <a href="../man0/s.0.html">s</a>(0) = beta;
+           for (Size i = 0; i &lt; m &amp;&amp; sopt.n_iter &lt;= sopt.max_iter; i++, sopt.n_iter++) {
+             w = M.solve(A * v[i]);
+             for (Size k = 0; k &lt;= i; k++) {
+               H(k, i) = dot(w, v[k]);
+               w -= H(k, i) * v[k];
+             }
+             H(i+1, i) = norm(w);
+             v[i+1] = w/H(i+1,i);
+             for (Size k = 0; k &lt; i; k++) {
+               details::apply_plane_rotation (H(k,i), H(k+1,i), cs(k), sn(k));
+             }
+             details::generate_plane_rotation (H(i,i), H(i+1,i), cs(i), sn(i));
+             details::apply_plane_rotation (H(i,i), H(i+1,i), cs(i), sn(i));
+             details::apply_plane_rotation (s(i), s(i+1), cs(i), sn(i));
+             sopt.residue = abs(s(i+1))/norm_b;
+             if (sopt.p_err) (*sopt.p_err) &lt;&lt; "[" &lt;&lt; label &lt;&lt; "] " &lt;&lt; sopt.n_iter &lt;&lt; " " &lt;&lt; sopt.residue &lt;&lt; std::endl;
+             if (sopt.residue &lt;= sopt.tol) {
+               details::update (x, i, H, s, v);
+               return 0;
+             }
+           }
+           details::update (x, m - 1, H, s, v);
+           r = M.solve(b - A * x);
+           beta = norm(r);
+           sopt.residue = beta/norm_b;
+           if (sopt.p_err) (*sopt.p_err) &lt;&lt; "[" &lt;&lt; label &lt;&lt; "] " &lt;&lt; sopt.n_iter &lt;&lt; " " &lt;&lt; sopt.residue &lt;&lt; std::endl;
+           if (sopt.residue &lt; sopt.tol) return 0;
+         }
+         return 1;
+       }
+
+       template &lt;class SmallMatrix, class SmallVector, class Vector, class Vector2, class Size&gt;
+       void update (Vector&amp; x, Size k, const SmallMatrix&amp; h, const SmallVector&amp; s, Vector2&amp; v) {
+         SmallVector y = s;
+         // back solve:
+         for (int i = k; i &gt;= 0; i--) {
+           y(i) /= h(i,i);
+           for (int j = i - 1; j &gt;= 0; j--)
+             y(j) -= h(j,i) * y(i);
+         }
+         for (Size j = 0; j &lt;= k; j++) {
+           x += v[j] * y(j);
+         }
+       }
+       template&lt;class Real&gt;
+       void generate_plane_rotation (const Real&amp; dx, const Real&amp; dy, Real&amp; cs, Real&amp; sn) {
+         if (dy == <a href="../man0/Real.0.html">Real</a>(0)) {
+           cs = 1.0;
+           sn = 0.0;
+         } else if (abs(dy) &gt; abs(dx)) {
+           Real temp = dx / dy;
+           sn = 1.0 / sqrt( 1.0 + temp*temp );
+           cs = temp * sn;
+         } else {
+           Real temp = dy / dx;
+           cs = 1.0 / sqrt( 1.0 + temp*temp );
+           sn = temp * cs;
+         }
+       }
+       template&lt;class Real&gt;
+       void apply_plane_rotation (Real&amp; dx, Real&amp; dy, const Real&amp; cs, const Real&amp; sn) {
+         Real temp  =  cs * dx + sn * dy;
+         dy = -sn * dx + cs * dy;
+         dx = temp;
+       }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Pierre  Saramito  &lt;<a href="mailto:Pierre.Saramito@imag.fr">Pierre.Saramito@imag.fr</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright   (C)  2000-2018  Pierre  Saramito  &lt;<a href="mailto:Pierre.Saramito@imag.fr">Pierre.Saramito@imag.fr</a>&gt; GPLv3+: GNU GPL version 3 or
+       later  &lt;<a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>&gt;.  This  is  free  software:  you  are free to change and
+       redistribute it.  There is NO WARRANTY, to the extent permitted by law.
+
+rheolef                                            Version 7.2                                   <u><a href="../man5rheolef/gmres.5rheolef.html">gmres</a></u>(5rheolef)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

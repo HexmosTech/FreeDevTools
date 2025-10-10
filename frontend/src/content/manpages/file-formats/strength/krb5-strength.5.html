@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>krb5-strength - Kerberos password strength checking plugin</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/krb5-strength">krb5-strength_3.3-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       krb5-strength - Kerberos password strength checking plugin
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       MIT Kerberos:
+
+           [plugins]
+             pwqual = {
+               module = strength:/usr/lib/x86_64-linux-gnu/krb5/plugins/pwqual/strength.so
+             }
+
+       Heimdal:
+
+           [password_quality]
+               policies         = krb5-strength
+               policy_libraries = /usr/lib/x86_64-linux-gnu/krb5/plugins/pwqual/strength.so
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>strength.so</u> is a KDC plugin for Kerberos password strength checking for either MIT Kerberos or Heimdal
+       provided as part of the krb5-strength package.  For MIT Kerberos KDCs (or, more to the point, kadmind
+       servers), this plugin is the recommended way of enabling strength checking.  For Heimdal KDCs, you
+       normally should use the <b>heimdal-strength</b> external program instead, but the plugin is a supported option
+       if you want to avoid external programs for some reason.
+
+       For this module to be effective for either Heimdal or MIT Kerberos, you will also need to construct a
+       dictionary.  What type of dictionary you create depends on what backends you want to use: CrackLib, CDB,
+       or SQLite.
+
+       For CrackLib, on Debian systems, you can install the cracklib-runtime package and use the <b>cracklib-format</b>
+       and <b>cracklib-packer</b> utilities that come with it.  The former takes a set of wordlists and outputs a
+       wordlist in the format required by <b>cracklib-packer</b>, and the latter turns this into a CrackLib dictionary.
+       Alternately, you can use the <b>mkdict</b> and <b>packer</b> utilities, which are included in the krb5-strength package
+       but not installed by default.  You can run them out of the <u>cracklib</u> directory of the source tree after
+       building.  (<b>mkdict</b> is the equivalent of <b>cracklib-format</b>.)
+
+       For building a CDB or SQLite dictionary, use <b>krb5-strength-wordlist</b>.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       First, build and install either a CrackLib dictionary as described above.  The CrackLib dictionary will
+       consist of three files, one each ending in "*.hwm", "*.pwd", and "*.pwi".  The CDB and SQLite
+       dictionaries will be single files, conventionally ending in "*.cdb" and "*.sqlite" respectively.  Install
+       those files somewhere on your system.  Then, follow the relevant instructions below for either "Heimdal"
+       or "MIT Kerberos".
+
+       See "Other Settings" below for additional <u>krb5.conf</u> setting supported by both Heimdal and MIT Kerberos.
+
+   <b>Heimdal</b>
+       There are two options: using an external password check program, or using the plugin.  I recommend the
+       external password check program unless you encounter speed problems with that approach that cause <b>kpasswd</b>
+       to time out.  If you choose to use the external program, read the <b>heimdal-strength</b> documentation instead
+       of this documentation.
+
+       If using the module, first add a stanza like the following to the "[appdefaults]" section of your
+       <u>/etc/krb5.conf</u> (or wherever your <u>krb5.conf</u> file is located):
+
+           krb5-strength = {
+               password_dictionary        = /path/to/cracklib/dictionary
+               password_dictionary_cdb    = /path/to/cdb/dictionary.cdb
+               password_dictionary_sqlite = /path/to/sqlite/dictionary.sqlite
+           }
+
+       The first setting configures a CrackLib dictionary, the second a CDB dictionary, and the third a SQLite
+       dictionary.  The provided path should be the full path to the dictionary files, omitting the trailing
+       "*.hwm", "*.pwd", and "*.pwi" extensions for the CrackLib dictionary (but including the extensions for
+       the other types).  You can use any combination of the three settings.  If you use more than one, CrackLib
+       will be checked first, then CDB, and then SQLite as appropriate.
+
+       When checking against a CDB database, the password, the password with the first character removed, the
+       last character removed, the first and last characters removed, the first two characters removed, and the
+       last two characters removed will all be checked against the dictionary.
+
+       When checking a SQLite database, the password will be rejected if it is within edit distance one of any
+       word in the dictionary, meaning that the database word can be formed from the password by deleting,
+       adding, or changing a single character.
+
+       Then, add a new section (or modify the existing "[password_quality]" section) like the following:
+
+           [password_quality]
+               policies         = krb5-strength
+               policy_libraries = /usr/lib/x86_64-linux-gnu/krb5/plugins/pwqual/strength.so
+
+       in either <u>krb5.conf</u> or <u>kdc.conf</u>.  Note that some older versions of Heimdal have a bug in the support for
+       loading modules when "policy_libraries" is set.  If you get an error like:
+
+           didn't find `kadm5_password_verifier' symbol in `(null)'
+
+       you may have to omit "policy_libraries" in your configuration and instead pass the "--check-library
+       argument" to <b>kpasswdd</b> specifying the library to load.
+
+       If you want to also enable history checking, see <b><a href="../man1/heimdal-history.1.html">heimdal-history</a></b>(1) for further instructions.
+
+   <b>MIT</b> <b>Kerberos</b>
+       To add this module to the list of password quality checks, add a section to <u>krb5.conf</u> (or to a separate
+       <u>kdc.conf</u> if you use that) like:
+
+           [plugins]
+             pwqual = {
+               module = strength:/usr/lib/x86_64-linux-gnu/krb5/plugins/pwqual/strength.so
+             }
+
+       to register the plugin.
+
+       There are two ways to tell where the dictionary is.  One option is to use <u>krb5.conf</u> (and in this case you
+       must use <u>krb5.conf</u>, even if you use a separate <u>kdc.conf</u> file).  For this approach, add the following to
+       the "[appdefaults]" section:
+
+           krb5-strength = {
+               password_dictionary        = /path/to/cracklib/dictionary
+               password_dictionary_cdb    = /path/to/cdb/dictionary.cdb
+               password_dictionary_sqlite = /path/to/sqlite/dictionary.sqlite
+           }
+
+       The first setting configures a CrackLib dictionary, the second a CDB dictionary, and the third a SQLite
+       dictionary.  The provided path should be the full path to the dictionary files, omitting the trailing
+       "*.hwm", "*.pwd", and "*.pwi" extensions for the CrackLib dictionary (but including the extensions for
+       the other types).  You can use any combination of the three settings.  If you use more than one, CrackLib
+       will be checked first, then CDB, and then SQLite as appropriate.
+
+       When checking against a CDB database, the password, the password with the first character removed, the
+       last character removed, the first and last characters removed, the first two characters removed, and the
+       last two characters removed will all be checked against the dictionary.
+
+       When checking a SQLite database, the password will be rejected if it is within edit distance one of any
+       word in the dictionary, meaning that the database word can be formed from the password by deleting,
+       adding, or changing a single character.
+
+       The second option is to use the normal "dict_path" setting.  In the "[realms]" section of your <u>krb5.conf</u>
+       or <u>kdc.conf</u>, under the appropriate realm or realms, specify the path to the dictionary:
+
+           dict_file = /path/to/cracklib/dictionary
+
+       This will be taken as a CrackLib dictionary path, the same as the setting for password_dictionary above.
+       The provided path should be the full path to the dictionary files, omitting the trailing "*.hwm",
+       "*.pwd", or "*.pwi" extension.  However, be aware that, if you use this approach, you will probably want
+       to disable the built-in standard dict pwqual plugin by adding the line:
+
+           disable = dict
+
+       to the "pwqual" block of the "[plugins]" section as shown above.  Otherwise, it will also try to load a
+       dictionary at the same path to do simple dictionary matching.
+
+       You can also mix and match these settings, by using "dict_path" for the CrackLib dictionary path and
+       <u>krb5.conf</u> for the CDB or SQLite dictionary paths.  If both settings are used for the CrackLib path,
+       <u>krb5.conf</u> overrides the "dict_path" setting (so that "dict_path" can be used for other password quality
+       modules).  There is no way to specify a CDB or SQLite dictionary via the "dict_path" setting.
+
+   <b>Other</b> <b>Settings</b>
+       The following additional settings are supported in the "[appdefaults]" section of <u>krb5.conf</u> when running
+       under either Heimdal or MIT Kerberos.
+
+       cracklib_maxlen
+           Normally,  all  passwords  are  checked  with CrackLib if a CrackLib dictionary is defined.  However,
+           CrackLib's rules were designed for a world in which most passwords  were  four  to  eight  characters
+           long,  and tends to spuriously reject a lot of passphrases.  If this option is set to something other
+           than its default of 0, passwords longer than that length bypass CrackLib  checks.   (Using  a  SQLite
+           dictionary for longer passwords is strongly recommended.)
+
+       minimum_different
+           If  set  to  a  numeric  value,  passwords  with  fewer than this number of unique characters will be
+           rejected.  This can be used to reject, for example, passwords that  are  long  strings  of  the  same
+           character or repetitions of small numbers of characters, which may be too easy to guess.
+
+       minimum_length
+           If  set  to  a  numeric  value, passwords with fewer than that number of characters will be rejected,
+           independent of any length restrictions in CrackLib.  Note that  this  setting  does  not  bypass  the
+           minimum  length  requirements in CrackLib itself (which, for the version embedded in this package, is
+           eight characters).
+
+       require_ascii_printable
+           If set to a true boolean value, rejects any password that  contains  non-ASCII  characters  or  ASCII
+           control  characters.   Spaces  are  allowed; tabs are not (at least assuming the POSIX C locale).  No
+           canonicalization or character set is defined for Kerberos passwords in general, so you  may  want  to
+           reject  non-ASCII characters to avoid interoperability problems with computers with different default
+           character sets or Unicode normalization forms.
+
+       require_classes
+           This option allows specification of more complex character class requirements.   The  value  of  this
+           parameter should be one or more whitespace-separated rule.  Each rule has the syntax:
+
+               [&lt;min&gt;-&lt;max&gt;:]&lt;class&gt;[,&lt;class&gt;...]
+
+           where  &lt;class&gt;  is one of "upper", "lower", "digit", or "symbol" (without quote marks), or an integer
+           representing a minimum number of character classes.  The symbol class includes all  characters  other
+           than  alphanumeric  characters,  including  space.   The  listed classes must appear in the password.
+           Separate multiple required classes with a comma (and no space).
+
+           The character class checks will be done in whatever locale the plugin or password  check  program  is
+           run  in,  which  will  normally  be  the  POSIX  C  locale  but  may  be different depending on local
+           configuration.
+
+           A simple example:
+
+               require_classes = upper,lower,digit
+
+           This requires all passwords contain at least one uppercase letter, at least one lowercase letter, and
+           at least one digit.
+
+           If present, &lt;min&gt; and &lt;max&gt; specify the minimum password length and maximum password length to  which
+           this rule applies.  This allows one to specify character class requirements that change with password
+           length.  So, for example:
+
+               require_classes = 8-19:upper,lower 8-15:digit 8-11:symbol
+
+           requires  all  passwords  from  8 to 11 characters long contain all four character classes, passwords
+           from 12 to 15 characters long contain upper and lower case and a digit, and passwords from 16  to  19
+           characters  long  contain  both  upper  and  lower case.  Passwords longer than 20 characters have no
+           character class restrictions.  (This example is probably used in conjunction with  "minimum_length  =
+           8".)
+
+           "require_classes"  also supports specifying the minimum number of character classes a password should
+           contain.  For example:
+
+               require_classes = 3
+
+           would require all passwords to have a minimum of any three of the character classes.
+
+           This can also be used with &lt;min&gt; and &lt;max&gt; ranges, as above.  For example:
+
+               require_classes = 8-11:3 12-19:2
+
+           requires all passwords from 8 to 11 characters contain at least three  different  character  classes,
+           and  passwords from 12 to 19 characters contain at least two different character classes.  Ranges can
+           overlap, as in the examples above, but this makes less sense when  specifying  a  minimum  number  of
+           classes.
+
+           Minimum numbers of character classes can be combined with specific character classes.  For example:
+
+               require_classes = symbol,3
+
+           requires all passwords contain three distinct character classes and must contain a symbol character.
+
+       require_non_letter
+           If set to a true boolean value, the password must contain at least one character that is not a letter
+           (uppercase  or lowercase) or a space.  This may be helpful in combination with passphrases; users may
+           choose a stock English phrase, and this will force at least some additional complexity.
+
+       You can omit any dictionary setting and only use the above settings, in which case only the above  checks
+       and  checks  for passwords based on the principal will be done, bypassing any dictionary check.  (But for
+       that simple style of password strength checking, there are  probably  better  strength  checking  plugins
+       already available.)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2016 Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;
+
+       Copyright 2006-2007, 2009-2010, 2012-2014 The Board of Trustees of the Leland Stanford Junior University
+
+       Copying  and distribution of this file, with or without modification, are permitted in any medium without
+       royalty provided the copyright notice and this notice are preserved.  This file is offered as-is, without
+       any warranty.
+
+       SPDX-License-Identifier: FSFAP
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/cracklib-format.8.html">cracklib-format</a></b>(8), <b><a href="../man8/cracklib-packer.8.html">cracklib-packer</a></b>(8), <b><a href="../man1/heimdal-strength.1.html">heimdal-strength</a></b>(1), <b><a href="../man1/krb5-strength-wordlist.1.html">krb5-strength-wordlist</a></b>(1)
+
+3.3                                                2023-12-26                                   <u><a href="../man5/KRB5-STRENGTH.5.html">KRB5-STRENGTH</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

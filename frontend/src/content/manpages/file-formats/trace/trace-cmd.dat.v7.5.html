@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trace-cmd.dat.v7 - trace-cmd version 7 file format</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/trace-cmd">trace-cmd_3.3.1-1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       trace-cmd.dat.v7 - trace-cmd version 7 file format
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>trace-cmd.dat</b> ignore
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <a href="../man1/trace-cmd.1.html">trace-cmd</a>(1) utility produces a "trace.dat" file. The file may also be named anything depending if
+       the user specifies a different output name, but it must have a certain binary format. The file is used by
+       trace-cmd to save kernel traces into it and be able to extract the trace from it at a later point (see
+       <b><a href="../man1/trace-cmd-report.1.html">trace-cmd-report</a>(1)</b>).
+
+</pre><h4><b>INITIAL</b> <b>FORMAT</b></h4><pre>
+           The first three bytes contain the magic value:
+
+           0x17 0x08  0x44
+
+           The next 7 bytes contain the characters:
+
+           "tracing"
+
+           The next set of characters contain a null '\0' terminated string
+           that contains the version of the file:
+
+           "7\0"
+
+           The next 1 byte contains the flags for the file endianess:
+
+           0 = little endian
+           1 = big endian
+
+           The next byte contains the number of bytes per "long" value:
+
+           4 - 32-bit long values
+           8 - 64-bit long values
+
+           Note: This is the long size of the target's user space. Not the
+           kernel space size.
+
+           [ Now all numbers are written in file defined endianess. ]
+
+           The next 4 bytes are a 32-bit word that defines what the traced
+           host machine page size was.
+
+           The compression algorithm header is written next:
+              "name\0version\0"
+           where "name" and "version" are strings, name and version of the
+           compression algorithm used to compress the trace file. If the name
+           is "none", the data in the file is not compressed.
+
+           The next 8 bytes are 64-bit integer, the offset within the file where
+           the first OPTIONS section is located.
+
+           The rest of the file consists of different sections. The only mandatory
+           is the first OPTIONS section, all others are optional. The location and
+           the order of the sections is not strict. Each section starts with a header:
+
+</pre><h4><b>FORMAT</b> <b>OF</b> <b>THE</b> <b>SECTION</b> <b>HEADER</b></h4><pre>
+           &lt;2 bytes&gt; unsigned short integer, ID of the section.
+           &lt;2 bytes&gt; unsigned short integer, section flags:
+             1 = the section is compressed.
+           &lt;4 bytes&gt; ID of a string, description of the section.
+           &lt;8 bytes&gt; long long unsigned integer, size of the section in the file.
+
+           If the section is compressed, the above is the compressed size.
+           The section must be uncompressed on reading. The described format of
+           the sections refers to the uncompressed data.
+
+</pre><h4><b>COMPRESSION</b> <b>FORMAT</b> <b>OF</b> <b>THE</b> <b>FILE</b> <b>SECTIONS</b></h4><pre>
+           Some of the sections in the file may be compressed with the compression algorithm,
+           specified in the compression algorithm header. Compressed sections have a compression
+           header, written after the section header and right before the compressed data:
+             &lt;4 bytes&gt; unsigned int, size of compressed data in this section.
+             &lt;4 bytes&gt; unsigned int, size of uncompressed data.
+             &lt;data&gt; binary compressed data, with the specified size.
+
+</pre><h4><b>COMPRESSION</b> <b>FORMAT</b> <b>OF</b> <b>THE</b> <b>TRACE</b> <b>DATA</b></h4><pre>
+           There are two special sections, BUFFER FLYRECORD and BUFFER LATENCY, containing
+           trace data. These sections may be compressed with the compression algorithm, specified
+           in the compression header. Usually the size of these sections is huge, that's why its
+           compression format is different from the other sections. The trace data is compressed
+           in chunks The size of one chunk is specified in the file creation time. The format
+           of compressed trace data is:
+              &lt;4 bytes&gt; unsigned int, count of chunks.
+              Follows the compressed chunks of given count. For each chunk:
+                 &lt;4 bytes&gt; unsigned int, size of compressed data in this chunk.
+                 &lt;4 bytes&gt; unsigned int, size of uncompressed data, aligned with the trace page size.
+                 &lt;data&gt; binary compressed data, with the specified size.
+           These chunks must be uncompressed on reading. The described format of
+           trace data refers to the uncompressed data.
+
+</pre><h4><b>OPTIONS</b> <b>SECTION</b></h4><pre>
+           Section ID: 0
+
+           This is the the only mandatory section in the file. There can be multiple
+           options sections, the first one is located at the offset specified right
+           after the compression algorithm header. The section consists of multiple
+           trace options, each option has the following format:
+             &lt;2 bytes&gt; unsigned short integer, ID of the option.
+             &lt;4 bytes&gt; unsigned integer, size of the option's data.
+             &lt;binary data&gt; bytes of the size specified above, data of the option.
+
+           Options, supported by the trace file version 7:
+
+           DONE: id 0, size 8
+             This option indicates the end of the options section, it is written
+             always as last option. The DONE option data is:
+                &lt;8 bytes&gt; long long unsigned integer, offset in the trace file where
+                the next options section is located. If this offset is 0, then there
+                are no more options sections.
+
+           DATE: id 1, size vary
+             The DATE option data is a null terminated ASCII string, which represents
+             the time difference between trace events timestamps and the Generic Time
+             of Day of the system.
+
+           CPUSTAT: id 2, size vary
+             The CPUSTAT option data is a null terminated ASCII string, the content of the
+             "per_cpu/cpu&lt;id&gt;/stats" file from the trace directory. There is a CPUSTAT option
+             for each CPU.
+
+           BUFFER: id 3, size vary
+             The BUFFER option describes the flyrecord trace data saved in the file, collected
+             from one trace instance. There is BUFFER option for each trace instance. The format
+             of the BUFFER data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset in the trace file where the
+               BUFFER FLYRECORD section is located, containing flyrecord trace data.
+               &lt;string&gt; a null terminated ASCII string, name of the trace instance. Empty string ""
+               is saved as name of the top instance.
+               &lt;string&gt; a null terminated ASCII string, trace clock used for events timestamps in
+               this trace instance.
+               &lt;4 bytes&gt; unsigned integer, size of the trace buffer page.
+               &lt;4 bytes&gt; unsigned integer, count of the CPUs with trace data.
+               For each CPU of the above count:
+                  &lt;4 bytes&gt; unsigned integer, ID of the CPU.
+                  &lt;8 bytes&gt; long long unsigned integer, offset in the trace file where the trace data
+                  for this CPU is located.
+                  &lt;8 bytes&gt; long long unsigned integer, size of the trace data for this CPU.
+
+           TRACECLOCK: id 4, size vary
+             The TRACECLOCK option data is a null terminated ASCII string, the content of the
+             "trace_clock" file from the trace directory.
+
+           UNAME: id 5, size vary
+             The UNAME option data is a null terminated ASCII string, identifying the system where
+             the trace data is collected. The string is retrieved by the uname() system call.
+
+           HOOK: id 6, size vary
+             The HOOK option data is a null terminated ASCII string, describing event hooks: custom
+             event matching to connect any two events together.
+
+           OFFSET: id 7, size vary
+             The OFFSET option data is a null terminated ASCII string, representing a fixed time that
+             is added to each event timestamp on reading.
+
+           CPUCOUNT: id 8, size 4
+             The CPUCOUNT option data is:
+               &lt;4 bytes&gt; unsigned integer, number of CPUs in the system.
+
+           VERSION: id 9, size vary
+             The VERSION option data is a null terminated ASCII string, representing the version of
+             the trace-cmd application, used to collect these trace logs.
+
+           PROCMAPS: id 10, size vary
+             The PROCMAPS option data is a null terminated ASCII string, representing the memory map
+             of each traced filtered process. The format of the string is, for each filtered process:
+               &lt;procss ID&gt; &lt;libraries count&gt; &lt;process command&gt; \n
+                 &lt;memory start address&gt; &lt;memory end address&gt; &lt;full path of the mapped library file&gt; \n
+                 ...
+                  separate line for each library, used by this process
+                 ...
+               ...
+
+           TRACEID: id 11, size 8
+             The TRACEID option data is a unique identifier of this tracing session:
+               &lt;8 bytes&gt; long long unsigned integer, trace session identifier.
+
+           TIME_SHIFT: id 12, size vary
+             The TIME_SHIFT option stores time synchronization information, collected during host and guest
+             tracing session. Usually it is saved in the guest trace file. This information is used to
+             synchronize guest with host events timestamps, when displaying all files from this tracing
+             session. The format of the TIME_SHIFT option data is:
+               &lt;8 bytes&gt; long long unsigned integer, trace identifier of the peer (usually the host).
+               &lt;4 bytes&gt; unsigned integer, flags specific to the time synchronization protocol, used in this
+               trace session.
+               &lt;4 bytes&gt; unsigned integer, number of traced CPUs. For each CPU, timestamps corrections
+               are recorded:
+                  &lt;4 bytes&gt; unsigned integer, count of the recorded timestamps corrections for this CPU.
+                  &lt;array of unsigned long long integers of the above count&gt;, times when the corrections are calculated
+                  &lt;array of unsigned long long integers of the above count&gt;, corrections offsets
+                  &lt;array of unsigned long long integers of the above count&gt;, corrections scaling ratio
+
+           GUEST: id 13, size vary
+             The GUEST option stores information about traced guests in this tracing session. Usually it is
+             saved in the host trace file. There is a separate GUEST option for each traced guest.
+             The information is used when displaying all files from this tracing session. The format of
+             the GUEST option data is:
+                &lt;string&gt; a null terminated ASCII string, name of the guest.
+                &lt;8 bytes&gt; long long unsigned integer, trace identifier of the guest for this session.
+                &lt;4 bytes&gt; unsigned integer, number of guest's CPUs. For each CPU:
+                   &lt;4 bytes&gt; unsigned integer, ID of the CPU.
+                   &lt;4 bytes&gt; unsigned integer, PID of the host task, emulating this guest CPU.
+
+           TSC2NSEC: id 14, size 16
+             The TSC2NSEC option stores information, used to convert TSC events timestamps to nanoseconds.
+             The format of the TSC2NSEC option data is:
+                &lt;4 bytes&gt; unsigned integer, time multiplier.
+                &lt;4 bytes&gt; unsigned integer, time shift.
+                &lt;8 bytes&gt; unsigned long long integer, time offset.
+
+           STRINGS: id 15, size vary
+             The STRINGS option holds a list of nul terminated strings that holds the names of the
+             other sections.
+
+           HEADER_INFO: id 16, size 8
+             The HEADER_INFO option data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset into the trace file where the HEADER INFO
+               section is located
+
+           FTRACE_EVENTS: id 17, size 8
+             The FTRACE_EVENTS option data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset into the trace file where the
+               FTRACE EVENT FORMATS section is located.
+
+           EVENT_FORMATS: id 18, size 8
+             The EVENT_FORMATS option data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset into the trace file where the EVENT FORMATS
+               section is located.
+
+           KALLSYMS: id 19, size 8
+             The KALLSYMS option data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset into the trace file where the KALLSYMS
+               section is located.
+
+           PRINTK: id 20, size 8
+             The PRINTK option data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset into the trace file where the TRACE_PRINTK
+               section is located.
+
+           CMDLINES: id 21, size 8
+             The CMDLINES option data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset into the trace file where the
+               SAVED COMMAND LINES section is located.
+
+           BUFFER_TEXT: id 22, size
+             The BUFFER_LAT option describes the latency trace data saved in the file. The format
+             of the BUFFER_LAT data is:
+               &lt;8 bytes&gt; long long unsigned integer, offset in the trace file where the
+               BUFFER LATENCY section is located, containing latency trace data.
+               &lt;string&gt; a null terminated ASCII string, name of the trace instance. Empty string ""
+               is saved as name of the top instance.
+               &lt;string&gt; a null terminated ASCII string, trace clock used for events timestamps in
+               this trace instance.
+
+</pre><h4><b>HEADER</b> <b>INFO</b> <b>SECTION</b></h4><pre>
+           Section ID: 16
+
+           The first 12 bytes of the section, after the section header, contain the string:
+
+           "header_page\0"
+
+           The next 8 bytes are a 64-bit word containing the size of the
+           page header information stored next.
+
+           The next set of data is of the size read from the previous 8 bytes,
+           and contains the data retrieved from debugfs/tracing/events/header_page.
+
+           Note: The size of the second field \fBcommit\fR contains the target
+           kernel long size. For example:
+
+           field: local_t commit;        offset:8;       \fBsize:8;\fR   signed:1;
+
+           shows the kernel has a 64-bit long.
+
+           The next 13 bytes contain the string:
+
+           "header_event\0"
+
+           The next 8 bytes are a 64-bit word containing the size of the
+           event header information stored next.
+
+           The next set of data is of the size read from the previous 8 bytes
+           and contains the data retrieved from debugfs/tracing/events/header_event.
+
+           This data allows the trace-cmd tool to know if the ring buffer format
+           of the kernel made any changes.
+
+</pre><h4><b>FTRACE</b> <b>EVENT</b> <b>FORMATS</b> <b>SECTION</b></h4><pre>
+           Section ID: 17
+
+           Directly after the section header comes the information about
+           the Ftrace specific events. These are the events used by the Ftrace plugins
+           and are not enabled by the event tracing.
+
+           The next 4 bytes contain a 32-bit word of the number of Ftrace event
+           format files that are stored in the file.
+
+           For the number of times defined by the previous 4 bytes is the
+           following:
+
+           8 bytes for the size of the Ftrace event format file.
+
+           The Ftrace event format file copied from the target machine:
+           debugfs/tracing/events/ftrace/&lt;event&gt;/format
+
+</pre><h4><b>EVENT</b> <b>FORMATS</b> <b>SECTION</b></h4><pre>
+           Section ID: 18
+
+           Directly after the section header comes the information about
+           the event layout.
+
+           The next 4 bytes are a 32-bit word containing the number of
+           event systems that are stored in the file. These are the
+           directories in debugfs/tracing/events excluding the \fBftrace\fR
+           directory.
+
+           For the number of times defined by the previous 4 bytes is the
+           following:
+
+           A null-terminated string containing the system name.
+
+           4 bytes containing a 32-bit word containing the number
+           of events within the system.
+
+           For the number of times defined in the previous 4 bytes is the
+           following:
+
+           8 bytes for the size of the event format file.
+
+           The event format file copied from the target machine:
+           debugfs/tracing/events/&lt;system&gt;/&lt;event&gt;/format
+
+</pre><h4><b>KALLSYMS</b> <b>SECTION</b></h4><pre>
+           Section ID: 19
+
+           Directly after the section header comes the information of the mapping
+           of function addresses to the function names.
+
+           The next 4 bytes are a 32-bit word containing the size of the
+           data holding the function mappings.
+
+           The next set of data is of the size defined by the previous 4 bytes
+           and contains the information from the target machine's file:
+           <a href="file:/proc/kallsyms">/proc/kallsyms</a>
+
+</pre><h4><b>TRACE_PRINTK</b> <b>SECTION</b></h4><pre>
+           Section ID: 20
+
+           If a developer used trace_printk() within the kernel, it may
+           store the format string outside the ring buffer.
+           This information can be found in:
+           debugfs/tracing/printk_formats
+
+           The next 4 bytes are a 32-bit word containing the size of the
+           data holding the printk formats.
+
+           The next set of data is of the size defined by the previous 4 bytes
+           and contains the information from debugfs/tracing/printk_formats.
+
+</pre><h4><b>SAVED</b> <b>COMMAND</b> <b>LINES</b> <b>SECTION</b></h4><pre>
+           Section ID: 21
+
+           Directly after the section header comes the information mapping
+           a PID to a process name.
+
+           The next 8 bytes contain a 64-bit word that holds the size of the
+           data mapping the PID to a process name.
+
+           The next set of data is of the size defined by the previous 8 bytes
+           and contains the information from debugfs/tracing/saved_cmdlines.
+
+</pre><h4><b>BUFFER</b> <b>FLYRECORD</b> <b>SECTION</b></h4><pre>
+           This section contains flyrecord tracing data, collected in one trace instance.
+           The data is saved per CPU. Each BUFFER FLYRECORD section has a corresponding BUFFER
+           option, containing information about saved CPU's trace data. Padding is placed between
+           the section header and the CPU data, placing the CPU data at a page aligned (target page)
+           position in the file.
+
+           This data is copied directly from the Ftrace ring buffer and is of the
+           same format as the ring buffer specified by the event header files
+           loaded in the header format file.
+
+           The trace-cmd tool will try to \<a href="../man2/fBmmap.2.html">fBmmap</a>(2)\fR the data page by page with the
+           target's page size if possible. If it fails to mmap, it will just read the
+           data instead.
+
+       BUFFER TEXT SECTION
+
+           .ft C
+             Section ID: 22
+
+             This section contains latency tracing data, ASCII text taken from the
+             target's debugfs/tracing/trace file.
+
+           STRINGS SECTION
+           .ft
+
+           Section ID: 15
+
+           All strings of the trace file metadata are stored in a string section within the file. The section
+           contains a list of nul terminated ASCII strings. An ID of the string is used in the file
+           meta data, which is the offset of the actual string into the string section. Strings can be stored
+           into multiple string sections in the file.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/trace-cmd.1.html">trace-cmd</a>(1), <a href="../man1/trace-cmd-record.1.html">trace-cmd-record</a>(1), <a href="../man1/trace-cmd-report.1.html">trace-cmd-report</a>(1), <a href="../man1/trace-cmd-start.1.html">trace-cmd-start</a>(1), <a href="../man1/trace-cmd-stop.1.html">trace-cmd-stop</a>(1),
+       <a href="../man1/trace-cmd-extract.1.html">trace-cmd-extract</a>(1), <a href="../man1/trace-cmd-reset.1.html">trace-cmd-reset</a>(1), <a href="../man1/trace-cmd-split.1.html">trace-cmd-split</a>(1), <a href="../man1/trace-cmd-list.1.html">trace-cmd-list</a>(1), <a href="../man1/trace-cmd-listen.1.html">trace-cmd-listen</a>(1),
+       <a href="../man5/trace-cmd.dat.5.html">trace-cmd.dat</a>(5)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Written by Steven Rostedt, &lt;<b><a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a></b>[1]&gt;
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git/</b>
+
+</pre><h4><b>COPYING</b></h4><pre>
+       Copyright (C) 2010 Red Hat, Inc. Free use of this software is granted under the terms of the GNU Public
+       License (GPL).
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a>
+           <a href="mailto:rostedt@goodmis.org">mailto:rostedt@goodmis.org</a>
+
+libtracefs                                         06/23/2025                                 <u><a href="../man5/TRACE-CMD.DAT.V.5.html">TRACE-CMD.DAT.V</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

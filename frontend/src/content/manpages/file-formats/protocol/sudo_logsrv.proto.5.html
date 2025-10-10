@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sudo_logsrv.proto — Sudo log server protocol</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/sudo">sudo_1.9.16p2-1ubuntu4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       sudo_logsrv.proto — Sudo log server protocol
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Starting with version 1.9.0, <b>sudo</b> supports sending event and I/O logs to a log server.  The protocol used
+       is  written  in  Google's  Protocol  Buffers domain specific language.  The “EXAMPLES” section includes a
+       complete description of the protocol in Protocol Buffers format.
+
+       Because there is no way to determine message boundaries when using Protocol Buffers,  the  wire  size  of
+       each  message  is  sent  immediately preceding the message itself as a 32-bit unsigned integer in network
+       byte order.  This is referred to as “length-prefix framing” and is how Google suggests handling the  lack
+       of message delimiters.
+
+       The  protocol  is  made  up of two basic messages, <u>ClientMessage</u> and <u>ServerMessage</u>, described below.  The
+       server must accept messages up to two megabytes in size.  The server may return an error  if  the  client
+       tries to send a message larger than two megabytes.
+
+</pre><h4><b>Client</b> <b>Messages</b></h4><pre>
+       A  <u>ClientMessage</u>  is  a container used to encapsulate all the possible message types a client may send to
+       the server.
+
+       message ClientMessage {
+         oneof type {
+           AcceptMessage accept_msg = 1;
+           RejectMessage reject_msg = 2;
+           ExitMessage exit_msg = 3;
+           RestartMessage restart_msg = 4;
+           AlertMessage alert_msg = 5;
+           IoBuffer ttyin_buf = 6;
+           IoBuffer ttyout_buf = 7;
+           IoBuffer stdin_buf = 8;
+           IoBuffer stdout_buf = 9;
+           IoBuffer stderr_buf = 10;
+           ChangeWindowSize winsize_event = 11;
+           CommandSuspend suspend_event = 12;
+           ClientHello hello_msg = 13;
+         }
+       }
+
+       The different <u>ClientMessage</u> sub-messages the client may sent to the server are described below.
+
+   <b>TimeSpec</b>
+       message TimeSpec {
+           int64 tv_sec = 1;
+           int32 tv_nsec = 2;
+       }
+
+       A <u>TimeSpec</u> is the equivalent of a POSIX <u>struct</u> <u>timespec</u>, containing seconds and nanoseconds members.  The
+       <u>tv_sec</u> member is a 64-bit integer to support dates after the year 2038.
+
+   <b>InfoMessage</b>
+       message InfoMessage {
+         message StringList {
+           repeated string strings = 1;
+         }
+         message NumberList {
+           repeated int64 numbers = 1;
+         }
+         string key = 1;
+         oneof value {
+           int64 numval = 2;
+           string strval = 3;
+           StringList strlistval = 4;
+           NumberList numlistval = 5;
+         }
+       }
+
+       An <u>InfoMessage</u> is used to represent information  about  the  invoking  user  as  well  as  the  execution
+       environment  the  command  runs in the form of key-value pairs.  The key is always a string but the value
+       may be a 64-bit integer, a string, an array of strings, or an array of 64-bit integers.   The  event  log
+       data is composed of <u>InfoMessage</u> entries.  See the “EVENT LOG VARIABLES” section for more information.
+
+   <b>ClientHello</b> <b>hello_msg</b>
+       message ClientHello {
+         string client_id = 1;
+       }
+
+       A <u>ClientHello</u> message consists of client information that may be sent to the server when the client first
+       connects.
+
+       client_id
+               A  free-form  client  description.   This  usually  includes  the  name and version of the client
+               implementation.
+
+   <b>AcceptMessage</b> <b>accept_msg</b>
+       message AcceptMessage {
+         TimeSpec submit_time = 1;
+         repeated InfoMessage info_msgs = 2;
+         bool expect_iobufs = 3;
+       }
+
+       An <u>AcceptMessage</u> is sent by the client when a command is allowed by the security policy.  It contains the
+       following members:
+
+       submit_time
+               The wall clock time when the command was submitted to the security policy.
+
+       info_msgs
+               An array of <u>InfoMessage</u> describing the user who submitted the command as well  as  the  execution
+               environment of the command.  This information is used to generate an event log entry and may also
+               be used by server to determine where and how the I/O log is stored.
+
+       expect_iobufs
+               Set to true if the server should expect <u>IoBuffer</u> messages to follow (for I/O logging) or false if
+               the server should only store the event log.
+
+       If an <u>AcceptMessage</u> is sent, the client must not send a <u>RejectMessage</u> or <u>RestartMessage</u>.
+
+   <b>RejectMessage</b> <b>reject_msg</b>
+       message RejectMessage {
+         TimeSpec submit_time = 1;
+         string reason = 2;
+         repeated InfoMessage info_msgs = 3;
+       }
+
+       A  <u>RejectMessage</u>  is sent by the client when a command is denied by the security policy.  It contains the
+       following members:
+
+       submit_time
+               The wall clock time when the command was submitted to the security policy.
+
+       reason  The reason the security policy gave for denying the command.
+
+       info_msgs
+               An array of <u>InfoMessage</u> describing the user who submitted the command as well  as  the  execution
+               environment of the command.  This information is used to generate an event log entry.
+
+       If a <u>RejectMessage</u> is sent, the client must not send an <u>AcceptMessage</u> or <u>RestartMessage</u>.
+
+   <b>ExitMessage</b> <b>exit_msg</b>
+       message ExitMessage {
+         TimeSpec run_time = 1;
+         int32 exit_value = 2;
+         bool dumped_core = 3;
+         string signal = 4;
+         string error = 5;
+       }
+
+       An <u>ExitMessage</u> is sent by the client after the command has exited or has been terminated by a signal.  It
+       contains the following members:
+
+       run_time
+               The  total  amount  of elapsed time since the command started, calculated using a monotonic clock
+               where possible.  This is not the wall clock time.
+
+       exit_value
+               The command's exit value in the range 0-255.
+
+       dumped_core
+               True if the command was terminated by a signal and dumped core.
+
+       signal  If the command was terminated by a signal, this is set to the name  of  the  signal  without  the
+               leading “SIG”.  For example, INT, TERM, KILL, SEGV.
+
+       error   A  message  from  the  client  indicating  that the command was terminated unexpectedly due to an
+               error.
+
+       When performing I/O logging, the client should  wait  for  a  <u>commit_point</u>  corresponding  to  the  final
+       <u>IoBuffer</u> before closing the connection unless the final <u>commit_point</u> has already been received.
+
+   <b>RestartMessage</b> <b>restart_msg</b>
+       message RestartMessage {
+         string log_id = 1;
+         TimeSpec resume_point = 2;
+       }
+
+       A  <u>RestartMessage</u>  is  sent  by  the  client  to  resume  sending an existing I/O log that was previously
+       interrupted.  It contains the following members:
+
+       log_id  The the server-side name for an I/O log that was previously sent to the  client  by  the  server.
+               This may be a path name on the server or some other kind of server-side identifier.
+
+       resume_point
+               The  point  in  time  after  which  to  resume  the  I/O  log.  This is in the form of a <u>TimeSpec</u>
+               representing the amount of time since  the  command  started,  not  the  wall  clock  time.   The
+               <u>resume_point</u> should correspond to a <u>commit_point</u> previously sent to the client by the server.  If
+               the  server  receives  a  <u>RestartMessage</u> containing a <u>resume_point</u> it has not previously seen, an
+               error will be returned to the client and the connection will be dropped.
+
+       If a <u>RestartMessage</u> is sent, the client must not send an <u>AcceptMessage</u> or <u>RejectMessage</u>.
+
+   <b>AlertMessage</b> <b>alert_msg</b>
+       message AlertMessage {
+         TimeSpec alert_time = 1;
+         string reason = 2;
+         repeated InfoMessage info_msgs = 3;
+       }
+
+       An <u>AlertMessage</u> is sent by the client to indicate a problem detected by the  security  policy  while  the
+       command is running that should be stored in the event log.  It contains the following members:
+
+       alert_time
+               The wall clock time when the alert occurred.
+
+       reason  The reason for the alert.
+
+       info_msgs
+               An  optional  array  of  <u>InfoMessage</u> describing the user who submitted the command as well as the
+               execution environment of the command.  This information is used to generate an event log entry.
+
+   <b>IoBuffer</b> <b>ttyin_buf</b> | <b>ttyout_buf</b> | <b>stdin_buf</b> | <b>stdout_buf</b> | <b>stderr_buf</b>
+       message IoBuffer {
+         TimeSpec delay = 1;
+         bytes data = 2;
+       }
+
+       An <u>IoBuffer</u> is used to represent data from terminal input,  terminal  output,  standard  input,  standard
+       output, or standard error.  It contains the following members:
+
+       delay   The elapsed time since the last record in the form of a <u>TimeSpec</u>.  The <u>delay</u> should be calculated
+               using a monotonic clock where possible.
+
+       data    The binary I/O log data from terminal input, terminal output, standard input, standard output, or
+               standard error.
+
+   <b>ChangeWindowSize</b> <b>winsize_event</b>
+       message ChangeWindowSize {
+         TimeSpec delay = 1;
+         int32 rows = 2;
+         int32 cols = 3;
+       }
+
+       A  <u>ChangeWindowSize</u> message is sent by the client when the terminal running the command changes size.  It
+       contains the following members:
+
+       delay   The elapsed time since the last record in the form of a <u>TimeSpec</u>.  The <u>delay</u> should be calculated
+               using a monotonic clock where possible.
+
+       rows    The new number of terminal rows.
+
+       cols    The new number of terminal columns.
+
+   <b>CommandSuspend</b> <b>suspend_event</b>
+       message CommandSuspend {
+         TimeSpec delay = 1;
+         string signal = 2;
+       }
+
+       A <u>CommandSuspend</u> message is sent by the client when the command  is  either  suspended  or  resumed.   It
+       contains the following members:
+
+       delay   The elapsed time since the last record in the form of a <u>TimeSpec</u>.  The <u>delay</u> should be calculated
+               using a monotonic clock where possible.
+
+       signal  The signal name without the leading “SIG”.  For example, STOP, TSTP, CONT.
+
+</pre><h4><b>Server</b> <b>Messages</b></h4><pre>
+       A  <u>ServerMessage</u> is a container used to encapsulate all the possible message types the server may send to
+       a client.
+
+       message ServerMessage {
+         oneof type {
+           ServerHello hello = 1;
+           TimeSpec commit_point = 2;
+           string log_id = 3;
+           string error = 4;
+           string abort = 5;
+         }
+       }
+
+       The different <u>ServerMessage</u> sub-messages the server may sent to the client are described below.
+
+   <b>ServerHello</b> <b>hello</b>
+       message ServerHello {
+         string server_id = 1;
+         string redirect = 2;
+         repeated string servers = 3;
+         bool subcommands = 4;
+       }
+
+       The <u>ServerHello</u> message consists of server information sent when the client first connects.  It  contains
+       the following members:
+
+       server_id
+               A free-form server description.  Usually this includes the name and version of the implementation
+               running on the log server.  This member is always present.
+
+       redirect
+               A  host  and port separated by a colon (‘’): that the client should connect to instead.  The host
+               may be a host name, an IPv4 address, or an IPv6 address in square brackets.  This may be used for
+               server load balancing.  The server will disconnect after sending the <u>ServerHello</u> when it includes
+               a <b>redirect</b>.
+
+       servers
+               A list of other known log servers.  This can be used  to  implement  log  server  redundancy  and
+               allows  the  client  to  discover all other log servers simply by connecting to one known server.
+               This member may be omitted when there is only a single log server.
+
+       subcommands
+               If set, the server supports logging additional commands during a session.  The client may send an
+               <u>AcceptMessage</u> or <u>RejectMessage</u> when <b>sudo</b> is running in <u>intercept</u> mode.  In  this  mode,  commands
+               spawned from the initial command authorized by <b>sudo</b> are subject to policy restrictions and/or are
+               logged.  If <u>subcommands</u> is false, the client must not attempt to log additional commands.
+
+   <b>TimeSpec</b> <b>commit_point</b>
+       A periodic time stamp sent by the server to indicate when I/O log buffers have been committed to storage.
+       This  message  is  not  sent after every <u>IoBuffer</u> but rather at a server-configurable interval.  When the
+       server receives an <u>ExitMessage</u>, it will respond with a <u>commit_point</u> corresponding to  the  last  received
+       <u>IoBuffer</u> before closing the connection.
+
+   <b>string</b> <b>log_id</b>
+       The  server-side ID of the I/O log being stored, sent in response to an <u>AcceptMessage</u> where <u>expect_iobufs</u>
+       is true.
+
+   <b>string</b> <b>error</b>
+       A fatal server-side error.  The server will close the connection after sending the <u>error</u> message.
+
+   <b>string</b> <b>abort</b>
+       An <u>abort</u> message from the server indicates that the client should kill  the  command  and  terminate  the
+       session.   It  may  be used to implement simple server-side policy.  The server will close the connection
+       after sending the <u>abort</u> message.
+
+</pre><h4><b>Protocol</b> <b>flow</b> <b>of</b> <b>control</b></h4><pre>
+       The expected protocol flow is as follows:
+
+       1.   Client connects to the first available server.  If the client  is  configured  to  use  TLS,  a  TLS
+            handshake will be attempted.
+
+       2.   Client  sends  <u>ClientHello</u>.   This  is  currently optional but allows the server to detect a non-TLS
+            connection on the TLS port.
+
+       3.   Server sends <u>ServerHello</u>.
+
+       4.   Client responds with either <u>AcceptMessage</u>, <u>RejectMessage</u>, or <u>RestartMessage</u>.
+
+       5.   If client sent a <u>AcceptMessage</u> with <u>expect_iobufs</u> set, server creates a new  I/O  log  and  responds
+            with a <u>log_id</u>.
+
+       6.   Client sends zero or more <u>IoBuffer</u> messages.
+
+       7.   Server periodically responds to <u>IoBuffer</u> messages with a <u>commit_point</u>.
+
+       8.   Client sends an <u>ExitMessage</u> when the command exits or is killed.
+
+       9.   Server sends the final <u>commit_point</u> if one is pending.
+
+       10.  Server  closes  the  connection.   After receiving the final <u>commit_point</u>, the client shuts down its
+            side of the TLS connection if TLS is in use, and closes the connection.
+
+       11.  Server shuts down its side of the TLS connection if TLS is in use, and closes the connection.
+
+       At any point, the server may send an <u>error</u> or <u>abort</u> message to the client at which point the server  will
+       close the connection.  If an <u>abort</u> message is received, the client should terminate the running command.
+
+</pre><h4><b>EVENT</b> <b>LOG</b> <b>VARIABLES</b></h4><pre>
+       <u>AcceptMessage</u>, <u>AlertMessage</u> and <u>RejectMessage</u> classes contain an array of <u>InfoMessage</u> that should contain
+       information  about  the  user  who  submitted  the  command  as  well  as information about the execution
+       environment of the command if it was accepted.
+
+       Some variables have a <u>client</u>, <u>run</u>, or <u>submit</u> prefix.  These prefixes are used to eliminate ambiguity  for
+       variables  that  could apply to the client program, the user submitting the command, or the command being
+       run.  Variables with a <u>client</u> prefix pertain to the program performing the connection to the log  server,
+       for  example  <b>sudo</b>.   Variables  with a <u>run</u> prefix pertain to the command that the user requested be run.
+       Variables with a <u>submit</u> prefix pertain to the user submitting the request (the user running <b>sudo</b>).
+
+       The following <u>InfoMessage</u> entries are required:
+
+       <b>Key</b>            <b>Type</b>          <b>Description</b>
+       command        string        command that was submitted
+       runuser        string        name of user the command was run as
+       submithost     string        name of host the command was submitted on
+       submituser     string        name of user submitting the command
+
+       The following <u>InfoMessage</u> entries are recognized, but not required:
+
+       <b>Key</b>            <b>Type</b>          <b>Description</b>
+       clientargv     StringList    client's original argument vector
+       clientpid      int64         client's process ID
+       clientppid     int64         client's parent process ID
+       clientsid      int64         client's terminal session ID
+       columns        int64         number of columns in the terminal
+       lines          int64         number of lines in the terminal
+       runargv        StringList    argument vector of command to run
+       runchroot      string        root directory of command to run
+       runcwd         string        running command's working directory
+       runenv         StringList    the running command's environment
+       rungid         int64         primary group-ID of the command
+       rungids        NumberList    supplementary group-IDs for the command
+       rungroup       string        primary group name of the command
+       rungroups      StringList    supplementary group names for the command
+       runuid         int64         run user's user-ID
+       submitcwd      string        submit user's current working directory
+       submitenv      StringList    the submit user's environment
+       submitgid      int64         submit user's primary group-ID
+       submitgids     NumberList    submit user's supplementary group-IDs
+       submitgroup    string        submitting user's primary group name
+       submitgroups   StringList    submit user's supplementary group names
+       submituid      int64         submit user's user-ID
+       ttyname        string        the terminal the command was submitted from
+
+       The server must accept other variables not listed above but may ignore them.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The Protocol Buffers description of the log server protocol, using “proto3” syntax, is included  in  full
+       below.
+
+       syntax = "proto3";
+
+       /*
+        * Client message to the server.  Messages on the wire are
+        * prefixed with a 32-bit size in network byte order.
+        */
+       message ClientMessage {
+         oneof type {
+           AcceptMessage accept_msg = 1;
+           RejectMessage reject_msg = 2;
+           ExitMessage exit_msg = 3;
+           RestartMessage restart_msg = 4;
+           AlertMessage alert_msg = 5;
+           IoBuffer ttyin_buf = 6;
+           IoBuffer ttyout_buf = 7;
+           IoBuffer stdin_buf = 8;
+           IoBuffer stdout_buf = 9;
+           IoBuffer stderr_buf = 10;
+           ChangeWindowSize winsize_event = 11;
+           CommandSuspend suspend_event = 12;
+         }
+       }
+
+       /* Equivalent of POSIX struct timespec */
+       message TimeSpec {
+           int64 tv_sec = 1;           /* seconds */
+           int32 tv_nsec = 2;          /* nanoseconds */
+       }
+
+       /* I/O buffer with keystroke data */
+       message IoBuffer {
+         TimeSpec delay = 1;           /* elapsed time since last record */
+         bytes data = 2;               /* keystroke data */
+       }
+
+       /*
+        * Key/value pairs, like Privilege Manager struct info.
+        * The value may be a number, a string, or a list of strings.
+        */
+       message InfoMessage {
+         message StringList {
+           repeated string strings = 1;
+         }
+         message NumberList {
+           repeated int64 numbers = 1;
+         }
+         string key = 1;
+         oneof value {
+           int64 numval = 2;
+           string strval = 3;
+           StringList strlistval = 4;
+           NumberList numlistval = 5;
+         }
+       }
+
+       /*
+        * Event log data for command accepted by the policy.
+        */
+       message AcceptMessage {
+         TimeSpec submit_time = 1;             /* when command was submitted */
+         repeated InfoMessage info_msgs = 2;   /* key,value event log data */
+         bool expect_iobufs = 3;               /* true if I/O logging enabled */
+       }
+
+       /*
+        * Event log data for command rejected by the policy.
+        */
+       message RejectMessage {
+         TimeSpec submit_time = 1;             /* when command was submitted */
+         string reason = 2;                    /* reason command was rejected */
+         repeated InfoMessage info_msgs = 3;   /* key,value event log data */
+       }
+
+       /* Message sent by client when command exits. */
+       /* Might revisit runtime and use end_time instead */
+       message ExitMessage {
+         TimeSpec run_time = 1;        /* total elapsed run time */
+         int32 exit_value = 2;         /* 0-255 */
+         bool dumped_core = 3;         /* true if command dumped core */
+         string signal = 4;            /* signal name if killed by signal */
+         string error = 5;             /* if killed due to other error */
+       }
+
+       /* Alert message, policy module-specific. */
+       message AlertMessage {
+         TimeSpec alert_time = 1;              /* time alert message occurred */
+         string reason = 2;                    /* policy alert error string */
+         repeated InfoMessage info_msgs = 3;   /* key,value event log data */
+       }
+
+       /* Used to restart an existing I/O log on the server. */
+       message RestartMessage {
+         string log_id = 1;            /* ID of log being restarted */
+         TimeSpec resume_point = 2;    /* resume point (elapsed time) */
+       }
+
+       /* Window size change event. */
+       message ChangeWindowSize {
+         TimeSpec delay = 1;           /* elapsed time since last record */
+         int32 rows = 2;               /* new number of rows */
+         int32 cols = 3;               /* new number of columns */
+       }
+
+       /* Command suspend/resume event. */
+       message CommandSuspend {
+         TimeSpec delay = 1;           /* elapsed time since last record */
+         string signal = 2;            /* signal that caused suspend/resume */
+       }
+
+       /*
+        * Server messages to the client.  Messages on the wire are
+        * prefixed with a 32-bit size in network byte order.
+        */
+       message ServerMessage {
+         oneof type {
+           ServerHello hello = 1;      /* server hello message */
+           TimeSpec commit_point = 2;  /* cumulative time of records stored */
+           string log_id = 3;          /* ID of server-side I/O log */
+           string error = 4;           /* error message from server */
+           string abort = 5;           /* abort message, kill command */
+         }
+       }
+
+       /* Hello message from server when client connects. */
+       message ServerHello {
+         string server_id = 1;         /* free-form server description */
+         string redirect = 2;          /* optional redirect if busy */
+         repeated string servers = 3;  /* optional list of known servers */
+       }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man5/sudo_logsrvd.conf.5.html">sudo_logsrvd.conf</a></u>(5), <u><a href="../man5/sudoers.5.html">sudoers</a></u>(5), <u><a href="../man8/sudo.8.html">sudo</a></u>(8), <u><a href="../man8/sudo_logsrvd.8.html">sudo_logsrvd</a></u>(8)
+
+       <u>Protocol</u> <u>Buffers</u>, https://developers.google.com/protocol-buffers/.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Many people have worked on <b>sudo</b> over the years; this version consists of code written primarily by:
+
+             Todd C. Miller
+
+       See  the  CONTRIBUTORS.md  file in the <b>sudo</b> distribution (https://www.sudo.ws/about/contributors/) for an
+       exhaustive list of people who have contributed to <b>sudo</b>.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If you believe you have found a bug in <b>sudo_logsrv.proto</b>, you can either file a bug report  in  the  sudo
+       bug database, https://bugzilla.sudo.ws/, or open an issue at https://github.com/sudo-project/sudo/issues.
+       If   you   would  prefer  to  use  email,  messages  may  be  sent  to  the  sudo-workers  mailing  list,
+       https://www.sudo.ws/mailman/listinfo/sudo-workers (public) or &lt;<a href="mailto:sudo@sudo.ws">sudo@sudo.ws</a>&gt; (private).
+
+       Please not report security vulnerabilities through public  GitHub  issues,  Bugzilla  or  mailing  lists.
+       Instead,  report  them  via email to &lt;<a href="mailto:Todd.Miller@sudo.ws">Todd.Miller@sudo.ws</a>&gt;.  You may encrypt your message with PGP if you
+       would like, using the key found at https://www.sudo.ws/dist/PGPKEYS.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Limited    free    support    is    available    via     the     sudo-users     mailing     list,     see
+       https://www.sudo.ws/mailman/listinfo/sudo-users to subscribe or search the archives.
+
+</pre><h4><b>DISCLAIMER</b></h4><pre>
+       <b>sudo</b>  is  provided  “AS  IS”  and  any  express or implied warranties, including, but not limited to, the
+       implied warranties of merchantability and fitness for a  particular  purpose  are  disclaimed.   See  the
+       LICENSE.md file distributed with <b>sudo</b> or https://www.sudo.ws/about/license/ for complete details.
+
+Sudo 1.9.16p2                                  September 13, 2022                           <u><a href="../man5/SUDO_LOGSRV.PROTO.5.html">SUDO_LOGSRV.PROTO</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

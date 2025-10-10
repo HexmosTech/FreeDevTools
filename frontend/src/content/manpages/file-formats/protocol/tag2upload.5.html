@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tag2upload - protocol for uploading to Debian via signed git tag</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/git-debpush">git-debpush_12.15_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tag2upload - protocol for uploading to Debian via signed git tag
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       tag2upload is a scheme that allows an authorised Debian package maintainer to update a package in the
+       Debian archive, by pushing an appropriate signed git tag.
+
+       Typically these tags are created with git-debpush, and interpreted by "dgit-repos-server --tag2upload".
+
+       However, the tags are plain git tags, with small amounts of additional metadata, so they could be made by
+       other tooling.
+
+       This document defines the syntax and semantics of the tag.
+
+</pre><h4><b>BASICS</b></h4><pre>
+       A signed git tag is an instruction to the tag2upload service if the tag message contains a line looking
+       like this:
+
+        [dgit ... please-upload ...]
+
+       The tag must be signed by an authorised uploader, for the relevant package.  The tagged object must be a
+       git commit.  Metadata about the intended operation is obtained from both the tag message and the
+       referenced git tree object.
+
+</pre><h4><b>GIT</b> <b>METADATA</b></h4><pre>
+       The git tag's name must be "DISTRO/VERSION", where VERSION is in the Debian package version number
+       transformed to be valid for git as specified in DEP-14, and DISTRO is the distribution name (the DEP-14
+       "vendor", "debian" for Debian).
+
+       The email address from git's "tagger" field (ie, the author of the tag, from git's point of view) will be
+       emailed any error reports.
+
+</pre><h4><b>TAG2UPLOAD</b> <b>IN-TAG</b> <b>METADATA</b></h4><pre>
+       tag2upload reuses a tag metadata format, and some metadata semantics, from dgit.
+
+       Metadata lines are in the form "[dgit ...]".  The brackets must be at the start and end of the line.
+       Inside the brackets, after "dgit", are space separated metadata items.
+
+       Each metadata item is "keyword" or "keyword=value".  Keywords start with one of the characters "- + . =
+       0-9 a-z".  Items may not contain whitespace.  Any metadata line whose first item starts with a double
+       quote """ is reserved for future expansion, and the whole line is ignored.
+
+       The placement and ordering of metadata items is not relevant, unless specified otherwise here.  Some
+       metadata items may be repeated.  Unknown keywords are ignored.
+
+       "please-upload"
+           Declares  that  this  tag  is  indeed an instruction to a tag2upload service, to produce and upload a
+           source package based on the commit at which the tag points.
+
+           The relevant git objects will also be pushed to a canonical server belonging to the  targeted  distro
+           (in Debian's case, *.dgit.debian.org).
+
+       "source=SOURCE" "version=VERSION"
+           Specifies  the  name and version of the source package intended to be uploaded, as also appear in the
+           first line of <u>debian/changelog</u>.  Duplicating this information in the tag  metadata  is  necessary  to
+           ensure certain security properties.
+
+           The package and version must correspond to <u>debian/control</u>, or it is an error.
+
+       "distro=DISTRO"
+           Specifies an intended distribution, to which the package is to be uploaded.  May be repeated.
+
+           Each  tag2upload  instance ignores tags which do not mention that instance's DISTRO.  So for a tag to
+           be effective, at least one distro= must be present.
+
+           (Note that DISTRO also appears in the tag name, so uploading to multiple distros necessarily involves
+           several tags, although they may have the same tag message.)
+
+       "upstream"=COMMITID "upstream-tag"=TAG
+           Identifies the upstream source code to be used.
+
+           This corresponds to the "orig" in the source package.  The orig tarball will be generated  with  "git
+           archive", as invoked by "git deborig".
+
+           Both  or  neither  of  these  must  be  supplied.   TAG  must  be fetchable from the same repo as the
+           tag2upload tag, and must resolve to COMMITID, which must be an unabbreviated hash.
+
+           TAG is required in order to ensure that COMMITID is retrievable.  This is because most git repository
+           servers only allow fetching tags and branches, not arbitrary commits.
+
+           If these are omitted, any necessary orig must  already  be  present  in  the  target  source  package
+           archive.  With "baredebian" quilt modes, this option is mandatory.
+
+           (This  metadata item might be ignored if the git tree specifies a native source package format, or if
+           the targeted archive already contains a suitable orig.)
+
+       "--quilt=QUILT-MODE"
+           Specifies the git tree format in use, for a "3.0 (quilt)" source package.
+
+           The semantics are the same as for the identically-named dgit option.
+
+           If this option is not  specified,  the  default  is  "quilt=linear"  (depending  on  the  distro  and
+           configuration).
+
+       "--deliberately=..."
+           The  semantics are the same as for the identically-named dgit option.  Unused or unknown deliberately
+           options are ignored.
+
+       "split"
+           Instructs the tag2upload service that this upload is to be made in "split git view" mode:
+
+           When converting from git to a source package, and in order to push and upload, it may be necessary to
+           make changes -- both to tree content and to git history.  For example, it may be necessary  to  apply
+           quilt patches, or to make the git branch fast-forwarding from previous history in the targeted suite.
+
+           "split"  instructs  the  tag2upload  service to make these changes, and push git commits representing
+           these changes to only its canonical target repository.  I.e.,  the  suite  branch  in  the  canonical
+           target  repository may contain additional changes, but these will not be automatically pushed back to
+           a maintainer-owned git repository (eg salsa.debian.org).  The git history  on  the  canonical  target
+           repository is always descended from the form supplied by the tagger; it can be readily obtained using
+           dgit.
+
+           Under the current implementation, this metadata item is mandatory, because the service is not capable
+           of doing anything else.
+
+</pre><h4><b>IN-TREE</b> <b>METADATA</b></h4><pre>
+       The target suite(s), are obtained from <u>debian/changelog</u>.
+
+</pre><h4><b>CONTENTS</b> <b>OF</b> <b>THE</b> <b>TREE</b></h4><pre>
+       The tree must be in the form of an unpacked Debian source package.
+
+       For  a  non-native  source  package  format,  the  upstream  files must correspond to any upstream commit
+       specified, or the orig already present in the archive -- either patched or unpatched,  according  to  the
+       quilt mode.
+
+       Mismatches will cause the tag2upload service's processing to fail.
+
+</pre><h4><b>REPLAY</b></h4><pre>
+       Uploading is intended to be an idempotent process.
+
+       Thus,  the  tag2upload tag is an instruction to upload <u>only</u> <u>if</u> <u>the</u> <u>supplied</u> <u>version</u> <u>is</u> <u>later</u> <u>than</u> <u>the</u> <u>one</u>
+       <u>in</u> <u>the</u> <u>targeted</u> <u>suite</u>.
+
+       Old tags, specifying old versions, will be rejected (although replay attempts might generate  some  error
+       mail to the tagger).
+
+</pre><h4><b>INVOCATION</b> <b>AND</b> <b>QUEUEING</b></h4><pre>
+       Normally,  arrangements  will  be  made  so that the tag2upload service becomes aware of new git tags, in
+       relevant repositories; for example, by means of webhooks.
+
+       If this mechanism fails, the tagging user may need  to  manually  provoke  the  tag2upload  service  into
+       rescanning the relevant repository.
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       tag2upload   was   designed   by   Ian   Jackson   &lt;<a href="mailto:ijackson@chiark.greenend.org.uk">ijackson@chiark.greenend.org.uk</a>&gt;   and  Sean  Whitton
+       &lt;<a href="mailto:spwhitton@spwhitton.name">spwhitton@spwhitton.name</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/dgit.1.html">dgit</a></b>(1), <b><a href="../man1/git-debpush.1.html">git-debpush</a></b>(1).
+
+perl v5.40.1                                     Debian Project                                    <u><a href="../man5/tag2upload.5.html">tag2upload</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

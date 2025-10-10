@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>openvpn examples - Secure IP tunnel daemon</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/openvpn">openvpn_2.6.14-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       openvpn examples - Secure IP tunnel daemon
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       This man page gives a few simple examples to create OpenVPN setups and configuration files.
+
+</pre><h4><b>SMALL</b> <b>OPENVPN</b> <b>SETUP</b> <b>WITH</b> <b>PEER-FINGERPRINT</b></h4><pre>
+       This  section  consists  of  instructions  how  to  build a small OpenVPN setup with the <b>peer-fingerprint</b>
+       option. This has the advantage of being easy to setup and should be suitable for most small lab and  home
+       setups  without the need for a PKI.  For bigger scale setup setting up a PKI (e.g. via easy-rsa) is still
+       recommended.
+
+       Both server and client configuration can be further modified to customise the setup.
+
+   <b>Server</b> <b>setup</b>
+       1. Install openvpn
+
+          Compile from source-code (see <u>INSTALL</u> file) or install  via  a  distribution  (apt/yum/ports)  or  via
+          installer (Windows).
+
+       2. Generate a self-signed certificate for the server:
+
+             openssl req -x509 -newkey ec:&lt;(openssl ecparam -name secp384r1) -keyout server.key -out server.crt -nodes -sha256 -days 3650 -subj '/CN=server'
+
+       3. Generate SHA256 fingerprint of the server certificate
+
+          Use the OpenSSL command line utility to view the fingerprint of just created certificate:
+
+             openssl x509 -fingerprint -sha256 -in server.crt -noout
+
+          This output something similar to:
+
+             SHA256 Fingerprint=00:11:22:33:44:55:66:77:88:99:aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99:aa:bb:cc:dd:ee:ff
+
+       4. Write a server configuration (<u>server.conf</u>):
+
+             # The server certificate we created in step 1
+             cert server.crt
+             key server.key
+
+             dh none
+             dev tun
+
+             # Listen on IPv6+IPv4 simultaneously
+             proto udp6
+
+             # The ip address the server will distribute
+             server 10.8.0.0 255.255.255.0
+             server-ipv6 fd00:6f76:706e::/64
+
+             # A tun-mtu of 1400 avoids problems of too big packets after VPN encapsulation
+             tun-mtu 1400
+
+             # The fingerprints of your clients. After adding/removing one here restart the
+             # server
+             &lt;peer-fingerprint&gt;
+             &lt;/peer-fingerprint&gt;
+
+             # Notify clients when you restart the server to reconnect quickly
+             explicit-exit-notify 1
+
+             # Ping every 60s, restart if no data received for 5 minutes
+             keepalive 60 300
+
+       5. Add at least one client as described in the client section.
+
+       6.
+
+          <b>Start</b> <b>the</b> <b>server.</b>
+
+                 • On   systemd   based   distributions   move   <u>server.crt</u>,   <u>server.key</u>   and  <u>server.conf</u>  to
+                   <b>/etc/openvpn/server</b> and start it via systemctl
+
+                       sudo mv server.conf server.key server.crt /etc/openvpn/server
+
+                       sudo systemctl start openvpn-server@server
+
+   <b>Adding</b> <b>a</b> <b>client</b>
+       1. Install OpenVPN
+
+       2. Generate a self-signed certificate for the client. In this example the  client  name  is  alice.  Each
+          client should have a unique name. Replace alice with a different name for each client.
+
+             openssl req -x509 -newkey ec:&lt;(openssl ecparam -name secp384r1) -nodes -sha256 -days 3650 -subj '/CN=alice'
+
+          This  generate  a  certificate and a key for the client. The output of the command will look something
+          like this:
+
+             -----BEGIN PRIVATE KEY-----
+             [base64 content]
+             -----END PRIVATE KEY-----
+             -----
+             -----BEGIN CERTIFICATE-----
+             [base 64 content]
+
+             -----END CERTIFICATE-----
+       3. Create a new client configuration file. In this example we will name the file <u>alice.ovpn</u>:
+
+             # The name of your server to connect to
+             remote yourserver.example.net
+             client
+             # use a random source port instead the fixed 1194
+             nobind
+
+             # Uncomment the following line if you want to route
+             # all traffic via the VPN
+             # redirect-gateway def1 ipv6
+
+             # To set a DNS server
+             # dhcp-option DNS 192.168.234.1
+
+             &lt;key&gt;
+             -----BEGIN PRIVATE KEY-----
+             [Insert here the key created in step 2]
+             -----END PRIVATE KEY-----
+             &lt;/key&gt;
+             &lt;cert&gt;
+             -----BEGIN CERTIFICATE-----
+             [Insert here the certificate created in step 2]
+             -----END CERTIFICATE-----
+             &lt;/cert&gt;
+
+             # This is the fingerprint of the server that we trust. We generated this fingerprint
+             # in step 2 of the server setup
+             peer-fingerprint 00:11:22:33:44:55:66:77:88:99:aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99:aa:bb:cc:dd:ee:ff
+
+             # The tun-mtu of the client should match the server MTU
+             tun-mtu 1400
+             dev tun
+
+       4. Generate the fingerprint of the client certificate. For that we  will  let  OpenSSL  read  the  client
+          configuration  file  as  the  x509  command will ignore anything that is not between the begin and end
+          markers of the certificate:
+
+             openssl x509 -fingerprint -sha256 -noout -in alice.ovpn
+
+          This will again output something like
+
+             SHA256 Fingerprint=ff:ee:dd:cc:bb:aa:99:88:77:66:55:44:33:22:11:00:ff:ee:dd:cc:bb:aa:99:88:77:66:55:44:33:22:11:00
+
+       5. Edit the <u>server.conf</u> configuration file and  add  this  new  client  fingerprint  as  additional  line
+          between <b>&lt;peer-fingerprint&gt;</b> and <b>&lt;/peer-fingerprint&gt;</b>
+
+          After adding <u>two</u> clients the part of configuration would look like this:
+
+             &lt;peer-fingerprint&gt;
+             ff:ee:dd:cc:bb:aa:99:88:77:66:55:44:33:22:11:00:ff:ee:dd:cc:bb:aa:99:88:77:66:55:44:33:22:11:00
+             99:88:77:66:55:44:33:22:11:00:ff:ee:dd:cc:bb:aa:99:88:77:66:55:44:33:22:11:00:88:77:66:55:44:33
+             &lt;/peer-fingperint&gt;
+
+       6. (optional)  if  the client is an older client that does not support the <b>peer-fingerprint</b> (e.g. OpenVPN
+          2.5 and older, OpenVPN Connect 3.3 and older), the client config <u>alice.ovpn</u> can be modified  to  still
+          work with these clients.
+
+          Remove  the  line  starting  with  <b>peer-fingerprint</b>.  Then  add  a  new <b>&lt;ca&gt;</b> section at the end of the
+          configuration file with the contents of the <b>server.crt</b> created in step 2 of the server setup. The  end
+          of <u>alice.ovpn</u> file should like:
+
+             [...]  # Beginning of the file skipped
+             &lt;/cert&gt;
+
+             # The tun-mtu of the client should match the server MTU
+             tun-mtu 1400
+             dev tun
+
+             &lt;ca&gt;
+             [contents of the server.crt]
+             &lt;/ca&gt;
+
+          Note  that  we  put  the <b>&lt;ca&gt;</b> section after the <b>&lt;cert&gt;</b> section to make the fingerprint generation from
+          step 4 still work since it will only use the first certificate it finds.
+
+       7. Import the file into the OpenVPN client or just use the <b>openvpn</b> <b>alice.ovpn</b> to start the VPN.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Prior to running these examples,  you  should  have  OpenVPN  installed  on  two  machines  with  network
+       connectivity  between  them.  If you have not yet installed OpenVPN, consult the INSTALL file included in
+       the OpenVPN distribution.
+
+   <b>Firewall</b> <b>Setup:</b>
+       If firewalls exist between the two machines, they should be set to forward the port OpenVPN is configured
+       to use, in both directions.  The default for OpenVPN is 1194/udp.  If you do not have  control  over  the
+       firewalls  between  the two machines, you may still be able to use OpenVPN by adding <b>--ping</b> <b>15</b> to each of
+       the <b>openvpn</b> commands used below in the examples (this will cause each peer to send out a UDP ping to  its
+       remote  peer  once  every  15 seconds which will cause many stateful firewalls to forward packets in both
+       directions without an explicit firewall rule).
+
+       Please see your operating system guides for how to configure the firewall on your systems.
+
+   <b>VPN</b> <b>Address</b> <b>Setup:</b>
+       For purposes of our example, our two machines will be called <b>bob.example.com</b>  and  <b>alice.example.com</b>.  If
+       you are constructing a VPN over the internet, then replace <b>bob.example.com</b> and <b>alice.example.com</b> with the
+       internet hostname or IP address that each machine will use to contact the other over the internet.
+
+       Now we will choose the tunnel endpoints. Tunnel endpoints are private IP addresses that only have meaning
+       in  the  context  of the VPN. Each machine will use the tunnel endpoint of the other machine to access it
+       over the VPN. In our  example,  the  tunnel  endpoint  for  bob.example.com  will  be  10.4.0.1  and  for
+       alice.example.com, 10.4.0.2.
+
+       Once  the  VPN is established, you have essentially created a secure alternate path between the two hosts
+       which is addressed by using the tunnel endpoints. You can control which network  traffic  passes  between
+       the  hosts  (a)  over  the  VPN  or  (b) independently of the VPN, by choosing whether to use (a) the VPN
+       endpoint address or (b) the public internet address, to access the remote host. For example if you are on
+       bob.example.com and you wish to connect to <b>alice.example.com</b> via <b>ssh</b> without using the VPN (since <b>ssh</b> has
+       its own built-in security) you would use the command <b>ssh</b> <b>alice.example.com</b>. However in the same scenario,
+       you could also use the command <b>telnet</b> <b>10.4.0.2</b> to create a telnet session with alice.example.com over the
+       VPN, that would use the VPN to secure the session rather than <b>ssh</b>.
+
+       You can use any address you wish for the tunnel endpoints but make sure that they are  private  addresses
+       (such  as  those  that begin with 10 or 192.168) and that they are not part of any existing subnet on the
+       networks of either peer, unless you are bridging. If you use an address that is part of your local subnet
+       for either of the tunnel endpoints, you will get a weird feedback loop.
+
+   <b>Example</b> <b>1:</b> <b>A</b> <b>simple</b> <b>tunnel</b> <b>without</b> <b>security</b> <b>(not</b> <b>recommended)</b>
+       On bob:
+
+          openvpn --remote alice.example.com --dev tun1 \
+                   --ifconfig 10.4.0.1 10.4.0.2 --verb 9
+
+       On alice:
+
+          openvpn --remote bob.example.com --dev tun1 \
+                   --ifconfig 10.4.0.2 10.4.0.1 --verb 9
+
+       Now verify the tunnel is working by pinging across the tunnel.
+
+       On bob:
+
+          ping 10.4.0.2
+
+       On alice:
+
+          ping 10.4.0.1
+
+       The <b>--verb</b> <b>9</b> option will produce verbose output, similar to the <b><a href="../man8/tcpdump.8.html">tcpdump</a></b>(8) program.  Omit  the  <b>--verb</b>  <b>9</b>
+       option to have OpenVPN run quietly.
+
+   <b>Example</b> <b>2:</b> <b>A</b> <b>tunnel</b> <b>with</b> <b>self-signed</b> <b>certificates</b> <b>and</b> <b>fingerprint</b>
+       First build a self-signed certificate on bob and display its fingerprint.
+
+          openssl req -x509 -newkey ec:&lt;(openssl ecparam -name secp384r1) -keyout bob.pem -out bob.pem -nodes -sha256 -days 3650 -subj '/CN=bob'
+          openssl x509 -noout -sha256 -fingerprint -in bob.pem
+
+       and the same on alice:
+
+          openssl req -x509 -newkey ec:&lt;(openssl ecparam -name secp384r1) -keyout alice.pem -out alice.pem -nodes -sha256 -days 3650 -subj '/CN=alice'
+          openssl x509 -noout -sha256 -fingerprint -in alice.pem
+
+       These  commands  will  build  a text file called <b>bob.pem</b> or <b>alice.pem</b> (in ascii format) that contain both
+       self-signed certificate and key and show the fingerprint of the certificates.  Transfer the  fingerprints
+       over a secure medium such as by using the <b><a href="../man1/scp.1.html">scp</a></b>(1) or <b><a href="../man1/ssh.1.html">ssh</a></b>(1) program.
+
+       On bob:
+
+          openvpn --ifconfig 10.4.0.1 10.4.0.2 --tls-server --dev tun --dh none \
+                  --cert bob.pem --key bob.pem --cipher AES-256-GCM \
+                  --peer-fingerprint "$fingerprint_of_alices_cert"
+
+       On alice:
+
+          openvpn --remote bob.example.com --tls-client --dev tun1   \
+                  --ifconfig 10.4.0.2 10.4.0.1 --cipher AES-256-GCM  \
+                  --cert alice.pem --key alice.pem                   \
+                  --peer-fingerprint "$fingerprint_of_bobs_cert"
+
+       Now verify the tunnel is working by pinging across the tunnel.
+
+       On bob:
+
+          ping 10.4.0.2
+
+       On alice:
+
+          ping 10.4.0.1
+
+       Note: This example use a elliptic curve (<u>secp384</u>), which allows <b>--dh</b> to be set to <b>none</b>.
+
+   <b>Example</b> <b>3:</b> <b>A</b> <b>tunnel</b> <b>with</b> <b>full</b> <b>PKI</b> <b>and</b> <b>TLS-based</b> <b>security</b>
+       For this test, we will designate <b>bob</b> as the TLS client and <b>alice</b> as the TLS server.
+
+       <u>Note:</u>  The  client  or  server  designation  only has meaning for the TLS subsystem. It has no bearing on
+              OpenVPN's peer-to-peer, UDP-based communication model.*
+
+       First, build a separate certificate/key pair for both bob and alice (see above where <b>--cert</b> is  discussed
+       for  more  info).  Then  construct  Diffie Hellman parameters (see above where <b>--dh</b> is discussed for more
+       info). You can also use the included  test  files  <b>client.crt</b>,  <b>client.key</b>,  <b>server.crt</b>,  <b>server.key</b>  and
+       <b>ca.crt</b>.  The  <b>.crt</b>  files  are certificates/public-keys, the <b>.key</b> files are private keys, and <b>ca.crt</b> is a
+       certification authority who has signed both <b>client.crt</b> and <b>server.crt</b>.  For Diffie Hellman parameters you
+       can use the included file <b>dh2048.pem</b>.
+
+       <u>WARNING:</u>
+              All client, server, and certificate authority  certificates  and  keys  included  in  the  OpenVPN
+              distribution are totally insecure and should be used for testing only.
+
+       On bob:
+
+          openvpn --remote alice.example.com --dev tun1    \
+                  --ifconfig 10.4.0.1 10.4.0.2             \
+                  --tls-client --ca ca.crt                 \
+                  --cert client.crt --key client.key       \
+                  --reneg-sec 60 --verb 5
+
+       On alice:
+
+          openvpn --remote bob.example.com --dev tun1      \
+                  --ifconfig 10.4.0.2 10.4.0.1             \
+                  --tls-server --dh dh1024.pem --ca ca.crt \
+                  --cert server.crt --key server.key       \
+                  --reneg-sec 60 --verb 5
+
+       Now verify the tunnel is working by pinging across the tunnel.
+
+       On bob:
+
+          ping 10.4.0.2
+
+       On alice:
+
+          ping 10.4.0.1
+
+       Notice  the  <b>--reneg-sec</b> <b>60</b> option we used above. That tells OpenVPN to renegotiate the data channel keys
+       every minute. Since we used <b>--verb</b> <b>5</b> above, you will see status information on each new key negotiation.
+
+       For production operations, a key renegotiation interval of 60 seconds is probably too frequent. Omit  the
+       <b>--reneg-sec</b> <b>60</b> option to use OpenVPN's default key renegotiation interval of one hour.
+
+   <b>Routing:</b>
+       Assuming  you can ping across the tunnel, the next step is to route a real subnet over the secure tunnel.
+       Suppose that bob and alice have two network interfaces each, one connected to the internet, and the other
+       to a private network. Our goal is to securely connect both private networks. We will  assume  that  bob's
+       private subnet is <u>10.0.0.0/24</u> and alice's is <u>10.0.1.0/24</u>.
+
+       First, ensure that IP forwarding is enabled on both peers. On Linux, enable routing:
+
+          echo 1 &gt; <a href="file:/proc/sys/net/ipv4/ip_forward">/proc/sys/net/ipv4/ip_forward</a>
+
+       This  setting  is  not  persistent.   Please  see  your  operating  systems documentation how to properly
+       configure IP forwarding, which is also persistent through system boots.
+
+       If your system is configured with a firewall.   Please  see  your  operating  systems  guide  on  how  to
+       configure the firewall.  You typically want to allow traffic coming from and going to the tun/tap adapter
+       OpenVPN is configured to use.
+
+       On bob:
+
+          route add -net 10.0.1.0 netmask 255.255.255.0 gw 10.4.0.2
+
+       On alice:
+
+          route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.4.0.1
+
+       Now  any  machine  on  the  <u>10.0.0.0/24</u>  subnet can access any machine on the <u>10.0.1.0/24</u> subnet over the
+       secure tunnel (or vice versa).
+
+       In a production environment, you could put the route command(s) in a script and  execute  with  the  <b>--up</b>
+       option.
+
+                                                                                             <u>OPENVPN</u> <u><a href="../man5/EXAMPLES.5.html">EXAMPLES</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

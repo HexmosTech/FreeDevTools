@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ovsdb - Open vSwitch Database (File Formats)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/openvswitch-common">openvswitch-common_3.5.0-1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ovsdb - Open vSwitch Database (File Formats)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       OVSDB,  the  Open vSwitch Database, is a database system whose network protocol is specified by RFC 7047.
+       The RFC does not specify an on-disk storage format.  The OVSDB implementation in Open vSwitch  implements
+       two  storage  formats:  one  for  standalone  (and  active-backup) databases, and the other for clustered
+       databases.  This manpage documents both of these formats.
+
+       Most users do not need to be concerned with this specification.   Instead,  to  manipulate  OVSDB  files,
+       refer to <u><a href="../man1/ovsdb-tool.1.html">ovsdb-tool</a>(1)</u>.  For an introduction to OVSDB as a whole, read <u><a href="../man7/ovsdb.7.html">ovsdb</a>(7)</u>.
+
+       OVSDB  files  explicitly  record changes that are implied by the database schema.  For example, the OVSDB
+       “garbage collection” feature means that when a client removes the last reference to  a  garbage-collected
+       row,  the  database  server  automatically  removes  that  row.  The database file explicitly records the
+       deletion of the garbage-collected row, so that the reader does not need to infer it.
+
+       OVSDB files do not include the values of ephemeral columns.
+
+       Standalone and clustered database files share the common structure described here.  They are  text  files
+       encoded  in  UTF-8  with  LF (U+000A) line ends, organized as append-only series of records.  Each record
+       consists of 2 lines of text.
+
+       The first line in each record has the format <b>OVSDB</b> <b>&lt;magic&gt;</b> <b>&lt;length&gt;</b> <b>&lt;hash&gt;</b>, where  &lt;magic&gt;  is  <b>JSON</b>  for
+       standalone  databases  or  <b>CLUSTER</b>  for  clustered databases, &lt;length&gt; is a positive decimal integer, and
+       &lt;hash&gt; is a SHA-1 checksum expressed as 40 hexadecimal digits.  Words in the first line must be separated
+       by exactly one space.
+
+       The second line must be exactly <u>length</u> bytes long (including the LF) and its  SHA-1  checksum  (including
+       the  LF)  must  match  <u>hash</u> exactly.  The line’s contents must be a valid JSON object as specified by RFC
+       4627.  Strings in the JSON object must be valid UTF-8.  To ensure that the second  line  is  exactly  one
+       line  of  text, the OVSDB implementation expresses any LF characters within a JSON string as <b>\n</b>.  For the
+       same reason, and to save space, the OVSDB implementation does not “pretty print”  the  JSON  object  with
+       spaces  and LFs.  (The OVSDB implementation tolerates LFs when reading an OVSDB database file, as long as
+       <u>length</u> and <u>hash</u> are correct.)
+
+   <b>JSON</b> <b>Notation</b>
+       We use notation from RFC 7047 here to describe the JSON data in records.  In  addition  to  the  notation
+       defined there, we add the following:
+
+       <b>&lt;raw-uuid&gt;</b>
+              A  36-character  JSON  string  that  contains  a  UUID  in  the format described by RFC 4122, e.g.
+              <b>"550e8400-e29b-41d4-a716-446655440000"</b>
+
+   <b>Standalone</b> <b>Format</b>
+       The first record in a standalone database contains the JSON schema for the database, as specified in  RFC
+       7047.   Only  this record is mandatory (a standalone file that contains only a schema represents an empty
+       database).
+
+       The second and subsequent records in a standalone database are transaction records.  Each record may have
+       the following optional special members, which  do  not  have  any  semantics  but  are  often  useful  to
+       administrators looking through a database log with <b>ovsdb-tool</b> <b>show-log</b>:
+
+       <b>"_date":</b> <b>&lt;integer&gt;</b>
+              The  time  at  which the transaction was committed, as an integer number of milliseconds since the
+              Unix epoch.  Early versions of OVSDB  counted  seconds  instead  of  milliseconds;  these  can  be
+              detected by noticing that their values are less than 2**32.
+
+              OVSDB always writes a <b>_date</b> member.
+
+       <b>"_comment":</b> <b>&lt;string&gt;</b>
+              A  JSON  string  that  specifies  the  comment  provided in a transaction <b>comment</b> operation.  If a
+              transaction has multiple <b>comment</b> operations,  OVSDB  concatenates  them  into  a  single  <b>_comment</b>
+              member, separated by a new-line.
+
+              OVSDB only writes a <b>_comment</b> member if it would be a nonempty string.
+
+       Each  of  these  records  also  has one or more additional members, each of which maps from the name of a
+       database table to a &lt;table-txn&gt;:
+
+       <b>&lt;table-txn&gt;</b>
+              A JSON object that describes the effects of a transaction on a  database  table.   Its  names  are
+              &lt;raw-uuid&gt;s for rows in the table and its values are &lt;row-txn&gt;s.
+
+       <b>&lt;row-txn&gt;</b>
+              Either  <b>null</b>,  which  indicates  that  the  transaction  deleted  this  row, or a JSON object that
+              describes how the transaction inserted or modified the row, whose names are the names  of  columns
+              and whose values are &lt;value&gt;s that give the column’s new value.
+
+              For  new  rows,  the  OVSDB  implementation omits columns whose values have the default values for
+              their types defined in RFC 7047 section 5.2.1; for modified rows, the OVSDB  implementation  omits
+              columns whose values are unchanged.
+
+   <b>Clustered</b> <b>Format</b>
+       The clustered format has the following additional notation:
+
+       <b>&lt;uint64&gt;</b>
+              A  JSON  integer  that  represents  a  64-bit  unsigned integer.  The OVS JSON implementation only
+              supports integers in the range -2**63 through 2**63-1, so  64-bit  unsigned  integer  values  from
+              2**63 through 2**64-1 are expressed as negative numbers.
+
+       <b>&lt;address&gt;</b>
+              A   JSON   string   that   represents   a   network   address   to   support  clustering,  in  the
+              <b>&lt;protocol&gt;:&lt;ip&gt;:&lt;port&gt;</b> syntax described in <b><a href="../man1/ovsdb-tool.1.html">ovsdb-tool</a>(1)</b>.
+
+       <b>&lt;servers&gt;</b>
+              A JSON object whose names are &lt;raw-uuid&gt;s that identify servers and whose values  are  &lt;address&gt;es
+              that specify those servers’ addresses.
+
+       <b>&lt;cluster-txn&gt;</b>
+              A JSON array with two elements:
+
+              1. The first element is either a &lt;database-schema&gt; or <b>null</b>.  A &lt;database-schema&gt; element is always
+                 present  in the first record of a clustered database to indicate the database’s initial schema.
+                 If it is not <b>null</b> in a later record, it indicates a change of schema for the database.
+
+              2. The second element is either a transaction record in  the  format  described  under  <b>Standalone</b>
+                 <b>Format</b> above, or <b>null</b>.
+
+              When  a  schema  is  present, the transaction record is relative to an empty database.  That is, a
+              schema change effectively resets the database to empty and the transaction record  represents  the
+              full  database  contents.   This  allows  readers  to  be ignorant of the full semantics of schema
+              change.
+
+       The first record in a clustered database contains the following  members,  all  of  which  are  required,
+       except <b>prev_election_timer</b>:
+
+       <b>"server_id":</b> <b>&lt;raw-uuid&gt;</b>
+              The server’s own UUID, which must be unique within the cluster.
+
+       <b>"local_address":</b> <b>&lt;address&gt;</b>
+              The address on which the server listens for connections from other servers in the cluster.
+
+       <b>"name":</b> <b>&lt;id&gt;</b>
+              The  database  schema  name.   It  is  only important when a server is in the process of joining a
+              cluster: a server will only join a cluster if the name matches.  (If the database schema name were
+              unique, then we would not also need a cluster ID.)
+
+       <b>"cluster_id":</b> <b>&lt;raw-uuid&gt;</b>
+              The cluster’s UUID.  The all-zeros UUID is not a valid cluster ID.
+
+       <b>"prev_term":</b> <b>&lt;uint64&gt;</b> <b>and</b> <b>"prev_index":</b> <b>&lt;uint64&gt;</b>
+              The Raft term and index just before the beginning of the log.
+
+       <b>"prev_servers":</b> <b>&lt;servers&gt;</b>
+              The set of one or more servers in the cluster at index  “prev_index”  and  term  “prev_term”.   It
+              might not include this server, if it was not the initial server in the cluster.
+
+       <b>"prev_election_timer":</b> <b>&lt;uint64&gt;</b>
+              The  election  base time before the beginning of the log.  If not exist, the default value 1000 ms
+              is used as if it exists this record.
+
+       <b>"prev_data":</b> <b>&lt;json-value&gt;</b> <b>and</b> <b>"prev_eid":</b> <b>&lt;raw-uuid&gt;</b>
+              A snapshot of the data in the database at index “prev_index” and term “prev_term”, and  the  entry
+              ID for that data.  The snapshot must contain a schema.
+
+       The second and subsequent records, if present, in a clustered database represent changes to the database,
+       to  the  cluster  state, or both.  There are several types of these records.  The most important types of
+       records directly represent persistent state described in the Raft specification:
+
+       <b>Entry</b>  A Raft log entry.
+
+       <b>Term</b>   The start of a new term.
+
+       <b>Vote</b>   The server’s vote for a leader in the current term.
+
+       The following additional types of records aid debugging and  troubleshooting,  but  they  do  not  affect
+       correctness.
+
+       <b>Leader</b> Identifies a newly elected leader for the current term.
+
+       <b>Commit</b> <b>Index</b>
+              An update to the server’s <b>commit_index</b>.
+
+       <b>Note</b>   A human-readable description of some event.
+
+       The  table below identifies the members that each type of record contains.  “yes” indicates that a member
+       is required, “?” that it is optional, blank that it is forbidden, and [1]  that  <b>data</b>  and  <b>eid</b>  must  be
+       either both present or both absent.
+                       ┌────────────────┬───────┬──────┬──────┬────────┬──────────────┬──────┐
+                       │ member         │ Entry │ Term │ Vote │ Leader │ Commit Index │ Note │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ comment        │ ?     │ ?    │ ?    │ ?      │ ?            │ ?    │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ term           │ yes   │ yes  │ yes  │ yes    │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ index          │ yes   │      │      │        │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ servers        │ ?     │      │      │        │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ election_timer │ ?     │      │      │        │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ data           │ [1]   │      │      │        │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ eid            │ [1]   │      │      │        │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ vote           │       │      │ yes  │        │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ leader         │       │      │      │ yes    │              │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ commit_index   │       │      │      │        │ yes          │      │
+                       ├────────────────┼───────┼──────┼──────┼────────┼──────────────┼──────┤
+                       │ note           │       │      │      │        │              │ yes  │
+                       └────────────────┴───────┴──────┴──────┴────────┴──────────────┴──────┘
+
+       The members are:
+
+       <b>"comment":</b> <b>&lt;string&gt;</b>
+              A  human-readable  string  giving  an administrator more information about the reason a record was
+              emitted.
+
+       <b>"term":</b> <b>&lt;uint64&gt;</b>
+              The term in which the activity occurred.
+
+       <b>"index":</b> <b>&lt;uint64&gt;</b>
+              The index of a log entry.
+
+       <b>"servers":</b> <b>&lt;servers&gt;</b>
+              Server configuration in a log entry.
+
+       <b>"election_timer":</b> <b>&lt;uint64&gt;</b>
+              Leader election timeout base value in a log entry.
+
+       <b>"data":</b> <b>&lt;json-value&gt;</b>
+              The data in a log entry.
+
+       <b>"eid":</b> <b>&lt;raw-uuid&gt;</b>
+              Entry ID in a log entry.
+
+       <b>"vote":</b> <b>&lt;raw-uuid&gt;</b>
+              The server ID for which this server voted.
+
+       <b>"leader":</b> <b>&lt;raw-uuid&gt;</b>
+              The server ID of the server.  Emitted by both leaders and followers when a leader is elected.
+
+       <b>"commit_index":</b> <b>&lt;uint64&gt;</b>
+              Updated <b>commit_index</b> value.
+
+       <b>"note":</b> <b>&lt;string&gt;</b>
+              One of a few special strings indicating important events.  The currently defined strings are:
+
+              <b>"transfer</b> <b>leadership"</b>
+                     This server transferred  leadership  to  a  different  server  (with  details  included  in
+                     <b>comment</b>).
+
+              <b>"left"</b> This  server  finished  leaving  the  cluster.  (This lets subsequent readers know that the
+                     server is not part of the cluster and should not attempt to connect to it.)
+
+   <b>Joining</b> <b>a</b> <b>Cluster</b>
+       In addition to general format for a clustered database, there is also a special case for a database  file
+       created  by  <b>ovsdb-tool</b>  <b>join-cluster</b>.   Such  a  file  contains  exactly  one  record, which conveys the
+       information passed to the <b>join-cluster</b> command.  It has the following members:
+
+       <b>"server_id":</b> <b>&lt;raw-uuid&gt;</b> <b>and</b> <b>"local_address":</b> <b>&lt;address&gt;</b> <b>and</b> <b>"name":</b> <b>&lt;id&gt;</b>
+              These have the same semantics described above in the general description of the format.
+
+       <b>"cluster_id":</b> <b>&lt;raw-uuid&gt;</b>
+              This is provided only if the user gave  the  <b>--cid</b>  option  to  <b>join-cluster</b>.   It  has  the  same
+              semantics described above.
+
+       <b>"remote_addresses";</b> <b>[&lt;address&gt;*]</b>
+              One or more remote servers to contact for joining the cluster.
+
+       When  the  server  successfully  joins  the  cluster,  the  database file is replaced by one described in
+       <u>Clustered</u> <u>Format</u>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The Open vSwitch Development Community
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2016-2024, The Open vSwitch Development Community
+
+3.5                                               Mar 04, 2025                                          <u><a href="../man5/OVSDB.5.html">OVSDB</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

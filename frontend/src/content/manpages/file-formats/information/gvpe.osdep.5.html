@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gvpe.osdep - os dependent information</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/gvpe">gvpe_3.1-2build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gvpe.osdep - os dependent information
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This file tries to capture OS-dependent configuration or build issues, quirks and platform limitations,
+       as known.
+
+</pre><h4><b>TUN</b> <b>vs.</b> <b>TAP</b> <b>interface</b></h4><pre>
+       Most operating systems nowadays support something called a <u>tunnel</u>-device, which makes it possible to
+       divert IPv4 (and often other protocols, too) into a user space daemon like gvpe. This is being referred
+       to as a TUN-device.
+
+       This is fine for point-to-point tunnels, but for a virtual ethernet, an additional ethernet header is
+       needed. This functionality (called a TAP device here) is only provided by a subset of the configurations.
+
+       On platforms only supporting a TUN-device, gvpe will invoke it's magical ethernet emulation package,
+       which currently only handles ARP requests for the IPv4 protocol (but more could be added, bu the tincd
+       network drivers might need to be modified for this to work). This means that on those platforms, only
+       IPv4 will be supported.
+
+       Also, since there is no way (currently) to tell gvpe which IP subnets are found on a specific host, you
+       will either need to hardwire the MAC address for TUN-style hosts on all networks (and avoid ARP
+       altogether, which is possible), or you need to send a packet from these hosts into the vpn network to
+       tell gvpe the local interface address.
+
+</pre><h4><b>Interface</b> <b>Initialisation</b></h4><pre>
+       Unless otherwise notes, the network interface will be initialized with the expected MAC address and
+       correct MTU value. With most interface drivers, this is done by running /sbin/ifconfig, so make sure that
+       this command exists.
+
+</pre><h4><b>Interface</b> <b>Types</b></h4><pre>
+   <b>native/linux</b>
+       TAP-device; already part of the kernel (only 2.4+ supported, but see tincd/linux). This is the
+       configuration tested best, as gvpe is being developed on this platform.
+
+       ifname should be set to the name of the network device.
+
+       To hardwire ARP addresses, use iproute2 (arp can do it, too):
+
+         MAC=fe:fd:80:00:00:$(printf "%02x" $NODEID)
+         ip neighbour add 10.11.12.13 lladdr $MAC nud permanent dev $IFNAME
+
+   <b>tincd/linux</b>
+       TAP-device; already part of the kernel (2.2 only). See native/linux for more info.
+
+       ifname should be set to the path of a tap device, e.g. /dev/tap0. The interface will be named
+       accordingly.
+
+   <b>native/cygwin</b>
+       TAP-device; The TAP device to be used must either be the CIPE driver
+       (<a href="http://cipe-win32.sourceforge.net/">http://cipe-win32.sourceforge.net/</a>), or (highly recommended) the newer TAP-Win32 driver bundled with
+       openvpn (<a href="http://openvpn.sf.net/">http://openvpn.sf.net/</a>). Just download and run the openvpn installer. The only option you need
+       to select is the TAP driver.
+
+       ifname should be set to the name of the device, found in the registry at (no kidding :):
+
+             HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Network\{4D36E972-E325-11CE-BFC1-08002BE10318}\&lt;adapterid&gt;\Connection\Name
+
+       The MAC address is dynamically being patched into packets and ARP-requests, so only IPv4 works with ARP
+       on this platform.
+
+   <b>tincd/bsd</b>
+       TAP-device, maybe; might work for many bsd variants.
+
+       This driver is a newer version of the tincd/*bsd drivers. It <u>might</u> provide a TAP device, or might not
+       work at all. You might try this interface type first, and, if it doesn't work, try one of the OS-specific
+       drivers.
+
+   <b>tincd/freebsd</b>
+       TAP-device; part of the kernel (since 4.x, maybe earlier).
+
+       ifname should be set to the path of a tap device, e.g. /dev/tap0. The interface will be named
+       accordingly.
+
+       These commands might be helpful examples:
+
+         ifconfig $IFNAME 10.0.0.$NODEID
+         route add -net 10.0.0.0 -netmask 255.255.255.0 -interface $IFNAME 10.0.0.$NODEID
+
+   <b>tincd/netbsd</b>
+       TUN-device; The interface is a point-to-point device. To initialize it, you currently need to configure
+       it as a point-to-point device, giving it an address on your vpn (the exact address doesn't matter), like
+       this:
+
+         ifconfig $IFNAME mtu $MTU up
+         ifconfig $IFNAME 10.11.12.13 10.55.66.77
+         route add -net 10.0.0.0 10.55.66.77 255.0.0.0
+         ping -c1 10.55.66.77 # ping once to tell gvpe your gw ip
+
+       The ping is required to tell the ARP emulator inside GVPE the local IP address.
+
+       ifname should be set to the path of a tun device, e.g. /dev/tun0. The interface will be named
+       accordingly.
+
+   <b>tincd/openbsd</b>
+       TUN-device; already part of the kernel. See tincd/netbsd for more information.
+
+   <b>native/darwin</b>
+       TAP-device;
+
+       The necessary kernel extension can be found here:
+
+         <a href="http://www-user.rhrk.uni-kl.de/~nissler/tuntap/">http://www-user.rhrk.uni-kl.de/~nissler/tuntap/</a>
+
+       There are two drivers, the one to use is the "tap" driver. It driver must be loaded before use, read the
+       docs on how to install it as a startup item.
+
+       ifname should be set to the path of a tap device, e.g. /dev/tap0. The interface will be named
+       accordingly.
+
+       These commands might be helpful examples:
+
+         ifconfig $IFNAME 10.0.0.$NODEID
+         route add -net 10.0.0.0 -interface $IFNAME 255.255.255.0
+
+   <b>tincd/darwin</b>
+       TUN-device; See tincd/netbsd for more information. native/darwin is preferable.
+
+       The necessary kernel extension can be found here:
+
+         <a href="http://chrisp.de/en/projects/tunnel.html">http://chrisp.de/en/projects/tunnel.html</a>
+
+       ifname should be set to the path of a tun device, e.g. /dev/tun0. The interface will be named
+       accordingly.
+
+       The driver must be loaded before use:
+
+         kmodload tunnel
+
+   <b>tincd/solaris</b>
+       TUN-device; already part of the kernel(?), or available here:
+
+         <a href="http://vtun.sourceforge.net/tun/">http://vtun.sourceforge.net/tun/</a>
+
+       Some precompiled tun drivers might be available here:
+
+         <a href="http://www.monkey.org/~dugsong/fragroute/">http://www.monkey.org/~dugsong/fragroute/</a>
+
+       The interface MAC and MTU are <u>NOT</u> set up for you. Please try it out and send me an ifconfig command
+       invocation that does that.
+
+       See tincd/netbsd for more information.
+
+       Completely untested so far.
+
+   <b>tincd/mingw</b>
+       TAP-device; see native/cygwin for more information.
+
+       The setup is likely to be similar to native/cygwin.
+
+       Completely untested so far.
+
+   <b>tincd/raw_socket</b>
+       TAP-device; purpose unknown and untested, probably binds itself on an existing ethernet device (given by
+       ifname). It must be down prior to running the command, and GVPE will try to set it's MAC address and MTU
+       to the "correct" values.
+
+       Completely untested so far.
+
+   <b>tincd/uml_socket</b>
+       TAP-device; purpose unknown and untested, probably creates a UNIX datagram socket (path given by ifname)
+       and reads and writes raw packets, so might be useful in other than UML contexts.
+
+       No network interface is created, and the MAC and MTU must be set as appropriate on the other side of the
+       socket.  GVPE will exit if the MAC address doesn't match what it expects.
+
+       Completely untested so far.
+
+   <b>tincd/cygwin</b>
+       Known to be broken, use native/cygwin instead.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man5/gvpe.5.html">gvpe</a></u>(5).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Marc Lehmann &lt;<a href="mailto:gvpe@schmorp.de">gvpe@schmorp.de</a>&gt;
+
+3.1                                                2018-10-25                                      <u><a href="../man5/GVPE.OSDEP.5.html">GVPE.OSDEP</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nng_ctx - protocol context</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnng-dev">libnng-dev_1.10.1-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nng_ctx - protocol context
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #include &lt;nng/nng.h&gt;
+
+           typedef struct nng_ctx_s nng_ctx
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       An nng_ctx is a handle to an underlying context object, which keeps the protocol state for some stateful
+       protocols. The purpose of a separate context object is to permit applications to share a single socket,
+       with its various underlying dialers, listeners, and pipes, while still benefiting from separate state
+       tracking.
+
+       For example, a <u>req</u> context will contain the request ID of any sent request, a timer to retry the request
+       on failure, and so forth. A separate context on the same socket can have similar data, but corresponding
+       to a completely different request.
+
+           <b>Important</b>
+
+           The nng_ctx structure is always passed by value (both for input parameters and return values), and
+           should be treated opaquely. Passing structures this way gives the compiler a chance to perform
+           accurate type checks in functions passing values of this type.
+
+       All contexts share the same socket, and so some options, as well as the underlying transport details,
+       will be common to all contexts on that socket.
+
+           <b>Note</b>
+
+           Not every protocol supports separate contexts. See the protocol-specific documentation for further
+           details about whether contexts are supported, and details about what options are supported for
+           contexts.
+
+       Protocols that make use of contexts will also have a default context that is used when the socket global
+       operations are used. Operations using the global context will generally not interfere with any other
+       contexts, except that certain socket options may affect socket global behavior.
+
+       Historically, applications wanting to use a stateful protocol concurrently would have to resort to raw
+       mode sockets, which bypasses much of the various protocol handling, leaving it to up to the application
+       to do so. Contexts make it possible to still benefit from advanced protocol handling, including timeouts,
+       retries, and matching requests to responses, while doing so concurrently.
+
+           <b>Note</b>
+
+           Raw mode sockets do not support contexts, since there is generally no state tracked for them, and
+           thus contexts make no sense.
+
+           <b>Tip</b>
+
+           Contexts are an excellent mechanism to use when building concurrent applications, and should be used
+           in lieu of raw mode sockets when possible.
+
+           <b>Important</b>
+
+           Use of file descriptor polling (with descriptors obtained using the NNG_OPT_RECVFD or NNG_OPT_SENDFD
+           options) while contexts are in use on the same socket is not supported, and may lead to unpredictable
+           behavior. These asynchronous methods should not be mixed on the same socket.
+
+   <b>Initialization</b>
+       A context may be initialized using the macro NNG_CTX_INITIALIZER before it is opened, to prevent
+       confusion with valid open contexts.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       The following program fragment demonstrates the use of contexts to implement a concurrent <u>rep</u> service
+       that simply echos messages back to the sender.
+
+           struct echo_context {
+               nng_ctx ctx;
+               nng_aio *aio;
+               enum { INIT, RECV, SEND } state;
+           };
+
+           void
+           echo(void *arg)
+           {
+               struct echo_context *ec = arg;
+
+               switch (ec-&gt;state) {
+               case INIT:
+                   ec-&gt;state = RECV;
+                   nng_ctx_recv(ec-&gt;ctx, ec-&gt;aio);
+                   return;
+               case RECV:
+                   if (nng_aio_result(ec-&gt;aio) != 0) {
+                       // ... handle error
+                   }
+                   // We reuse the message on the ec-&gt;aio
+                   ec-&gt;state = SEND;
+                   nng_ctx_send(ec-&gt;ctx, ec-&gt;aio);
+                   return;
+               case SEND:
+                   if (nng_aio_result(ec-&gt;aio) != 0) {
+                       // ... handle error
+                   }
+                   ec-&gt;state = RECV;
+                   nng_ctx_recv(ec-&gt;ctx, ec-&gt;aio);
+                   return;
+               }
+           }
+
+       Given the above fragment, the following example shows setting up the service. It assumes that the socket
+       has already been created and any transports set up as well with functions such as nng_dial() or
+       nng_listen().
+
+           #define CONCURRENCY 1024
+
+           static struct echo_context ecs[CONCURRENCY];
+
+           void
+           start_echo_service(nng_socket rep_socket)
+           {
+               for (int i = 0; i &lt; CONCURRENCY; i++) {
+                   // error checks elided for clarity
+                   nng_ctx_open(&amp;ecs[i].ctx, rep_socket);
+                   nng_aio_alloc(&amp;ecs[i].aio, echo, ecs+i);
+                   ecs[i].state = INIT;
+                   echo(ecs+i); // start it running
+               }
+           }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man3/libnng.3.html">libnng</a>(3), <a href="../man3/nng_ctx_close.3.html">nng_ctx_close</a>(3), <a href="../man3/nng_ctx_open.3.html">nng_ctx_open</a>(3), <a href="../man3/nng_ctx_get.3.html">nng_ctx_get</a>(3), <a href="../man3/nng_ctx_id.3.html">nng_ctx_id</a>(3), <a href="../man3/nng_ctx_recv.3.html">nng_ctx_recv</a>(3),
+       <a href="../man3/nng_ctx_recvmsg.3.html">nng_ctx_recvmsg</a>(3), <a href="../man3/nng_ctx_send.3.html">nng_ctx_send</a>(3), <a href="../man3/nng_ctx_sendmsg.3.html">nng_ctx_sendmsg</a>(3), <a href="../man3/nng_ctx_set.3.html">nng_ctx_set</a>(3), <a href="../man5/nng_dialer.5.html">nng_dialer</a>(5), <a href="../man5/nng_listener.5.html">nng_listener</a>(5),
+       <a href="../man5/nng_socket.5.html">nng_socket</a>(5), <a href="../man5/nng_options.5.html">nng_options</a>(5), <a href="../man7/nng.7.html">nng</a>(7)
+
+                                                   2025-04-20                                         <u><a href="../man5/NNG_CTX.5.html">NNG_CTX</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

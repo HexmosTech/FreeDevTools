@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>collectd-perl - Documentation of collectd's "perl plugin"</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/collectd-core">collectd-core_5.12.0-23ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       collectd-perl - Documentation of collectd's "perl plugin"
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         LoadPlugin perl
+         # ...
+         &lt;Plugin perl&gt;
+           IncludeDir "/path/to/perl/plugins"
+           BaseName "Collectd::Plugins"
+           EnableDebugger ""
+           LoadPlugin "FooBar"
+
+           &lt;Plugin FooBar&gt;
+             Foo "Bar"
+           &lt;/Plugin&gt;
+         &lt;/Plugin&gt;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "perl plugin" embeds a Perl-interpreter into collectd and provides an interface to collectd's plugin
+       system. This makes it possible to write plugins for collectd in Perl. This is a lot more efficient than
+       executing a Perl-script every time you want to read a value with the "exec plugin" (see <b><a href="../man5/collectd-exec.5.html">collectd-exec</a></b>(5))
+       and provides a lot more functionality, too.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       <b>LoadPlugin</b> <u>Plugin</u>
+           Loads  the  Perl  plugin <u>Plugin</u>. This does basically the same as <b>use</b> would do in a Perl program. As a
+           side effect, the first occurrence of this option causes the Perl-interpreter to be initialized.
+
+       <b>BaseName</b> <u>Name</u>
+           Prepends <u>Name</u><b>::</b> to all plugin names loaded after this option. This is  provided  for  convenience  to
+           keep  plugin  names  short. All Perl-based plugins provided with the <u>collectd</u> distributions reside in
+           the "Collectd::Plugins" namespace.
+
+       &lt;<b>Plugin</b> <u>Name</u>&gt; block
+           This block may be used to pass on configuration settings to  a  Perl  plugin.  The  configuration  is
+           converted  into a config-item data type which is passed to the registered configuration callback. See
+           below for details about the config-item data type and how to register callbacks.
+
+           The <u>name</u> identifies the callback. It is used literally and independent of the <b>BaseName</b> setting.
+
+       <b>EnableDebugger</b> <u>Package</u>[=<u>option</u>,...]
+           Run collectd under the control of the Perl source debugger. If  <u>Package</u>  is  not  the  empty  string,
+           control  is  passed  to  the  debugging,  profiling, or tracing module installed as Devel::<u>Package</u>. A
+           comma-separated list of options may be specified after the "=" character. Please note  that  you  may
+           not  leave  out  the  <u>Package</u> option even if you specify <b>""</b>. This is the same as using the <b>-d:Package</b>
+           command line option.
+
+           See perldebug for detailed documentation about debugging Perl.
+
+           This option does not prevent collectd from daemonizing, so you should  start  collectd  with  the  <b>-f</b>
+           command  line  option.  Else  you  will  not  be able to use the command line driven interface of the
+           debugger.
+
+       <b>IncludeDir</b> <u>Dir</u>
+           Adds <u>Dir</u> to the <b>@INC</b> array. This is the same as using the <b>-IDir</b> command line option or <b>use</b> <b>lib</b> <b>Dir</b> in
+           the source code. Please note that it only has effect on plugins loaded after this option.
+
+       <b>RegisterLegacyFlush</b> <u>true|false</u>
+           The "Perl plugin" used to register one flush callback (called <b>"perl"</b>) and call all  Perl-based  flush
+           handlers when this callback was called. Newer versions of the plugin wrap the Perl flush handlers and
+           register them directly with the daemon <u>in</u> <u>addition</u> to the legacy <b>"perl"</b> callback. This allows to call
+           specific Perl flush handlers, but has the downside that flushing <u>all</u> plugins now calls the Perl flush
+           handlers  twice  (once directly and once via the legacy callback). Unfortunately, removing the <b>"perl"</b>
+           callback would break backwards compatibility.
+
+           This option allows you to disable the legacy <b>"perl"</b> flush callback if you care about the double  call
+           and don't call the <b>"perl"</b> callback in your setup.
+
+</pre><h4><b>WRITING</b> <b>YOUR</b> <b>OWN</b> <b>PLUGINS</b></h4><pre>
+       Writing  your  own plugins is quite simple. collectd manages plugins by means of <b>dispatch</b> <b>functions</b> which
+       call the appropriate <b>callback</b> <b>functions</b> registered by the plugins. Any plugin basically consists  of  the
+       implementation  of  these  callback  functions  and  initializing code which registers the functions with
+       collectd. See the section "EXAMPLES" below for a really basic example. The following  types  of  <b>callback</b>
+       <b>functions</b> are known to collectd (all of them are optional):
+
+       configuration functions
+           This  type  of  functions  is  called  during  configuration  if an appropriate <b>Plugin</b> block has been
+           encountered. It is called once for each <b>Plugin</b> block which  matches  the  name  of  the  callback  as
+           provided with the <b>plugin_register</b> method - see below.
+
+       init functions
+           This  type  of functions is called once after loading the module and before any calls to the read and
+           write functions. It should be used to initialize  the  internal  state  of  the  plugin  (e. g.  open
+           sockets, ...). If the return value evaluates to <b>false</b>, the plugin will be disabled.
+
+       read functions
+           This  type  of  function  is used to collect the actual data. It is called once per interval (see the
+           <b>Interval</b> configuration option of collectd). Usually it will call <b>plugin_dispatch_values</b>  to  dispatch
+           the values to collectd which will pass them on to all registered <b>write</b> <b>functions</b>. If the return value
+           evaluates  to <b>false</b> the plugin will be skipped for an increasing amount of time until it returns <b>true</b>
+           again.
+
+       write functions
+           This type of function is used to write the dispatched values. It is called  once  for  each  call  to
+           <b>plugin_dispatch_values</b>.
+
+       flush functions
+           This  type  of  function  is used to flush internal caches of plugins. It is usually triggered by the
+           user only. Any plugin which caches data before writing  it  to  disk  should  provide  this  kind  of
+           callback function.
+
+       log functions
+           This type of function is used to pass messages of plugins or the daemon itself to the user.
+
+       notification function
+           This  type  of  function  is  used  to act upon notifications. In general, a notification is a status
+           message that may be associated with a data instance.  Usually, a notification  is  generated  by  the
+           daemon  if  a  configured  threshold  has been exceeded (see the section "THRESHOLD CONFIGURATION" in
+           <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5) for more details), but any plugin may dispatch notifications as well.
+
+       shutdown functions
+           This type of function is called once before the daemon shuts down. It should be used to clean up  the
+           plugin (e.g. close sockets, ...).
+
+       Any  function  (except  log  functions)  may  set  the <b>$@</b> variable to describe errors in more detail. The
+       message will be passed on to the user using collectd's logging mechanism.
+
+       See the documentation of the <b>plugin_register</b> method in the section "METHODS" below  for  the  number  and
+       types  of arguments passed to each <b>callback</b> <b>function</b>. This section also explains how to register <b>callback</b>
+       <b>functions</b> with collectd.
+
+       To enable a plugin, copy it to a place where Perl can find it (i. e.  a  directory  listed  in  the  <b>@INC</b>
+       array)  just as any other Perl plugin and add an appropriate <b>LoadPlugin</b> option to the configuration file.
+       After restarting collectd you're done.
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       The following complex types are used to pass values between the Perl plugin and collectd:
+
+       Config-Item
+           A config-item is one structure which keeps the information provided in the  configuration  file.  The
+           array  of  children keeps one entry for each configuration option. Each such entry is another config-
+           item structure, which may nest further if nested blocks are used.
+
+             {
+               key      =&gt; key,
+               values   =&gt; [ val1, val2, ... ],
+               children =&gt; [ { ... }, { ... }, ... ]
+             }
+
+       Data-Set
+           A data-set is a list of one or more data-sources. Each data-source defines a  name,  type,  min-  and
+           max-value and the data-set wraps them up into one structure. The general layout looks like this:
+
+             [{
+               name =&gt; 'data_source_name',
+               type =&gt; DS_TYPE_COUNTER || DS_TYPE_GAUGE || DS_TYPE_DERIVE || DS_TYPE_ABSOLUTE,
+               min  =&gt; value || undef,
+               max  =&gt; value || undef
+             }, ...]
+
+       Value-List
+           A  value-list  is  one structure which features an array of values and fields to identify the values,
+           i. e. time and host, plugin name and plugin-instance as well as a type and type-instance.  Since  the
+           "type" is not included in the value-list but is passed as an extra argument, the general layout looks
+           like this:
+
+             {
+               values =&gt; [123, 0.5],
+               time   =&gt; time (),
+               interval =&gt; plugin_get_interval (),
+               host   =&gt; $hostname_g,
+               plugin =&gt; 'myplugin',
+               type   =&gt; 'myplugin',
+               plugin_instance =&gt; '',
+               type_instance   =&gt; ''
+             }
+
+       Notification
+           A notification is one structure defining the severity, time and message of the status message as well
+           as  an  identification  of  a  data instance. Also, it includes an optional list of user-defined meta
+           information represented as (name, value) pairs:
+
+             {
+               severity =&gt; NOTIF_FAILURE || NOTIF_WARNING || NOTIF_OKAY,
+               time     =&gt; time (),
+               message  =&gt; 'status message',
+               host     =&gt; $hostname_g,
+               plugin   =&gt; 'myplugin',
+               type     =&gt; 'mytype',
+               plugin_instance =&gt; '',
+               type_instance   =&gt; '',
+               meta     =&gt; [ { name =&gt; &lt;name&gt;, value =&gt; &lt;value&gt; }, ... ]
+             }
+
+       Match-Proc
+           A match-proc is one structure storing the callbacks of a "match" of the filter chain  infrastructure.
+           The general layout looks like this:
+
+             {
+               create  =&gt; 'my_create',
+               destroy =&gt; 'my_destroy',
+               match   =&gt; 'my_match'
+             }
+
+       Target-Proc
+           A   target-proc  is  one  structure  storing  the  callbacks  of  a  "target"  of  the  filter  chain
+           infrastructure. The general layout looks like this:
+
+             {
+               create  =&gt; 'my_create',
+               destroy =&gt; 'my_destroy',
+               invoke  =&gt; 'my_invoke'
+             }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following functions provide the C-interface to Perl-modules.  They  are  exported  by  the  ":plugin"
+       export tag (see the section "EXPORTS" below).
+
+       <b>plugin_register</b> (<u>type</u>, <u>name</u>, <u>data</u>)
+           Registers a callback-function or data-set.
+
+           <u>type</u> can be one of:
+
+           TYPE_CONFIG
+           TYPE_INIT
+           TYPE_READ
+           TYPE_WRITE
+           TYPE_FLUSH
+           TYPE_LOG
+           TYPE_NOTIF
+           TYPE_SHUTDOWN
+           TYPE_DATASET
+
+           <u>name</u>  is  the  name  of  the callback-function or the type of the data-set, depending on the value of
+           <u>type</u>. (Please note that the type of the data-set is the value passed as <u>name</u> here and has nothing  to
+           do with the <u>type</u> argument which simply tells <b>plugin_register</b> what is being registered.)
+
+           The  last  argument, <u>data</u>, is either a function name or an array-reference.  If <u>type</u> is <b>TYPE_DATASET</b>,
+           then the <u>data</u> argument must be an array-reference which points to  an  array  of  hashes.  Each  hash
+           describes  one  data-set.  For the exact layout see <b>Data-Set</b> above. Please note that there is a large
+           number of predefined data-sets available in the <b>types.db</b> file which are automatically registered with
+           collectd - see <b><a href="../man5/types.db.5.html">types.db</a></b>(5) for a description of the format of this file.
+
+           <b>Note</b>: Using <b>plugin_register</b> to register a data-set is deprecated.  Add  the  new  type  to  a  custom
+           <b><a href="../man5/types.db.5.html">types.db</a></b>(5) file instead. This functionality might be removed in a future version of collectd.
+
+           If  the  <u>type</u> argument is any of the other types (<b>TYPE_INIT</b>, <b>TYPE_READ</b>, ...) then <u>data</u> is expected to
+           be a function name. If the name is not prefixed with the plugin's package name collectd will  add  it
+           automatically.  The interface slightly differs from the C interface (which expects a function pointer
+           instead) because Perl does not support to share references to subroutines between threads.
+
+           These  functions  are  called  in the various stages of the daemon (see the section "WRITING YOUR OWN
+           PLUGINS" above) and are passed the following arguments:
+
+           TYPE_CONFIG
+               The only argument passed is <u>config-item</u>. See above for the layout of this data type.
+
+           TYPE_INIT
+           TYPE_READ
+           TYPE_SHUTDOWN
+               No arguments are passed.
+
+           TYPE_WRITE
+               The arguments passed are <u>type</u>, <u>data-set</u>, and <u>value-list</u>. <u>type</u> is a  string.  For  the  layout  of
+               <u>data-set</u> and <u>value-list</u> see above.
+
+           TYPE_FLUSH
+               The  arguments  passed  are  <u>timeout</u>  and <u>identifier</u>. <u>timeout</u> indicates that only data older than
+               <u>timeout</u> seconds is to be flushed. <u>identifier</u> specifies which values are to be flushed.
+
+           TYPE_LOG
+               The arguments are <u>log-level</u> and <u>message</u>. The log level is small for important messages  and  high
+               for  less important messages. The least important level is <b>LOG_DEBUG</b>, the most important level is
+               <b>LOG_ERR</b>. In between  there  are  (from  least  to  most  important):  <b>LOG_INFO</b>,  <b>LOG_NOTICE</b>,  and
+               <b>LOG_WARNING</b>. <u>message</u> is simply a string <b>without</b> a newline at the end.
+
+           TYPE_NOTIF
+               The only argument passed is <u>notification</u>. See above for the layout of this data type.
+
+       <b>plugin_unregister</b> (<u>type</u>, <u>plugin</u>)
+           Removes a callback or data-set from collectd's internal list of functions / datasets.
+
+       <b>plugin_dispatch_values</b> (<u>value-list</u>)
+           Submits  a  <u>value-list</u>  to the daemon. If the data-set identified by <u>value-list</u>-&gt;{<u>type</u>} is found (and
+           the number of values matches the number of data-sources) then the type, data-set  and  value-list  is
+           passed to all write-callbacks that are registered with the daemon.
+
+       <b>plugin_write</b> ([<b>plugins</b> =&gt; <u>...</u>][, <b>datasets</b> =&gt; <u>...</u>], <b>valuelists</b> =&gt; <u>...</u>)
+           Calls  the  write  function  of  the  given  <u>plugins</u>  with the provided <u>data</u> <u>sets</u> and <u>value</u> <u>lists</u>. In
+           contrast to <b>plugin_dispatch_values</b>, it does not update collectd's internal  cache  and  bypasses  the
+           filter  mechanism  (see  <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5) for details). If the <b>plugins</b> argument has been omitted, the
+           values will be dispatched to all registered write plugins. If the <b>datasets</b> argument has been omitted,
+           the required data sets are looked up according to the "type" member in the  appropriate  value  list.
+           The  value  of  all three arguments may either be a single scalar or a reference to an array.  If the
+           <b>datasets</b> argument has been specified, the number of data sets has to equal the  number  of  specified
+           value lists.
+
+       <b>plugin_flush</b> ([<b>timeout</b> =&gt; <u>timeout</u>][, <b>plugins</b> =&gt; <u>...</u>][, <b>identifiers</b> =&gt; <u>...</u>])
+           Flush  one  or  more  plugins.  <u>timeout</u> and the specified <u>identifiers</u> are passed on to the registered
+           flush-callbacks. If omitted, the timeout defaults to -1. The identifier  defaults  to  the  undefined
+           value.  If  the <b>plugins</b> argument has been specified, only named plugins will be flushed. The value of
+           the <b>plugins</b> and <b>identifiers</b> arguments may either be a string or a reference to an array of strings.
+
+       <b>plugin_dispatch_notification</b> (<u>notification</u>)
+           Submits a <u>notification</u> to the daemon which will then pass it to all notification-callbacks  that  are
+           registered.
+
+       <b>plugin_log</b> (<u>log-level</u>, <u>message</u>)
+           Submits  a  <u>message</u> of level <u>log-level</u> to collectd's logging mechanism.  The message is passed to all
+           log-callbacks that are registered with collectd.
+
+       <b>ERROR</b>, <b>WARNING</b>, <b>NOTICE</b>, <b>INFO</b>, <b>DEBUG</b> (<u>message</u>)
+           Wrappers  around  <b>plugin_log</b>,  using  <b>LOG_ERR</b>,  <b>LOG_WARNING</b>,  <b>LOG_NOTICE</b>,  <b>LOG_INFO</b>   and   <b>LOG_DEBUG</b>
+           respectively as <u>log-level</u>.
+
+       <b>plugin_get_interval</b> ()
+           Returns  the interval of the current plugin as a floating point number in seconds. This value depends
+           on the  interval  configured  within  the  "LoadPlugin  perl"  block  or  the  global  interval  (see
+           <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5) for details).
+
+       The  following  function  provides  the  filter chain C-interface to Perl-modules.  It is exported by the
+       ":filter_chain" export tag (see the section "EXPORTS" below).
+
+       <b>fc_register</b> (<u>type</u>, <u>name</u>, <u>proc</u>)
+           Registers filter chain callbacks with collectd.
+
+           <u>type</u> may be any of:
+
+           FC_MATCH
+           FC_TARGET
+
+           <u>name</u> is the name of the match  or  target.  By  this  name,  the  callbacks  are  identified  in  the
+           configuration file when specifying a <b>Match</b> or <b>Target</b> block (see <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5) for details).
+
+           <u>proc</u>  is  a hash reference. The hash includes up to three callbacks: an optional constructor (<b>create</b>)
+           and destructor (<b>destroy</b>) and  a  mandatory  <b>match</b>  or  <b>invoke</b>  callback.  <b>match</b>  is  called  whenever
+           processing  an  appropriate  match,  while <b>invoke</b> is called whenever processing an appropriate target
+           (see the section "FILTER CONFIGURATION"  in  <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5)  for  details).  Just  like  any  other
+           callbacks,  filter chain callbacks are identified by the function name rather than a function pointer
+           because Perl does not support to share references  to  subroutines  between  threads.  The  following
+           arguments are passed to the callbacks:
+
+           create
+               The  arguments  passed are <u>config-item</u> and <u>user-data</u>. See above for the layout of the config-item
+               data-type. <u>user-data</u> is a reference to a scalar value that may be used to store  any  information
+               specific  to  this  particular  instance. The daemon does not care about this information at all.
+               It's for the plugin's use only.
+
+           destroy
+               The only argument passed is <u>user-data</u> which is a reference to the user data  initialized  in  the
+               <b>create</b> callback. This callback may be used to cleanup instance-specific information and settings.
+
+           match, invoke
+               The  arguments  passed are <u>data-set</u>, <u>value-list</u>, <u>meta</u> and <u>user-data</u>.  See above for the layout of
+               the data-set and value-list data-types. <u>meta</u> is a pointer to an array of meta  information,  just
+               like  the  <b>meta</b> member of the notification data-type (see above). <u>user-data</u> is a reference to the
+               user data initialized in the <b>create</b> callback.
+
+</pre><h4><b>GLOBAL</b> <b>VARIABLES</b></h4><pre>
+       <b>$hostname_g</b>
+           As the name suggests this variable keeps the hostname of the system collectd is running on. The value
+           might be influenced by the <b>Hostname</b> or <b>FQDNLookup</b> configuration  options  (see  <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5)  for
+           details).
+
+       <b>$interval_g</b>
+           This variable keeps the interval in seconds in which the read functions are queried (see the <b>Interval</b>
+           configuration option).
+
+           <b>Note:</b>  This  variable  should  no  longer be used in favor of plugin_get_interval() (see above). This
+           function takes any plugin-specific interval settings into  account  (see  the  "Interval"  option  of
+           "LoadPlugin" in <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5) for details).
+
+       Any changes to these variables will be globally visible in collectd.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       By  default  no  symbols are exported. However, the following export tags are available (<b>:all</b> will export
+       all of them):
+
+       <b>:plugin</b>
+           <b>plugin_register</b> ()
+           <b>plugin_unregister</b> ()
+           <b>plugin_dispatch_values</b> ()
+           <b>plugin_flush</b> ()
+           <b>plugin_flush_one</b> ()
+           <b>plugin_flush_all</b> ()
+           <b>plugin_dispatch_notification</b> ()
+           <b>plugin_log</b> ()
+       <b>:types</b>
+           <b>TYPE_CONFIG</b>
+           <b>TYPE_INIT</b>
+           <b>TYPE_READ</b>
+           <b>TYPE_WRITE</b>
+           <b>TYPE_FLUSH</b>
+           <b>TYPE_SHUTDOWN</b>
+           <b>TYPE_LOG</b>
+           <b>TYPE_DATASET</b>
+       <b>:ds_types</b>
+           <b>DS_TYPE_COUNTER</b>
+           <b>DS_TYPE_GAUGE</b>
+           <b>DS_TYPE_DERIVE</b>
+           <b>DS_TYPE_ABSOLUTE</b>
+       <b>:log</b>
+           <b>ERROR</b> ()
+           <b>WARNING</b> ()
+           <b>NOTICE</b> ()
+           <b>INFO</b> ()
+           <b>DEBUG</b> ()
+           <b>LOG_ERR</b>
+           <b>LOG_WARNING</b>
+           <b>LOG_NOTICE</b>
+           <b>LOG_INFO</b>
+           <b>LOG_DEBUG</b>
+       <b>:filter_chain</b>
+           <b>fc_register</b>
+           <b>FC_MATCH_NO_MATCH</b>
+           <b>FC_MATCH_MATCHES</b>
+           <b>FC_TARGET_CONTINUE</b>
+           <b>FC_TARGET_STOP</b>
+           <b>FC_TARGET_RETURN</b>
+       <b>:fc_types</b>
+           <b>FC_MATCH</b>
+           <b>FC_TARGET</b>
+       <b>:notif</b>
+           <b>NOTIF_FAILURE</b>
+           <b>NOTIF_WARNING</b>
+           <b>NOTIF_OKAY</b>
+       <b>:globals</b>
+           <b>$hostname_g</b>
+           <b>$interval_g</b>
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Any Perl plugin will start similar to:
+
+         package Collectd::Plugins::FooBar;
+
+         use strict;
+         use warnings;
+
+         use Collectd qw( :all );
+
+       A very simple read function might look like:
+
+         sub foobar_read
+         {
+           my $vl = { plugin =&gt; 'foobar', type =&gt; 'gauge' };
+           $vl-&gt;{'values'} = [ <a href="../man42/rand.42.html">rand</a>(42) ];
+           plugin_dispatch_values ($vl);
+           return 1;
+         }
+
+       A very simple write function might look like:
+
+         sub foobar_write
+         {
+           my ($type, $ds, $vl) = @_;
+           for (my $i = 0; $i &lt; scalar (@$ds); ++$i) {
+             print "$vl-&gt;{'plugin'} ($vl-&gt;{'type'}): $vl-&gt;{'values'}-&gt;[$i]\n";
+           }
+           return 1;
+         }
+
+       A very simple match callback might look like:
+
+         sub foobar_match
+         {
+           my ($ds, $vl, $meta, $user_data) = @_;
+           if (matches($ds, $vl)) {
+             return FC_MATCH_MATCHES;
+           } else {
+             return FC_MATCH_NO_MATCH;
+           }
+         }
+
+       To register those functions with collectd:
+
+         plugin_register (TYPE_READ, "foobar", "foobar_read");
+         plugin_register (TYPE_WRITE, "foobar", "foobar_write");
+
+         fc_register (FC_MATCH, "foobar", "foobar_match");
+
+       See the section "DATA TYPES" above for a complete documentation of the data types used by the read, write
+       and match functions.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       •   Please feel free to send in new plugins to collectd's mailing list at &lt;collectd at collectd.org&gt;  for
+           review  and,  possibly,  inclusion in the main distribution. In the latter case, we will take care of
+           keeping the plugin up to date and adapting it to new versions of collectd.
+
+           Before submitting your plugin, please take a look at &lt;<a href="http://collectd.org/dev-info.shtml">http://collectd.org/dev-info.shtml</a>&gt;.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       •   collectd is heavily multi-threaded. Each collectd thread accessing the perl plugin will be mapped  to
+           a  Perl  interpreter  thread  (see  <b><a href="../man3perl/threads.3perl.html">threads</a></b>(3perl)).   Any  such thread will be created and destroyed
+           transparently and on-the-fly.
+
+           Hence, any plugin has to be thread-safe if it provides several entry points from collectd  (i. e.  if
+           it  registers  more  than  one  callback  or if a registered callback may be called more than once in
+           parallel). Please note that no data is shared between  threads  by  default.  You  have  to  use  the
+           <b>threads::shared</b> module to do so.
+
+       •   Each  function  name  registered  with  collectd has to be available before the first thread has been
+           created (i. e. basically at compile time). This basically means that hacks (yes,  I  really  consider
+           this  to  be  a  hack) like "*foo = \&amp;bar; plugin_register (TYPE_READ, "plugin", "foo");" most likely
+           will not work. This is due to the fact that the symbol table is not shared across different threads.
+
+       •   Each plugin is usually only loaded once and kept in memory for performance  reasons.  Therefore,  END
+           blocks  are  only  executed once when collectd shuts down. You should not rely on END blocks anyway -
+           use <b>shutdown</b> <b>functions</b> instead.
+
+       •   The perl plugin exports the internal API of collectd which is  considered  unstable  and  subject  to
+           change  at any time. We try hard to not break backwards compatibility in the Perl API during the life
+           cycle of one major release.  However, this cannot be guaranteed at all times. Watch out for  warnings
+           dispatched by the perl plugin after upgrades.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/collectd.1.html">collectd</a></b>(1),     <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5),     <b><a href="../man5/collectd-exec.5.html">collectd-exec</a></b>(5),     <b><a href="../man5/types.db.5.html">types.db</a></b>(5),     <b><a href="../man1/perl.1.html">perl</a></b>(1),    <b><a href="../man3perl/threads.3perl.html">threads</a></b>(3perl),
+       <b>threads::<a href="../man3perl/shared.3perl.html">shared</a></b>(3perl), <b><a href="../man1/perldebug.1.html">perldebug</a></b>(1)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The "perl plugin" has been written by Sebastian Harl &lt;sh at tokkee.org&gt;.
+
+       This  manpage  has  been  written  by  Florian  Forster   &lt;octo at collectd.org&gt;   and   Sebastian   Harl
+       &lt;sh at tokkee.org&gt;.
+
+5.12.0.git                                         2025-08-07                                   <u><a href="../man5/COLLECTD-PERL.5.html">COLLECTD-PERL</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

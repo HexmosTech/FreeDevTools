@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>collectd-exec - Documentation of collectd's "exec plugin"</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/collectd-core">collectd-core_5.12.0-23ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       collectd-exec - Documentation of collectd's "exec plugin"
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # See <a href="../man5/collectd.conf.5.html">collectd.conf</a>(5)
+         LoadPlugin exec
+         # ...
+         &lt;Plugin exec&gt;
+           Exec "myuser:mygroup" "myprog"
+           Exec "otheruser" "/path/to/another/binary" "arg0" "arg1"
+           NotificationExec "user" "/usr/lib/collectd/exec/handle_notification"
+         &lt;/Plugin&gt;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "exec plugin" forks off an executable either to receive values or to dispatch notifications to the
+       outside world. The syntax of the configuration is explained in <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5) but summarized in the
+       above synopsis.
+
+       If you want/need better performance or more functionality you should take a long look at the "perl
+       plugin", <b><a href="../man5/collectd-perl.5.html">collectd-perl</a></b>(5).
+
+</pre><h4><b>EXECUTABLE</b> <b>TYPES</b></h4><pre>
+       There are currently two types of executables that can be executed by the "exec plugin":
+
+       "Exec"
+           These  programs  are  forked  and values that it writes to "STDOUT" are read back.  The executable is
+           forked in a fashion similar to init: It is forked once and not again until it exits. If it exited, it
+           will be forked again after at most <u>Interval</u> seconds. It is perfectly legal for the executable to  run
+           for a long time and continuously write values to "STDOUT".
+
+           See "EXEC DATA FORMAT" below for a description of the output format expected from these programs.
+
+           <b>Warning:</b>  If  the  executable only writes one value and then exits it will be executed every <u>Interval</u>
+           seconds. If <u>Interval</u> is short (the default is 10 seconds) this may result in serious system load.
+
+       "NotificationExec"
+           The program is forked once for each notification that is handled by the daemon.  The notification  is
+           passed  to  the  program  on  "STDIN"  in  a fashion similar to HTTP-headers. In contrast to programs
+           specified with "Exec" the execution of this program is not serialized, so that several  instances  of
+           this program may run at once if multiple notifications are received.
+
+           See "NOTIFICATION DATA FORMAT" below for a description of the data passed to these programs.
+
+</pre><h4><b>EXEC</b> <b>DATA</b> <b>FORMAT</b></h4><pre>
+       The forked executable is expected to print values to "STDOUT". The expected format is as follows:
+
+       Comments
+           Each line beginning with a "#" (hash mark) is ignored.
+
+       <b>PUTVAL</b> <u>Identifier</u> [<u>OptionList</u>] <u>Valuelist</u>
+           Submits one or more values (identified by <u>Identifier</u>, see below) to the daemon which will dispatch it
+           to all its write-plugins.
+
+           An  <u>Identifier</u>  is  of  the  form "<u>host</u><b>/</b><u>plugin</u><b>-</b><u>instance</u><b>/</b><u>type</u><b>-</b><u>instance</u>" with both <u>instance</u>-parts being
+           optional. If they're omitted the hyphen must be omitted, too. <u>plugin</u> and each  <u>instance</u>-part  may  be
+           chosen  freely  as long as the tuple (plugin, plugin instance, type instance) uniquely identifies the
+           plugin within collectd. <u>type</u> identifies the type and number of  values  (i. e.  data-set)  passed  to
+           collectd. A large list of predefined data-sets is available in the <b>types.db</b> file. See <b><a href="../man5/types.db.5.html">types.db</a></b>(5) for
+           a description of the format of this file.
+
+           The  <u>OptionList</u>  is  an  optional  list  of <u>Options</u>, where each option is a key-value-pair. A list of
+           currently understood options can be found below, all other  options  will  be  ignored.  Values  that
+           contain spaces must be quoted with double quotes.
+
+           <u>Valuelist</u>  is  a colon-separated list of the time and the values, each either an integer if the data-
+           source is a counter, or a double if the data-source is of type "gauge". You can submit  an  undefined
+           gauge-value  by  using <b>U</b>. When submitting <b>U</b> to a counter the behavior is undefined. The time is given
+           as epoch (i. e. standard UNIX time) or <b>N</b> to use the current time.
+
+           You can mix options and values, but the order is important: Options only effect following values,  so
+           specifying  an option as last field is allowed, but useless. Also, an option applies to <b>all</b> following
+           values, so you don't need to re-set an option over and over again.
+
+           The currently defined <b>Options</b> are:
+
+           <b>interval=</b><u>seconds</u>
+               Gives the interval in which the data identified by <u>Identifier</u> is being collected.
+
+           meta:<b>key</b>=<u>value</u>
+               Add meta data with the key <b>key</b> and the value <u>value</u>.
+
+           Please note that this is the same format as used in the <b>unixsock</b>  <b>plugin</b>,  see  <b><a href="../man5/collectd-unixsock.5.html">collectd-unixsock</a></b>(5).
+           There's also a bit more information on identifiers in case you're confused.
+
+           Since examples usually let one understand a lot better, here are some:
+
+             PUTVAL leeloo/cpu-0/cpu-idle N:2299366
+             PUTVAL alice/interface/if_octets-eth0 interval=10 1180647081:421465:479194
+
+       <b>PUTNOTIF</b> [<u>OptionList</u>] <b>message=</b><u>Message</u>
+           Submits a notification to the daemon which will then dispatch it to all plugins which have registered
+           for receiving notifications.
+
+           The  <b>PUTNOTIF</b>  if  followed by a list of options which further describe the notification. The <b>message</b>
+           option is special in that it will consume the rest of the line as its value. The  <b>message</b>,  <b>severity</b>,
+           and <b>time</b> options are mandatory.
+
+           Valid options are:
+
+           <b>message=</b><u>Message</u> (<b>REQUIRED</b>)
+               Sets  the  message  of  the notification. This is the message that will be made accessible to the
+               user, so it should contain some useful information. As with all options: If the message  includes
+               spaces, it must be quoted with double quotes. This option is mandatory.
+
+           <b>severity=failure</b>|<b>warning</b>|<b>okay</b> (<b>REQUIRED</b>)
+               Sets the severity of the notification. This option is mandatory.
+
+           <b>time=</b><u>Time</u> (<b>REQUIRED</b>)
+               Sets  the  time of the notification. The time is given as "epoch", i. e. as seconds since January
+               1st, 1970, 00:00:00. This option is mandatory.
+
+           <b>host=</b><u>Hostname</u>
+           <b>plugin=</b><u>Plugin</u>
+           <b>plugin_instance=</b><u>Plugin-Instance</u>
+           <b>type=</b><u>Type</u>
+           <b>type_instance=</b><u>Type-Instance</u>
+               These "associative"  options  establish  a  relation  between  this  notification  and  collected
+               performance data. This connection is purely informal, i. e. the daemon itself doesn't do anything
+               with  this information. However, websites or GUIs may use this information to place notifications
+               near the affected graph or table. All the  options  are  optional,  but  <b>plugin_instance</b>  without
+               <b>plugin</b> or <b>type_instance</b> without <b>type</b> doesn't make much sense and should be avoided.
+
+           <b>type:key=</b><u>value</u>
+               Sets  user  defined meta information. The <b>type</b> key is a single character defining the type of the
+               meta information.
+
+               The current supported types are:
+
+               <b>s</b> A string passed as-is.
+
+       Please note that this is the same format as used in the <b>unixsock</b> <b>plugin</b>, see <b><a href="../man5/collectd-unixsock.5.html">collectd-unixsock</a></b>(5).
+
+       When collectd exits it sends a <b>SIGTERM</b> to all still running child-processes upon which they have to quit.
+
+</pre><h4><b>NOTIFICATION</b> <b>DATA</b> <b>FORMAT</b></h4><pre>
+       The notification executables receive values rather than providing them. In fact,  after  the  program  is
+       started "STDOUT" is connected to "/dev/null".
+
+       The  data is passed to the executables over "STDIN" in a format very similar to HTTP: At first there is a
+       "header" with one line per field. Every line consists of  a  field  name,  ended  by  a  colon,  and  the
+       associated value until end-of-line.  The "header" is ended by two newlines immediately following another,
+       i.e. an empty line. The rest, basically the "body", is the message of the notification.
+
+       The following is an example notification passed to a program:
+
+         Severity: FAILURE
+         Time: 1200928930.515
+         Host: myhost.mydomain.org
+         \n
+         This is a test notification to demonstrate the format
+
+       The  following  header  files  are  currently  used. Please note, however, that you should ignore unknown
+       header files to be as forward-compatible as possible.
+
+       <b>Severity</b>
+           Severity of the notification. May either be <b>FAILURE</b>, <b>WARNING</b>, or <b>OKAY</b>.
+
+       <b>Time</b>
+           The time in epoch, i.e. as seconds since 1970-01-01 00:00:00 UTC. The value currently has millisecond
+           precision (i.e. three decimal places), but scripts should accept arbitrary numbers of decimal places,
+           including no decimal places.
+
+       <b>Host</b>
+       <b>Plugin</b>
+       <b>PluginInstance</b>
+       <b>Type</b>
+       <b>TypeInstance</b>
+           Identification of the performance data this notification is associated with.  All of these fields are
+           optional because notifications do not <b>need</b> to be associated with a certain value.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The following environment variables are set by the plugin before calling <u>exec</u>:
+
+       COLLECTD_INTERVAL
+           Value of the global interval setting.
+
+       COLLECTD_HOSTNAME
+           Hostname used by <u>collectd</u> to dispatch local values.
+
+</pre><h4><b>USING</b> <b>NAGIOS</b> <b>PLUGINS</b></h4><pre>
+       Though the interface is far from perfect, there are tons of  plugins  for  Nagios.   You  can  use  these
+       plugins  with  collectd  by  using a simple transition layer, "exec-nagios.px", which is shipped with the
+       collectd distribution in the "contrib/" directory. It is a simple Perl script that  comes  with  embedded
+       documentation. To see it, run the following command:
+
+         perldoc exec-nagios.px
+
+       This  script  expects a configuration file, "exec-nagios.conf". You can find an example in the "contrib/"
+       directory, too.
+
+       Even a simple mechanism to submit "performance data" to collectd is  implemented.  If  you  need  a  more
+       sophisticated setup, please rewrite the plugin to make use of collectd's more powerful interface.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       •   The  user,  the  binary is executed as, may not have root privileges, i. e.  must have an UID that is
+           non-zero. This is for your own good.
+
+       •   Early versions of the plugin did not use a command but treated all lines as if they were arguments to
+           the <u>PUTVAL</u> command. When the <u>PUTNOTIF</u> command was implemented, this behavior was kept for lines which
+           start with an unknown command for backwards compatibility. This compatibility code has  been  removed
+           in <u>collectd</u> <u>5</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/collectd.1.html">collectd</a></b>(1), <b><a href="../man5/collectd.conf.5.html">collectd.conf</a></b>(5), <b><a href="../man5/collectd-perl.5.html">collectd-perl</a></b>(5), <b><a href="../man5/collectd-unixsock.5.html">collectd-unixsock</a></b>(5), <b><a href="../man2/fork.2.html">fork</a></b>(2), <b><a href="../man3/exec.3.html">exec</a></b>(3)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Florian Forster &lt;<a href="mailto:octo@collectd.org">octo@collectd.org</a>&gt;
+
+5.12.0.git                                         2025-08-07                                   <u><a href="../man5/COLLECTD-EXEC.5.html">COLLECTD-EXEC</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>
