@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF::Builder::Content - Methods for adding graphics and text to a PDF</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpdf-builder-perl">libpdf-builder-perl_3.027-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDF::Builder::Content - Methods for adding graphics and text to a PDF
+
+       Inherits from PDF::Builder::Basic::PDF::Dict
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # Start with a PDF page (new or opened)
+           my $pdf = PDF::Builder-&gt;new();
+           my $page = $pdf-&gt;page();
+
+           # Add new content object(s)
+           my $content = $page-&gt;graphics();  # or gfx()
+           #   and/or (as separate object name)
+           my $content = $page-&gt;text();
+
+           # Then call the methods below to add graphics and text to the page.
+           # Note that negative coordinates can have unpredictable effects, so
+           # keep your coordinates non-negative!
+
+       These methods add content to <u>streams</u> output for text or graphics objects.  Unless otherwise restricted by
+       a check that we are in or out of text mode, many methods listed here apply equally to text and graphics
+       streams. It is possible that there <u>are</u> some which have no effect in one stream type or the other, but are
+       currently lacking a check to prevent them from being inserted into an inapplicable stream.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       All public methods listed, <u>except</u> <u>as</u> <u>otherwise</u> <u>noted,</u> return $self, for ease of chaining calls.
+
+   <b>Coordinate</b> <b>Transformations</b>
+       The methods in this section change the coordinate system for the current content object relative to the
+       rest of the document.  <b>Note:</b> the changes are relative to the <u>original</u> page coordinates (and thus,
+       absolute), not to the previous position! Thus, "translate(10, 10); translate(10, 10);" ends up only
+       moving the origin to "[10, 10]", rather than to "[20, 20]". There is one call, transform_rel(), which
+       makes your changes <u>relative</u> to the previous position.
+
+       If you call more than one of these methods, the PDF specification recommends calling them in the
+       following order: translate, rotate, scale, skew.  Each change builds on the last, and you can get
+       unexpected results when calling them in a different order.
+
+       <b>CAUTION:</b> a <u>text</u> object ($content) behaves a bit differently. Individual translate, rotate, scale, and
+       skew calls <u>cancel</u> <u>out</u> any previous settings.  If you want to combine multiple transformations for text,
+       use the "transform" call.
+
+       <u>translate</u>
+
+           $content-&gt;translate($dx,$dy)
+
+           Moves the origin along the x and y axes to $dx and $dy respectively.
+
+       <u>rotate</u>
+
+           $content-&gt;rotate($degrees)
+
+           Rotates the coordinate system counter-clockwise (anti-clockwise) around the current origin. Use a
+           negative argument to rotate clockwise. Note that 360 degrees will be treated as 0 degrees.
+
+           <b>Note:</b> Unless you have already moved (translated) the origin, it is, and will remain, at the lower
+           left corner of the visible sheet. It will <u>not</u> automatically shift to another corner. For example, a
+           rotation of +90 degrees (counter-clockwise) will leave the entire visible sheet in negative Y
+           territory (0 at the left edge, -original_width at the right edge), while X remains in positive
+           territory (0 at bottom, +original_height at the top edge).
+
+           This rotate() call permits any angle. Do not confuse it with the <u>page</u> rotation "rotate" call, which
+           only permits increments of 90 degrees (with opposite sign!), but <u>does</u> shift the origin to another
+           corner of the sheet.
+
+       <u>scale</u>
+
+           $content-&gt;scale($sx,$sy)
+
+           Scales (stretches) the coordinate systems along the x and y axes.  Separate multipliers are provided
+           for x and y.
+
+       <u>skew</u>
+
+           $content-&gt;skew($skx,$sky)
+
+           Skews the coordinate system by $skx degrees (counter-clockwise/anti-clockwise) from the x axis <u>and</u>
+           $sky degrees (clockwise) from the y axis.  Note that 360 degrees will be treated the same as 0
+           degrees.
+
+       <u>transform</u>
+
+           $content-&gt;transform(%opts)
+
+           Use one or more of the given %opts:
+
+               $content-&gt;transform(
+                   'translate' =&gt; [$dx,$dy],
+                   'rotate'    =&gt; $degrees,
+                   'scale'     =&gt; [$sx,$sy],
+                   'skew'      =&gt; [$skx,$sky],
+                   'matrix'    =&gt; [$a, $b, $c, $d, $e, $f],
+                   'point'     =&gt; [$x,$y]
+                   'repeat'    =&gt; $boolean
+               )
+
+           A six element list may be given ("matrix") for a further transformation matrix:
+
+               $a = cos(rot) * scale factor for X
+               $b = sin(rot) * tan(skew for X)
+               $c = -sin(rot) * tan(skew for Y)
+               $d = cos(rot) * scale factor for Y
+               $e = translation for X
+               $f = translation for Y
+
+           Performs multiple coordinate transformations in one call, in the order recommended by the PDF
+           specification (translate, rotate, scale, skew).  This is equivalent to making each transformation
+           separately, <u>in</u> <u>the</u> <u>indicated</u> <u>order</u>.  A matrix of 6 values may also be given ("matrix"). The
+           transformation matrix is updated.  A "point" may be given (a point to be multiplied [transformed] by
+           the completed matrix).  Omitted options will be unchanged.
+
+           If "repeat" is true, and if this is not the first call to a transformation method, the previous
+           transformation will be performed again, modified by any other provided arguments.
+
+       <u>transform_rel</u>
+
+           $content-&gt;transform_rel(%opts)
+
+           Makes transformations similarly to "transform", except that it <u>adds</u> to the previously set values,
+           rather than <u>replacing</u> them (except for <u>scale</u>, which <b>multiplies</b> the new values with the old).
+
+           Unlike "transform", "matrix" and "point" are not supported.
+
+       <u>matrix</u>
+
+           $content-&gt;matrix($a, $b, $c, $d, $e, $f)
+
+           <u>(Advanced)</u> Sets the current transformation matrix manually. Unless you have a particular need to
+           enter transformations manually, you should use the "transform" method instead.
+
+               $a = cos(rot) * scale factor for X
+               $b = sin(rot) * tan(skew for X)
+               $c = -sin(rot) * tan(skew for Y)
+               $d = cos(rot) * scale factor for Y
+               $e = translation for X
+               $f = translation for Y
+
+           In text mode, the text matrix is <b>returned</b>.  In graphics mode, $self is <b>returned</b>.
+
+   <b>Graphics</b> <b>State</b> <b>Parameters</b>
+       The following calls also affect the <b>text</b> state.
+
+       <u>linewidth,</u> <u>line_width</u>
+
+           $content-&gt;linewidth($width)
+
+           Sets the width of the stroke (in points). This is the line drawn in graphics mode, or the <u>outline</u> of
+           a character in text mode (with appropriate "render" mode). If no $width is given, the current setting
+           is <b>returned</b>. If the width is being set, $self is <b>returned</b> so that calls may be chained.
+
+           <b>Alternate</b> <b>name:</b> "line_width"
+
+           This is provided for compatibility with PDF::API2.
+
+       <u>linecap,</u> <u>line_cap</u>
+
+           $content-&gt;linecap($style)
+
+           Sets the style to be used at the end of a stroke. This applies to lines which come to a free-floating
+           end, <u>not</u> to "joins" ("corners") in polylines (see "linejoin").
+
+           <b>Alternate</b> <b>name:</b> "line_cap"
+
+           This is provided for compatibility with PDF::API2.
+
+           "butt" or "b" or 0 = Butt Cap (default)
+               The stroke ends at the end of the path, with no projection.
+
+           "round" or "r" or 1 = Round Cap
+               A  semicircular  arc is drawn around the end of the path with a diameter equal to the line width,
+               and is filled in.
+
+           "square" or "s" or 2 = Projecting Square Cap
+               The stroke continues past the end of the path for half the line width.
+
+           If no $style is given, the current setting is <b>returned</b>. If the style is being set, $self is  <b>returned</b>
+           so that calls may be chained.
+
+           Either a number or a string (case-insensitive) may be given.
+
+       <u>linejoin,</u> <u>line_join</u>
+
+           $content-&gt;linejoin($style)
+
+           Sets the style of join to be used at corners of a path (within a multisegment polyline).
+
+           <b>Alternate</b> <b>name:</b> "line_join"
+
+           This is provided for compatibility with PDF::API2.
+
+           "miter" or "m" or 0 = Miter Join, default
+               The  outer  edges of the strokes extend until they meet, up to the limit specified by <u>miterlimit</u>.
+               If the limit would be surpassed, a <u>bevel</u> join is used instead. For a given  linewidth,  the  more
+               acute  the angle is (closer to 0 degrees), the higher the ratio of miter length to linewidth will
+               be, and that's what <u>miterlimit</u> controls -- a very "pointy" join is replaced by a bevel.
+
+           "round" or "r" or 1 = Round Join
+               A filled circle with a diameter equal  to  the  <u>linewidth</u>  is  drawn  around  the  corner  point,
+               producing a rounded corner. The arc will meet up with the sides of the line in a smooth tangent.
+
+           "bevel" or "b" or 2 = Bevel Join
+               A filled triangle is drawn to fill in the notch between the two strokes.
+
+           If  no $style is given, the current setting is <b>returned</b>. If the style is being set, $self is <b>returned</b>
+           so that calls may be chained.
+
+           Either a number or a string (case-insensitive) may be given.
+
+       <u>miterlimit,</u> <u>miter_limit</u>
+
+           $content-&gt;miterlimit($ratio)
+
+           Sets the miter limit when the line join style is a <u>miter</u> join.
+
+           The ratio is the maximum length of the miter (inner to outer corner) divided by the line  width.  Any
+           miter  above this ratio will be converted to a <u>bevel</u> join. The practical effect is that lines meeting
+           at shallow angles are chopped off instead of producing long pointed corners.
+
+           The default miter limit is 10.0 (approximately 11.5 degree cutoff angle).  The smaller the limit, the
+           larger the cutoff angle.
+
+           If no $ratio is given, the current setting is <b>returned</b>. If the ratio is being set, $self is  <b>returned</b>
+           so that calls may be chained.
+
+           <b>Alternate</b> <b>name:</b> "miter_limit"
+
+           This  is  provided  for compatibility with PDF::API2.  Long ago, in a distant galaxy, this method was
+           misnamed <u>meterlimit</u>, but that was removed a while ago. Any code using that name should be updated!
+
+       <u>linedash,</u> <u>line_dash_pattern</u>
+
+           $content-&gt;linedash()
+
+           $content-&gt;linedash($length)
+
+           $content-&gt;linedash($dash_length, $gap_length, ...)
+
+           $content-&gt;linedash('pattern' =&gt; [$dash_length, $gap_length, ...], 'shift' =&gt; $offset)
+
+           Sets the line dash pattern.
+
+           If called without any arguments, a solid line will be drawn.
+
+           If called with one argument, the dashes and gaps (strokes and spaces) will have equal lengths.
+
+           If called with two or more arguments, the arguments represent alternating dash and gap lengths.
+
+           If called with a hash of arguments, the <u>pattern</u> array may have one or more elements,  specifying  the
+           dash  and  gap  lengths.  A dash phase may be set (<u>shift</u>), which is a <b>positive</b> <b>integer</b> specifying the
+           distance into the pattern at which to start the dashed line.  Note that if you wish to give  a  <u>shift</u>
+           amount, using "shift", you need to use "pattern" instead of one or two elements.
+
+           If  an  <b>odd</b>  number  of dash array elements are given, the list is repeated by the reader software to
+           form an even number of elements (pairs).
+
+           If a single argument of <b>-1</b> is given, the current setting is <b>returned</b>.  This is an array consisting of
+           two elements: an anonymous array containing the dash pattern (default: empty), and the shift (offset)
+           amount (default: 0).  It may be used directly in a <b>linedash()</b> call, as linedash  will  recognize  the
+           special pattern [ array, number ].
+
+           If the dash pattern is being <u>set</u>, $self is <b>returned</b> so that calls may be chained.
+
+           <b>Alternate</b> <b>name:</b> "line_dash_pattern"
+
+           This is provided for compatibility with PDF::API2.
+
+       <u>flatness,</u> <u>flatness_tolerance</u>
+
+           $content-&gt;flatness($tolerance)
+
+           <u>(Advanced)</u>  Sets  the  maximum  variation  in output pixels when drawing curves. The defined range of
+           $tolerance is 0 to 100, with 0 meaning  <u>use</u>  <u>the</u>  <u>device</u>  <u>default</u>  <u>flatness</u>.  According  to  the  PDF
+           specification, you should not try to force visible line segments (the curve's approximation); results
+           will  be unpredictable. Usually, results for different flatness settings will be indistinguishable to
+           the eye.
+
+           The $tolerance value is silently clamped to be between 0 and 100.
+
+           If no $tolerance is given, the current setting is <b>returned</b>. If the tolerance is being set,  $self  is
+           <b>returned</b> so that calls may be chained.
+
+           <b>Alternate</b> <b>name:</b> "flatness_tolerance"
+
+           This is provided for compatibility with PDF::API2.
+
+       <u>egstate</u>
+
+           $content-&gt;egstate($object)
+
+           <u>(Advanced)</u> Adds an Extended Graphic State <b>object</b> containing additional state parameters.
+
+   <b>Path</b> <b>Construction</b> <b>(Drawing)</b>
+       <u>move</u>
+
+           $content-&gt;move($x,$y)
+
+           Starts  a new path at the specified coordinates.  Note that multiple x,y pairs <u>can</u> be given, although
+           this isn't that useful (only the last pair would have an effect).
+
+       <u>close</u>
+
+           $content-&gt;close()
+
+           Closes and ends the current path by extending a line  from  the  current  position  to  the  starting
+           position.
+
+       <u>Straight</u> <u>line</u> <u>constructs</u>
+
+       <b>Note:</b>  None  of these will actually be <u>visible</u> until you call "stroke", "fill", or "fillstroke". They are
+       merely setting up the path to draw.
+
+       line
+
+           $content-&gt;line($x,$y)
+
+           $content-&gt;line($x,$y, $x2,$y2,...)
+
+           Extends the path in a line from the <u>current</u> coordinates to the specified coordinates, and updates the
+           current position to be the new coordinates.
+
+           Multiple additional "[$x,$y]" pairs are permitted, to draw joined multiple line segments.  Note  that
+           this  is <b>not</b> equivalent to a polyline (see "poly"), because the first "[$x,$y]" pair in a polyline is
+           a <u>move</u> operation.  Also, the "linecap" setting will be used rather than the  "linejoin"  setting  for
+           treating the ends of segments.
+
+       hline, vline
+
+           $content-&gt;hline($x)
+
+           $content-&gt;vline($y)
+
+           Shortcuts  for drawing horizontal and vertical lines from the current position. They are like line(),
+           but to the new x and current y ("hline"), or to the the current x and new y ("vline").
+
+       polyline
+
+           $content-&gt;polyline($x1,$y1, ..., $xn,$yn)
+
+           This is a shortcut for creating a polyline path from the current position. It  extends  the  path  in
+           line segments along the specified coordinates.  The current position is changed to the last "[$x,$y]"
+           pair given.
+
+           A  critical  distinction  between  the  "polyline"  method  and  the  "poly"  method  is that in this
+           ("polyline"), the first pair of coordinates are treated as a <u>draw</u> order (unlike  the  <u>move</u>  order  in
+           "poly").
+
+           Thus, while this is provided for compatibility with PDF::API2, it is <u>not</u> really an alias or alternate
+           name for "poly"!
+
+       poly
+
+           $content-&gt;poly($x1,$y1, ..., $xn,$yn)
+
+           This  is  a shortcut for creating a polyline path. It moves to "[$x1,$y1]", and then extends the path
+           in line segments along the specified coordinates.  The  current  position  is  changed  to  the  last
+           "[$x,$y]" pair given.
+
+           The  difference  between a polyline and a "line" with multiple "[$x,$y]" pairs is that the first pair
+           in a polyline are a <u>move</u>, while in a line they are a <u>draw</u>.  Also, "line_join" instead  of  "line_cap"
+           is used to control the appearance of the ends of line segments.
+
+           A  critical distinction between the "polyline" method and the "poly" method is that in this ("poly"),
+           the first pair of coordinates are treated as a <u>move</u> order.
+
+       rectangle
+
+           $content = $content-&gt;rectangle($x1, $y1, $x2, $y2)
+
+           Creates a new rectangle-shaped path, between the two corner points "[$x1, $y1]" and "[$x2, $y2]". The
+           corner points are swapped if necessary, to make "1" the lower left and "2" the upper right (x2  &gt;  x1
+           and y2 &gt; y1).  The object (here, $content) is returned, to permit chaining.
+
+           <b>Note</b> that this is <u>not</u> an alias or alternate name for "rect". It handles only one rectangle, and takes
+           corner coordinates for corner "2", rather than the width and height.
+
+       rect
+
+           $content = $content-&gt;rect($x,$y, $w,$h)
+
+           $content = $content-&gt;rect($x1,$y1, $w1,$h1, ..., $xn,$yn, $wn,$hn)
+
+           This  creates  paths  for  one  or  more  rectangles,  with  their lower left points at "[$x,$y]" and
+           specified widths (+x direction)  and  heights  (+y  direction).   Negative  widths  and  heights  are
+           permitted,  which  draw  to  the  left (-x) and below (-y) the given corner point, respectively.  The
+           current position is changed to the "[$x,$y]" of the last rectangle given.   Note  that  this  is  the
+           <u>starting</u>  point  of  the  rectangle,  not the end point.  The object (here, $content) is returned, to
+           permit chaining.
+
+           <b>Note</b> that this differs from the "rectangle" method in that multiple rectangles may be  drawn  in  one
+           call,  and  the  second  pair  for  each  rectangle are the width and height, not the opposite corner
+           coordinates.
+
+       rectxy
+
+           $content-&gt;rectxy($x1,$y1, $x2,$y2)
+
+           This creates a rectangular path, with "[$x1,$y1]" and "[$x2,$y2]" specifying <u>opposite</u>  corners.  They
+           can  be  Lower  Left and Upper Right, <u>or</u> Upper Left and Lower Right, in either order, so long as they
+           are diagonally opposite each other.  The current position is changed to the "[$x1,$y1]" (first) pair.
+
+           This is not <u>quite</u> an alias or alternate name for "rectangle", as it permits the corner points  to  be
+           specified in any order.
+
+       <u>Curved</u> <u>line</u> <u>constructs</u>
+
+       <b>Note:</b>  None  of these will actually be <u>visible</u> until you call "stroke", "fill", or "fillstroke". They are
+       merely setting up the path to draw.
+
+       circle
+
+           $content-&gt;circle($xc,$yc, $radius)
+
+           This creates a circular path centered on "[$xc,$yc]" with the specified radius. It  does  <b>not</b>  change
+           the current position.
+
+       ellipse
+
+           $content-&gt;ellipse($xc,$yc, $rx,$ry)
+
+           This  creates  a  closed  elliptical  path  centered  on "[$xc,$yc]", with axis radii (semidiameters)
+           specified by $rx (x axis) and $ry (y axis), respectively.  It does not change the current position.
+
+       arc
+
+           $content-&gt;arc($xc,$yc, $rx,$ry, $alpha,$beta, $move, $dir)
+
+           $content-&gt;arc($xc,$yc, $rx,$ry, $alpha,$beta, $move)
+
+           This extends the path along an arc of an ellipse centered at "[$xc,$yc]".  The semidiameters  of  the
+           elliptical  curve  are  $rx  (x  axis) and $ry (y axis), respectively, and the arc sweeps from $alpha
+           degrees to $beta degrees. The current position is then set to the endpoint of the arc.
+
+           Set $move to a <u>true</u> value if this arc is the beginning of a new path instead of the  continuation  of
+           an  existing  path. Either way, the current position will be updated to the end of the arc.  Use "$rx
+           == $ry" for a circular arc.
+
+           The optional $dir arc sweep direction defaults to 0 (<u>false</u>), for  a  counter-clockwise/anti-clockwise
+           sweep. Set to 1 (<u>true</u>) for a clockwise sweep.
+
+       pie
+
+           $content-&gt;pie($xc,$yc, $rx,$ry, $alpha,$beta, $dir)
+
+           $content-&gt;pie($xc,$yc, $rx,$ry, $alpha,$beta)
+
+           Creates  a  pie-shaped  path  from  an  ellipse  centered  on  "[$xc,$yc]".   The  x-axis  and y-axis
+           semidiameters of the ellipse are $rx and $ry, respectively, and the arc sweeps from $alpha degrees to
+           $beta degrees.  It does not  change  the  current  position.   Depending  on  the  sweep  angles  and
+           direction,  this can draw either the pie "slice" or the remaining pie (with slice removed).  Use "$rx
+           == $ry" for a circular pie.  Use a different "[$xc,$yc]"  for  the  slice,  to  offset  it  from  the
+           remaining pie.
+
+           The  optional  $dir arc sweep direction defaults to 0 (<u>false</u>), for a counter-clockwise/anti-clockwise
+           sweep. Set to 1 (<u>true</u>) for a clockwise sweep.
+
+           This is a shortcut to draw a section of elliptical (or circular) arc and connect it to the center  of
+           the ellipse or circle, to form a pie shape.
+
+       curve
+
+           $content-&gt;curve($cx1,$cy1, $cx2,$cy2, $x,$y)
+
+           This extends the path in a curve from the current point to "[$x,$y]", using the two specified <u>control</u>
+           points  to  create  a  <b>cubic</b>  <b>Bezier</b>  <b>curve</b>,  and  updates  the  current position to be the new point
+           ("[$x,$y]").
+
+           Within a <b>text</b> object, the text's baseline follows the Bezier curve.
+
+           Note that while multiple sets of three "[x,y]" pairs are permitted, these are treated as  <u>independent</u>
+           cubic Bezier curves. There is no attempt made to smoothly blend one curve into the next!
+
+       qbspline, spline
+
+           $content-&gt;qbspline($cx1,$cy1, $x,$y)
+
+           This  extends the path in a curve from the current point to "[$x,$y]", using the two specified points
+           to create a quadratic Bezier curve, and updates the current position to be the new point.
+
+           Internally, these splines are one or more cubic Bezier curves (see  "curve")  with  the  two  control
+           points synthesized from the two given points (a control point and the end point of a <u>quadratic</u> Bezier
+           curve).
+
+           Note  that  while  multiple sets of two "[x,y]" pairs are permitted, these are treated as <u>independent</u>
+           quadratic Bezier curves. There is no attempt made to smoothly blend one curve into the next!
+
+           Further note that this "spline" does not match the common definition of a spline being  a  <u>continuous</u>
+           curve  passing <u>through</u> <b>all</b> the given points! It is a piecewise non-continuous cubic Bezier curve. Use
+           with care, and do not make assumptions about splines for you or your readers. You may wish to use the
+           "bspline" call to have a continuously smooth spline to pass through all given points.
+
+           Pairs of points (control point and end point) are consumed in a loop. If one point or  coordinate  is
+           left  over  at the end, it is discarded (as usual practice for excess data to a routine). There is no
+           check for duplicate points or other degeneracies.
+
+           <b>Alternate</b> <b>name:</b> "spline"
+
+           This method is still named "spline" in PDF::API2, so for compatibility, that  name  is  usable  here.
+           Since  there  are  both  quadratic  and  cubic  splines available in PDF, it is preferred to use more
+           descriptive names such as "qbspline" and "cbspline" to minimize confusion.
+
+       bspline, cbspline
+
+           $content-&gt;bspline($ptsRef, %opts)
+
+           This extends the path in a curve from the current point to the end of a list of coordinate  pairs  in
+           the  array referenced by $ptsRef. Smoothly continuous cubic Bezier splines are used to create a curve
+           that passes through <u>all</u> the given points. Multiple control  points  are  synthesized;  they  are  not
+           supplied in the call. The current position is updated to the last point.
+
+           Internally, these splines are one cubic Bezier curve (see "curve") per pair of input points, with the
+           two  control points synthesized from the tangent through each point as set by the polyline that would
+           connect each point to its neighbors. The intent is that the resulting curve should follow  reasonably
+           closely  a  polyline  that  would  connect the points, and should avoid any major excursions. See the
+           discussions below for the handling of the control points at the endpoints  (current  point  and  last
+           input point). The point at the end of the last line or curve drawn becomes the new current point.
+
+           Options %opts:
+
+       'firstseg' =&gt; '<u>mode</u>'
+           where <u>mode</u> is
+
+           curve
+               This is the <b>default</b> behavior.  This forces the first segment (from the current point to the first
+               given  point)  to  be  drawn  as a cubic Bezier curve. This means that the direction of the curve
+               coming off the current point is unconstrained (it will end up being a reflection of  the  tangent
+               at the first given point).
+
+           line1
+               This  forces the first segment (from the current point to the first given point) to be drawn as a
+               curve, with the tangent at the current point to  be  constrained  as  parallel  to  the  polyline
+               segment.
+
+           line2
+               This  forces the first segment (from the current point to the first given point) to be drawn as a
+               line segment. This also sets the tangent through the first given point as a continuation  of  the
+               line, as well as constraining the direction of the line at the current point.
+
+           constraint1
+               This  forces the first segment (from the current point to the first given point) to <b>not</b> be drawn,
+               but to be an invisible curve (like mode=line1) to leave the tangent  at  the  first  given  point
+               unconstrained.  A  <u>move</u> will be made to the first given point, and the current point is otherwise
+               ignored.
+
+           constraint2
+               This forces the first segment (from the current point to the first given point) to <b>not</b> be  drawn,
+               but  to be an invisible line (like mode=line2) to constrain the tangent at the first given point.
+               A <u>move</u> will be made to the first given point, and the current point is otherwise ignored.
+
+       'lastseg' =&gt; '<u>mode</u>'
+           where <u>mode</u> is
+
+           curve
+               This is the <b>default</b> behavior.  This forces the last segment (to the last given input point) to be
+               drawn as a cubic Bezier curve. This means that the direction of the curve goin to the last  point
+               is  unconstrained  (it  will  end  up being a reflection of the tangent at the next-to-last given
+               point).
+
+           line1
+               This forces the last segment (to the last given input point) to be drawn as a curve with the  the
+               tangent  through  the  last  given  point parallel to the polyline segment, thus constraining the
+               direction of the line at the last point.
+
+           line2
+               This forces the last segment (to the last given input point) to be drawn as a line segment.  This
+               also sets the tangent through the next-to-last given point as a back continuation of the line, as
+               well as constraining the direction of the line at the last point.
+
+           constraint1
+               This  forces  the  last  segment  (to  the  last given input point) to <b>not</b> be drawn, but to be an
+               invisible curve  (like  mode=line1)  to  leave  the  tangent  at  the  next-to-last  given  point
+               unconstrained.  The  last  given  input  point is ignored, and next-to-last point becomes the new
+               current point.
+
+           constraint2
+               This forces the last segment (to the last given input point) to  <b>not</b>  be  drawn,  but  to  be  an
+               invisible  line  (like  mode=line2) to constrain the tangent at the next-to-last given point. The
+               last given input point is ignored, and next-to-last point becomes the new current point.
+
+       'ratio' =&gt; <u>n</u>
+           <u>n</u> is the ratio of the length from a point to a control point to the length of the polyline segment on
+           that side of the given point. It must be greater than 0.1, and the default is 0.3333 (1/3).
+
+       'colinear' =&gt; '<u>mode</u>'
+           This describes how to handle the middle segment when there are four or more colinear  points  in  the
+           input  set. A <u>mode</u> of 'line' specifies that a line segment will be drawn between each of the interior
+           colinear points. A <u>mode</u> of 'curve' (this is the default) will draw a Bezier  curve  between  each  of
+           those points.
+
+           "colinear"  applies  only  to interior runs of colinear points, between curves.  It does not apply to
+           runs at the beginning or end of  the  point  list,  which  are  drawn  as  line  segments  or  linear
+           constraints regardless of <u>firstseg</u> and <u>lastseg</u> settings.
+
+       'debug' =&gt; <u>N</u>
+           If <u>N</u> is 0 (the default), only the spline is returned. If it is greater than 0, a number of additional
+           items  will  be  drawn:  (N&gt;0)  the  points, (N&gt;1) a green solid polyline connecting them, (N&gt;2) blue
+           original tangent lines at each  interior  point,  and  (N&gt;3)  red  dashed  lines  and  hollow  points
+           representing the Bezier control points.
+
+           <b>Special</b> <b>cases</b>
+
+           Adjacent  points  which are duplicates are consolidated.  An extra coordinate at the end of the input
+           point list (not a full "[x,y]" pair) will, as usual, be ignored.
+
+       0 given points (after duplicate consolidation)
+           This leaves only the current point (unchanged), so it is a no-op.
+
+       1 given point (after duplicate consolidation)
+           This leaves the current point and one point, so it is rendered as a line, regardless of %opt flags.
+
+       2 given points (after duplicate consolidation)
+           This leaves the current point, an intermediate point, and the end point.  If  the  three  points  are
+           colinear,  two  line segments will be drawn. Otherwise, both segments are curves (through the tangent
+           at the intermediate point). If either end segment mode is requested to be a line or constraint, it is
+           treated as a <b>line1</b> mode request instead.
+
+       <u>N</u> colinear points at beginning or end
+           <u>N</u> colinear points at beginning or end  of  the  point  set  causes  <u>N-1</u>  line  segments  ("line2"  or
+           "constraint2", regardless of the settings of "firstseg", "lastseg", and "colinear".
+
+           <b>Alternate</b> <b>name:</b> "cbspline"
+
+           This  is  to emphasize that it is a <u>cubic</u> Bezier spline, as opposed to a <u>quadratic</u> Bezier spline (see
+           "qbspline" above).
+
+       bogen
+
+           $content-&gt;bogen($x1,$y1, $x2,$y2, $radius, $move, $larger, $reverse)
+
+           $content-&gt;bogen($x1,$y1, $x2,$y2, $radius, $move, $larger)
+
+           $content-&gt;bogen($x1,$y1, $x2,$y2, $radius, $move)
+
+           $content-&gt;bogen($x1,$y1, $x2,$y2, $radius)
+
+           (<u>bogen</u> is German for <u>bow</u>, as in a segment (arc) of a circle. This is a segment of a circle defined by
+           the intersection of two circles of a given radius, with the two intersection points as inputs.  There
+           are <b>four</b> possible resulting arcs, which can be selected with $larger and $reverse.)
+
+           This  extends  the  path  along  an  arc  of  a circle of the specified radius between "[$x1,$y1]" to
+           "[$x2,$y2]". The current position is then set to the endpoint of the arc ("[$x2,$y2]").
+
+           Set $move to a <u>true</u> value if this arc is the beginning of a new path instead of the  continuation  of
+           an  existing  path.  Note  that the default ($move = <u>false</u>) is <u>not</u> a straight line to <u>P1</u> and then the
+           arc, but a blending into the curve from the current point. It will often <u>not</u> pass through <u>P1</u>!
+
+           Set $larger to a <u>true</u> value to draw the larger ("outer") arc between the two points, instead  of  the
+           smaller  one.  Both  arcs  are  drawn  <u>clockwise</u>  from <u>P1</u> to <u>P2</u>. The default value of <u>false</u> draws the
+           smaller arc.  Note that the "other" circle's larger arc is used (the center point is "flipped" across
+           the line between <u>P1</u> and <u>P2</u>), rather than using the "remainder" of the  smaller  arc's  circle  (which
+           would necessitate reversing the direction of travel along the arc -- see $reverse).
+
+           Set $reverse to a <u>true</u> value to draw the mirror image of the specified arc (flip it over, so that its
+           center  point  is  on  the  other  side  of  the line connecting the two points). Both arcs are drawn
+           <u>counter-clockwise</u> from <u>P1</u> to <u>P2</u>. The default (<u>false</u>) draws clockwise arcs. An  arc  is  <b>always</b>  drawn
+           from <u>P1</u> to <u>P2</u>; the direction (clockwise or counter-clockwise) may be chosen.
+
+           The  $radius value cannot be smaller than <b>half</b> the distance from "[$x1,$y1]" to "[$x2,$y2]". If it is
+           too small, the radius will be set to half the distance between the points (resulting in an  arc  that
+           is  a  semicircle).  This  is a silent error, as even if the points are correct, due to rounding etc.
+           they may not fall <u>exactly</u> on the two circles.
+
+           You can think of "looking" from <u>P1</u> to <u>P2</u>. In the dengenerate case, where the radius is  exactly  half
+           the  distance  between  the points, there is no difference between "small" and "large" arcs, and both
+           cirles will coincide with their center half way between <u>P1</u> and <u>P2</u>. Only the direction matters.   Once
+           the  radius  is  any  larger, the two circles become distinct. The primary circle is centered to your
+           right, whose small arc is CW on your left; the secondary circle is centered to your left, whose small
+           arc is CCW on your right. The "large" arcs are the arcs using the remainder of the circles: CW  large
+           is part of the left (secondary) circle, and CCW large is part of the right (primary) circle.
+
+   <b>Path</b> <b>Painting</b> <b>(Drawing)</b>
+       <u>stroke</u>
+
+           $content-&gt;stroke()
+
+           Strokes the current path. That is, it is drawing solid or dashed <u>lines</u>, but <b>not</b> filling areas.
+
+       <u>fill</u>
+
+           $content-&gt;fill($use_even_odd_fill)
+
+           $content-&gt;fill('rule' =&gt; $rule)
+
+           $content-&gt;fill()  # use default nonzero rule
+
+           Fill the current path's enclosed <u>area</u>.  It does <u>not</u> stroke the enclosing path around the area.
+
+           $user_even_odd_fill = 0 or <u>false</u> (<b>default</b>)
+           $rule = 'nonzero'
+               If the path intersects with itself, the <u>nonzero</u> winding rule will be used to determine which part
+               of  the  path  is  filled  in. This basically fills in <u>everything</u> inside the path, except in some
+               situations depending on the direction of the path.
+
+           $user_even_odd_fill = 1 (non-zero value) or <u>true</u>
+           $rule = 'even-odd'
+               If the path intersects with itself, the <u>even-odd</u> winding rule will be  used  to  determine  which
+               part  of  the path is filled in. In most cases, this means that the filling state alternates each
+               time the path is intersected.  This basically will fill alternating closed sub-areas.
+
+           See the PDF Specification, section 8.5.3.3 (in version 1.7), for more details on filling.
+
+           The "rule" parameter is added for PDF::API2 compatibility.
+
+       <u>fillstroke,</u> <u>paint,</u> <u>fill_stroke</u>
+
+           $content-&gt;fillstroke($use_even_odd_fill)
+
+           $content-&gt;fillstroke('rule' =&gt; $rule)
+
+           $content-&gt;fillstroke()  # use default nonzero rule
+
+           <b>Fill</b> the current path's enclosed <u>area</u> and then <b>stroke</b> the enclosing path around  the  area  (possibly
+           with a different color).
+
+           $user_even_odd_fill = 0 or <u>false</u> (<b>default</b>)
+           $rule = 'nonzero'
+               If the path intersects with itself, the <u>nonzero</u> winding rule will be used to determine which part
+               of  the  path  is  filled  in. This basically fills in <u>everything</u> inside the path, except in some
+               situations depending on the direction of the path.
+
+           $user_even_odd_fill = 1 (non-zero value) or <u>true</u>
+           $rule = 'even-odd'
+               If the path intersects with itself, the <u>even-odd</u> winding rule will be  used  to  determine  which
+               part  of  the path is filled in. In most cases, this means that the filling state alternates each
+               time the path is intersected.  This basically will fill alternating closed sub-areas.
+
+           See the PDF Specification, section 8.5.3.3 (in version 1.7), for more details on filling.
+
+           The "rule" parameter is added for PDF::API2 compatibility.
+
+           <b>Alternate</b> <b>names:</b> "paint" and "fill_stroke"
+
+           "paint" is for compatibility with PDF::API2, while "fill_stroke" is added for compatibility with many
+           other PDF::API2-related renamed methods.
+
+       <u>clip</u>
+
+           $content-&gt;clip($use_even_odd_fill)
+
+           $content-&gt;clip('rule' =&gt; $rule)
+
+           $content-&gt;clip()  # use default nonzero rule
+
+           Modifies the current clipping path by intersecting it with  the  current  path.  Initially  (a  fresh
+           page),  the  clipping  path  is  the  entire  media.  Each  definition  of a path, and a clip() call,
+           intersects the new path with the existing clip path, so the resulting clip path is no larger than the
+           new path, and may even be empty if the intersection is null.
+
+           $user_even_odd_fill = 0 or <u>false</u> (<b>default</b>)
+           $rule = 'nonzero'
+               If the path intersects with itself, the <u>nonzero</u> winding rule will be used to determine which part
+               of the path is included (clipped in or out).  This basically includes <u>everything</u> inside the path,
+               except in some situations depending on the direction of the path.
+
+           $user_even_odd_fill = 1 (non-zero value) or <u>true</u>
+           $rule = 'even-odd'
+               If the path intersects with itself, the <u>even-odd</u> winding rule will be  used  to  determine  which
+               part  of the path is included. In most cases, this means that the inclusion state alternates each
+               time the path is intersected.  This basically will include alternating closed sub-areas.
+
+           It is common usage to make the endpath() call (<b>n</b>) after the clip() call, to clear  the  path  (unless
+           you  want to reuse that path, such as to fill and/or stroke it to show the clip path). If you want to
+           clip text glyphs, it gets rather complicated, as a clip port cannot be created within a  text  object
+           (that   will  have  an  effect  on  text).   See  the  object  discussion  in  "Rendering  Order"  in
+           PDF::Builder::Docs.
+
+               my $grfxC1 = $page-&gt;gfx();
+               my $textC  = $page-&gt;text();
+               my $grfxC2 = $page-&gt;gfx();
+                ...
+               $grfxC1-&gt;save();
+               $grfxC1-&gt;endpath();
+               $grfxC1-&gt;rect(...);
+               $grfxC1-&gt;clip();
+               $grfxC1-&gt;endpath();
+                ...
+               $textC-&gt;  output text to be clipped
+                ...
+               $grfxC2-&gt;restore();
+
+           The "rule" parameter is added for PDF::API2 compatibility.
+
+       <u>endpath,</u> <u>end</u>
+
+           $content-&gt;endpath()
+
+           Ends the current path without explicitly enclosing it.  That is, unlike "close",  there  is  <b>no</b>  line
+           segment drawn back to the starting position.
+
+           <b>Alternate</b> <b>name:</b> "end"
+
+           This is provided for compatibility with PDF::API2. Do not confuse it with the "$pdf-&gt;end()" method!
+
+       <u>shade</u>
+
+           $content-&gt;shade($shade, @coord)
+
+           Sets the shading matrix.
+
+           $shade
+               A hash reference that includes a name() method for the shade name.
+
+           @coord
+               An  array  of  4  items:  X-translation,  Y-translation,  X-scaled  and  translated, Y-scaled and
+               translated.
+
+   <b>Colors</b>
+       <u>fillcolor,</u> <u>fill_color,</u> <u>strokecolor,</u> <u>stroke_color</u>
+
+           $content-&gt;fillcolor($color)
+
+           $content-&gt;strokecolor($color)
+
+           Sets the fill (enclosed area) or stroke (path) color. The interior of text characters are <u>filled</u>, and
+           (<u>if</u> ordered by "render") the outline is <u>stroked</u>.
+
+               # Use a named color
+               # -&gt; RGB color model
+               # there are many hundreds of named colors defined in
+               # PDF::Builder::Resource::Colors
+               $content-&gt;fillcolor('blue');
+
+               # Use an RGB color (# followed by 3, 6, 9, or 12 hex digits)
+               # -&gt; RGB color model
+               # This maps to 0-1.0 values for red, green, and blue
+               $content-&gt;fillcolor('#FF0000');   # red
+
+               # Use a CMYK color (% followed by 4, 8, 12, or 16 hex digits)
+               # -&gt; CMYK color model
+               # This maps to 0-1.0 values for cyan, magenta, yellow, and black
+               $content-&gt;fillcolor('%FF000000');   # cyan
+               # Note: you might wish to make use of packages such as
+               #  HashData::Color::PantoneToCMYK to map "Pantone" color names/codes to a
+               #  set of CMYK values
+
+               # Use an HSV color (! followed by 3, 6, 9, or 12 hex digits)
+               # -&gt; RGB color model
+               # This maps to 0-360 degrees for the hue, and 0-1.0 values for
+               # saturation and value
+               $content-&gt;fillcolor('!FF0000');
+
+               # Use an HSL color (&amp; followed by 3, 6, 9, or 12 hex digits)
+               # -&gt; L*a*b color model
+               # This maps to 0-360 degrees for the hue, and 0-1.0 values for
+               # saturation and lightness. Note that 360 degrees = 0 degrees (wraps)
+               $content-&gt;fillcolor('&amp;FF0000');
+
+               # Use an L*a*b color ($ followed by 3, 6, 9, or 12 hex digits)
+               # -&gt; L*a*b color model
+               # This maps to 0-100 for L, -100 to 100 for a and b
+               $content-&gt;fillcolor('$FF0000');
+
+           In all cases, if too few digits are given, the  given  digits  are  silently  right-padded  with  0's
+           (zeros).  If  an  incorrect number of digits are given, the next lowest number of expected digits are
+           used, and the remaining digits are silently ignored.
+
+               # A single number between 0.0 (black) and 1.0 (white) is an alternate way
+               # of specifying a gray scale.
+               $content-&gt;fillcolor(0.5);
+
+               # Three array elements between 0.0 and 1.0 is an alternate way of specifying
+               # an RGB color.
+               $content-&gt;fillcolor(0.3, 0.59, 0.11);
+
+               # Four array elements between 0.0 and 1.0 is an alternate way of specifying
+               # a CMYK color.
+               $content-&gt;fillcolor(0.1, 0.9, 0.3, 1.0);
+
+           In all cases, if a number is less than 0, it is silently turned into a 0. If a number is greater than
+           1, it is silently turned into a 1. This "clamps" all values to the range 0.0-1.0.
+
+               # A single reference is treated as a pattern or shading space.
+
+               # Two or more entries with the first element a Perl reference, is treated
+               # as either an indexed colorspace reference plus color-index(es), or
+               # as a custom colorspace reference plus parameter(s).
+
+           If no value was passed in, the current fill color (or stroke  color)  <u>array</u>  is  <b>returned</b>,  otherwise
+           $self is <b>returned</b>.
+
+           <b>Alternate</b> <b>names:</b> "fill_color" and "stroke_color".
+
+           These are provided for PDF::API2 compatibility.
+
+   <b>External</b> <b>Objects</b>
+       <u>image</u>
+
+           $content-&gt;image($image_object, $x,$y, $width,$height)
+
+           $content-&gt;image($image_object, $x,$y, $scale)
+
+           $content-&gt;image($image_object, $x,$y)
+
+           $content-&gt;image($image_object)
+
+           # Example
+           my $image_object = $pdf-&gt;image_jpeg($my_image_file);
+           $content-&gt;image($image_object, 100, 200);
+
+           Places an image on the page in the specified location (specifies the lower left corner of the image).
+           The default location is "[0,0]".
+
+           If coordinate transformations have been made (see <u>Coordinate</u> <u>Transformations</u> above), the position and
+           scale  will be relative to the updated coordinates. Otherwise, "[0,0]" will represent the bottom left
+           corner of the page, and $width and $height will be measured at 72dpi.
+
+           For example, if you have a 600x600 image that you would like to be shown at 600dpi  (i.e.,  one  inch
+           square), set the width and height to 72.  (72 Big Points is one inch)
+
+           If  passed  the  output  of  image_svg(), image() will simply pass it on to the object() method, with
+           adjusted parameters. Note that this usage requires that the "width"  and  "height"  are  replaced  by
+           "scale_x" and "scale_y" values (optionally).
+
+       <u>formimage</u>
+
+           $content-&gt;formimage($form_object, $x,$y, $scaleX, $scaleY)
+
+           $content-&gt;formimage($form_object, $x,$y, $scale)
+
+           $content-&gt;formimage($form_object, $x,$y)
+
+           $content-&gt;formimage($form_object)
+
+           Places  an  XObject on the page in the specified location (giving the lower left corner of the image)
+           and scale (applied to the image's native height and width). If no scale is given, use 1  for  both  X
+           and Y. If one scale is given, use for both X and Y.  If two scales given, they are for (separately) X
+           and Y. In general, you should not greatly distort an image by using greatly different scaling factors
+           in  X  and  Y,  although it is now possible for when that effect is desirable. The "$x,$y" default is
+           "[0,0]".
+
+           <b>Note</b> that while this method is named form <u>image</u>, it is also used for the pseudoimages created by  the
+           barcode  routines.  Images  are naturally dimensionless (1 point square) and need at some point to be
+           scaled up to the desired point size. Barcodes are naturally sized in points, and should be scaled  at
+           approximately <u>1</u>. Therefore, it would greatly overscale barcodes to multiply by image width and height
+           <u>within</u>  "formimage",  and  require  scaling of 1/width and 1/height in the call. So, we leave scaling
+           alone within "formimage" and have the user manually scale <u>images</u> by the image width  and  height  (in
+           pixels) in the call to "formimage".
+
+       <u>object</u>
+
+           $content-&gt;object($object, $x,$y, $scale_x,$scale_y)
+
+           $content-&gt;object($object, $x,$y, $scale)
+
+           $content-&gt;object($object, $x,$y)
+
+           $content-&gt;object($object)
+
+           Places  an  image  or  other  external  object (a.k.a. XObject) on the page in the specified location
+           (giving the upper left corner of the object). Note that this positioning is  <u>different</u>  from  image()
+           and formimage(), which give the <u>lower</u> <u>left</u> corner!
+
+           Up to four optional arguments may be given, with their defaults as described below.
+
+           $x  and  $y  are  the <u>upper</u> <u>left</u> corner of the object. If they are omitted, the object will be placed
+           with its <u>lower</u> <u>left</u> corner at "[0, 0]".  <b>Note</b> that if the object's bounding box has the fourth  value
+           (maximum  ascender)  greater  than 0, you may need to subtract that value from "y" to get the desired
+           vertical position! A typical application will have a bounding box of "[0, -height, width, 0]", and no
+           correction is needed. If the bounding box is "[0, -max_descender, width, max_ascender]", you may need
+           to add the correction.
+
+           For images, $scale_x and $scale_y represent the width and height of the image on the page, in points.
+           If $scale_x is omitted, it will default to 72 pixels per inch. If $scale_y is omitted, the image will
+           be scaled proportionally, based on the image dimensions.
+
+           For other external objects, including <b>SVG</b> <b>images</b>, the scale is a multiplier, where  1  (the  default)
+           represents 100% (i.e., no change).
+
+           If coordinate transformations have been made (see Coordinate Transformations above), the position and
+           scale will be relative to the updated coordinates.
+
+           If  no  coordinate  transformations  are  needed,  this  method  can  be  called  directly  from  the
+           PDF::Builder::Page object instead.
+
+           If an SVG XObject array (output from image_svg()) is passed in, only the first [0th] element will  be
+           displayed. Any others will be ignored.
+
+   <b>Text</b>
+       <u>Text</u> <u>State</u> <u>Parameters</u>
+
+       All of the following parameters that take a size are applied before any scaling takes place, so you don't
+       need to adjust values to counteract scaling.
+
+       charspace, character_spacing, char_space
+
+           $spacing = $content-&gt;charspace($spacing)
+
+           Sets  additional  <b>horizontal</b>  spacing  between <b>characters</b> in a line. Vertical writing systems are not
+           supported. This is in <u>points</u> and is initially zero.  It may be positive to give an <u>expanded</u> effect to
+           words, or it may be negative to give a <u>condensed</u> effect to words.  If $spacing is given, the  current
+           setting  is  replaced  by  that value and $self is <b>returned</b> (to permit chaining).  If $spacing is not
+           given, the current setting is <b>returned</b>.
+
+           One use for character spacing is to adjust <u>tracking</u> in a line of text.  It is common to adjust inter-
+           word spacing (e.g., TeX "glue" length) to justify a line (see "wordspace"), but in  cases  where  the
+           result  is  words  too close together (or too far apart), you may want to adjust tracking in order to
+           force spaces back to a more "reasonable" standard size. For example, if you  have  a  fairly  "loose"
+           line, with wide spaces between words, you could add a little character spacing between the letters of
+           words,  and  shrink  the  spaces  down to a more reasonable size. Don't overdo it, and make the words
+           themselves difficult to read! You also would want to  take  care  to  "drive"  the  resulting  spaces
+           towards a consistent width throughout a document (or at least, a paragraph).
+
+           You  may  also  choose  to  use  character  spacing for special effects, such as a high-level heading
+           expanded with extra space. This is a decorative effect, and should be used with restraint.
+
+           Note that interword spaces (x20)  <u>also</u>  receive  additional  character  space,  in  addition  to  any
+           additional word space ("wordspace") defined!
+
+           <b>CAUTION:</b>  be careful about using "charspace" if you are using a connected ("script") font. This might
+           include Arabic, Devanagari, Latin cursive handwriting, and so  on.  You  don't  want  to  leave  gaps
+           between  characters,  or cause overlaps. For such fonts and typefaces, you <u>may</u> need to explicitly set
+           the "charspace" spacing to 0, if you have set it to non-zero elsewhere.  PDF::Builder may not be able
+           to determine that a given font is a  connected  script  font,  and  automatically  suppress  non-zero
+           character spacing.
+
+           <b>Alternate</b> <b>names:</b> "character_spacing" and "char_space"
+
+           <u>character_spacing</u>  is  provided  for compatibility with PDF::API2, while <u>char_space</u> is provided to be
+           consistent with many other method name changes in PDF::API2.
+
+       wordspace, word_spacing, word_space
+
+           $spacing = $content-&gt;wordspace($spacing)
+
+           Sets additional <b>horizontal</b> spacing between  <b>words</b>  in  a  line.  Vertical  writing  systems  are  not
+           supported.  This  is  in  <u>points</u>  and  is  initially zero (i.e., just the width of the space, without
+           anything extra). It may be negative to close up sentences a bit.  If $spacing is given,  the  current
+           setting  is  replaced  by  that value and $self is <b>returned</b> (to permit chaining).  If $spacing is not
+           given, the current setting is <b>returned</b>.
+
+           See the note in "charspace" in regards to <u>tracking</u> adjustment, and its effect on "wordspace". The two
+           calls may often be used together for optimal results (although resulting in a somewhat increased  PDF
+           file size).
+
+           Note  that  it  is a limitation of the PDF specification (as of version 1.7, section 9.3.3) that only
+           spacing with an ASCII space (x20) is adjusted. Neither required blanks (xA0)  nor  any  multiple-byte
+           spaces  (including  thin  and  wide  spaces) are currently adjusted. <b>However,</b> multiple <u>spaces</u> between
+           words <u>each</u> are expanded. E.g., if you have a double x20 space between words, it  will  receive  <u>twice</u>
+           the  expansion of a single space! Furthermore, character spacing (Tc) is also added to each space, in
+           <u>addition</u> to word spacing (Tw).
+
+           <b>alternate</b> <b>names:</b> "word_spacing" and "word_space"
+
+           <u>word_spacing</u> is provided for compatibility  with  PDF::API2,  while  <u>word_space</u>  is  provided  to  be
+           consistent with many other method name changes in PDF::API2.
+
+       hscale
+
+           $scale = $content-&gt;hscale($scale)
+
+           Sets  the  percentage of horizontal text scaling (relative sizing, <u>not</u> spacing). This is initally 100
+           (percent, i.e., no scaling). A scale of greater than 100 will stretch the text, while less  than  100
+           will  compress  it.   If  $scale is given, the current setting is replaced by that value and $self is
+           <b>returned</b> (to permit chaining).  If $scale is not given, the current setting is <b>returned</b>.
+
+           Note that scaling affects all of the character widths, interletter spacing, and interword spacing. It
+           is inadvisable to stretch or compress text by a large amount,  as  it  will  quickly  make  the  text
+           unreadable.  If  your  objective is to justify text, you will usually be better off using "charspace"
+           and "wordspace" to expand (or slightly condense) a line  to  fill  a  desired  width.  Also  see  the
+           text_justify() calls for this purpose.
+
+       leading
+
+           $leading = $content-&gt;leading($leading)
+
+           $leading = $content-&gt;leading()
+
+           Sets  the  text  leading,  which is the distance between baselines. This is initially <b>zero</b> (i.e., the
+           lines will be printed on top of each other). The unit of leading is points.  If  $leading  is  given,
+           the  current  setting  is  replaced  by  that  value  and $self is <b>returned</b> (to permit chaining).  If
+           $leading is not given, the current setting is <b>returned</b>.
+
+           Note that "leading" here is defined as used in electronic  typesetting  and  the  PDF  specification,
+           which  is  the  full  interline spacing (text baseline to text baseline distance, in points). In cold
+           metal typesetting, <u>leading</u> was usually the <u>extra</u> spacing between lines beyond the font height itself,
+           created by inserting lead (type alloy) shims.
+
+       render
+
+           $mode = $content-&gt;render($mode)
+
+           Sets the text rendering mode.
+
+           0 = Fill text
+           1 = Stroke text (outline)
+           2 = Fill, then stroke text
+           3 = Neither fill nor stroke text (invisible)
+           4 = Fill text and add to path for clipping
+           5 = Stroke text and add to path for clipping
+           6 = Fill, then stroke text and add to path for clipping
+           7 = Add text to path for clipping
+
+           If $mode is given, the current setting is replaced by that value and $self  is  <b>returned</b>  (to  permit
+           chaining).  If $mode is not given, the current setting is <b>returned</b>.
+
+       rise
+
+           $dist = $content-&gt;rise($dist)
+
+           Adjusts  the  baseline up or down from its current location.  This is initially zero. A $dist greater
+           than 0 moves the baseline <b>up</b> the page (y increases).
+
+           Use this for creating superscripts or subscripts (usually along with an adjustment to the font size).
+           If $dist is given, the current setting is replaced by that value and $self  is  <b>returned</b>  (to  permit
+           chaining).  If $dist is not given, the current setting is <b>returned</b>.
+
+       textstate
+
+           %state = $content-&gt;textstate(charspace =&gt; $value, wordspace =&gt; $value, ...)
+
+           This is a shortcut for setting multiple text state parameters at once.  If any parameters are set, an
+           <u>empty</u>  hash  is <b>returned</b>.  This can also be used without arguments to retrieve the current text state
+           settings (a hash of the state is <b>returned</b>).
+
+           <b>Note:</b> This does not work with the "save" and "restore" commands.
+
+       font
+
+           $content-&gt;font($font_object, $size)  # Set
+
+           ($font_object, $size) = $content-&gt;font()  # Get
+
+           Sets or gets the font and font size. $font is an object created by calling "font" in PDF::Builder  to
+           add the font to the document.
+
+               # Example (12 point Helvetica)
+               my $pdf = PDF::Builder-&gt;new();
+
+               my $font = $pdf-&gt;font('Helvetica');
+               $text-&gt;font($font, 24);
+               $text-&gt;position(72, 720);
+               $text-&gt;text('Hello, World!');
+
+               $pdf-&gt;save('sample.pdf');
+
+           Or, get the current font object and size setting:
+
+               my ($font, $size) = $text-&gt;font();
+
+           Results ($font and $size) are indeterminate if <b>font()</b> was not previously called using them.
+
+       <u>Positioning</u> <u>Text</u>
+
+       position
+
+           $content = $content-&gt;position($x, $y) # Set (also returns object, for ease of chaining)
+
+           ($x, $y) = $content-&gt;position()  # Get
+
+           If  called  <u>with</u> arguments (Set), moves to the start of the current line of text, offset by $x and $y
+           (right and up for positive values).
+
+           If called <u>without</u> arguments (Get), returns the current position of the cursor (before the effects  of
+           any coordinate transformation methods).
+
+           Note  that this is very similar in function to distance(), added recently to PDF::API2 and added here
+           for compatibility.
+
+       textpos, (see also) position
+
+           ($tx,$ty) = $content-&gt;textpos()
+
+           <b>Returns</b> the current text position on the page (where next write will happen) as an array.
+
+           <b>Note:</b> This does not affect the PDF in any way. It only tells you where the the next write will occur.
+
+           <b>Alternate</b> <b>name:</b> "position" (added for compatibility with PDF::API2)
+
+       distance
+
+           $content-&gt;distance($dx,$dy)
+
+           This moves to the start of the previously-written line, plus an offset by the  given  amounts,  which
+           are both required. "[0,0]" would overwrite the previous line, while "[0,36]" would place the new line
+           36pt <u>above</u> the old line (higher y). The $dx moves to the right, if positive.
+
+           "distance"  is  analogous  to  graphic's  "move",  except that it is relative to the beginning of the
+           previous text write, not to the coordinate origin.  <b>Note</b> that subsequent text writes will be relative
+           to this new starting (left) point and Y position! E.g., if you give a non-zero $dx, subsequent  lines
+           will be indented by that amount.
+
+       cr
+
+           $content-&gt;cr()
+
+           $content-&gt;cr($vertical_offset)
+
+           $content-&gt;<a href="../man0/cr.0.html">cr</a>(0)
+
+           If  passed  without  an  argument,  moves  (down)  to  the  start  of  the <u>next</u> line (distance set by
+           "leading"). This is similar to nl().
+
+           If passed <u>with</u> an argument, the "leading" distance is ignored and the next line starts  that  far  <u>up</u>
+           the  page  (positive  value)  or  <u>down</u> the page (negative value) from the current line. "Y" increases
+           upward, so a negative value would normally be used to get to the next line down.
+
+           An argument of <u>0</u> would simply return to the start of the present line, overprinting it with new text.
+           That is, it acts as a simple carriage return, without a linefeed.
+
+           Note that any setting for "leading" is ignored. If you wish to account for the "leading" setting, you
+           may wish to use the "crlf" method instead.
+
+       nl
+
+           $content-&gt;nl()
+
+           $content-&gt;nl($indent)
+
+           $content-&gt;<a href="../man0/nl.0.html">nl</a>(0)
+
+           Moves to the start of the next line (see "leading"). If $indent is not given, or is 0,  there  is  no
+           indentation.  Otherwise,  indent by that amount (<u>out</u>dent if a negative value). The unit of measure is
+           hundredths of a "unit of text space", or roughly 88 per em.
+
+           Note that any setting for "leading" is ignored. If you wish to account for the "leading" setting, you
+           may wish to use the "crlf" method instead.
+
+       crlf
+
+           $content = $content-&gt;crlf()
+
+           Moves to the start of the next line, based on the "leading" setting. It returns its own  object,  for
+           ease of chaining.
+
+           If leading isn't set, a default distance of 120% of the font size will be used.
+
+           Added for compatibility with PDF::API2 changes; may be used to replace both "cr" and "nl" methods.
+
+       advancewidth, text_width
+
+           $width = $content-&gt;advancewidth($string, %opts)
+
+           Returns  the  number of points that will be used (horizontally) by the input string. This assumes all
+           on one line (no line breaking).
+
+           Options %opts:
+
+           'font' =&gt; $f3_TimesRoman
+               Change the font used, overriding $self-&gt;{' font'}. The font must  have  been  previously  created
+               (i.e., is not the name). Example: use Times-Roman.
+
+           'fontsize' =&gt; 12
+               Change the font size, overriding $self-&gt;{' fontsize'}. Example: 12 pt font.
+
+           'wordspace' =&gt; 0.8
+               Change  the  additional word spacing, overriding $self-&gt;<b>wordspace()</b>.  Example: add 0.8 pt between
+               words.
+
+           'charspace' =&gt; -2.1
+               Change the additional character spacing, overriding $self-&gt;<b>charspace()</b>.  Example: subtract 2.1 pt
+               between letters, to condense the text.
+
+           'hscale' =&gt; 125
+               Change the horizontal scaling factor, overriding $self-&gt;<b>hscale()</b>.  Example: stretch text to  125%
+               of its natural width.
+
+           <b>Returns</b>  the <b>width</b> <b>of</b> <b>the</b> <b>$string</b> (when set as a line of type), based on all currently set text-state
+           attributes. These can optionally be overridden with %opts. <u>Note</u> <u>that</u> <u>these</u> <u>values</u> <u>temporarily</u> <u><b>replace</b></u>
+           <u>the</u> <u>existing</u> <u>values,</u> <u><b>not</b></u> <u>scaling</u> <u>them</u> <u>up</u> <u>or</u> <u>down.</u> For example, if the existing charspace  is  2,  and
+           you give in options a value of 3, the value used is 3, not 5.
+
+           <b>Note:</b>  This  does  not  affect the PDF in any way. It only tells you how much horizontal space a text
+           string will take up.
+
+           <b>Alternate</b> <b>name:</b> "text_width"
+
+           This is provided for compatibility with PDF::API2.
+
+       <u>Rendering</u> <u>Text</u>
+
+       Single Lines
+
+       text
+
+           $width = $content-&gt;text($text, %opts)
+
+           Adds text to the page (left justified by default).  The width used (in points) is <b>returned</b>.
+
+           Options:
+
+           'align' =&gt; position
+               Align the text, assuming left-to-right writing  direction  (RTL/bidirectional  is  not  currently
+               supported).
+
+               'l' or 'left' (case insensitive).
+                   <b>default.</b> Text <u>begins</u> at the current text position.
+
+               'c' or 'center' (case insensitive).
+                   Text is <u>centered</u> at the current text position.
+
+               'r' or 'right' (case insensitive).
+                   Text <u>ends</u> (is right justified to) at the current text position.
+
+               In  all  cases,  the  ending  text position is at the (right) end of the text.  If mixing various
+               alignments, you should explicitly place the current text position so as to not overwrite  earlier
+               text.
+
+           'indent' =&gt; $distance
+               Indents the text by the number of points (A value less than 0 gives an <u>outdent</u>).  The indentation
+               amount  moves the text left (negative indentation) or right (positive indentation), regardless of
+               alignment. This allows desired alignment effects (for centered and  right)  that  aren't  exactly
+               aligned  on the current position. For example, consider a column of decimal numbers centered on a
+               desired <u>x</u> position, but aligned on their decimal points. The "indent"  would  be  on  a  per-line
+               basis, adjusted by the length of the number and the decimal position.
+
+           'underline' =&gt; 'none'
+           'underline' =&gt; 'auto'
+           'underline' =&gt; $distance
+           'underline' =&gt; [$distance, $thickness, ...]
+               Underlines the text. $distance is the number of units beneath the baseline, and $thickness is the
+               width of the line.  Multiple underlines can be made by passing several distances and thicknesses.
+               A value of 'none' means no underlining (is the default).
+
+               Example:
+
+                   # 3 underlines:
+                   #   distance 4, thickness 1, color red
+                   #   distance 7, thickness 1.5, color yellow
+                   #   distance 11, thickness 2, color (strokecolor default)
+                   'underline' =&gt; [4,[1,'red'],7,[1.5,'yellow'],11,2],
+
+           'strikethru' =&gt; 'none'
+           'strikethru' =&gt; 'auto'
+           'strikethru' =&gt; $distance
+           'strikethru' =&gt; [$distance, $thickness, ...]
+               Strikes  through  the  text (like HTML <u>s</u> tag). A value of 'auto' places the line about 30% of the
+               font size above the baseline, or a specified $distance (above the baseline)  and  $thickness  (in
+               points).   Multiple  strikethroughs  can be made by passing several distances and thicknesses.  A
+               value of 'none' means no strikethrough. It is the default.
+
+               Example:
+
+                   # 2 strikethroughs:
+                   #   distance 4, thickness 1, color red
+                   #   distance 7, thickness 1.5, color yellow
+                   'strikethru' =&gt; [4,[1,'red'],7,[1.5,'yellow']],
+
+           'strokecolor' =&gt; color_spec
+               Defines the underline or strikethru line color, if different from the text color.
+
+       textHS
+
+           $width = $content-&gt;textHS($HSarray, $settings, %opts)
+
+           Takes an array of hashes produced by HarfBuzz::Shaper and  outputs  them  to  the  PDF  output  file.
+           HarfBuzz  outputs  glyph  CIDs  and  positioning  information.   It may rearrange and swap characters
+           (glyphs), and the result may bear no resemblance to the original Unicode point list. You  should  see
+           examples/HarfBuzz.pl,  which  shows  a  number  of examples with Latin and non-Latin text, as well as
+           vertical writing.  https://www.catskilltech.com/Examples has a sample available in case you  want  to
+           see some examples of what HarfBuzz can do, and don't yet have HarfBuzz::Shaper installed.
+
+           $HSarray
+               This  is  the reference to array of hashes produced by HarfBuzz::Shaper, normally unchanged after
+               being created (but <u>can</u> be modified). See "Using Shaper" in  PDF::Builder::Docs  for  some  things
+               that can be done.
+
+           $settings
+               This  a  reference  to  a  hash  of various pieces of information that textHS() needs in order to
+               function. They include:
+
+               'script' =&gt; 'script_name'
+                   This is the standard 4 letter code (e.g.,  'Latn')  for  the  script  (alphabet  and  writing
+                   system)  you're  using. Currently, only Latn (Western writing systems) do kerning, and 'Latn'
+                   is the default. HarfBuzz::Shaper will usually be able to figure out from the  Unicode  points
+                   used  what  the script is, and you might be able to use the set_script() call to override its
+                   guess. However, PDF::Builder and HarfBuzz::Shaper do not talk to each other about the  script
+                   being used.
+
+               'features' =&gt; array_of_features
+                   This  item  is  <b>required</b>,  but  may  be empty, e.g., "$settings-&gt;{'features'} = ();".  It can
+                   include switches using the standard HarfBuzz naming, and a + or - switch, such as '-liga'  to
+                   turn  <b>off</b>  ligatures.  '-liga'  and  '-kern', to turn off ligatures and kerning, are the only
+                   features supported currently. <b>Note</b> that this is separate from any switches for features  that
+                   you  send  to  HarfBuzz::Shaper  (with  "$hb-&gt;add_features()",  etc.) when you run it (before
+                   textHS()).
+
+               'language' =&gt; 'language_code'
+                   This item is optional and currently does not appear  to  have  any  substantial  effect  with
+                   HarfBuzz::Shaper.  It  is  the  standard  code  for  the language to be used, such as 'en' or
+                   'en_US'. You might need to define this  for  HarfBuzz::Shaper,  in  case  that  system  can't
+                   surmise the language rules to be used.
+
+               'dir' =&gt; 'flag'
+                   Tell  textHS() whether this text is to be written in a Left-To-Right manner (<b>L</b>, the <b>default</b>),
+                   Right-To-Left (<b>R</b>), Top-To-Bottom (<b>T</b>), or Bottom-To-Top (<b>B</b>). From  the  script  used  (Unicode
+                   points),  HarfBuzz::Shaper  can  usually  figure  out  what direction to write text in. Also,
+                   HarfBuzz::Shaper does not share its information with PDF::Builder -- you need  to  separately
+                   specify  the  direction,  unless  you  want  to accept the default LTR direction. You <u>can</u> use
+                   HarfBuzz::Shaper's get_direction() call (in addition to get_language() and  get_script())  to
+                   see  what  HarfBuzz  thinks  is  the  correct  text direction. set_direction() may be used to
+                   override Shaper's guess as to the direction.
+
+                   By the way, if the direction is RTL, HarfBuzz will reverse the text and return an array  with
+                   the  last  character  first (to be written LTR). Likewise, for BTT, HarfBuzz will reverse the
+                   text and return a string to be written from  the  top  down.  Languages  which  are  normally
+                   written  horizontally  are  usually  set  vertically  with  direction  TTB.  If  setting text
+                   vertically, ligatures and kerning, as well as character connectivity for cursive scripts, are
+                   automatically turned off, so don't let the direction default to LTR  or  RTL  in  the  Shaper
+                   call, and then try to fix it up in textHS().
+
+               align =&gt; 'flag'
+                   Given the current output location, align the text at the <b>B</b>eginning of the line (left for LTR,
+                   right  for RTL), <b>C</b>entered at the location, or at the <b>E</b>nd of the line (right for LTR, left for
+                   RTL).  The default is <b>B</b>. <b>C</b>entered is analogous to using text_center(), and <b>E</b>nd  is  analogous
+                   to using text_right(). Similar alignments are done for TTB and BTT.
+
+               'dump' =&gt; flag
+                   Set  to  1, it prints out positioning and glyph CID information (to STDOUT) for each glyph in
+                   the chunk. The default is 0 (no information dump).
+
+               'minKern' =&gt; amount (default 1)
+                   If the amount of kerning (font character width <b>differs</b> <b>from</b> glyph <u>ax</u> value)  is  <u>larger</u>  than
+                   this  many  character  grid units, use the unaltered ax for the width (textHS() will output a
+                   kern amount in the TJ operation).  Otherwise,  ignore  kerning  and  use  ax  of  the  actual
+                   character  width.  The intent is to avoid bloating the PDF code with unnecessary tiny kerning
+                   adjustments in the TJ operation.
+
+           %opts
+               This a hash of options.
+
+               'underline' =&gt; underlining_instructions
+                   See text() for available instructions.
+
+               'strikethru' =&gt; strikethrough_instructions
+                   See text() for available instructions.
+
+               'strokecolor' =&gt; line_color
+                   Color specification (e.g., 'green', '#FF3377') for underline or strikethrough, if  not  given
+                   in an array with their instructions.
+
+           Text is sent <u>separately</u> to HarfBuzz::Shaper in 'chunks' ('segments') of a single script (alphabet), a
+           single  direction  (LTR,  RTL,  TTB, or BTT), a single font file, and a single font size. A chunk may
+           consist of a large amount of text, but at present, textHS() can only output a single line.  For  long
+           lines  that need to be split into column-width lines, the best way may be to take the array of hashes
+           returned by HarfBuzz::Shaper and split it into smaller chunks at spaces and other whitespace. You may
+           have to query the font to see what the glyph CIDs are for space and anything else used.
+
+           It is expected that when textHS() is called, that the font and font size have  already  been  set  in
+           PDF::Builder code, as this information is needed to interpret what HarfBuzz::Shaper is returning, and
+           to  write  it  to the PDF file.  Needless to say, the font should be opened from the same file as was
+           given to HarfBuzz::Shaper (ttfont() only, with .ttf or .otf files), and the font  size  must  be  the
+           same. The appropriate location on the page must also already have been specified.
+
+       advancewidthHS, text_widthHS
+
+           $width = $content-&gt;advancewidthHS($HSarray, $settings, %opts)
+
+           Returns  text  chunk  width (in points) for Shaper-defined glyph array.  This is the horizontal width
+           for LTR and RTL direction, and the vertical height for TTB and BTT direction.  <b>Note:</b> You must  define
+           the font and font size <u>before</u> calling advancewidthHS().
+
+           $HSarray
+               The array reference of glyphs created by the HarfBuzz::Shaper call.  See textHS() for details.
+
+           $settings
+               the hash reference of settings. See textHS() for details.
+
+               'dir' =&gt; 'L' etc.
+                   the direction of the text, to know which "advance" value to sum up.
+
+           %opts
+               Options.  Unlike  advancewidth(),  you  cannot  override  the  font,  font  size,  etc.  used  by
+               HarfBuzz::Shaper to calculate the glyph list.
+
+               'doKern' =&gt; flag (default 1)
+                   If 1, cancel minor kerns per "minKern" setting. This flag should be 0 (false)  if  <b>-kern</b>  was
+                   passed  to  HarfBuzz::Shaper  (do  not  kern  text).   This is treated as 0 if an ax override
+                   setting is given.
+
+               'minKern' =&gt; amount (default 1)
+                   If the amount of kerning (font character width <b>differs</b> <b>from</b> glyph <u>ax</u> value)  is  <u>larger</u>  than
+                   this  many  character  grid units, use the unaltered <u>ax</u> for the width (textHS() will output a
+                   kern amount in the TJ operation).  Otherwise,  ignore  kerning  and  use  ax  of  the  actual
+                   character  width.  The intent is to avoid bloating the PDF code with unnecessary tiny kerning
+                   adjustments in the TJ operation.
+
+           Returns total width in points.
+
+           <b>Alternate</b> <b>name:</b> "text_widthHS"
+
+   <b>Advanced</b> <b>Methods</b>
+       <u>save</u>
+
+           $content-&gt;save()
+
+           Saves the current <u>graphics</u> state on a PDF stack. See PDF definition 8.4.2 through 8.4.4 for  details.
+           This  includes  the  line width, the line cap style, line join style, miter limit, line dash pattern,
+           stroke color, fill color,  current  transformation  matrix,  current  clipping  port,  flatness,  and
+           dictname.
+
+           This  method applies to <u>only</u> <u>gfx/graphics</u> objects. If attempted with <u>text</u> objects, you will receive a
+           one-time (per run) warning message, and should update your code <b>not</b> to do <b>save()</b> and <b>restore()</b>  on  a
+           text  object.   Only  <b>save()</b>  generates  the  message, as presumably each <b>restore()</b> has already had a
+           <b>save()</b> performed.
+
+       <u>restore</u>
+
+           $content-&gt;restore()
+
+           Restores the most recently saved graphics state (see "save"), removing it from the stack. You  cannot
+           <u>restore</u>  the  graphics state (pop it off the stack) unless you have done at least one <u>save</u> (pushed it
+           on the stack).  This method applies to both <u>text</u> and <u>gfx/graphics</u> objects.
+
+       <u>add</u>
+
+           $content-&gt;add(@content)
+
+           Add raw content (arbitrary string(s)) to the PDF stream.  You will generally want to  use  the  other
+           methods  in  this  class  instead,  unless  this  is  in  order  to implement some PDF operation that
+           PDF::Builder does not natively support. An array of multiple strings  may  be  given;  they  will  be
+           concatenated with spaces between them.
+
+           Be careful when doing this, as you are dabbling in the black arts, directly setting PDF operations!
+
+           One  interesting  use is to split up an overly long object stream that is giving your editor problems
+           when exploring a PDF file. Add a newline <b>add("\n")</b> every few hundred bytes of output  or  so,  to  do
+           this.   Note  that  you  must  use  double  quotes  (quotation  marks),  rather  than  single  quotes
+           (apostrophes).
+
+           Use extreme care if inserting <b>BT</b> and <b>ET</b> markers into the PDF stream.  You may want to use textstart()
+           and textend() calls instead, and even then, there are many side effects either way. It  is  generally
+           not  useful  to suspend text mode with ET/textend and BT/textstart, but it is possible, if you <u>really</u>
+           need to do it.
+
+           Another, useful, case is when your input PDF is from the <b>Chrome</b> <b>browser</b> printing a page to  PDF  with
+           headers  and/or  footers.  In some versions, this leaves the PDF page with a strange scaling (such as
+           the page height in points divided by 3300) and the Y-axis flipped so 0 is at  the  top.  This  causes
+           problems  when trying to add additional text or graphics in a new text or graphics record, where text
+           is flipped (mirrored) upsidedown and at the wrong end of the page. If this happens, you might be able
+           to cure it by adding
+
+               $scale = .23999999; # example, 792/3300, examine PDF or experiment!
+                ...
+               if ($scale != 1) {
+                   my @pageDim = $page-&gt;mediabox();     # e.g., 0 0 612 792
+                   my $size_page = $pageDim[3]/$scale;  # 3300 = 792/.23999999
+                   my $invScale = 1.0/$scale;           # 4.16666684
+                   $text-&gt;add("$invScale 0 0 -$invScale 0 $size_page cm");
+               }
+
+           as the first output to the $text stream. Unfortunately, it  is  difficult  to  predict  exactly  what
+           $scale  should  be,  as  it may be 3300 units per page, or a fixed amount. You may need to examine an
+           uncompressed PDF file stream to see what is being used.  It  <u>might</u>  be  possible  to  get  the  input
+           (original) PDF into a string and look for a certain pattern of "cm" output
+
+               .2399999 0 0 -.23999999 0 792 cm
+
+           or similar, which is not within a save/restore (q/Q). If the stream is already compressed, this might
+           not be possible.
+
+       <u>addNS</u>
+
+           $content-&gt;addNS(@content)
+
+           Like add(), but does <b>not</b> make sure there is a space between each element and before and after the new
+           content.  It  is  up  to  <u>you</u>  to ensure that any necessary spaces in the PDF stream are placed there
+           explicitly!
+
+       <u>compressFlate</u>
+
+           $content-&gt;compressFlate()
+
+           Marks content for compression on output.  This is done automatically in  nearly  all  cases,  so  you
+           shouldn't need to call this yourself.
+
+           The new() call can set the <b>compress</b> parameter to 'flate' (default) to compress all object streams, or
+           'none' to suppress compression and allow you to examine the output in an editor.
+
+       <u>textstart</u>
+
+           $content-&gt;textstart()
+
+           Starts  a  text  object (ignored if already in a text object). You will likely want to use the text()
+           method (text <u>context</u>, not text output) instead.
+
+           Note that calling this method, besides outputting a <b>BT</b> marker, will reset most text settings to their
+           default values. In addition, <b>BT</b> itself will reset some transformation matrices.
+
+       <u>textend</u>
+
+           $content-&gt;textend()
+
+           Ends a text object (ignored if not in a text object).
+
+           Note that calling this  method,  besides  outputting  an  <b>ET</b>  marker,  will  output  any  accumulated
+           <u>poststream</u> content.
+
+perl v5.40.1                                       2025-08-10                         <u>PDF::Builder::<a href="../man3pm/Content.3pm.html">Content</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

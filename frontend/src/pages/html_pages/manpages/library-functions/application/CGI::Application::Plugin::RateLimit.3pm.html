@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::RateLimit - limits runmode call rate per user</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-ratelimit-perl">libcgi-application-plugin-ratelimit-perl_1.0-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::RateLimit - limits runmode call rate per user
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use CGI::Application::Plugin::RateLimit;
+
+         sub setup {
+           ...
+
+           # call this in your setup routine to set
+           my $rate_limit = $self-&gt;rate_limit();
+
+           # set the database handle to use
+           $rate_limit-&gt;dbh($dbh);
+
+           # set the table name to use for storing hits, the default is
+           # 'rate_limit_hits'
+           $rate_limit-&gt;table('rate_limit_hits');
+
+           # keep people from calling 'send' more often than 5 times in 10
+           # minutes and 'list' more often than once every 5 seconds.
+           $rate_limit-&gt;protected_modes(send =&gt; {timeframe =&gt; '10m',
+                                                 max_hits  =&gt; 5
+                                                },
+                                        list =&gt; {timeframe =&gt; '5s',
+                                                 max_hits  =&gt; 1
+                                                });
+
+           # you can also protect abstract actions, for example to prevent a
+           # flood of failed logins
+           $rate_limit-&gt;protected_actions(failed_login =&gt; {timeframe =&gt; '10s',
+                                                           max_hits  =&gt; 2
+                                                          });
+
+           # call this runmode when a violation is detected
+           $rate_limit-&gt;violation_mode('too_fast_buddy');
+
+           # or, run this callback
+           $rate_limit-&gt;violation_callback(sub { die(...) });
+
+           # override the default identity function
+           # ($ENV{REMOTE_USER} || $ENV{REMOTE_IP})
+           $rate_limit-&gt;identity_callback(sub { ... });
+         }
+
+         # record a hit for an action (not needed for run-modes which are
+         # handled automatically)
+         $rate_limit-&gt;record_hit(action =&gt; 'failed_login');
+
+         # check for a violation on an action and handle
+         return $self-&gt;slow_down_buddy
+           if( $rate_limit-&gt;check_violation(action =&gt; 'failed_login') );
+
+         # revoke the most recent hit for this user, preventing it from
+         # counting towards a violation
+         $rate_limit-&gt;revoke_hit();
+
+         # examine the violation in violation_mode or violation_callback:
+         $mode   = $rate_limit-&gt;violated_mode;
+         $action = $rate_limit-&gt;violated_action;
+         $limits = $rate_limit-&gt;violated_limits;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides protection against a user calling a runmode too frequently.  A typical use-case
+       might be a contact form that sends email.  You'd like to allow your users to send you messages, but
+       thousands of messages from a single user would be a problem.
+
+       This module works by maintaining a database of hits to protected runmodes.  It then checks this database
+       to determine if a new hit should be allowed based on past activity by the user.  The user's identity is,
+       by default, tied to login (via REMOTE_USER) or IP address (via REMOTE_IP) if login info is not available.
+       You may provide your own identity function via the <b>identity_callback()</b> method.
+
+       To use this module you must create a table in your database with the following schema (using MySQL-
+       syntax, although other DBs may work as well with minor alterations):
+
+         CREATE TABLE rate_limit_hits (
+            user_id   <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255)      NOT NULL,
+            action    <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255)      NOT NULL,
+            timestamp UNSIGNED INTEGER  NOT NULL,
+            INDEX (user_id, action, timestamp)
+         );
+
+       You may feel free to vary the storage-type and size of user_id and action to match your usage.  For
+       example, if your <b>identity_callback()</b> always returns an integer you could make user_id an integer column.
+
+       This table should be periodically cleared of old data.  Anything older than the maximum timeframe being
+       used can be safely deleted.
+
+       <b>IMPORTANT</b> <b>NOTE</b>: The protection offered by this module is not perfect.  Identifying a user on the internet
+       is very hard and a sophisticated attacker can work around these checks, by switching IPs or automating
+       login creation.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       The object returned from calling "$self-&gt;rate_limit" on your CGI::App object supports the following
+       method calls:
+
+   <b>dbh</b>
+          $rate_limit-&gt;dbh($dbh);
+
+       Call this to set the database handle the object should use.  Must be set in <b>setup()</b>.
+
+   <b>table</b>
+          $rate_limit-&gt;table('some_table_name');
+
+       Call this to determine the table to be used to store and lookup hits.  The default is 'rate_limit_hits'
+       if not set.  See the DESCRIPTION section for the required table schema.
+
+   <b>protected_modes</b>
+           $rate_limit-&gt;protected_modes(send =&gt; {timeframe =&gt; '10m',
+                                                 max_hits  =&gt; 5
+                                                },
+                                        list =&gt; {timeframe =&gt; '5s',
+                                                 max_hits  =&gt; 1
+                                                });
+
+       Takes a list of key-value pairs describing the modes to protect.  Keys are names of run-modes.  Values
+       are hashes with the following keys:
+
+         timeframe - the timeframe to be considered for violations.  Values
+         must be numbers followed by either 's' for seconds, 'm' for minutes
+         or 'h' for hours.
+
+         max_hits - how many hits to allow in the specified timeframe before
+         triggering a violation.
+
+   <b>protected_actions</b>
+           $rate_limit-&gt;protected_actions(failed_login =&gt; {timeframe =&gt; '10s',
+                                                           max_hits  =&gt; 2
+                                                          });
+
+       Specifies non-run-mode actions to protect.  These are arbitrary keys you can use with <b>record_hit()</b> and
+       <b>check_violation()</b>.  Takes the same data-structure as <b>protected_modes()</b>.
+
+   <b>violation_mode</b>
+         $rate_limit-&gt;violation_mode('too_fast_buddy');
+
+       Call to set a run-mode to call when a violation is triggered.  Either this or violation_callback must be
+       set.
+
+   <b>violation_callback</b>
+           $rate_limit-&gt;violation_callback(sub { ... });
+
+       Callback to call when a violation is detected.  Should either throw an exception or return the run-mode
+       to run.  Called with the CGI::App object as its sole parameter.
+
+   <b>identity_callback</b>
+           $rate_limit-&gt;identity_callback(sub { ... });
+
+       Call this to provide a customized mechanism for determining the identity of the user.  The default is:
+
+         sub { $ENV{REMOTE_USER} || $ENV{REMOTE_IP} }
+
+       You might consider adding in session-ID or a hook to your authentication system if it doesn't use
+       REMOTE_USER.  Whatever you write should return a single scalar which is expected to be unique to each
+       user.
+
+   <b>record_hit</b>
+         $rate_limit-&gt;record_hit(action =&gt; 'failed_login');
+
+       Record a hit for an arbitrary action.  This is not needed for run-mode protection.  Takes the action name
+       as an argument, which must match an action registered with <b>protected_actions()</b>.
+
+   <b>check_violation</b>
+         return $self-&gt;slow_down_buddy
+           if( $rate_limit-&gt;check_violation(action =&gt; 'failed_login') );
+
+       Checks for a violation of a protected action.  This is not needed for run-mode protection.  Takes the
+       action name as an argument, which must match an action registered with <b>protected_actions()</b>.
+
+       Returns 1 if a violation took place, 0 otherwise.
+
+   <b>revoke_hit</b>
+         $rate_limit-&gt;revoke_hit();
+
+       Revokes the last hit for this user.  You might use this to prevent validation errors from counting
+       against a user, for example.
+
+   <b>violated_mode</b>
+         $mode = $rate_limit-&gt;violated_mode;
+
+       Returns the mode for the last violation, or undef if an action caused the violation.
+
+   <b>violated_action</b>
+         $mode = $rate_limit-&gt;violated_action;
+
+       Returns the action for the last violation, or undef if an action caused the violation.
+
+   <b>violated_limits</b>
+         $limits = $rate_limit-&gt;violated_limits;
+
+       Returns the hash-ref passed to <b>protected_actions()</b> or <b>protected_modes()</b> for the violated mode/action.
+
+</pre><h4><b>DATABASE</b> <b>SUPPORT</b></h4><pre>
+       I've tested this module with MySQL and SQLite.  I think it's likely to work with many other databases -
+       please let me know if you try one.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Please send questions and suggestions about this module to the CGI::Application mailing-list.  To join
+       the mailing list, simply send a blank message to:
+
+         <a href="mailto:cgiapp-subscribe@lists.erlbaum.net">cgiapp-subscribe@lists.erlbaum.net</a>
+
+</pre><h4><b>VERSION</b> <b>CONTROL</b></h4><pre>
+       This module is in a public Subversion repository at SourceForge here:
+
+          https://svn.sourceforge.net/svnroot/html-template/trunk/CGI-Application-Plugin-RateLimit
+
+</pre><h4><b>BUGS</b></h4><pre>
+       I know of no bugs.  If you find one, let me know by filing a report on <a href="http://rt.cpan.org">http://rt.cpan.org</a>.  Failing that,
+       you can email me at <a href="mailto:sam@tregar.com">sam@tregar.com</a>.  Please include the version of the module you're using and small test
+       case demonstrating the problem.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sam Tregar, <a href="mailto:sam@plusthree.com">sam@plusthree.com</a>
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2006 by Sam Tregar
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.6 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.34.0                                       2022-06-09                                     <u><a href="../man3pm/RateLimit.3pm.html">RateLimit</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

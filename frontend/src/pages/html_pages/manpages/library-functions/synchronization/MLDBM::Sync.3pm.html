@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLDBM::Sync - safe concurrent access to MLDBM databases</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmldbm-sync-perl">libmldbm-sync-perl_0.30-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+         MLDBM::Sync - safe concurrent access to MLDBM databases
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use MLDBM::Sync;                       # this gets the default, SDBM_File
+         use MLDBM qw(DB_File Storable);        # use Storable for serializing
+         use MLDBM qw(MLDBM::Sync::SDBM_File);  # use extended SDBM_File, handles values &gt; 1024 bytes
+         use Fcntl qw(:DEFAULT);                # import symbols O_CREAT &amp; O_RDWR for use with DBMs
+
+         # NORMAL PROTECTED read/write with implicit locks per i/o request
+         my $sync_dbm_obj = tie %cache, 'MLDBM::Sync' [..other DBM args..] or die $!;
+         $cache{"AAAA"} = "BBBB";
+         my $value = $cache{"AAAA"};
+
+         # SERIALIZED PROTECTED read/write with explicit lock for both i/o requests
+         my $sync_dbm_obj = tie %cache, 'MLDBM::Sync', '/tmp/syncdbm', O_CREAT|O_RDWR, 0640;
+         $sync_dbm_obj-&gt;Lock;
+         $cache{"AAAA"} = "BBBB";
+         my $value = $cache{"AAAA"};
+         $sync_dbm_obj-&gt;UnLock;
+
+         # SERIALIZED PROTECTED READ access with explicit read lock for both reads
+         $sync_dbm_obj-&gt;ReadLock;
+         my @keys = keys %cache;
+         my $value = $cache{'AAAA'};
+         $sync_dbm_obj-&gt;UnLock;
+
+         # MEMORY CACHE LAYER with Tie::Cache
+         $sync_dbm_obj-&gt;SyncCacheSize('100K');
+
+         # KEY CHECKSUMS, for lookups on MD5 checksums on large keys
+         my $sync_dbm_obj = tie %cache, 'MLDBM::Sync', '/tmp/syncdbm', O_CREAT|O_RDWR, 0640;
+         $sync_dbm_obj-&gt;<a href="../man1/SyncKeysChecksum.1.html">SyncKeysChecksum</a>(1);
+         my $large_key = "KEY" x 10000;
+         $sync{$large_key} = "LARGE";
+         my $value = $sync{$large_key};
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module wraps around the MLDBM interface, by handling concurrent access to MLDBM databases with file
+       locking, and flushes i/o explicity per lock/unlock.  The new [Read]<b>Lock()</b>/<b>UnLock()</b> API can be used to
+       serialize requests logically and improve performance for bundled reads &amp; writes.
+
+         my $sync_dbm_obj = tie %cache, 'MLDBM::Sync', '/tmp/syncdbm', O_CREAT|O_RDWR, 0640;
+
+         # Write locked critical section
+         $sync_dbm_obj-&gt;Lock;
+           ... all accesses to DBM LOCK_EX protected, and go to same tied file handles
+           $cache{'KEY'} = 'VALUE';
+         $sync_dbm_obj-&gt;UnLock;
+
+         # Read locked critical section
+         $sync_dbm_obj-&gt;ReadLock;
+           ... all read accesses to DBM LOCK_SH protected, and go to same tied files
+           ... WARNING, cannot write to DBM in ReadLock() section, will die()
+           ... WARNING, my $v = $cache{'KEY'}{'SUBKEY'} will trigger a write so not safe
+           ...   to use in ReadLock() section
+           my $value = $cache{'KEY'};
+         $sync_dbm_obj-&gt;UnLock;
+
+         # Normal access OK too, without explicity locking
+         $cache{'KEY'} = 'VALUE';
+         my $value = $cache{'KEY'};
+
+       MLDBM continues to serve as the underlying OO layer that serializes complex data structures to be stored
+       in the databases.  See the MLDBM BUGS section for important limitations.
+
+       MLDBM::Sync also provides built in RAM caching with Tie::Cache md5 key checksum functionality.
+
+</pre><h4><b>INSTALL</b></h4><pre>
+       Like any other CPAN module, either use CPAN.pm, or perl -MCPAN "-e" shell, or get the file
+       MLDBM-Sync-x.xx.tar.gz, unzip, untar and:
+
+         perl Makefile.PL
+         make
+         make test
+         make install
+
+</pre><h4><b>LOCKING</b></h4><pre>
+       The MLDBM::Sync wrapper protects MLDBM databases by locking and unlocking around read and write requests
+       to the databases.  Also necessary is for each new lock to <b>tie()</b> to the database internally, <b>untie()</b>ing
+       when unlocking.  This flushes any i/o for the dbm to the operating system, and allows for concurrent
+       read/write access to the databases.
+
+       Without any extra effort from the developer, an existing MLDBM database will benefit from MLDBM::sync.
+
+         my $dbm_obj = tie %dbm, ...;
+         $dbm{"key"} = "value";
+
+       As a write or STORE operation, the above will automatically cause the following:
+
+         $dbm_obj-&gt;Lock; # also ties
+         $dbm{"key"} = "value";
+         $dbm_obj-&gt;UnLock; # also unties
+
+       Just so, a read or FETCH operation like:
+
+         my $value = $dbm{"key"};
+
+       will really trigger:
+
+         $dbm_obj-&gt;ReadLock; # also ties
+         my $value = $dbm{"key"};
+         $dbm_obj-&gt;Lock; # also unties
+
+       However, these lock operations are expensive because of the underlying <b>tie()</b>/<b>untie()</b> that occurs for i/o
+       flushing, so when bundling reads &amp; writes, a developer may explicitly use this API for greater
+       performance:
+
+         # tie once to database, write 100 times
+         $dbm_obj-&gt;Lock;
+         for (1..100) {
+           $dbm{$_} = $_ * 100;
+           ...
+         }
+         $dbm_obj-&gt;UnLock;
+
+         # only tie once to database, and read 100 times
+         $dbm_obj-&gt;ReadLock;
+         for(1..100) {
+           my $value = $dbm{$_};
+           ...
+         }
+         $dbm_obj-&gt;UnLock;
+
+</pre><h4><b>CACHING</b></h4><pre>
+       I built MLDBM::Sync to serve as a fast and robust caching layer for use in multi-process environments
+       like mod_perl.  In order to provide an additional speed boost when caching static data, I have added an
+       RAM caching layer with Tie::Cache, which regulates the size of the memory used with its MaxBytes setting.
+
+       To activate this caching, just:
+
+         my $dbm = tie %cache, 'MLDBM::Sync', '/tmp/syncdbm', O_CREAT|O_RDWR, 0640;
+         $dbm-&gt;<a href="../man100000/SyncCacheSize.100000.html">SyncCacheSize</a>(100000);  # 100000 bytes max memory used
+         $dbm-&gt;SyncCacheSize('100K');  # 100 Kbytes max memory used
+         $dbm-&gt;SyncCacheSize('1M');    # 1 Megabyte max memory used
+
+       The ./bench/bench_sync.pl, run like "bench_sync.pl "-c"" will run the tests with caching turned on
+       creating a benchmark with 50% cache hits.
+
+       One run without caching was:
+
+        === INSERT OF 50 BYTE RECORDS ===
+         Time for 100 writes + 100 reads for  SDBM_File                  0.16 seconds     12288 bytes
+         Time for 100 writes + 100 reads for  MLDBM::Sync::SDBM_File     0.17 seconds     12288 bytes
+         Time for 100 writes + 100 reads for  GDBM_File                  3.37 seconds     17980 bytes
+         Time for 100 writes + 100 reads for  DB_File                    4.45 seconds     20480 bytes
+
+       And with caching, with 50% cache hits:
+
+        === INSERT OF 50 BYTE RECORDS ===
+         Time for 100 writes + 100 reads for  SDBM_File                  0.11 seconds     12288 bytes
+         Time for 100 writes + 100 reads for  MLDBM::Sync::SDBM_File     0.11 seconds     12288 bytes
+         Time for 100 writes + 100 reads for  GDBM_File                  2.49 seconds     17980 bytes
+         Time for 100 writes + 100 reads for  DB_File                    2.55 seconds     20480 bytes
+
+       Even for SDBM_File, this speedup is near 33%.
+
+</pre><h4><b>KEYS</b> <b>CHECKSUM</b></h4><pre>
+       A common operation on database lookups is checksumming the key, prior to the lookup, because the key
+       could be very large, and all one really wants is the data it maps too.  To enable this functionality
+       automatically with MLDBM::Sync, just:
+
+         my $sync_dbm_obj = tie %cache, 'MLDBM::Sync', '/tmp/syncdbm', O_CREAT|O_RDWR, 0640;
+         $sync_dbm_obj-&gt;<a href="../man1/SyncKeysChecksum.1.html">SyncKeysChecksum</a>(1);
+
+        !! WARNING: keys() &amp; each() do not work on these databases
+        !! as of v.03, so the developer will not be fooled into thinking
+        !! the stored key values are meaningful to the calling application
+        !! and will die() if called.
+        !!
+        !! This behavior could be relaxed in the future.
+
+       An example of this might be to cache a XSLT conversion, which are typically very expensive.  You have the
+       XML data and the XSLT data, so all you do is:
+
+         # $xml_data, $xsl_data are strings
+         my $xslt_output;
+         unless ($xslt_output = $cache{$xml_data.'&amp;&amp;&amp;&amp;'.$xsl_data}) {
+           ... do XSLT conversion here for $xslt_output ...
+           $cache{$xml_data.'&amp;&amp;&amp;&amp;'.xsl_data} = $xslt_output;
+         }
+
+       What you save by doing this is having to create HUGE keys to lookup on, which no DBM is likely to do
+       efficiently.  This is the same method that File::Cache uses internally to hash its file lookups in its
+       directories.
+
+</pre><h4><b>New</b> <b>MLDBM::Sync::SDBM_File</b></h4><pre>
+       SDBM_File, the default used for MLDBM and therefore MLDBM::Sync has a limit of 1024 bytes for the size of
+       a record.
+
+       SDBM_File is also an order of magnitude faster for small records to use with MLDBM::Sync, than DB_File or
+       GDBM_File, because the <b>tie()</b>/<b>untie()</b> to the dbm is much faster.  Therefore, bundled with MLDBM::Sync
+       release is a MLDBM::Sync::SDBM_File layer which works around this 1024 byte limit.  To use, just:
+
+         use MLDBM qw(MLDBM::Sync::SDBM_File);
+
+       It works by breaking up up the <b>STORE()</b> values into small 128 byte segments, and spreading those segments
+       across many records, creating a virtual record layer.  It also uses Compress::Zlib to compress STORED
+       data, reducing the number of these 128 byte records. In benchmarks, 128 byte record segments seemed to be
+       a sweet spot for space/time efficiency, as SDBM_File created very bloated *.pag files for 128+ byte
+       records.
+
+</pre><h4><b>BENCHMARKS</b></h4><pre>
+       In the distribution ./bench directory is a bench_sync.pl script that can benchmark using the various DBMs
+       with MLDBM::Sync.
+
+       The MLDBM::Sync::SDBM_File DBM is special because is uses SDBM_File for fast small inserts, but slows
+       down linearly with the size of the data being inserted and read.
+
+       The results for a dual PIII-450 linux 2.4.7, with a ext3 file system blocksize 4096 mounted async on a
+       RAID-1 2xIDE 7200 RPM disk were as follows:
+
+        === INSERT OF 50 BYTE RECORDS ===
+         Time for 100 writes + 100 reads for  SDBM_File                  0.16 seconds     12288 bytes
+         Time for 100 writes + 100 reads for  MLDBM::Sync::SDBM_File     0.19 seconds     12288 bytes
+         Time for 100 writes + 100 reads for  GDBM_File                  1.09 seconds     18066 bytes
+         Time for 100 writes + 100 reads for  DB_File                    0.67 seconds     12288 bytes
+         Time for 100 writes + 100 reads for  Tie::TextDir .04           0.31 seconds     13192 bytes
+
+        === INSERT OF 500 BYTE RECORDS ===
+        (skipping test for SDBM_File 100 byte limit)
+         Time for 100 writes + 100 reads for  MLDBM::Sync::SDBM_File     0.52 seconds    110592 bytes
+         Time for 100 writes + 100 reads for  GDBM_File                  1.20 seconds     63472 bytes
+         Time for 100 writes + 100 reads for  DB_File                    0.66 seconds     86016 bytes
+         Time for 100 writes + 100 reads for  Tie::TextDir .04           0.32 seconds     58192 bytes
+
+        === INSERT OF 5000 BYTE RECORDS ===
+        (skipping test for SDBM_File 100 byte limit)
+         Time for 100 writes + 100 reads for  MLDBM::Sync::SDBM_File     1.41 seconds   1163264 bytes
+         Time for 100 writes + 100 reads for  GDBM_File                  1.38 seconds    832400 bytes
+         Time for 100 writes + 100 reads for  DB_File                    1.21 seconds    831488 bytes
+         Time for 100 writes + 100 reads for  Tie::TextDir .04           0.58 seconds    508192 bytes
+
+        === INSERT OF 20000 BYTE RECORDS ===
+        (skipping test for SDBM_File 100 byte limit)
+        (skipping test for MLDBM::Sync db size &gt; 1M)
+         Time for 100 writes + 100 reads for  GDBM_File                  2.23 seconds   2063912 bytes
+         Time for 100 writes + 100 reads for  DB_File                    1.89 seconds   2060288 bytes
+         Time for 100 writes + 100 reads for  Tie::TextDir .04           1.26 seconds   2008192 bytes
+
+        === INSERT OF 50000 BYTE RECORDS ===
+        (skipping test for SDBM_File 100 byte limit)
+        (skipping test for MLDBM::Sync db size &gt; 1M)
+         Time for 100 writes + 100 reads for  GDBM_File                  3.66 seconds   5337944 bytes
+         Time for 100 writes + 100 reads for  DB_File                    3.64 seconds   5337088 bytes
+         Time for 100 writes + 100 reads for  Tie::TextDir .04           2.80 seconds   5008192 bytes
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Copyright (c) 2001-2002 Joshua Chamas, Chamas Enterprises Inc.  All rights reserved.  Sponsored by
+       development on NodeWorks <a href="http://www.nodeworks.com">http://www.nodeworks.com</a> and Apache::ASP <a href="http://www.apache-asp.org">http://www.apache-asp.org</a>
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+        <a href="../man3/MLDBM.3.html">MLDBM</a>(3), <a href="../man3/SDBM_File.3.html">SDBM_File</a>(3), <a href="../man3/DB_File.3.html">DB_File</a>(3), <a href="../man3/GDBM_File.3.html">GDBM_File</a>(3)
+
+perl v5.36.0                                       2022-11-19                                          <u><a href="../man3pm/Sync.3pm.html">Sync</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

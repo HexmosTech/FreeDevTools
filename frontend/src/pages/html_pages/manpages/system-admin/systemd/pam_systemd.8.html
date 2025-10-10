@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pam_systemd - Register user sessions in the systemd login manager</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpam-systemd">libpam-systemd_257.7-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pam_systemd - Register user sessions in the systemd login manager
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       pam_systemd.so
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>pam_systemd</b> registers user sessions with the systemd login manager <b><a href="../man8/systemd-logind.service.8.html">systemd-logind.service</a></b>(8), and hence
+       the systemd control group hierarchy.
+
+       The module also applies various resource management and runtime parameters to the new session, as
+       configured in the <b>JSON</b> <b>User</b> <b>Records</b>[1] of the user, when one is defined.
+
+       On login, this module — in conjunction with systemd-logind.service — ensures the following:
+
+        1. If it does not exist yet, the user runtime directory <a href="file:/run/user/">/run/user/</a>$UID is either created or mounted as
+           new "tmpfs" file system with quota applied, and its ownership changed to the user that is logging in.
+
+        2. The <u>$XDG_SESSION_ID</u> environment variable is initialized. If auditing is available and <b>pam_loginuid.so</b>
+           was run before this module (which is highly recommended), the variable is initialized from the
+           auditing session id (<a href="file:/proc/self/sessionid">/proc/self/sessionid</a>). Otherwise, an independent session counter is used.
+
+        3. A new systemd scope unit is created for the session. If this is the first concurrent session of the
+           user, an implicit per-user slice unit below user.slice is automatically created and the scope placed
+           into it. An instance of the system service user@.service, which runs the systemd user manager
+           instance, is started.
+
+        4. The "$TZ", "$EMAIL" and "$LANG" environment variables are configured for the user, based on the
+           respective data from the user's JSON record (if it is defined). Moreover, any environment variables
+           explicitly configured in the user record are imported, and the umask, nice level, and resource limits
+           initialized.
+
+       On logout, this module ensures the following:
+
+        1. If enabled in <b><a href="../man5/logind.conf.5.html">logind.conf</a></b>(5) (<u>KillUserProcesses=</u>), all processes of the session are terminated. If
+           the last concurrent session of a user ends, the user's systemd instance will be terminated too, and
+           so will the user's slice unit.
+
+        2. If the last concurrent session of a user ends, the user runtime directory <a href="file:/run/user/">/run/user/</a>$UID and all its
+           contents are removed, too.
+
+       If the system was not booted up with systemd as init system, this module does nothing and immediately
+       returns <b>PAM_SUCCESS</b>.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following options are understood:
+
+       <u>class=</u>
+           Takes a string argument which sets the session class. The <u>XDG_SESSION_CLASS</u> environment variable (see
+           below) takes precedence. See <b><a href="../man3/sd_session_get_class.3.html">sd_session_get_class</a></b>(3) for a way to query the class of a session. The
+           following session classes are defined:
+
+           <b>Table</b> <b>1.</b> <b>Session</b> <b>Classes</b>
+           ┌──────────────────┬───────────────────────────────────────┐
+           │ <b>Name</b>             │ <b>Explanation</b>                           │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>user</b>             │ A regular interactive user session.   │
+           │                  │ This is the default class for         │
+           │                  │ sessions for which a TTY or X display │
+           │                  │ is known at session registration      │
+           │                  │ time.                                 │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>user-early</b>       │ Similar to <b>user</b> but sessions of this  │
+           │                  │ class are not ordered after <b>systemd-</b>  │
+           │                  │ <b><a href="../man8/user-sessions.service.8.html">user-sessions.service</a></b>(8), i.e. may be │
+           │                  │ started before regular sessions are   │
+           │                  │ allowed to be established. This       │
+           │                  │ session class is the default for      │
+           │                  │ sessions of the root user that would  │
+           │                  │ otherwise qualify for the <b>user</b> class, │
+           │                  │ see above. (Added in v256.)           │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>user-incomplete</b>  │ Similar to <b>user</b> but for sessions      │
+           │                  │ which are not fully set up yet, i.e.  │
+           │                  │ have no home directory mounted or     │
+           │                  │ similar. This is used by <b>systemd-</b>     │
+           │                  │ <b><a href="../man8/homed.service.8.html">homed.service</a></b>(8) to allow users to    │
+           │                  │ log in via <b><a href="../man1/ssh.1.html">ssh</a></b>(1) before their home   │
+           │                  │ directory is mounted, delaying the    │
+           │                  │ mount until the user provided the     │
+           │                  │ unlock password. Sessions of this     │
+           │                  │ class are upgraded to the regular     │
+           │                  │ <b>user</b> class once the home directory is │
+           │                  │ activated.                            │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>greeter</b>          │ Similar to <b>user</b> but for sessions that │
+           │                  │ are spawned by a display manager      │
+           │                  │ ephemerally and which prompt the user │
+           │                  │ for login credentials.                │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>lock-screen</b>      │ Similar to <b>user</b> but for sessions that │
+           │                  │ are spawned by a display manager      │
+           │                  │ ephemerally and which show a lock     │
+           │                  │ screen that can be used to unlock     │
+           │                  │ locked user accounts or sessions.     │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>background</b>       │ Used for background sessions, such as │
+           │                  │ those invoked by <b><a href="../man8/cron.8.html">cron</a></b>(8) and similar  │
+           │                  │ tools. This is the default class for  │
+           │                  │ sessions for which no TTY or X        │
+           │                  │ display is known at session           │
+           │                  │ registration time.                    │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>background-light</b> │ Similar to <b>background</b>, but sessions   │
+           │                  │ of this class will not pull in the    │
+           │                  │ <b>user@.<a href="../man5/service.5.html">service</a></b>(5) of the user, and     │
+           │                  │ thus possibly have no services of the │
+           │                  │ user running. (Added in v256.)        │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>manager</b>          │ The <b>user@.<a href="../man5/service.5.html">service</a></b>(5) service of the   │
+           │                  │ user is registered under this session │
+           │                  │ class. (Added in v256.)               │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>manager-early</b>    │ Similar to <b>manager</b>, but for the root  │
+           │                  │ user. Compare with the <b>user</b> vs.       │
+           │                  │ <b>user-early</b> situation. (Added in       │
+           │                  │ v256.)                                │
+           └──────────────────┴───────────────────────────────────────┘
+
+           Added in version 197.
+
+       <u>type=</u>
+           Takes a string argument which sets the session type. The <u>XDG_SESSION_TYPE</u> environment variable (see
+           below) takes precedence. One of <b>unspecified</b>, <b>tty</b>, <b>x11</b>, <b>wayland</b>, <b>mir</b>, or <b>web</b>. See
+           <b><a href="../man3/sd_session_get_type.3.html">sd_session_get_type</a></b>(3) for details about the session type.
+
+           Added in version 209.
+
+       <u>desktop=</u>
+           Takes a single, short identifier string for the desktop environment. The <u>XDG_SESSION_DESKTOP</u>
+           environment variable (see below) takes precedence. This may be used to indicate the session desktop
+           used, where this applies and if this information is available. For example: <b>GNOME</b>, or <b>KDE</b>. It is
+           recommended to use the same identifiers and capitalization as for <u>$XDG_CURRENT_DESKTOP</u>, as defined by
+           the <b>Desktop</b> <b>Entry</b> <b>Specification</b>[2]. (However, note that the option only takes a single item, and not
+           a colon-separated list like <u>$XDG_CURRENT_DESKTOP</u>.) See <b><a href="../man3/sd_session_get_desktop.3.html">sd_session_get_desktop</a></b>(3) for further details.
+
+           Added in version 240.
+
+       <u>default-capability-bounding-set=</u>, <u>default-capability-ambient-set=</u>
+           Takes a comma-separated list of process capabilities (e.g.  <b>CAP_WAKE_ALARM</b>, <b>CAP_BLOCK_SUSPEND</b>, ...)
+           to set for the invoked session's processes, if the user record does not encode appropriate sets of
+           capabilities directly. See <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7) for details on the capabilities concept. If not specified,
+           the default bounding set is left as is (i.e. usually contains the full set of capabilities). The
+           default ambient set is set to <b>CAP_WAKE_ALARM</b> for regular users if the PAM session is associated with
+           a local seat or if it is invoked for the systemd user service user@.service. Otherwise, defaults to
+           the empty set.
+
+           Added in version 254.
+
+       <u>debug</u>[=]
+           Takes an optional boolean argument. If yes or without the argument, the module will log debugging
+           information as it operates.
+
+</pre><h4><b>MODULE</b> <b>TYPES</b> <b>PROVIDED</b></h4><pre>
+       Only <b>session</b> is provided.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The following environment variables are initialized by the module and available to the processes of the
+       user's session:
+
+       <u>$XDG_SESSION_ID</u>
+           A short session identifier, suitable to be used in filenames. The string itself should be considered
+           opaque, although often it is just the audit session ID as reported by /proc/self/sessionid. Each ID
+           will be assigned only once during machine uptime. It may hence be used to uniquely label files or
+           other resources of this session. Combine this ID with the boot identifier, as returned by
+           <b><a href="../man3/sd_id128_get_boot.3.html">sd_id128_get_boot</a></b>(3), for a globally unique identifier.
+
+       <u>$XDG_RUNTIME_DIR</u>
+           Path to a user-private user-writable directory that is bound to the user login time on the machine.
+           It is automatically created the first time a user logs in and removed on the user's final logout. If
+           a user logs in twice at the same time, both sessions will see the same <u>$XDG_RUNTIME_DIR</u> and the same
+           contents. If a user logs in once, then logs out again, and logs in again, the directory contents will
+           have been lost in between, but applications should not rely on this behavior and must be able to deal
+           with stale files. To store session-private data in this directory, the user should include the value
+           of <u>$XDG_SESSION_ID</u> in the filename. This directory shall be used for runtime file system objects such
+           as <b>AF_UNIX</b> sockets, FIFOs, PID files and similar. It is guaranteed that this directory is local and
+           offers the greatest possible file system feature set the operating system provides. For further
+           details, see the <b>XDG</b> <b>Base</b> <b>Directory</b> <b>Specification</b>[3].  <u>$XDG_RUNTIME_DIR</u> is not set if the current
+           user is not the original user of the session.
+
+       <u>$TZ</u>, <u>$EMAIL</u>, <u>$LANG</u>
+           If a JSON user record is known for the user logging in these variables are initialized from the
+           respective data in the record.
+
+           Added in version 245.
+
+       <u>$SHELL_PROMPT_PREFIX</u>, <u>$SHELL_PROMPT_SUFFIX</u>, <u>$SHELL_WELCOME</u>
+           These environment variables are initialized from the service credentials "shell.prompt.prefix",
+           "shell.prompt.suffix" and "shell.welcome" if set. They are passed to the invoked session processes,
+           where they are imported into any shell prompt (specifically <u>$SHELL_PROMPT_PREFIX</u> is added as prefix
+           to <u>$PS1</u>, and <u>$SHELL_PROMPT_SUFFIX</u> as suffix) or printed on screen when a shell first initializes.
+
+           Added in version 257.
+
+       The following environment variables are read by the module and may be used by the PAM service to pass
+       metadata to the module. If these variables are not set when the PAM module is invoked but can be
+       determined otherwise they are set by the module, so that these variables are initialized for the session
+       and applications if known at all.
+
+       <u>$XDG_SESSION_TYPE</u>
+           The session type. This may be used instead of <u>type=</u> on the module parameter line, and is usually
+           preferred.
+
+           Added in version 209.
+
+       <u>$XDG_SESSION_CLASS</u>
+           The session class. This may be used instead of <u>class=</u> on the module parameter line, and is usually
+           preferred.
+
+           Added in version 209.
+
+       <u>$XDG_SESSION_DESKTOP</u>
+           The desktop identifier. This may be used instead of <u>desktop=</u> on the module parameter line, and is
+           usually preferred.
+
+           Added in version 209.
+
+       <u>$XDG_SEAT</u>
+           The seat name the session shall be registered for, if any.
+
+           Added in version 209.
+
+       <u>$XDG_VTNR</u>
+           The VT number the session shall be registered for, if any. (Only applies to seats with a VT
+           available, such as "seat0")
+
+           Added in version 209.
+
+       If not set, <b>pam_systemd</b> will initialize <u>$XDG_SEAT</u> and <u>$XDG_VTNR</u> based on the <u>$DISPLAY</u> variable (if the
+       latter is set).
+
+</pre><h4><b>SESSION</b> <b>LIMITS</b></h4><pre>
+       PAM modules earlier in the stack, that is those that come before <b>pam_systemd.so</b>, can set session scope
+       limits using the PAM context objects. The data for these objects is provided as <b>NUL</b>-terminated C strings
+       and maps directly to the respective unit resource control directives. Note that these limits apply to
+       individual sessions of the user, they do not apply to all user processes as a combined whole. In
+       particular, the per-user <b>user@.service</b> unit instance, which runs the <b>systemd</b> <b>--user</b> manager process and
+       its children, and is tracked outside of any session, being shared by all the user's sessions, is not
+       covered by these limits.
+
+       See <b><a href="../man5/systemd.resource-control.5.html">systemd.resource-control</a></b>(5) for more information about the resources. Also, see <b><a href="../man3/pam_set_data.3.html">pam_set_data</a></b>(3) for
+       additional information about how to set the context objects.
+
+       <u>systemd.memory_max=</u>
+           Sets unit <u>MemoryMax=</u>.
+
+           Added in version 239.
+
+       <u>systemd.tasks_max=</u>
+           Sets unit <u>TasksMax=</u>.
+
+           Added in version 239.
+
+       <u>systemd.cpu_weight=</u>
+           Sets unit <u>CPUWeight=</u>.
+
+           Added in version 239.
+
+       <u>systemd.io_weight=</u>
+           Sets unit <u>IOWeight=</u>.
+
+           Added in version 239.
+
+       <u>systemd.runtime_max_sec=</u>
+           Sets unit <u>RuntimeMaxSec=</u>.
+
+           Added in version 244.
+
+       Example data as can be provided from an another PAM module:
+
+           pam_set_data(handle, "systemd.memory_max", (void *)"200M", cleanup);
+           pam_set_data(handle, "systemd.tasks_max",  (void *)"50",   cleanup);
+           pam_set_data(handle, "systemd.cpu_weight", (void *)"100",  cleanup);
+           pam_set_data(handle, "systemd.io_weight",  (void *)"340",  cleanup);
+           pam_set_data(handle, "systemd.runtime_max_sec", (void *)"3600", cleanup);
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here's an example PAM configuration fragment that allows users sessions to be managed by
+       systemd-logind.service:
+
+           #%PAM-1.0
+           auth      sufficient pam_unix.so
+           -auth     sufficient pam_systemd_home.so
+           auth      required   pam_deny.so
+
+           account   required   pam_nologin.so
+           -account  sufficient pam_systemd_home.so
+           account   sufficient pam_unix.so
+           account   required   pam_permit.so
+
+           -password sufficient pam_systemd_home.so
+           password  sufficient pam_unix.so sha512 shadow try_first_pass
+           password  required   pam_deny.so
+
+           -session  optional   pam_keyinit.so revoke
+           -session  optional   pam_loginuid.so
+           -session  optional   pam_systemd_home.so
+           <b>-session</b>  <b>optional</b>   <b>pam_systemd.so</b>
+           session   required   pam_unix.so
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man8/systemd-user-sessions.service.8.html">systemd-user-sessions.service</a></b>(8), <b>user@.<a href="../man5/service.5.html">service</a></b>(5), <b><a href="../man8/systemd-logind.service.8.html">systemd-logind.service</a></b>(8),
+       <b><a href="../man5/logind.conf.5.html">logind.conf</a></b>(5), <b><a href="../man1/loginctl.1.html">loginctl</a></b>(1), <b><a href="../man8/pam_systemd_home.8.html">pam_systemd_home</a></b>(8), <b><a href="../man5/pam.conf.5.html">pam.conf</a></b>(5), <b><a href="../man5/pam.d.5.html">pam.d</a></b>(5), <b><a href="../man8/pam.8.html">pam</a></b>(8), <b><a href="../man8/pam_loginuid.8.html">pam_loginuid</a></b>(8),
+       <b><a href="../man5/systemd.scope.5.html">systemd.scope</a></b>(5), <b><a href="../man5/systemd.slice.5.html">systemd.slice</a></b>(5), <b><a href="../man5/systemd.service.5.html">systemd.service</a></b>(5)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. JSON User Records
+           https://systemd.io/USER_RECORD
+
+        2. Desktop Entry Specification
+           https://standards.freedesktop.org/desktop-entry-spec/latest/
+
+        3. XDG Base Directory Specification
+           https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+
+systemd 257.7                                                                                     <u><a href="../man8/PAM_SYSTEMD.8.html">PAM_SYSTEMD</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Condition - Condition variables.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/ocaml-man">ocaml-man_5.3.0-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Condition - Condition variables.
+
+</pre><h4><b>Module</b></h4><pre>
+       Module   Condition
+
+</pre><h4><b>Documentation</b></h4><pre>
+       Module <b>Condition</b>
+        : <b>sig</b> <b>end</b>
+
+       Condition variables.
+
+       Condition  variables  are  useful  when  several  threads  wish to access a shared data structure that is
+       protected by a mutex (a mutual exclusion lock).
+
+       A condition variable is a communication channel. On the receiver side, one or more threads  can  indicate
+       that  they  wish  to  wait for a certain property to become true. On the sender side, a thread can signal
+       that this property has become true, causing one (or more) waiting threads to be woken up.
+
+       For instance, in the implementation of a queue data structure, if a thread  that  wishes  to  extract  an
+       element finds that the queue is currently empty, then this thread waits for the queue to become nonempty.
+       A  thread  that inserts an element into the queue signals that the queue has become nonempty. A condition
+       variable is used for this purpose. This communication channel conveys the information that  the  property
+       "the queue is nonempty" is true, or more accurately, may be true. (We explain below why the receiver of a
+       signal cannot be certain that the property holds.)
+
+       To continue the example of the queue, assuming that the queue has a fixed maximum capacity, then a thread
+       that  wishes  to  insert  an element may find that the queue is full. Then, this thread must wait for the
+       queue to become not full, and a thread that extracts an element of the queue signals that the  queue  has
+       become not full. Another condition variable is used for this purpose.
+
+       In  short,  a  condition  variable  <b>c</b> is used to convey the information that a certain property P about a
+       shared data structure D, protected by a mutex <b>m</b> , may be true.
+
+       Condition variables provide an efficient alternative to busy-waiting.  When one wishes to  wait  for  the
+       property P to be true, instead of writing a busy-waiting loop:
+            <b>Mutex.lock</b> <b>m;</b>
+            <b>while</b> <b>not</b> <b>P</b> <b>do</b>
+              <b>Mutex.unlock</b> <b>m;</b> <b>Mutex.lock</b> <b>m</b>
+            <b>done;</b>
+            <b>&lt;update</b> <b>the</b> <b>data</b> <b>structure&gt;;</b>
+            <b>Mutex.unlock</b> <b>m</b>
+
+       one uses <b>Condition.wait</b> in the body of the loop, as follows:
+            <b>Mutex.lock</b> <b>m;</b>
+            <b>while</b> <b>not</b> <b>P</b> <b>do</b>
+              <b>Condition.wait</b> <b>c</b> <b>m</b>
+            <b>done;</b>
+            <b>&lt;update</b> <b>the</b> <b>data</b> <b>structure&gt;;</b>
+            <b>Mutex.unlock</b> <b>m</b>
+
+       The  busy-waiting  loop  is  inefficient  because the waiting thread consumes processing time and creates
+       contention of the mutex <b>m</b> .  Calling <b>Condition.wait</b> allows the waiting thread to be suspended, so it does
+       not consume any computing resources while waiting.
+
+       With a condition variable <b>c</b> , exactly one mutex <b>m</b> is associated.  This association is implicit: the mutex
+       <b>m</b> is not explicitly passed as an argument to <b>Condition.create</b> . It is up to the programmer to  know,  for
+       each condition variable <b>c</b> , which is the associated mutex <b>m</b> .
+
+       With a mutex <b>m</b> , several condition variables can be associated.  In the example of the bounded queue, one
+       condition variable is used to indicate that the queue is nonempty, and another condition variable is used
+       to indicate that the queue is not full.
+
+       With  a  condition  variable  <b>c</b>  ,  exactly one logical property P should be associated. Examples of such
+       properties include "the queue is nonempty" and "the queue is not full".  It is up to  the  programmer  to
+       keep  track,  for  each  condition  variable,  of  the corresponding property P.  A signal is sent on the
+       condition variable <b>c</b> as an indication that the property P is true, or may be true.  On the receiving end,
+       however, a thread that is woken up cannot  assume  that  P  is  true;  after  a  call  to  <b>Condition.wait</b>
+       terminates,  one  must explicitly test whether P is true.  There are several reasons why this is so.  One
+       reason is that, between the moment when the signal is sent and the moment when a waiting thread  receives
+       the signal and is scheduled, the property P may be falsified by some other thread that is able to acquire
+       the mutex <b>m</b> and alter the data structure D.  Another reason is that spurious wakeups may occur: a waiting
+       thread can be woken up even if no signal was sent.
+
+       Here  is  a  complete example, where a mutex protects a sequential unbounded queue, and where a condition
+       variable is used to signal that the queue is nonempty.
+            <b>type</b> <b>'a</b> <b>safe_queue</b> <b>=</b>
+              <b>{</b> <b>queue</b> <b>:</b> <b>'a</b> <b>Queue.t;</b> <b>mutex</b> <b>:</b> <b>Mutex.t;</b> <b>nonempty</b> <b>:</b> <b>Condition.t</b> <b>}</b>
+
+            <b>let</b> <b>create</b> <b>()</b> <b>=</b>
+              <b>{</b> <b>queue</b> <b>=</b> <b>Queue.create();</b> <b>mutex</b> <b>=</b> <b>Mutex.create();</b>
+                <b>nonempty</b> <b>=</b> <b>Condition.create()</b> <b>}</b>
+
+            <b>let</b> <b>add</b> <b>v</b> <b>q</b> <b>=</b>
+              <b>Mutex.lock</b> <b>q.mutex;</b>
+              <b>let</b> <b>was_empty</b> <b>=</b> <b>Queue.is_empty</b> <b>q.queue</b> <b>in</b>
+              <b>Queue.add</b> <b>v</b> <b>q.queue;</b>
+              <b>if</b> <b>was_empty</b> <b>then</b> <b>Condition.broadcast</b> <b>q.nonempty;</b>
+              <b>Mutex.unlock</b> <b>q.mutex</b>
+
+            <b>let</b> <b>take</b> <b>q</b> <b>=</b>
+              <b>Mutex.lock</b> <b>q.mutex;</b>
+              <b>while</b> <b>Queue.is_empty</b> <b>q.queue</b> <b>do</b> <b>Condition.wait</b> <b>q.nonempty</b> <b>q.mutex</b> <b>done;</b>
+              <b>let</b> <b>v</b> <b>=</b> <b>Queue.take</b> <b>q.queue</b> <b>in</b> <b>(*</b> <b>cannot</b> <b>fail</b> <b>since</b> <b>queue</b> <b>is</b> <b>nonempty</b> <b>*)</b>
+              <b>Mutex.unlock</b> <b>q.mutex;</b>
+              <b>v</b>
+
+       Because the call to <b>Condition.broadcast</b> takes place inside the critical section, the  following  property
+       holds  whenever  the mutex is unlocked: if the queue is nonempty, then no thread is waiting, or, in other
+       words, if some thread is waiting, then the queue must be empty.  This  is  a  desirable  property:  if  a
+       thread  that  attempts  to  execute  a  <b>take</b>  operation  could  remain suspended even though the queue is
+       nonempty, that would be a problematic situation, known as a deadlock.
+
+       <u>type</u> <u>t</u>
+
+       The type of condition variables.
+
+       <u>val</u> <u>create</u> : <b>unit</b> <b>-&gt;</b> <b>t</b>
+
+       <b>create()</b> creates and returns a new condition variable.  This condition variable should be associated  (in
+       the programmer's mind) with a certain mutex <b>m</b> and with a certain property P of the data structure that is
+       protected by the mutex <b>m</b> .
+
+       <u>val</u> <u>wait</u> : <b>t</b> <b>-&gt;</b> <b>Mutex.t</b> <b>-&gt;</b> <b>unit</b>
+
+       The call <b>wait</b> <b>c</b> <b>m</b> is permitted only if <b>m</b> is the mutex associated with the condition variable <b>c</b> , and only
+       if  <b>m</b>  is  currently locked.  This call atomically unlocks the mutex <b>m</b> and suspends the current thread on
+       the condition variable <b>c</b> . This thread can later be woken up after the  condition  variable  <b>c</b>  has  been
+       signaled  via  <b>Condition.signal</b>  or <b>Condition.broadcast</b> ; however, it can also be woken up for no reason.
+       The mutex <b>m</b> is locked again before <b>wait</b> returns. One cannot assume that the property  P  associated  with
+       the  condition variable <b>c</b> holds when <b>wait</b> returns; one must explicitly test whether P holds after calling
+       <b>wait</b> .
+
+       <u>val</u> <u>signal</u> : <b>t</b> <b>-&gt;</b> <b>unit</b>
+
+       <b>signal</b> <b>c</b> wakes up one of the threads waiting on the condition variable <b>c</b> , if there is one. If  there  is
+       none, this call has no effect.
+
+       It  is recommended to call <b>signal</b> <b>c</b> inside a critical section, that is, while the mutex <b>m</b> associated with
+       <b>c</b> is locked.
+
+       <u>val</u> <u>broadcast</u> : <b>t</b> <b>-&gt;</b> <b>unit</b>
+
+       <b>broadcast</b> <b>c</b> wakes up all threads waiting on the condition variable <b>c</b> . If there are none, this  call  has
+       no effect.
+
+       It  is  recommended  to call <b>broadcast</b> <b>c</b> inside a critical section, that is, while the mutex <b>m</b> associated
+       with <b>c</b> is locked.
+
+OCamldoc                                           2025-06-12                                      <u><a href="../man3o/Condition.3o.html">Condition</a></u>(3o)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

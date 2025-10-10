@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>epoll - I/O event notification facility</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/manpages">manpages_6.9.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       epoll - I/O event notification facility
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/epoll.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>epoll</b>  API performs a similar task to <b><a href="../man2/poll.2.html">poll</a></b>(2): monitoring multiple file descriptors to see if I/O is
+       possible on any of them.  The <b>epoll</b> API can be used either as  an  edge-triggered  or  a  level-triggered
+       interface and scales well to large numbers of watched file descriptors.
+
+       The  central  concept  of  the <b>epoll</b> API is the <b>epoll</b> <u>instance</u>, an in-kernel data structure which, from a
+       user-space perspective, can be considered as a container for two lists:
+
+       •  The <u>interest</u> list (sometimes also called the <b>epoll</b> set): the set of file descriptors that the  process
+          has registered an interest in monitoring.
+
+       •  The  <u>ready</u>  list: the set of file descriptors that are "ready" for I/O.  The ready list is a subset of
+          (or, more precisely, a set of references to) the file descriptors in the  interest  list.   The  ready
+          list is dynamically populated by the kernel as a result of I/O activity on those file descriptors.
+
+       The following system calls are provided to create and manage an <b>epoll</b> instance:
+
+       •  <b><a href="../man2/epoll_create.2.html">epoll_create</a></b>(2) creates a new <b>epoll</b> instance and returns a file descriptor referring to that instance.
+          (The more recent <b><a href="../man2/epoll_create1.2.html">epoll_create1</a></b>(2) extends the functionality of <b><a href="../man2/epoll_create.2.html">epoll_create</a></b>(2).)
+
+       •  Interest  in  particular file descriptors is then registered via <b><a href="../man2/epoll_ctl.2.html">epoll_ctl</a></b>(2), which adds items to the
+          interest list of the <b>epoll</b> instance.
+
+       •  <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) waits for I/O events, blocking the calling thread if no events are currently  available.
+          (This system call can be thought of as fetching items from the ready list of the <b>epoll</b> instance.)
+
+   <b>Level-triggered</b> <b>and</b> <b>edge-triggered</b>
+       The  <b>epoll</b>  event  distribution  interface  is  able  to behave both as edge-triggered (ET) and as level-
+       triggered (LT).  The difference between the two mechanisms can be described  as  follows.   Suppose  that
+       this scenario happens:
+
+       (1)  The  file  descriptor  that  represents  the  read  side  of a pipe (<u>rfd</u>) is registered on the <b>epoll</b>
+            instance.
+
+       (2)  A pipe writer writes 2 kB of data on the write side of the pipe.
+
+       (3)  A call to <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) is done that will return <u>rfd</u> as a ready file descriptor.
+
+       (4)  The pipe reader reads 1 kB of data from <u>rfd</u>.
+
+       (5)  A call to <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) is done.
+
+       If the <u>rfd</u> file descriptor has been added to the <b>epoll</b> interface using the <b>EPOLLET</b> (edge-triggered) flag,
+       the call to <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) done in step <b>5</b> will probably hang despite the available data still  present  in
+       the  file  input  buffer;  meanwhile  the  remote peer might be expecting a response based on the data it
+       already sent.  The reason for this is that edge-triggered mode delivers events only when changes occur on
+       the monitored file descriptor.  So, in step <b>5</b> the caller might end up  waiting  for  some  data  that  is
+       already present inside the input buffer.  In the above example, an event on <u>rfd</u> will be generated because
+       of  the  write  done  in  <b>2</b>  and the event is consumed in <b>3</b>.  Since the read operation done in <b>4</b> does not
+       consume the whole buffer data, the call to <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) done in step <b>5</b> might block indefinitely.
+
+       An application that employs the <b>EPOLLET</b> flag should use nonblocking file descriptors to  avoid  having  a
+       blocking  read  or  write starve a task that is handling multiple file descriptors.  The suggested way to
+       use <b>epoll</b> as an edge-triggered (<b>EPOLLET</b>) interface is as follows:
+
+       (1)  with nonblocking file descriptors; and
+
+       (2)  by waiting for an event only after <b><a href="../man2/read.2.html">read</a></b>(2) or <b><a href="../man2/write.2.html">write</a></b>(2) return <b>EAGAIN</b>.
+
+       By contrast, when used as a level-triggered interface (the default, when <b>EPOLLET</b> is not specified), <b>epoll</b>
+       is simply a faster <b><a href="../man2/poll.2.html">poll</a></b>(2), and can be used wherever  the  latter  is  used  since  it  shares  the  same
+       semantics.
+
+       Since even with edge-triggered <b>epoll</b>, multiple events can be generated upon receipt of multiple chunks of
+       data, the caller has the option to specify the <b>EPOLLONESHOT</b> flag, to tell <b>epoll</b> to disable the associated
+       file  descriptor  after  the  receipt  of  an  event  with  <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2).  When the <b>EPOLLONESHOT</b> flag is
+       specified, it is the caller's responsibility  to  rearm  the  file  descriptor  using  <b><a href="../man2/epoll_ctl.2.html">epoll_ctl</a></b>(2)  with
+       <b>EPOLL_CTL_MOD</b>.
+
+       If  multiple  threads  (or  processes, if child processes have inherited the <b>epoll</b> file descriptor across
+       <b><a href="../man2/fork.2.html">fork</a></b>(2)) are blocked in <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) waiting on the same epoll file descriptor and a file descriptor  in
+       the interest list that is marked for edge-triggered (<b>EPOLLET</b>) notification becomes ready, just one of the
+       threads  (or  processes)  is awoken from <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2).  This provides a useful optimization for avoiding
+       "thundering herd" wake-ups in some scenarios.
+
+   <b>Interaction</b> <b>with</b> <b>autosleep</b>
+       If the system is in <b>autosleep</b> mode via <u>/sys/power/autosleep</u> and an event happens which wakes  the  device
+       from  sleep,  the  device driver will keep the device awake only until that event is queued.  To keep the
+       device awake until the event has been processed, it is necessary  to  use  the  <b><a href="../man2/epoll_ctl.2.html">epoll_ctl</a></b>(2)  <b>EPOLLWAKEUP</b>
+       flag.
+
+       When  the  <b>EPOLLWAKEUP</b>  flag is set in the <b>events</b> field for a <u>struct</u> <u>epoll_event</u>, the system will be kept
+       awake from the moment the event is queued, through the <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) call which returns the  event  until
+       the  subsequent  <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2)  call.  If the event should keep the system awake beyond that time, then a
+       separate <u>wake_lock</u> should be taken before the second <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) call.
+
+   <b><a href="file:/proc">/proc</a></b> <b>interfaces</b>
+       The following interfaces can be used to limit the amount of kernel memory consumed by epoll:
+
+       <u><a href="file:/proc/sys/fs/epoll/max_user_watches">/proc/sys/fs/epoll/max_user_watches</a></u> (since Linux 2.6.28)
+              This specifies a limit on the total number of file descriptors that a user can register across all
+              epoll instances on the system.  The limit is per real user ID.  Each  registered  file  descriptor
+              costs  roughly  90 bytes on a 32-bit kernel, and roughly 160 bytes on a 64-bit kernel.  Currently,
+              the default value for <u>max_user_watches</u> is 1/25 (4%) of the available low memory,  divided  by  the
+              registration cost in bytes.
+
+   <b>Example</b> <b>for</b> <b>suggested</b> <b>usage</b>
+       While  the  usage  of  <b>epoll</b> when employed as a level-triggered interface does have the same semantics as
+       <b><a href="../man2/poll.2.html">poll</a></b>(2), the edge-triggered usage requires more clarification to avoid stalls in  the  application  event
+       loop.   In  this  example,  listener  is  a  nonblocking  socket on which <b><a href="../man2/listen.2.html">listen</a></b>(2) has been called.  The
+       function <u>do_use_fd()</u> uses the new ready file descriptor until <b>EAGAIN</b> is returned  by  either  <b><a href="../man2/read.2.html">read</a></b>(2)  or
+       <b><a href="../man2/write.2.html">write</a></b>(2).   An  event-driven  state  machine application should, after having received <b>EAGAIN</b>, record its
+       current state so that at the next call to <u>do_use_fd()</u> it will continue to <b><a href="../man2/read.2.html">read</a></b>(2) or <b><a href="../man2/write.2.html">write</a></b>(2) from  where
+       it stopped before.
+
+           #define MAX_EVENTS 10
+           struct epoll_event ev, events[MAX_EVENTS];
+           int listen_sock, conn_sock, nfds, epollfd;
+
+           /* Code to set up listening socket, 'listen_sock',
+              (socket(), bind(), listen()) omitted. */
+
+           epollfd = <a href="../man0/epoll_create1.0.html">epoll_create1</a>(0);
+           if (epollfd == -1) {
+               perror("epoll_create1");
+               exit(EXIT_FAILURE);
+           }
+
+           ev.events = EPOLLIN;
+           ev.data.fd = listen_sock;
+           if (epoll_ctl(epollfd, EPOLL_CTL_ADD, listen_sock, &amp;ev) == -1) {
+               perror("epoll_ctl: listen_sock");
+               exit(EXIT_FAILURE);
+           }
+
+           for (;;) {
+               nfds = epoll_wait(epollfd, events, MAX_EVENTS, -1);
+               if (nfds == -1) {
+                   perror("epoll_wait");
+                   exit(EXIT_FAILURE);
+               }
+
+               for (n = 0; n &lt; nfds; ++n) {
+                   if (events[n].data.fd == listen_sock) {
+                       conn_sock = accept(listen_sock,
+                                          (struct sockaddr *) &amp;addr, &amp;addrlen);
+                       if (conn_sock == -1) {
+                           perror("accept");
+                           exit(EXIT_FAILURE);
+                       }
+                       setnonblocking(conn_sock);
+                       ev.events = EPOLLIN | EPOLLET;
+                       ev.data.fd = conn_sock;
+                       if (epoll_ctl(epollfd, EPOLL_CTL_ADD, conn_sock,
+                                   &amp;ev) == -1) {
+                           perror("epoll_ctl: conn_sock");
+                           exit(EXIT_FAILURE);
+                       }
+                   } else {
+                       do_use_fd(events[n].data.fd);
+                   }
+               }
+           }
+
+       When  used  as  an  edge-triggered  interface,  for  performance  reasons, it is possible to add the file
+       descriptor inside the <b>epoll</b> interface (<b>EPOLL_CTL_ADD</b>) once by specifying (<b>EPOLLIN</b>|<b>EPOLLOUT</b>).  This allows
+       you to avoid continuously switching between <b>EPOLLIN</b> and <b>EPOLLOUT</b> calling <b><a href="../man2/epoll_ctl.2.html">epoll_ctl</a></b>(2) with <b>EPOLL_CTL_MOD</b>.
+
+   <b>Questions</b> <b>and</b> <b>answers</b>
+       •  What is the key used to distinguish the file descriptors registered in an interest list?
+
+          The key is the combination of the file descriptor number and the open file description (also known  as
+          an "open file handle", the kernel's internal representation of an open file).
+
+       •  What happens if you register the same file descriptor on an <b>epoll</b> instance twice?
+
+          You  will  probably get <b>EEXIST</b>.  However, it is possible to add a duplicate (<b><a href="../man2/dup.2.html">dup</a></b>(2), <b><a href="../man2/dup2.2.html">dup2</a></b>(2), <b><a href="../man2/fcntl.2.html">fcntl</a></b>(2)
+          <b>F_DUPFD</b>) file descriptor to the same <b>epoll</b> instance.  This can be a  useful  technique  for  filtering
+          events, if the duplicate file descriptors are registered with different <u>events</u> masks.
+
+       •  Can  two  <b>epoll</b> instances wait for the same file descriptor?  If so, are events reported to both <b>epoll</b>
+          file descriptors?
+
+          Yes, and events would be reported to both.  However, careful programming may  be  needed  to  do  this
+          correctly.
+
+       •  Is the <b>epoll</b> file descriptor itself poll/epoll/selectable?
+
+          Yes.  If an <b>epoll</b> file descriptor has events waiting, then it will indicate as being readable.
+
+       •  What happens if one attempts to put an <b>epoll</b> file descriptor into its own file descriptor set?
+
+          The  <b><a href="../man2/epoll_ctl.2.html">epoll_ctl</a></b>(2)  call  fails (<b>EINVAL</b>).  However, you can add an <b>epoll</b> file descriptor inside another
+          <b>epoll</b> file descriptor set.
+
+       •  Can I send an <b>epoll</b> file descriptor over a UNIX domain socket to another process?
+
+          Yes, but it does not make sense to do this, since the receiving process would not have copies  of  the
+          file descriptors in the interest list.
+
+       •  Will closing a file descriptor cause it to be removed from all <b>epoll</b> interest lists?
+
+          Yes,  but  be  aware  of  the  following  point.   A  file  descriptor  is a reference to an open file
+          description (see <b><a href="../man2/open.2.html">open</a></b>(2)).  Whenever a file descriptor is duplicated  via  <b><a href="../man2/dup.2.html">dup</a></b>(2),  <b><a href="../man2/dup2.2.html">dup2</a></b>(2),  <b><a href="../man2/fcntl.2.html">fcntl</a></b>(2)
+          <b>F_DUPFD</b>, or <b><a href="../man2/fork.2.html">fork</a></b>(2), a new file descriptor referring to the same open file description is created.  An
+          open file description continues to exist until all file descriptors referring to it have been closed.
+
+          A  file  descriptor  is removed from an interest list only after all the file descriptors referring to
+          the underlying open file description have been closed.  This means that even after a  file  descriptor
+          that  is  part of an interest list has been closed, events may be reported for that file descriptor if
+          other file descriptors referring to the same underlying file description remain open.  To prevent this
+          happening, the file descriptor must be explicitly removed from the interest list  (using  <b><a href="../man2/epoll_ctl.2.html">epoll_ctl</a></b>(2)
+          <b>EPOLL_CTL_DEL</b>)  before  it  is  duplicated.   Alternatively, the application must ensure that all file
+          descriptors are closed (which may be difficult if file descriptors were duplicated behind  the  scenes
+          by library functions that used <b><a href="../man2/dup.2.html">dup</a></b>(2) or <b><a href="../man2/fork.2.html">fork</a></b>(2)).
+
+       •  If more than one event occurs between <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) calls, are they combined or reported separately?
+
+          They will be combined.
+
+       •  Does an operation on a file descriptor affect the already collected but not yet reported events?
+
+          You  can do two operations on an existing file descriptor.  Remove would be meaningless for this case.
+          Modify will reread available I/O.
+
+       •  Do I need to continuously read/write a file descriptor until <b>EAGAIN</b> when using the <b>EPOLLET</b> flag (edge-
+          triggered behavior)?
+
+          Receiving an event from <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) should suggest to you that such file descriptor is ready for the
+          requested I/O operation.  You must consider it ready until the next  (nonblocking)  read/write  yields
+          <b>EAGAIN</b>.  When and how you will use the file descriptor is entirely up to you.
+
+          For  packet/token-oriented  files (e.g., datagram socket, terminal in canonical mode), the only way to
+          detect the end of the read/write I/O space is to continue to read/write until <b>EAGAIN</b>.
+
+          For stream-oriented files (e.g., pipe, FIFO, stream socket), the condition  that  the  read/write  I/O
+          space  is  exhausted  can  also  be detected by checking the amount of data read from / written to the
+          target file descriptor.  For example, if you call <b><a href="../man2/read.2.html">read</a></b>(2) by asking to read a certain amount  of  data
+          and  <b><a href="../man2/read.2.html">read</a></b>(2)  returns  a lower number of bytes, you can be sure of having exhausted the read I/O space
+          for the file descriptor.  The same is true when writing using <b><a href="../man2/write.2.html">write</a></b>(2).  (Avoid this latter  technique
+          if you cannot guarantee that the monitored file descriptor always refers to a stream-oriented file.)
+
+   <b>Possible</b> <b>pitfalls</b> <b>and</b> <b>ways</b> <b>to</b> <b>avoid</b> <b>them</b>
+       •  <b>Starvation</b> <b>(edge-triggered)</b>
+
+          If  there  is  a  large amount of I/O space, it is possible that by trying to drain it the other files
+          will not get processed causing starvation.  (This problem is not specific to <b>epoll</b>.)
+
+          The solution is to maintain a ready list and mark the file descriptor as ready in its associated  data
+          structure,  thereby  allowing  the  application to remember which files need to be processed but still
+          round robin amongst all the ready files.  This also supports ignoring subsequent  events  you  receive
+          for file descriptors that are already ready.
+
+       •  <b>If</b> <b>using</b> <b>an</b> <b>event</b> <b>cache...</b>
+
+          If  you  use  an  event cache or store all the file descriptors returned from <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2), then make
+          sure to provide a way to mark its closure dynamically (i.e., caused by a previous event's processing).
+          Suppose you receive 100 events from <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2), and in event #47 a condition causes event #13 to be
+          closed.  If you remove the structure and <b><a href="../man2/close.2.html">close</a></b>(2) the file descriptor for event #13, then  your  event
+          cache might still say there are events waiting for that file descriptor causing confusion.
+
+          One  solution  for  this  is  to  call, during the processing of event 47, <b>epoll_ctl</b>(<b>EPOLL_CTL_DEL</b>) to
+          delete file descriptor 13 and <b><a href="../man2/close.2.html">close</a></b>(2), then mark its associated data structure as removed and link it
+          to a cleanup list.  If you find another event for file descriptor 13 in  your  batch  processing,  you
+          will discover the file descriptor had been previously removed and there will be no confusion.
+
+</pre><h4><b>VERSIONS</b></h4><pre>
+       Some  other  systems  provide  similar  mechanisms;  for  example,  FreeBSD  has  <u>kqueue</u>, and Solaris has
+       <u>/dev/poll</u>.
+
+</pre><h4><b>STANDARDS</b></h4><pre>
+       Linux.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Linux 2.5.44.  glibc 2.3.2.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       The set of file descriptors that is being monitored via an epoll file descriptor can be  viewed  via  the
+       entry for the epoll file descriptor in the process's <u><a href="file:/proc/">/proc/</a></u>pid<u>/fdinfo</u> directory.  See <b><a href="../man5/proc.5.html">proc</a></b>(5) for further
+       details.
+
+       The <b><a href="../man2/kcmp.2.html">kcmp</a></b>(2) <b>KCMP_EPOLL_TFD</b> operation can be used to test whether a file descriptor is present in an epoll
+       instance.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man2/epoll_create.2.html">epoll_create</a></b>(2), <b><a href="../man2/epoll_create1.2.html">epoll_create1</a></b>(2), <b><a href="../man2/epoll_ctl.2.html">epoll_ctl</a></b>(2), <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2), <b><a href="../man2/ioctl_eventpoll.2.html">ioctl_eventpoll</a></b>(2), <b><a href="../man2/poll.2.html">poll</a></b>(2), <b><a href="../man2/select.2.html">select</a></b>(2)
+
+Linux man-pages 6.9.1                              2024-06-12                                           <u><a href="../man7/epoll.7.html">epoll</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::BDD::Cucumber::Manual::Tutorial - Quick Start Guide</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-bdd-cucumber-perl">libtest-bdd-cucumber-perl_0.87-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::BDD::Cucumber::Manual::Tutorial - Quick Start Guide
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.87
+
+</pre><h4><b>Introduction</b></h4><pre>
+       In this article we're going to jump straight in to using Test::BDD::Cucumber to build some simple tests
+       for Digest, a core Perl module which provides message digests.
+
+       We'll create a "features/" directory, and put our first test case in it, "features/basic.feature" in it.
+       The contents of it are, in their entirity:
+
+        Feature: Simple tests of Digest.pm
+         As a developer planning to use Digest.pm
+         I want to test the basic functionality of Digest.pm
+         In order to have confidence in it
+
+         Background:
+           Given a usable Digest class
+
+         Scenario: Check MD5
+            This scenario verifies the MD5 hash object of Digest.pm
+           Given a Digest MD5 object
+           When I've added "foo bar baz" to the object
+           And I've added "bat ban shan" to the object
+           Then the hex output is "bcb56b3dd4674d5d7459c95e4c8a41d5"
+           Then the base64 output is "1B2M2Y8AsgTpgAmY7PhCfg"
+
+         Scenario: Check SHA-1
+            This scenario verifies the SHA-1 hash object of Digest.pm
+           Given a Digest SHA-1 object
+           When I've added "&lt;data&gt;" to the object
+           Then the hex output is "&lt;output&gt;"
+           Examples:
+             | data | output   |
+             | foo  | 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33 |
+             | bar  | 62cdb7020ff920e5aa642c3d4066950dd1f01f4d |
+             | baz  | bbe960a25ea311d21d40669e93df2003ba9b90a2 |
+
+         Scenario: MD5 longer data
+             This scenario tests multi-line input in the MD5 hash object
+           Given a Digest MD5 object
+           When I've added the following to the object
+             """
+             Here is a chunk of text that works a bit like a HereDoc. We'll split
+             off indenting space from the lines in it up to the indentation of the
+             first \"\"\"
+             """
+           Then the hex output is "75ad9f578e43b863590fae52d5d19ce6"
+
+       This is a complete test, and if you run pherkin against it, you will get sane output! It just doesn't do
+       anything ... yet.
+
+       In the "features/" we'll add a "step_definitions/" directory, and add our first (and again, only) step
+       definitions "features/step_definitions/basic_steps.pl" file in it:
+
+        #!perl
+
+        use strict;
+        use warnings;
+
+        use Test2::Bundle::More;
+        use Test::BDD::Cucumber::StepFile;
+
+        Given qr/a usable (\S+) class/, sub { eval "use $1;" };
+        Given qr/a Digest (\S+) object/, sub {
+           my $object = Digest-&gt;new($1);
+           ok( $object, "Object created" );
+           S-&gt;{'object'} = $object;
+        };
+
+        When qr/I've added "(.+)" to the object/, sub {
+           S-&gt;{'object'}-&gt;add( $1 );
+        };
+
+        When "I've added the following to the object", sub {
+           S-&gt;{'object'}-&gt;add( C-&gt;data );
+        };
+
+        Then qr/the (.+) output is "(.+)"/, sub {
+           my $method = {base64 =&gt; 'b64digest', 'hex' =&gt; 'hexdigest' }-&gt;{ $1 } ||
+               do { fail("Unknown output type $1"); return };
+           is( S-&gt;{'object'}-&gt;$method, $2 );
+        };
+
+        # Note: There's no C&lt;done_testing;&gt; at the end of the step file. This is
+        #       intentional.
+
+       When you run pherkin or the Test::Builder-based test which does the same thing (900_run_features.t
+       &lt;https://github.com/pherkin/test-bdd-cucumber-perl/blob/master/t/900_run_features.t&gt;), we look for a
+       "features/" directory, and search for step definitions files (matched by "*_steps.pl") and feature files
+       (matched by "*.feature").
+
+       The step matchers (the code that starts with "Given", "When" and "Then") are all loaded, and then we
+       execute the feature files one by one. Let's step through the feature file, and look at how it matches up
+       to the step definitions file.
+
+</pre><h4><b>Name</b> <b>and</b> <b>conditions</b> <b>of</b> <b>satisfaction</b></h4><pre>
+        Feature: Simple tests of Digest.pm
+         As a developer planning to use Digest.pm
+         I want to test the basic functionality of Digest.pm
+         In order to have confidence in it
+
+       The first non-comment line of your feature file is a description of what you intend to do. You need to
+       start the name itself with the string "Feature:", and that should be the first line of your file, save
+       comments (denoted by #).
+
+       Anything after that before the next new-line are your conditions of satisfaction. These aren't parsed,
+       they're treated as human-readable text, and by convention, they're a user story
+       &lt;<a href="http://en.wikipedia.org/wiki/User_story">http://en.wikipedia.org/wiki/User_story</a>&gt;.
+
+</pre><h4><b>Background</b></h4><pre>
+         Background:
+           Given a usable Digest class
+
+       Next up, we have the Background section. The Background is a special kind of Scenario that doesn't have
+       an explicit name, and should occur only once in your feature file. Its steps are run before the steps of
+       every other scenario - the harnesses distributed with this distro won't display the Background section
+       separately, they'll just subsume the steps in to the other scenarios.
+
+       This is matched by:
+
+        Given qr/a usable (\S+) class/, sub { use_ok( $1 ); };
+
+       Given() is a function exported by Test::BDD::Cucumber::StepFile that accepts two arguments: a regular
+       expression (or a string when you don't need to do any smart matching) and a coderef.
+
+       If you're paying attention, you might notice that "use_ok" comes from Test::More. <b>Each</b> <b>step</b> <b>is</b> <b>run,</b> <b>from</b>
+       <b>a</b> Test::Builder <b>perspective,</b> <b>as</b> <b>its</b> <b>own</b> <b>distinct</b> <b>test</b> <b>file</b>. This happens seamlessly, so you can use any
+       Test::Builder-based testing tools in your step definitions without really worrying about it. There's some
+       more detail in Test::BDD::Cucumber::Manual::Steps.
+
+</pre><h4><b>The</b> <b>First</b> <b>Scenario...</b></h4><pre>
+         Scenario: Check MD5
+            This scenario verifies the MD5 hash object of Digest.pm
+           Given a Digest MD5 object
+           When I've added "foo bar baz" to the object
+           And I've added "bat ban shan" to the object
+           Then the hex output is "bcb56b3dd4674d5d7459c95e4c8a41d5"
+           Then the base64 output is "1B2M2Y8AsgTpgAmY7PhCfg"
+
+       The first scenario is delimited from the previous steps by a blank line, and it's called <u>Check</u> <u>MD5</u>.
+       Scenarios are marked out using the "Scenario:" keyword, and just like the Background section before, it's
+       a series of steps.
+
+       Between the "Scenario:" line and the step lines, there's a description. Any line starting with one of the
+       step keywords ("Given", "When" or "Then") is considered to terminate the description block (to start the
+       group of step lines).
+
+       The steps rely on the step before, which means we can examine the Test::BDD::Cucumber::StepContext object
+       $c a little more closely.
+
+        Given qr/a Digest (\S+) object/, sub {
+           my $c = shift;
+
+           my $object = Digest-&gt;new($1);
+           ok( $object, "Object created" );
+           $c-&gt;stash-&gt;{'scenario'}-&gt;{'object'} = $object;
+        };
+
+       Creates a step definition. We create a new Digest object, and then use Test::More's ok() function to
+       check that worked. We then put it in the <u>stash</u> for other steps to use. There are three stashes documented
+       in Test::BDD::Cucumber::StepContext, "feature", "scenario" and "step". As you might expect, "feature" is
+       available to all step definitions that are being executed as part of a feature, and "scenario" is
+       available to all steps that are being executed as part of a scenario.
+
+       The context is the single argument that gets passed to each step, and it contains evertything that step
+       should need to execute. We'll be looking at some of the methods you can call against it as we look at
+       other steps, and you can find complete documentation for it here: Test::BDD::Cucumber::StepContext.
+
+       You'll note that the code above differs from the very first example, where we made use of "C" and "S".
+       "C" is a function which returns the current context, and "S" is a function which returns the scenario
+       stash. So the above can be written:
+
+        Given qr/a Digest (\S+) object/, sub {
+           my $object = Digest-&gt;new($1);
+           ok( $object, "Object created" );
+           S-&gt;{'object'} = $object;
+        };
+
+       This scenario also introduce several ways of starting a step, <u>Given</u>, <u>When</u>, and <u>Then</u>, as well as <u>And</u>.
+       These are used to organize steps by type, with <u>Given</u> tending to describe setup steps, <u>When</u> describing the
+       key actions that you're testing, and <u>Then</u> describing the outputs you're looking for. You can find more on
+       this here: &lt;https://github.com/cucumber/cucumber/wiki/Given-When-Then&gt;.
+
+       A step definition you've declared with <u>Given</u> <b>will</b> <b>not</b> match a step starting with <b>Then</b>. You can use the
+       keyword <u>Step</u> to declare general matching steps in your step definition files, although it's considered
+       bad practice.
+
+       Finally, the keywords <u>And</u> and <u>But</u> are simply replaced with the verb on the line before them.
+
+</pre><h4><b>Scenario</b> <b>Outlines</b></h4><pre>
+         Scenario: Check SHA-1
+            This scenario verifies the SHA-1 hash object of Digest.pm
+           Given a Digest SHA-1 object
+           When I've added "&lt;data&gt;" to the object
+           Then the hex output is "&lt;output&gt;"
+           Examples:
+             | data | output   |
+             | foo  | 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33 |
+             | bar  | 62cdb7020ff920e5aa642c3d4066950dd1f01f4d |
+             | baz  | bbe960a25ea311d21d40669e93df2003ba9b90a2 |
+
+       The next scenario adds one of the three ways you can provide structured data to your steps, using
+       placeholders and a table. This scenario is run three times, one for each table row, and with the "
+       &lt;placeholders" &gt; being replaced by the appropriate row's column. These are called Scenario Outlines
+       &lt;https://github.com/cucumber/cucumber/wiki/Scenario-outlines&gt;.
+
+       One scenario outline can have multiple "Examples", e.g.
+
+         Scenario: Check SHA-1
+            This scenario verifies the SHA-1 hash object of Digest.pm
+           Given a Digest SHA-1 object
+           When I've added "&lt;data&gt;" to the object
+           Then the hex output is "&lt;output&gt;"
+           Examples: 'foo' example
+               This is the 'foo' examples
+               description block.
+             | data | output   |
+             | foo  | 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33 |
+
+           Examples: other examples
+               This description block describes
+               the other examples.
+             | data | output   |
+             | bar  | 62cdb7020ff920e5aa642c3d4066950dd1f01f4d |
+             | baz  | bbe960a25ea311d21d40669e93df2003ba9b90a2 |
+
+</pre><h4><b>Multiline</b> <b>Step</b> <b>Arguments</b></h4><pre>
+         Scenario: MD5 longer data
+             This scenario tests multi-line input in the MD5 hash object
+           Given a Digest MD5 object
+           When I've added the following to the object
+             """
+             Here is a chunk of text that works a bit like a HereDoc. We'll split
+             off indenting space from the lines in it up to the indentation of the
+             first \"\"\"
+             """
+           Then the hex output is "75ad9f578e43b863590fae52d5d19ce6"
+
+       While before we were looking at structured data on a Scenario level, we can also provide it on a Step
+       level, in two ways. Firstly, we can provide multi-line strings, as above, using a feature that is
+       syntactically similar to "pystring"s, and conceptually similar to HEREDOCs. The contents of the string
+       will be available to the step definition via the data() method of the <u>context</u>:
+
+        When "I've added the following to the object", sub {
+           S-&gt;{'object'}-&gt;add( C-&gt;data );
+        };
+
+       While we don't have an example of it here, you can also provide tables to your steps, which will also be
+       available via data():
+
+        Scenario: Sort Employees
+          Given a set of employees
+            | name  | wage   | hair color |
+            | Peter | 10,000 | brown      |
+            | John  | 20,000 | blond      |
+            | Joan  | 30,000 | green      |
+
+       You can find out more about these features in the Cucumber documentation here:
+       &lt;https://github.com/cucumber/cucumber/wiki/Multiline-Step-Arguments&gt;.
+
+</pre><h4><b>Conditional</b> <b>execution</b> <b>and</b> <b>tags</b></h4><pre>
+       There are times when only a subset of the scenarios in a feature should be run. To that end, "pherkin"
+       (like "cucumber") has a command line option to select the set of scenarios to be run, based on "tags".
+
+       These tags can be inserted in a scenario before the "Feature" line, before the "Scenario" line and before
+       the "Examples" line. Tags are cumulative: tags on a feature are applied to all scenarios and examples.
+
+       Here's the initial example from the tutorial with tags added.
+
+        @feature-tag1 @feature-tag2
+        Feature: Simple tests of Digest.pm
+         As a developer planning to use Digest.pm
+         I want to test the basic functionality of Digest.pm
+         In order to have confidence in it
+
+         Background:
+           Given a usable Digest class
+
+         @scenario-tag
+         Scenario: Check SHA-1
+            This scenario verifies the SHA-1 hash object of Digest.pm
+           Given a Digest SHA-1 object
+           When I've added "&lt;data&gt;" to the object
+           Then the hex output is "&lt;output&gt;"
+
+           @daily-tests-tag
+           Examples: 'foo' example
+               This is the 'foo' examples
+               description block.
+             | data | output   |
+             | foo  | 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33 |
+
+           @weekly-tests-tag
+           Examples: other examples
+               This description block describes
+               the other examples.
+             | data | output   |
+             | bar  | 62cdb7020ff920e5aa642c3d4066950dd1f01f4d |
+             | baz  | bbe960a25ea311d21d40669e93df2003ba9b90a2 |
+
+       In order to run all scenarios, except the weekly tests, run:
+
+         pherkin --tags=~@weekly-tests-tag
+
+       In order to run all scenarios marked with "@feature-tag1" except the weekly tests, run:
+
+         pherkin --tags=@feature-tag1 --tags=~@weekly-tests-tag
+
+       In order to run all scenarios marked with "@feature-tag1" as well as those marked with "@feature-tag2",
+       run:
+
+         pherkin --tags=@feature-tag1,@feature-tag2
+
+</pre><h4><b>Non-English</b> <b>features</b> <b>and</b> <b>step</b> <b>files</b></h4><pre>
+       By default, pherkin expects your features and step definitions to be written in English.  Since feature
+       files are mainly used for communication within your team, you might want to use your native language. To
+       see a list of the languages you can used, ask pherkin what languages are supported:
+
+        &gt; pherkin --i18n help
+        | af        | Afrikaans           | Afrikaans         |
+        | ar        | Arabic              | العربية           |
+        | bg        | Bulgarian           | български         |
+        | bm        | Malay               | Bahasa Melayu     |
+        | ca        | Catalan             | català            |
+        ...
+
+       To see which keywords (and sub names) to use, ask pherkin about a specific language:
+
+        &gt; pherkin --i18n de
+        | feature          | "Funktionalität"                             |
+        | background       | "Grundlage"                                  |
+        | scenario         | "Szenario"                                   |
+        | scenarioOutline  | "Szenariogrundriss"                          |
+        | examples         | "Beispiele"                                  |
+        | given            | "Angenommen", "Gegeben sei", "Gegeben seien" |
+        | when             | "Wenn"                                       |
+        | then             | "Dann"                                       |
+        | and              | "Und"                                        |
+        | but              | "Aber"                                       |
+        | given (code)     | "Angenommen", "Gegebensei", "Gegebenseien"   |
+        | when (code)      | "Wenn"                                       |
+        | then (code)      | "Dann"                                       |
+
+       The last three lines of this list show you which sub names to use in your step file.  Head over to the
+       <u>i18n</u> directory for some examples.
+
+</pre><h4><b>Next</b> <b>Steps...</b></h4><pre>
+       That's the tutorial done! You can find out more about writing steps in
+       Test::BDD::Cucumber::Manual::Steps, the documentation for our simple command-line tool in App::pherkin,
+       and how to integrate with Test::Builder in Test::BDD::Cucumber::Manual::Integration.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Peter Sergeant "<a href="mailto:pete@clueball.com">pete@clueball.com</a>"
+
+</pre><h4><b>LICENSE</b></h4><pre>
+         Copyright 2019-2023, Erik Huelsmann
+         Copyright 2011-2019, Peter Sergeant; Licensed under the same terms as Perl
+
+perl v5.40.1                                       2025-05-29              <u>Test::BDD::Cuc...anual::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

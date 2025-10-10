@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::Contract - Design-by-Contract OO in Perl.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-contract-perl">libclass-contract-perl_1.14-9_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::Contract - Design-by-Contract OO in Perl.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 1.10 of Class::Contract, released February  9, 2001.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package ClassName
+           use Class::Contract;
+
+           contract {
+             inherits 'BaseClass';
+
+             invar { ... };
+
+             attr 'data1';
+             attr 'data2' =&gt; HASH;
+
+             class attr 'shared' =&gt; SCALAR;
+
+             ctor 'new';
+
+             method 'methodname';
+               pre  { ... };
+                 failmsg 'Error message';
+
+               post  { ... };
+                 failmsg 'Error message';
+
+               impl { ... };
+
+             method 'nextmethod';
+               impl { ... };
+
+             class method 'sharedmeth';
+               impl { ... };
+
+             # etc.
+           };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Background</b>
+       Design-by-contract is a software engineering technique in which each module of a software system
+       specifies explicitly what input (or data or arguments) it requires, and what output (or information or
+       results) it guarantees to produce in response.
+
+       These specifications form the "clauses" of a contract between a module and the client software that uses
+       it. If the client software abides by the input requirements, the module guarantees to produce the correct
+       output. Hence by verifying these clauses at each interaction with a module, the overall behaviour of the
+       system can be confidently predicted.
+
+       Design-by-contract reinforces the benefits of modular design techniques by inserting explicit compile-
+       time or run-time checks on a contract.  These checks are most often found in object-oriented languages
+       and are typically implemented as pre-conditions and post-conditions on methods, and invariants on
+       classes.
+
+       Note that these features differ from simple verification statements such as the C "assert" statement.
+       Conditions and invariants are properties of a class, and are inherited by derived classes.
+
+       An additional capacity that is often provided in design-by-contract systems is the ability to selectively
+       disable checking in production code. This allows the contractual testing to be carried out during
+       implementation, without impinging on the performance of the final system.
+
+   <b>Adding</b> <b>design-by-contract</b> <b>to</b> <b>Perl</b>
+       The Class::Contract module provides a framework for specifying methods and attributes for a class (much
+       like the existing class definition modules Class::Struct, Class::MethodMaker, and Class::Generate).
+       Class::Contract allows both per-object and per-class methods and attributes to be defined. Attributes may
+       be scalar-, array-, hash-, or object-based.
+
+       Class::Contract differs from other class-specification modules (except Class::Generate) in that it also
+       provides the ability to specify invariant conditions on classes, and pre- and post-conditions on methods
+       and attributes. All of these clauses are fully inheritable, and may be selectively disabled. It differs
+       from all other modules in that it has a cleaner, simpler specification syntax, and -- more importantly --
+       it enforces encapsulation of object attributes, thereby ensuring that the class contract cannot be
+       subverted.
+
+   <b>Defining</b> <b>classes</b>
+       Class::Contract provides an explicit syntax for defining the attributes, methods, and constructors of a
+       class. The class itself is defined using the "contract" subroutine. "contract" takes a single argument --
+       a subroutine reference or a block. That block is executed once and the results used to construct and
+       install the various components of the class in the current package:
+
+               package Queue;
+               contract {
+                 # specification of class Queue attributes and methods here
+               };
+
+   <b>Defining</b> <b>attributes</b>
+       Attributes are defined within the "contract" block via the "attr" subroutine.  Attributes must be given a
+       name, and may also be given a type: "SCALAR", "ARRAY", "HASH", or a class name:
+
+               contract {
+                       attr 'last';                   # Scalar attribute (by default)
+                       attr 'lest' =&gt; SCALAR;         # Scalar attribute
+                       attr 'list' =&gt; ARRAY;          # Array attribute
+                       attr 'lost' =&gt; HASH;           # Hash attribute
+                       attr 'lust' =&gt; MyClass;        # Object attribute
+               };
+
+       For each attribute so declared, Class::Contract creates an <u>accessor</u> -- a method that returns a reference
+       to the attribute in question. Code using these accessors might look like this:
+
+               ${$obj-&gt;last}++;
+               push @{$obj-&gt;list}, $newitem;
+               print $obj-&gt;lost-&gt;{'marbles'};
+               $obj-&gt;lust-&gt;after('technology stocks');
+
+       Attributes are normally object-specific, but it is also possible to define attributes that are shared by
+       all objects of a class. Class objects are specified by prefixing the call to "attr" with a call to the
+       "class" subroutine:
+
+               class Queue;
+               contract {
+                       class attr 'obj_count';
+               };
+
+       The accessor for this shared attribute can now be called either as an object method:
+
+               print ${$obj-&gt;obj_count};
+
+       or as a class method:
+
+               print ${Queue-&gt;obj_count};
+
+       In order to ensure that the clauses of a class' contract (see below) are honoured, both class and object
+       attributes are only accessible via their accessors, and those accessors may only be called within methods
+       belonging to the same class hierarchy. Objects are implemented as "flyweight scalars" in order to ensure
+       this strict encapsulation is preserved.
+
+   <b>Defining</b> <b>methods</b>
+       Methods are defined in much the same way as attributes. The "method" subroutine is used to specify the
+       name of a method, then the "impl" subroutine is used to provide an implementation for it:
+
+               contract {
+                       attr list =&gt; ARRAY;
+
+                       method 'next';
+                           impl { shift @{self-&gt;list} };
+
+                       method 'enqueue';
+                           impl { push @{self-&gt;list}, $_[1] };
+               };
+
+       "impl" takes a block (or a reference to a subroutine), which is used as the implementation of the method
+       named by the preceding "method" call.  Within that block, the subroutine "self" may be used to return a
+       reference to the object on which the method was called. Unlike, regular OO Perl, the object reference is
+       not passed as the method's first argument.  (Note: this change occurred in version 1.10)
+
+       Like attributes, methods normally belong to -- and are accessed via -- a specific object. To define
+       methods that belong to the entire class, the "class" qualifier is once again used:
+
+               contract {
+                       class attr 'obj_count';
+
+                       class method 'inc_count';
+                               impl { ${self-&gt;obj_count}++ };
+               };
+
+       Note that the "self" subroutine can still be used -- within a class method it returns the appropriate
+       class name, rather than an object reference.
+
+   <b>Defining</b> <b>constructors</b>
+       Class::Contract requires constructors to be explicitly defined using the "ctor" subroutine:
+
+               contract {
+                       ctor 'new';
+                           impl { @{self-&gt;list} = ( $_[0] ) }
+               };
+
+       Note that the implementation section of a constructor <u>doesn't</u> specify code to build or bless the new
+       object. That is taken care of automatically (in order to ensure the correct "flyweight" implementation of
+       the object).
+
+       Instead, the constructor implementation is invoked <u>after</u> the object has been created and blessed into the
+       class. Hence the implementation only needs to initialize the various attributes of the "self" object.  In
+       addition, the return value of the implementation is ignored: constructor calls always return a reference
+       to the newly created object.
+
+       Any attribute that is not initialized by a constructor is automatically "default initialized". By
+       default, scalar attributes remain "undef", array and hash attributes are initialized to an empty array or
+       hash, and object attributes are initialized by having their "new" constructor called (with no arguments).
+       This is the only reasonable default for object attributes, but it is usually advisable to initialize them
+       explicitly in the constructor.
+
+       It is also possible to define a "class constructor", which may be used to initialize class attributes:
+
+               contract {
+                       class attr 'obj_count';
+
+                       class ctor;
+                               impl { ${self-&gt;obj_count} = 0 };
+               };
+
+       The class constructor is invoked at the very end of the call to "contract" in which the class is defined.
+
+       Note too that the class constructor does not require a name. It may, however, be given one, so that it
+       can be explicitly called again (as a class method) later in the program:
+
+               class MyClass;
+               contract {
+                       class attr 'obj_count';
+
+                       class ctor 'reset';
+                               impl { ${self-&gt;obj_count} = 0 };
+               };
+
+               # and later...
+
+               MyClass-&gt;reset;
+
+   <b>Defining</b> <b>destructors</b>
+       Destructors are also explicitly defined under Class::Contract, using the "dtor" subroutine:
+
+               contract {
+                       dtor;
+                           impl { print STDLOG "Another object died\n" }
+               };
+
+       As with the constructor, the implementation section of a destructor doesn't specify code to clean up the
+       "flyweight" implementation of the object. Class::Contract takes care of that automatically.
+
+       Instead, the implementation is invoked <u>before</u> the object is deallocated, and may be used to clean up any
+       of the internal structure of the object (for example to break reference cycles).
+
+       It is also possible to define a "class destructor", which may be used to clean up class attributes:
+
+               contract {
+                       class attr 'obj_count';
+
+                       class dtor;
+                           impl { print STDLOG "Total was ${self-&gt;obj_count}\n" };
+               };
+
+       The class destructor is invoked from an "END" block within Class::Contract (although the implementation
+       itself is a closure, so it executes in the namespace of the original class).
+
+   <b>Constraining</b> <b>class</b> <b>elements</b>
+       As described so far, Class::Contract doesn't provide any features that differ greatly from those of any
+       other class definition module. But Class::Contract does have one significant difference: it allows the
+       class designer to specify "clauses" that implement and enforce a contract on the class's interface.
+
+       Contract clauses are specified as labelled blocks of code, associated with a particular class, method, or
+       attribute definition.
+
+   <b>Class</b> <b>invariants</b>
+       Classes may be given <u>invariants</u>: clauses than must be satisfied at the end of any method call that is
+       invoked from outside the class itself. For example, to specify that a class's object count attribute must
+       never fall below zero:
+
+               contract {
+                       invar { ${self-&gt;obj_count} &gt;= 0 };
+               };
+
+       The block following "invar" is treated as if it were a class method that is automatically invoked after
+       every other method invocation. If the method returns false, "croak" is invoked with the error message:
+       'Class invariant at %s failed' (where the '%s' is replaced by the file and line number at which the
+       invariant was defined).
+
+       This error message can be customized, using the "failmsg" subroutine:
+
+               contract {
+                       invar { ${self-&gt;obj_count} &gt;= 0 };
+                           failmsg 'Anti-objects detected by invariant at %s';
+               };
+
+       Once again, the '%s' is replaced by the appropriate file name and line number. A "failmsg" can be
+       specified after other types of clause too (see below).
+
+       A class may have as many invariants as it requires, and they may be specified anywhere throughout the the
+       body of the "contract".
+
+   <b>Attribute</b> <b>and</b> <b>method</b> <b>pre-</b> <b>and</b> <b>post-conditions</b>
+       Pre- and post-conditions on methods and attributes are specified using the "pre" and "post" subroutines
+       respectively.
+
+       For attributes, pre-conditions are called before the attribute's accessor is invoked, and post-conditions
+       are called after the reference returned by the accessor is no longer accessible. This is achieved by
+       having the accessor return a tied scalar whose "DESTROY" method invokes the post-condition.
+
+       Method pre-conditions are tested before their method's implementation is invoked; post-conditions are
+       tested after the implementation finishes (but before the method's result is returned). Constructors are
+       (by definition) class methods and may have pre- and post-conditions, just like any other method.
+
+       Both types of condition clause receive the same argument list as the accessor or method implementation
+       that they constrain. Both are expected to return a false value if they fail:
+
+               contract {
+                       class attr 'obj_count';
+                           post { ${&amp;value} &gt; 0 };
+                             failmsg 'Anti-objects detected by %s';
+
+                       method 'inc_count';
+                           post { ${self-&gt;obj_count} &lt; 1000000 };
+                             failmsg 'Too many objects!';
+                           impl { ${self-&gt;obj_count}++ };
+               };
+
+       Note that within the pre- and post-conditions of an attribute, the special "value" subroutine returns a
+       reference to the attribute itself, so that conditions can check properties of the attribute they guard.
+
+       Methods and attributes may have as many distinct pre- and post-conditions as they require, specified in
+       any convenient order.
+
+   <b>Checking</b> <b>state</b> <b>changes.</b>
+       Post-conditions and invariants can access the previous state of an object or the class, via the "old"
+       subroutine. Within any post-condition or invariant, this subroutine returns a reference to a copy of the
+       object or class state, as it was just before the current method or accessor was called.
+
+       For example, an "append" method might use "old" to verify the appropriate change in size of an object:
+
+               contract {
+                   method 'append';
+                       post { @{self-&gt;queue} == @{old-&gt;queue} + @_ }
+                       impl { push @{self-&gt;queue}, @_ };
+               };
+
+       Note that the implementation's return value is also available in the method's post-condition(s) and the
+       class's invariants, through the subroutine "value". In the above example, the implementation of "append"
+       returns the new size of the queue (i.e. what "push" returns), so the post-condition could also be
+       written:
+
+               contract {
+                   method 'append';
+                       post { ${&amp;value} == @{old-&gt;queue} + @_ }
+                       impl { push @{self-&gt;queue}, @_ };
+               };
+
+       Note that "value" will return a reference to a scalar or to an array, depending on the context in which
+       the method was originally called.
+
+   <b>Clause</b> <b>control</b>
+       Any type of clause may be declared optional:
+
+               contract {
+                       optional invar { @{self-&gt;list} &gt; 0 };
+                       failmsg 'Empty queue detected at %s after call';
+               };
+
+       By default, optional clauses are still checked every time a method or accessor is invoked, but they may
+       also be switched off (and back on) at run-time, using the "check" method:
+
+               local $_ = 'Queue';         # Specify in $_ which class to disable
+               check my %contract =&gt; 0;    # Disable optional checks for class Queue
+
+       This (de)activation is restricted to the scope of the hash that is passed as the first argument to
+       "check". In addition, the change only affects the class whose name is held in the variable $_ at the time
+       "check" is called.  This makes it easy to (de)activate checks for a series of classes:
+
+               check %contract =&gt; 0 for qw(Queue PriorityQueue DEQueue);  # Turn off
+               check %contract =&gt; 1 for qw(Stack PriorityStack Heap);     # Turn on
+
+       The special value '__ALL__' may also be used as a (pseudo-)class name:
+
+               check %contract =&gt; 0 for __ALL__;
+
+       This enables or disables checking on every class defined using Class::Contract. But note that only
+       clauses that were originally declared "optional" are affected by calls to "check". Non-optional clauses
+       are <u>always</u> checked.
+
+       Optional clauses are typically universally disabled in production code, so Class::Contract provides a
+       short-cut for this. If the module is imported with the single argument 'production', optional clauses are
+       universally and irrevocably deactivated. In fact, the "optional" subroutine is replaced by:
+
+               sub Class::Contract::optional {}
+
+       so that optional clauses impose no run-time overhead at all.
+
+       In production code, contract checking ought to be disabled completely, and the requisite code optimized
+       away.  To do that, simply change:
+
+         use Class::Contract;
+
+       to
+
+         use Class::Contract::Production;
+
+   <b>Inheritance</b>
+       The semantics of class inheritance for Class::Contract classes differ in several respects from those of
+       normal object-oriented Perl.
+
+       To begin with, classes defined using Class::Contract have a <u>static</u> <u>inheritance</u> <u>hierarchy</u>. The inheritance
+       relationships of contracted classes are defined using the "inherits" subroutine within the class's
+       "contract" block:
+
+               package PriorityQueue;
+               contract {
+                       inherits qw( Queue OrderedContainer );
+               };
+
+       That means that ancestor classes are fixed at compile-time (rather than being determined at run-time by
+       the @ISA array). Note that multiple inheritance is supported.
+
+       Method implementations are only inherited if they are not explicitly provided. As with normal OO Perl, a
+       method's implementation is inherited from the left-most ancestral class that provides a method of the
+       same name (though with Class::Contract, this is determined at compile-time).
+
+       Constructors are a special case, however. Their "constructive" behaviour is always specific to the
+       current class, and hence involves no inheritance under any circumstances. However, the "initialising"
+       behaviour specified by a constructor's "impl" block <u>is</u> inherited. In fact, the implementations of <u>all</u>
+       base class constructors are called automatically by the derived class constructor (in left-most, depth-
+       first order), and passed the same argument list as the invoked constructor. This behaviour is much more
+       like that of other OO programming languages (for example, Eiffel or C++).
+
+       Methods in a base class can also be declared as being <u>abstract</u>:
+
+               contract {
+                   abstract method 'remove';
+                       post { ${self-&gt;count} == ${old-&gt;count}-1 };
+               };
+
+       Abstract methods act like placeholders in an inheritance hierarchy.  Specifically, they have no
+       implementation, existing only to reserve the name of a method and to associate pre- and post-conditions
+       with it.
+
+       An abstract method cannot be directly called (although its associated conditions may be). If such a
+       method is ever invoked, it immediately calls "croak". Therefore, the presence of an abstract method in a
+       base class requires the derived class to redefine that method, if the derived class is to be usable. To
+       ensure this, any constructor built by Class::Contract will refuse to create objects belonging to classes
+       with abstract methods.
+
+       Methods in a base class can also be declared as being <u>private</u>:
+
+               contract {
+                   private method 'remove';
+                       impl { pop @{self-&gt;queue} };
+               };
+
+       Private methods may only be invoked by the class or one of its descendants.
+
+   <b>Inheritance</b> <b>and</b> <b>condition</b> <b>checking</b>
+       Attribute accessors and object methods inherit <u>all</u> post-conditions of every ancestral accessor or method
+       of the same name. Objects and classes also inherit all invariants from any ancestor classes. That is,
+       methods accumulate all the post- and invariant checks that their ancestors performed, as well as any new
+       ones they define for themselves, and must satisfy <u>all</u> of them in order to execute successfully.
+
+       Pre-conditions are handled slightly differently. The principles of design-by-contract programming state
+       that pre-conditions in derived classes can be no stronger than those in base classes (and may well be
+       weaker). In other words, a derived class must handle every case that its base class handled, but may
+       choose to handle other cases as well, by being less demanding regarding its pre-conditions.
+
+       Meyers suggests an efficient way to achieve this relaxation of constraints without the need for detailed
+       logical analysis of pre-conditions. His solution is to allow a derived class method or accessor to run if
+       <u>either</u> the pre-conditions it inherits are satisfied <u>or</u> its own pre-conditions are satisfied. This is
+       precisely the semantics that Class::Contract uses when checking pre-conditions in derived classes.
+
+   <b>A</b> <b>complete</b> <b>example</b>
+       The following code implements a PriorityStack class, in which elements pushed onto the stack "sink" until
+       they encounter an element with lower priority.  Note the use of "old" to check that object state has
+       changed correctly, and the use of explicit dispatch (e.g. "self-&gt;Stack::pop") to invoke inherited methods
+       from the derived-class methods that redefine them.
+
+               package PriorityStack;
+               use Class::Contract;
+
+               contract {
+                   # Reuse existing implementation...
+                   inherits 'Stack';
+
+                   # Name the constructor (nothing special to do, so no implementation)
+                   ctor 'new';
+
+                   method 'push';
+                       # Check that data to be added is okay...
+                       pre  { defined $_[0] };
+                           failmsg 'Cannot push an undefined value';
+                       pre  { $_[1] &gt; 0 };
+                           failmsg 'Priority must be greater than zero';
+
+                       # Check that push increases stack depth appropriately...
+                       post { self-&gt;count == old-&gt;count+1 };
+
+                       # Check that the right thing was left on top...
+                       post { old-&gt;top-&gt;{'priority'} &lt;= self-&gt;top-&gt;{'priority'} };
+
+                       # Implementation reuses inherited methods: pop any higher
+                       # priority entries, push the new entry, then re-bury it...
+                       impl {
+                           my ($newval, $priority) = @_[0,1];
+                           my @betters;
+                           unshift @betters, self-&gt;Stack::pop
+                               while self-&gt;count
+                                  &amp;&amp; self-&gt;Stack::top-&gt;{'priority'} &gt; $priority;
+                           self-&gt;Stack::push( {'val'=&gt;$newval, priority=&gt;$priority} );
+                           self-&gt;Stack::push( $_ )  foreach @betters;
+                       };
+
+                   method 'pop';
+                       # Check that pop decreases stack depth appropriately...
+                       post { self-&gt;count == old-&gt;count-1 };
+
+                       # Reuse inherited method...
+                       impl {
+                           return  unless self-&gt;count;
+                           return self-&gt;Stack::pop-&gt;{'val'};
+                       };
+
+                   method 'top';
+                       post { old-&gt;count == self-&gt;count }
+                       impl {
+                           return  unless self-&gt;count;
+                           return self-&gt;Stack::top-&gt;{'val'};
+                       };
+               };
+
+</pre><h4><b>FUTURE</b> <b>WORK</b></h4><pre>
+       Future work on Class::Contract will concentrate on three areas:
+
+       1.  Improving the attribute accessor mechanism
+           Lvalue  subroutines  will  be  introduced  in  perl version 5.6. They will allow a return value to be
+           treated as an alias for the (scalar) argument of a "return" statement. This will make it possible  to
+           write  subroutines  whose  return  value  may  be  assigned  to (like the built-in "pos" and "substr"
+           functions).
+
+           In the absence of this feature, Class::Contract accessors of all types return a  reference  to  their
+           attribute, which then requires an explicit dereference:
+
+                   ${self-&gt;value} = $newval;
+                   ${self-&gt;access_count}++;
+
+           When  this  feature  is  available, accessors for scalar attributes will be able to return the actual
+           attribute itself as an lvalue. The above code would then become cleaner:
+
+                   self-&gt;value = $newval;
+                   self-&gt;access_count++;
+
+       2.  Providing better software engineering tools.
+           Contracts make the consequences of inheritance harder to predict, since they  significantly  increase
+           the amount of ancestral behaviour (i.e.  contract clauses) that a class inherits.
+
+           Languages  such as Eiffel provide useful tools to help the software engineer make sense of this extra
+           information. In particular, Eiffel provides two alternate ways of inspecting a  particular  class  --
+           flat form and short form.
+
+           "Flattening"  a  class  produces an equivalent class definition without any inheritance. That is, the
+           class is modified by making explicit all the  attributes,  methods,  conditions,  and  invariants  it
+           inherits  from  other classes. This allows the designer to see every feature a class possesses in one
+           location.
+
+           "Shortening" a class, takes the existing class definition and removes all implementation  aspects  of
+           it  --  that  is, those that have no bearing on its public interface. A shortened representation of a
+           class therefore has all attribute specifications and method implementations removed.  Note  that  the
+           two  processes  can be concatenated: shortening a flattened class produces an explicit listing of its
+           complete public interface. Such a representation can be profitably used as a  basis  for  documenting
+           the class.
+
+           It  is envisaged that Class::Contract will eventually provide a mechanism to produce equivalent class
+           representations in Perl.
+
+       3.  Offering better facilities for retrofitting contracts.
+           At present, adding contractual clauses to an existing class requires a  major  restructuring  of  the
+           original  code.  Clearly,  if  design-by-contract  is  to gain popularity with Perl programmers, this
+           transition cost must be minimized.
+
+           It is as yet unclear how this might be accomplished, but  one  possibility  would  be  to  allow  the
+           implementation  of  certain  parts  of  a  Class::Contract  class (perhaps even the underlying object
+           implementation itself) to be user-defined.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway (<a href="mailto:damian@conway.org">damian@conway.org</a>)
+
+</pre><h4><b>MAINTAINER</b></h4><pre>
+       C. Garrett Goebel (<a href="mailto:ggoebel@cpan.org">ggoebel@cpan.org</a>)
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There are undoubtedly serious bugs lurking somewhere in  code  this  funky  :-)  Bug  reports  and  other
+       feedback are most welcome.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  (c)  1997-2000,  Damian  Conway. All Rights Reserved.  This module is free software. It may be
+       used, redistributed and/or modified under the terms of the Perl Artistic License
+         (see <a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a>)
+
+       Copyright (c) 2000-2001, C. Garrett Goebel. All Rights Reserved.  This module is free software. It may be
+       used, redistributed and/or modified under the terms of the Perl Artistic License
+         (see <a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a>)
+
+perl v5.36.0                                       2023-01-22                   <u>Class::Contract::<a href="../man3pm/Production.3pm.html">Production</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

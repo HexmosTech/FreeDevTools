@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template::Alloy::Parse - Common parsing role for creating AST from templates</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtemplate-alloy-perl">libtemplate-alloy-perl_1.022-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Template::Alloy::Parse - Common parsing role for creating AST from templates
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Template::Alloy::Parse role is responsible for storing the majority of directive parsing code, as
+       well as for delegating to the TT, HTE, Tmpl, and Velocity roles for finding variables and directives.
+
+</pre><h4><b>ROLE</b> <b>METHODS</b></h4><pre>
+       parse_tree
+           Used by load_tree.  This is the main grammar engine of the program.  It delegates to the syntax found
+           in  $self-&gt;{'SYNTAX'} (defaults to 'alloy') and calls the function found in the $SYNTAX hashref.  The
+           majority of these syntaxes use methods found in the $DIRECTIVES hashref to parse different  DIRECTIVE
+           types for each particular syntax.
+
+           A template that looked like the following:
+
+               Foo
+               [%- GET foo -%]
+               [%- GET bar -%]
+               Bar
+
+           would parse to the following AST:
+
+               [
+                   'Foo',
+                   ['GET', 6, 15, ['foo', 0]],
+                   ['GET', 22, 31, ['bar', 0]],
+                   'Bar',
+               ]
+
+           The  "GET"  words  represent  the  directive  used.   The  6,  15  represent the beginning and ending
+           characters of the directive in the document.  The remaining items are  the  variables  necessary  for
+           running the particular directive.
+
+       parse_expr
+           Used to parse a variable, an expression, a literal string, or a number.  It returns a parsed variable
+           tree.  Samples of parsed variables can be found in the VARIABLE PARSE TREE section.
+
+               my $str = "1 + 2 * 3";
+               my $ast = $self-&gt;parse_expr(\$str);
+               # $ast looks like [[undef, '+', 1, [[undef, '*', 2, 3], 0]], 0]
+
+       "parse_args"
+           Allow  for  the  multitudinous  ways that TT parses arguments.  This allows for positional as well as
+           named arguments.  Named arguments can be separated with a  "="  or  "=&gt;",  and  positional  arguments
+           should  be  separated  by  "  "  or ",".  This only returns an array of parsed variables.  To get the
+           actual values, you must call play_expr on each value.
+
+       "dump_parse_tree"
+           This method allows for returning a string of perl code representing the AST of the parsed tree.
+
+           It is mainly used for testing.
+
+       "dump_parse_expr"
+           This method allows for returning a Data::Dumper dump of a parsed variable.  It  is  mainly  used  for
+           testing.
+
+       "parse_*"
+           Methods  by  these  names are used by parse_tree to parse the template.  These are the grammar.  They
+           are used by all of the various template syntaxes Unless otherwise mentioned, these  methods  are  not
+           exposed via the role.
+
+</pre><h4><b>VARIABLE</b> <b>PARSE</b> <b>TREE</b></h4><pre>
+       Template::Alloy  parses  templates  into  an  tree  of operations (an AST or abstract syntax tree).  Even
+       variable access is parsed into a tree.  This is done in a manner somewhat similar  to  the  way  that  TT
+       operates  except  that  nested  variables such as foo.bar|baz contain the '.' or '|' in between each name
+       level.  Operators are parsed and stored as part of the variable (it may be more appropriate to say we are
+       parsing a term or an expression).
+
+       The following table shows a variable or expression and the corresponding parsed tree (this  is  what  the
+       parse_expr method would return).
+
+           one                [ 'one',  0 ]
+           one()              [ 'one',  [] ]
+           one.two            [ 'one',  0, '.', 'two',  0 ]
+           one|two            [ 'one',  0, '|', 'two',  0 ]
+           one.$two           [ 'one',  0, '.', ['two', 0 ], 0 ]
+           one(two)           [ 'one',  [ ['two', 0] ] ]
+           one.${two().three} [ 'one',  0, '.', ['two', [], '.', 'three', 0], 0]
+           2.34               2.34
+           "one"              "one"
+           1 + 2              [ [ undef, '+', 1, 2 ], 0]
+           a + b              [ [ undef, '+', ['a', 0], ['b', 0] ], 0 ]
+           "one"|length       [ [ undef, '~', "one" ], 0, '|', 'length', 0 ]
+           "one $a two"       [ [ undef, '~', 'one ', ['a', 0], ' two' ], 0 ]
+           [0, 1, 2]          [ [ undef, '[]', 0, 1, 2 ], 0 ]
+           [0, 1, 2].size     [ [ undef, '[]', 0, 1, 2 ], 0, '.', 'size', 0 ]
+           ['a', a, $a ]      [ [ undef, '[]', 'a', ['a', 0], [['a', 0], 0] ], 0]
+           {a  =&gt; 'b'}        [ [ undef, '{}', 'a', 'b' ], 0 ]
+           {a  =&gt; 'b'}.size   [ [ undef, '{}', 'a', 'b' ], 0, '.', 'size', 0 ]
+           {$a =&gt; b}          [ [ undef, '{}', ['a', 0], ['b', 0] ], 0 ]
+           a * (b + c)        [ [ undef, '*', ['a', 0], [ [undef, '+', ['b', 0], ['c', 0]], 0 ]], 0 ]
+           (a + b)            [ [ undef, '+', ['a', 0], ['b', 0] ]], 0 ]
+           (a + b) * c        [ [ undef, '*', [ [undef, '+', ['a', 0], ['b', 0] ], 0 ], ['c', 0] ], 0 ]
+           a ? b : c          [ [ undef, '?', ['a', 0], ['b', 0], ['c', 0] ], 0 ]
+           a || b || c        [ [ undef, '||', ['a', 0], [ [undef, '||', ['b', 0], ['c', 0] ], 0 ] ], 0 ]
+           ! a                [ [ undef, '!', ['a', 0] ], 0 ]
+
+       Some notes on the parsing.
+
+           Operators are parsed as part of the variable and become part of the variable tree.
+
+           Operators are stored in the variable tree using an operator identity array which
+           contains undef as the first value, the operator, and the operator arguments.  This
+           allows for quickly descending the parsed variable tree and determining that the next
+           node is an operator.
+
+           Parenthesis () can be used at any point in an expression to disambiguate precedence.
+
+           "Variables" that appear to be literal strings or literal numbers
+           are returned as the literal (no operator tree).
+
+       The following perl can be typed at the command line to view the parsed variable tree:
+
+           perl -e 'use Template::Alloy; print Template::Alloy-&gt;dump_parse_expr("foo.bar + 2")."\n"'
+
+       Also the following can be included in a template to view the output in a template:
+
+           [% USE cet = Template::Alloy %]
+           [%~ cet.dump_parse_expr('foo.bar + 2').replace('\s+', ' ') %]
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Seamons &lt;<a href="mailto:paul@seamons.com">paul@seamons.com</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module may be distributed under the same terms as Perl itself.
+
+perl v5.38.2                                       2024-03-07                        <u>Template::Alloy::<a href="../man3pm/Parse.3pm.html">Parse</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

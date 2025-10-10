@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::EncodedColumn - Automatically encode columns</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-encodedcolumn-perl">libdbix-class-encodedcolumn-perl_0.00020-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::EncodedColumn - Automatically encode columns
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In your DBIx::Class Result class (sometimes erroneously referred to as the 'table' class):
+
+         __PACKAGE__-&gt;load_components(qw/EncodedColumn ... Core/);
+
+         #Digest encoder with hex format and SHA-1 algorithm
+         __PACKAGE__-&gt;add_columns(
+           'password' =&gt; {
+             data_type     =&gt; 'CHAR',
+             size          =&gt; 40,
+             encode_column =&gt; 1,
+             encode_class  =&gt; 'Digest',
+             encode_args   =&gt; {algorithm =&gt; 'SHA-1', format =&gt; 'hex'},
+         }
+
+         #SHA-1 / hex encoding / generate check method
+         __PACKAGE__-&gt;add_columns(
+           'password' =&gt; {
+             data_type   =&gt; 'CHAR',
+             size        =&gt; 40 + 10,
+             encode_column =&gt; 1,
+             encode_class  =&gt; 'Digest',
+             encode_args   =&gt; {algorithm =&gt; 'SHA-1', format =&gt; 'hex', salt_length =&gt; 10},
+             encode_check_method =&gt; 'check_password',
+         }
+
+         #MD5 /  base64 encoding / generate check method
+         __PACKAGE__-&gt;add_columns(
+           'password' =&gt; {
+             data_type =&gt; 'CHAR',
+             size      =&gt; 22,
+             encode_column =&gt; 1,
+             encode_class  =&gt; 'Digest',
+             encode_args   =&gt; {algorithm =&gt; 'MD5', format =&gt; 'base64'},
+             encode_check_method =&gt; 'check_password',
+         }
+
+         #Eksblowfish bcrypt / cost of 8/ no key_nul / generate check method
+         __PACKAGE__-&gt;add_columns(
+           'password' =&gt; {
+             data_type =&gt; 'CHAR',
+             size      =&gt; 59,
+             encode_column =&gt; 1,
+             encode_class  =&gt; 'Crypt::Eksblowfish::Bcrypt',
+             encode_args   =&gt; { key_nul =&gt; 0, cost =&gt; 8 },
+             encode_check_method =&gt; 'check_password',
+         }
+
+       In your application code:
+
+          #updating the value.
+          $row-&gt;password('plaintext');
+          my $digest = $row-&gt;password;
+
+          #checking against an existing value with a check_method
+          $row-&gt;check_password('old_password'); #true
+          $row-&gt;password('new_password');
+          $row-&gt;check_password('new_password'); #returns true
+          $row-&gt;check_password('old_password'); #returns false
+
+       <b>Note:</b> The component needs to be loaded <u>before</u> Core and other components such as Timestamp. Core should
+       always be last.
+
+          E.g:
+          __PACKAGE__-&gt;load_components(qw/EncodedColumn TimeStamp Core/);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This DBIx::Class component can be used to automatically encode a column's contents whenever the value of
+       that column is set.
+
+       This module is similar to the existing DBIx::Class::DigestColumns, but there is some key differences:
+
+       "DigestColumns" performs the encode operation on "insert" and "update", and "EncodedColumn" performs the
+       operation when the value is set, or on "new".
+       "DigestColumns" supports only algorithms of the Digest family. "EncodedColumn" employs a set of thin
+       wrappers around different cipher modules to provide support for any cipher you wish to use and wrappers
+       are very simple to write (typically less than 30 lines).
+       "EncodedColumn" supports having more than one encoded column per table and each column can use a
+       different cipher.
+       "Encode" adds only one item to the namespace of the object utilizing it ("_column_encoders").
+
+       There  is,  unfortunately,  some features that "EncodedColumn" doesn't support.  "DigestColumns" supports
+       changing certain options at runtime, as well as the option to not automatically encode values on set. The
+       author of this module found these options to be non-essential and omitted them by design.
+
+</pre><h4><b>Options</b> <b>added</b> <b>to</b> <b>add_column</b></h4><pre>
+   <b>encode_column</b> <b>=&gt;</b> <b>1</b>
+       Enable automatic encoding of column values. If this option is not set to  true  any  other  options  will
+       become no-ops.
+
+   <b>encode_check_method</b> <b>=&gt;</b> <b>$method_name</b>
+       By  using  the  encode_check_method attribute when you declare a column you can create a check method for
+       that column. The check method accepts a plain text string, and returns a boolean that  indicates  whether
+       the digest of the provided value matches the current value.
+
+   <b>encode_class</b>
+       The class to use for encoding. Available classes are:
+
+       "Crypt::Eksblowfish::Bcrypt" - uses DBIx::Class::EncodedColumn::Crypt::Eksblowfish::Bcrypt and requires
+       Crypt::Eksblowfish::Bcrypt to be installed
+       "Digest" - uses DBIx::Class::EncodedColumn::Digest requires Digest to be installed as well as the
+       algorithm required (Digest::SHA, Digest::Whirlpool, etc)
+       "Crypt::OpenPGP" - DBIx::Class::EncodedColumn::Crypt::OpenPGP and requires Crypt::OpenPGP to be installed
+
+       Please  see  the  relevant class's documentation for information about the specific arguments accepted by
+       each and make sure you include  the  encoding  algorithm  (e.g.  Crypt::OpenPGP)  in  your  application's
+       requirements.
+
+</pre><h4><b>EXTENDED</b> <b>METHODS</b></h4><pre>
+       The following DBIx::Class::ResultSource method is extended:
+
+       <b>register_column</b> - Handle the options described above.
+
+       The following DBIx::Class::Row methods are extended by this module:
+
+       <b>new</b> - Encode the columns on <b>new()</b> so that copy and create DWIM.
+       <b>set_column</b> - Encode values whenever column is set.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       DBIx::Class::DigestColumns, DBIx::Class, Digest
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Guillermo Roditi (groditi) &lt;<a href="mailto:groditi@cpan.org">groditi@cpan.org</a>&gt;
+
+       Inspired  by  the original module written by Tom Kirkpatrick (tkp) &lt;<a href="mailto:tkp@cpan.org">tkp@cpan.org</a>&gt; featuring contributions
+       from Guillermo Roditi (groditi) &lt;<a href="mailto:groditi@cpan.org">groditi@cpan.org</a>&gt; and Marc Mims &lt;<a href="mailto:marc@questright.com">marc@questright.com</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       jshirley - J. Shirley &lt;<a href="mailto:cpan@coldhardcode.com">cpan@coldhardcode.com</a>&gt;
+
+       kentnl - Kent Fredric &lt;<a href="mailto:kentnl@cpan.org">kentnl@cpan.org</a>&gt;
+
+       mst - Matt S Trout &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+       wreis - Wallace reis &lt;<a href="mailto:wreis@cpan.org">wreis@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) the DBIx::Class::EncodedColumn "AUTHOR" and "CONTRIBUTORS" as listed above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software and may be distributed under the same terms as perl itself.
+
+perl v5.40.1                                       2025-04-01                    <u>DBIx::Class::<a href="../man3pm/EncodedColumn.3pm.html">EncodedColumn</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

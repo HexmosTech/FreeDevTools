@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rex::Commands::Run - Execute a remote command</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/rex">rex_1.16.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rex::Commands::Run - Execute a remote command
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       With this module you can run a command.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        my $output = run 'ls -l';
+        sudo 'id';
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       Please note that Rex may set the "PATH" environment variable when executing commands on the user's behalf
+       to a different value compared to executing the same commands manually. The following are available to
+       control the related behavior:
+
+       path command
+       set_path configuration option
+       no_path_cleanup feature flag
+       source_profile feature flag
+       source_global_profile feature flag
+
+</pre><h4><b>EXPORTED</b> <b>FUNCTIONS</b></h4><pre>
+   <b>run($command</b> <b>[,</b> <b>$callback],</b> <b>%options)</b>
+       This  function  will  execute the given $command and returns the output. In scalar context it returns the
+       raw output as is, and in list context it returns the list of output lines. The exit value of the  command
+       is stored in the $? variable.
+
+        run 'uptime';
+        my $output       = run 'uptime';
+        my @output_lines = run 'uptime';
+
+       Please  note  when  the  "tty"  feature  flag is enabled the combined output containing both "STDOUT" and
+       "STDERR" is returned via "STDOUT". When using the "no_tty" feature flag, or the 1.0  feature  bundle  (or
+       newer), then run() returns only the "STDOUT" output of the command.
+
+       To access separate "STDOUT" and "STDERR" output, use a callback subroutine, for example:
+
+        run 'uptime', sub {
+          my ( $stdout, $stderr ) = @_;
+          my $server = Rex::get_current_connection()-&gt;{server};
+          say "[$server] $stdout\n";
+        };
+
+       It also takes further options in a form of a hash. Supported options are:
+
+       cwd =&gt; $path
+           Sets the working directory of the executed command to $path.
+
+       only_if =&gt; $condition_command
+           Executes the command only if $condition_command returns success.
+
+       unless =&gt; $condition_command
+           Executes the command if $condition_command returns failure.
+
+       only_notified =&gt; TRUE
+           Queues the command to be executed later upon notification.
+
+       env =&gt; { var1 =&gt; $value1, ..., varN =&gt; $valueN }
+           Sets environment variables for the given command.
+
+       timeout =&gt; value
+           Sets the timeout for the command to be run.
+
+       auto_die =&gt; TRUE
+           Die  if  the  command  returns  with  an exit code indicating failure. It can be set globally via the
+           exec_autodie feature flag.
+
+       command =&gt; $command_to_run
+           If present, Rex will execute $command_to_run, and treat the first argument as an identifier  for  the
+           given run() block (e.g. to be triggered with notify).
+
+       creates =&gt; $file_to_create
+           Tries to create $file_to_create upon execution, and skips execution if the file already exists.
+
+       continuous_read =&gt; $callback
+           Calls  $callback  subroutine  reference for each line of the command's output, passing the line as an
+           argument.
+
+       end_if_matched =&gt; qr{$pattern}
+           End execution early as soon as $pattern is detected in the command's output.
+
+       Examples:
+
+       If you only want to run a command if another command succeeds or fails, use  the  "only_if"  or  "unless"
+       options.
+
+        run 'some-command',
+          only_if =&gt; 'pgrep httpd'; # only run if httpd is running
+
+        run 'some-other-command',
+          unless =&gt; 'pgrep httpd'; # only run if httpd is _not_ running
+
+       If you want to set custom environment variables you can do it like this:
+
+        run 'my_command',
+          env =&gt; {
+            env_var_1 =&gt; 'the value for 1',
+            env_var_2 =&gt; 'the value for 2',
+          };
+
+       If you want to end the command upon receiving a certain output:
+
+        run 'my_command',
+          end_if_matched =&gt; qr{$pattern};
+
+   <b>run($command,</b> <b>$arguments,</b> <b>%options)</b>
+       This form will execute $command with the given $arguments pass as an array reference.  All arguments will
+       be quoted by Rex with "Net::OpenSSH::ShellQuoter-&gt;quoter()" according to the managed host's shell.
+
+        run 'ls', [ '-l', '-t', '-r', '-a' ];
+        run 'ls', [ '<a href="file:/tmp">/tmp</a>', '-l' ], auto_die =&gt; TRUE;
+
+   <b>run($command_description,</b> <b>command</b> <b>=&gt;</b> <b>$command,</b> <b>%options)</b>
+       If  you  only  want to run a command in certain cases, you can queue the command and notify it to trigger
+       its execution.
+
+        run 'extract-something',
+          command       =&gt; 'tar -C /foo -xzf /tmp/foo.tgz',
+          only_notified =&gt; TRUE;
+
+        # some code ...
+
+        notify 'run', 'extract-something'; # now the command gets executed
+
+   <b>can_run($command)</b>
+       This function checks if a command is available in the path. It accepts a list of  commands,  and  returns
+       the full path to the first command found.
+
+        task 'uptime', sub {
+          if ( my $cmd = can_run( 'uptime', 'downtime' ) ) {
+            say run $cmd;
+          }
+        };
+
+   <b>sudo</b>
+       Run  a  single  command,  a code block, or all commands with "sudo". You need perl to be available on the
+       remote systems to use "sudo".
+
+       Depending on your remote sudo configuration, you may need to define a sudo  password  with  <u>sudo_password</u>
+       first:
+
+        sudo_password 'my_sudo_password'; # hardcoding
+
+       Or alternatively, since Rexfile is plain perl, you can read the password from terminal at the start:
+
+        use Term::ReadKey;
+
+        print 'I need sudo password: ';
+        ReadMode('noecho');
+        sudo_password <a href="../man0/ReadLine.0.html">ReadLine</a>(0);
+        ReadMode('restore');
+
+       Similarly, it is also possible to read it from a secret file, database, etc.
+
+       You can turn sudo on globally with:
+
+        sudo TRUE; # run _everything_ with sudo
+
+       To run only a specific command with sudo, use :
+
+        say sudo 'id';                # passing a remote command directly
+        say sudo { command =&gt; 'id' }; # passing anonymous hashref
+
+        say sudo { command =&gt; 'id', user =&gt; 'different' }; # run a single command with sudo as different user
+
+       To run multiple commands with "sudo", either use an anonymous code reference directly:
+
+        sudo sub {
+            service 'nginx' =&gt; 'restart';
+            say run 'id';
+        };
+
+       or pass it via "command" (optionally along a different user):
+
+        sudo {
+            command =&gt; sub {
+                say run 'id';
+                say run 'pwd', cwd =&gt; '/home/different';
+            },
+            user =&gt; 'different',
+        };
+
+       <b>Note</b>  that  some users receive the error "sudo: sorry, you must have a tty to run sudo". In this case you
+       have to disable "requiretty" for this user.  You can do this in your  sudoers  file  with  the  following
+       code:
+
+          Defaults:$username !requiretty
+
+perl v5.40.0                                       2025-02-06                            <u>Rex::Commands::<a href="../man3pm/Run.3pm.html">Run</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

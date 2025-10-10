@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object::Realize::Later - Delayed creation of objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libobject-realize-later-perl">libobject-realize-later-perl_0.21-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Object::Realize::Later - Delayed creation of objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        package MyLazyObject;
+
+        use Object::Realize::Later
+           becomes =&gt; 'MyRealObject',
+           realize =&gt; 'load';
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "Object::Realize::Later" class helps with implementing transparent on demand realization of object
+       data.  This is related to the tricks on autoloading of data, the lesser known cousin of autoloading of
+       functionality.
+
+       On demand realization is all about performance gain.  Why should you spent costly time on realizing an
+       object, when the data on the object is never (or not yet) used?  In interactive programs, postponed
+       realization may boost start-up: the realization of objects is triggered by the use, so spread over time.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Construction</b>
+       <b>use</b>(Object::Realize::Later %options)
+           When  you  invoke  ("use") the "Object::Realize::Later" package, it will add a set of methods to your
+           package (see section "Added to YOUR class").
+
+            -Option            --Default
+             becomes             &lt;required&gt;
+             believe_caller      &lt;false&gt;
+             realize             &lt;required&gt;
+             source_module       &lt;becomes&gt;
+             warn_realization    &lt;false&gt;
+             warn_realize_again  &lt;false&gt;
+
+           becomes =&gt; CLASS
+             Which type will this object become after realization.
+
+           believe_caller =&gt; BOOLEAN
+             When a method is called on the un-realized object, the AUTOLOAD checks whether  this  resolves  the
+             need.  If not, the realization is not done.  However, when realization may result in an object that
+             extends  the  functionality of the class specified with "becomes", this check must be disabled.  In
+             that case, specify true for this option.
+
+           realize =&gt; METHOD|CODE
+             How will transform.  If you specify a CODE reference, then this will be called with the lazy-object
+             as first argument, and the requested method as second.
+
+             After realization, you may still have your hands on the lazy object on  various  places.   Be  sure
+             that  your  realization  method  is  coping with that, for instance by using Memoize.  See examples
+             below.
+
+           source_module =&gt; CLASS
+             if the class (a package) is included in a file (module)  with  a  different  name,  then  use  this
+             argument  to  specify  the  file name. The name is expected to be the same as in the "require" call
+             which would load it.
+
+           warn_realization =&gt; BOOLEAN
+             Print a warning message when the realization starts.  This is for debugging purposes.
+
+           warn_realize_again =&gt; BOOLEAN
+             When an object is realized, the original object -which functioned as a stub-  is  reconstructed  to
+             work  as  proxy  to the realized object.  This option will issue a warning when that proxy is used,
+             which means that somewhere in your program there is a variable still holding  a  reference  to  the
+             stub.  This latter is not problematic at all, although it slows-down each method call.
+
+   <b>Added</b> <b>to</b> <b>YOUR</b> <b>class</b>
+       $obj-&gt;<b>AUTOLOAD</b>()
+           When a method is called which is not available for the lazy object, the AUTOLOAD is called.
+
+       $obj-&gt;<b>can</b>($method)
+       Object::Realize::Later-&gt;<b>can</b>($method)
+           Is  the  specified  $method  available  for the lazy or the realized version of this object?  It will
+           return the reference to the code.
+
+           example:
+
+              MyLazyObject-&gt;can('lazyWork')      # true
+              MyLazyObject-&gt;can('realWork')      # true
+
+              my $lazy = MyLazyObject-&gt;new;
+              $lazy-&gt;can('lazyWork');            # true
+              $lazy-&gt;can('realWork');            # true
+
+       $obj-&gt;<b>forceRealize</b>()
+           You can force the load by calling this method on your object.  It returns the realized object.
+
+       Object::Realize::Later-&gt;<b>isa</b>($class)
+           Is this object a (sub-)class of the specified $class or can it become a (sub-)class of $class.
+
+           example:
+
+            MyLazyObject-&gt;isa('MyRealObject')      # true
+            MyLazyObject-&gt;isa('SuperClassOfLazy'); # true
+            MyLazyObject-&gt;isa('SuperClassOfReal'); # true
+
+            my $lazy = MyLazyObject-&gt;new;
+            $lazy-&gt;isa('MyRealObject');            # true
+            $lazy-&gt;isa('SuperClassOfLazy');        # true
+            $lazy-&gt;isa('SuperClassOfReal');        # true
+
+       $obj-&gt;<b>willRealize</b>()
+           Returns which class will be the realized to follow-up this class.
+
+   <b>Object::Realize::Later</b> <b>internals</b>
+       The next methods are not exported to the class where the `use' took place.  These methods  implement  the
+       actual realization.
+
+       Object::Realize::Later-&gt;<b>import</b>(%options)
+           The  %options  used  for  "import"  are  the values after the class name with "use".  So this routine
+           implements the actual option parsing.  It generates code dynamically, which is then evaluated in  the
+           callers name-space.
+
+       Object::Realize::Later-&gt;<b>realizationOf</b>( $object, [$realized] )
+           Returns the $realized version of $object, optionally after setting it first.  When the method returns
+           "undef",  the  realization  has  not  yet taken place or the realized object has already been removed
+           again.
+
+       Object::Realize::Later-&gt;<b>realize</b>(%options)
+           This method  is  called  when  a  "$object-"<b>forceRealize()</b>&gt;  takes  place.   It  checks  whether  the
+           realization has been done already (is which case the realized object is returned)
+
+</pre><h4><b>DETAILS</b></h4><pre>
+   <b>About</b> <b>lazy</b> <b>loading</b>
+       There  are  two  ways  to implement lazy behaviour: you may choose to check whether you have realized the
+       data in each method which accesses the data, or use the autoloading of data trick.
+
+       An implementation of the first solution is:
+
+        sub realize {
+            my $self = shift;
+            return $self unless $self-&gt;{_is_realized};
+
+            # read the data from file, or whatever
+            $self-&gt;{data} = ....;
+
+            $self-&gt;{_is_realized} = 1;
+            $self;
+        }
+
+        sub getData() {
+            my $self = shift;
+            return $self-&gt;realize-&gt;{data};
+        }
+
+       The above implementation is error-prone, where you can easily forget to call <b>realize()</b>.  The tests cannot
+       cover all ordenings of method-calls to detect the mistakes.
+
+       The <u>second</u> <u>approach</u> uses autoloading, and is supported by this package.  First we create  a  stub-object,
+       which will be transformable into a realized object later.  This transformation is triggered by AUTOLOAD.
+
+       This  stub-object  may contain some methods from the realized object, to reduce the need for realization.
+       The stub will also contain some information which is required for the creation of the real object.
+
+       "Object::Realize::Later" solves the inheritance problems (especially the <b>isa()</b>  and  <b>can()</b>  methods)  and
+       supplies  the  AUTOLOAD  method.  Class methods which are not defined in the stub object are forwarded as
+       class methods without realization.
+
+   <b>Traps</b>
+       Be aware of dangerous traps in the current implementation.  These  problems  appear  by  having  multiple
+       references  to the same delayed object.  Depending on how the realization is implemented, terrible things
+       can happen.
+
+       The two versions of realization:
+
+       •   by reblessing
+
+           This is the safe version.  The realized object is the same object as the delayed one,  but  reblessed
+           in  a  different  package.   When  multiple references to the delayed object exists, they will all be
+           updated at the same, because the bless information is stored within the refered variable.
+
+       •   by new instance
+
+           This is the nicest way of realization, but also quite more dangerous.  Consider this:
+
+            package Delayed;
+            use Object::Realize::Later
+                 becomes =&gt; 'Realized',
+                 realize =&gt; 'load';
+
+            sub new($)      {my($class,$v)=@_; bless {label=&gt;$v}, $class}
+            sub setLabel($) {my $self = shift; $self-&gt;{label} = shift}
+            sub load()      {$_[0] = Realized-&gt;new($_[0]-&gt;{label}) }
+
+            package Realized;  # file Realized.pm or use use(source_module)
+            sub new($)      {my($class,$v)=@_; bless {label=&gt;$v}, $class}
+            sub setLabel($) {my $self = shift; $self-&gt;{label} = shift}
+            sub getLabel()  {my $self = shift; $self-&gt;{label}}
+
+            package main;
+            my $original = Delayed-&gt;new('original');
+            my $copy     = $original;
+            print $original-&gt;getLabel;     # prints 'original'
+            print ref $original;           # prints 'Realized'
+            print ref $copy;               # prints 'Delayed'
+            $original-&gt;setLabel('changed');
+            print $original-&gt;getLabel;     # prints 'changed'
+            print $copy-&gt;getLabel;         # prints 'original'
+
+   <b>Examples</b>
+       <u>Example</u> <u>1</u>
+
+       In the first example, we delay-load a message.  On the moment the message is defined, we  only  take  the
+       location.  When the data of the message is taken (header or body), the data is autoloaded.
+
+        package Mail::Message::Delayed;
+
+        use Object::Realize::Later
+          ( becomes =&gt; 'Mail::Message::Real'
+          , realize =&gt; 'loadMessage'
+          );
+
+        sub new($) {
+            my ($class, $file) = @_;
+            bless { filename =&gt; $file }, $class;
+        }
+
+        sub loadMessage() {
+            my $self = shift;
+            Mail::Message::Real-&gt;new($self-&gt;{filename});
+        }
+
+       In the main program:
+
+        package main;
+        use Mail::Message::Delayed;
+
+        my $msg    = Mail::Message::Delayed-&gt;new('/home/user/mh/1');
+        $msg-&gt;body-&gt;print;     # this will trigger autoload.
+
+       <u>Example</u> <u>2</u>
+
+       Your  realization  may also be done by reblessing.  In that case to change the type of your object into a
+       different type which stores the same information.  Is that right?  Are you sure?  For simple cases,  this
+       may be possible:
+
+        package Alive;
+        use Object::Realize::Later
+             becomes =&gt; 'Dead',
+             realize =&gt; 'kill';
+
+        sub new()         {my $class = shift; bless {@_}, $class}
+        sub jump()        {print "Jump!\n"}
+        sub showAntlers() {print "Fight!\n"}
+        sub kill()        {bless(shift, 'Dead')}
+
+        package Dead;
+        sub takeAntlers() {...}
+
+       In the main program:
+
+        my $deer   = Alive-&gt;new(Animal =&gt; 'deer');
+        my $trophy = $deer-&gt;takeAntlers();
+
+       In  this  situation, the object (reference) is not changed but is <u>reblessed</u>.  There is no danger that the
+       un-realized version of the object is kept somewhere: all variable which know about this partical <u>deer</u> see
+       the change.
+
+       <u>Example</u> <u>3</u>
+
+       This module is especially useful for larger  projects,  which  there  is  a  need  for  speed  or  memory
+       reduction.  In  this  case,  you  may  have  an  extra  overview  on  which  objects  have  been realized
+       (transformed), and which not.  This example is taken from the MailBox modules:
+
+       The Mail::Box module tries to boost the access-time to a folder.  If you only need the  messages  of  the
+       last  day,  why shall all be read?  So, MailBox only creates an invertory of messages at first.  It takes
+       the headers of all messages, but leaves the body (content) of the message in the file.
+
+       In MailBox' case, the Mail::Message-object has the choice between a number of Mail::Message::Body's,  one
+       of which has only be prepared to read the body when needed.  A code snippet:
+
+        package Mail::Message;
+        sub new($$)
+        {   my ($class, $head, $body) = @_;
+            my $self = bless {head =&gt; $head, body =&gt; $body}, $class;
+            $body-&gt;message($self);          # tell body about the message
+        }
+        sub head()     { shift-&gt;{head} }
+        sub body()     { shift-&gt;{body} }
+
+        sub loadBody()
+        {   my $self = shift;
+            my $body = $self-&gt;body;
+
+            # Catch re-invocations of the loading.  If anywhere was still
+            # a reference to the old (unrealized) body of this message, we
+            # return the new-one directly.
+            return $body unless $body-&gt;can('forceRealize');
+
+            # Load the body (change it to anything which really is of
+            # the promised type, or a sub-class of it.
+            my ($lines, $size) = .......;    # get the data
+            $self-&gt;{body} = Mail::Message::Body::Lines
+                                 -&gt;new($lines, $size, $self);
+
+            # Return the realized object.
+            return $self-&gt;{body};
+        }
+
+        package Mail::Message::Body::Lines;
+        use base 'Mail::Message::Body';
+
+        sub new($$$)
+        {   my ($class, $lines, $size, $message) = @_;
+            bless { lines =&gt; $lines, size =&gt; $size
+                  , message =&gt; $message }, $class;
+        }
+        sub size()    { shift-&gt;{size} }
+        sub lines()   { shift-&gt;{lines} }
+        sub message() { shift-&gt;{message);
+
+        package Mail::Message::Body::Delayed;
+        use Object::Realize::Later
+            becomes =&gt; 'Mail::Message::Body',
+            realize =&gt; sub {shift-&gt;message-&gt;loadBody};
+
+        sub new($)
+        {   my ($class, $size) = @_;
+            bless {size =&gt; $size}, $class;
+        }
+        sub size() { shift-&gt;{size} }
+        sub message(;$)
+        {   my $self = shift;
+            @_ ? ($self-&gt;{message} = shift) : $self-&gt;{messages};
+        }
+
+        package main;
+        use Mail::Message;
+        use Mail::Message::Body::Delayed;
+
+        my $body    = Mail::Message::Body::Delayed-&gt;<a href="../man42/new.42.html">new</a>(42);
+        my $message = Mail::Message-&gt;new($head, $body);
+
+        print $message-&gt;size;         # will not trigger realization!
+        print $message-&gt;can('lines'); # true, but no realization yet.
+        print $message-&gt;lines;        # realizes automatically.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This  module  is  part  of  Object-Realize-Later  distribution  version  0.21, built on January 24, 2018.
+       Website: <u><a href="http://perl.overmeer.net/CPAN/">http://perl.overmeer.net/CPAN/</a></u>
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyrights 2001-2018 by [Mark Overmeer]. For other contributors see ChangeLog.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.  See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.36.0                                       2022-11-19                        <u>Object::Realize::<a href="../man3pm/Later.3pm.html">Later</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

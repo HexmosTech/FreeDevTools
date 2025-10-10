@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::IO::FastRaw -- A simple, fast and convenient io format for PerlDL.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pdl">pdl_2.100-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::IO::FastRaw -- A simple, fast and convenient io format for PerlDL.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use PDL;
+        use PDL::IO::FastRaw;
+
+        writefraw($pdl,"fname");         # write a raw file
+
+        $pdl2 = readfraw("fname");       # read a raw file
+        $pdl2 = PDL-&gt;readfraw("fname");
+
+        gluefraw($pdlx, "fname");        # append to existing file
+        $pdlx-&gt;gluefraw("fname");
+
+        $pdl3 = mapfraw("fname2",{ReadOnly =&gt; 1}); # mmap a file, don't read yet
+
+        $pdl4 = maptextfraw("fname3",{...}); # map a text file into a 1-D pdl.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a very simple and fast io format for PerlDL.  The disk data consists of two files, a header
+       metadata file in ASCII and a binary file consisting simply of consecutive bytes, shorts or whatever.
+
+       It is hoped that this will not only make for a simple PerlDL module for saving and retrieving these files
+       but also make it easy for other programs to use these files.
+
+       The format of the ASCII header is simply
+
+               &lt;typeid&gt;
+               &lt;ndims&gt;
+               &lt;dim0&gt; &lt;dim1&gt; ...
+
+       You should probably stick with the default header name.  You may want to specify your own header,
+       however, such as when you have a large collection of data files with identical dimensions and data types.
+       Under these circumstances, simply specify the "Header" option in the options hash.
+
+       The binary files are in general NOT interchangeable between different architectures since the binary file
+       is simply dumped from the memory region of the ndarray.  This is what makes the approach efficient.
+
+       It is also possible to mmap the file which can give a large speedup in certain situations as well as save
+       a lot of memory by using a disk file as virtual memory. When a file is mapped, parts of it are read only
+       as they are accessed in the memory (or as the kernel decides: if you are reading the pages in order, it
+       may well preread some for you).
+
+       Note that memory savings and copy-on-write are operating-system dependent - see Core.xs and your
+       operating system documentation for exact semantics of whatever. Basically, if you write to a mmapped file
+       without "ReadOnly", the change will be reflected in the file immediately. "ReadOnly" doesn't really make
+       it impossible to write to the ndarray but maps the memory privately so the file will not be changed when
+       you change the ndarray. Be aware though that mmapping a 40Mb file without "ReadOnly" spends no virtual
+       memory but with "ReadOnly" it does reserve 40Mb.
+
+   <b>Example:</b> <b>Converting</b> <b>ASCII</b> <b>to</b> <b>raw</b>
+       You have a whole slew of data files in ASCII from an experiment that you ran in your lab.  You're still
+       tweaking the analysis and plots, so you'd like if your data could load as fast as possible.  Eventually
+       you'll read the data into your scripts using "readfraw", but the first thing you might do is create a
+       script that converts all the data files to raw files:
+
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+        # Assumes that the data files end with a .asc or .dat extension
+        # and saves the raw file output with a .bdat extension.
+        # call with
+        #  &gt;./convert_to_raw.pl file1.dat file2.dat ...
+        # or
+        #  &gt;./convert_to_raw.pl *.dat
+
+        use PDL;
+        use PDL::IO::FastRaw;  # for saving raw files
+        use PDL::IO::Misc;             # for reading ASCII files with rcols
+        while(shift) {                 # run through the entire supplied list of file names
+                ($newName = $_) =~ s/\.(asc|dat)/.bdat/;
+                print "Saving contents of $_ to $newName\n";
+                $data = rcols($_);
+                writefraw($data, $newName);
+        }
+
+   <b>Example:</b> <b>readfraw</b>
+       Now that you've gotten your data into a raw file format, you can start working on your analysis scripts.
+       If you scripts used "rcols" in the past, the reading portion of the script should go much, much faster
+       now:
+
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+        # My plotting script.
+        # Assume I've specified the files to plot on the command line like
+        #  &gt;./plot_script.pl file1.bdat file2.bdat ...
+        # or
+        #  &gt;./plot_script.pl *.bdat
+
+        use PDL;
+        use PDL::IO::FastRaw;
+        while(shift) {                 # run through the entire supplied list of file names
+                $data = readfraw($_);
+                my_plot_func($data);
+        }
+
+   <b>Example:</b> <b>Custom</b> <b>headers</b>
+       In the first example, I allow "writefraw" to use the standard header file name, which would be
+       "file.bdat.hdr".  However, I often measure time series that have identical length, so all of those header
+       files are redundant.  To fix that, I simply pass the Header option to the "writefraw" command.  A
+       modified script would look like this:
+
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+        # Assumes that the data files end with a .asc or .dat extension
+        # and saves the raw file output with a .bdat extension.
+        # call with
+        #  &gt;./convert_to_raw.pl [-hHeaderFile] &lt;fileglob&gt; [-hHeaderFile] &lt;fileglob&gt; ...
+
+        use PDL;
+        use PDL::IO::FastRaw;  # for saving raw files
+        use PDL::IO::Misc;             # for reading ASCII files with rcols
+        my $header_file = undef;
+        CL_OPTION: while($_ = shift @ARGV) {   # run through the entire list of command-line options
+                if(/-h(.*)/) {
+                        $header_file = $1;
+                        next CL_OPTION;
+                }
+                ($newName = $_) =~ s/\.(asc|dat)/.bdat/;
+                print "Saving contents of $_ to $newName\n";
+                $data = rcols($_);
+                writefraw($data, $newName, {Header =&gt; $header_file});
+        }
+
+       Modifying the read script is left as an exercise for the reader.  :]
+
+   <b>Example:</b> <b>Using</b> <b>mapfraw</b>
+       Sometimes you'll want to use "mapfraw" rather than the read/write functions.  In fact, the original
+       author of the module doesn't use the read/write functions anymore, prefering to always use "mapfraw".
+       How would you go about doing this?
+
+       Assuming you've already saved your data into the raw format, the only change you would have to make to
+       the script in example 2 would be to change the call to "readfraw" to "mapfraw".  That's it.  You will
+       probably see differences in performance, though I (David Mertens) couldn't tell you about them because I
+       haven't played around with "mapfraw" much myself.
+
+       What if you eschew the use of "writefraw" and prefer to only use "mapfraw"?  How would you save your data
+       to a raw format?  In that case, you would have to create a "mapfraw" ndarray with the correct dimensions
+       first using
+
+        $ndarray_on_hd = mapfraw('fname', {Creat =&gt; 1, Dims =&gt; [dim1, dim2, ...]});
+
+       Note that you must specify the dimensions and you must tell "mapfraw" to create the new ndarray for you
+       by setting the "Creat" option to a true value, not "Create" (note the missing final 'e').
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>writefraw</b>
+       Write a raw format binary file
+
+        writefraw($pdl,"fname");
+        writefraw($pdl,"fname", {Header =&gt; 'headerfname'});
+
+       The "writefraw" command supports the following option:
+
+       Header  Specify the header file name.
+
+   <b>readfraw</b>
+       Read a raw format binary file
+
+        $pdl2 = readfraw("fname");
+        $pdl2 = PDL-&gt;readfraw("fname");
+        $pdl2 = readfraw("fname", {Header =&gt; 'headerfname'});
+
+       The "readfraw" command supports the following option:
+
+       Header  Specify the header file name.
+
+   <b>gluefraw</b>
+       Append a single data item to an existing binary file written by "writefraw". Error if dims not compatible
+       with existing data.
+
+         gluefraw($file, $pdl[, $opts]);
+
+   <b>mapfraw</b>
+       Memory map a raw format binary file (see the module docs also)
+
+        $pdl3 = mapfraw("fname2",{ReadOnly =&gt; 1});
+
+       The "mapfraw" command supports the following options (not all combinations make sense):
+
+       Dims, Datatype
+               If  creating a new file or if you want to specify your own header data for the file, you can give
+               an array reference and a scalar, respectively.
+
+       Creat   Create the file. Also writes out a header for the file.
+
+       Trunc   Set the file size. Automatically enabled with "Creat". NOTE: This also clears  the  file  to  all
+               zeroes.
+
+       ReadOnly
+               Disallow writing to the file.
+
+       Header  Specify the header file name.
+
+   <b>maptextfraw</b>
+       Memory map a text file (see the module docs also).
+
+       Note  that  this  function maps the raw format so if you are using an operating system which does strange
+       things to e.g.  line delimiters upon reading a text file, you get the raw (binary) representation.
+
+       The file doesn't really need to be text but it is just mapped as one large binary chunk.
+
+       This function is just a convenience wrapper which firsts "stat"s the file and  sets  the  dimensions  and
+       datatype.
+
+        $pdl4 = maptextfraw("fname", {options}
+
+       The options other than Dims, Datatype of "mapfraw" are supported.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Should  be  documented  better.  "writefraw" and "readfraw" should also have options (the author nowadays
+       only uses "mapfraw" ;)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (C) Tuomas J. Lukka 1997.  All rights reserved. There  is  no  warranty.  You  are  allowed  to
+       redistribute this software / documentation under certain conditions. For details, see the file COPYING in
+       the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be
+       included in the file.
+
+perl v5.40.1                                       2025-03-27                              <u>PDL::IO::<a href="../man3pm/FastRaw.3pm.html">FastRaw</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

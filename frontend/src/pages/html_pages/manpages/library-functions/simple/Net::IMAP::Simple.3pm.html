@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::IMAP::Simple - Perl extension for simple IMAP account handling.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-imap-simple-perl">libnet-imap-simple-perl_1.2211-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::IMAP::Simple - Perl extension for simple IMAP account handling.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use strict;
+           use warnings;
+           use Net::IMAP::Simple;
+           use Email::Simple;
+
+           # Create the object
+           my $imap = Net::IMAP::Simple-&gt;new('imap.example.com') ||
+              die "Unable to connect to IMAP: $Net::IMAP::Simple::errstr\n";
+
+           # Log on
+           if(!$imap-&gt;login('user','pass')){
+               print STDERR "Login failed: " . $imap-&gt;errstr . "\n";
+               <a href="../man64/exit.64.html">exit</a>(64);
+           }
+
+           # Print the subject's of all the messages in the INBOX
+           my $nm = $imap-&gt;select('INBOX');
+
+           for(my $i = 1; $i &lt;= $nm; $i++){
+               if($imap-&gt;seen($i)){
+                   print "*";
+               } else {
+                   print " ";
+               }
+
+               my $es = Email::Simple-&gt;new(join '', @{ $imap-&gt;top($i) } );
+
+               printf("[%03d] %s\n", $i, $es-&gt;header('Subject'));
+           }
+
+           $imap-&gt;quit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is a simple way to access IMAP accounts.
+
+</pre><h4><b>OBJECT</b> <b>CREATION</b> <b>METHOD</b></h4><pre>
+           my $imap = Net::IMAP::Simple-&gt;new( $server [ :port ]);
+
+           # OR
+
+           my $imap = Net::IMAP::Simple-&gt;new( $server [, option_name =&gt; option_value ] );
+
+   <b>new</b>
+       This class method constructs a new Net::IMAP::Simple object. It takes one required parameter which is the
+       server to connect to, and additional optional parameters.
+
+       The server parameter may specify just the server, or both the server and port number. To specify an
+       alternate port, separate it from the server with a colon (":"), "example.com:5143".
+
+       On success an object is returned. On failure, nothing is returned and an error message is set to
+       $Net::IMAP::Simple.
+
+       See "PREAUTH" below for a special hostname invocation that doesn't use Sockets (internally).
+
+       Options are provided as a hash to "new()":
+
+       port =&gt; int
+           Assign the port number (default: 143)
+
+       timeout =&gt; int (default: 90)
+           Connection timeout in seconds.
+
+       retry =&gt; int (default: 1)
+           Attempt to retry the connection attmpt (x) times before giving up
+
+       retry_delay =&gt; int (default: 5)
+           Wait (x) seconds before retrying a connection attempt
+
+       use_v6 =&gt; BOOL
+           If set to true, attempt to use IPv6 sockets rather than IPv4 sockets.
+
+           This option requires the IO::Socket::INET6 module
+
+       use_ssl =&gt; BOOL
+           If set to true, attempt to use IO::Socket::SSL sockets rather than vanilla sockets.
+
+           Note that no attempt is made to check the certificate validity by default.  This is terrible personal
+           security but matches the previous behavior of this module.  Please consider using "find_ssl_defaults"
+           below.
+
+           This option requires the IO::Socket::SSL module
+
+       ssl_version =&gt; version
+           This  should  be  one or more of the following (space separated): SSLv3 SSLv2 TLSv1.  If you specify,
+           for example, "SSLv3 SSLv2" then IO::Socket::SSL will attempt auto negotiation.  At the time  of  this
+           writing,  the  default  string was v3/v2 auto negotiation -- it may have changed by the time you read
+           this.
+
+           Warning: setting this will also set "use_ssl".
+
+       find_ssl_defaults =&gt; []
+           Looks in some standard places for CA certificate libraries and  if  found  sets  reasonable  defaults
+           along the lines of the following.
+
+               ssl_options =&gt; [ SSL_ca_path =&gt; "<a href="file:/etc/ssl/certs/">/etc/ssl/certs/</a>",
+                   SSL_verify_mode =&gt; IO::Socket::SSL::SSL_VERIFY_PEER() ]
+
+           Warning: setting this will also set "use_ssl".
+
+       ssl_options =&gt; []
+           You may provide your own IO::Socket::SSL options if you desire to do so.  It is completely overridden
+           by "find_ssl_defaults" above.
+
+       bindaddr =&gt; str
+           Assign a local address to bind
+
+       use_select_cache =&gt; BOOL
+           Enable "select()" caching internally
+
+       select_cache_ttl =&gt; int
+           The number of seconds to allow a select cache result live before running "$imap-&gt;select()" again.
+
+       debug =&gt; BOOL | \*HANDLE | warn | file:name
+           Enable  debugging  output. If "\*HANDLE" is a valid file handle, debugging will be written to it.  If
+           it is the string "warn" then the debugging will be written using the warn command.  If it is a string
+           of the form "file:name" then the named file will be opened for append and the debugs written  to  it.
+           Otherwise debugging will be written to "STDOUT"
+
+       readline_callback =&gt; CODE
+           You  may  choose  to pass a callback function for the purpose of pre-processing lines before they are
+           handed to the rest of the Net::IMAP::Simple internals.  This can be handy for animating a spinner  or
+           modifying the IMAP behavior.
+
+</pre><h4><b>PREAUTH</b></h4><pre>
+       Rather  than  passing  a  port  number  and  issuing  a login, in some situations it may be convenient to
+       authenticate with (for example) ssh and simply invoke (for example) dovecot by hand.
+
+       If the server name starts with "cmd:", then Net::IMAP::Simple will issue the command rather than building
+       sockets.  This is a typical setup:
+
+           my $cmd = "ssh -C mailhost dovecot --exec-mail imap";
+           my $imap = Net::IMAP::Simple-&gt;new("cmd:$cmd");
+            # $imap-&gt;login(); ... don't need this
+
+           my $number_of_messages = $imap-&gt;select("INBOX");
+
+</pre><h4><b>METHODS</b></h4><pre>
+       starttls
+               $imap-&gt;starttls;
+
+           If you start an IMAP session and wish to upgrade to SSL later, you can use  this  function  to  start
+           TLS.  This function will try to "require" IO::Socket::SSL and Net::SSLeay at runtime.
+
+       login
+             my $inbox_msgs = $imap-&gt;login($user, $passwd);
+
+           This  method  takes  two  required  parameters,  a  username and password. This pair is authenticated
+           against the server. If authentication is successful TRUE (1) will be returned
+
+           Nothing is returned on failure and the "errstr()" error handler is set with the error message.
+
+       status
+               my $num_messages                     = $imap-&gt;status($folder);
+               my ($unseen, $recent, $num_messages) = $imap-&gt;status($folder);
+
+           Issue a "STATUS" command.  The "STATUS" command counts messages without altering  the  state  of  the
+           named  (optionally)  mailbox.   It  returns  either  the  number of messages, or the number of unseen
+           messages, recent, and the total number of messages.
+
+           $folder is an optional argument.  "status()" will use the current mailbox or "INBOX" if  the  $folder
+           argument is not provided.
+
+           This method does not use caching.
+
+           This  method  can  also  query  custom status values.  The first argument to the function (if any) is
+           assumed to be the folder name, so the folder argument is required when trying to query custom  status
+           values.
+
+               my ($f1, $f2) = $imap-&gt;status($folder, qw(f1 f2));
+               my $f2        = $imap-&gt;status($folder, qw(f1 f2));
+
+       uidnext
+               my $uidnext = $imap-&gt;uidnext($folder);
+
+           Return  the "UIDNEXT" value for a mailbox.  The $folder argument is optional.  This is really just an
+           alias for
+
+               my $uidnext = $imap-&gt;status($folder, qw(uidnext));
+
+           with the mild difference that it can compute the folder argument for you
+
+       uidvalidity
+               my $uidvalidity = $imap-&gt;uidnext($folder);
+
+           Return the "UIDVALIDITY" value for a mailbox.  The $folder argument is optional.   This  is  also  an
+           alias for the status call like "uidnext()" above.
+
+       uid This function is actually an alias for "$imap-&gt;uidsearch($msg_range)".
+
+               my($uid)= $imap-&gt;uid($msgno);
+               my @uid = $imap-&gt;uid($msg_range); # eg 4:14  or 15,4,14
+
+           Return  the  "UID"  value(s) for a message.  These unique IDs "<u>must</u>" stay the same during the session
+           and "<u>should</u>" stay the same between sessions.  Whether they stay the same depends on the "UIDVALIDITY"
+           value; see: above and RFC3501.
+
+           Warning, although you might thing @uid should contain the "UID"s for 15,  then  4,  then  14  in  the
+           example  above; most IMAP servers seem to return the UIDs in increasing order.  Normally the sequence
+           numbers are in increasing order also, so it all maches up.
+
+               my ($uid4, $uid14, $uid15) = $imap-&gt;uid("15,4,14"); # warning
+
+           One final note, this gives the size of the search match, not the uid like you might expect:
+
+               my $uid_search_result_list_size = $imap-&gt;uid('3'); # probably always 1
+
+       seq
+               my $seq = $imap-&gt;seq($uids);
+               my @seq = $imap-&gt;seq($uids); # eg 58888:58900
+
+           Rather like "uid()" above, but maps uids to sequence numbers.
+
+       select
+               my $num_messages = $imap-&gt;select($folder);
+
+           Selects a folder named in the single required parameter. The number of messages  in  that  folder  is
+           returned  on  success.  On failure, nothing is returned  and the "errstr()" error handler is set with
+           the error message.
+
+       examine
+           This is very nearly a synonym for "select()".  The only real difference is that the  EXAMINE  command
+           is  sent  to  the server instead of SELECT.  Net::IMAP::Simple is otherwise unaware of the read-only-
+           ness of the mailbox.
+
+       close
+               $imap-&gt;close;
+
+           Un-selects the current mailbox, leaving no mailbox selected.
+
+       messages
+               print "Messages in Junk Mail -- " . $imap-&gt;messages("INBOX.Junk Mail") .  "\n";
+
+           This method is an alias for "$imap-&gt;select"
+
+       flags
+               print "Available server flags: " . join(", ", $imap-&gt;flags) . "\n";
+
+           This method accepts an optional folder name and returns the current available server flags as a list,
+           for the selected folder. If no folder name is provided the last  folder  "$imap-&gt;select"'ed  will  be
+           used.
+
+           This method uses caching.
+
+       separator
+           Returns the folder separator (technically "hierarchy separator", rfc3501§6.3.8) for the server.
+
+       recent
+               print "Recent messages value: " . $imap-&gt;recent . "\n";
+
+           This  method accepts an optional folder name and returns the 'RECENT' value provided durning a SELECT
+           result set. If no folder name is provided the last folder "$imap-&gt;select"'ed will be used.
+
+           This method uses caching.
+
+           See also: search
+
+       unseen
+               print "Unseen messages value: " . $imap-&gt;unseen . "\n";
+
+           This method accepts an optional folder name and returns the 'UNSEEN' value provided during  a  SELECT
+           command  result. If no folder name is provided the last folder "$imap-&gt;select"'ed will be used.  If a
+           folder name <u>is</u> provided, this will issue a SELECT first.
+
+           This method uses caching.
+
+           If the server does not provide UNSEEN during SELECT -- surprisingly common -- this method  will  fall
+           back and use STATUS to determine the unseen count.
+
+           <b>NOTE</b>:  This  is  not  the opposite of seen below.  The UNSEEN value varies from server to server, but
+           according to the IMAP specification, it should be the <u>number</u> <u>of</u> <u>the</u> <u>first</u> <u>unseen</u> <u>message</u>, in the case
+           the flag is provided.  (If the flag is not provided, users would have to use the  SEARCH  command  to
+           find it.)
+
+           See also: search
+
+       current_box
+              print "Current Mail Box folder: " . $imap-&gt;current_box . "\n";
+
+           This method returns the current working mail box folder name.
+
+       top
+               my $header = $imap-&gt;top( $message_number ); print for @{$header};
+
+           This  method  accepts a message number as its required parameter. That message will be retrieved from
+           the currently selected folder. On success this method returns a list reference containing  the  lines
+           of  the header. Nothing is returned on failure and the "errstr()" error handler is set with the error
+           message.
+
+       seen
+               defined( my $seen = $imap-&gt;seen( $message_number ) )
+                   or warn "problem testing for \Seen: "
+                         . $imap-&gt;errstr;
+
+               print "msg #$message_number has been \Seen!" if $seen;
+
+           A message number is the only required parameter for this method.  The message's "\Seen" flag will  be
+           examined  and  if  the  message  has  been  seen  a true value is returned.  A defined false value is
+           returned if the message does not have the "\Seen" flag set.  The undefined value is returned when  an
+           error has occurred while checking the flag status.
+
+           <b>NOTE</b>:  This  is not the opposite of unseen above.  This issues a "FETCH" command and checks to see if
+           the given message has been "\Seen" before.
+
+       deleted
+               defined( my $deleted = $imap-&gt;deleted( $message_number ) )
+                   or warn "problem testing for \Deleted: "
+                         . $imap-&gt;errstr;
+
+               print "msg #$message_number has been \Deleted!" if $deleted;
+
+           A message number is the only required parameter for this method.  The message's "\Deleted" flag  will
+           be  examined  and if the message has been deleted a true value is returned.  A defined false value is
+           returned if the message does not have the "\Deleted" flag set.  The undefined value is returned  when
+           an error has occurred while checking the flag status.
+
+       list
+               my $message_size  = $imap-&gt;list($message_number);
+               my $mailbox_sizes = $imap-&gt;list;
+
+           This method returns size information for a message, as indicated in the single optional parameter, or
+           all  messages  in  a mailbox. When querying a single message a scalar value is returned. When listing
+           the entire mailbox a hash is returned.  On failure, nothing is  returned  and  the  "errstr()"  error
+           handler is set with the error message.
+
+       fetch
+             my $headers = $imap-&gt;fetch("1:5")
+
+           Fetch the headers for messages 1-5 in the current folder.
+
+             for my $midx ( keys %$headers ) {
+                 for my $hdr in ($headers-&gt;{$midx}) {
+                     say "$hdr"
+
+                     # In many situations the headers will be parsed and may not be simple
+                     # strings (e.g., with the SimpleX RecDescent parse). The simplest
+                     # way to get a feel for the output is to use a dumper on it.
+                 }
+             }
+
+       get
+             my $message = $imap-&gt;get( $message_number ) or die $imap-&gt;errstr;
+             my @message_lines = $map-&gt;get( $message_number ) or die $imap-&gt;errstr;
+
+             my $part = $imap-&gt;get( $message_number, '1.1' ) or die $imap-&gt;errstr;
+             my @part_lines = $imap-&gt;get( $message_number, '1.1' ) or die $imap-&gt;errstr;
+
+           This  method fetches a message and returns its lines as an array or, the actual message.  On failure,
+           either an empty list is returned and the "errstr()" error handler is set with the error message.
+
+           Optionally, a part can be specified in order to fetch a specific portion of a message.  This  is  the
+           raw,  encoded  body  of  the  message part.  The part number is a set of zero or more part specifiers
+           delimited by periods.  Every message has at least one part.  Specifying a part  of  '1'  returns  the
+           raw, encoded body.  This is only useful if you know the header information such as encoding.
+
+           Historically,  "get()"  returned  the array of lines as a reference to the array instead of returning
+           the message or the array itself.  Please note that it still does this, although it may be  deprecated
+           in the future.
+
+           The  scalar  result returned is actually a blessed arrayref with the stringify member overloaded.  If
+           you're intending to use the resulting message as a string more than once, it <u>may</u> make sense to  force
+           the stringification first.
+
+               my $message = $imap-&gt;<a href="../man1/get.1.html">get</a>(1);
+                  $message = "$message"; # force stringification
+
+           It is not normally necessary to do this.
+
+       put
+             $imap-&gt;put( $mailbox_name, $message, @flags ) or warn $imap-&gt;errstr;
+
+           Save  a message to the server under the folder named $mailbox_name.  You may optionally specify flags
+           for the mail (e.g. "\Seen", "\Answered"), but they must start with a slash.
+
+           If $message is an arrayref, the lines will be printed correctly.
+
+       put_with_date
+             $imap-&gt;put_with_date( $mailbox_name, $message, $date, @flags ) or warn $imap-&gt;errstr;
+
+           Save a message to the server under the folder named $mailbox_name just like the put method above, but
+           supplying a date will set the IMAP server internal date for the message if  supported  per  RFC  3501
+           Section 6.3.11.
+
+           Note  when  using  this  with  Gmail  it  expects the date format to be: DD-Mon-YYYY hh:mm:ss tz  for
+           example  31-Dec-2016 12:59:59 -0500
+
+       msg_flags
+               my @flags = $imap-&gt;msg_flags( $message_number );
+               my $flags = $imap-&gt;msg_flags( $message_number );
+
+               # aught to come out roughly the same
+               print "Flags on message #$message_number: @flags\n";
+               print "Flags on message #$message_number: $flags\n";
+
+           Detecting errors with this member functions is usually desirable.  In the scalar  context,  detecting
+           an error is synonymous with testing for defined.
+
+               if( defined( my $flags = $imap-&gt;msg_flags($num) ) ) {
+                   # it has $flags!
+
+               } else {
+                   warn "problem listing flags for message #$num: "
+                      . $imap-&gt;errstr;
+               }
+
+           In list context, you must call waserr() to test for success.
+
+               my @flags = $imap-&gt;msg_flags($num);
+               warn "problem listing flags for msg #$num: "
+                  . $imap-&gt;errstr if $imap-&gt;waserr;
+
+       getfh
+             my $file = $imap-&gt;getfh( $message_number ); print &lt;$file&gt;;
+
+           On  success  this  method  returns  a  file handle pointing to the message identified by the required
+           parameter. On failure, nothing is returned and the "errstr()" error handler is  set  with  the  error
+           message.
+
+       quit
+             $imap-&gt;quit;
+
+             OR
+
+             $imap-&gt;quit(BOOL);
+
+           This method logs out of the IMAP server, expunges the selected mailbox, and closes the connection. No
+           error message will ever be returned from this method.
+
+           Optionally if BOOL is TRUE (1) then a hard quit is performed which closes the socket connection. This
+           hard  quit  will still issue both EXPUNGE and LOGOUT commands however the response is ignored and the
+           socket is closed after issuing the commands.
+
+       logout
+             $imap-&gt;logout;
+
+           This method is just like the quit method except that it does not have a hard quit option and it  does
+           not expunge the mailbox before it hangs up and closes the socket.
+
+       last
+             my $message_number = $imap-&gt;last;
+
+           This  method  returns  the message number of the last message in the selected mailbox, since the last
+           time the mailbox was selected. On failure, nothing is returned and the "errstr()"  error  handler  is
+           set with the error message.
+
+       delete
+             print "Gone!" if $imap-&gt;delete( $message_number );
+
+           This  method sets the "\Deleted" flag on the given message (or messages). On success it returns true,
+           false on failure and the "errstr()" error handler is set with the error message.   If  the  flag  was
+           already  there,  no error is produced.  I takes either a message number or "sequence set" as the only
+           argument.  Note that messages aren't actually deleted until they are expunged (see expunge_mailbox).
+
+       undelete
+             print "Resurrected!" if $imap-&gt;undelete( $message_number );
+
+           This method removes the "\Deleted" flag on the given message. On success it returns  true,  false  on
+           failure and the "errstr()" error handler is set with the error message.  If the flag wasn't there, no
+           error is produced.
+
+       see
+             print "You've seen message #$msgno" if $imap-&gt;see( $messageno );
+
+           This  method sets the "\Seen" flag on the given message. On success it returns true, false on failure
+           and the "errstr()" error handler is set with the error message.  If the flag was  already  there,  no
+           error is produced.
+
+       unsee
+             print "You've not seen message #$msgno" if $imap-&gt;unsee( $messageno );
+
+           This  method  removes  the  "\Seen"  flag  on the given message. On success it returns true, false on
+           failure and the "errstr()" error handler is set with the error message.  If the flag wasn't there, no
+           error is produced.
+
+       add_flags
+           delete and see above really just call this function for those flags.
+
+              $imap-&gt;add_flags( $msgno, qw(\Seen \Deleted) )
+                   or die $imap-&gt;errstr;
+
+       sub_flags
+           unsee above really just calls this function for that flag.
+
+              $imap-&gt;sub_flags( $msgno, '\Seen' ) or die $imap-&gt;errstr;
+
+       mailboxes
+             my @boxes   = $imap-&gt;mailboxes;
+             my @folders = $imap-&gt;mailboxes("Mail/%");
+             my @lists   = $imap-&gt;mailboxes("lists/perl/*", "/Mail/");
+
+           This method returns a list of mailboxes. When called with no arguments it recurses from the IMAP root
+           to get all mailboxes. The first optional argument is a mailbox  path  and  the  second  is  the  path
+           reference. RFC 3501 section 6.3.8 has more information.
+
+           On failure nothing is returned and the "errstr()" error handler is set with the error message.
+
+       mailboxes_subscribed
+             my @boxes   = $imap-&gt;mailboxes_subscribed;
+             my @folders = $imap-&gt;mailboxes_subscribed("Mail/%");
+             my @lists   = $imap-&gt;mailboxes_subscribed("lists/perl/*", "/Mail/");
+
+           This method returns a list of mailboxes subscribed to. When called with no arguments it recurses from
+           the  IMAP  root to get all mailboxes. The first optional argument is a mailbox path and the second is
+           the path reference. RFC 3501 has more information.
+
+           On failure nothing is returned and the "errstr()" error handler is set with the error message.
+
+       create_mailbox
+             print "Created" if $imap-&gt;create_mailbox( "/Mail/lists/perl/advocacy" );
+
+           This method creates the mailbox named in the required argument. Returns true  on  success,  false  on
+           failure and the "errstr()" error handler is set with the error message.
+
+       expunge_mailbox
+             my @expunged = $imap-&gt;expunge_mailbox( "/Mail/lists/perl/advocacy" );
+             die $imap-&gt;errstr if $imap-&gt;waserr;
+
+             my $expunged = $imap-&gt;expunge_mailbox( "/Mail/lists/perl/advocacy" )
+                 or die $imap-&gt;errstr;
+
+           This method removes all mail marked as deleted in the mailbox named in the required argument. Returns
+           either  the  number  of  messages that were expunged, or the indexes of those messages -- which has a
+           questionable usefulness since it tends to return numbers that don't relate  to  the  message  numbers
+           marked with the "\Deleted" flags.
+
+           If  0  messages were expunged without error, the function will return 0E0 so it will still test true,
+           but also evaluate to 0.
+
+           In list context, you must call waserr() to test for success.
+
+       delete_mailbox
+             print "Deleted" if $imap-&gt;delete_mailbox( "/Mail/lists/perl/advocacy" );
+
+           This method deletes the mailbox named in the required argument. Returns true  on  success,  false  on
+           failure and the "errstr()" error handler is set with the error message.
+
+       rename_mailbox
+             print "Renamed" if $imap-&gt;rename_mailbox( $old =&gt; $new );
+
+           This  method  renames  the  mailbox in the first required argument to the mailbox named in the second
+           required argument. Returns true on success, false on failure and the "errstr()" error handler is  set
+           with the error message.
+
+       folder_subscribe
+             print "Subscribed" if $imap-&gt;folder_subscribe( "/Mail/lists/perl/advocacy" );
+
+           This  method  subscribes  to the folder. Returns true on success, false on failure and the "errstr()"
+           error handler is set with the error message.
+
+       folder_unsubscribe
+             print "Unsubscribed" if $imap-&gt;folder_unsubscribe( "/Mail/lists/perl/advocacy" );
+
+           This method un-subscribes to the folder. Returns true on success, false on failure and the "errstr()"
+           error handler is set with the error message.
+
+       copy
+             print "copied" if $imap-&gt;copy( $message_number, $mailbox );
+
+           This method copies the message number (or "sequence set") in the currently selected  mailbox  to  the
+           folder  specified  in  the  second  argument.   Both  arguments are required.  On success this method
+           returns true. Returns false on failure and the  "errstr()"  error  handler  is  set  with  the  error
+           message.
+
+       uidcopy
+             print "copied" if $imap-&gt;uidcopy( $message_uid, $mailbox );
+
+           This  method  is  identical  to  "copy()"  above, except that it uses UID numbers instead of sequence
+           numbers.
+
+       noop
+             $imap-&gt;noop;
+
+           Performs a null operation.  This may be needed to get updates on a mailbox, or ensure that the server
+           does not close the connection as idle.  RFC 3501 states that servers' idle timeouts must not be  less
+           than 30 minutes.
+
+       errstr
+            print "Login ERROR: " . $imap-&gt;errstr . "\n" if !$imap-&gt;login($user, $pass);
+
+           Return the last error string captured for the last operation which failed.
+
+       waserr
+            my @flags = $imap-&gt;<a href="../man14/msg_flags.14.html">msg_flags</a>(14);
+            die $imap-&gt;errstr if $imap-&gt;waserr;
+
+           Because  "msg_flags()"  can  optionally  return a list, it's not really possible to detect failure in
+           list context.  Therefore, you must call "waserr()" if you wish to detect errors.
+
+           Few of the Net::IMAP::Simple methods use "waserr()".  The ones that do will mention it.
+
+       list2range
+           Sometimes you have a long list of sequence numbers which are consecutive and really  want  to  be  an
+           IMAP-style range.
+
+               my @list  = (5..9, 13..38, 55,56,57);
+               my $short = $imap-&gt;list2range(@list);
+
+               # $short how says: 5:9,13:38,55:57
+
+       range2list
+           Pretty much the opposite of "list2range".
+
+               my @list = $imap-&gt;range2list("1,3,5:9");
+               # @list is (1,3,5,6,7,8,9);
+
+</pre><h4><b>SEARCHING</b></h4><pre>
+       search
+           This function returns an array of message numbers (in list context) or the number of matched messages
+           (in scalar context).  It takes a single argument: the search.
+
+           IMAP  searching  can be a little confusing and this function makes no attempt to parse your searches.
+           If you wish to do searches by hand, please see RFC 3501.
+
+           IMAP sorting (see RFC 5256) is supported via an optional  second  argument.   The  RFC  requires  the
+           charset be specified, which can be provided via the optional third argument (defaults to UTF-8).
+
+           Here are a few examples:
+
+               my @ids = $imap-&gt;search("UNSEEN");
+               my @ids = $imap-&gt;search('SUBJECT "blarg is \"blarg\""');
+               my @ids = $imap-&gt;search('FROM "<a href="mailto:joe@aol.com">joe@aol.com</a>"');
+               my @ids = $imap-&gt;search("DELETED");
+
+               # example from RFC 3501, search terms are ANDed together
+               my @ids = $imap-&gt;search('FLAGGED SINCE 1-Feb-1994 NOT FROM "Smith"');
+               # example from RFC 3501, search terms are ORed together
+               my @ids = $imap-&gt;search('OR BODY "blard" SUBJECT "blarg"');
+
+               # flagged and ( since x or !from y ):
+               my @ids = $imap-&gt;search('FLAGGED OR SINCE x NOT FROM "y"');
+                 # no typo above, see the RFC
+
+               # example from RFC 5256, sorted by subject and reverse date
+               my @ids = $imap-&gt;search('BODY "zaphod"', 'SUBJECT REVERSE DATE');
+
+           Since  this  module  is  meant to be simple, Net::IMAP::Simple has a few search helpers.  If you need
+           fancy booleans and things, you'll have to learn search.  If  you  need  a  quick  search  for  unseen
+           messages, see below.
+
+           These all return an array of messages or count of messages exactly as the search function does.  Some
+           of  them  take arguments, some do not.  They do try to grok your arguments slightly, the mechanics of
+           this (if any) will be mentioned below.
+
+           search_seen
+               Returns numbers of messages that have the \Seen flag.
+
+           search_recent
+               Returns numbers of messages that have the \Recent flag.
+
+           search_answered
+               Returns numbers of messages that have the \Answered flag.
+
+           search_deleted
+               Returns numbers of messages that have the \Deleted flag.
+
+           search_flagged
+               Returns numbers of messages that have the \Flagged flag.
+
+           search_draft
+               Returns numbers of messages that have the \Draft flag.
+
+           search_unseen
+               Returns numbers of messages that do not have the \Seen flag.
+
+           search_old
+               Returns numbers of messages that do not have the \Recent flag.
+
+           search_unanswered
+               Returns numbers of messages that do not have the \Answered flag.
+
+           search_undeleted
+               Returns numbers of messages that do not have the \Deleted flag.
+
+           search_unflagged
+               Returns numbers of messages that do not have the \Flagged flag.
+
+           search_smaller
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages  that  are
+               smaller  than  "&lt;x&gt;" octets.  This function will try to force your argument to be a number before
+               passing it to the IMAP server.
+
+           search_larger
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages  that  are
+               larger  than  "&lt;x&gt;"  octets.  This function will try to force your argument to be a number before
+               passing it to the IMAP server.
+
+           search_from
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that  have
+               "&lt;x&gt;"  in  the  from  header.   This  function will attempt to force your string into the RFC3501
+               quoted-string format.
+
+           search_to
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that  have
+               "&lt;x&gt;" in the to header.  This function will attempt to force your string into the RFC3501 quoted-
+               string format.
+
+           search_cc
+               This  function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that have
+               "&lt;x&gt;" in the cc header.  This function will attempt to force your string into the RFC3501 quoted-
+               string format.
+
+           search_bcc
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that  have
+               "&lt;x&gt;"  in  the  bcc  header.   This  function  will attempt to force your string into the RFC3501
+               quoted-string format.
+
+           search_subject
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that  have
+               "&lt;x&gt;"  in  the  subject header.  This function will attempt to force your string into the RFC3501
+               quoted-string format.
+
+           search_body
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that  have
+               "&lt;x&gt;"  in  the  message  body.   This function will attempt to force your string into the RFC3501
+               quoted-string format.
+
+           search_before
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that  were
+               received  before "&lt;x&gt;".  If you have Date::Manip installed (optional), this function will attempt
+               to force the date into the format "%d-%b-%Y" (date-monthName-year) as RFC3501 requires.   If  you
+               do not have that module, no attempt will be made to coerce your date into the correct format.
+
+           search_since
+               This  function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that were
+               received after "&lt;x&gt;".  If you have Date::Manip installed (optional), this function  will  attempt
+               to  force  the  date into the format "%d-%m-%Y" (date-month-year) as RFC3501 requires.  If you do
+               not have that module, no attempt will be made to coerce your date into the correct format.
+
+           search_sent_before
+               This function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that  have
+               a  header  date  before  "&lt;x&gt;".  If you have Date::Manip installed (optional), this function will
+               attempt to force the date into the format "%d-%m-%Y" (date-month-year) as RFC3501  requires.   If
+               you do not have that module, no attempt will be made to coerce your date into the correct format.
+
+           search_sent_since
+               This  function takes a single argument we'll call "&lt;x&gt;" and returns numbers of messages that have
+               a header date after "&lt;x&gt;".  If you have Date::Manip  installed  (optional),  this  function  will
+               attempt  to  force the date into the format "%d-%m-%Y" (date-month-year) as RFC3501 requires.  If
+               you do not have that module, no attempt will be made to coerce your date into the correct format.
+
+       uidsearch
+           This function works exactly like "search()" but it returns UIDs instead  of  sequence  numbers.   The
+           convenient shortcuts above are not provided for it.
+
+</pre><h4><b>OTHER</b> <b>NOTES</b></h4><pre>
+       sequence set
+           Message  numbers  are never checked before being passed to the IMAP server (this is a "simple" module
+           after all), so in most places where a message number is  required,  you  can  instead  use  so-called
+           <u>sequence</u> <u>sets</u>.  Examples:
+
+               $imap-&gt;copy(   "3,4,9:22", "ANOTHERBOX" ) or die $imap-&gt;errstr;
+               $imap-&gt;delete( "3,4,9:22" ) or die $imap-&gt;errstr;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Creator
+           Joao Fonseca "&lt;<a href="mailto:joao_g_fonseca@yahoo.com">joao_g_fonseca@yahoo.com</a>&gt;"
+
+       Maintainer 2004
+           Casey West "&lt;<a href="mailto:casey@geeknst.com">casey@geeknst.com</a>&gt;"
+
+       Maintainer 2005
+           Colin Faber "&lt;<a href="mailto:cfaber@fpsn.net">cfaber@fpsn.net</a>&gt;"
+
+       Maintainer 2009
+           Paul Miller "&lt;<a href="mailto:jettero@cpan.org">jettero@cpan.org</a>&gt;"
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  (c)  2009-2010  Paul  Miller  Copyright  (c)  2005  Colin  Faber Copyright (c) 2004 Casey West
+       Copyright (c) 1999 Joao Fonseca
+
+       All rights reserved. This program is free software; you can redistribute it and/or modify  it  under  the
+       same terms as Perl itself.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  module  is free software.  You can redistribute it and/or modify it under the terms of the Artistic
+       License 2.0.
+
+       This program is distributed in the hope that it will be useful, but without any  warranty;  without  even
+       the implied warranty of merchantability or fitness for a particular purpose.
+
+       [This software may have had previous licenses, of which the current maintainer is completely unaware.  If
+       this is so, it is possible the above license is incorrect or invalid.]
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There  are  probably  bugs.   But  don't worry, the current maintainer takes them very seriously and will
+       usually triage (at least) within a single day.
+
+       &lt;https://rt.cpan.org/Dist/Display.html?Queue=Net-IMAP-Simple&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       perl, Net::IMAP::Server, IO::Socket::SSL, IO::Socket::INET6
+
+perl v5.26.2                                       2018-05-21                             <u>Net::IMAP::<a href="../man3pm/Simple.3pm.html">Simple</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

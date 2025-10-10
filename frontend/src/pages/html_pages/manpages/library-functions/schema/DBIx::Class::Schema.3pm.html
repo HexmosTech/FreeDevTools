@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Schema - composable schemas</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Schema - composable schemas
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Library::Schema;
+         use base qw/DBIx::Class::Schema/;
+
+         # load all Result classes in Library/Schema/Result/
+         __PACKAGE__-&gt;load_namespaces();
+
+         package Library::Schema::Result::CD;
+         use base qw/DBIx::Class::Core/;
+
+         __PACKAGE__-&gt;load_components(qw/InflateColumn::DateTime/); # for example
+         __PACKAGE__-&gt;table('cd');
+
+         # Elsewhere in your code:
+         my $schema1 = Library::Schema-&gt;connect(
+           $dsn,
+           $user,
+           $password,
+           { AutoCommit =&gt; 1 },
+         );
+
+         my $schema2 = Library::Schema-&gt;connect($coderef_returning_dbh);
+
+         # fetch objects using Library::Schema::Result::DVD
+         my $resultset = $schema1-&gt;resultset('DVD')-&gt;search( ... );
+         my @dvd_objects = $schema2-&gt;resultset('DVD')-&gt;search( ... );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Creates database classes based on a schema. This is the recommended way to use DBIx::Class and allows you
+       to use more than one concurrent connection with your classes.
+
+       NB: If you're used to Class::DBI it's worth reading the "SYNOPSIS" carefully, as DBIx::Class does things
+       a little differently. Note in particular which module inherits off which.
+
+</pre><h4><b>SETUP</b> <b>METHODS</b></h4><pre>
+   <b>load_namespaces</b>
+       Arguments: %options?
+
+         package MyApp::Schema;
+         __PACKAGE__-&gt;load_namespaces();
+
+         __PACKAGE__-&gt;load_namespaces(
+            result_namespace =&gt; 'Res',
+            resultset_namespace =&gt; 'RSet',
+            default_resultset_class =&gt; '+MyApp::Othernamespace::RSet',
+         );
+
+       With  no  arguments,  this method uses Module::Find to load all of the Result and ResultSet classes under
+       the namespace of the schema from which it is called.  For example, "My::Schema" will by default find  and
+       load Result classes named "My::Schema::Result::*" and ResultSet classes named "My::Schema::ResultSet::*".
+
+       ResultSet   classes   are   associated   with   Result   class   of   the   same   name.    For  example,
+       "My::Schema::Result::CD" will get the ResultSet class "My::Schema::ResultSet::CD" if it is present.
+
+       Both   Result   and   ResultSet   namespaces   are   configurable   via   the   "result_namespace"    and
+       "resultset_namespace" options.
+
+       Another  option,  "default_resultset_class" specifies a custom default ResultSet class for Result classes
+       with no corresponding ResultSet.
+
+       All of the namespace and classname options are by default relative to the schema classname.  To specify a
+       fully-qualified name, prefix it with a literal "+".  For example, "+Other::NameSpace::Result".
+
+       <u>Warnings</u>
+
+       You will be warned if ResultSet classes are discovered for which there are  no  matching  Result  classes
+       like this:
+
+         load_namespaces found ResultSet class $classname with no corresponding Result class
+
+       If  a  ResultSource instance is found to already have a ResultSet class set using resultset_class to some
+       other class, you will be warned like this:
+
+         We found ResultSet class '$rs_class' for '$result_class', but it seems
+         that you had already set '$result_class' to use '$rs_set' instead
+
+       <u>Examples</u>
+
+         # load My::Schema::Result::CD, My::Schema::Result::Artist,
+         #    My::Schema::ResultSet::CD, etc...
+         My::Schema-&gt;load_namespaces;
+
+         # Override everything to use ugly names.
+         # In this example, if there is a My::Schema::Res::Foo, but no matching
+         #   My::Schema::RSets::Foo, then Foo will have its
+         #   resultset_class set to My::Schema::RSetBase
+         My::Schema-&gt;load_namespaces(
+           result_namespace =&gt; 'Res',
+           resultset_namespace =&gt; 'RSets',
+           default_resultset_class =&gt; 'RSetBase',
+         );
+
+         # Put things in other namespaces
+         My::Schema-&gt;load_namespaces(
+           result_namespace =&gt; '+Some::Place::Results',
+           resultset_namespace =&gt; '+Another::Place::RSets',
+         );
+
+       To search multiple namespaces for either Result or ResultSet classes, use an arrayref of  namespaces  for
+       that  option.  In the case that the same result (or resultset) class exists in multiple namespaces, later
+       entries in the list of namespaces will override earlier ones.
+
+         My::Schema-&gt;load_namespaces(
+           # My::Schema::Results_C::Foo takes precedence over My::Schema::Results_B::Foo :
+           result_namespace =&gt; [ 'Results_A', 'Results_B', 'Results_C' ],
+           resultset_namespace =&gt; [ '+Some::Place::RSets', 'RSets' ],
+         );
+
+   <b>load_classes</b>
+       Arguments: @classes?, { $namespace =&gt; [ @classes ] }+
+
+       "load_classes" is an alternative method to "load_namespaces", both of which serve similar purposes,  each
+       with  different  advantages  and  disadvantages.   In  the general case you should use "load_namespaces",
+       unless you need to be able to specify that only specific classes are loaded at runtime.
+
+       With no arguments, this method uses Module::Find to  find  all  classes  under  the  schema's  namespace.
+       Otherwise,   this  method  loads  the  classes  you  specify  (using  use),  and  registers  them  (using
+       "register_class").
+
+       It is possible to comment out classes with a leading "#", but note that perl will think  it's  a  mistake
+       (trying  to  use  a  comment  in  a  qw  list),  so  you'll  need  to add "no warnings 'qw';" before your
+       load_classes call.
+
+       If any classes found do not appear to be Result class files, you will get the following warning:
+
+          Failed to load $comp_class. Can't find source_name method. Is
+          $comp_class really a full DBIC result class? Fix it, move it elsewhere,
+          or make your load_classes call more specific.
+
+       Example:
+
+         My::Schema-&gt;load_classes(); # loads My::Schema::CD, My::Schema::Artist,
+                                     # etc. (anything under the My::Schema namespace)
+
+         # loads My::Schema::CD, My::Schema::Artist, Other::Namespace::Producer but
+         # not Other::Namespace::LinerNotes nor My::Schema::Track
+         My::Schema-&gt;load_classes(qw/ CD Artist #Track /, {
+           Other::Namespace =&gt; [qw/ Producer #LinerNotes /],
+         });
+
+   <b>storage_type</b>
+       Arguments: $storage_type|{$storage_type, \%args}
+       Return Value: $storage_type|{$storage_type, \%args}
+       Default value: DBIx::Class::Storage::DBI
+
+       Set the storage class that will be instantiated when "connect" is called.  If the classname  starts  with
+       "::", the prefix "DBIx::Class::Storage" is assumed by "connect".
+
+       You  want  to  use  this  to  set  subclasses of DBIx::Class::Storage::DBI in cases where the appropriate
+       subclass is not autodetected.
+
+       If your storage type requires instantiation arguments, those are defined as a second argument in the form
+       of a hashref and the entire value needs to be wrapped into an arrayref or a  hashref.   We  support  both
+       types   of   refs   here   in  order  to  play  nice  with  your  Config::[class]  or  your  choice.  See
+       DBIx::Class::Storage::DBI::Replicated for an example of this.
+
+   <b>exception_action</b>
+       Arguments: $code_reference
+       Return Value: $code_reference
+       Default value: None
+
+       When "throw_exception" is invoked and "exception_action" is set to a code reference, this reference  will
+       be  called  instead  of  "throw" in DBIx::Class::Exception, with the exception message passed as the only
+       argument.
+
+       Your custom throw code <b>must</b> rethrow the exception, as "throw_exception" is an  integral  part  of  DBIC's
+       internal execution control flow.
+
+       Example:
+
+          package My::Schema;
+          use base qw/DBIx::Class::Schema/;
+          use My::ExceptionClass;
+          __PACKAGE__-&gt;exception_action(sub { My::ExceptionClass-&gt;throw(@_) });
+          __PACKAGE__-&gt;load_classes;
+
+          # or:
+          my $schema_obj = My::Schema-&gt;connect( .... );
+          $schema_obj-&gt;exception_action(sub { My::ExceptionClass-&gt;throw(@_) });
+
+   <b>stacktrace</b>
+       Arguments: boolean
+
+       Whether  "throw_exception"  should  include  stack  trace  information.   Defaults to false normally, but
+       defaults to true if $ENV{DBIC_TRACE} is true.
+
+   <b>sqlt_deploy_hook</b>
+       Arguments: $sqlt_schema
+
+       An  optional  sub  which  you  can  declare  in  your  own  Schema  class  that  will  get   passed   the
+       SQL::Translator::Schema object when you deploy the schema via "create_ddl_dir" or "deploy".
+
+       For  an  example  of  what  you  can  do  with  this,  see  "Adding Indexes And Functions To Your SQL" in
+       DBIx::Class::Manual::Cookbook.
+
+       Note that sqlt_deploy_hook is called by "deployment_statements", which in turn is called before "deploy".
+       Therefore the hook can be used only to manipulate the SQL::Translator::Schema object before it is  turned
+       into SQL fed to the database. If you want to execute post-deploy statements which can not be generated by
+       SQL::Translator, the currently suggested method is to overload "deploy" and use dbh_do.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>connect</b>
+       Arguments: @connectinfo
+       Return Value: $new_schema
+
+       Creates  and  returns a new Schema object. The connection info set on it is used to create a new instance
+       of the storage backend and set it on the Schema object.
+
+       See "connect_info" in DBIx::Class::Storage::DBI for DBI-specific syntax on the @connectinfo argument,  or
+       DBIx::Class::Storage in general.
+
+       Note  that  "connect_info"  expects an arrayref of arguments, but "connect" does not. "connect" wraps its
+       arguments in an arrayref before passing them to "connect_info".
+
+       <u>Overloading</u>
+
+       "connect" is a convenience method. It is equivalent to calling  $schema-&gt;clone-&gt;connection(@connectinfo).
+       To write your own overloaded version, overload "connection" instead.
+
+   <b>resultset</b>
+       Arguments: $source_name
+       Return Value: $resultset
+
+         my $rs = $schema-&gt;resultset('DVD');
+
+       Returns the DBIx::Class::ResultSet object for the registered source name.
+
+   <b>sources</b>
+       Return Value: @source_names
+
+         my @source_names = $schema-&gt;sources;
+
+       Lists names of all the sources registered on this Schema object.
+
+   <b>source</b>
+       Arguments: $source_name
+       Return Value: $result_source
+
+         my $source = $schema-&gt;source('Book');
+
+       Returns the DBIx::Class::ResultSource object for the registered source name.
+
+   <b>class</b>
+       Arguments: $source_name
+       Return Value: $classname
+
+         my $class = $schema-&gt;class('CD');
+
+       Retrieves the Result class name for the given source name.
+
+   <b>txn_do</b>
+       Arguments: $coderef, @coderef_args?
+       Return Value: The return value of $coderef
+
+       Executes  $coderef  with  (optional)  arguments  @coderef_args atomically, returning its result (if any).
+       Equivalent  to  calling  $schema-&gt;storage-&gt;txn_do.   See  "txn_do"  in  DBIx::Class::Storage   for   more
+       information.
+
+       This   interface   is  preferred  over  using  the  individual  methods  "txn_begin",  "txn_commit",  and
+       "txn_rollback" below.
+
+       WARNING: If you are connected with "AutoCommit =&gt; 0" the transaction is considered nested, and  you  will
+       still  need  to  call  "txn_commit" to write your changes when appropriate. You will also want to connect
+       with auto_savepoint =&gt; 1 to get partial rollback to  work,  if  the  storage  driver  for  your  database
+       supports it.
+
+       Connecting with "AutoCommit =&gt; 1" is recommended.
+
+   <b>txn_scope_guard</b>
+       Runs "txn_scope_guard" on the schema's storage. See "txn_scope_guard" in DBIx::Class::Storage.
+
+   <b>txn_begin</b>
+       Begins    a    transaction    (does    nothing   if   AutoCommit   is   off).   Equivalent   to   calling
+       $schema-&gt;storage-&gt;txn_begin. See "txn_begin" in DBIx::Class::Storage for more information.
+
+   <b>txn_commit</b>
+       Commits the current transaction. Equivalent to calling $schema-&gt;storage-&gt;txn_commit. See "txn_commit"  in
+       DBIx::Class::Storage for more information.
+
+   <b>txn_rollback</b>
+       Rolls   back   the   current  transaction.  Equivalent  to  calling  $schema-&gt;storage-&gt;txn_rollback.  See
+       "txn_rollback" in DBIx::Class::Storage for more information.
+
+   <b>storage</b>
+         my $storage = $schema-&gt;storage;
+
+       Returns the DBIx::Class::Storage object for this Schema. Grab this if you want to turn on  SQL  statement
+       debugging at runtime, or set the quote character. For the default storage, the documentation can be found
+       in DBIx::Class::Storage::DBI.
+
+   <b>populate</b>
+       Arguments: $source_name, [ \@column_list, \@row_values+ ] | [ \%col_data+ ]
+       Return Value: \@result_objects (scalar context) | @result_objects (list context)
+
+       A convenience shortcut to "populate" in DBIx::Class::ResultSet. Equivalent to:
+
+        $schema-&gt;resultset($source_name)-&gt;populate([...]);
+
+       NOTE
+           The  context  of  this  method  call has an important effect on what is submitted to storage. In void
+           context data is fed directly to fastpath insertion routines provided by the underlying storage  (most
+           often  "execute_for_fetch" in DBI), bypassing the new and insert calls on the Result class, including
+           any augmentation of these methods provided by components. For example if you are using something like
+           DBIx::Class::UUIDColumns to create primary keys for you, you will find that your PKs are  empty.   In
+           this case you will have to explicitly force scalar or list context in order to create those values.
+
+   <b>connection</b>
+       Arguments: @args
+       Return Value: $new_schema
+
+       Similar to "connect" except sets the storage object and connection data in-place on the Schema class. You
+       should probably be calling "connect" to get a proper Schema object instead.
+
+       <u>Overloading</u>
+
+       Overload "connection" to change the behaviour of "connect".
+
+   <b>compose_namespace</b>
+       Arguments: $target_namespace, $additional_base_class?
+       Return Value: $new_schema
+
+       For  each  DBIx::Class::ResultSource  in  the schema, this method creates a class in the target namespace
+       (e.g. $target_namespace::CD, $target_namespace::Artist) that  inherits  from  the  corresponding  classes
+       attached to the current schema.
+
+       It  also  attaches  a  corresponding  DBIx::Class::ResultSource  object  to  the  new  $schema object. If
+       $additional_base_class is given, the new composed classes will inherit from first the corresponding class
+       from the current schema then the base class.
+
+       For example, for a schema with My::Schema::CD and My::Schema::Artist classes,
+
+         $schema-&gt;compose_namespace('My::DB', 'Base::Class');
+         print join (', ', @My::DB::CD::ISA) . "\n";
+         print join (', ', @My::DB::Artist::ISA) ."\n";
+
+       will produce the output
+
+         My::Schema::CD, Base::Class
+         My::Schema::Artist, Base::Class
+
+   <b>svp_begin</b>
+       Creates  a   new   savepoint   (does   nothing   outside   a   transaction).    Equivalent   to   calling
+       $schema-&gt;storage-&gt;svp_begin.  See "svp_begin" in DBIx::Class::Storage for more information.
+
+   <b>svp_release</b>
+       Releases    a    savepoint    (does    nothing   outside   a   transaction).    Equivalent   to   calling
+       $schema-&gt;storage-&gt;svp_release.  See "svp_release" in DBIx::Class::Storage for more information.
+
+   <b>svp_rollback</b>
+       Rollback  to   a   savepoint   (does   nothing   outside   a   transaction).    Equivalent   to   calling
+       $schema-&gt;storage-&gt;svp_rollback.  See "svp_rollback" in DBIx::Class::Storage for more information.
+
+   <b>clone</b>
+       Arguments: %attrs?
+       Return Value: $new_schema
+
+       Clones  the schema and its associated result_source objects and returns the copy. The resulting copy will
+       have the same attributes as the source schema, except for those attributes explicitly overridden  by  the
+       provided %attrs.
+
+   <b>throw_exception</b>
+       Arguments: $message
+
+       Throws  an  exception.  Obeys the exemption rules of DBIx::Class::Carp to report errors from outer-user's
+       perspective. See "exception_action" for details on overriding this method's behavior.  If "stacktrace" is
+       turned on, "throw_exception"'s default behavior will provide a detailed stack trace.
+
+   <b>deploy</b>
+       Arguments: \%sqlt_args, $dir
+
+       Attempts to deploy the schema to the current storage using SQL::Translator.
+
+       See "METHODS" in SQL::Translator for a list of values for "\%sqlt_args".  The most common value for  this
+       would  be  "{  add_drop_table  =&gt; 1 }" to have the SQL produced include a "DROP TABLE" statement for each
+       table created. For quoting purposes supply "quote_identifiers".
+
+       Additionally, the DBIx::Class parser accepts a "sources" parameter  as  a  hash  ref  or  an  array  ref,
+       containing  a  list  of  source  to  deploy.  If present, then only the sources listed will get deployed.
+       Furthermore, you can use the "add_fk_index" parser parameter to prevent the parser from creating an index
+       for each FK.
+
+   <b>deployment_statements</b>
+       Arguments: See "deployment_statements" in DBIx::Class::Storage::DBI
+       Return Value: $listofstatements
+
+       A convenient shortcut to "$self-&gt;storage-&gt;deployment_statements($self, @args)".  Returns  the  statements
+       used by "deploy" and "deploy" in DBIx::Class::Storage.
+
+   <b>create_ddl_dir</b>
+       Arguments: See "create_ddl_dir" in DBIx::Class::Storage::DBI
+
+       A convenient shortcut to "$self-&gt;storage-&gt;create_ddl_dir($self, @args)".
+
+       Creates  an  SQL  file  based  on  the  Schema,  for  each  of the specified database types, in the given
+       directory.
+
+   <b>ddl_filename</b>
+       Arguments: $database-type, $version, $directory, $preversion
+       Return Value: $normalised_filename
+
+         my $filename = $table-&gt;ddl_filename($type, $version, $dir, $preversion)
+
+       This method is called by "create_ddl_dir" to compose a file name out of the supplied directory,  database
+       type and version number. The default file name format is: "$dir$schema-$version-$type.sql".
+
+       You may override this method in your schema if you wish to use a different format.
+
+        WARNING
+
+        Prior to DBIx::Class version 0.08100 this method had a different signature:
+
+           my $filename = $table-&gt;ddl_filename($type, $dir, $version, $preversion)
+
+        In recent versions variables $dir and $version were reversed in order to
+        bring the signature in line with other Schema/Storage methods. If you
+        really need to maintain backward compatibility, you can do the following
+        in any overriding methods:
+
+           ($dir, $version) = ($version, $dir) if ($DBIx::Class::VERSION &lt; 0.08100);
+
+   <b>thaw</b>
+       Provided  as the recommended way of thawing schema objects. You can call "Storable::thaw" directly if you
+       wish, but the thawed objects will not have a reference to any schema, so are rather useless.
+
+   <b>freeze</b>
+       This doesn't actually do anything beyond calling nfreeze, it is just provided here for symmetry.
+
+   <b>dclone</b>
+       Arguments: $object
+       Return Value: dcloned $object
+
+       Recommended way of dcloning DBIx::Class::Row and DBIx::Class::ResultSet objects so  their  references  to
+       the schema object (which itself is <b>not</b> cloned) are properly maintained.
+
+   <b>schema_version</b>
+       Returns the current schema class' $VERSION in a normalised way.
+
+   <b>register_class</b>
+       Arguments: $source_name, $component_class
+
+       This  method  is  called  by  "load_namespaces" and "load_classes" to install the found classes into your
+       Schema. You should be using those instead of this one.
+
+       You will only need this method if you have your Result classes in files which are  not  named  after  the
+       packages (or all in the same file). You may also need it to register classes at runtime.
+
+       Registers a class which isa DBIx::Class::ResultSourceProxy. Equivalent to calling:
+
+         $schema-&gt;register_source($source_name, $component_class-&gt;result_source_instance);
+
+   <b>register_source</b>
+       Arguments: $source_name, $result_source
+
+       This method is called by "register_class".
+
+       Registers the DBIx::Class::ResultSource in the schema with the given source name.
+
+   <b>unregister_source</b>
+       Arguments: $source_name
+
+       Removes the DBIx::Class::ResultSource from the schema for the given source name.
+
+   <b>register_extra_source</b>
+       Arguments: $source_name, $result_source
+
+       As "register_source" but should be used if the result class already has a source and you want to register
+       an extra one.
+
+   <b>compose_connection</b> <b>(DEPRECATED)</b>
+       Arguments: $target_namespace, @db_info
+       Return Value: $new_schema
+
+       DEPRECATED. You probably wanted compose_namespace.
+
+       Actually, you probably just wanted to call connect.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This  module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01                           <u>DBIx::Class::<a href="../man3pm/Schema.3pm.html">Schema</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

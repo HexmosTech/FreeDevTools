@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>crypto, cryptodev — user-mode access to hardware-accelerated cryptography</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       crypto, cryptodev — user-mode access to hardware-accelerated cryptography
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>device</b> <b>crypto</b>
+       <b>device</b> <b>cryptodev</b>
+
+       <b>#include</b> <b>&lt;sys/ioctl.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/time.h&gt;</b>
+       <b>#include</b> <b>&lt;crypto/cryptodev.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>crypto</b> driver gives user-mode applications access to hardware-accelerated cryptographic transforms as
+       implemented by the <u><a href="../man9/crypto.9.html">crypto</a></u>(9) in-kernel interface.
+
+       The  <u>/dev/crypto</u>  special  device  provides an <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) based interface.  User-mode applications open the
+       special device and then issue <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) calls on the  descriptor.   User-mode  access  to  <u>/dev/crypto</u>  is
+       controlled by two <u><a href="../man8/sysctl.8.html">sysctl</a></u>(8) variables: <b>kern.userasymcrypto</b> and <b>kern.cryptodevallowsoft</b>.
+
+       The  <b>crypto</b>  device  provides two distinct modes of operation: one mode for symmetric-keyed cryptographic
+       requests and digests, and a second mode for both  asymmetric-key  (public-key/private-key)  requests  and
+       modular  arithmetic  (for  Diffie-Hellman key exchange and other cryptographic protocols).  The two modes
+       are described separately below.
+
+</pre><h4><b>THEORY</b> <b>OF</b> <b>OPERATION</b></h4><pre>
+       Regardless of whether symmetric-key or asymmetric-key operations are to be performed, use of  the  device
+       requires a basic series of steps:
+
+       1.   Open the <u>/dev/crypto</u> device.
+
+       2.   Create a new cryptography file descriptor via CRIOGET to use for all subsequent <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) commands.
+
+       3.   Close the <u>/dev/crypto</u> device.
+
+       4.   If  any  symmetric-keyed cryptographic or digest operations will be performed, create a session with
+            CIOCGSESSION.  Most applications will require at least one symmetric session.  Since cipher and  MAC
+            keys  are  tied  to sessions, many applications will require more.  Asymmetric operations do not use
+            sessions.
+
+       5.   Submit requests, synchronously with CIOCCRYPT (symmetric),  CIOCCRYPTAEAD  (symmetric),  or  CIOCKEY
+            (asymmetric).
+
+       6.   Optionally destroy a session with CIOCFSESSION.
+
+       7.   Close  the  cryptography file descriptor with <u><a href="../man2/close.2.html">close</a></u>(2).  This will automatically close any remaining
+            sessions associated with the file desriptor.
+
+</pre><h4><b>SYMMETRIC-KEY</b> <b>OPERATION</b></h4><pre>
+       The symmetric-key operation mode provides a context-based API to traditional symmetric-key encryption (or
+       privacy) algorithms, or to keyed and unkeyed one-way hash (HMAC and MAC) algorithms.   The  symmetric-key
+       mode also permits fused operation, where the hardware performs both a privacy algorithm and an integrity-
+       check  algorithm  in  a  single  pass over the data: either a fused encrypt/HMAC-generate operation, or a
+       fused HMAC-verify/decrypt operation.
+
+       To use symmetric mode, you must first create a session specifying the algorithm(s)  and  key(s)  to  use;
+       then issue encrypt or decrypt requests against the session.
+
+   <b>Algorithms</b>
+       For a list of supported algorithms, see <u><a href="../man7/crypto.7.html">crypto</a></u>(7) and <u><a href="../man9/crypto.9.html">crypto</a></u>(9).
+
+   <b>IOCTL</b> <b>Request</b> <b>Descriptions</b>
+       CRIOGET <u>int</u> <u>*fd</u>
+                     Clone  the  fd  argument  to  <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2),  yielding a new file descriptor for the creation of
+                     sessions.
+
+       CIOCFINDDEV <u>struct</u> <u>crypt_find_op</u> <u>*fop</u>
+
+                     struct crypt_find_op {
+                         int     crid;       /* driver id + flags */
+                         char    name[32];   /* device/driver name */
+                     };
+
+                     If <u>crid</u> is -1, then find the driver named <u>name</u> and return the id in <u>crid</u>.  If <u>crid</u>  is  not
+                     -1,  return the name of the driver with <u>crid</u> in <u>name</u>.  In either case, if the driver is not
+                     found, ENOENT is returned.
+
+       CIOCGSESSION <u>struct</u> <u>session_op</u> <u>*sessp</u>
+
+                     struct session_op {
+                         u_int32_t cipher;   /* e.g. CRYPTO_DES_CBC */
+                         u_int32_t mac;      /* e.g. CRYPTO_MD5_HMAC */
+
+                         u_int32_t keylen;   /* cipher key */
+                         const void *key;
+                         int mackeylen;      /* mac key */
+                         const void *mackey;
+
+                         u_int32_t ses;      /* returns: ses # */
+                     };
+
+                     Create a new cryptographic session on  a  file  descriptor  for  the  device;  that  is,  a
+                     persistent  object  specific to the chosen privacy algorithm, integrity algorithm, and keys
+                     specified in <u>sessp</u>.  The special value 0 for either privacy or  integrity  is  reserved  to
+                     indicate  that  the  indicated  operation  (privacy  or  integrity) is not desired for this
+                     session.
+
+                     Multiple sessions may be bound to a single file descriptor.  The  session  ID  returned  in
+                     <u>sessp-&gt;ses</u>  is  supplied  as a required field in the symmetric-operation structure <u>crypt_op</u>
+                     for future encryption or hashing requests.
+
+                     For non-zero symmetric-key privacy algorithms, the privacy algorithm must be  specified  in
+                     <u>sessp-&gt;cipher</u>,  the  key length in <u>sessp-&gt;keylen</u>, and the key value in the octets addressed
+                     by <u>sessp-&gt;key</u>.
+
+                     For keyed one-way hash algorithms, the one-way hash must be specified  in  <u>sessp-&gt;mac</u>,  the
+                     key length in <u>sessp-&gt;mackey</u>, and the key value in the octets addressed by <u>sessp-&gt;mackeylen</u>.
+
+                     Support  for a specific combination of fused privacy and integrity-check algorithms depends
+                     on whether the underlying hardware supports that combination.   Not  all  combinations  are
+                     supported  by  all  hardware, even if the hardware supports each operation as a stand-alone
+                     non-fused operation.
+
+       CIOCGSESSION2 <u>struct</u> <u>session2_op</u> <u>*sessp</u>
+
+                     struct session2_op {
+                         u_int32_t cipher;   /* e.g. CRYPTO_DES_CBC */
+                         u_int32_t mac;      /* e.g. CRYPTO_MD5_HMAC */
+
+                         u_int32_t keylen;   /* cipher key */
+                         const void *key;
+                         int mackeylen;      /* mac key */
+                         const void *mackey;
+
+                         u_int32_t ses;      /* returns: ses # */
+                         int crid;           /* driver id + flags (rw) */
+                         int pad[4];         /* for future expansion */
+                     };
+
+                     This request is similar to CIOGSESSION except that <u>sessp-&gt;crid</u> requests either  a  specific
+                     crypto  device  or a class of devices (software vs hardware).  The <u>sessp-&gt;pad</u> field must be
+                     initialized to zero.
+
+       CIOCCRYPT <u>struct</u> <u>crypt_op</u> <u>*cr_op</u>
+
+                     struct crypt_op {
+                         u_int32_t ses;
+                         u_int16_t op;       /* e.g. COP_ENCRYPT */
+                         u_int16_t flags;
+                         u_int len;
+                         caddr_t src, dst;
+                         caddr_t mac;                /* must be large enough for result */
+                         caddr_t iv;
+                     };
+
+                     Request a symmetric-key (or hash) operation.  To encrypt, set <u>cr_op-&gt;op</u> to COP_ENCRYPT.  To
+                     decrypt, set <u>cr_op-&gt;op</u> to COP_DECRYPT.  The field <u>cr_op-&gt;len</u> supplies  the  length  of  the
+                     input buffer; the fields <u>cr_op-&gt;src</u>, <u>cr_op-&gt;dst</u>, <u>cr_op-&gt;mac</u>, <u>cr_op-&gt;iv</u> supply the addresses
+                     of  the input buffer, output buffer, one-way hash, and initialization vector, respectively.
+                     If a session is using both a privacy algorithm and  a  hash  algorithm,  the  request  will
+                     generate a hash of the input buffer before generating the output buffer by default.  If the
+                     COP_F_CIPHER_FIRST  flag  is  included  in  the  <u>cr_op-&gt;flags</u>  field, then the request will
+                     generate a hash of the output buffer after executing the privacy algorithm.
+
+       CIOCCRYPTAEAD <u>struct</u> <u>crypt_aead</u> <u>*cr_aead</u>
+
+                     struct crypt_aead {
+                         u_int32_t ses;
+                         u_int16_t op;       /* e.g. COP_ENCRYPT */
+                         u_int16_t flags;
+                         u_int len;
+                         u_int aadlen;
+                         u_int ivlen;
+                         caddr_t src, dst;
+                         caddr_t aad;
+                         caddr_t tag;                /* must be large enough for result */
+                         caddr_t iv;
+                     };
+
+                     The CIOCCRYPTAEAD is similar to the CIOCCRYPT but provides additional data in  <u>cr_aead-&gt;aad</u>
+                     to include in the authentication mode.
+
+       CIOCFSESSION <u>u_int32_t</u> <u>ses_id</u>
+                     Destroys the session identified by <u>ses_id</u>.
+
+</pre><h4><b>ASYMMETRIC-KEY</b> <b>OPERATION</b></h4><pre>
+   <b>Asymmetric-key</b> <b>algorithms</b>
+       Contingent  upon  hardware  support,  the  following  asymmetric (public-key/private-key; or key-exchange
+       subroutine) operations may also be available:
+
+             <u>Algorithm</u>             Input parameter    Output parameter
+                                   Count              Count
+             CRK_MOD_EXP           3                  1
+             CRK_MOD_EXP_CRT       6                  1
+             CRK_DSA_SIGN          5                  2
+             CRK_DSA_VERIFY        7                  0
+             CRK_DH_COMPUTE_KEY    3                  1
+
+       See below for discussion of the input and output parameter counts.
+
+   <b>Asymmetric-key</b> <b>commands</b>
+       CIOCASYMFEAT <u>int</u> <u>*feature_mask</u>
+                Returns a bitmask of supported asymmetric-key operations.  Each of the  above-listed  asymmetric
+                operations is present if and only if the bit position numbered by the code for that operation is
+                set.  For example, CRK_MOD_EXP is available if and only if the bit (1 &lt;&lt; CRK_MOD_EXP) is set.
+
+       CIOCKEY <u>struct</u> <u>crypt_kop</u> <u>*kop</u>
+
+                struct crypt_kop {
+                    u_int crk_op;               /* e.g. CRK_MOD_EXP */
+                    u_int crk_status;           /* return status */
+                    u_short crk_iparams;        /* # of input params */
+                    u_short crk_oparams;        /* # of output params */
+                    u_int crk_pad1;
+                    struct crparam crk_param[CRK_MAXPARAM];
+                };
+
+                /* Bignum parameter, in packed bytes. */
+                struct crparam {
+                    void * crp_p;
+                    u_int crp_nbits;
+                };
+
+                Performs an asymmetric-key operation from the list above.  The specific operation is supplied in
+                <u>kop-&gt;crk_op</u>; final status for the operation is returned in <u>kop-&gt;crk_status</u>.  The number of input
+                arguments   and   the   number   of  output  arguments  is  specified  in  <u>kop-&gt;crk_iparams</u>  and
+                <u>kop-&gt;crk_iparams</u>,  respectively.   The  field  <u>crk_param[]</u>  must  be  filled  in  with   exactly
+                <u>kop-&gt;crk_iparams</u>  <u>+</u>  <u>kop-&gt;crk_oparams</u>  arguments,  each  encoded  as  a <u>struct</u> <u>crparam</u> (address,
+                bitlength) pair.
+
+                The semantics of these arguments are currently undocumented.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/aesni.4.html">aesni</a></u>(4), <u><a href="../man4/hifn.4.html">hifn</a></u>(4), <u><a href="../man4/ipsec.4.html">ipsec</a></u>(4), <u><a href="../man4/padlock.4.html">padlock</a></u>(4), <u><a href="../man4/safe.4.html">safe</a></u>(4), <u><a href="../man4/ubsec.4.html">ubsec</a></u>(4), <u><a href="../man7/crypto.7.html">crypto</a></u>(7), <u><a href="../man8/geli.8.html">geli</a></u>(8), <u><a href="../man9/crypto.9.html">crypto</a></u>(9)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>crypto</b> driver first appeared in OpenBSD 3.0.  The <b>crypto</b> driver was imported to FreeBSD 5.0.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Error checking and reporting is weak.
+
+       The values specified for symmetric-key key sizes to CIOCGSESSION must exactly match the  values  expected
+       by <u><a href="../man9/opencrypto.9.html">opencrypto</a></u>(9).  The output buffer and MAC buffers supplied to CIOCCRYPT must follow whether privacy or
+       integrity  algorithms  were specified for session: if you request a non-NULL algorithm, you must supply a
+       suitably-sized buffer.
+
+       The scheme for passing arguments for asymmetric requests is baroque.
+
+       CRIOGET should not exist.  It should be possible to use the CIOC* commands directly on a <u>/dev/crypto</u> file
+       descriptor.
+
+Debian                                          December 17, 2019                                      <u><a href="../man4/CRYPTO.4.html">CRYPTO</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

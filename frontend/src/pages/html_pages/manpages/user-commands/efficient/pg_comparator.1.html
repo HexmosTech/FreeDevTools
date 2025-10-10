@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pg_comparator - efficient table content comparison and synchronization</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/postgresql-comparator">postgresql-comparator_2.3.2-5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pg_comparator - efficient table content comparison and synchronization
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>pg_comparator</b> [options as <b>--help</b> <b>--option</b> <b>--man</b>] conn1 conn2
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This script performs a network and time efficient comparison or synchronization of two possibly large
+       tables in <b>PostgreSQL</b>, <b>MySQL</b> or <b>SQLite</b> databases, so as to detect inserted, updated or deleted tuples
+       between these tables.  The algorithm is efficient especially if the expected differences are relatively
+       small.
+
+       The implementation is quite generic: multi-column keys (but there must be a key!), no assumption of data
+       types other that they can be cast to text, subset of columns can be used for the comparison, handling of
+       NULL values...
+
+       This script focuses on the comparison algorithm, hence the many options.  The fact that it may do
+       anything useful, such as checking that a replication tool does indeed replicates your data, or such as
+       synchronizing tables, is a mere side effect.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       Options allow requesting help or to adjust some internal parameters.  Short one-letter options are also
+       available, usually with the first letter of the option name.
+
+       "--aggregate=(sum|xor)" or "-a (sum|xor)"
+           Aggregation  function  to be used for summaries, either <b>xor</b> or <b>sum</b>.  It must operate on the result of
+           the checksum function.  For PostgreSQL and SQLite, the <b>xor</b> aggregate needs to be loaded.  There is  a
+           signed/unsigned  issue  on  the  key  hash  when using <b>xor</b> for comparing tables on MySQL or SQLite vs
+           PostgreSQL.  We provide a new "ISUM" aggregate for SQLite because both  "SUM"  and  "TOTAL"  do  some
+           incompatible handling of integer overflows.
+
+           Default is <b>sum</b> because it is available by default and works in mixed mode.
+
+       "--ask-pass"
+           Ask for passwords interactively. See also "--env-pass" option below.
+
+           Default is not to ask for passwords.
+
+       "--asynchronous" or "-A", "--no-asynchronous" or "-X"
+           Whether  to run asynchronous queries. This provides some parallelism, however the two connections are
+           more or less synchronized per query.
+
+           Default is to use asynchronous queries to enable some parallelism.
+
+       "--checksum-computation=(create|insert)" or "--cc=..."
+           How to create the checksum table.  Use <b>create</b> to use a "CREATE ... AS SELECT ..." query, or <b>insert</b> to
+           use a "CREATE ...; INSERT ... SELECT ..." query.  The former will require an additional  counting  to
+           get  the table size, so in the end there are two queries anyway.  There is a type size issue with the
+           <b>insert</b> strategy on MySQL, the cumulated key string length must be under 64 bytes.
+
+           Default is <b>create</b> because it always works for both databases.
+
+       "--checksum-function=fun" or "--cf=fun" or "-c fun"
+           Checksum function to use, either <b>ck</b>, <b>fnv</b> or <b>md5</b>.  For PostgreSQL, MySQL and SQLite  the  provided  <b>ck</b>
+           and <b>fnv</b> checksum functions must be loaded into the target databases.  Choosing <b>md5</b> does not come free
+           either:  the  provided cast functions must be loaded into the target databases and the computation is
+           more expensive.
+
+           Default is <b>ck</b>, which is fast,  especially  if  the  operation  is  cpu-bound  and  the  bandwidth  is
+           reasonably high.
+
+       "--checksum-size=n" or "--check-size=n" or "--cs=n" or "-z n"
+           Tuple checksum size, must be <b>2</b>, <b>4</b> or <b>8</b> bytes.  The key checksum size is always 4 bytes long.
+
+           Default  is  <b>8</b>,  so  that  the  false negative probability is very low.  There should be no reason to
+           change that.
+
+       "--cleanup"
+           Drop checksum and summary tables beforehand.  Useful after a run with "--no-temp"  and  "--no-clear",
+           typically used for debugging.
+
+           Default is not to drop because it is not needed.
+
+       "--clear"
+           Drop  checksum  and  summary  tables  explicitly  after  the computation.  Note that they are dropped
+           implicitly by default when the connection is closed as they  are  temporary,  see  "-(-no)-temporary"
+           option.  This option is useful for debugging.
+
+           Default is <b>not</b> to clear explicitly the checksum and summary tables, as it is not needed.
+
+       "--debug" or "-d"
+           Set  debug  mode.  Repeat for higher debug levels. See also "--verbose".  Beware that some safe gards
+           about option settings are skipped under debug so as to allow testing under different conditions.
+
+           Default is not to run in debug mode.
+
+       "--env-pass='var'"
+           Take password from environment variables "var1", "var2" or "var" for connection one,  two,  or  both.
+           This is tried before asking interactively if "--ask-pass" is also set.
+
+           Default is not to look for passwords from environment variables.
+
+       "--expect n" or "-e n"
+           Total  number  of differences to expect (updates, deletes and inserts).  This option is only used for
+           non regression tests. See the TESTS section.
+
+       "--folding-factor=7" or "-f 7"
+           Folding factor: log2 of the number of rows grouped together at each stage, starting from  the  leaves
+           so that the first round always groups as many records as possible. The power of two allows one to use
+           masked computations.  The minimum value of 1 builds a binary tree.
+
+           Default  folding  factor  log2  is  <b>7</b>, i.e. size 128 folds.  This default value was chosen after some
+           basic tests on medium-size cases with medium or low bandwidth.  Values  from  4  to  8  should  be  a
+           reasonable choice for most settings.
+
+       "--help" or "-h"
+           Show short help.
+
+       "--key-checksum='kcs'" or "--kcs=..."
+           Use  key  checksum  attribute of this name, which must be already available in the tables to compare.
+           This option also requires option "--tuple-checksum".  See also the EXAMPLES section below for how  to
+           set  a  checksum  trigger.  Consider "--use-key" instead if you already have a reasonably distributed
+           integer primary key.
+
+           Default is to build both key and tuple checksums on the fly.
+
+       "--lock", "--no-lock"
+           Whether to lock tables.  Setting the option explicitly overrides the default one way or another.  For
+           PostgreSQL, this option requires "--transaction", which is enabled by default.
+
+           Default depends on the current operation: the table is <u>not</u> <u>locked</u> for a comparison, but it is  <u>locked</u>
+           for a synchronization.
+
+       "--long-read-len=0" or "-L 0"
+           Set  max  size  for  fetched  binary  large  objects.   Well,  it seems to be ignored at least by the
+           PostgreSQL driver.
+
+           Default is to keep the default value set by the driver.
+
+       "--man" or "-m"
+           Show manual page interactively in the terminal.
+
+       "--max-ratio=0.1"
+           Maximum relative search effort. The search is  stopped  if  the  number  of  results  is  above  this
+           threshold  expressed relatively to the table size.  Use 2.0 for no limit (all tuples were deleted and
+           new ones are inserted).
+
+           Default is <b>0.1</b>, i.e. an overall 10% difference is allowed before giving up.
+
+       "--max-report=n"
+           Maximum absolute search effort. The search is stopped if the number of differences goes  beyond  this
+           threshold.  If  set,  the  previous "--max-ratio" option is ignored, otherwise the effort is computed
+           with the ratio once the table size is known.
+
+           Default is to compute the maximum number of reported differences based on the  "--max-ratio"  option,
+           with a minimum of 100 differences allowed.
+
+       "--max-levels=0"
+           Maximum number of levels used. Allows one to cut-off folding. 0 means no cut-off.  Setting a value of
+           1  would  only  use the checksum table, without summaries.  A value of 3 or 4 would be raisonable, as
+           the last levels of the tree are nice for the theoretical  complexity  formula,  but  do  not  improve
+           performance in practice.
+
+           Default is <b>0</b>.
+
+       "--null='text'"
+           How  to handle NULL values. Either <b>hash</b> to hash all values, where NULL has one special hash value, or
+           <b>text</b> where NULL values are substituted by the "NULL" string.
+
+           Default is <b>text</b> because it is faster.
+
+       "--option" or "-o"
+           Show option summary.
+
+       "--pg-text-cast"
+           With PostgreSQL add explicit TEXT casts to work around some typing issues.
+
+       "--pg-copy=128"
+           Experimental option to use PostgreSQL's COPY instead of INSERT/UPDATE when synchronizing,  by  chunks
+           of the specified size.
+
+       "--prefix='pgc_cmp'"
+           Name  prefix, possibly schema qualified, used for generated comparison tables by appending numbers to
+           it. Consider changing the prefix if you expect several comparisons to run  concurrently  against  the
+           same database.
+
+           Default  is  "pgc_cmp".  Checksum tables is named "pgc_cmp_1_0" and "pgc_cmp_2_0", and summary tables
+           are named by increasing the last number.
+
+       "--report", "--no-report"
+           Report differing keys to stdout as they are found.
+
+           Default is to report.
+
+       "--separator='|'" or "-s '|'"
+           Separator string or character used when concatenating key columns for computing checksums.
+
+           Defaults to the pipe '|' character.
+
+       "--size=n"
+           Assume this value as the table size. It is sufficient for the algorithm to  perform  well  that  this
+           size is in the order of magnitude of the actual table size.
+
+           Default is to query the table sizes, which is skipped if this option is set.
+
+       "--source-1='DBI:...'", "--source-2='...'" or "-1 '...'", "-2 '...'"
+           Take  full  control  of DBI data source specification and mostly ignore the comparison authentication
+           part of the source or target URLs.  One can connect with "DBI:Pg:service=backup",  use  an  alternate
+           driver,  set  any  option  allowed  by  the  driver...  See "DBD::Pg" and "DBD:mysql" manuals for the
+           various options that can be set through the DBI data source  specification.   However,  the  database
+           server  specified  in  the URL must be consistent with this source specification so that the queries'
+           syntax is the right one.
+
+           Default is to rely on the two URL arguments.
+
+       "--skip-inserts", "--skip-updates", "--skip-deletes"
+           When synchronizing, do not perform these operations.
+
+           Default under "--synchronize" is to do all operations.
+
+       "--stats=(txt|csv)"
+           Show various statistics about the comparison performed in this format.  Also,  option  "--stats-name"
+           gives the test a name, useful to generate csv files that will be processed automatically.
+
+           Default  is  <b>not</b>  to  show  statistics,  because  it  requires additional synchronizations and is not
+           necessarily interesting to the user.
+
+       "--synchronize" or "-S"
+           Actually perform operations to synchronize the second table wrt the first.  Well, not really,  it  is
+           only  a  dry  run. It is actually done if you add "--do-it" or "-D". Save your data before attempting
+           anything like that!
+
+           Default is not to synchronize.
+
+       "--temporary", "--no-temporary"
+           Whether to use temporary tables. If you don't, the tables are kept by default at  the  end,  so  they
+           will have to be deleted by hand. See "--clear" option to request a cleanup. This option is useful for
+           debugging.
+
+           Default is to use temporary tables that are automatically wiped out when the connection is closed.
+
+       "--unlogged", "--no-unlogged"
+           Use  unlogged  tables  for  storing checksums. These tables are not transactional, so it may speed up
+           things a little. However, they are not automatically cleaned up at the end. See "--clear"  option  to
+           request a cleanup.
+
+           Default is not to use unlogged tables.
+
+       "--threads" or "-T", "--no-threads" or "-N"
+           Highly EXPERIMENTAL feature.
+
+           Try  to  use  threads  to perform computations in parallel, with some hocus-pocus because perl thread
+           model does not really work well with DBI.   Perl  threads  are  rather  heavy  and  slow,  more  like
+           communicating processes than light weight threads, really.
+
+           This  does  NOT  work at all with PostgreSQL.  It works partially with MySQL, at the price of turning
+           off "--transaction".
+
+           Default is <b>not</b> to use threads, as it does not work for all databases.
+
+       "--timeout n"
+           Timeout comparison after "n" seconds.
+
+           Default is no timeout. Be patient.
+
+       "--transaction", "--no-transaction"
+           Whether to wrap the whole algorithm in a single transaction.
+
+           Default is to use a wrapping transaction, as it seems to be both faster and safer to do so.
+
+       "--tuple-checksum='tcs'" or "--tcs=..."
+           Use tuple checksum attribute of this name, which must be already available in the tables to  compare.
+           This  option  requires  to  set  also  either "--use-key" or "--key-checksum=..." above. The provided
+           checksum attributes must not appear in the lists of key and value columns.   See  also  the  EXAMPLES
+           section below for how to set a checksum trigger.
+
+           Default is to build both key and tuple checksums on the fly.
+
+       "--use-key" or "-u"
+           Whether  to  directly  use  the value of the key to distribute tuples among branches. The key must be
+           simple, integer, not NULL, and evenly distributed.  If you have a reasonably spread  integer  primary
+           key, consider using this option to avoid half of the checksum table hash computations.
+
+           Default is to hash the key, so as to handle any type, composition and distribution.
+
+       "--use-null", "--no-use-null"
+           Whether  to  use  the  information  that  a  column  is declared NOT NULL to simplify computations by
+           avoiding calls to COALESCE to handle NULL values.
+
+           Default is to use this information, at the price of querying table metadata.
+
+       "--verbose" or "-v"
+           Be verbose about what is happening. The more you ask, the more verbose.
+
+           Default is to be quiet, so that possible warnings or errors stand out.
+
+       "--version" or "-V"
+           Show version information and exit.
+
+       "--where=..."
+           SQL boolean condition on table tuples for partial comparison.  Useful to reduce the load if you  know
+           that  expected  differences are in some parts of your data, say those time-stamped today...  The same
+           condition is passed on both sides, so both tables must be pretty similar so that it  works.  This  is
+           usually the case.
+
+           Default is to compare whole tables.
+
+</pre><h4><b>ARGUMENTS</b></h4><pre>
+       The two arguments describe database connections with the following URL-like syntax, where square brackets
+       denote  optional  parts.  Many  parts  are  optional  with  a  default. The minimum syntactically correct
+       specification is "/", but that does not necessary mean anything useful.
+
+         [driver://][login[:pass]@][host][:port]/[base/[[schema.]table[?key[:cols]]]]
+
+       See the EXAMPLES section below, and also the "--source-*" options above.
+
+       Note that some default value used  by  DBI  drivers  may  be  changed  with  driver-specific  environment
+       variables,  and  that  DBI also provides its own defaults and overrides, so what actually happens may not
+       always be clear.  Default values for the second URL are mostly taken from the first URL.
+
+       <b>driver</b>
+           Database driver to use.  Use <b>pgsql</b> for PostgreSQL, <b>mysql</b> for MySQL, <b>sqlite</b> for SQLite.  Heterogeneous
+           databases may be compared and synchronized, however beware that subtle typing, encoding  and  casting
+           issues  may  prevent  heterogeneous comparisons or synchronizations to succeed.  Default is <b>pgsql</b> for
+           the first connection, and same as first for second.
+
+           For SQLite, the authentication part of the URL (login, pass, host, port) is  expected  to  be  empty,
+           thus the full URL should look like:
+
+             sqlite:///base.db/table?key,col:other,columns
+
+           Moreover, setting the PGC_SQLITE_LOAD_EXTENSION environment variable with ":"-separated shared object
+           files loads these into SQLite.
+
+       <b>login</b>
+           Login to use when connecting to database. Default is username for first connection, and same as first
+           connection for second.
+
+       <b>pass</b>
+           Password  to  use  when  connecting  to  database.  Note that it is a bad idea to put a password as a
+           command argument.  Default is none for the first connection, and  the  same  password  as  the  first
+           connection for the second <u>if</u> the connection targets the same host, port and uses the same login.  See
+           also "--ask-pass" and "--env-pass" options.
+
+       <b>host</b>
+           Hostname or IP to connect to.  Default is the empty string, which means connecting to the database on
+           localhost with a UNIX socket.
+
+       <b>port</b>
+           TCP-IP port to connect to.  Default is 5432 for PostgreSQL and 3306 for MySQL.
+
+       <b>base</b>
+           Database  catalog  to connect to. Default is username for first connection.  Default is same as first
+           connection for second connection.  For SQLite, provide the database file name. The path  is  relative
+           by default, but can be made absolute by prepending an additional '/':
+
+             sqlite:////var/cache/sqlite/base.db/table?...
+
+       <b>schema.table</b>
+           The possibly schema-qualified table to use for comparison.  No default for first connection.  Default
+           is same as first connection for second connection.
+
+           Note  that MySQL does not have <u>schemas</u>, so the schema part must be empty.  However, strangely enough,
+           their <u>database</u> concept is just like a <u>schema</u>, so one could  say  that  MySQL  really  does  not  have
+           <u>databases</u>, although there is something of that name. Am I clear?
+
+       <b>keys</b>
+           Comma-separated  list of key columns.  Default is table primary key for first connection.  Default is
+           same as first connection for second connection.  The key <b>cannot</b> be empty. If you do not have a way of
+           identifying your tuples, then there is no point in looking for differences.
+
+       <b>cols</b>
+           Comma-separated list of columns to compare. May be empty.  Default is all columns but <b>keys</b> for  first
+           connection.  Default is same as first connection for second connection.  Beware that "...?key:" means
+           an empty cols, while "...?key" sets the default by querying table metadata.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Compare tables calvin and hobbes in database family on localhost, with key <u>id</u> and columns <u>c1</u> and <u>c2</u>:
+
+         ./pg_comparator /family/calvin?id:c1,c2 /family/hobbes
+
+       Compare tables calvin in default database on localhost and the same table in default database on sablons,
+       with key <u>id</u> and column <u>data</u>:
+
+         ./pg_comparator localhost/family/calvin?id:data sablons/
+
+       Synchronize "user" table in database "wikipedia" from MySQL on "server1" to PostgreSQL on "server2".
+
+         ./pg_comparator -S -D --ask-pass \
+             mysql://calvin@server1/wikipedia/user pgsql://hobbes@server2/
+
+       For PostgreSQL, you may add trigger-maintained key and tuple checksums as:
+
+         -- TABLE Foo(id SERIAL PRIMARY KEY, data ... NOT NULL);
+         -- add a key and tuple checksum attributes
+         -- the key checksum can be skipped if you use --use-key,
+         -- for which the key must be a simple NOT NULL integer.
+         ALTER TABLE Foo
+           ADD COLUMN key_cs INT4 NOT NULL DEFAULT 0,
+           ADD COLUMN tup_cs INT8 NOT NULL DEFAULT 0;
+         -- function to update the tuple checksum
+         -- if some attributes may be NULL, they must be coalesced
+         CREATE FUNCTION foo_cs() RETURNS TRIGGER AS $$
+           BEGIN
+             -- compute key checksum
+             NEW.key_cs = cksum4(NEW.id);
+             -- compute tuple checksum
+             NEW.tup_cs = cksum8(NEW.id || '|' || NEW.data);
+             RETURN NEW;
+           END; $$ LANGUAGE plpgsql;
+         -- set trigger to call the checksum update function
+         CREATE TRIGGER foo_cs_trigger
+           BEFORE UPDATE OR INSERT ON Foo
+           FOR EACH ROW EXECUTE PROCEDURE foo_cs();
+         -- if table Foo is not initially empty,
+         -- update its contents to trigger checksum computations
+         UPDATE Foo SET id=id;
+
+       Then a fast comparison, which does not need to compute the initial checksum table, can be requested with:
+
+         ./pg_comparator --tcs=tup_cs --kcs=key_cs \
+             admin@server1/app/Foo?id:data hobbes@server2/
+
+       As the primary key is a simple integer, the <u>key_cs</u> could be left out and the comparison could be launched
+       with:
+
+         ./pg_comparator --tcs=tup_cs --use-key \
+             admin@server1/app/Foo?id:data hobbes@server2/
+
+</pre><h4><b>OUTPUT</b></h4><pre>
+       The output of the command consists of lines describing the differences found between the two tables. They
+       are expressed in term of insertions, updates or deletes and of tuple keys.
+
+       <b>UPDATE</b> <b>k</b>
+           Key <u>k</u> tuple is updated from table 1 to table 2.  It exists in both tables with different values.
+
+       <b>INSERT</b> <b>k</b>
+           Key  <u>k</u>  tuple  does  not  appear  in table 2, but only in table 1.  It must be inserted in table 2 to
+           synchronize it wrt table 1.
+
+       <b>DELETE</b> <b>k</b>
+           Key <u>k</u> tuple appears in table 2, but not in table 1.  It must be deleted from 2 to synchronize it  wrt
+           table 1.
+
+       In  case  of tuple checksum collisions, false negative results may occur.  Changing the checksum function
+       would help in such cases.  See the ANALYSIS sub-section.
+
+</pre><h4><b>INSTALL</b></h4><pre>
+       This section describes how to install extensions (functions, casts, aggregates) needed  by  pg_comparator
+       for the different target databases.
+
+       First, get pg_comparator sources &lt;<a href="http://www.coelho.net/pg_comparator/pg_comparator-2.3.2.tgz">http://www.coelho.net/pg_comparator/pg_comparator-2.3.2.tgz</a>&gt;.
+
+   <b>PostgreSQL</b>
+       For  installing on PostgreSQL, you must ensure that the "pg_config" command found in your path is the one
+       of the target PostgreSQL server, and that development packages are installed.
+
+       Then compile and install the extensions' shared objects:
+
+         sh&gt; make pgsql_install
+
+       To load the extension files into the target "DB" database, where "..." are the connection options:
+
+         sh&gt; psql ... -c 'CREATE EXTENSION pgcmp' DB
+
+       To uninstall:
+
+         sh&gt; psql ... -c 'DROP EXTENSION pgcmp' DB
+         sh&gt; make pgsql_uninstall
+
+   <b>MySQL</b>
+       For installing on MySQL, you must ensure that the "mysql_config" command found in your path is the one of
+       the target MySQL server, and that development packages are installed.
+
+       Then compile and install the extensions' shared objects:
+
+         sh&gt; make mysql_install
+
+       And load the extension files into the database:
+
+         sh&gt; mysql ... &lt; PATH-TO-EXTENSION/mysql_casts.sql
+         sh&gt; mysql ... &lt; PATH-TO-EXTENSION/mysql_checksum.sql
+
+       See "mysql_config --plugindir" for the extension directory path.   On  some  systems  "PATH-TO-EXTENSION"
+       might be "/usr/lib/mysql/contrib".
+
+       To uninstall:
+
+         sh&gt; make mysql_uninstall
+
+   <b>SQLite</b>
+       For installing with SQLite, the corresponding development package is needed.
+
+       First compile and install the extensions' shared objects (you may adjust "SQLITE.libdir" make variable to
+       change the target directory, which is by default "<a href="file:/usr/local/lib">/usr/local/lib</a>"):
+
+         sh&gt; make sqlite_install
+
+       Then load the extension by executing (to do it always, you may append the line to your ".sqliterc" file):
+
+         SELECT load_extension('/usr/local/lib/sqlite_checksum.so');
+
+       To uninstall:
+
+         sh&gt; make sqlite_uninstall
+
+</pre><h4><b>DEPENDENCES</b></h4><pre>
+       Three support functions are needed on the database:
+
+       1.
+         The "COALESCE" function takes care of NULL values in columns.
+
+       2.
+         A  checksum  function  must  be used to reduce and distribute key and columns values. It may be changed
+         with the "--checksum" option.  Its size can be selected with the "--checksize" option (currently  2,  4
+         or 8 bytes). The checksums also require casts to be converted to integers of various sizes.
+
+         Suitable  implementations  are available for PostgreSQL and can be loaded into the server by processing
+         "share/contrib/pgc_checksum.sql" and "share/contrib/pgc_casts.sql". New checksums and  casts  are  also
+         available  for  MySQL,  see "mysql_*.sql". An loadable implementation of suitable checksum functions is
+         also available for SQLite, see "sqlite_checksum.*".
+
+         The "ck" checksum is based on Jenkins hash &lt;https://en.wikipedia.org/wiki/Jenkins_hash&gt;,  which  relies
+         on  simple  add,  shift  and  xor  integer  operations.   The  "fnv"  checksum  is inspired by FNV hash
+         &lt;https://en.wikipedia.org/wiki/Fowler_Noll_Vo_hash&gt; (64 bits  1a  version)  which  uses  xor  and  mult
+         integer operations, although I also added some shift and add to help tweak high bits.
+
+       3.
+         An  aggregate  function  is  used  to  summarize checksums for a range of rows.  It must operate on the
+         result of the checksum function.  It may be changed with the "--aggregate" option.
+
+         Suitable implementations of a exclusive-or "xor" aggregate are available  for  PostgreSQL  and  can  be
+         loaded into the server by processing "share/contrib/xor_aggregate.sql".
+
+         The  "sqlite_checksum.*" file also provides a "xor" and "sum" aggregates for SQLite that are compatible
+         with other databases.
+
+       Moreover several perl modules are useful to run this script:
+
+       •   "Getopt::Long" for option management.
+
+       •   "DBI", "DBD::Pg" to connect to PostgreSQL, "DBD::mysql" to connect to  MySQL,  and  "DBD::SQLite"  to
+           connect to SQLite.
+
+       •   "Term::ReadPassword" for "--ask-pass" option.
+
+       •   "Pod::Usage" for doc self-extraction ("--man" "--opt" "--help").
+
+       •   "threads" for the experimental threaded version with option "--threads".
+
+       •   "Digest::MD5" for md5 checksum with SQLite.
+
+       Modules are only loaded by the script if they are actually required.
+
+</pre><h4><b>ALGORITHM</b></h4><pre>
+       The  aim  of the algorithm is to compare the content of two tables, possibly on different remote servers,
+       with minimum network traffic.  It is performed in three phases.
+
+       1.
+         A checksum table is computed on each side for the target table.
+
+       2.
+         A fist level summary table is computed on each side by aggregating chunks of the checksum table.  Other
+         levels  of  summary aggregations are then performed till there is only one row in the last table, which
+         then stores a global checksum for the whole initial target tables.
+
+       3.
+         Starting from the upper summary tables, aggregated checksums are compared from both sides to  look  for
+         differences, down to the initial checksum table.  Keys of differing tuples are displayed.
+
+   <b>CHECKSUM</b> <b>TABLE</b>
+       The  first  phase  computes the initial checksum table <u><a href="../man0/T.0.html">T</a>(0)</u> on each side.  Assuming that <u>key</u> is the table
+       key columns, and <u>cols</u> is the table data columns that are to  be  checked  for  differences,  then  it  is
+       performed by querying target table <u>T</u> as follow:
+
+         CREATE TABLE <a href="../man0/T.0.html">T</a>(0) AS
+           SELECT key AS pk,                   -- primary key
+                  checksum(key) AS kcs,        -- key checksum
+                  checksum(key || cols) AS tcs -- tuple checksum
+           FROM t;
+
+       The  initial  key is kept, as it will be used to show differing keys at the end. The rational for the <u>kcs</u>
+       column is to randomize the key-values distribution so as to balance aggregates in the  next  phase.   The
+       key  must appear in the checksum also, otherwise content exchanged between two keys would not be detected
+       in some cases.
+
+   <b>SUMMARY</b> <b>TABLES</b>
+       Now we compute a set of cascading summary tables by grouping <u>f</u> (folding  factor)  checksums  together  at
+       each  stage.  The  grouping  is  based  on  a  mask  on  the <u>kcs</u> column to take advantage of the checksum
+       randomization. Starting from <u>p=0</u> we build:
+
+         CREATE TABLE T(p+1) AS
+           SELECT kcs &amp; mask(p+1) AS kcs, -- key checksum subset
+                  XOR(tcs) AS tcs         -- tuple checksum summary
+           FROM T(p)
+           GROUP BY kcs &amp; mask(p+1);
+
+       The mask(p) is defined so that it groups together on average <u>f</u> checksums together: <b><a href="../man0/mask.0.html">mask</a></b>(0) = ceil2(size);
+       mask(p) = mask(p-1)/f; This leads to a hierarchy of tables, each one  being  a  smaller  summary  of  the
+       previous one:
+
+       level <b>0</b>
+           checksum table, <u>size</u> rows, i.e. as many rows as the target table.
+
+       level <b>1</b>
+           first summary table, (size/f) rows.
+
+       level <b>p</b>
+           intermediate summary table, (size/f**p) rows.
+
+       level <b>n-1</b>
+           one before last summary table, less than f rows.
+
+       level <b>n</b>
+           last summary table, mask is 0, 1 row.
+
+       It  is  important  that  the  very  same  masks are used on both sides so that aggregations are the same,
+       allowing to compare matching contents on both sides.
+
+   <b>SEARCH</b> <b>FOR</b> <b>DIFFERENCES</b>
+       After all these support tables are built on both sides comes the search for  differences.  When  checking
+       the  checksum summary of the last tables (level <u>n</u>) with only one row, it is basically a comparison of the
+       checksum of the whole table contents. If they match, then  both  tables  are  equal,  and  we  are  done.
+       Otherwise, if these checksums differ, some investigation is needed to detect offending keys.
+
+       The  investigation is performed by going down the table hierarchy and looking for all <u>kcs</u> for which there
+       was a difference in the checksum on the previous level. The same query is performed on both side at  each
+       stage:
+
+         SELECT kcs, tcs
+         FROM T(p)
+         WHERE kcs &amp; mask(p+1) IN (kcs-with-diff-checksums-from-level-p+1)
+         ORDER BY kcs [and on level 0: , id];
+
+       And  the  results  from  both  sides are merged together.  When doing the merge procedure, four cases can
+       arise:
+
+       1.
+         Both <u>kcs</u> and <u>tcs</u> match. Then there is no difference.
+
+       2.
+         Although <u>kcs</u> does match, <u>tcs</u> does not. Then this <u>kcs</u> is to be investigated at the next  level,  as  the
+         checksum summary differs.  If we are already at the last level, then the offending key can be shown.
+
+       3.
+         No  <u>kcs</u> match, one supplemental <u>kcs</u> in the first side.  Then this <u>kcs</u> correspond to key(s) that must be
+         inserted for syncing the second table wrt the first.
+
+       4.
+         No <u>kcs</u> match, one supplemental <u>kcs</u> in the second side.  Then this <u>kcs</u> correspond to key(s) that must be
+         deleted for syncing the second table wrt the first.
+
+       Cases 3 and 4 are simply symmetrical, and it is only an interpretation to decide whether it is an  insert
+       or a delete, taking the first side as the reference.
+
+   <b>ANALYSIS</b>
+       Let  <u>n</u>  be  the  number  of rows, <u>r</u> the row size, <u>f</u> the folding factor, <u>k</u> the number of differences to be
+       detected, <u>c</u> the checksum size in bits, then the costs to identify differences and the error rate is:
+
+       <b>network</b> <b>volume</b>
+         is better than <u>k*f*ceil(log(n)/log(f))*(c+log(n))</u>.  the contents of <u>k</u> blocks of size <u>f</u>  is  transferred
+         on the depth of the tree, and each block identifier is of size <u>log(n)</u> and contains a checksum <u>c</u>.  It is
+         independent   of   <u>r</u>,   and   you   want   <u>k&lt;&lt;n</u>.    The   volume   of   the   SQL   requests  is  about
+         <u>k*log(n)*ceil(log(n)/log(f))</u>, as the list of non matching checksums <u>k*log(n)</u> may be dragged on the tree
+         depth.
+
+       <b>number</b> <b>of</b> <b>requests</b> <b>(on</b> <b>each</b> <b>side,</b> <b>the</b> <b>algorithm</b> <b>is</b> <b>symmetric)</b>
+         minimum is <u>6+ceil(log(n)/log(f))</u> for equal tables, maximum is <u>6+2*ceil(log(n)/log(f))</u>.
+
+       <b>disk</b> <b>I/O</b> <b>traffic</b>
+         is about <u>n*r+n*ln(n)*(f/(f-1))</u>.
+
+       <b>false</b> <b>negative</b> <b>probability</b>
+         <u>i.e.</u> part of the tables are considered equal although they are  different.   With  a  perfect  checksum
+         function,  this  is  the  probability  of a checksum collision at any point where they are computed and
+         should have been different: about <u>k*ceil(log(n)/log(f))*2**-c</u>.  For a million row table, expecting 1000
+         changes with the default algorithm parameter values, this is about <u>2**10</u> <u>*3/2**64</u>, that  is  about  one
+         chance in <u>2**52</u> merge runs.
+
+       The  lower  the  folding  factor  <u>f</u>  the better for the network volume, but the higher the better for the
+       number of requests and disk I/Os: the choice of <u>f</u> is a tradeoff.
+
+       The lower the checksum size <u>c</u>, the better for the network volume, but the worse for  the  false  negative
+       probability.
+
+       If the available bandwidth is reasonable, the comparison will most likely be cpu-bound: the time is spent
+       mainly  on computing the initial checksum table.  Thus if you are planning to check for differences quite
+       often, consider maintaining a tuple checksum with a trigger, and possibly a key  checksum  as  well,  and
+       invoke with "--tuple-checksum" and either "--key-checksum" or "--use-key".
+
+   <b>IMPLEMENTATION</b> <b>ISSUES</b>
+       The checksum implementation gives integers, which are constant length and easy to manipulate afterwards.
+
+       The  <b>xor</b> aggregate is a good choice because there is no overflow issue with it, it takes into account all
+       bits of the input, and it can easily be defined on any binary data. The <b>sum</b> aggregate is also  okay,  but
+       it requires some kind of underlying integer type.
+
+       NULL values must be taken care appropriately.
+
+       The folding factor and all modules are taken as power of two so as to use a masks.
+
+       There  is  a  special  management of large chunks of deletes or inserts which is implemented although not
+       detailed in the algorithmic overview and complexity analysis.
+
+       There is some efforts to build a PostgreSQL/MySQL compatible implementation of the algorithm, which added
+       hacks to deal with type conversions and other stuff.
+
+       This script is reasonably tested, but due to its proof of concept nature there is a lot  of  options  the
+       combination of which cannot all be tested.
+
+   <b>NOTE</b>
+       If  the  tables  to  compare  are  in  the same database, a simple SQL query can extract the differences.
+       Assuming Tables <u>T1</u> and <u>T2</u> with primary key <u>id</u> and non null contents <u>data</u>, then their differences, that is
+       how <u>T2</u> differs from the reference <u>T1</u>, is summarized by the following query:
+
+               SELECT COALESCE(T1.id, T2.id) AS key,
+                 CASE WHEN T1.id IS NULL THEN 'DELETE'
+                      WHEN T2.id IS NULL THEN 'INSERT'
+                      ELSE 'UPDATE'
+                 END AS operation
+               FROM T1 FULL JOIN T2 USING (id)
+               WHERE T1.id IS NULL      -- DELETE
+                  OR T2.id IS NULL      -- INSERT
+                  OR T1.data &lt;&gt; T2.data -- UPDATE
+
+   <b>REFERENCES</b>
+       A paper was presented at a conference about this tool and its algorithm: <b>Remote</b>  <b>Comparison</b>  <b>of</b>  <b>Database</b>
+       <b>Tables</b>  by <u>Fabien</u> <u>Coelho</u>, In Third International Conference on Advances in Databases, Knowledge, and Data
+       Applications  (DBKDA),  pp  23-28,  St  Marteen,  The  Netherlands   Antilles,   January   2011.    ISBN:
+       978-1-61208-002-4.        Copyright       IARIA       2011.        Online       at       Think       Mind
+       &lt;<a href="http://www.thinkmind.org/index.php">http://www.thinkmind.org/index.php</a>?view=article&amp;articleid=dbkda_2011_2_10_30021&gt;.
+
+       The algorithm and script was inspired by <b>Taming</b> <b>the</b> <b>Distributed</b> <b>Database</b>  <b>Problem:</b>  <b>A</b>  <b>Case</b>  <b>Study</b>  <b>Using</b>
+       <b>MySQL</b>   by   <u>Giuseppe</u>  <u>Maxia</u>  in  <b>Sys</b>  <b>Admin</b>  vol  13  num  8,  Aug  2004,  pp  29-40.   See  Perl  Monks
+       &lt;<a href="http://www.perlmonks.org/index.pl">http://www.perlmonks.org/index.pl</a>?node_id=381053&gt; for details.  In  this  paper,  three  algorithms  are
+       presented.   The first one compares two tables with a checksum technique.  The second one finds UPDATE or
+       INSERT differences based  on  a  2-level  (checksum  and  summary)  table  hierarchy.  The  algorithm  is
+       asymmetrical, as different queries are performed on the two tables to compare.  It seems that the network
+       traffic  volume  is  in <u>k*(f+(n/f)+r)</u>, that it has a probabilistically-buggy merge procedure, and that it
+       makes assumptions about the distribution of key values.  The third algorithm looks for DELETE differences
+       based on counting, with the implicit assumption that there are only such differences.
+
+       In contrast to this approach, our fully symmetrical algorithm implements all three tasks at once, to find
+       UPDATE, DELETE and INSERT between the two tables. The checksum and summary  hierarchical  level  idea  is
+       reused and generalized so as to reduce the algorithmic complexity.
+
+       From  the implementation standpoint, the script is as parametric as possible with many options, and makes
+       few assumptions about table structures, types and values.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u>Michael</u> <u>Nacos</u> made a robust implementation pg51g &lt;<a href="http://pgdba.net/pg51g/">http://pgdba.net/pg51g/</a>&gt; based  on  triggers.  He  also
+       noted  that although database contents are compared by the algorithm, the database schema differences can
+       <u>also</u> be detected by comparing system tables which describe them.
+
+       <u>Benjamin</u> <u>Mead</u> <u>Vandiver</u>'s PhD Thesis <b>Detecting</b>  <b>and</b>  <b>Tolerating</b>  <b>Byzantine</b>  <b>Faults</b>  <b>in</b>  <b>Database</b>  <b>Systems</b>,
+       Massachusset's  Institute  of  Technology,  May  2008 (report number MIT-CSAIL-TR-2008-040).  There is an
+       interesting  discussion  in  Chapter  7,  where  experiments  are  presented   with   a   Java/JDBC/MySQL
+       implementation of two algorithms, including this one.
+
+       <u>Baron</u>  <u>Schwartz</u>  discusses  comparison  algorithms in an online post &lt;<a href="http://tinyurl.com/mysql-data-diff">http://tinyurl.com/mysql-data-diff</a>-
+       algorithm&gt;.
+
+       Some more links:
+
+       • Adept SQL &lt;<a href="http://www.adeptsql.com/">http://www.adeptsql.com/</a>&gt;
+
+       • Altova Database Spy &lt;<a href="http://www.altova.com/databasespy/">http://www.altova.com/databasespy/</a>&gt;
+
+       • AUI Soft SQLMerger &lt;<a href="http://auisoft.com/sqlmerger/">http://auisoft.com/sqlmerger/</a>&gt;
+
+       • Clever Components dbcomparer &lt;<a href="http://www.clevercomponents.com/products/dbcomparer/">http://www.clevercomponents.com/products/dbcomparer/</a>&gt;
+
+       • Comparezilla &lt;<a href="http://comparezilla.sourceforge.net/">http://comparezilla.sourceforge.net/</a>&gt;
+
+       • Datanamic Datadiff &lt;<a href="http://www.datanamic.com/datadiff/">http://www.datanamic.com/datadiff/</a>&gt;
+
+       • DB Balance &lt;<a href="http://www.dbbalance.com/db_cmp_pro.htm">http://www.dbbalance.com/db_cmp_pro.htm</a>&gt;
+
+       • DBConvert &lt;https://dbconvert.com/postgresql/&gt;
+
+       • DBSolo datacomp &lt;<a href="http://www.dbsolo.com/datacomp.html">http://www.dbsolo.com/datacomp.html</a>&gt;
+
+       • dbForge Data Compare &lt;<a href="http://www.devart.com/dbforge/sql/datacompare/">http://www.devart.com/dbforge/sql/datacompare/</a>&gt;
+
+       • DiffKit &lt;<a href="http://www.diffkit.org/">http://www.diffkit.org/</a>&gt;
+
+       • Percona Toolkit &lt;https://www.percona.com/software/mysql-tools/percona-toolkit&gt;
+
+       • MySQL DBCompare &lt;https://dev.mysql.com/doc/mysql-utilities/1.6/en/mysqldbcompare.html&gt;
+
+       • SQL Server tablediff Utility &lt;<a href="http://msdn.microsoft.com/en-US/library/ms162843.aspx">http://msdn.microsoft.com/en-US/library/ms162843.aspx</a>&gt;
+
+       • Red Gate SQL Data Compare &lt;<a href="http://www.red-gate.com/products/sql-development/sql-data-compare/">http://www.red-gate.com/products/sql-development/sql-data-compare/</a>&gt;
+
+       • Spectral Core OmegaSync &lt;<a href="http://www.spectralcore.com/omegasync/">http://www.spectralcore.com/omegasync/</a>&gt;,
+
+       • SQL Delta &lt;<a href="http://www.sqldelta.com/">http://www.sqldelta.com/</a>&gt;
+
+       • SQLite sqldiff &lt;https://www.sqlite.org/sqldiff.html&gt;
+
+       • AlfaAlfa SQL Server Comparison Tool &lt;<a href="http://www.sql-server-tool.com/">http://www.sql-server-tool.com/</a>&gt;
+
+       • SQLyog MySQL GUI &lt;<a href="http://www.webyog.com/">http://www.webyog.com/</a>&gt;
+
+       • xSQL Software Data Compare &lt;<a href="http://www.xsql.com/products/sql_server_data_compare/">http://www.xsql.com/products/sql_server_data_compare/</a>&gt;
+
+</pre><h4><b>TESTS</b></h4><pre>
+       The paper reports numerous performance tests with PostgreSQL under various bandwidth constraints.
+
+       Moreover, non regression tests are run over randomly generated tables when the software is upgraded:
+
+       <u>sanity</u> - about 30 seconds &amp; 30 runs
+           Run a comparison, synchronization &amp; check for all databases combinaisons and all working asynchronous
+           queries and threading options.
+
+       <u>fast</u> - about 5 minutes &amp; 360 runs
+           Run 12 tests similar to the previous one with varrying options (number  of  key  columns,  number  of
+           value columns, aggregate function, checksum function, null handling, folding factor, table locking or
+           not...).
+
+       <u>feature</u> - about 5 minutes &amp; 171 or 477 runs
+           Test  various features: <u>cc</u> for checksum computation strategies, <u>auto</u> for trigger-maintained checksums
+           on PostgreSQL, <u>pgcopy</u> for PostgreSQL copy test, <u>empty</u> for corner cases with empty tables,  <u>quote</u>  for
+           table  quoting,  <u>engine</u>  for  InnoDB  vs  MyISAM MySQL backends, <u>width</u> for large columns, <u>nullkey</u> for
+           possible NULL values in keys, <u>sqlite</u> for SQLite test, <u>mylite</u> for SQLite/MySQL mixed  mode  with  some
+           restrictions, <u>pglite</u> for SQLite/PostgreSQL mixed mode with some restrictions.
+
+       <u>release</u> - about 20 minutes &amp; 944 runs
+           This is <u>feature</u> with two table sizes, <u>fast</u>, and <u>collisions</u> to test possible hash collisions.
+
+       <u>hour</u> - about 1 hour &amp; 2880 runs
+           A  combination of 8 <u>fast</u> validations with varrying table sizes and difference ratio ranging from 0.1%
+           to 99.9%.
+
+       <u>full</u> - about 6 hours &amp; 16128 runs... seldom run
+           A combinatorial test involving numerous options: aggregation,  checksums,  null  handling,  foldings,
+           number of key and value attributes...
+
+</pre><h4><b>BUGS</b></h4><pre>
+       All software have bugs. This is a software, hence it has bugs.
+
+       Reporting bugs is good practice, so tell me if you find one.  If you have a fix, this is even better!
+
+       The implementation does not do many sanity checks.
+
+       Although  the  algorithm  can  work  with  some  normalized columns (say strings are trimmed, lowercased,
+       Unicode normalized...), the implementation may not work at all.
+
+       The script is really tested with integer and text types, issues may arise with other types.
+
+       The script handles one table at a time. In order to synchronize several linked tables, you  must  disable
+       referential integrity checks, then synchronize each tables, then re-enable the checks.
+
+       There  is  no  real  attempt  at  doing some sensible identifier quoting, although quotes provided in the
+       connection url are kept, so it may work after all for simple enough cases.
+
+       There is no neat user interfaces, this is a earthly command line tool.  This is not a bug, but a feature.
+
+       There are too many options.
+
+       Using another language such as Python for this application seems attractive,  but  there  is  no  cleanly
+       integrated manual-page style support such as POD, and the documentation is 50% of this script.
+
+       Mixed  SQLite  vs  PostgreSQL  or  MySQL  table comparison may not work properly in all cases, because of
+       SQLite dynamic type handling and reduced capabilities.
+
+       The script creates (temporary) tables on both sides for comparing the target tables: this imply that  you
+       must  be  allowed  to  do  that  for the comparison...  However, read-only replicas do not allow creating
+       objects, which mean that you cannot use  pg_comparator  to  compare  table  contents  on  a  synchronized
+       replica.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Allow larger checksum sizes.
+
+       Add an option to avoid IN (x,y,...) syntax, maybe with a temporary table to hold values and use a JOIN on
+       that. I'm not sure about the performance implications, though.
+
+       Allow generating the SQL update script without applying it.
+
+       Option to generate more compact updates, i.e. only update attributes with different values.
+
+</pre><h4><b>VERSIONS</b></h4><pre>
+       See web site &lt;<a href="http://www.coelho.net/pg_comparator/">http://www.coelho.net/pg_comparator/</a>&gt; for the latest version.  Although versions are really
+       managed with SVN, there is also a github repos &lt;https://github.com/zx80/pg_comparator&gt;.
+
+       <b>version</b> <b>2.3.2</b> (r1594 on 2020-11-03)
+           Accept dash character ("-") in login and database names, submitted by <u>Piotr</u> <u>Boniecki</u>.  Fix quoting of
+           values  when  synchronizing  with copy, reported by <u>Luis</u> <u>Gonzales</u> <u>Sotelino</u>.  Add "module_pathname" to
+           Postgres extension control file.
+
+       <b>version</b> <b>2.3.1</b> (r1582 on 2017-07-07)
+           Fix spelling errors in the documentation, reported by <u>Bas</u> <u>Couwenberg</u>.  Fix distribution "Makefile".
+
+       <b>version</b> <b>2.3.0</b> (r1569 on 2017-07-07)
+           Add new "INSTALL" Section.  Turn cast, functions and aggregates into  a  PostgreSQL  extension.   Fix
+           "--where" handling when "--tcs" is used, reported by <u>Kenneth</u> <u>Hammink</u>.  Add "--pg-text-cast" option to
+           work around missing implicit casts, issue reported by <u>Saulius</u> <u>Grigaitis</u>.  Documentation updates.  The
+           <u>release</u> validation was run successfully on PostgreSQL 9.6.3 and MySQL 5.7.18.
+
+       <b>version</b> <b>2.2.6</b> (r1540 on 2015-04-18)
+           Fix some typos found by Lintian and pointed out by <u>Ivan</u> <u>Mincik</u>.  Add support for FNV (Fowler Noll Vo)
+           version  1a  inspired  hash  functions.   Add  option  to  skip  inserts,  updates  or  deletes  when
+           synchronizing, which may be useful to deal with foreign keys, issue pointed out by <u>Graeme</u> <u>Bell</u>.   The
+           <u>release</u> validation was run successfully on PostgreSQL 9.4.1 and MySQL 5.5.41.
+
+       <b>version</b> <b>2.2.5</b> (r1512 on 2014-07-24)
+           Fix  broken URL defaults to use UNIX sockets with an empty host name, per report by <u>Ivan</u> <u>Mincik</u>.  Fix
+           "--where" condition handling with "--pg-copy" in corner cases.  Do not take execution timestamps when
+           not required.  Allow a larger number of differences by default for small table comparisons.  Add more
+           sanity checks.  Improve some  error  messages.   The  <u>release</u>  validation  was  run  successfully  on
+           PostgreSQL 9.4b1 and MySQL 5.5.38.
+
+       <b>version</b> <b>2.2.4</b> (r1506 on 2014-07-13)
+           Add  experimental  support  for using COPY instead of INSERT/UPDATE for PostgreSQL, in chunks of size
+           specified with option "--pg-copy", as suggested by <u>Graeme</u> <u>Bell</u>.  Minor fix when computing the maximum
+           number of differences to report.  The <u>release</u> validation was run successfully on PostgreSQL 9.4b1 and
+           MySQL 5.5.37.
+
+       <b>version</b> <b>2.2.3</b> (r1494 on 2014-04-19)
+           Improved documentation.  Add "--unlogged" option to use unlogged tables.  The <u>release</u> validation  was
+           run successfully on PostgreSQL 9.3.4 and MySQL 5.5.35.
+
+       <b>version</b> <b>2.2.2</b> (r1485 on 2014-01-08)
+           Fix  some  warnings  reported  by  <u>Ivan</u>  <u>Mincik</u>.   Minor doc changes.  The <u>release</u> validation was run
+           successfully on PostgreSQL 9.3.2 and MySQL 5.5.34.
+
+       <b>version</b> <b>2.2.1</b> (r1480 on 2013-05-09)
+           Do not die on missing driver in URL, regression reported by <u>Ivan</u> <u>Mincik</u>.  The <u>release</u> validation  was
+           run successfully on PostgreSQL 9.2.4 and MySQL 5.5.31.
+
+       <b>version</b> <b>2.2.0</b> (r1473 on 2013-03-07)
+           Bug  fix  by <u>Robert</u> <u>Coup</u>, which was triggered on hash collisions (again).  This bug was introduced in
+           2.1.0 when getting rid of the key separator, and not caught by the validation.  Factor  out  database
+           dependencies  in  a  separate  data  structure,  so  that adding new targets should be simpler in the
+           future.  Add SQLite support.  Add experimental Firebird support.  Fix some warnings.  Update "cksum8"
+           function to propagate the first checksum half into the computation  of  the  second  half.   Improved
+           documentation.   Improved  validation,  in  particular  with a <u>collisions</u> test.  The <u>release</u> and <u>hour</u>
+           validations were run successfully on PostgreSQL 9.2.3 and MySQL 5.5.29.
+
+       <b>version</b> <b>2.1.2</b> (r1402 on 2012-10-28)
+           Fix an issue when table names were quoted, raised by <u>Robert</u> <u>Coup</u>.  Improved documentation, especially
+           Section "SEE ALSO".  More precise warning.  Improved validation.  The <u>release</u>  and  <u>hour</u>  validations
+           were run successfully on PostgreSQL 9.2.1 and MySQL 5.5.27.
+
+       <b>version</b> <b>2.1.1</b> (r1375 on 2012-08-20)
+           Synchronization  now handles possible NULLs in keys.  Warn if key is nullable or not an integer under
+           "--use-key".  Improved documentation, in particular non regression tests are described.  The  <u>release</u>
+           and <u>hour</u> validations were run successfully on PostgreSQL 9.1.4 and MySQL 5.5.24.
+
+       <b>version</b> <b>2.1.0</b> (r1333 on 2012-08-18)
+           Add "--tuple-checksum" and "--key-checksum" options so as to use existing possibly trigger-maintained
+           checksums  in  the  target tables instead of computing them on the fly.  Add "--checksum-computation"
+           option to control how the checksum table is built, either "CREATE ... AS ..." or "CREATE ...;  INSERT
+           ...".   For MySQL, rely directly on the count returned by "CREATE ... AS" if available.  Add "--lock"
+           option for locking tables, which is enabled when synchronizing.  Improve asynchronous query handling,
+           especially when creating checksum tables and getting initial table counts, and in some  other  cases.
+           Remove  redundant  data  transfers  from  checksum  table  under  option "--use-key".  Get rid of the
+           separator when retrieving keys of differing tuples.  Note  that  it  is  still  used  when  computing
+           checksums.   Fix  bug in bulk insert and delete key recovery under option "--use-key".  Fix potential
+           bug in handling complex conditions with "--where".  Change default prefix to <b>pgc_cmp</b> so  that  it  is
+           clearer  that  it  belongs  to  <b>pg_comparator</b>.   Fix  initial  count  query  which  was  not  started
+           asynchronously under "--tcs".  Ensure that if not null detection is in doubt,  a  column  is  assumed
+           nullable  and  thus is coalesced.  Fix query counters so that they are shared under "--threads".  Fix
+           threading for explicit cleanup phase.  Warn if nullable key attributes are encountered.  Make default
+           driver for second connection be the same as first.  Rename option "--assume-size" as  "--size".   Add
+           short documentation about "--debug".  Multiple "--debug" set DBI tracing levels as well.  Improve the
+           difference  computation code so that the algorithm is more readable.  Improve documentation.  Add and
+           improve comments in the code.  The <u>release</u> and <u>hour</u> validations were run successfully  on  PostgreSQL
+           9.1.4 and MySQL 5.5.24.
+
+       <b>version</b> <b>2.0.1</b> (r1159 on 2012-08-10)
+           Add  "--source-*"  options  to  allow  taking  over  DBI  data  source specification.  Change default
+           aggregate to "sum" so that it  works  as  expected  by  default  when  mixing  PostgreSQL  and  MySQL
+           databases.  The  results  are okay with "xor", but more paths than necessary were investigated, which
+           can unduly trigger the max report  limit.   Improved  documentation.  In  particular  default  option
+           settings  are  provided systematically.  The <u>fast</u> validation was run successfully on PostgreSQL 9.1.4
+           and MySQL 5.5.24.
+
+       <b>version</b> <b>2.0.0</b> (r1148 on 2012-08-09)
+           Use asynchronous queries so as to provide some parallelism  to  the  comparison  without  the  issues
+           raised  by threads. It is enabled by default and can be switched off with option "--no-asynchronous".
+           Allow  empty  hostname  specification  in  connection  URL  to  use  a  UNIX  socket.   Improve   the
+           documentation,  in  particular  the analysis section.  Fix minor typos in the documentation.  Add and
+           fix various comments in the code.  The <u>fast</u> validation was run successfully on PostgreSQL  9.1.4  and
+           MySQL 5.5.24.
+
+       <b>version</b> <b>1.8.2</b> (r1117 on 2012-08-07)
+           Bug fix in the merge procedure by <u>Robert</u> <u>Coup</u> that could result in some strange difference reports in
+           corner  cases,  when  there  were  collisions  on  the <u>kcs</u> in the initial checksum table.  Fix broken
+           synchronization with '|' separator, raised by <u>Aldemir</u> <u>Akpinar</u>.  Warn about possible issues with large
+           objects.  Add "--long-read-len" option as a possible way to circumvent such issues.   Try  to  detect
+           these issues.  Add a counter for metadata queries.  Minor documentation improvements and fixes.
+
+       <b>version</b> <b>1.8.1</b> (r1109 on 2012-03-24)
+           Change  default separator again, to '|'.  Fix "--where" option mishandling when counting, pointed out
+           by <u>Enrique</u> <u>Corona</u>.
+
+           Post release note: the synchronisation is broken with the default separator in 1.8.1, do not use  it,
+           or use --separator='%'.
+
+       <b>version</b> <b>1.8.0</b> (r1102 on 2012-01-08)
+           Change  default  separator  to  '%', which seems less likely, after issues run into by <u>Emanuel</u> <u>Calvo</u>.
+           Add more pointers and documentation.
+
+       <b>version</b> <b>1.7.0</b> (r1063 on 2010-11-12)
+           Improved documentation.  Enhancement and fix by <u>Maxim</u> <u>Beloivanenko</u>: handle quoted table and attribute
+           names; Work around bulk inserts and deletes which  may  be  undefined.   More  stats,  more  precise,
+           possibly  in  CSV format.  Add timeout and use-null options.  Fix subtle bug which occurred sometimes
+           on kcs collisions in table <u><a href="../man0/T.0.html">T</a>(0)</u>.
+
+       <b>version</b> <b>1.6.1</b> (r754 on 2010-04-16)
+           Improved documentation.  Key and columns now defaults to primary key and all other columns  of  table
+           in  first  connection.   Password  can be supplied from the environment.  Default password for second
+           connection always set depending on the first.  Add max ratio option to express the  relative  maximum
+           number  of differences.  Compute grouping masks by shifting left instead of right by default (that is
+           doing a divide instead of a modulo).   Threads  now  work  a  little,  although  it  is  still  quite
+           experimental.   Fix  a  bug  that  made perl see differing checksum although they were equal, in some
+           unclear conditions.
+
+       <b>version</b> <b>1.6.0</b> (r701 on 2010-04-03)
+           Add more functions (MD5, SUM) and sizes (2, 4, 8).  Remove template parameterization  which  is  much
+           too   fragile  to  expose.   Add  a  wrapping  transaction  which  may  speed  up  things  a  little.
+           Implementation for MySQL, including synchronizing heterogeneous databases.   Improved  documentation.
+           Extensive validation/non regression tests.
+
+       <b>version</b> <b>1.5.2</b> (r564 on 2010-03-22)
+           More  documentation.   Improved  connection  parsing  with  more  sensible  defaults.   Make the mask
+           computation match its above documentation with a bottom-up derivation, instead of a simpler  top-down
+           formula which results in bad performances when a power of the factor is close to the size (as pointed
+           out  in  <u>Benjamin</u> <u>Mead</u> <u>Vandiver</u>'s PhD).  This bad mask computation was introduced somehow between 1.3
+           and 1.4 as an attempt at simplifying the code.
+
+       <b>version</b> <b>1.5.1</b> (r525 on 2010-03-21)
+           More documentation.  Add "--expect" option for non regression tests.
+
+       <b>version</b> <b>1.5.0</b> (r511 on 2010-03-20)
+           Add more links.  Fix so that with a key only (i.e. without additional columns), although it could  be
+           optimized further in this case.  Integrate patch by <u>Erik</u> <u>Aronesty</u>: More friendly "connection parser".
+           Add synchronization option to actually synchronize the data.
+
+       <b>version</b> <b>1.4.4</b> (r438 on 2008-06-03)
+           Manual connection string parsing.
+
+       <b>version</b> <b>1.4.3</b> (r424 on 2008-02-17)
+           Grumble! wrong tar pushed out.
+
+       <b>version</b> <b>1.4.2</b> (r421 on 2008-02-17)
+           Minor makefile fix asked for by <u>Roberto</u> <u>C.</u> <u>Sanchez</u>.
+
+       <b>version</b> <b>1.4.1</b> (r417 on 2008-02-14)
+           Minor fix for PostgreSQL 8.3 by <u>Roberto</u> <u>C.</u> <u>Sanchez</u>.
+
+       <b>version</b> <b>1.4</b> (r411 on 2007-12-24)
+           Port  to  PostgreSQL  8.2.  Better  documentation.   Fix  mask  bug: although the returned answer was
+           correct, the table folding was not.  DELETE/INSERT messages exchanged so as  to  match  a  'sync'  or
+           'copy' semantics, as suggested by <u>Erik</u> <u>Aronesty</u>.
+
+       <b>version</b> <b>1.3</b> (r239 on 2004-08-31)
+           Project moved to PG Foundry.  Use cksum8 checksum function by default.  Minor doc updates.
+
+       <b>version</b> <b>1.2</b> (r220 on 2004-08-27)
+           Added "--show-all-keys" option for handling big chunks of deletes or inserts.
+
+       <b>version</b> <b>1.1</b> (r210 on 2004-08-26)
+           Fix  algorithmic  bug:  checksums  <b>must</b>  also  include the key, otherwise exchanged data could be not
+           detected if the keys were to be grouped together.  Algorithmic section added to manual page.   Thanks
+           to <u>Giuseppe</u> <u>Maxia</u> who asked for it.  Various code cleanups.
+
+       <b>version</b> <b>1.0</b> (r190 on 2004-08-25)
+           Initial revision.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2004-2020, <u>Fabien</u> <u>Coelho</u> &lt;pg dot comparator at coelho dot net&gt; &lt;<a href="http://www.coelho.net/">http://www.coelho.net/</a>&gt;
+
+       This  software  is  distributed  under  the terms of the BSD License.  Basically, you can do whatever you
+       want, but you have to keep the license and I'm not responsible for any  consequences.   Beware,  you  may
+       lose  your data, your friends or your hairs because of this software!  See the LICENSE file enclosed with
+       the distribution for details.
+
+       If you are very happy with this software, I would appreciate a postcard saying so.  See  my  webpage  for
+       current address.
+
+perl v5.40.0                                       2024-09-11                                   <u><a href="../man1/pg_comparator.1.html">pg_comparator</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

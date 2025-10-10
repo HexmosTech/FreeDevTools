@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plack::Middleware - Base class for easy-to-use PSGI middleware</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libplack-perl">libplack-perl_1.0051-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Plack::Middleware - Base class for easy-to-use PSGI middleware
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Plack::Middleware::Foo;
+         use parent qw( Plack::Middleware );
+
+         sub call {
+             my($self, $env) = @_;
+             # Do something with $env
+
+             # $self-&gt;app is the original app
+             my $res = $self-&gt;app-&gt;($env);
+
+             # Do something with $res
+             return $res;
+         }
+
+         # then in app.psgi
+         use Plack::Builder;
+
+         my $app = sub { ... } # as usual
+
+         builder {
+             enable "Plack::Middleware::Foo";
+             enable "Plack::Middleware::Bar", %options;
+             $app;
+         };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Plack::Middleware is a utility base class to write PSGI middleware. All you have to do is to inherit from
+       Plack::Middleware and then implement the callback "call" method (or the "to_app" method that would return
+       the PSGI code reference) to do the actual work. You can use "$self-&gt;app" to call the original (wrapped)
+       application.
+
+       Your middleware object is created at the PSGI application compile time and is persistent during the web
+       server life cycle (unless it is a non-persistent environment such as CGI), so you should never set or
+       cache per-request data like $env in your middleware object. See also "OBJECT LIFECYCLE" in
+       Plack::Component.
+
+       See Plack::Builder how to actually enable middleware in your <u>.psgi</u> application file using the DSL. If you
+       do not like our builder DSL, you can also use the "wrap" method to wrap your application with a
+       middleware:
+
+         use Plack::Middleware::Foo;
+
+         my $app = sub { ... };
+         $app = Plack::Middleware::Foo-&gt;wrap($app, %options);
+         $app = Plack::Middleware::Bar-&gt;wrap($app, %options);
+
+</pre><h4><b>RESPONSE</b> <b>CALLBACK</b></h4><pre>
+       The typical middleware is written like this:
+
+         package Plack::Middleware::Something;
+         use parent qw(Plack::Middleware);
+
+         sub call {
+             my($self, $env) = @_;
+             # pre-processing $env
+             my $res = $self-&gt;app-&gt;($env);
+             # post-processing $res
+             return $res;
+         }
+
+       The tricky thing about post-processing the response is that it could either be an immediate 3 element
+       array ref, or a code reference that implements the delayed (streaming) interface.
+
+       Dealing with these two types of response in each piece of middleware is pointless, so you're recommended
+       to use the "response_cb" wrapper function in Plack::Util when implementing a post processing middleware.
+
+         sub call {
+             my($self, $env) = @_;
+             # pre-processing $env
+             my $res = $self-&gt;app-&gt;($env);
+
+             return Plack::Util::response_cb($res, sub {
+                 my $res = shift;
+                 # do something with $res;
+             });
+         }
+
+       The callback function gets a response as an array reference, and you can update the reference to
+       implement the post-processing. In the normal case, this arrayref will have three elements (as described
+       by the PSGI spec), but will have only two elements when using a $writer as described below.
+
+         package Plack::Middleware::Always500;
+         use parent qw(Plack::Middleware);
+         use Plack::Util;
+
+         sub call {
+             my($self, $env) = @_;
+             my $res  = $self-&gt;app-&gt;($env);
+             return Plack::Util::response_cb($res, sub {
+                 my $res = shift;
+                 $res-&gt;[0] = 500;
+                 return;
+             });
+         }
+
+       In this example, the callback gets the $res and updates its first element (status code) to 500. Using
+       "response_cb" makes sure that this works with the delayed response too.
+
+       You're not required (and not recommended either) to return a new array reference - they will be simply
+       ignored. You're suggested to explicitly return, unless you fiddle with the content filter callback (see
+       below).
+
+       Similarly, note that you have to keep the $res reference when you swap the entire response.
+
+         Plack::Util::response_cb($res, sub {
+             my $res = shift;
+             $res = [ $new_status, $new_headers, $new_body ]; # THIS DOES NOT WORK
+             return;
+         });
+
+       This does not work, since assigning a new anonymous array to $res doesn't update the original PSGI
+       response value. You should instead do:
+
+         Plack::Util::response_cb($res, sub {
+             my $res = shift;
+             @$res = ($new_status, $new_headers, $new_body); # THIS WORKS
+             return;
+         });
+
+       The third element of the response array ref is a body, and it could be either an arrayref or
+       IO::Handle-ish object. The application could also make use of the $writer object if "psgi.streaming" is
+       in effect, and in this case, the third element will not exist ("@$res == 2"). Dealing with these variants
+       is again really painful, and "response_cb" can take care of that too, by allowing you to return a content
+       filter as a code reference.
+
+         # replace all "Foo" in content body with "Bar"
+         Plack::Util::response_cb($res, sub {
+             my $res = shift;
+             return sub {
+                 my $chunk = shift;
+                 return unless defined $chunk;
+                 $chunk =~ s/Foo/Bar/g;
+                 return $chunk;
+             }
+         });
+
+       The callback takes one argument $chunk and your callback is expected to return the updated chunk. If the
+       given $chunk is undef, it means the stream has reached the end, so your callback should also return
+       undef, or return the final chunk and return undef when called next time.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Plack Plack::Builder Plack::Component
+
+perl v5.38.2                                       2024-01-20                             <u>Plack::<a href="../man3pm/Middleware.3pm.html">Middleware</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ima::DBI - Database connection caching and organization</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libima-dbi-perl">libima-dbi-perl_0.35-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Ima::DBI - Database connection caching and organization
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Foo;
+           use base 'Ima::DBI';
+
+           # Class-wide methods.
+           Foo-&gt;set_db($db_name, $data_source, $user, $password);
+           Foo-&gt;set_db($db_name, $data_source, $user, $password, \%attr);
+
+           my @database_names   = Foo-&gt;db_names;
+           my @database_handles = Foo-&gt;db_handles;
+
+           Foo-&gt;set_sql($sql_name, $statement, $db_name);
+           Foo-&gt;set_sql($sql_name, $statement, $db_name, $cache);
+
+           my @statement_names   = Foo-&gt;sql_names;
+
+           # Object methods.
+           $dbh = $obj-&gt;db_*;      # Where * is the name of the db connection.
+           $sth = $obj-&gt;sql_*;     # Where * is the name of the sql statement.
+           $sth = $obj-&gt;sql_*(@sql_pieces);
+
+           $obj-&gt;DBIwarn($what, $doing);
+
+           my $rc = $obj-&gt;commit;
+           my $rc = $obj-&gt;commit(@db_names);
+
+           my $rc = $obj-&gt;rollback;
+           my $rc = $obj-&gt;rollback(@db_names);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Ima::DBI attempts to organize and facilitate caching and more efficient use of database connections and
+       statement handles by storing DBI and SQL information with your class (instead of as separate objects).
+       This allows you to pass around just one object without worrying about a trail of DBI handles behind it.
+
+       One of the things I always found annoying about writing large programs with DBI was making sure that I
+       didn't have duplicate database handles open.  I was also annoyed by the somewhat wasteful nature of the
+       prepare/execute/finish route I'd tend to go through in my subroutines.  The new DBI-&gt;connect_cached and
+       DBI-&gt;prepare_cached helped a lot, but I still had to throw around global datasource, username and
+       password information.
+
+       So, after a while I grew a small library of DBI helper routines and techniques.  Ima::DBI is the
+       culmination of all this, put into a nice(?), clean(?) class to be inherited from.
+
+   <b>Why</b> <b>should</b> <b>I</b> <b>use</b> <b>this</b> <b>thing?</b>
+       Ima::DBI is a little odd, and it's kinda hard to explain.  So lemme explain why you'd want to use this
+       thing...
+
+       •   Consolidation of all SQL statements and database information
+
+           No matter what, embedding one language into another is messy.  DBI alleviates this somewhat, but I've
+           found  a  tendency  to have that scatter the SQL around inside the Perl code.  Ima::DBI allows you to
+           easily group the SQL statements in one place where they are easier to  maintain  (especially  if  one
+           developer  is  writing  the  SQL,  another  writing the Perl).  Alternatively, you can place your SQL
+           statement alongside the code which uses it.  Whatever floats your boat.
+
+           Database connection information (data source, username, password, atrributes,  etc...)  can  also  be
+           consolidated together and tracked.
+
+           Both  the  SQL  and  the  connection  info  are  probably  going to change a lot, so having them well
+           organized and easy to find in the code is a Big Help.
+
+       •   Holds off opening a database connection until necessary.
+
+           While Ima::DBI is informed of all your database connections and SQL statements  at  compile-time,  it
+           will not connect to the database until you actually prepare a statement on that connection.
+
+           This is obviously very good for programs that sometimes never touch the database.  It's also good for
+           code that has lots of possible connections and statements, but which typically only use a few.  Kinda
+           like an autoloader.
+
+       •   Easy integration of the DBI handles into your class
+
+           Ima::DBI  causes  each database handle to be associated with your class, allowing you to pull handles
+           from an instance of your object, as well as making many oft-used DBI methods available directly  from
+           your instance.
+
+           This  gives  you  a cleaner OO design, since you can now just throw around the object as usual and it
+           will carry its associated DBI baggage with it.
+
+       •   Honors taint mode
+
+           It always struck me  as  a  design  deficiency  that  tainted  SQL  statements  could  be  passed  to
+           $sth-&gt;<b>prepare()</b>.  For example:
+
+               # $user is from an untrusted source and is tainted.
+               $user = get_user_data_from_the_outside_world;
+               $sth = $dbh-&gt;prepare('DELETE FROM Users WHERE User = $user');
+
+           Looks  innocent  enough... but what if $user was the string "1 OR User LIKE '%'".  You just blew away
+           all your users. Hope you have backups.
+
+           Ima::DBI turns on the DBI-&gt;connect Taint attribute so that all DBI methods (except <b>execute()</b>) will no
+           longer accept tainted data.  See "Taint" in DBI for details.
+
+       •   Taints returned data
+
+           Databases should be like any other system call.  It's the scary Outside  World,  thus  it  should  be
+           tainted.   Simple.   Ima::DBI  turns  on  DBI's  Taint attribute on each connection.  This feature is
+           overridable by passing your own Taint attribute to set_db as normal for DBI.  See "Taint" in DBI  for
+           details.
+
+       •   Encapsulation of some of the more repetitive bits of everyday DBI usage
+
+           I get lazy a lot and I forget to do things I really should, like using <b>bind_cols()</b>, or rigorous error
+           checking.   Ima::DBI  does  some  of  this  stuff  automatically,  other  times it just makes it more
+           convenient.
+
+       •   Encapsulation of DBI's cache system
+
+           DBI's automatic handle caching system is relatively new, and some people aren't  aware  of  its  use.
+           Ima::DBI  uses  it  automatically,  so you don't have to worry about it. (It even makes it a bit more
+           efficient)
+
+       •   Sharing of database and sql information amongst inherited classes
+
+           Any SQL statements and connections created by a class are available to its children via normal method
+           inheritance.
+
+       •   Guarantees one connection per program.
+
+           One program, one database connection (per database user).  One program, one prepared statement handle
+           (per statement, per database user).  That's what Ima::DBI enforces.  Extremely  handy  in  persistent
+           environments (servers, daemons, mod_perl, FastCGI, etc...)
+
+       •   Encourages use of bind parameters and columns
+
+           Bind  parameters are safer and more efficient than embedding the column information straight into the
+           SQL statement.  Bind columns are more efficient than normal fetching.  Ima::DBI pretty much  requires
+           the usage of the former, and eases the use of the latter.
+
+   <b>Why</b> <b>shouldn't</b> <b>I</b> <b>use</b> <b>this</b> <b>thing.</b>
+       •   It's all about OO
+
+           Although  it  is  possible  to  use  Ima::DBI  as a stand-alone module as part of a function-oriented
+           design, its generally not to be used unless integrated into an object-oriented design.
+
+       •   Overkill for small programs
+
+       •   Overkill for programs with only one or two SQL statements
+
+           Its up to you whether the trouble of setting up a class and jumping through  the  necessary  Ima::DBI
+           hoops  is  worth  it  for  small  programs.   To me, it takes just as much time to set up an Ima::DBI
+           subclass as it would to access DBI without it... but then again I wrote the module.  YMMV.
+
+       •   Overkill for programs that only use their SQL statements once
+
+           Ima::DBI's caching might prove to be an unnecessary performance hog if you never  use  the  same  SQL
+           statement twice.  Not sure, I haven't looked into it.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       The basic steps to "DBIing" a class are:
+
+       1.  Inherit from Ima::DBI
+
+       2.  Set up and name all your database connections via <b>set_db()</b>
+
+       3.  Set up and name all your SQL statements via <b>set_sql()</b>
+
+       4.  Use  sql_*  to retrieve your statement handles ($sth) as needed and db_* to retrieve database handles
+           ($dbh).
+
+       Have a look at EXAMPLE below.
+
+</pre><h4><b>TAINTING</b></h4><pre>
+       Ima::DBI, by default, uses DBI's Taint flag on all connections.
+
+       This means that Ima::DBI methods do not accept tainted data, and that all data fetched from the  database
+       will  be  tainted.   This  may be different from the DBI behavior you're used to.  See "Taint" in DBI for
+       details.
+
+</pre><h4><b>Class</b> <b>Methods</b></h4><pre>
+   <b>set_db</b>
+           Foo-&gt;set_db($db_name, $data_source, $user, $password);
+           Foo-&gt;set_db($db_name, $data_source, $user, $password, \%attr);
+
+       This method is used in place of DBI-&gt;connect to create your database  handles.  It  sets  up  a  new  DBI
+       database handle associated to $db_name.  All other arguments are passed through to DBI-&gt;connect_cached.
+
+       A  new  method  is  created  for  each  db you setup.  This new method is called "db_$db_name"... so, for
+       example, Foo-&gt;set_db("foo", ...) will create a method called "<b>db_foo()</b>".  (Spaces  in  $db_name  will  be
+       translated into underscores: '_')
+
+       %attr is combined with a set of defaults (RaiseError =&gt; 1, AutoCommit =&gt; 0, PrintError =&gt; 0, Taint =&gt; 1).
+       This  is  a  better default IMHO, however it does give databases without transactions (such as MySQL when
+       used with the default MyISAM table type) a hard time.  Be  sure  to  turn  AutoCommit  back  on  if  your
+       database does not support transactions.
+
+       The  actual  database  handle  creation (and thus the database connection) is held off until a prepare is
+       attempted with this handle.
+
+   <b>set_sql</b>
+           Foo-&gt;set_sql($sql_name, $statement, $db_name);
+           Foo-&gt;set_sql($sql_name, $statement, $db_name, $cache);
+
+       This method is used in place of DBI-&gt;prepare to create your statement handles. It sets up a new statement
+       handle associated to $sql_name using the database connection associated  with  $db_name.   $statement  is
+       passed  through  to  either  DBI-&gt;prepare  or  DBI-&gt;prepare_cached  (depending  on  $cache) to create the
+       statement handle.
+
+       If $cache is true or isn't given, then <b>prepare_cached()</b> will be used to prepare the statement handle  and
+       it will be cached.  If $cache is false then a normal <b>prepare()</b> will be used and the statement handle will
+       be  recompiled  on  every  sql_*()  call.   If  you  have a statement which changes a lot or is used very
+       infrequently you might not want it cached.
+
+       A new method is created for each statement you set up.  This new method is "sql_$sql_name"... so, as with
+       <b>set_db()</b>, Foo-&gt;set_sql("bar", ..., "foo"); will  create  a  method  called  "<b>sql_bar()</b>"  which  uses  the
+       database  connection  from  "<b>db_foo()</b>".  Again,  spaces  in $sql_name will be translated into underscores
+       ('_').
+
+       The actual statement handle creation is held off until sql_* is first called on this name.
+
+   <b>transform_sql</b>
+       To make up for the limitations of bind parameters, $statement can contain <b>sprintf()</b> style formatting (ie.
+       %s and such) to allow dynamically generated SQL statements (so to get a real percent sign, use '%%').
+
+       The translation of the SQL happens in <b>transform_sql()</b>,  which  can  be  overridden  to  do  more  complex
+       transformations. See Class::DBI for an example.
+
+   <b>db_names</b> <b>/</b> <b>db_handles</b>
+         my @database_names   = Foo-&gt;db_names;
+         my @database_handles = Foo-&gt;db_handles;
+         my @database_handles = Foo-&gt;db_handles(@db_names);
+
+       Returns a list of the database handles set up for this class using <b>set_db()</b>.  This includes all inherited
+       handles.
+
+       <b>db_names()</b> simply returns the name of the handle, from which it is possible to access it by converting it
+       to a method name and calling that db method...
+
+           my @db_names = Foo-&gt;db_names;
+           my $db_meth = 'db_'.$db_names[0];
+           my $dbh = $foo-&gt;$db_meth;
+
+       Icky, eh?  Fortunately, <b>db_handles()</b> does this for you and returns a list of database handles in the same
+       order  as  <b>db_names()</b>.   <b>Use</b> <b>this</b> <b>sparingly</b> as it will connect you to the database if you weren't already
+       connected.
+
+       If given @db_names, <b>db_handles()</b> will return only the handles for those connections.
+
+       These both work as either class or object methods.
+
+   <b>sql_names</b>
+         my @statement_names   = Foo-&gt;sql_names;
+
+       Similar to <b>db_names()</b> this returns the names of all SQL statements set up for this class using <b>set_sql()</b>,
+       inherited or otherwise.
+
+       There is no corresponding <b>sql_handles()</b> because we can't know what arguments to pass in.
+
+</pre><h4><b>Object</b> <b>Methods</b></h4><pre>
+   <b>db_*</b>
+           $dbh = $obj-&gt;db_*;
+
+       This is how you directly access a database handle you set up with set_db.
+
+       The actual particular method name is derived from what you told set_db.
+
+       db_* will handle all the issues of making sure you're already connected to the database.
+
+   <b>sql_*</b>
+           $sth = $obj-&gt;sql_*;
+           $sth = $obj-&gt;sql_*(@sql_pieces);
+
+       sql_*() is a catch-all name for the methods you set up with <b>set_sql()</b>.  For instance, if you did:
+
+           Foo-&gt;set_sql('GetAllFoo', 'Select * From Foo', 'SomeDb');
+
+       you'd run that statement with <b>sql_GetAllFoo()</b>.
+
+       sql_* will handle all the issues of making sure the database is  already  connected,  and  the  statement
+       handle  is  prepared.   It  returns  a  prepared  statement  handle  for you to use.  (You're expected to
+       <b>execute()</b> it)
+
+       If sql_*() is given a list of @sql_pieces it will use them to fill in your statement, assuming  you  have
+       <b>sprintf()</b> formatting tags in your statement.  For example:
+
+           Foo-&gt;set_sql('GetTable', 'Select * From %s', 'Things');
+
+           # Assuming we have created an object... this will prepare the
+           # statement 'Select * From Bar'
+           $sth = $obj-&gt;sql_Search('Bar');
+
+       Be <b>very</b> <b>careful</b> with what you feed this function.  It cannot do any quoting or escaping for you, so it is
+       totally  up  to  you  to  take  care of that.  Fortunately if you have tainting on you will be spared the
+       worst.
+
+       It is recommended you only use this in cases where bind parameters will not work.
+
+   <b>DBIwarn</b>
+           $obj-&gt;DBIwarn($what, $doing);
+
+       Produces a useful error for exceptions with DBI.
+
+       <b>I'm</b> <b>not</b> <b>particularly</b> <b>happy</b> <b>with</b> <b>this</b> <b>interface</b>
+
+       Most useful like this:
+
+           eval {
+               $self-&gt;sql_Something-&gt;execute($self-&gt;{ID}, @stuff);
+           };
+           if($@) {
+               $self-&gt;DBIwarn($self-&gt;{ID}, 'Something');
+                       return;
+           }
+
+</pre><h4><b>Modified</b> <b>database</b> <b>handle</b> <b>methods</b></h4><pre>
+       Ima::DBI makes some of the methods available to your object that are  normally  only  available  via  the
+       database handle.  In addition, it spices up the API a bit.
+
+   <b>commit</b>
+           $rc = $obj-&gt;commit;
+           $rc = $obj-&gt;commit(@db_names);
+
+       Derived from $dbh-&gt;<b>commit()</b> and basically does the same thing.
+
+       If  called  with  no  arguments,  it causes <b>commit()</b> to be called on all database handles associated with
+       $obj.  Otherwise it commits all database handles whose names are listed in @db_names.
+
+       Alternatively, you may like to do:  $rc = $obj-&gt;db_Name-&gt;commit;
+
+       If all the commits succeeded it returns true, false otherwise.
+
+   <b>rollback</b>
+           $rc = $obj-&gt;rollback;
+           $rc = $obj-&gt;rollback(@db_names);
+
+       Derived from $dbh-&gt;rollback, this acts just like Ima::DBI-&gt;commit, except that it calls <b>rollback()</b>.
+
+       Alternatively, you may like to do:  $rc = $obj-&gt;db_Name-&gt;rollback;
+
+       If all the rollbacks succeeded it returns true, false otherwise.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           package Foo;
+           use base qw(Ima::DBI);
+
+           # Set up database connections (but don't connect yet)
+           Foo-&gt;set_db('Users', 'dbi:Oracle:Foo', 'admin', 'passwd');
+           Foo-&gt;set_db('Customers', 'dbi:Oracle:Foo', 'Staff', 'passwd');
+
+           # Set up SQL statements to be used through out the program.
+           Foo-&gt;set_sql('FindUser', &lt;&lt;"SQL", 'Users');
+               SELECT  *
+               FROM    Users
+               WHERE   Name LIKE ?
+           SQL
+
+           Foo-&gt;set_sql('ChangeLanguage', &lt;&lt;"SQL", 'Customers');
+               UPDATE  Customers
+               SET     Language = ?
+               WHERE   Country = ?
+           SQL
+
+           # rest of the class as usual.
+
+           package main;
+
+           $obj = Foo-&gt;new;
+
+           eval {
+               # Does connect &amp; prepare
+               my $sth = $obj-&gt;sql_FindUser;
+               # bind_params, execute &amp; bind_columns
+               $sth-&gt;execute(['Likmi%'], [\($name)]);
+               while( $sth-&gt;fetch ) {
+                   print $name;
+               }
+
+               # Uses cached database and statement handles
+               $sth = $obj-&gt;sql_FindUser;
+               # bind_params &amp; execute.
+               $sth-&gt;execute('%Hock');
+               @names = $sth-&gt;fetchall;
+
+               # connects, prepares
+               $rows_altered = $obj-&gt;sql_ChangeLanguage-&gt;execute(qw(es_MX mx));
+           };
+           unless ($@) {
+               # Everything went okay, commit the changes to the customers.
+               $obj-&gt;commit('Customers');
+           }
+           else {
+               $obj-&gt;rollback('Customers');
+               warn "DBI failure:  $@";
+           }
+
+</pre><h4><b>USE</b> <b>WITH</b> <b>MOD_PERL,</b> <b>FASTCGI,</b> <b>ETC.</b></h4><pre>
+       To help with use in forking environments, Ima::DBI database handles keep track of the PID of the  process
+       they  were  openend under.  If they notice a change (because you forked a new process), a new handle will
+       be opened in the new process.  This prevents a common problem seen in environments  like  mod_perl  where
+       people would open a handle in the parent process and then run into trouble when they try to use it from a
+       child process.
+
+       Because  Ima::DBI  handles  keeping  database  connections  persistent and prevents problems with handles
+       openend before forking, it is not necessary to use Apache::DBI when using Ima::DBI.   However,  there  is
+       one  feature  of  Apache::DBI  which  you  will need in a mod_perl or FastCGI environment, and that's the
+       automatic rollback it does at the end of each request.  This rollback provides safety  from  transactions
+       left hanging when some perl code dies -- a serious problem which could grind your database to a halt with
+       stale locks.
+
+       To  replace  this feature on your own under mod_perl, you can add something like this in a handler at any
+       phase of the request:
+
+          $r-&gt;push_handlers(PerlCleanupHandler =&gt; sub {
+              MyImaDBI-&gt;rollback();
+          });
+
+       Here "MyImaDBI" is your subclass of Ima::DBI.  You could also make this into an actual module and set the
+       PerlCleanupHandler from your httpd.conf.  A similar approach should work in any long-running  environment
+       which has a hook for running some code at the end of each request.
+
+</pre><h4><b>TODO,</b> <b>Caveat,</b> <b>BUGS,</b> <b>etc....</b></h4><pre>
+       I seriously doubt that it's thread safe.
+           You  can bet cupcackes to sno-cones that much havoc will be wrought if Ima::DBI is used in a threaded
+           Perl.
+
+       Should make use of private_* handle method to store information
+       The docs stink.
+           The docs were originally written when I didn't have a good handle on the module and how  it  will  be
+           used in practical cases.  I need to rewrite the docs from the ground up.
+
+       Need to add debugging hooks.
+           The  thing  which immediately comes to mind is a Verbose flag to print out SQL statements as they are
+           made as well as mention when database connections are made, etc...
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Tony Bowden &lt;<a href="mailto:tony@tmtm.com">tony@tmtm.com</a>&gt; and Perrin Harkins &lt;<a href="mailto:perrin@elem.com">perrin@elem.com</a>&gt;
+
+</pre><h4><b>ORIGINAL</b> <b>AUTHOR</b></h4><pre>
+       Michael G Schwern &lt;<a href="mailto:schwern@pobox.com">schwern@pobox.com</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module is free software.  You may distribute under the same terms as Perl itself.  IT COMES  WITHOUT
+       WARRANTY OF ANY KIND.
+
+</pre><h4><b>THANKS</b> <b>MUCHLY</b></h4><pre>
+       Tim Bunce, for enduring many DBI questions and adding Taint, prepare_cached and connect_cached methods to
+       DBI, simplifying this greatly!
+
+       Arena Networks, for effectively paying for Mike to write most of this module.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       DBI.
+
+       You may also choose to check out Class::DBI which hides most of this from view.
+
+perl v5.34.0                                       2022-06-14                                      <u>Ima::<a href="../man3pm/DBI.3pm.html">DBI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

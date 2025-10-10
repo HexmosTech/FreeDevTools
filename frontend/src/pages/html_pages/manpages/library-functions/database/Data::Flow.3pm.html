@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::Flow - Perl extension for simple-minded recipe-controlled build of data.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-flow-perl">libdata-flow-perl_1.02-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::Flow - Perl extension for simple-minded recipe-controlled build of data.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Data::Flow;
+         $recipes = { path  =&gt; { default =&gt; './MANIFEST'},
+                      contents =&gt; { prerequisites =&gt; ['path', 'x'] ,
+                                    process =&gt;
+                                    sub {
+                                      my $data = shift;
+                                      $data-&gt;{ shift() } = `cat $data-&gt;{'path'}`
+                                        x $data-&gt;{'x'};
+                                    }
+                                  },
+                    };
+
+         $request = new Data::Flow $recipes;
+         $request-&gt;set( x =&gt; 1);
+         print $request-&gt;get('contents');
+
+         tie %request, Data::Flow, $recipes;
+         $request{x} = 1;
+         print $request{contents};
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The module Data::Flow provides its services via objects. The objects may be obtained by the usual
+
+         $request = new Data::Flow $recipes;
+
+       paradigm. The argument $recipes is a hash reference, which provides the rules for request processing. The
+       objects support three methods, <b>set()</b>, <b>get()</b>, <b>aget()</b>, and <b>already_set()</b>. The first one is used to provide
+       input data for processing, the second one to obtain the output. The third one to obtain a reference to an
+       array with results of repeated <b>get()</b>, and the last one to query whether a field is already known.
+
+       The unit of requested information is a <u>field</u>. The method <b>set()</b> takes a pair "field =&gt; value", the methods
+       <b>get()</b> and <b>already_set()</b> take one argument: the "field", and the method <b>aget()</b> takes multiple fields.
+
+       Every object is created without any fields filled, but it knows how to <u>construct</u> fields basing on other
+       fields or some global into. This knowledge is provided in the argument $recipe of the <b>new()</b> function.
+       This is a reference to a hash, keyed by <u>fields</u>. The values of this hash are hash references themselves,
+       which describe how to acquire the <u>field</u> which is the corresponding key of the initial hash.
+
+       The internal hashes may have the following keys:
+
+       "default"
+               describes  the  default  value  for  the key, if none is provided by <b>set()</b>. The value becomes the
+               value of the field of the object. No additional processing is performed. Example:
+
+                 default =&gt; $Config{installdir}
+
+       "prerequisites"
+               gives the fields which are needed for the construction of  the  given  field.  The  corresponding
+               value is an array references. The array contains the <u>required</u> fields.
+
+               If  "defaults"  did  not  satisfy  the request for a field, but "$recipe-&gt;{field}{prerequisites}"
+               exists, the <u>required</u> fields are build before any further processing is done. Example:
+
+                 prerequisites =&gt; [ qw(prefix arch) ]
+
+       "process"
+               contains the rule to build the field.  The  value  is  a  reference  to  a  subroutine  taking  2
+               arguments:  the  reference to a hash with all the fields which have been set, and the name of the
+               required field. It is up to the subroutine to actually fill the corresponding field of the  hash,
+               an error condition is raised if it did not. Example:
+
+                 process =&gt; sub { my $data = shift;
+                                 $data-&gt;{time} = localtime(time) } }
+
+       "oo_process"
+               contains  the  rule  to  build  the  field.  The  value  is  a reference to a subroutine taking 2
+               arguments: the object $request, and the name of the required field. It is up to the subroutine to
+               actually fill the corresponding field of $request, an error condition is raised if  it  did  not.
+               Example:
+
+                 oo_process =&gt; sub { my $data = shift;
+                                    $data-&gt;set( time =&gt; localtime(time) ) }
+
+       "output"
+               the  corresponing  value  has  the  same  meaning  as  for "process", but the return value of the
+               subroutine is used as the value of the <u>field</u>. Example:
+
+                 output =&gt; sub { localtime(time) }
+
+       "oo_output"
+               the corresponing value has the same meaning as for "process", but the return value of the  method
+               is used as the value of the <u>field</u>. Example:
+
+                 output =&gt; sub { my $self = shift; $self-&gt;get('r') . localtime(time) }
+
+       "filter"
+               contains  the  rule  to  build  the  field basing on other fields. The value is a reference to an
+               array. The first element of the array is a reference to a subroutine, the rest contains names  of
+               the  fields.  When the subroutine is called, the arguments are the values of <u>fields</u> of the object
+               $request which appear in the array (in the same order). The return value  of  the  subroutine  is
+               used as the value of the <u>field</u>. Example:
+
+                 filter =&gt; [ sub { shift + shift },
+                             'first_half', 'second_half' ]
+
+               Note that the mentioned field will be automatically marked as prerequisites.
+
+       "self_filter"
+               is  similar to "filter", but an extra argument, the object itself, is put in front of the list of
+               arguments.  Example:
+
+                 self_filter =&gt; [ sub { my ($self, $first_half = (shift, shift);
+                                        $first_half *= -$self-&gt;get('total')*100
+                                          if $first_half &lt; 0;  # negative means percentage
+                                        $first_half + shift },
+                             'first_half', 'second_half' ]
+
+       "class_filter"
+               is similar to "filter", but the first argument is the name of the method to call, second  one  is
+               the  name  of  the  package to use for the method invocation. The rest contains names of field to
+               provide as method arguments. Example:
+
+                 class_filter =&gt; [ 'new', 'FileHandle', 'filename' ]
+
+       "method_filter"
+               is similar to "class_filter", but the second argument is the name of the field which is  used  to
+               call the method upon. Example:
+
+                 method_filter =&gt; [ 'show', 'widget_name', 'current_display' ]
+
+   <b>Tied</b> <b>interface</b>
+       The access to the same functionality is available via tied hash interface.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ilya  Zakharevich,  <a href="mailto:cpan@ilyaz.org">cpan@ilyaz.org</a>,  with  multiple  additions  from Terrence Monroe Brannon and Radoslav
+       Nedyalkov.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1), <b><a href="../man1/make.1.html">make</a></b>(1).
+
+perl v5.36.0                                       2022-10-13                                          <u><a href="../man3pm/Flow.3pm.html">Flow</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

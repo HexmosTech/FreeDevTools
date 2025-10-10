@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::IMAP::Client - Not so simple IMAP client library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-imap-client-perl">libnet-imap-client-perl_0.9507-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::IMAP::Client - Not so simple IMAP client library
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::IMAP::Client;
+
+           my $imap = Net::IMAP::Client-&gt;new(
+
+               server =&gt; 'mail.you.com',
+               user   =&gt; 'USERID',
+               pass   =&gt; 'PASSWORD',
+               ssl    =&gt; 1,                              # (use SSL? default no)
+               ssl_verify_peer =&gt; 1,                     # (use ca to verify server, default yes)
+               ssl_ca_file =&gt; '/etc/ssl/certs/certa.pm', # (CA file used for verify server) or
+             # ssl_ca_path =&gt; '<a href="file:/etc/ssl/certs/">/etc/ssl/certs/</a>',         # (CA path used for SSL)
+               port   =&gt; 993                             # (but defaults are sane)
+
+           ) or die "Could not connect to IMAP server";
+
+           # everything's useless if you can't login
+           $imap-&gt;login or
+             die('Login failed: ' . $imap-&gt;last_error);
+
+           # let's see what this server knows (result cached on first call)
+           my $capab = $imap-&gt;capability;
+              # or
+           my $knows_sort = $imap-&gt;capability( qr/^sort/i );
+
+           # get list of folders
+           my @folders = $imap-&gt;folders;
+
+           # get total # of messages, # of unseen messages etc. (fast!)
+           my $status = $imap-&gt;status(@folders); # hash ref!
+
+           # select folder
+           $imap-&gt;select('INBOX');
+
+           # get folder hierarchy separator (cached at first call)
+           my $sep = $imap-&gt;separator;
+
+           # fetch all message ids (as array reference)
+           my $messages = $imap-&gt;search('ALL');
+
+           # fetch all ID-s sorted by subject
+           my $messages = $imap-&gt;search('ALL', 'SUBJECT');
+              # or
+           my $messages = $imap-&gt;search('ALL', [ 'SUBJECT' ]);
+
+           # fetch ID-s that match criteria, sorted by subject and reverse date
+           my $messages = $imap-&gt;search({
+               FROM    =&gt; 'foo',
+               SUBJECT =&gt; 'bar',
+           }, [ 'SUBJECT', '^DATE' ]);
+
+           # fetch message summaries (actually, a lot more)
+           my $summaries = $imap-&gt;get_summaries([ @msg_ids ]);
+
+           foreach (@$summaries) {
+               print $_-&gt;uid, $_-&gt;subject, $_-&gt;date, $_-&gt;rfc822_size;
+               print join(', ', @{$_-&gt;from}); # etc.
+           }
+
+           # fetch full message
+           my $data = $imap-&gt;get_rfc822_body($msg_id);
+           print $$data; # it's reference to a scalar
+
+           # fetch full messages
+           my @msgs = $imap-&gt;get_rfc822_body([ @msg_ids ]);
+           print $$_ for (@msgs);
+
+           # fetch single attachment (message part)
+           my $data = $imap-&gt;get_part_body($msg_id, '1.2');
+
+           # fetch multiple attachments at once
+           my $hash = $imap-&gt;get_parts_bodies($msg_id, [ '1.2', '1.3', '2.2' ]);
+           my $part1_2 = $hash-&gt;{'1.2'};
+           my $part1_3 = $hash-&gt;{'1.3'};
+           my $part2_2 = $hash-&gt;{'2.2'};
+           print $$part1_2;              # need to dereference it
+
+           # copy messages between folders
+           $imap-&gt;select('INBOX');
+           $imap-&gt;copy(\@msg_ids, 'Archive');
+
+           # delete messages ("Move to Trash")
+           $imap-&gt;copy(\@msg_ids, 'Trash');
+           $imap-&gt;add_flags(\@msg_ids, '\\Deleted');
+           $imap-&gt;expunge;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::IMAP::Client provides methods to access an IMAP server.  It aims to provide a simple and clean API,
+       while employing a rigorous parser for IMAP responses in order to create Perl data structures from them.
+       The code is simple, clean and extensible.
+
+       It started as an effort to improve Net::IMAP::Simple but then I realized that I needed to change a lot of
+       code and API so I started it as a fresh module.  Still, the design is influenced by Net::IMAP::Simple and
+       I even stole a few lines of code from it ;-) (very few, honestly).
+
+       This software was developed for creating a web-based email (IMAP) client: www.xuheki.com.  Xhueki uses
+       Net::IMAP::Client.
+
+</pre><h4><b>API</b> <b>REFERENCE</b></h4><pre>
+       Unless otherwise specified, if a method fails it returns <u>undef</u> and you can inspect the error by calling
+       $imap-&gt;last_error.  For a successful call most methods will return a meaningful value but definitely not
+       <u>undef</u>.
+
+   <b>new(%args)</b>  <b>#</b> <b>constructor</b>
+           my $imap = Net::IMAP::Client-&gt;new(%args);
+
+       Pass to the constructor a hash of arguments that can contain:
+
+       - <b>server</b> (STRING)
+           Host name or IP of the IMAP server.
+
+       - <b>user</b> (STRING)
+           User ID (<u>only</u> <u>"clear"</u> <u>login</u> <u>is</u> <u>supported</u> <u>for</u> <u>now!</u>)
+
+       - <b>pass</b> (STRING)
+           Password
+
+       - <b>ssl</b> (BOOL, optional, default FALSE)
+           Pass a true value if you want to use IO::Socket::SSL You may not set both "ssl" and "tls" at the same
+           time.
+
+       - <b>tls</b> (BOOL, optional, default FALSE)
+           Pass  a  true  value  if  you  want to use connect without SSL and then use "STARTTLS" to upgrade the
+           connection to an encrypted session using IO::Socket::SSL.  The other "ssl_*" options also apply.
+
+           You may not set both "ssl" and "tls" at the same time.
+
+       - <b>ssl_verify_peer</b> (BOOL, optional, default TRUE)
+           Pass a false value if you do not want to use SSL CA to verify server
+
+           only need when you set ssl to true
+
+       - <b>ssl_ca_file</b> (STRING, optional)
+           Pass a file path which used as CA file to verify server
+
+           at least one of ssl_ca_file and ssl_ca_path is needed for ssl verify
+            server
+
+       -<b>ssl_ca_path</b> (STRING, optional)
+           Pass a dir which will be used as CA file search dir, found CA file will be used to verify server
+
+           On linux, by default is '<a href="file:/etc/ssl/certs/">/etc/ssl/certs/</a>'
+
+           at least one of ssl_ca_file and ssl_ca_path is needed for ssl verify
+            server
+
+       - <b>ssl_options</b> (HASHREF, optional)
+           Optional arguments to be passed to the IO::Socket::SSL object.
+
+       - <b>uid_mode</b> (BOOL, optional, default TRUE)
+           Whether to use UID command (see RFC3501).  Recommended.
+
+       - <b>socket</b> (IO::Handle, optional)
+           If you already have a socket connected to the IMAP server, you can pass it here.
+
+       The <b>ssl_ca_file</b> and <b>ssl_ca_path</b> only need when you set <b>ssl_verify_peer</b> to TRUE.
+
+       If you havn't apply an <b>ssl_ca_file</b> and  <b>ssl_ca_path</b>,  on  linux,  the  <b>ssl_ca_path</b>  will  use  the  value
+       '<a href="file:/etc/ssl/certs/">/etc/ssl/certs/</a>', on other platform <b>ssl_verify_peer</b> will be disabled.
+
+       The constructor doesn't login to the IMAP server -- you need to call $imap-&gt;login for that.
+
+   <b>last_error</b>
+       Returns the last error from the IMAP server.
+
+   <b>login($user,</b> <b>$pass)</b>
+       Login  to the IMAP server.  You can pass $user and $pass here if you wish; if not passed, the values used
+       in constructor will be used.
+
+       Returns <u>undef</u> if login failed.
+
+   <b>logout</b> <b>/</b> <b>quit</b>
+       Send EXPUNGE and LOGOUT then close connection.  "quit" is an alias for "logout".
+
+   <b>noop</b>
+       "Do nothing" method that calls the IMAP "NOOP" command.  It returns a  true  value  upon  success,  <u>undef</u>
+       otherwise.
+
+       This  method  fetches any notifications that the server might have for us and you can get them by calling
+       $imap-&gt;notifications.  See the "<b>notifications()</b>" method.
+
+   <b>capability()</b> <b>/</b> <b>capability(qr/^SOMETHING/)</b>
+       With no arguments, returns an array of all capabilities advertised by the server.  If  you're  interested
+       in  a  certain  capability  you can pass a RegExp.  E.g. to check if this server knows 'SORT', you can do
+       this:
+
+           if ($imap-&gt;capability(/^sort$/i)) {
+               # speaks it
+           }
+
+       This data is cached, the server will be only hit once.
+
+   <b>select($folder)</b>
+       Selects the current IMAP folder.  On success this method also records some information about the selected
+       folder in a hash stored in $self-&gt;{FOLDERS}{$folder}.  You might want to use  Data::Dumper  to  find  out
+       exactly what, but at the time of this writing this is:
+
+       - <b>messages</b>
+           Total number of messages in this folder
+
+       - <b>flags</b>
+           Flags available for this folder (as array ref)
+
+       - <b>recent</b>
+           Total number of recent messages in this folder
+
+       - <b>sflags</b>
+           Various  other  flags  here, such as PERMANENTFLAGS of UIDVALIDITY.  You might want to take a look at
+           RFC3501 at this point. :-p
+
+       This method is basically stolen from Net::IMAP::Simple.
+
+   <b>examine($folder)</b>
+       Selects the current IMAP folder in read-only (EXAMINE) mode.  Otherwise identical to select.
+
+   <b>status($folder),</b> <b>status(\@folders)</b>
+       Returns the status of the given folder(s).
+
+       If passed an array ref, the return value is a hash ref mapping folder name to folder  status  (which  are
+       hash references in turn).  If passed a single folder name, it returns the status of that folder only.
+
+           my $inbox = $imap-&gt;status('INBOX');
+           print $inbox-&gt;{UNSEEN}, $inbox-&gt;{MESSAGES};
+           print Data::Dumper::Dumper($inbox);
+
+           my $all = $imap-&gt;status($imap-&gt;folders);
+           while (my ($name, $status) = each %$all) {
+               print "$name : $status-&gt;{MESSAGES}/$status-&gt;{UNSEEN}\n";
+           }
+
+       This method is designed to be very fast when passed multiple folders.  It's <u>a</u> <u>lot</u> faster to call:
+
+           $imap-&gt;status(\@folders);
+
+       than:
+
+           $imap-&gt;status($_) foreach (@folders);
+
+       because  it  sends all the STATUS requests to the IMAP server before it starts receiving the answers.  In
+       my tests with my remote IMAP server, for 40 folders this method takes 0.6 seconds, compared to 6+ seconds
+       when called individually for each folder alone.
+
+   <b>separator</b>
+       Returns the folder hierarchy separator.  This is provided as a result of the following IMAP command:
+
+           FETCH "" "*"
+
+       I don't know of any way to change this value on a server so I have to assume it's a constant.  Therefore,
+       this method caches the result and it won't hit the server a second time on subsequent calls.
+
+   <b>folders</b>
+       Returns a list of all folders available on the server.  In scalar context it returns a  reference  to  an
+       array, i.e.:
+
+           my @a = $imap-&gt;folders;
+           my $b = $imap-&gt;folders;
+           # now @a == @$b;
+
+   <b>folders_more</b>
+       Returns  an hash reference containing more information about folders.  It maps folder name to an hash ref
+       containing the following:
+
+         - flags -- folder flags (array ref; i.e. [ '\\HasChildren' ])
+         - sep   -- one character containing folder hierarchy separator
+         - name  -- folder name (same as the key -- thus redundant)
+
+   <b>namespace</b>
+       Returns an hash reference containing the namespaces for this  server  (see  RFC  2342).   Since  the  RFC
+       defines 3 possible types of namespaces, the hash contains the following keys:
+
+        - `personal' -- the personal namespace
+        - `other' -- "other users" namespace
+        - `shared' -- shared namespace
+
+       Each  one  can be <u>undef</u> if the server returned "NIL", or an array reference.  If an array reference, each
+       element is in the form:
+
+        {
+           sep    =&gt; '.',
+           prefix =&gt; 'INBOX.'
+        }
+
+       (<u>sep</u> is the separator for this hierarchy, and <u>prefix</u> is the prefix).
+
+   <b>seq_to_uid(@sequence_ids)</b>
+       I recommend usage of UID-s only (see "uid_mode") but this isn't always possible.  Even when "uid_mode" is
+       on, the server will sometimes return notifications  that  only  contain  message  sequence  numbers.   To
+       convert these to UID-s you can use this method.
+
+       On  success  it  returns  an  hash reference which maps sequence numbers to message UID-s.  Of course, on
+       failure it returns <u>undef</u>.
+
+   <b>search($criteria,</b> <b>$sort,</b> <b>$charset)</b>
+       Executes the "SEARCH" or "SORT" IMAP commands (depending on  wether  $sort  is  <u>undef</u>)  and  returns  the
+       results as an array reference containing message ID-s.
+
+       Note  that if you use $sort and the IMAP server doesn't have this capability, this method will fail.  Use
+       "capability" to investigate.
+
+       - <b>$criteria</b>
+           Can be a string, in which case it is passed literally to the IMAP command (which can be  "SEARCH"  or
+           "SORT").
+
+           It can also be an hash reference, in which case keys =&gt; values are collected into a string and values
+           are properly quoted, i.e.:
+
+              { subject =&gt; 'foo',
+                from    =&gt; 'bar' }
+
+           will translate to:
+
+              'SUBJECT "foo" FROM "bar"'
+
+           which is a valid IMAP SEARCH query.
+
+           If you want to retrieve all messages (no search criteria) then pass 'ALL' here.
+
+       - <b>$sort</b>
+           Can  be  a string or an array reference.  If it's an array, it will simply be joined with a space, so
+           for instance passing the following is equivalent:
+
+               'SUBJECT DATE'
+               [ 'SUBJECT', 'DATE' ]
+
+           The SORT command in IMAP allows you to prefix  a  sort  criteria  with  'REVERSE'  which  would  mean
+           descending  sorting;  this  module  will  allow  you  to  prefix it with '^', so again, here are some
+           equivalent constructs:
+
+               'SUBJECT REVERSE DATE'
+               'SUBJECT ^DATE'
+               [ 'SUBJECT', 'REVERSE', 'DATE' ]
+               [ 'subject', 'reverse date' ]
+               [ 'SUBJECT', '^DATE' ]
+
+           It'll also uppercase whatever you passed here.
+
+           If you omit $sort (or pass <u>undef</u>) then this method will use the SEARCH command.   Otherwise  it  uses
+           the SORT command.
+
+       - <b>$charset</b>
+           The  IMAP  SORT  recommendation  [2]  requires  a  charset  declaration for SORT, but not for SEARCH.
+           Interesting, huh?
+
+           Our module is a bit more paranoid and it will actually add charset for  both  SORT  and  SEARCH.   If
+           $charset is omitted (or <u>undef</u>) the it will default to "UTF-8", which, supposedly, is supported by all
+           IMAP servers.
+
+   <b>get_rfc822_body($msg_id)</b>
+       Fetch and return the full RFC822 body of the message.  <b>$msg_id</b> can be a scalar but also an array of ID-s.
+       If  it's  an array, then all bodies of those messages will be fetched and the return value will be a list
+       or an array reference (depending how you call it).
+
+       Note that the actual data is returned as a reference to a scalar, to speed things up.
+
+       Examples:
+
+           my $data = $imap-&gt;<a href="../man10/get_rfc822_body.10.html">get_rfc822_body</a>(10);
+           print $$data;   # need to dereference it
+
+           my @more = $imap-&gt;get_rfc822_body([ 11, 12, 13 ]);
+           print $$_ foreach @more;
+
+               or
+
+           my $more = $imap-&gt;get_rfc822_body([ 11, 12, 13 ]);
+           print $$_ foreach @$more;
+
+   <b>get_part_body($msg_id,</b> <b>$part_id)</b>
+       Fetches and returns the body of a certain part of the message.  Part ID-s  look  like  '1'  or  '1.1'  or
+       '2.3.1' etc. (see RFC3501 [1], "FETCH Command").
+
+       <u>Scalar</u> <u>reference</u>
+
+       Note  that  again,  this data is returned as a reference to a scalar rather than the scalar itself.  This
+       decision was taken purely to save some time passing around potentially large data from Perl subroutines.
+
+       <u>Undecoded</u>
+
+       One other thing to note is that  the  data  is  not  decoded.   One  simple  way  to  decode  it  is  use
+       Email::MIME::Encodings, i.e.:
+
+           use Email::MIME::Encodings;
+           my $summary = $imap-&gt;<a href="../man10/get_summaries.10.html">get_summaries</a>(10)-&gt;[0];
+           my $part = $summary-&gt;get_subpart('1.1');
+           my $body = $imap-&gt;get_part_body('1.1');
+           my $cte = $part-&gt;transfer_encoding;  # Content-Transfer-Encoding
+           $body = Email::MIME::Encodings::decode($cte, $$body);
+
+           # and now you should have the undecoded (perhaps binary) data.
+
+       See get_summaries below.
+
+   <b>get_parts_bodies($msg_id,</b> <b>\@part_ids)</b>
+       Similar  to  get_part_body,  but  this  method is capable to retrieve more parts at once.  It's of course
+       faster than calling get_part_body for each part alone.  Returns an hash reference which maps part  ID  to
+       part  body  (the  latter  is a reference to a scalar containing the actual data).  Again, the data is not
+       unencoded.
+
+           my $parts = $imap-&gt;get_parts_bodies(10, [ '1.1', '1.2', '2.1' ]);
+           print ${$parts-&gt;{'1.1'}};
+
+   <b>get_summaries($msg,</b> <b>$headers)</b> <b>/</b> <b>get_summaries(\@msgs,</b> <b>$headers)</b>
+       ($headers is optional).
+
+       Fetches, parses and returns "message summaries".  $msg can be an array ref, or a single id.   The  return
+       value is always an array reference, even if a single message is queried.
+
+       If  $headers  is  passed,  it  must  be  a string containing name(s) of the header fields to fetch (space
+       separated).  Example:
+
+           $imap-&gt;get_summaries([1, 2, 3], 'References X-Original-To')
+
+       The result contains Net::IMAP::Client::MsgSummary objects.  The best way to understand the result  is  to
+       actually call this function and use Data::Dumper to see its structure.
+
+       Following  is  the  output for a pretty complicated message, which contains an HTML part with an embedded
+       image and an attached message.  The attached message in turn  contains  an  HTML  part  and  an  embedded
+       message.
+
+         bless( {
+           'message_id' =&gt; '&lt;<a href="mailto:48A71D17.1000109@foobar.com">48A71D17.1000109@foobar.com</a>&gt;',
+           'date' =&gt; 'Sat, 16 Aug 2008 21:31:51 +0300',
+           'to' =&gt; [
+               bless( {
+                   'at_domain_list' =&gt; undef,
+                   'name' =&gt; undef,
+                   'mailbox' =&gt; 'kwlookup',
+                   'host' =&gt; 'foobar.com'
+               }, 'Net::IMAP::Client::MsgAddress' )
+           ],
+           'cc' =&gt; undef,
+           'from' =&gt; [
+               bless( {
+                   'at_domain_list' =&gt; undef,
+                   'name' =&gt; 'Mihai Bazon',
+                   'mailbox' =&gt; 'justme',
+                   'host' =&gt; 'foobar.com'
+               }, 'Net::IMAP::Client::MsgAddress' )
+           ],
+           'flags' =&gt; [
+               '\\Seen',
+               'NonJunk',
+               'foo_bara'
+           ],
+           'uid' =&gt; '11',
+           'subject' =&gt; 'test with message attachment',
+           'rfc822_size' =&gt; '12550',
+           'in_reply_to' =&gt; undef,
+           'bcc' =&gt; undef,
+           'internaldate' =&gt; '16-Aug-2008 21:29:23 +0300',
+           'reply_to' =&gt; [
+               bless( {
+                   'at_domain_list' =&gt; undef,
+                   'name' =&gt; 'Mihai Bazon',
+                   'mailbox' =&gt; 'justme',
+                   'host' =&gt; 'foobar.com'
+               }, 'Net::IMAP::Client::MsgAddress' )
+           ],
+           'sender' =&gt; [
+               bless( {
+                   'at_domain_list' =&gt; undef,
+                   'name' =&gt; 'Mihai Bazon',
+                   'mailbox' =&gt; 'justme',
+                   'host' =&gt; 'foobar.com'
+               }, 'Net::IMAP::Client::MsgAddress' )
+           ],
+           'parts' =&gt; [
+               bless( {
+                   'part_id' =&gt; '1',
+                   'parts' =&gt; [
+                       bless( {
+                           'parameters' =&gt; {
+                               'charset' =&gt; 'UTF-8'
+                           },
+                           'subtype' =&gt; 'html',
+                           'part_id' =&gt; '1.1',
+                           'encoded_size' =&gt; '365',
+                           'cid' =&gt; undef,
+                           'type' =&gt; 'text',
+                           'description' =&gt; undef,
+                           'transfer_encoding' =&gt; '7bit'
+                       }, 'Net::IMAP::Client::MsgSummary' ),
+                       bless( {
+                           'disposition' =&gt; {
+                               'inline' =&gt; {
+                                   'filename' =&gt; 'someimage.png'
+                               }
+                           },
+                           'language' =&gt; undef,
+                           'encoded_size' =&gt; '4168',
+                           'description' =&gt; undef,
+                           'transfer_encoding' =&gt; 'base64',
+                           'parameters' =&gt; {
+                               'name' =&gt; 'someimage.png'
+                           },
+                           'subtype' =&gt; 'png',
+                           'part_id' =&gt; '1.2',
+                           'type' =&gt; 'image',
+                           'cid' =&gt; '&lt;<a href="mailto:part1.02030404.05090202@foobar.com">part1.02030404.05090202@foobar.com</a>&gt;',
+                           'md5' =&gt; undef
+                       }, 'Net::IMAP::Client::MsgSummary' )
+                   ],
+                   'multipart_type' =&gt; 'related'
+               }, 'Net::IMAP::Client::MsgSummary' ),
+               bless( {
+                   'message_id' =&gt; '&lt;<a href="mailto:48A530CE.3050807@foobar.com">48A530CE.3050807@foobar.com</a>&gt;',
+                   'date' =&gt; 'Fri, 15 Aug 2008 10:31:26 +0300',
+                   'encoded_size' =&gt; '6283',
+                   'to' =&gt; [
+                       bless( {
+                           'at_domain_list' =&gt; undef,
+                           'name' =&gt; undef,
+                           'mailbox' =&gt; 'kwlookup',
+                           'host' =&gt; 'foobar.com'
+                       }, 'Net::IMAP::Client::MsgAddress' )
+                   ],
+                   'subtype' =&gt; 'rfc822',
+                   'cc' =&gt; undef,
+                   'from' =&gt; [
+                       bless( {
+                           'at_domain_list' =&gt; undef,
+                           'name' =&gt; 'Mihai Bazon',
+                           'mailbox' =&gt; 'justme',
+                           'host' =&gt; 'foobar.com'
+                       }, 'Net::IMAP::Client::MsgAddress' )
+                   ],
+                   'subject' =&gt; 'Test with images',
+                   'in_reply_to' =&gt; undef,
+                   'description' =&gt; undef,
+                   'transfer_encoding' =&gt; '7bit',
+                   'parameters' =&gt; {
+                       'name' =&gt; 'Attached Message'
+                   },
+                   'bcc' =&gt; undef,
+                   'part_id' =&gt; '2',
+                   'sender' =&gt; [
+                       bless( {
+                           'at_domain_list' =&gt; undef,
+                           'name' =&gt; 'Mihai Bazon',
+                           'mailbox' =&gt; 'justme',
+                           'host' =&gt; 'foobar.com'
+                       }, 'Net::IMAP::Client::MsgAddress' )
+                   ],
+                   'reply_to' =&gt; [
+                       bless( {
+                           'at_domain_list' =&gt; undef,
+                           'name' =&gt; 'Mihai Bazon',
+                           'mailbox' =&gt; 'justme',
+                           'host' =&gt; 'foobar.com'
+                       }, 'Net::IMAP::Client::MsgAddress' )
+                   ],
+                   'parts' =&gt; [
+                       bless( {
+                           'parameters' =&gt; {
+                               'charset' =&gt; 'UTF-8'
+                           },
+                           'subtype' =&gt; 'html',
+                           'part_id' =&gt; '2.1',
+                           'encoded_size' =&gt; '344',
+                           'cid' =&gt; undef,
+                           'type' =&gt; 'text',
+                           'description' =&gt; undef,
+                           'transfer_encoding' =&gt; '7bit'
+                       }, 'Net::IMAP::Client::MsgSummary' ),
+                       bless( {
+                           'disposition' =&gt; {
+                               'inline' =&gt; {
+                                   'filename' =&gt; 'logo.png'
+                               }
+                           },
+                           'language' =&gt; undef,
+                           'encoded_size' =&gt; '4578',
+                           'description' =&gt; undef,
+                           'transfer_encoding' =&gt; 'base64',
+                           'parameters' =&gt; {
+                               'name' =&gt; 'logo.png'
+                           },
+                           'subtype' =&gt; 'png',
+                           'part_id' =&gt; '2.2',
+                           'type' =&gt; 'image',
+                           'cid' =&gt; '&lt;<a href="mailto:part1.02060209.09080406@foobar.com">part1.02060209.09080406@foobar.com</a>&gt;',
+                           'md5' =&gt; undef
+                       }, 'Net::IMAP::Client::MsgSummary' )
+                   ],
+                   'cid' =&gt; undef,
+                   'type' =&gt; 'message',
+                   'multipart_type' =&gt; 'related'
+               }, 'Net::IMAP::Client::MsgSummary' )
+           ],
+           'multipart_type' =&gt; 'mixed'
+         }, 'Net::IMAP::Client::MsgSummary' );
+
+       As you can see, the parser retrieves all data, including from the embedded messages.
+
+       There  are  many  other modules you can use to fetch such information.  Email::Simple and Email::MIME are
+       great.  The only problem is that you have to have fetched already the full (RFC822) body of the  message,
+       which  is  impractical  over IMAP.  When you want to quickly display a folder summary, the only practical
+       way is to issue a FETCH command and retrieve only those headers that you are interested  in  (instead  of
+       full  body).   "get_summaries" does exactly that (issues a FETCH (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE
+       BODYSTRUCTURE)).  It's acceptably fast even for huge folders.
+
+   <b>fetch($msg_id,</b> <b>$attributes)</b>
+       This is a low level interface to FETCH.  It calls the imap FETCH command and returns  a  somewhat  parsed
+       hash of the results.
+
+       $msg_id can be a single message ID or an array of IDs.  If a single ID is given, the return value will be
+       a  hash  reference containing the requested values.  If $msg_id is an array, even if it contains a single
+       it, then the return value will be an array of hashes.
+
+       $attributes is a string of attributes to FETCH, separated with a space, or an array (ref) of attributes.
+
+       Examples:
+
+       # retrieve the UID of the most recent message
+
+           my $last_uid = $imap-&gt;fetch('*', 'UID')-&gt;{UID};
+
+       # fetch the flags of the first message
+
+           my $flags = $imap-&gt;fetch(1, 'FLAGS')-&gt;{FLAGS};
+
+       # fetch flags and some headers (Subject and From)
+
+           my $headers = 'BODY[HEADER.FIELDS (Subject From)]';
+           my $results = $imap-&gt;fetch([1, 2, 3], "FLAGS $headers");
+           foreach my $hash (@$results) {
+               print join(" ", @{$hash-&gt;{FLAGS}}), "\n";
+               print $hash-&gt;{$headers}, "\n";
+           }
+
+   <b>notifications()</b>
+       The IMAP server may send various notifications upon execution of commands.   They  are  collected  in  an
+       array which is returned by this method (returns an array ref in scalar context, or a list otherwise).  It
+       clears  the notifications queue so on second call it will return an empty array (unless new notifications
+       were collected in the meantime).
+
+       Each element in this array (notification) is a hash reference containing one or more or the following:
+
+         - seq       : the *sequence number* of the changed message
+         - uid       : UID of the changed message (NOT ALWAYS available!)
+         - flags     : new flags for this message
+         - deleted   : when the \Deleted flag was set for this message
+         - messages  : new number of messages in this folder
+         - recent    : number of recent messages in this folder
+         - flags     : new flags of this folder (seq is missing)
+         - destroyed : when this message was expunged
+         - folder    : the name of the selected folder
+
+       "folder" is always present.  "seq" is present when a message was changed some flags (in  which  case  you
+       have  "flags")  or  was  expunged (in which case "destroyed" is true).  When "flags" were changed and the
+       <b>\Deleted</b> flag is present, you also get "deleted" true.
+
+       "seq" is a message sequence number.  Pretty dumb, I think it's preferable to work with UID-s, but  that's
+       what  the  IMAP  server  reports.   In some cases the UID <u>might</u> be readily available (i.e. my IMAP server
+       sends notifications in the same body as a response to, say, a FETCH BODY command), but when it's not, you
+       have to rely on <b>seq_to_uid()</b>.  <b>Note</b> that when "destroyed" is true, the message has been  <b>expunged</b>;  there
+       is  no  way  in this case to retrieve the UID so you have to rely solely on "seq" in order to update your
+       caches.
+
+       When "flags" is present but no "seq", it means that the list of available  flags  for  the  "folder"  has
+       changed.
+
+       You  get "messages" upon an "EXISTS" notification, which usually means "you have new mail".  It indicates
+       the total number of messages in the folder, not just "new" messages.  I've yet to come up with a good way
+       to measure the number of new/unseen messages, other than calling "status($folder)".
+
+       I rarely got "recent" from my IMAP server in my tests; if more clients are simultaneously  logged  in  as
+       the  same  IMAP  user,  only one of them will receive "RECENT" notifications; others will have to rely on
+       "EXISTS" to tell when new messages have arrived.  Therefore I can only say that "RECENT" is useless and I
+       advise you to ignore it.
+
+   <b>append($folder,</b> <b>\$rfc822,</b> <b>$flags,</b> <b>$date)</b>
+       Appends a message to the given $folder.  You must pass the full RFC822 body in $rfc822.  $flags and $date
+       are optional.  If you pass $flags, it must be an array of strings specifying the  initial  flags  of  the
+       appended  message.   If  <u>undef</u>,  the message will be appended with an empty flag set, which amongst other
+       things means that it will be regarded as an "\Unseen" message.
+
+       $date specifies the INTERNALDATE of the appended messge.   If  <u>undef</u>  it  will  default  to  the  current
+       date/time.  <b>NOTE:</b> this functionality is not tested; $date should be in a format understood by IMAP.
+
+   <b>get_flags($msg_id)</b> <b>/</b> <b>get_flags(\@msg_ids)</b>
+       Returns  the  flags  of one or more messages.  The return value is an array (reference) if one message ID
+       was passed, or a hash reference if an array (of one or more) message ID-s was passed.
+
+       When an array was passed, the returned hash will map each message UID to an array of flags.
+
+   <b>store($msg,</b> <b>$flag)</b> <b>/</b> <b>store(\@msgs,</b> <b>\@flags)</b>
+       Resets FLAGS of the given message(s) to the given flag(s).  $msg can be an array of ID-s (or UID-s), or a
+       single (U)ID.  $flags can be a single string, or an array reference as well.
+
+       Note that the folder where these messages reside must have been already selected.
+
+       Examples:
+
+           $imap-&gt;store(10, '\\Seen');
+           $imap-&gt;store([11, 12], '\\Deleted');
+           $imap-&gt;store(13, [ '\\Seen', '\\Answered' ]);
+
+       The IMAP specification defines certain reserved flags (they all start with a backslash).  For example,  a
+       message  with  the  flag "\Deleted" should be regarded as deleted and will be permanently discarded by an
+       EXPUNGE command.  Although, it is possible to "undelete" a message by removing this flag.
+
+       The following reserved flags are defined by the IMAP spec:
+
+           \Seen
+           \Answered
+           \Flagged
+           \Deleted
+           \Draft
+           \Recent
+
+       The "\Recent" flag is considered "read-only" -- you cannot add or remove it manually; the  server  itself
+       will do this as appropriate.
+
+   <b>add_flags($msg,</b> <b>$flag)</b> <b>/</b> <b>add_flags(\@msgs,</b> <b>\@flags)</b>
+       Like <b>store()</b> but it doesn't reset all flags -- it just specifies which flags to <b>add</b> to the message.
+
+   <b>del_flags($msg,</b> <b>$flag)</b> <b>/</b> <b>del_flags(\@msgs,</b> <b>\@flags)</b>
+       Like <b>store()</b> / <b>add_flags()</b> but it <b>removes</b> flags.
+
+   <b>delete_message($msg)</b> <b>/</b> <b>delete_message(\@msgs)</b>
+       Stores the \Deleted flag on the given message(s).  Equivalent to:
+
+           $imap-&gt;add_flags(\@msgs, '\\Deleted');
+
+   <b>expunge()</b>
+       Permanently removes messages that have the "\Deleted" flag set from the current folder.
+
+   <b>copy($msg,</b> <b>$folder)</b> <b>/</b> <b>copy(\@msg_ids,</b> <b>$folder)</b>
+       Copies message(s) from the selected folder to the given $folder.  You can pass a single message ID, or an
+       array of message ID-s.
+
+   <b>create_folder($folder)</b>
+       Creates the folder with the given name.
+
+   <b>delete_folder($folder)</b>
+       Deletes  the folder with the given name.  This works a bit different from the IMAP specs.  The IMAP specs
+       says that any subfolders should remain intact.  This  method  actually  deletes  subfolders  recursively.
+       Most of the time, this is What You Want.
+
+       Note that all messages in $folder, as well as in any subfolders, are permanently lost.
+
+   <b>get_threads($algorithm,</b> <b>$msg_id)</b>
+       Returns a "threaded view" of the current folder.  Both arguments are optional.
+
+       $algorithm  should  be  <u>undef</u>,  "REFERENCES"  or "SUBJECT".  If undefined, "REFERENCES" is assumed.  This
+       selects the threading algorithm, as per IMAP THREAD AND SORT extensions  specification.   I  only  tested
+       "REFERENCES".
+
+       $msg_id  can  be undefined, or a message ID.  If it's undefined, then a threaded view of the whole folder
+       will be returned.  If you pass a message ID, then this method  will  return  the  top-level  thread  that
+       contains the message.
+
+       The return value is an array which actually represents threads.  Elements of this array are message ID-s,
+       or  other  arrays  (which  in  turn contain message ID-s or other arrays, etc.).  The first element in an
+       array will represent the start of the thread.  Subsequent elements are child messages or subthreads.
+
+       An example should help (FIXME).
+
+</pre><h4><b>TODO</b></h4><pre>
+       - authentication schemes other than plain text (<b>help</b> <b>wanted</b>)
+       - better error handling?
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::IMAP::Simple, Mail::IMAPClient, Mail::IMAPTalk
+
+       Email::Simple, Email::MIME
+
+       RFC3501 [1] is a must read if you want to do anything fancier than what this module already supports.
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       [1] <a href="http://ietfreport.isoc.org/rfc/rfc3501.txt">http://ietfreport.isoc.org/rfc/rfc3501.txt</a>
+
+       [2] <a href="http://ietfreport.isoc.org/all-ids/draft-ietf-imapext-sort-20.txt">http://ietfreport.isoc.org/all-ids/draft-ietf-imapext-sort-20.txt</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mihai Bazon, &lt;<a href="mailto:mihai.bazon@gmail.com">mihai.bazon@gmail.com</a>&gt;
+           <a href="http://www.xuheki.com/">http://www.xuheki.com/</a>
+           <a href="http://www.dynarchlib.com/">http://www.dynarchlib.com/</a>
+           <a href="http://www.bazon.net/mishoo/">http://www.bazon.net/mishoo/</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) Mihai Bazon 2008.  All rights reserved.
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE  THIS  SOFTWARE  IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS  AND/OR  OTHER
+       PARTIES  PROVIDE  THE  SOFTWARE  "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE.  THE  ENTIRE  RISK  AS  TO  THE  QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,  OR  ANY
+       OTHER  PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING  OUT  OF
+       THE  USE  OR  INABILITY  TO  USE  THE  SOFTWARE  (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE  TO  OPERATE
+       WITH  ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2023-02-07                             <u>Net::IMAP::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

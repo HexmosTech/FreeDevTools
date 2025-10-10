@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Devel::MAT::UserGuide" - a users' introduction to "Devel::MAT"</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdevel-mat-perl">libdevel-mat-perl_0.53-1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Devel::MAT::UserGuide" - a users' introduction to "Devel::MAT"
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       The "Devel::MAT" ecosystem allows developers of <u>perl</u> programs to inspect and analyse memory-related
+       problems such as memory leaks, unexpected memory consumption, or odd state. This is an "offline" analysis
+       system, in the sense that the analysis tools all run in a different process, possibly at a later time,
+       than the <u>perl</u> process that is being analysed.
+
+       The basic workflow consists of two main stages: first a <u>heap</u> <u>dump</u> file is generated from the <u>perl</u> process
+       being debugged, at or around the time that the problem becomes apparent, and secondly this file is loaded
+       by an analysis tool in order to inspect the contents.
+
+       These two stages are described here separately. It is important to note that they don't have to be done
+       at the same time, on the same <u>perl</u> process, or even on the same sort of machine. It is fully possible to
+       capture the heap from a process on, say, a small server, then copy the file to a development workstation
+       or laptop and analyse it there at a later time. It is for this reason that the heap-dumping part,
+       Devel::MAT::Dumper, is now separated into its own CPAN distribution. This means it can be installed on
+       its own, without all the extra dependencies the full set of analysis tools require.
+
+</pre><h4><b>CAPTURING</b> <b>THE</b> <b>HEAP</b></h4><pre>
+       To generate the heap dump file that captures the contents of the heap, the Devel::MAT::Dumper module is
+       used. Ultimately the "dump" function within it needs to be called, but usually one of the module load
+       options can be used on the <u>perl</u> commandline to achieve this without requiring the running code to be
+       modified.
+
+       For example, the "-dump_at_DIE" option means that a heap dump will be written just before the process
+       quits due to an uncaught exception:
+
+         $ perl -MDevel::MAT::Dumper=-dump_at_DIE program.pl
+
+       At this point, the program will start up and run normally, but if it is about to die, it will first write
+       a <u>.pmat</u> file capturing the contents of the memory.
+
+         ...
+         Dumping to program.pl.pmat because of DIE
+         Can't call method "method" on an undefined value at program.pl line 123.
+
+       There are a variety of other options for other situations, to suit other sorts of bugs and issues under
+       investigation. For more options, see the documentation at "IMPORT OPTIONS" in Devel::MAT::Dumper.
+
+</pre><h4><b>ANALYSING</b> <b>THE</b> <b>HEAP</b></h4><pre>
+       Now that we have a <u>.pmat</u> file, we can load it and start to inspect the contents. A lot of the smaller,
+       simpler tools are built as plugins for the main <u>pmat</u> command shell, so we can start by loading the heap
+       file there.
+
+         $ pmat program.pl.pmat
+         Perl memory dumpfile from perl 5.24.1
+         Heap contains 15624 objects
+         pmat&gt;
+
+       In this shell a collection of commands is available to help analyse and inspect the contents of memory
+       represented by this heap dump, which can be used in an interactive way, trying to narrow down to find the
+       cause of the memory issue.
+
+       It is hard in general to describe exactly what sequence of analysis commands will be best to find the
+       problem, as the specifics of each individual case will call for different kinds of analysis and require
+       us to ask different questions of the toolset.
+
+       Ultimately there is quite a variety of possible underlying causes of memory growth in a Perl program; a
+       few possible causes could be:
+
+       • A  single  large  SV  such as a hash or array containing millions of items, or a single string possibly
+         gigabytes in length.
+
+       • A large number of SVs being created retained indefinitely, never being reclaimed.
+
+       • A large number of temporary SVs being created, but due to internal reference  cycles  their  memory  is
+         never reclaimed despite them now being unreachable.
+
+       This  list  of  course  is  quite incomplete - there are as many different variations of erroenous memory
+       usage as there are possible programs to write.  Additionally, a lot of more  interesting  programs  often
+       suffer  multiple overlapping issues at once. Nevertheless, this broad categorisation can help to describe
+       some overall approaches to finding memory usage issues.
+
+       A good first step to take in the <u>pmat</u> shell to try to distinguish these cases is  to  use  the  "largest"
+       command.  This  command  requires no additional arguments, and by default will print (in size order), the
+       five largest individual SVs in the entire heap.
+
+         pmat&gt; largest
+
+       For more information about the "largest" command, see also "largest" in Devel::MAT::Tool::Sizes.
+
+   <b>One</b> <b>Large</b> <b>SV</b>
+       Sometimes you'll find a single SV that far outweighs all the others; for example:
+
+         pmat&gt; largest
+         SCALAR(PV) at 0x6a47708: 1.6 GiB
+         SCALAR(PV) at 0x1a59488: 4.0 MiB
+         <a href="../man0/HASH.0.html">HASH</a>(0) at 0xfb4770=strtab: 1.5 MiB
+         SCALAR(PV) at 0x71b6468: 707.3 KiB
+         SCALAR(PV) at 0x71be2f0: 609.6 KiB
+         others: 46.2 MiB
+
+       In this output, we see that the topmost SV reported, at address 0x6a47708 is much larger than  everything
+       else  put  together. In this case we have essentially already found the cause of the memory usage growth,
+       and we can proceed by identifying what this particular SV  actually  is,  by  following  the  process  in
+       Devel::MAT::UserGuide::IdentifyingAnSV.
+
+       For a brief overview, we can just count the total number of objects of various kinds in the heap:
+
+         pmat&gt; count
+           Kind       Count (blessed)        Bytes (blessed)
+           ARRAY        182         0     16.0 KiB
+           CODE         182         0     22.8 KiB
+           GLOB         325         0     48.2 KiB
+           ...
+
+       We can inspect the callstack at the time the heap dump was made:
+
+         pmat&gt; callers
+         <a href="../man0/caller.0.html">caller</a>(0): CODE(PP) at 0x55555582a4e8=&amp;main::__ANON__ =&gt; void
+           at t/test.pl line 49
+           $_[0]: SCALAR(PV) at 0x55c2bdce2778 = "arguments"
+           $_[1]: SCALAR(PV) at 0x55c2bdce2868 = "go"
+           $_[2]: SCALAR(PV) at 0x55c2bdce26e8 = "here"
+         ...
+
+</pre><h4><b>COMMAND</b> <b>HELP</b></h4><pre>
+       A list of the commands currently available in the shell can be found by the "help" command:
+
+         pmat&gt; help
+         callers   - Display the caller stack
+         count     - Count the various kinds of SV
+         elems     - List the elements of an ARRAY SV
+         ...
+
+       For more information about a particular command, give its name as an argument to the "help" command:
+
+         pmat&gt; help sizes
+         sizes - Summarize object and byte counts across different SV types
+
+         SYNOPSIS:
+           sizes [OPTIONS...]
+
+         OPTIONS:
+           --owned     sum SVs by owned size
+           --struct    sum SVs by structural size
+
+       Also  note  that  each command is implemented by a (correctly-cased) package under the "Devel::MAT::Tool"
+       namespace. For example, the "count" tool is implemented by, and therefore more documentation can be found
+       in, the Devel::MAT::Tool::Count package.
+
+   <b>Specifying</b> <b>SVs</b>
+       Many commands operate on a particular given SV. This can be specified in several ways:
+
+       •   A numerical address directly:
+
+              pmat&gt; show 0x55a7e4e59f78
+              IO()=IO::File at 0x55a7e4e59f78 with refcount 1
+              ...
+
+       •   A named root SV (see the "roots" command for a list of them all):
+
+              pmat&gt; show defstash
+              <a href="../man61/STASH.61.html">STASH</a>(61) at 0x55a7e4d69060=defstash with refcount 2
+
+       •   A named symbol from the symbol table. Note that subs require the "&amp;" sigil:
+
+             pmat&gt; show $warnings::VERSION
+             SCALAR(PV) at 0x55a7e4d96550 with refcount 1
+             ...
+
+             pmat&gt; show &amp;warnings::import
+             CODE(PP) at 0x55a7e4dc3458 with refcount 1
+             ...
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2024-10-20                         <u>Devel::MAT::<a href="../man3pm/UserGuide.3pm.html">UserGuide</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

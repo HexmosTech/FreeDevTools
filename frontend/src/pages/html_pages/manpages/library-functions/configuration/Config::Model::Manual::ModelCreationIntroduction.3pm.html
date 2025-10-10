@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::Model::Manual::ModelCreationIntroduction - Introduction to model creation with Config::Model</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-model-perl">libconfig-model-perl_2.155-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::Model::Manual::ModelCreationIntroduction - Introduction to model creation with Config::Model
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.155
+
+</pre><h4><b>Introduction</b></h4><pre>
+       This page describes how to write a simple configuration model. Creation of more complex models are
+       described in Creating a model with advanced features.
+
+       Note that this document shows a lot of Perl data structure to highlight the content of a model. A Perl
+       data structure is very similar to a JSON structure. The only thing you need to know are:
+
+       •   Curly braces "{ ... }" contain a dictionary of key, value pairs (a "hash" in Perl land))
+
+       •   Square brackets "[ ... ]" contain a list of items ("array" or "list" in Perl land)
+
+</pre><h4><b>Some</b> <b>definitions</b></h4><pre>
+       configuration file
+           Text  file  where configuration data are stored. This configuration file is used by an application --
+           the <u>target</u> <u>application</u>
+
+       configuration tree
+           The semantic content of the configuration file stored in a tree representation
+
+       configuration model
+           Structure and constraints of the configuration tree. Like a schema for the configuration tree
+
+       target application
+           The application that uses the configuration file. The application can be of type "system"  (i.e.  the
+           configuration  file  is  located in "<a href="file:/etc">/etc</a>"), "user" (i.e. the configuration file is located in a user
+           directory like "<a href="file:~/.config">~/.config</a>") or "application" (the configuration file  is  in  or  below  the  current
+           directory)
+
+       end user
+           User of the target application
+
+       application developer
+           Target application developer
+
+       model developer
+           People developing the configuration model. Not necessarily the application developer
+
+</pre><h4><b>What</b> <b>is</b> <b>a</b> <b>configuration</b> <b>tree?</b></h4><pre>
+       Most  configuration  files  are actually organized mostly as a tree structure. Depending on the syntax of
+       the file, this structure may be obvious to see (e.g. for XML, Apache) or not so obvious  ("Xorg"  syntax,
+       INI syntax).
+
+       For  some  files  like "approx.conf" or "adduser.conf", this tree structure is quite flat.  It looks much
+       like a rake than a tree, but still, it's a tree.
+
+       For instance, this "approx.conf":
+
+        $pdiffs     1
+        $max_wait   14
+        debian     <a href="http://ftp.fr.debian.org/debian">http://ftp.fr.debian.org/debian</a>
+
+       can have this tree representation:
+
+        root
+        |--pdiff=1
+        |--max_wait=14
+        `--distrib(debian)=<a href="http://ftp.fr.debian.org/debian">http://ftp.fr.debian.org/debian</a>
+
+       Other configuration files like "apache2.conf" or "xorg.conf" have a structure that look more like a tree.
+
+       For instance, consider this "xorg.conf" snippet:
+
+        Section "Device"
+           Identifier     "Device0"
+           Driver         "nvidia"
+        EndSection
+
+        Section "Screen"
+           Identifier     "Screen0"
+           Device         "Device0"
+           Option         "AllowGLXWithComposite" "True"
+           Option         "DynamicTwinView" "True"
+           SubSection     "Display"
+               Depth       24
+           EndSubSection
+        EndSection
+
+       Knowing that Xorg.conf can have several Device or Screen sections identified by their "Identifiers",  the
+       configuration can be represented in this tree as:
+
+        root
+        |--Device(Device0)
+        |  `--Driver=nvidia
+        `--Screen(Screen0)
+           |--Device=Device0
+           |--Option
+           |  |--AllowGLXWithComposite=True
+           |  `--DynamicTwinView=True
+           `--Display
+              `--Depth=24
+
+       One  may  argue  that some "Xorg" parameter refer to others (i.e."Device" and "Monitor" value in "Screen"
+       section) and so they cannot be represented as a tree. That's right, there are some more complex relations
+       that are added to the tree structure. This will be covered in more  details  when  dealing  with  complex
+       models.
+
+       In  some  other case, the structure of a tree is not fixed. For instance, "Device" options in "Xorg.conf"
+       are different depending on the value of  the  "Device  Driver".  In  this  case,  the  structure  of  the
+       configuration tree must be adapted (morphed) depending on a parameter value.
+
+       Just  like  XML data can have Schema to validate their content, the configuration tree structure needs to
+       have its own schema to validate its content. Since the tree structure cannot be represented as  a  static
+       tree without reference, XML like schema are not enough to validate configuration data.
+
+       Config::Model  provides  a  kind of schema for configuration data that takes care of the cross references
+       mentioned above and of the dynamic nature of the configuration tree required for "Xorg" (and others).
+
+</pre><h4><b>What</b> <b>is</b> <b>a</b> <b>model?</b></h4><pre>
+       A configuration model defines the configuration tree structure:
+
+       •   A model defines one or more configuration class
+
+       •   At least one class is required to define the configuration tree root
+
+       •   Each class contains several elements. An element can be:
+
+           •   A leaf to represent one configuration parameter
+
+           •   A list of hash of leaves to represent several parameter
+
+           •   A node to hold a node of a configuration tree
+
+           •   A list or hash of nodes
+
+       These basic relations enable to define the main parts of a configuration tree.
+
+       If we refer to the "approx.conf" example mentioned above, one only  class  is  required  (let's  say  the
+       "Approx" class). This class must contain (see approx.conf man page):
+
+       •   A boolean leaf for "pdiff" (1 if not specified)
+
+       •   An integer leaf for "max_wait" (10 seconds unless specified otherwise)
+
+       •   A hash of string leaves for "distrib" (no default).
+
+       A configuration model is stored this way by Config::Model:
+
+        {
+         name =&gt; 'Approx',
+         element =&gt; [
+             pdiffs =&gt; {
+                 type =&gt; 'leaf',
+                 value_type =&gt; 'boolean',
+                 upstream_default =&gt; '1'
+             },
+             max_wait =&gt; {
+                 type =&gt; 'leaf',
+                 value_type =&gt; 'integer',
+                 upstream_default =&gt; '10'
+             },
+             distributions =&gt; {
+                 type =&gt; 'hash',
+                 index_type =&gt; 'string' ,
+                 cargo =&gt; {
+                     value_type =&gt; 'uniline',
+                     type =&gt; 'leaf',
+                 },
+             }
+          ]
+        }
+
+       The "Xorg" example leads to a slightly more complex model with several classes:
+
+       •   "Xorg" (root class)
+
+       •   "Xorg::Device"
+
+       •   "Xorg::Screen"
+
+       •   "Xorg::Screen::Option" for the Screen options
+
+       •   "Xorg::Screen::Display" for the"Display" subsection
+
+       The root class is declared this way:
+
+        {
+         name =&gt; 'Xorg',
+         element =&gt; [
+                     Device =&gt; {
+                                type =&gt; 'hash',
+                                index_type =&gt; 'string'
+                                cargo =&gt; {
+                                           type =&gt; 'node',
+                                           config_class_name =&gt; 'Xorg::Device'
+                                         },
+                               },
+                     Screen =&gt; {
+                                type =&gt; 'hash',
+                                index_type =&gt; 'string'
+                                cargo =&gt; {
+                                          type =&gt; 'node',
+                                          config_class_name =&gt; 'Xorg::Screen'
+                                         },
+                               },
+                  ]
+        }
+
+       The"Xorg::Screen" class is:
+
+        {
+         name =&gt; 'Xorg::Screen',
+         element =&gt; [
+                      Device =&gt; {
+                                  type' =&gt; 'leaf',
+                                  value_type =&gt; 'uniline',
+                                },
+                      Display =&gt; {
+                                   type =&gt; 'hash',
+                                   index_type =&gt; 'integer'
+                                   cargo =&gt; {
+                                              type =&gt; 'node',
+                                              config_class_name =&gt; 'Xorg::Screen::Display'
+                                            },
+                                 }
+                     Option =&gt; {
+                                 type =&gt; 'node',
+                                 config_class_name =&gt; 'Xorg::Screen::Option'
+                               },
+                     ]
+         }
+
+       It's now time to detail how the elements of a class are constructed.
+
+</pre><h4><b>Model</b> <b>analysis</b></h4><pre>
+       To define the required configuration classes, you should read the documentation of the target application
+       to :
+
+       •   Find the structure of the configuration tree
+
+       •   Identify configuration parameters, their constraints and relations
+
+       Last  but not least, you should also find several valid examples of your application configuration. These
+       examples can be used as non-regression tests  and  to  verify  that  the  application  documentation  was
+       understood.
+
+</pre><h4><b>Model</b> <b>declaration</b></h4><pre>
+   <b>Configuration</b> <b>class</b> <b>declaration</b>
+       Since  writing  the data structure shown below is not fun (even with Perl), you are encouraged to use the
+       model editor provided by cme using "cme meta edit" command  (provided  by  Config::Model::Itself).   This
+       commands provides a GUI to create or update your model.
+
+       When saving, "cme" writes the data structure in the correct directory.
+
+   <b>Configuration</b> <b>class</b> <b>declaration</b> <b>(the</b> <b>hard</b> <b>way)</b>
+       In summary, configuration documentation is translated in a format usable by Config::Model:
+
+       •   The structure is translated into configuration classes
+
+       •   Configuration parameters are translated into elements
+
+       •   Constraints are translated into element attributes
+
+       All models files must be written in a specific directory. For instance, for model "Xorg", you must create
+       "./lib/Config/Model/models/Xorg.pl".  Other  classes  like "Xorg::Screen" can be stored in their own file
+       "./lib/Config/Model/models/Xorg/Screen.pl" or included in "Xorg.pl"
+
+       A model file is a Perl file containing an array for hash ref. Each Hash ref contains a class declaration:
+
+        [ { name =&gt; 'Xorg', ... } , { name =&gt; 'Xorg::Screen', ... } ] ;
+
+       A class can have the following parameters:
+
+       •   name: mandatory name of the class
+
+       •   class_description: Description of the configuration class.
+
+       •   generated_by: Mention with a descriptive string if this  class  was  generated  by  a  program.  This
+           parameter is currently reserved for "Config::Model::Itself" model editor.
+
+       •   include: Include element description from another class.
+
+       For more details, see "Configuration_Model" in Config::Model.
+
+       For instance:
+
+        $ cat lib/Config/Model/models/Xorg.pl
+        [
+          {
+            name =&gt; 'Xorg',
+            class_description =&gt; 'Top level Xorg configuration.',
+            include =&gt; [ 'Xorg::ConfigDir'],
+            element =&gt; [
+                        Files =&gt; {
+                                  type =&gt; 'node',
+                                  description =&gt; 'File pathnames',
+                                  config_class_name =&gt; 'Xorg::Files'
+                                 },
+                        # snip
+                       ]
+          },
+          {
+            name =&gt; 'Xorg::DRI',
+            element =&gt; [
+                        Mode =&gt; {
+                                 type =&gt; 'leaf',
+                                 value_type =&gt; 'uniline',
+                                 description =&gt; 'DRI mode, usually set to 0666'
+                                }
+                       ]
+          }
+        ];
+
+   <b>Common</b> <b>attributes</b> <b>for</b> <b>all</b> <b>elements</b>
+       This  first  set  of  attributes  helps  the  user  by providing guidance (with "level" and "status") and
+       documentation ("summary" and "description").
+
+       All elements (simple or complex) can have the following attributes:
+
+       •   "description": full length description of the attribute
+
+       •   "summary": one line summary of the above description
+
+       •   "level": is "important", "normal" or "hidden". The level is used to set  how  configuration  data  is
+           presented  to  the  user  in  browsing mode. Important elements are shown to the user no matter what.
+           hidden elements are explained with the warp notion.
+
+       •   "status": is "obsolete", "deprecated" or "standard"  (default).  Warnings  are  shown  when  using  a
+           deprecated element and an exception is raised when an obsolete element is used.
+
+       See "Configuration_class" in Config::Model for details.
+
+   <b>Leaf</b> <b>elements</b>
+       Leaf  element  is  the  most  common  type  to represent configuration data.  A leaf element represents a
+       specific configuration parameter.
+
+       In more details,  a  leaf  element  have  the  following  attributes  (See  "Value_model_declaration"  in
+       Config::Model::Value doc):
+
+       type
+           Set to "leaf" (mandatory)
+
+       value_type
+           Either  "boolean",  "integer",  "number",  "enum",  "string",  "uniline" (i.e. a string without "\n")
+           (mandatory)
+
+       min Minimum value (for "integer" or "number")
+
+       max Maximum value (for "integer" or "number")
+
+       choice
+           Possible values for an enum
+
+       mandatory
+           Whether the value is mandatory or not
+
+       default
+           Default value that must be written in the configuration file
+
+       upstream_default
+           Default value that is known by the target application and thus does not need to  be  written  in  the
+           configuration file.
+
+       To know which attributes to use, you should read the documentation of the target application.
+
+       For  instance,  "AddressFamily"  parameter  (<b><a href="../man5/sshd_config.5.html">sshd_config</a></b>(5))  is  specified with: <u>Specifies</u> <u>which</u> <u>address</u>
+       <u>family</u> <u>should</u> <u>be</u> <u>used</u> <u>by</u> <u><b><a href="../man8/sshd.8.html">sshd</a></b>(8).</u>  <u>Valid</u> <u>arguments</u> <u>are</u> <u>"any",</u> <u>"inet"</u> <u>(use</u> <u>IPv4</u>  <u>only),</u>  <u>or</u>  <u>"inet6"</u>  <u>(use</u>
+       <u>IPv6</u> <u>only).</u>  <u>The</u> <u>default</u> <u>is</u> <u>"any".</u>
+
+       For  Config::Model, "AddressFamily" is a type "leaf" element, value_type "enum" and the application falls
+       back to "any" if this parameter is left blank in "sshd_config" file.
+
+       Thus the model of this element is :
+
+        AddressFamily =&gt; {
+          type             =&gt; 'leaf',
+          value_type       =&gt; 'enum',
+          upstream_default =&gt; 'any',
+          description      =&gt; 'Specifies which address family should be used by <a href="../man8/sshd.8.html">sshd</a>(8).',
+          choice           =&gt; [ 'any', 'inet', 'inet6' ]
+        }
+
+   <b>Simple</b> <b>list</b> <b>or</b> <b>hash</b> <b>element</b>
+       Some configuration parameters are in fact a list or a hash of parameters. For instance, "approx.conf" can
+       feature a list of remote repositories:
+
+        # remote repositories
+        debian     <a href="http://ftp.fr.debian.org/debian">http://ftp.fr.debian.org/debian</a>
+        multimedia <a href="http://www.debian-multimedia.org">http://www.debian-multimedia.org</a>
+
+       These repositorie URLs must be stored as a hash where the key is <u>debian</u> or <u>multimedia</u> and the  associated
+       value  is  a  URL.  But  this  hash  must  have  something which is not explicit in "approx.conf" file: a
+       parameter name. Approx man page mentions that: <u>The</u> <u>name/value</u> <u>pairs</u> <u>[not</u> <u>beginning</u> <u>with</u> <u>'$'</u> <u>are</u>  <u>used</u>  <u>to</u>
+       <u>map</u> <u>distribution</u> <u>names</u> <u>to</u> <u>remote</u> <u>repositories.</u>.  So let's use "distribution" as a parameter name.
+
+       The example is stored this way in the configuration tree:
+
+        root
+        |--distribution(debian)=<a href="http://ftp.fr.debian.org/debian">http://ftp.fr.debian.org/debian</a>
+        `--<a href="../manmultimedia/distribution.multimedia.html">distribution</a>(multimedia)=<a href="http://www.debian-multimedia.org">http://www.debian-multimedia.org</a>
+
+       The model needs to declare that "distribution" is:
+
+       •   a type "hash" parameter
+
+       •   the hash key is a string
+
+       •   the values of the hash are of type "leaf" and value_type "uniline"
+
+        distribution =&gt; {
+                          type =&gt; 'hash',
+                          index_type =&gt; 'string',
+                          cargo =&gt; {
+                                     type =&gt; 'leaf',
+                                     value_type =&gt; 'uniline',
+                                   },
+                          summary =&gt; 'remote repositories',
+                          description =&gt; 'The other name/value pairs are ...',
+                        }
+
+       For more details on list and hash elements, see hash or list model declaration man page.
+
+   <b>node</b> <b>element</b>
+       A node element is necessary if the configuration file has more than a list of variable. In this case, the
+       tree is deeper than a rake and a node element if necessary to provide a new node within the tree.
+
+       In the Xorg example above, the options of "Xorg::Screen" need their own sub-branch in the tree:
+
+        Screen(Screen0)
+          `--Option
+             |--AllowGLXWithComposite=True
+             `--DynamicTwinView=True
+
+       For  this, a new dedicated class is necessary&gt;Xorg::Screen::Option&gt; (see its declaration above). This new
+       class must be tied to the Screen class with a node element.
+
+       A node element has the following parameters:
+
+       •   type (set to "node")
+
+       •   the name of the configuration class name (&gt;config_class_name&gt;)
+
+       So the "Option" node element is declared with:
+
+        Option =&gt; {
+                    type =&gt; 'node',
+                    config_class_name =&gt; 'Xorg::Screen::Option'
+                  },
+
+   <b>Hash</b> <b>or</b> <b>list</b> <b>of</b> <b>nodes</b>
+       Some configuration files can feature a  set  of  rather  complex  configuration  entities.  For  instance
+       "Xorg.pl"  can  feature  several  Screen  or  Device definitions. These definitions are identified by the
+       "Identifier" parameter:
+
+        Section "Device"
+          Identifier     "Device0"
+          Driver         "nvidia"
+          BusID          "PCI:3:0:1"
+        EndSection
+
+        Section "Screen"
+          Identifier     "Screen0"
+          Device         "Device0"
+          DefaultDepth    24
+        EndSection
+
+       The Xorg configuration tree features 2 elements (Screen and Device) that use the Identifier parameters as
+       hash keys:
+
+        root
+        |--Device(Device0)
+        |  |--Driver=nvidia
+        |  `--BusId=PCI:3:0:1
+        `--Screen(Screen0)
+           |--Device=Device0
+           `--DefaultDepth=24
+
+       And the Xorg model must define these 2 parameters as "hash". The cargo of this hash is of type "node" and
+       refers to 2 different configuration classes, one for  "Device"  ("Xorg::Device")  and  one  for  "Screen"
+       ("Xorg::Screen"):
+
+        {
+        name =&gt; 'Xorg',
+        element =&gt; [
+                    Device =&gt; {
+                               type =&gt; 'hash',
+                               index_type =&gt; 'string'
+                               cargo =&gt; {
+                                          type =&gt; 'node',
+                                          config_class_name =&gt; 'Xorg::Device'
+                                        },
+                              },
+                    Screen =&gt; {
+                               type =&gt; 'hash',
+                               index_type =&gt; 'string'
+                               cargo =&gt; {
+                                         type =&gt; 'node',
+                                         config_class_name =&gt; 'Xorg::Screen'
+                                        },
+                              },
+                 ]
+        }
+
+</pre><h4><b>Configuration</b> <b>wizard</b></h4><pre>
+       Both Perl/Tk and Curses interfaces feature a configuration wizard generated from a configuration model.
+
+       The  wizard  works by exploring the configuration tree and stopping on each <u>important</u> element and on each
+       error (mostly missing mandatory parameter).
+
+       When designing a model, you have to ponder for each element:
+
+       •   The importance level of the parameter (important, normal or hidden).  "level"  is  used  to  set  how
+           configuration data is presented to the user in wizard and browsing mode. Important elements are shown
+           in  the  wizard. hidden elements are explained with the warp notion in Creating a model with advanced
+           features.
+
+</pre><h4><b>Reading</b> <b>configuration</b> <b>files</b></h4><pre>
+       Once the model is specified, Config::Model can generate a nice user interface, but there's still  no  way
+       to load or write the configuration file.
+
+       For  Config::Model  to  read the file, the model designer must declare in the model how to read and write
+       the file (the read/write backend).
+
+       The read/write functionality is provided by a class inheriting "Config::Model::Backend::Any"  class  like
+       "Config::Model::Backend::IniFile"
+
+       The  name of the backend parameter must match the backend class name without "Config::Model::Backend". As
+       syntactic sugar, lower case backend name are transformed into upper case to match the backend class name.
+
+       E.g.
+
+        Yaml -&gt; Config::Model::Backend::Yaml
+        plain_file -&gt; Config::Model::Backend::PlainFile
+        ini_file -&gt; Config::Model::Backend::IniFile
+
+       With the backend name, the following parameters must be defined:
+
+       config_dir
+           The configuration directory
+
+       file
+           Config file name (optional). defaults to "&lt;config_class_name&gt;.[pl|ini|cds]"
+
+          rw_config  =&gt; { backend    =&gt; 'ini_file' ,
+                          config_dir =&gt; '/etc/cfg_dir',
+                          file       =&gt; 'cfg_file.ini',
+                        },
+
+       See Config::Model::Backend::IniFile for details
+
+       Note that these parameters can also be set with the  graphical  configuration  model  editor  ("cme  meta
+       edit").
+
+       "rw_config"  can  also  have  custom parameters that are passed verbatim to "Config::Model::Backend::Foo"
+       methods:
+
+         rw_config  =&gt; {
+            backend    =&gt; 'my_backend',
+            config_dir =&gt; '/etc/cfg_dir',
+            my_param   =&gt; 'my_value',
+         }
+
+       This "Config::Model::Backend::MyBackend" class is expected  to  inherit  Config::Model::Backend::Any  and
+       provide the following methods:
+
+       new
+       read
+       write
+
+       Their signatures are explained in Config::Model::BackendMgr doc on plugin backends
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   More complex models: Config::Model::Manual::ModelCreationAdvanced
+
+       •   Config::Model::Manual::ModelForUpgrade: Writing a model for configuration upgrades
+
+       •   Configuration upgrades within Debian packages &lt;<a href="http://wiki.debian.org/PackageConfigUpgrade">http://wiki.debian.org/PackageConfigUpgrade</a>&gt;
+
+</pre><h4><b>Feedback</b> <b>welcome</b></h4><pre>
+       Feel free to send comments and suggestion about this page at
+
+        config-model-users at lists dot sourceforge dot net.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Dominique Dumont &lt;ddumont at cpan.org&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2005-2022 by Dominique Dumont.
+
+       This is free software, licensed under:
+
+         The GNU Lesser General Public License, Version 2.1, February 1999
+
+perl v5.40.0                                       2024-11-30             <u>Config::Model::...<a href="../man3pm/ionIntroduction.3pm.html">ionIntroduction</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

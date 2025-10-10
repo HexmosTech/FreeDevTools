@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perl::Critic::Policy::ValuesAndExpressions::RequireNumericVersion - $VERSION a plain number</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libperl-critic-pulp-perl">libperl-critic-pulp-perl_99-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Perl::Critic::Policy::ValuesAndExpressions::RequireNumericVersion - $VERSION a plain number
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This policy is part of the "Perl::Critic::Pulp" add-on.  It asks you to use a plain number in a module
+       $VERSION so that Perl's builtin version works.
+
+       Any literal number is fine, or a string which is a number,
+
+           $VERSION = 123;           # ok
+           $VERSION = '1.5';         # ok
+           $VERSION = 1.200_001;     # ok
+
+       For Perl 5.10 and higher the extra forms of the "version" module too,
+
+           use 5.010;
+           $VERSION = '1.200_001';   # ok for 5.10 up, version.pm
+
+       But a non-number string is not allowed,
+
+           $VERSION = '1.2alpha';    # bad
+
+       The idea of this requirement is that a plain number is needed for Perl's builtin module version checking
+       like the following, and on that basis this policy is under the "bugs" theme (see "POLICY THEMES" in
+       Perl::Critic).
+
+           use Foo 1.0;
+           Foo-&gt;<a href="../man1/VERSION.1.html">VERSION</a>(1);
+
+       A plain number is also highly desirable so applications can do their own compares like
+
+           if (Foo-&gt;VERSION &gt;= 1.234) {
+
+       In each case if $VERSION is not a number then it provokes warnings, and may end up appearing as a lesser
+       version than intended.
+
+           Argument "1.2.alpha" isn't numeric in subroutine entry
+
+       If you've loaded the "version.pm" module then a $VERSION not accepted by "version.pm" will in fact croak,
+       which is an unpleasant variant behaviour.
+
+           use version ();
+           print "version ",Foo-&gt;VERSION,"\n";
+           # croaks "Invalid version format ..." if $Foo::VERSION is bad
+
+   <b>Scripts</b>
+       This policy only looks at $VERSION in modules.  $VERSION in a script can be anything since it won't
+       normally be part of "use" checks etc.  A script $VERSION is anything outside any "package" statement
+       scope, or under an explicit "package main".
+
+           package main;
+           $VERSION = '1.5.prerelease';  # ok, script
+
+           $main::VERSION = 'blah';      # ok, script
+           $::VERSION = 'xyzzy';         # ok, script
+
+       A fully-qualified package name is recognised as belonging to a module,
+
+           $Foo::Bar::VERSION = 'xyzzy'; # bad
+
+   <b>Underscores</b> <b>in</b> <b>Perl</b> <b>5.8</b> <b>and</b> <b>Earlier</b>
+       In Perl 5.8 and earlier a string like "1.200_333" is truncated to the numeric part, ie. 1.200, and can
+       thus fail to satisfy
+
+           $VERSION = '1.222_333';   # bad
+           use Foo 1.222_331;  # not satisfied by $VERSION='string' form
+
+       But an actual number literal with an "_" is allowed.  Underscores in literals are stripped out (see
+       perldata), but not in the automatic string to number conversion so a string like "$VERSION = '1.222_333'"
+       provokes a warning and stops at 1.222.
+
+           $VERSION = 1.222_333;     # ok
+
+       On CPAN an underscore in a distribution version number is rated as a developer pre-release.  But don't
+       put it in module $VERSION strings due to the problems above.  The suggestion is to include the underscore
+       in the distribution filename but either omit it from the $VERSION or make it a number literal not a
+       string,
+
+           $VERSION = 1.002003;    # ok
+           $VERSION = 1.002_003;   # ok, but not for VERSION_FROM
+
+       "ExtUtils::MakeMaker" "VERSION_FROM" will take the latter as its numeric value, ie. "1.002003" not
+       "1.002_003" as the distribution version.  For the latter you can either put an explicit "VERSION" in
+       <u>Makefile.PL</u>
+
+           use ExtUtils::MakeMaker;
+           WriteMakefile (VERSION =&gt; '1.002_003');
+
+       Or you can trick MakeMaker with a string plus "eval",
+
+           $VERSION = '1.002_003';    # ok evalled down
+           $VERSION = eval $VERSION;
+
+       "MakeMaker" sees the string "1.002_003" but at runtime the "eval" crunches it down to a plain number
+       1.002003.  "RequireNumericVersion" notices such an "eval" and anything in $VERSION.  Something bizarre in
+       $VERSION won't be noticed, but that's too unlikely to worry about.
+
+   <b>"version"</b> <b>module</b> <b>in</b> <b>Perl</b> <b>5.10</b> <b>up</b>
+       In Perl 5.10 "use" etc module version checks parse $VERSION with the "version.pm" module.  This policy
+       allows the "version" module forms if there's an explicit "use 5.010" or higher in the file.
+
+           use 5.010;
+           $VERSION = '1.222_333';   # ok for 5.10
+           $VERSION = '1.2.3';       # ok for 5.10
+
+       But this is still undesirable, as an application check like
+
+           if (Foo-&gt;VERSION &gt;= 1.234) {
+
+       gets the raw string from $VERSION and thus a non-numeric warning and truncation.  Perhaps applications
+       should let "UNIVERSAL.pm" do the work with say
+
+           if (eval { Foo-&gt;VERSION(1.234) }) {
+
+       or apply "version-&gt;new()" to one of the args.  Maybe another policy to not explicitly compare $VERSION,
+       or perhaps an option to tighten this policy to require numbers even in 5.10?
+
+   <b>Exponential</b> <b>Format</b>
+       Exponential strings like "1e6" are disallowed
+
+           $VERSION = '2.125e6';   # bad
+
+       Except with the "eval" trick as per above
+
+           $VERSION = '2.125e6';   # ok
+           $VERSION = eval $VERSION;
+
+       Exponential number literals are fine.
+
+           $VERSION = 1e6;         # ok
+
+       Exponential strings don't work in Perl 5.10 because they're not recognised by the "version" module
+       (v0.82).  They're fine in Perl 5.8 and earlier, but in the interests of maximum compatibility this policy
+       treats such a string as non-numeric.  Exponentials in versions should be unusual anyway.
+
+   <b>Disabling</b>
+       If you don't care about this policy at all then you can disable from your <u>.perlcriticrc</u> in the usual way
+       (see "CONFIGURATION" in Perl::Critic),
+
+           [-ValuesAndExpressions::RequireNumericVersion]
+
+   <b>Other</b> <b>Ways</b> <b>to</b> <b>Do</b> <b>It</b>
+       The version number system with underscores, multi-dots, v-nums, etc is diabolical mess, and each new
+       addition to it just seems to make it worse.  Even the original floating point in version checks is asking
+       for rounding error trouble, though normally fine in practice.  A radical simplification is to just use
+       integer version numbers.
+
+           $VERSION = 123;
+
+       If you want sub-versions then increment by 100 or some such.  Even a YYYYMMDD date is a possibility.
+
+           $VERSION = 20110328;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Perl::Critic::Pulp, Perl::Critic
+
+       Perl::Critic::Policy::Modules::RequireVersionVar,
+       Perl::Critic::Policy::ValuesAndExpressions::ProhibitComplexVersion,
+       Perl::Critic::Policy::ValuesAndExpressions::RequireConstantVersion
+
+       Perl::Critic::Policy::ValuesAndExpressions::ProhibitVersionStrings,
+       Perl::Critic::Policy::Modules::ProhibitUseQuotedVersion
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       <a href="http://user42.tuxfamily.org/perl-critic-pulp/index.html">http://user42.tuxfamily.org/perl-critic-pulp/index.html</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2019, 2021 Kevin Ryde
+
+       Perl-Critic-Pulp is free software; you can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 3, or (at your
+       option) any later version.
+
+       Perl-Critic-Pulp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+       even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+       Public License for more details.
+
+       You should have received a copy of the GNU General Public License along with Perl-Critic-Pulp.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.32.1                                       2021-02-28              <u>Perl::Critic::...<a href="../man3pm/eNumericVersion.3pm.html">eNumericVersion</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

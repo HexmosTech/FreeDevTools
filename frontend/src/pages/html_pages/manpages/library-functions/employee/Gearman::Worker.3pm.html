@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gearman::Worker - Worker for gearman distributed job system</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgearman-client-perl">libgearman-client-perl_2.004.015-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Gearman::Worker - Worker for gearman distributed job system
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Gearman::Worker;
+           my $worker = Gearman::Worker-&gt;new;
+           $worker-&gt;job_servers(
+             '127.0.0.1',
+             {
+               host      =&gt; '10.0.0.1',
+               port      =&gt; 4730,
+               socket_cb =&gt; sub {...},
+               use_ssl   =&gt; 1,
+               ca_file   =&gt; ...,
+               cert_file =&gt; ...,
+               key_file  =&gt; ...,
+             }
+           );
+
+           $worker-&gt;register_function($funcname =&gt; sub {
+               ...
+             }
+           );
+
+           $worker-&gt;work(
+             on_start =&gt; sub {
+               my ($jobhandle) = @_;
+               ...
+             },
+             on_complete =&gt; sub {
+               my ($jobhandle, $result) = @_;
+               ...
+             },
+             on_fail =&gt; sub {
+               my ($jobhandle, $err) = @_;
+               ..
+             },
+             stop_if =&gt; sub {
+               my ($is_idle, $last_job_time) = @_;
+               # stop idle worker
+               return $is_idle;
+             },
+           );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>Gearman::Worker</u> is a worker class for the Gearman distributed job system, providing a framework for
+       receiving and serving jobs from a Gearman server.
+
+       Callers instantiate a <u>Gearman::Worker</u> object, register a list of functions and capabilities that they can
+       handle, then enter an event loop, waiting for the server to send jobs.
+
+       The worker can send a return value back to the server, which then gets sent back to the client that
+       requested the job; or it can simply execute silently.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Gearman::Worker-&gt;new(%options)</b>
+       Creates a new <u>Gearman::Worker</u> object, and returns the object.
+
+       If <u>%options</u> is provided, initializes the new worker object with the settings in <u>%options</u>, which can
+       contain:
+
+       <u>Gearman::Worker</u> is derived from Gearman::Objects
+
+       •   job_servers
+
+           List  of  job  servers.  Value  should  be  an array reference, hash reference or scalar.  It will be
+           ignored if this worker is running as a child process of a gearman server.
+
+       •   prefix
+
+           Calls <u>prefix</u> (see below) to set the prefix / namespace.
+
+       •   client_id
+
+           Unique worker identifier for "job_servers".
+
+   <b>$worker-&gt;prefix($prefix)</b>
+       Sets the namespace / prefix for the function names.  This is  useful  for  sharing  job  servers  between
+       different  applications  or  different instances of the same application (different development sandboxes
+       for example).
+
+       The namespace is currently implemented as a simple tab separated concatenation  of  the  prefix  and  the
+       function name.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Summation</b>
+       This is an example worker that receives a request to sum up a list of integers.
+
+           use Gearman::Worker;
+           use Storable qw( thaw );
+           use List::Util qw( sum );
+           my $worker = Gearman::Worker-&gt;new;
+           $worker-&gt;job_servers('127.0.0.1');
+           $worker-&gt;register_function(sum =&gt; sub { sum @{ thaw($_[0]-&gt;arg) } });
+           $worker-&gt;work while 1;
+
+       See the Gearman::Client documentation for a sample client sending the <u>sum</u> job.
+
+</pre><h4><b>NOTE</b></h4><pre>
+       If  you  intend to send or receive UTF-8 data over SSL connections, beware that there is no UTF-8 support
+       in the underlying Net::SSLeay.  "Forcing-Unicode-in-Perl-(Or-Unforcing-Unicode-in-Perl)"  in  perlunicode
+       describes proper workarounds.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>reset_abilities</b>
+       This tells all the job servers that this worker can no longer do any tasks.
+
+       <b>return</b> true if "reset_abilities" request successfully transmitted to "job_servers"
+
+   <b>work(%opts)</b>
+       This endlessly loops. It takes an applicable job, if available, does the job, and then waits for the next
+       one.  You can pass "stop_if", "on_start", "on_complete" and "on_fail" callbacks in <u>%opts</u>.  See "SYNOPSIS"
+
+   <b>$worker-&gt;register_function($funcname,</b> <b>$subref)</b>
+   <b>$worker-&gt;register_function($funcname,</b> <b>$timeout,</b> <b>$subref)</b>
+       Registers  the  function  $funcname  as  being  provided  by  the  worker  $worker,  and advertises these
+       capabilities to all of the job servers defined in this worker.
+
+       $subref must be a subroutine reference that will be invoked when the worker receives a request  for  this
+       function.  It  will  be  passed  a Gearman::Job object representing the job that has been received by the
+       worker.
+
+       $timeout is an optional parameter specifying how long the jobserver will wait for your subroutine to give
+       an answer. Exceeding this time will result in the  jobserver  reassigning  the  task  and  ignoring  your
+       result. This prevents a gimpy worker from ruining the 'user experience' in many situations.
+
+       <b>return</b> true if $funcname registration successfully transmitted to "job_servers"
+
+   <b>unregister_function($funcname)</b>
+       send cant_do $funcname request to job_servers
+
+       <b>return</b> true if CANT_DO $funcname request successfully transmitted to "job_servers"
+
+   <b>job_servers(@servers)</b>
+       Override Gearman::Objects method to skip job server initialization if working with Gearman::Server.
+
+       Calling this method will do nothing in a worker that is running as a child process of a gearman server.
+
+   <b>send_work_complete($job,</b> <b>$v)</b>
+       notify the server (and listening clients) that job completed successfully
+
+   <b>send_work_data($job,</b> <b>$data)</b>
+       Use this method to update the client with data from a running job.
+
+   <b>send_work_warning($job,</b> <b>$message)</b>
+       Use  this  method to send a warning $message to the server (and any listening clients) with regard to the
+       running "job".
+
+   <b>send_work_exception($job,</b> <b>$exception)</b>
+       Use this method to notify the server (and any listening clients) that the "job"  failed  with  the  given
+       $exception.
+
+       If  you  are using Gearman::Client, you have to set parameter exceptions properly to get worker exception
+       notifications.
+
+   <b>send_work_fail($job)</b>
+       Use this method to notify the server (and any listening clients) that the job failed.
+
+   <b>send_work_status($job,</b> <b>$numerator,</b> <b>$denominator)</b>
+       Use this method to send periodically to the server status update for long  running  jobs  to  update  the
+       percentage complete.
+
+   <b>_uncache_sock($js,</b> <b>$reason)</b>
+       close TCP connection
+
+</pre><h4><b>WORKERS</b> <b>AS</b> <b>CHILD</b> <b>PROCESSES</b></h4><pre>
+       Gearman  workers  can  be  run as child processes of a parent process which embeds Gearman::Server.  When
+       such a parent process fork/execs a worker, it sets the environment variable  GEARMAN_WORKER_USE_STDIO  to
+       true  before  launching  the  worker.  If this variable is set to true, then the job_servers function and
+       option for <u>new()</u> are ignored and the unix socket bound to STDIN/OUT are used instead as the  IO  path  to
+       the gearman server.
+
+perl v5.26.2                                       2018-08-30                               <u>Gearman::<a href="../man3pm/Worker.3pm.html">Worker</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

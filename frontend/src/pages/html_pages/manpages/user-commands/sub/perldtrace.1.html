@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>perldtrace - Perl's support for DTrace</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/perl-doc">perl-doc_5.40.1-2ubuntu0.2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       perldtrace - Perl's support for DTrace
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # dtrace -Zn 'perl::sub-entry, perl::sub-return { trace(copyinstr(arg0)) }'
+        dtrace: description 'perl::sub-entry, perl::sub-return ' matched 10 probes
+
+        # perl -E 'sub outer { inner(@_) } sub inner { say shift } outer("hello")'
+        hello
+
+        (dtrace output)
+        CPU     ID                    FUNCTION:NAME
+          0  75915       Perl_pp_entersub:sub-entry   BEGIN
+          0  75915       Perl_pp_entersub:sub-entry   import
+          0  75922      Perl_pp_leavesub:sub-return   import
+          0  75922      Perl_pp_leavesub:sub-return   BEGIN
+          0  75915       Perl_pp_entersub:sub-entry   outer
+          0  75915       Perl_pp_entersub:sub-entry   inner
+          0  75922      Perl_pp_leavesub:sub-return   inner
+          0  75922      Perl_pp_leavesub:sub-return   outer
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       DTrace is a framework for comprehensive system- and application-level tracing. Perl is a DTrace <u>provider</u>,
+       meaning it exposes several <u>probes</u> for instrumentation. You can use these in conjunction with kernel-level
+       probes, as well as probes from other providers such as MySQL, in order to diagnose software defects, or
+       even just your application's bottlenecks.
+
+       Perl must be compiled with the "-Dusedtrace" option in order to make use of the provided probes. While
+       DTrace aims to have no overhead when its instrumentation is not active, Perl's support itself cannot
+       uphold that guarantee, so it is built without DTrace probes under most systems. One notable exception is
+       that Mac OS X ships a <u><a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a></u> with DTrace support enabled.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       5.10.1
+           Perl's initial DTrace support was added, providing "sub-entry" and "sub-return" probes.
+
+       5.14.0
+           The "sub-entry" and "sub-return" probes gain a fourth argument: the package name of the function.
+
+       5.16.0
+           The "phase-change" probe was added.
+
+       5.18.0
+           The "op-entry", "loading-file", and "loaded-file" probes were added.
+
+</pre><h4><b>PROBES</b></h4><pre>
+       sub-entry(SUBNAME, FILE, LINE, PACKAGE)
+           Traces  the  entry  of any subroutine. Note that all of the variables refer to the subroutine that is
+           being invoked; there is currently no way to get ahold  of  any  information  about  the  subroutine's
+           <u>caller</u> from a DTrace action.
+
+            :*perl*::sub-entry {
+                printf("%s::%s entered at %s line %d\n",
+                      copyinstr(arg3), copyinstr(arg0), copyinstr(arg1), arg2);
+            }
+
+       sub-return(SUBNAME, FILE, LINE, PACKAGE)
+           Traces  the  exit  of  any subroutine. Note that all of the variables refer to the subroutine that is
+           returning; there is currently no way to get ahold of any information about  the  subroutine's  <u>caller</u>
+           from a DTrace action.
+
+            :*perl*::sub-return {
+                printf("%s::%s returned at %s line %d\n",
+                      copyinstr(arg3), copyinstr(arg0), copyinstr(arg1), arg2);
+            }
+
+       phase-change(NEWPHASE, OLDPHASE)
+           Traces  changes  to  Perl's  interpreter state. You can internalize this as tracing changes to Perl's
+           "${^GLOBAL_PHASE}" variable, especially since the  values  for  "NEWPHASE"  and  "OLDPHASE"  are  the
+           strings that "${^GLOBAL_PHASE}" reports.
+
+            :*perl*::phase-change {
+                printf("Phase changed from %s to %s\n",
+                    copyinstr(arg1), copyinstr(arg0));
+            }
+
+       op-entry(OPNAME)
+           Traces  the  execution  of  each opcode in the Perl runloop. This probe is fired before the opcode is
+           executed. When the Perl debugger is enabled, the DTrace probe is fired <u>after</u> the debugger hooks  (but
+           still before the opcode itself is executed).
+
+            :*perl*::op-entry {
+                printf("About to execute opcode %s\n", copyinstr(arg0));
+            }
+
+       loading-file(FILENAME)
+           Fires  when  Perl  is  about to load an individual file, whether from "use", "require", or "do". This
+           probe fires before the file is read from disk. The filename argument is converted to local filesystem
+           paths instead of providing "Module::Name"-style names.
+
+            :*perl*:loading-file {
+                printf("About to load %s\n", copyinstr(arg0));
+            }
+
+       loaded-file(FILENAME)
+           Fires when Perl has successfully loaded an individual file, whether from "use", "require",  or  "do".
+           This  probe  fires after the file is read from disk and its contents evaluated. The filename argument
+           is converted to local filesystem paths instead of providing "Module::Name"-style names.
+
+            :*perl*:loaded-file {
+                printf("Successfully loaded %s\n", copyinstr(arg0));
+            }
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Most frequently called functions
+            # dtrace -qZn 'sub-entry { @[strjoin(strjoin(copyinstr(arg3),"::"),copyinstr(arg0))] = count() } END {trunc(@, 10)}'
+
+            Class::MOP::Attribute::slots                                    400
+            Try::Tiny::catch                                                411
+            Try::Tiny::try                                                  411
+            Class::MOP::Instance::inline_slot_access                        451
+            Class::MOP::Class::Immutable::Trait:::around                    472
+            Class::MOP::Mixin::AttributeCore::has_initializer               496
+            Class::MOP::Method::Wrapped::__ANON__                           544
+            Class::MOP::Package::_package_stash                             737
+            Class::MOP::Class::initialize                                  1128
+            Class::MOP::get_metaclass_by_name                              1204
+
+       Trace function calls
+            # dtrace -qFZn 'sub-entry, sub-return { trace(copyinstr(arg0)) }'
+
+            0  -&gt; Perl_pp_entersub                        BEGIN
+            0  &lt;- Perl_pp_leavesub                        BEGIN
+            0  -&gt; Perl_pp_entersub                        BEGIN
+            0    -&gt; Perl_pp_entersub                      import
+            0    &lt;- Perl_pp_leavesub                      import
+            0  &lt;- Perl_pp_leavesub                        BEGIN
+            0  -&gt; Perl_pp_entersub                        BEGIN
+            0    -&gt; Perl_pp_entersub                      dress
+            0    &lt;- Perl_pp_leavesub                      dress
+            0    -&gt; Perl_pp_entersub                      dirty
+            0    &lt;- Perl_pp_leavesub                      dirty
+            0    -&gt; Perl_pp_entersub                      whiten
+            0    &lt;- Perl_pp_leavesub                      whiten
+            0  &lt;- Perl_dounwind                           BEGIN
+
+       Function calls during interpreter cleanup
+            # dtrace -Zn 'phase-change /copyinstr(arg0) == "END"/ { self-&gt;ending = 1 } sub-entry /self-&gt;ending/ { trace(copyinstr(arg0)) }'
+
+            CPU     ID                    FUNCTION:NAME
+              1  77214       Perl_pp_entersub:sub-entry   END
+              1  77214       Perl_pp_entersub:sub-entry   END
+              1  77214       Perl_pp_entersub:sub-entry   cleanup
+              1  77214       Perl_pp_entersub:sub-entry   _force_writable
+              1  77214       Perl_pp_entersub:sub-entry   _force_writable
+
+       System calls at compile time
+            # dtrace -qZn 'phase-change /copyinstr(arg0) == "START"/ { self-&gt;interesting = 1 } phase-change /copyinstr(arg0) == "RUN"/ { self-&gt;interesting = 0 } syscall::: /self-&gt;interesting/ { @[probefunc] = count() } END { trunc(@, 3) }'
+
+            lseek                                                           310
+            read                                                            374
+            stat64                                                         1056
+
+       Perl functions that execute the most opcodes
+            # dtrace -qZn 'sub-entry { self-&gt;fqn = strjoin(copyinstr(arg3), strjoin("::", copyinstr(arg0))) } op-entry /self-&gt;fqn != ""/ { @[self-&gt;fqn] = count() } END { trunc(@, 3) }'
+
+            warnings::unimport                                             4589
+            Exporter::Heavy::_rebuild_cache                                5039
+            Exporter::import                                              14578
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       DTrace Dynamic Tracing Guide
+           &lt;https://illumos.org/books/dtrace/preface.html&gt;
+
+       DTrace: Dynamic Tracing in Oracle Solaris, Mac OS X and FreeBSD
+           &lt;https://www.amazon.com/DTrace-Dynamic-Tracing-Solaris-FreeBSD/dp/0132091518/&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Devel::DTrace::Provider
+           This CPAN module lets you create application-level DTrace probes written in Perl.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Shawn M Moore "<a href="mailto:sartak@gmail.com">sartak@gmail.com</a>"
+
+perl v5.40.1                                       2025-07-25                                      <u><a href="../man1/PERLDTRACE.1.html">PERLDTRACE</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

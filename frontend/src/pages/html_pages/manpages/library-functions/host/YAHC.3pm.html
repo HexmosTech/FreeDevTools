@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAHC - Yet another HTTP client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libyahc-perl">libyahc-perl_0.035-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       YAHC - Yet another HTTP client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use YAHC qw/yahc_reinit_conn/;
+
+           my @hosts = ('www.booking.com', 'www.google.com:80');
+           my ($yahc, $yahc_storage) = YAHC-&gt;new({ host =&gt; \@hosts });
+
+           $yahc-&gt;request({ path =&gt; '/', host =&gt; 'www.reddit.com' });
+           $yahc-&gt;request({ path =&gt; '/', host =&gt; sub { 'www.reddit.com' } });
+           $yahc-&gt;request({ path =&gt; '/', host =&gt; \@hosts });
+           $yahc-&gt;request({ path =&gt; '/', callback =&gt; sub { ... } });
+           $yahc-&gt;request({ path =&gt; '/' });
+           $yahc-&gt;request({
+               path =&gt; '/',
+               callback =&gt; sub {
+                   yahc_reinit_conn($_[0], { host =&gt; 'www.newtarget.com' })
+                       if $_[0]-&gt;{response}{status} == 301;
+               }
+           });
+
+           $yahc-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       YAHC is fast &amp; minimal low-level asynchronous HTTP client intended to be used where you control both the
+       client and the server. Is especially suits cases where set of requests need to be executed against group
+       of machines.
+
+       It is <b>NOT</b> a general HTTP user agent, it doesn't support redirects, proxies and any number of other
+       advanced HTTP features like (in roughly descending order of feature completeness) LWP::UserAgent,
+       WWW::Curl, HTTP::Tiny, HTTP::Lite or Furl. This library is basically one step above manually talking HTTP
+       over sockets.
+
+       YAHC supports SSL and socket reuse (latter is in experimental mode).
+
+</pre><h4><b>STATE</b> <b>MACHINE</b></h4><pre>
+       Each YAHC connection goes through following list of states in its lifetime:
+
+                         +-----------------+
+                     +&lt;&lt;-|   INITIALIZED   &lt;-&lt;&lt;+
+                     v   +-----------------+   ^
+                     v           |             ^
+                     v   +-------v---------+   ^
+                     +&lt;&lt;-+   RESOLVE DNS   +-&gt;&gt;+
+                     v   +-----------------+   ^
+                     v           |             ^
+                     v   +-------v---------+   ^
+                     +&lt;&lt;-+    CONNECTING   +-&gt;&gt;+
+                     v   +-----------------+   ^
+                     v           |             ^
+            Path in  v   +-------v---------+   ^  Retry
+            case of  +&lt;&lt;-+    CONNECTED    +-&gt;&gt;+  logic
+            failure  v   +-----------------+   ^  path
+                     v           |             ^
+                     v   +-------v---------+   ^
+                     +&lt;&lt;-+     WRITING     +-&gt;&gt;+
+                     v   +-----------------+   ^
+                     v           |             ^
+                     v   +-------v---------+   ^
+                     +&lt;&lt;-+     READING     +-&gt;&gt;+
+                     v   +-----------------+   ^
+                     v           |             ^
+                     v   +-------v---------+   ^
+                     +&gt;&gt;-&gt;   USER ACTION   +-&gt;&gt;+
+                         +-----------------+
+                                 |
+                         +-------v---------+
+                         |    COMPLETED    |
+                         +-----------------+
+
+       There are three paths of workflow:
+
+       1) Normal execution (central line).
+           In normal situation a connection after being initialized goes through state:
+
+           - RESOLVE DNS (not implemented)
+
+           - CONNECTING - wait finishing of handshake
+
+           - CONNECTED
+
+           - WRITING - sending request body
+
+           - READING - awaiting and reading response
+
+           - USER ACTION - see below
+
+           - COMPLETED - all done, this is terminal state
+
+           SSL  connection  has  extra  state  SSL_HANDSHAKE  after  CONNECTED state. State 'RESOLVE DNS' is not
+           implemented yet.
+
+       2) Retry path (right line).
+           In case of IO error during normal execution YAHC retries connection "retries" times. In practice this
+           means that connection goes back to INITIALIZED state.
+
+       3) Failure path (left line).
+           If all retry attempts did not succeeded a connection goes to state 'USER ACTION' (see below).
+
+   <b>State</b> <b>'USER</b> <b>ACTION'</b>
+       'USER ACTION' state is called right before connection if going to enter 'COMPLETED'  state  (with  either
+       failed or successful results) and is meant to give a chance to user to interrupt the workflow.
+
+       'USER ACTION' state is entered in these circumstances:
+
+       •   HTTP response received. Note that non-200 responses are NOT treated as error.
+
+       •   unsupported HTTP response is received (such as response without Content-Length header)
+
+       •   retries limit reached
+
+       •   lifetime timeout has expired
+
+       •   provided callback has thrown exception
+
+       •   internal error has occurred
+
+       When a connection enters this state "callback" CodeRef is called:
+
+           $yahc-&gt;request({
+               ...
+               callback =&gt; sub {
+                   my (
+                       $conn,          # connection 'object'
+                       $error,         # one of YAHC::Error::* constants
+                       $strerror       # string representation of error
+                   ) = @_;
+
+                   # Note that fields in $conn-&gt;{response} are not reliable
+                   # if $error != YAHC::Error::NO_ERROR()
+
+                   # HTTP response is stored in $conn-&gt;{response}.
+                   # It can be also accessed via yahc_conn_response().
+                   my $response = $conn-&gt;{response};
+                   my $status = $response-&gt;{status};
+                   my $body = $response-&gt;{body};
+               }
+           });
+
+       If  there  was  no  IO error "yahc_conn_response" return "HashRef" representing response. It contains the
+       following key-value pairs.
+
+           proto         =&gt; :Str
+           status        =&gt; :StatusCode
+           body          =&gt; :Str
+           head          =&gt; :HashRef
+
+       In case of a error or non-200 HTTP response "yahc_retry_conn" or "yahc_reinit_conn" may be called to give
+       the request more chances to complete successfully (for example by following redirects  or  providing  new
+       target  hosts).  Also,  note  that  in  case  of  a error data returned by "yahc_conn_response" cannot be
+       trusted. For example, if an IO error happened during receiving HTTP body headers would state 200 response
+       code.
+
+       YAHC lowercases headers names returned in "head". This is done to comply with  RFC  which  identify  HTTP
+       headers as case-insensitive.
+
+       In  some cases connection cannot be retried anymore and callback is called for information purposes only.
+       This case can be distinguished by $error  having  <b>YAHC::Error::TERMINAL_ERROR()</b>  bit  set.  One  can  use
+       "yahc_terminal_error" helper to detect such case.
+
+       Note that "callback" should NOT throw exception. If so the connection will be immediately closed.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       This method creates YAHC object and accompanying storage object:
+
+           my ($yahc, $yahc_storage) = YAHC-&gt;new();
+
+       This  is  a  radical way of solving all possible memleak because of cyclic references in callbacks. Since
+       all references of callbacks are kept in $yahc_storage object it's fine to use YAHC object inside  request
+       callback:
+
+           my $yahc-&gt;request({
+               callback =&gt; sub {
+                   $yahc-&gt;stop; # this is fine!!!
+               },
+           });
+
+       However,  user has to guarantee that both $yahc and $yahc_storage objects are kept in the same scope. So,
+       they will be destroyed at the same time.
+
+       "new" can be passed with all parameters supported by "request". They will be inherited by all requests.
+
+       Additionally, "new" supports three parameters: "socket_cache", "account_for_signals", and "loop".
+
+       <u>socket_cache</u>
+
+       "socket_cache" option controls socket reuse logic. By default socket cache is  disabled.  If  user  wants
+       YAHC reuse sockets he should set "socket_cache" to a HashRef.
+
+           my ($yahc, $yahc_storage) = YAHC-&gt;new({ socket_cache =&gt; {} });
+
+       In  this  case YAHC maintains unused sockets keyed on "join($;, $$, $host, $port, $scheme)". We use $; so
+       we can use the "$socket_cache-&gt;{$$, $host, $port, $scheme}" idiom to access the cache.
+
+       It's up to user to control the cache. It's also up to user to set necessary  request  headers  for  keep-
+       alive.  YAHC does not cache socket in cases of an error, HTTP/1.0 and when server explicitly instructs to
+       close connection (i.e. header 'Connection' = 'close').
+
+       <u>loop</u>
+
+       By default, each YAHC object will use its own EV eventloop.  This is normally preferred since  it  allows
+       for more accurate timing metrics.
+
+       However,  if  the  process  is already using an eventloop, having an inner loop means the outer one stays
+       waiting until the inner one is done.
+
+       To get around this, one can specify the eventloop that YAHC will use:
+
+           my ($yahc, $storage) = YAHC-&gt;new({
+               loop =&gt; EV::default_loop(), # use the default EV eventloop
+           });
+
+       Using the above, YAHC will be sharing the same eventloop as everyone else, so  some  operations  are  now
+       riskier  and  should  be avoided; For example, in most scenarios "account_for_signals" should not be used
+       alongside "loop", as only whatever is entering the eventloop should set the signal handlers.
+
+       <u>account_for_signals</u>
+
+       Another parameter "account_for_signals" requires special attention! Here is why:
+
+           excerpt from EV documentation &lt;<a href="http://search.cpan.org/~mlehmann/EV-4.22/EV.pm">http://search.cpan.org/~mlehmann/EV-4.22/EV.pm</a>#PERL_SIGNALS&gt;
+
+           While Perl signal handling (%SIG) is not affected by EV, the behaviour with EV is as the same as  any
+           other  C  library:  Perl-signals will only be handled when Perl runs, which means your signal handler
+           might be invoked only the next time an event callback is invoked.
+
+       In practise this means that none of set %SIG  handlers  will  be  called  until  EV  calls  one  of  perl
+       callbacks.  Which,  in  some  cases,  may  take  a  long time. By setting "account_for_signals" YAHC adds
+       "EV::check" watcher with empty callback effectively making EV calling the callback  on  every  iteration.
+       The trickery comes at some performance cost. This is what EV documentation says about it:
+
+           ... you can also force a watcher to be called on every event loop iteration by installing a EV::check
+           watcher. This ensures that perl gets into control for a short time to handle any pending signals, and
+           also ensures (slightly) slower overall operation.
+
+       So,   if   your   code  or  the  codes  surrounding  your  code  use  %SIG  handlers  it's  wise  to  set
+       "account_for_signals".
+
+   <b>request</b>
+           protocol               =&gt; "HTTP/1.1", # (or "HTTP/1.0")
+           scheme                 =&gt; "http" or "https"
+           host                   =&gt; see below,
+           port                   =&gt; ...,
+           method                 =&gt; "GET",
+           path                   =&gt; "/",
+           query_string           =&gt; "",
+           head                   =&gt; [],
+           body                   =&gt; "",
+
+           # timeouts
+           connect_timeout        =&gt; undef,
+           request_timeout        =&gt; undef,
+           drain_timeout          =&gt; undef,
+           lifetime_timeout       =&gt; undef,
+
+           # burst control
+           backoff_delay          =&gt; undef,
+
+           # callbacks
+           init_callback          =&gt; undef,
+           connecting_callback    =&gt; undef,
+           connected_callback     =&gt; undef,
+           writing_callback       =&gt; undef,
+           reading_callback       =&gt; undef,
+           callback               =&gt; undef,
+
+           # SSL options
+           ssl_options            =&gt; {},
+
+       Notice how YAHC does not take a full URI string as input, you have to specify the individual parts of the
+       URL. Users who need to parse an existing URI string to produce a request should use the URI module to  do
+       so.
+
+       For example, to send a request to "<a href="http://example.com/flower">http://example.com/flower</a>?color=red", pass the following parameters:
+
+           $yach-&gt;request({
+               host         =&gt; "example.com",
+               port         =&gt; "80",
+               path         =&gt; "/flower",
+               query_string =&gt; "color=red"
+           });
+
+       <u>request</u> <u>building</u>
+
+       YAHC doesn't escape any values for you, it just passes them through as-is. You can easily produce invalid
+       requests if e.g. any of these strings contain a newline, or aren't otherwise properly escaped.
+
+       Notice that you do not need to put the leading "?" character in the "query_string". You do, however, need
+       to properly "uri_escape" the content of "query_string".
+
+       The  value  of "head" is an "ArrayRef" of key-value pairs instead of a "HashRef", this way you can decide
+       in which order the headers are sent, and you can send the same header name multiple times. For example:
+
+           head =&gt; [
+               "Content-Type" =&gt; "application/json",
+               "X-Requested-With" =&gt; "YAHC",
+           ]
+
+       Will produce these request headers:
+
+           Content-Type: application/json
+           X-Requested-With: YAHC
+
+       <u>host</u>
+
+       "host" parameter can accept one of following values:
+
+           1) string - represents target host. String may have following formats:
+           hostname:port, ip:port.
+
+           2) ArrayRef of strings - YAHC will cycle through items selecting new host
+           for each attempt.
+
+           3) CodeRef. The subroutine is invoked for each attempt and should at least
+           return a string (hostname or IP address). It can also return array
+           containing: ($host, $ip, $port, $scheme). This option effectively give a
+           user control over host selection for retries. The CodeRef is passed with
+           connection "object" which can be fed to yahc_conn_* family of functions.
+
+       <u>timeouts</u>
+
+       The value of "connect_timeout", "request_timeout" and "drain_timeout" is in floating point  seconds,  and
+       is  used  as  the  time  limit  for  connecting to the host (reaching CONNECTED state), full request time
+       (reaching COMPLETED state) and sending request to remote site (reaching READING state) respectively.
+
+       "lifetime_timeout" has special purpose. Its task  is  to  provide  upper  bound  timeout  for  a  request
+       lifetime.  In  other words, if a request comes with multiple retries "connect_timeout", "request_timeout"
+       and  "drain_timeout"  are  per  attempt.  "lifetime_timeout"  covers  all  attempts.  If  by   the   time
+       "lifetime_timeout"  expires  a connection is not in COMPLETED state a error is generated. Note that after
+       this error the connection cannot be retried anymore.  So, it's forced to go to COMPLETED state.
+
+       The default value for all is "undef", meaning no timeout limit.
+
+       <u>backoff_delay</u>
+
+       "backoff_delay" can be used to introduce delay between retries. This is a great way to avoid load  spikes
+       on  server  side. Following example creates new request which would be retried twice doing three attempts
+       in total. Second and third attempts will be delay by one second each.
+
+           $yach-&gt;request({
+               host          =&gt; "example.com",
+               retries       =&gt; 2,
+               backoff_delay =&gt; 1,
+           });
+
+       "backoff_delay" can be set in two ways:
+
+           1) floating point seconds - define constant delay between retires.
+
+           2) CodeRef. The subroutine is invoked on each retry and should return
+           floating point seconds. This option is useful for having exponentially
+           growing delay or, for instance, jitted delays.
+
+       The default value is "undef", meaning no delay.
+
+       <u>callbacks</u>
+
+       The  value   of   "init_callback",   "connecting_callback",   "connected_callback",   "writing_callback",
+       "reading_callback"  is a reference to a subroutine which is called upon reaching corresponding state. Any
+       exception thrown in the subroutine will be ignored.
+
+       The value of "callback" defines main request callback which is called  when  a  connection  enters  'USER
+       ACTION' state (see 'USER ACTION' state above).
+
+       Also see LIMITATIONS
+
+       <u>ssl_options</u>
+
+       Performing HTTPS requires the value of "ssl_options" extended by two parameters set to current hostname:
+
+               SSL_verifycn_name =&gt; $hostname,
+               IO::Socket::SSL-&gt;can_client_sni ? ( SSL_hostname =&gt; $hostname ) : (),
+
+       Apart  of  this changes, the value is directly passed to "IO::Socket::SSL::start_SSL()". For more details
+       refer to IO::Socket::SSL documentation &lt;https://metacpan.org/pod/IO::Socket::SSL&gt;.
+
+   <b>drop</b>
+       Given connection HashRef or conn_id move connection to COMPLETED state (avoiding 'USER ACTION' state) and
+       drop it from internal pool. The function takes two  parameters:  first  is  either  a  connection  id  or
+       connection  HashRef. Second one is a boolean flag indicating whether connection's socket should closed or
+       it might be reused.
+
+   <b>run</b>
+       Start YAHC's loop. The loop stops when all connection complete.
+
+       Note that "run" can accept  two  extra  parameters:  until_state  and  list  of  connections.  These  two
+       parameters tell YAHC to break the loop once specified connections reach desired state.
+
+       For example:
+
+           $yahc-&gt;run(YAHC::State::READING(), $conn_id);
+
+       Will loop until connection '$conn_id' move to state READING meaning that the data has been sent to remote
+       side. In order to gather response one should later call:
+
+           $yahc-&gt;run(YAHC::State::COMPLETED(), $conn_id);
+
+       or simply:
+
+           $yahc-&gt;run();
+
+       Leaving list of connection empty makes YAHC waiting for all connection reaching needed until_state.
+
+       Note that waiting one particular connection to finish doesn't mean that others are not executed. Instead,
+       all  active  connections  are  looped  at  the same time, but YAHC breaks the loop once waited connection
+       reaches needed state.
+
+   <b>run_once</b>
+       Same as run but with EV::RUN_ONCE set. For more details check &lt;https://metacpan.org/pod/EV&gt;
+
+   <b>run_tick</b>
+       Same as run but with EV::RUN_NOWAIT set. For more details check &lt;https://metacpan.org/pod/EV&gt;
+
+   <b>is_running</b>
+       Return true if YAHC is running, false otherwise.
+
+   <b>loop</b>
+       Return underlying EV loop object.
+
+   <b>break</b>
+       Break running EV loop if any.
+
+</pre><h4><b>EXPORTED</b> <b>FUNCTIONS</b></h4><pre>
+   <b>yahc_reinit_conn</b>
+       "yahc_reinit_conn" reinitialize given connection. The attempt counter is reset to 0. The function accepts
+       HashRef as second argument. By passing it one can change  host,  port,  scheme,  body,  head  and  others
+       parameters. The format and meaning of these parameters is same as in "request" method.
+
+       One of use cases of "yahc_reinit_conn", for example, is to handle redirects:
+
+           use YAHC qw/yahc_reinit_conn/;
+
+           my ($yahc, $yahc_storage) = YAHC-&gt;new();
+           $yahc-&gt;request({
+               host =&gt; 'domain_which_returns_301.com',
+               callback =&gt; sub {
+                   ...
+                   my $conn = $_[0];
+                   yahc_reinit_conn($conn, { host =&gt; 'www.newtarget.com' })
+                       if $_[0]-&gt;{response}{status} == 301;
+                   ...
+               }
+           });
+
+           $yahc-&gt;run;
+
+       "yahc_reinit_conn"  is  meant  to  be  called  inside "callback" i.e. when connection is in 'USER ACTION'
+       state.
+
+   <b>yahc_retry_conn</b>
+       Retries given connection. "yahc_retry_conn" should be called only  if  "yahc_conn_attempts_left"  returns
+       positive value. Otherwise, it exits silently. The function accepts HashRef as second argument. By passing
+       it   one   can  change  "backoff_delay"  parameter.  See  docs  for  "request"  for  more  details  about
+       "backoff_delay".
+
+       Intended usage is to retry transient failures or to try different host:
+
+           use YAHC qw/
+               yahc_retry_conn
+               yahc_conn_attempts_left
+           /;
+
+           my ($yahc, $yahc_storage) = YAHC-&gt;new();
+           $yahc-&gt;request({
+               retries =&gt; 2,
+               host =&gt; [ 'host1', 'host2' ],
+               callback =&gt; sub {
+                   ...
+                   my $conn = $_[0];
+                   if ($_[0]-&gt;{response}{status} == 503 &amp;&amp; yahc_conn_attempts_left($conn)) {
+                       yahc_retry_conn($conn);
+                       return;
+                   }
+                   ...
+               }
+           });
+
+           $yahc-&gt;run;
+
+       "yahc_retry_conn" is meant to be called inside "callback" similarly to "yahc_reinit_conn".
+
+   <b>yahc_conn_id</b>
+       Return id of given connection.
+
+   <b>yahc_conn_state</b>
+       Return state of given connection.
+
+   <b>yahc_conn_target</b>
+       Return selected host and port for current attempt for given connection.  Format "host:port". Default port
+       values are omitted.
+
+   <b>yahc_conn_url</b>
+       Same as "yahc_conn_target" but return full URL
+
+   <b>yahc_conn_user_data</b>
+       Let user associate arbitrary data with a connection. Be aware of not creating cyclic reference!
+
+   <b>yahc_conn_errors</b>
+       Return errors appeared in given connection. Note that the function returns  all  errors,  not  only  ones
+       happened  during  current  attempt. Returned value is ArrayRef of ArrayRefs. Later one represents a error
+       and contains following items:
+
+           error number (see YAHC::Error constants)
+           error string
+           ArrayRef of host, ip, port, scheme
+           time when the error happened
+           attempt when the error happened
+
+   <b>yahc_conn_register_error</b>
+       "yahc_conn_register_error" adds new record in connection's error list. This functions is used  internally
+       for  keeping track of all low-level errors during connection's lifetime. It can be also used by users for
+       high-level errors such as 50x responses. The function takes $conn, $error which is one  of  "YAHC::Error"
+       constants and error description. Error description can be passed in sprintf manner. For example:
+
+           $yahc-&gt;request({
+               ...
+               callback =&gt; sub {
+                   ...
+                   my $conn = $_[0];
+                   my $status = $conn-&gt;{response}{status} || 0;
+                   if ($status == 503 || $status == 504) {
+                       yahc_conn_register_error(
+                           $conn,
+                           YAHC::Error::RESPONSE_ERROR(),
+                           "server returned %d",
+                           $status
+                       );
+
+                       yahc_retry_conn($conn);
+                       return;
+                   }
+                   ...
+               }
+           });
+
+   <b>yahc_conn_last_error</b>
+       Return last error appeared in connection. See "yahc_conn_errors".
+
+   <b>yahc_terminal_error</b>
+       Given a error return 1 if the error has <b>YAHC::Error::TERMINAL_ERROR()</b> bit set.  Otherwise return 0.
+
+   <b>yahc_conn_timeline</b>
+       Return timeline of given connection. See more about timeline in description of "new" method.
+
+   <b>yahc_conn_request</b>
+       Return request of given connection. See "request".
+
+   <b>yahc_conn_response</b>
+       Return response of given connection. See "request".
+
+   <b>yahc_conn_attempt</b>
+       Return current attempt starting from 1. The function can also return 0 if no attempts were made yet.
+
+   <b>yahc_conn_attempts_left</b>
+       Return number of attempts left.
+
+   <b>yahc_conn_socket_cache_id</b>
+       Return  socket_cache  id  for  given  connection.  Should  be used to generate key for "socket_cache". If
+       connection is not initialized yet "undef" is returned.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       YAHC provides set of constants for errors. Each constant returns bitmask which  can  be  used  to  detect
+       presence   of   a   particular   error,   for   example,   in   "callback".   There   is  one  exception:
+       <b>YAHC::Error::NO_ERROR()</b> return 0 indicating no error during request execution.
+
+       Error handling code can look like following:
+
+           $yahc-&gt;request({
+               ...
+               callback =&gt; sub {
+                   my (
+                       $conn,          # connection 'object'
+                       $error,         # one of YAHC::Error::* constants
+                       $strerror       # string representation of error
+                   ) = @_;
+
+                   if ($error &amp; YAHC::Error::TIMEOUT()) {
+                       # A timeout has happened. Use one of YAHC::Error::*_TIMEOUT()
+                       # constants for more clarification
+                   } elsif ($error &amp; YAHC::Error::SSL_ERROR()) {
+                       # We had some issues with SSL. $error might have
+                       # YAHC::Error::READ_ERROR() or YAHC::Error::WRITE_ERROR()
+                       # indicating whether is was read or write error.
+                   } elsif (...) { # etc
+                   }
+               }
+           });
+
+       The list of error constants. The names are self-explanatory in many cases:
+
+       "YAHC::Error::NO_ERROR()"
+           Return value 0 (not a bitmask)&gt; meaning no error
+
+       "YAHC::Error::REQUEST_TIMEOUT()"
+       "YAHC::Error::CONNECT_TIMEOUT()"
+       "YAHC::Error::DRAIN_TIMEOUT()"
+       "YAHC::Error::LIFETIME_TIMEOUT()"
+       "YAHC::Error::TIMEOUT()"
+       "YAHC::Error::RETRY_LIMIT()"
+           The connection has exhausted all available retries. This error is  usually  returned  to  "callback".
+           Check  connection's  errors  via  "yahc_conn_errors"  to  inspect  the  reasons  of failures for each
+           individual attempt.
+
+       "YAHC::Error::CONNECT_ERROR()"
+       "YAHC::Error::READ_ERROR()"
+       "YAHC::Error::WRITE_ERROR()"
+       "YAHC::Error::SSL_ERROR()"
+       "YAHC::Error::REQUEST_ERROR()"
+           not used
+
+       "YAHC::Error::RESPONSE_ERROR()"
+           Server returned unparsable response
+
+       "YAHC::Error::CALLBACK_ERROR()"
+           Usually represents exception in one of the callbacks
+
+       "YAHC::Error::TERMINAL_ERROR()"
+           This bit is set when connection cannot be retried anymore and is forced to complete
+
+       "YAHC::Error::INTERNAL_ERROR()"
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       &lt;https://github.com/ikruglov/YAHC&gt;
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>UTF8</b> <b>flag</b>
+       Note that YAHC has astonishing reduction in performance if any parameters participating in building  HTTP
+       message has UTF8 flag set. Those fields are "protocol", "host", "port", "method", "path", "query_string",
+       "head", "body" and maybe others.
+
+       Just one example (check scripts/utf8_test.pl for code). Simple HTTP request with 10MB of payload:
+
+           elapsed without utf8 flag: 0.039s
+           elapsed with utf8 flag: 0.540s
+
+       Because  of this YAHC warns if detected UTF8-flagged payload. The user needs to make sure that *all* data
+       passed to YAHC is unflagged binary strings.
+
+   <b>LIMITATIONS</b>
+       •   State 'RESOLVE DNS' is not implemented yet.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Ivan Kruglov &lt;<a href="mailto:ivan.kruglov@yahoo.com">ivan.kruglov@yahoo.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2013-2017 Ivan Kruglov "&lt;<a href="mailto:ivan.kruglov@yahoo.com">ivan.kruglov@yahoo.com</a>&gt;".
+
+</pre><h4><b>ACKNOWLEDGMENT</b></h4><pre>
+       This module derived lots of ideas, code and docs from Hijk &lt;https://github.com/gugod/Hijk&gt;.  This  module
+       was originally developed for Booking.com.
+
+</pre><h4><b>LICENCE</b></h4><pre>
+       The MIT License
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE  THIS  SOFTWARE  IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS  AND/OR  OTHER
+       PARTIES  PROVIDE  THE  SOFTWARE  "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE.  THE  ENTIRE  RISK  AS  TO  THE  QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,  OR  ANY
+       OTHER  PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING  OUT  OF
+       THE  USE  OR  INABILITY  TO  USE  THE  SOFTWARE  (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE  TO  OPERATE
+       WITH  ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2022-12-13                                          <u><a href="../man3pm/YAHC.3pm.html">YAHC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

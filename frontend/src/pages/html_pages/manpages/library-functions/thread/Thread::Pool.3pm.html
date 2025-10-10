@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread::Pool - group of threads for performing similar jobs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libthread-pool-perl">libthread-pool-perl_0.36-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Thread::Pool - group of threads for performing similar jobs
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This documentation describes version 0.36.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Thread::Pool;
+        $pool = Thread::Pool-&gt;new(
+         {
+          optimize =&gt; 'cpu', # default: 'memory'
+
+          pre =&gt; sub {shift; print "starting worker with @_\n",
+          do =&gt; sub {shift; print "doing job for @_\n"; reverse @_},
+          post =&gt; sub {shift; print "stopping worker with @_\n",
+
+          stream =&gt; sub {shift; print "streamline with @_\n",
+
+          monitor =&gt; sub { print "monitor with @_\n",
+          pre_post_monitor_only =&gt; 0, # default: 0 = also for "do"
+
+          checkpoint =&gt; sub { print "checkpointing\n" },
+          frequency =&gt; 1000,
+
+          autoshutdown =&gt; 1, # default: 1 = yes
+
+          workers =&gt; 10,     # default: 1
+          maxjobs =&gt; 50,     # default: 5 * workers
+          minjobs =&gt; 5,      # default: maxjobs / 2
+         },
+         qw(a b c)           # parameters to "pre" and "post" routine
+        );
+
+        $pool-&gt;job( qw(d e f) );              # not interested in result
+
+        $jobid = $pool-&gt;job( qw(g h i) );
+        @result = $pool-&gt;result( $jobid );    # wait for result to be ready
+
+        $jobid = $pool-&gt;job( qw(j k l) );
+        @result = $pool-&gt;result_dontwait( $jobid ); # do _not_ wait for result
+
+        @result = $pool-&gt;waitfor( qw(m n o) ); # submit and wait for result
+
+        $pool-&gt;add;           # add worker(s)
+        $pool-&gt;remove;        # remove worker(s)
+        $pool-&gt;workers( 10 ); # adapt number of workers
+        $pool-&gt;join;          # wait for all removed worker threads to finish
+
+        $workers = $pool-&gt;workers;
+        $todo    = $pool-&gt;todo;
+        $removed = $pool-&gt;removed;
+
+        $pool-&gt;maxjobs( 100 );  # adapt or (de-)activate job throttling
+        $pool-&gt;minjobs( 10 );
+
+        $pool-&gt;autoshutdown( 1 ); # shutdown when object is destroyed
+        $pool-&gt;shutdown;          # wait until all jobs done
+        $pool-&gt;abort;             # finish current job and remove all workers
+
+        $done    = $pool-&gt;done;   # simple thread-use statistics
+        $notused = $pool-&gt;notused;
+
+        Thread::Pool-&gt;remove_me;  # inside "do" only
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+                         *** A note of CAUTION ***
+
+        This module only functions on Perl versions 5.8.0 and later.
+        And then only when threads are enabled with -Dusethreads.
+        It is of no use with any version of Perl before 5.8.0 or
+        without threads enabled.
+
+                         *************************
+
+       The Thread::Pool allows you to set up a group of (worker) threads to execute a (large) number of similar
+       jobs that need to be executed asynchronously.  The routine that actually performs the job (the "do"
+       routine), must be specified as a name or a reference to a (anonymous) subroutine.
+
+       Once a pool is created, jobs can be executed at will and will be assigned to the next available worker.
+       If the result of the job is important, a job ID is issued.  The job ID can then later be used to obtain
+       the result.
+
+       Initialization parameters can be passed during the creation of the Thread::Pool object.  The
+       initialization ("pre") routine can be specified as a name or as a reference to a (anonymous) subroutine.
+       The "pre" routine can e.g. be used to create a connection to an external source using a non-threadsafe
+       library.
+
+       When a worker is told to finish, the "post" routine is executed if available.
+
+       Results of jobs must be obtained separately, unless a "stream" or a "monitor" routine is specified.  Then
+       the result of each job will be streamed to the "stream" or "monitor" routine in the order in which the
+       jobs were submitted.
+
+       Unless told otherwise, all jobs that are assigned, will be executed before the pool is allowed to be
+       destroyed.  If a "stream" or "monitor" routine is specified, then all results will be handled by that
+       routine before the pool is allowed to be destroyed.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       The following class methods are available.
+
+   <b>new</b>
+        $pool = Thread::Pool-&gt;new(
+         {
+          optimize =&gt; 'cpu',                            # default: memory
+
+          do =&gt; sub { print "doing with @_\n" },        # must have
+          pre =&gt; sub { print "starting with @_\n",      # default: none
+          post =&gt; sub { print "stopping with @_\n",     # default: none
+
+          stream =&gt; sub { print "streamline with @_\n", # default: none
+
+          monitor =&gt; sub { print "monitor with @_\n",   # default: none
+          pre_post_monitor_only =&gt; 0, # default: 0 = also for "do"
+          checkpoint =&gt; \&amp;checkpoint,
+          frequency =&gt; 1000,
+
+          autoshutdown =&gt; 1, # default: 1 = yes
+
+          workers =&gt; 10,     # default: 1
+          maxjobs =&gt; 50,     # default: 5 * workers
+          minjobs =&gt; 5,      # default: maxjobs / 2
+         },
+
+         qw(a b c)           # parameters to "pre" and "post" routines
+
+        );
+
+       The "new" method returns the Thread::Pool object.
+
+       The first input parameter is a reference to a hash that should at least contain the "do" key with a
+       subroutine reference.
+
+       The other input parameters are optional.  If specified, they are passed to the the "pre" subroutine
+       whenever a new worker is added.
+
+       Each time a worker thread is added, the "pre" subroutine (if available) will be called inside the thread.
+       Each time a worker thread is removed, the "post" routine is called.  Its return value(s) are saved only
+       if a job ID was requested when removing the thread.  Then the result method can be called to obtain the
+       results of the "post" subroutine.
+
+       The following field <b>must</b> be specified in the hash reference:
+
+       optimize
+          optimize =&gt; 'cpu', # default: 'memory'
+
+         The  "optimize" field specifies which implementation of the belt will be selected.  Currently there are
+         two choices: 'cpu' and 'memory'.  By default, the "memory" optimization will be selected if no specific
+         optimization is specified.
+
+         You can call the class method optimize to change the default optimization.
+
+       do
+          do =&gt; 'do_the_job',            # assume caller's namespace
+
+         or:
+
+          do =&gt; 'Package::do_the_job',
+
+         or:
+
+          do =&gt; \&amp;SomeOther::do_the_job,
+
+         or:
+
+          do =&gt; sub {print "anonymous sub doing the job\n"},
+
+         The "do" field specifies the subroutine to be executed for each job.  It must be  specified  as  either
+         the name of a subroutine or as a reference to a (anonymous) subroutine.
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1..N  any parameters that were passed with the call to L&lt;job&gt;.
+
+         Any values that are returned by this subroutine after finishing each job, are accessible with result if
+         a job ID was requested when assigning the job.
+
+       The following fields are <b>optional</b> in the hash reference:
+
+       pre
+          pre =&gt; 'prepare_jobs',         # assume caller's namespace
+
+         or:
+
+          pre =&gt; 'Package::prepare_jobs',
+
+         or:
+
+          pre =&gt; \&amp;SomeOther::prepare_jobs,
+
+         or:
+
+          pre =&gt; sub {print "anonymous sub preparing the jobs\n"},
+
+         The  "pre"  field  specifies  the  subroutine  to  be executed <b>each</b> time a new worker thread is <b>started</b>
+         (either when starting the pool, or when new worker threads are added with  a  call  to  either  add  or
+         workers)  and once when a "monitor" routine is specified.  It must be specified as either the name of a
+         subroutine or as a reference to a (anonymous) subroutine.
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1..N  any additional parameters that were passed with the call to L&lt;new&gt;.
+
+         You can determine whether the "pre" routine is called for a new  worker  thread  or  for  a  monitoring
+         thread by checking the self or monitor class method inside the "pre" routine.
+
+       post
+          post =&gt; 'cleanup_after_worker',        # assume caller's namespace
+
+         or:
+
+          post =&gt; 'Package::cleanup_after_worker',
+
+         or:
+
+          post =&gt; \&amp;SomeOther::cleanup_after_worker,
+
+         or:
+
+          post =&gt; sub {print "anonymous sub cleaning up after the worker removed\n"},
+
+         The  "post"  field specifies the subroutine to be executed <b>each</b> time a worker thread is <b>removed</b> (either
+         when being specifically removed, or when the pool is  shutdown  specifically  or  implicitly  when  the
+         Thread::Pool  object  is  destroyed.   It  must be specified as either the name of a subroutine or as a
+         reference to a (anonymous) subroutine.
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1..N  any additional parameters that were passed with the call to L&lt;new&gt;.
+
+         Any values that are returned by this subroutine after closing down the thread, are accessible with  the
+         result method, but only if the thread was removed and a job ID was requested.
+
+         You  can  determine  whether  the  "post" routine is called for a new worker thread or for a monitoring
+         thread by checking the self or monitor class method inside the "post" routine.
+
+       stream
+          stream =&gt; 'in_order_of_submit',        # assume caller's namespace
+
+         or:
+
+          stream =&gt; 'Package::in_order_of_submit',
+
+         or:
+
+          stream =&gt; \&amp;SomeOther::in_order_of_submit,
+
+         or:
+
+          stream =&gt; sub {print "anonymous sub called in order of submit\n"},
+
+         The "stream" field specifies the subroutine to be executed  for  streaming  the  results  of  the  "do"
+         routine.  If specified, the "stream" routine is called once for the result of each "do" subroutine, but
+         in  the  order  in  which  the  jobs  were  submitted rather than in the order in which the result were
+         obtained (which is by the very nature of threads, indeterminate).
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1     the Thread::Pool object to which the worker thread belongs.
+          2..N  the values that were returned by the "do" subroutine
+
+         The "stream" routine is executed in <b>any</b> of the threads that are created for  the  Thread::Pool  object.
+         The system attempts to call the "stream" routine in the same thread from which the values are obtained,
+         but  when  things  get out of sync, other threads may stream the result of a job.  If you want <b>only</b> <b>one</b>
+         thread to stream all results, use the "monitor" routine.
+
+       monitor
+          monitor =&gt; 'in_order_of_submit',       # assume caller's namespace
+
+         or:
+
+          monitor =&gt; 'Package::in_order_of_submit',
+
+         or:
+
+          monitor =&gt; \&amp;SomeOther::in_order_of_submit,
+
+         or:
+
+          monitor =&gt; sub {print "anonymous sub called in order of submit\n"},
+
+         The "monitor" field specifies the subroutine to be executed for monitoring  the  results  of  the  "do"
+         routine.   If  specified,  the "monitor" routine is called once for the result of each "do" subroutine,
+         but in the order in which the jobs were submitted rather than in the order in  which  the  result  were
+         obtained (which is by the very nature of threads, indeterminate).
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1..N  the values that were returned by the "do" subroutine
+
+         The  "monitor"  routine  is  executed in its own thread.  This means that all results have to be passed
+         between threads, and therefore be frozen and thawed with Storable.  If you  can  handle  the  streaming
+         from different threads, it is probably wiser to use the "stream" routine feature.
+
+       pre_post_monitor_only
+          pre_post_monitor_only =&gt; 1, # default 0
+
+         The  "pre_post_monitor_only"  field only makes sense if a "monitor" routine is specified.  If specified
+         with a true value, indicates that the "pre" and "post" routines (if specified) should  only  be  called
+         for  the  "monitor"  routine  only  and <b>not</b> for the "do" routine.  Otherwise, the same "pre" and "post"
+         routine will be called for both the "do" as well as the "monitor" routine.
+
+         When the "pre" and "post" routine are called for the "do" subroutine, the self class method returns the
+         Thread::Pool object (which it doesn't do when called in the "monitor" routine).
+
+       checkpoint
+          checkpoint =&gt; 'checkpointing',                 # assume caller's namespace
+
+         or:
+
+          checkpoint =&gt; 'Package::checkpointing',
+
+         or:
+
+          checkpoint =&gt; \&amp;SomeOther::checkpointing,
+
+         or:
+
+          checkpoint =&gt; sub {print "anonymous sub to do checkpointing\n"},
+
+         The "checkpoint" field specifies the subroutine to be executed every time a checkpoint should  be  made
+         by  a monitoring routine (e.g. for saving or updating status).  It must be specified as either the name
+         of a subroutine or as a reference to a (anonymous) subroutine.
+
+         It only makes sense to specify a checkpoint routine if there is also a  monitoring  routine  specified.
+         No  checkpointing  will  occur  by  default  if  a  monitoring  routine <b>is</b> specified.  The frequency of
+         checkpointing can be specified with the "frequency" field.
+
+         The specified subroutine should not expect any parameters to be passed.  Any  values  returned  by  the
+         checkpointing routine, will be lost.
+
+       frequency
+          frequency =&gt; 100,                             # default = 1000
+
+         The  "frequency"  field  specifies  the  number  of  jobs  that  should  have been monitored before the
+         "checkpoint" routine is called.  If a checkpoint  routine  is  specified  but  no  frequency  field  is
+         specified, then a frequency of <b>1000</b> will be assumed.
+
+         This  field  has  no  meaning  if  no checkpoint routine is specified with the "checkpoint" field.  The
+         default frequency can be changed with the frequency method.
+
+       autoshutdown
+          autoshutdown =&gt; 0, # default: 1
+
+         The "autoshutdown" field specified whether the shutdown method should be  called  when  the  object  is
+         destroyed.  By default, this flag is set to 1 indicating that the shutdown method should be called when
+         the  object  is being destroyed.  Setting the flag to a false value, will cause the shutdown method <b>not</b>
+         to be called, causing potential loss of data and error messages when threads are not finished when  the
+         program exits.
+
+         The setting of the flag can be later changed by calling the autoshutdown method.
+
+       workers
+          workers =&gt; 5, # default: 1
+
+         The  "workers"  field  specifies  the  number of worker threads that should be created when the pool is
+         created.  If no "workers" field is specified, then only one worker thread will be created.  The workers
+         method can be used to change the number of workers later.
+
+       maxjobs
+          maxjobs =&gt; 25, # default: 5 * workers
+
+         The "maxjobs" field specifies the <b>maximum</b> number of jobs that can be sitting on the belt to be  handled
+         (job  throttling).   If  a  new  job submission would exceed this amount, job submission will be halted
+         until the number of jobs waiting to be handled has become at least as low as the amount specified  with
+         the "minjobs" field.
+
+         If the "maxjobs" field is not specified, an amount of 5 * the number of worker threads will be assumed.
+         If  you  do  not want to have any job throttling, you can specify the value "undef" for the field.  But
+         beware!  If you do not have job throttling active, you may wind up using excessive  amounts  of  memory
+         used for storing all of the job submission information.
+
+         The  maxjobs  method  can  be  called  to change the job throttling settings during the lifetime of the
+         object.
+
+       minjobs
+          minjobs =&gt; 10, # default: maxjobs / 2
+
+         The "minjobs" field specified the <b>minimum</b> number of jobs that can be waiting on the belt to be  handled
+         before job submission is allowed again (job throttling).
+
+         If  job throttling is active and the "minjobs" field is not specified, then half of the "maxjobs" value
+         will be assumed.
+
+         The minjobs method can be called to change the job throttling  settings  during  the  lifetime  of  the
+         object.
+
+   <b>frequency</b>
+        Thread::Pool-&gt;frequency( 100 );
+
+        $frequency = Thread::Pool-&gt;frequency;
+
+       The  "frequency"  class  method  allows  you  to  specify  the default frequency that will be used when a
+       checkpoint routine is specified with the "checkpoint" field.  The default frequency is set to <b>1000</b> if  no
+       other value has been previously specified.
+
+   <b>optimize</b>
+        Thread::Pool-&gt;optimize( 'cpu' );
+
+        $optimize = Thread::Pool-&gt;optimize;
+
+       The  "optimize"  class method allows you to specify the default optimization type that will be used if no
+       "optimize" field has been explicitly specified with a call to new.  It returns the current  default  type
+       of optimization.
+
+       Currently two types of optimization can be selected:
+
+       memory
+         Attempt to use as little memory as possible.  Currently, this is achieved by starting a separate thread
+         which hosts an unshared array.  This uses the "Thread::Conveyor::Thread" sub-class.
+
+       cpu
+         Attempt  to  use as little CPU as possible.  Currently, this is achieved by using a shared array (using
+         the "Thread::Conveyor::Array" sub-class), encapsulated in a hash reference if throttling  is  activated
+         (then also using the "Thread::Conveyor::Throttled" sub-class).
+
+</pre><h4><b>POOL</b> <b>METHODS</b></h4><pre>
+       The following methods can be executed on the Thread::Pool object.
+
+   <b>job</b>
+        $jobid = $pool-&gt;job( @parameter );     # saves result
+        $pool-&gt;job( @parameter );              # does not save result
+
+       The  "job"  method  specifies  a  job  to be executed by any of the available workers.  Which worker will
+       execute the job, is indeterminate.  When it will happen, depends on the number of jobs that still have to
+       be done when this job was submitted.
+
+       The input parameters are passed to the "do" subroutine as is.
+
+       If a return value is requested, then the return value(s) of the  "do"  subroutine  will  be  saved.   The
+       returned value is a job ID that should be used as the input parameter to result or result_dontwait.
+
+   <b>waitfor</b>
+        @result = $pool-&gt;waitfor( @parameter ); # submit job and wait for result
+
+       The  "waitfor"  method specifies a job to be executed, wait for the result to become ready and return the
+       result.  It is in fact a shortcut for using job and result.
+
+       The input parameters are passed to the "do" subroutine as is.
+
+       The return value(s) are what was returned by the "do" routine.  The meaning of  the  return  value(s)  is
+       entirely up to you as the developer.
+
+   <b>result</b>
+        @result = $pool-&gt;result( $jobid );
+
+       The "result" method waits for the specified job to be finished and returns the result of that job.
+
+       The input parameter is the job id as returned from the job assignment.
+
+       The  return  value(s)  are  what was returned by the "do" routine.  The meaning of the return value(s) is
+       entirely up to you as the developer.
+
+       If you want to wait for <b>any</b> job to be finished, use the result_any method.
+
+       If you don't want to wait for the job to be finished, but just want to see if there is a result  already,
+       use the result_dontwait method.
+
+   <b>result_any</b>
+        @result = $pool-&gt;result_any;
+
+        @result = $pool-&gt;result_any( \$jobid );
+
+       The "result_any" method waits for <b>any</b> job to be finished and returns the result of that job.
+
+       The optional input parameter is the reference to a scalar variable in which the job id will be stored.
+
+       The  return  value(s)  are  what was returned by the "do" routine.  The meaning of the return value(s) is
+       entirely up to you as the developer.
+
+       If you don't want to wait for a job to be finished, but just want to see if there is  a  result  already,
+       use the result_dontwait method.
+
+   <b>result_dontwait</b>
+        @result = $pool-&gt;result_dontwait( $jobid );
+
+       The  "result_dontwait"  method  returns  the  result  of  the  job if it is available.  If the job is not
+       finished yet, it will return undef in scalar context or the empty list in list context.
+
+       The input parameter is the job id as returned from the job assignment.
+
+       If the result of the job is available, then the return  value(s)  are  what  was  returned  by  the  "do"
+       routine.  The meaning of the return value(s) is entirely up to you as the developer.
+
+       If you want to wait for the job to be finished, use the result method.
+
+   <b>todo</b>
+        $todo = $pool-&gt;todo;
+
+       The "todo" method returns the number of jobs that are still left to be done.
+
+   <b>results</b>
+        $results = $pool-&gt;results;
+        @result = $pool-&gt;results;
+
+       The  "results" method returns the jobids of which there are results available and which have not yet been
+       fetched with result.  Returns the number of results available in scalar context.
+
+   <b>add</b>
+        $tid = $pool-&gt;add;             # add 1 worker thread
+        @tid = $pool-&gt;add( 5 );
+
+       The "add" method adds the specified number of worker threads to the pool  and  returns  the  thread  ID's
+       (tid) of the threads that were created.
+
+       The  input  parameter specifies the number of workers to be added.  If no number of workers is specified,
+       then 1 worker thread will be added.
+
+       In scalar context, returns the thread ID (tid) of the first worker thread that was added.   This  usually
+       only makes sense if you're adding only one worker thread.
+
+       In list context, returns the thread ID's (tid) of the worker threads that were created.
+
+       Each time a worker thread is added, the "pre" routine (if available) will be called inside the thread.
+
+   <b>remove</b>
+        $pool-&gt;remove;                 # remove 1 worker thread
+        $pool-&gt;remove( 5 );            # remove 5 worker threads
+
+        $jobid = $pool-&gt;remove;        # remove 1 worker thread, save result
+        @jobid = $pool-&gt;remove( 5 );   # remove 5 worker threads, save results
+
+       The  "remove"  method  adds the specified number of special "remove" job to the lists of jobs to be done.
+       It will return the job ID's if called in a non-void context.
+
+       The input parameter specifies the number of workers to be removed.  If no number of workers is specified,
+       then 1 worker thread will be removed.
+
+       In void context, the results of the execution of the "post" subroutine(s) is discarded.
+
+       In scalar context, returns the job ID of the result of the first worker thread that  was  removed.   This
+       usually only makes sense if you're removing only one worker thread.
+
+       In list context, returns the job ID's of the result of all the worker threads that were removed.
+
+       Each  time  a worker thread is removed, the "post" routine is called.  Its return value(s) are saved only
+       if a job ID was requested when removing the thread.  Then the result method can be called to  obtain  the
+       results of the "post" subroutine.
+
+   <b>workers</b>
+        $workers = $pool-&gt;workers;     # find out number of worker threads
+        $pool-&gt;workers( 10 );          # set number of worker threads
+
+       The "workers" method can be used to find out how many worker threads there are currently available, or it
+       can be used to set the number of worker threads.
+
+       The input value, if specified, specifies the number of worker threads that should be available.  If there
+       are  more  worker  threads  available  than the number specified, then superfluous worker threads will be
+       removed.  If there are not enough worker threads available, new worker threads will be added.
+
+       The return value is the current number of worker threads.
+
+   <b>frequency</b>
+        $frequency = $pool-&gt;frequency;
+
+       The "frequency" instance method returns the frequency with which the checkpoint routine is being  called.
+       Returns undef if no checkpointing is being done.
+
+   <b>maxjobs</b>
+        $pool-&gt;maxjobs( 100 );
+        $maxjobs = $pool-&gt;maxjobs;
+
+       The  "maxjobs"  method  returns  the maximum number of jobs that can be on the belt before job throttling
+       sets in.  The input value, if specified, specifies the new maximum number of jobs  that  may  be  on  the
+       belt.  Job throttling will be switched off if the value <b>0</b> is specified.
+
+       Specifying  the  "maxjobs"  field  when  creating  the pool object with new is equivalent to calling this
+       method.
+
+       The minjobs method can be called to specify the minimum number of jobs that must be on  the  belt  before
+       job  submission  is  allowed  again  after  reaching the maximum number of jobs.  By default, half of the
+       "maxjobs" value is assumed.
+
+   <b>minjobs</b>
+        $pool-&gt;minjobs( 50 );
+        $minjobs = $pool-&gt;minjobs;
+
+       The "minjobs" method returns the minimum number of jobs that must be on the belt before job submission is
+       allowed again after reaching the maximum number of jobs.  The input value, if  specified,  specifies  the
+       new minimum number of jobs that must be on the belt.
+
+       Specifying  the  "minjobs"  field  when  creating  the pool object with new is equivalent to calling this
+       method.
+
+       The maxjobs method can be called to set the maximum number of jobs that may be on  the  belt  before  job
+       submission will be halted.
+
+   <b>join</b>
+        $pool-&gt;join;
+
+       The  "join" method waits until all of the worker threads that have been removed have finished their jobs.
+       It basically cleans up the threads that are not needed anymore.
+
+       The "shutdown" method call the "join" method after removing all the active worker threads.  You therefore
+       seldom need to call the "join" method separately.
+
+   <b>removed</b>
+        $removed = $pool-&gt;removed;
+
+       The "removed" method returns the number of worker threads that were removed  over  the  lifetime  of  the
+       object.
+
+   <b>autoshutdown</b>
+        $pool-&gt;autoshutdown( 1 );
+        $autoshutdown = $pool-&gt;autoshutdown;
+
+       The "autoshutdown" method sets and/or returns the flag indicating whether an automatic shutdown should be
+       performed when the object is destroyed.
+
+   <b>shutdown</b>
+        $pool-&gt;shutdown;
+
+       The  "shutdown" method waits for all jobs to be executed, removes all worker threads, handles any results
+       that still need to be streamed, before it returns.  Call the abort method if you  do  not  want  to  wait
+       until all jobs have been executed.
+
+       It  is  called  automatically  when  the object is destroyed, unless specifically disabled by providing a
+       false value with the "autoshutdown" field when creating the pool with new, or by calling the autoshutdown
+       method.
+
+   <b>abort</b>
+       The "abort" method waits for all worker threads to finish their <b>current</b> job, removes all worker  threads,
+       before it returns.  Call the shutdown method if you want to wait until all jobs have been done.
+
+       You can restart the job handling process after calling "abort" by adding workers again.
+
+   <b>done</b>
+        $done = $pool-&gt;done;
+
+       The "done" method returns the number of jobs that has been performed by the removed worker threads of the
+       pool.
+
+       The "done" method is typically called after the shutdown method has been called.
+
+   <b>notused</b>
+        $notused = $pool-&gt;notused;
+
+       The "notused" method returns the number of removed threads that have not performed any jobs.  It provides
+       a  heuristic  to  determine  how  many  workers you actually need for a specific application: a value &gt; 0
+       indicates that you have specified too many worker threads for this application.
+
+       The "notused" method is typically called after the shutdown method has been called.
+
+</pre><h4><b>INSIDE</b> <b>JOB</b> <b>METHODS</b></h4><pre>
+       The following methods only make sense inside the "pre", "do", "post", "stream" and "monitor" routines.
+
+   <b>self</b>
+        $self = Thread::Pool-&gt;self;
+
+       The class method "self" returns the object to which this thread belongs.   It  is  available  within  the
+       "pre", "do", "post", "stream" and "monitor" subroutines only.
+
+   <b>monitor</b>
+        $monitor = Thread::Pool-&gt;monitor;
+
+       The  class  method  "monitor"  returns the Thread::Conveyor::Monitored object that is associated with the
+       pool.  It is available only if the "monitor" field was specified in new.  And then only within the "pre",
+       "do", "post", "stream" and "monitor" subroutines only.
+
+   <b>remove_me</b>
+        Thread::Pool-&gt;remove_me;
+
+       The "remove_me" class method only makes sense within the  "do"  subroutine.   It  indicates  to  the  job
+       dispatcher  that  this worker thread should be removed from the pool.  After the "do" subroutine returns,
+       the worker thread will be removed.
+
+   <b>jobid</b>
+        $jobid = Thread::Pool-&gt;jobid;
+
+       The "jobid" class method only makes sense within the "do" subroutine in streaming mode.  It  returns  the
+       job ID value of the current job.  This can be used connection with the dont_set_result and the set_result
+       methods to have another thread set the result of the current job.
+
+   <b>dont_set_result</b>
+        Thread::Pool-&gt;dont_set_result;
+
+       The  "dont_set_result" class method only makes sense within the "do" subroutine.  It indicates to the job
+       dispatcher that the result of this job should <b>not</b> be saved.  This is for cases where the result  of  this
+       job  will  be placed in the result hash at some time in the future by another thread using the set_result
+       method.
+
+   <b>set_result</b>
+        Thread::Pool-&gt;self-&gt;set_result( $jobid,@param );
+
+       The "set_result" object method only makes sense within the "do" subroutine.  It allows  you  to  set  the
+       result of <b>other</b> jobs than the one currently being performed.
+
+       This  method  is  only  needed in <b>very</b> special situations.  Normally, just returning values from the "do"
+       subroutine is enough to have the result saved.  This method is exposed to  the  outside  world  in  those
+       cases where a specific thread becomes responsible for setting the result of other threads (which used the
+       dont_set_result method to defer saving their result.
+
+       The  first  input parameter specifies the job ID of the job for which to set the result.  The rest of the
+       input parameters is considered to be the result to be saved.  Whatever is specified in the  rest  of  the
+       input parameters, will be returned with the result or result_dontwait methods.
+
+</pre><h4><b>REQUIRED</b> <b>MODULES</b></h4><pre>
+        Thread::Conveyor (0.15)
+        Thread::Conveyor::Monitored (0.11)
+
+</pre><h4><b>OPTIMIZATIONS</b></h4><pre>
+       This  module  uses  load to reduce memory and CPU usage. This causes subroutines only to be compiled in a
+       thread when they are actually needed at the expense of more CPU when they need to  be  compiled.   Simple
+       benchmarks  however  revealed  that  the  overhead of the compiling single routines is not much more (and
+       sometimes a lot less) than the overhead of cloning a Perl interpreter with  a  lot  of  subroutines  pre-
+       loaded.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Passing  unshared  values  between  threads  is  accomplished  by  serializing the specified values using
+       Thread::Serialize.  Please see the CAVEATS section there for an up-to-date status of what can  be  passed
+       around between threads.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       There are currently two examples.
+
+   <b>simple</b> <b>asynchronous</b> <b>log</b> <b>file</b> <b>resolving</b> <b>filter</b>
+       This is an example of a very simple asynchronous log file resolver filter.
+
+       Because  the IP number to domain name translation is dependent on external DNS servers, it can take quite
+       some (wallclock) time before a response is  returned  by  the  "gethostbyaddr"  function.   In  a  single
+       threaded  environment,  a  single  bad  DNS  server  can  severely slow down the resolving process.  In a
+       threaded environment, you can have one thread waiting for a slow DNS server while other threads are  able
+       to obtain answers in the mean time.
+
+       This  example  uses  a shared hash to keep results from DNS server responses, so that if an IP number was
+       attempted to be resolved once (either successfully or unsuccessfully), it will not  be  attempted  again:
+       instead the value from the hash will be assumed.
+
+        # You should always use strict!
+        # Using Thread::Pool by itself is enough, no "use threads;" needed
+        # Initialize the shared hash with IP numbers and their results
+
+        use strict;
+        use Thread::Pool;
+        my %resolved : shared;
+
+        # Create the pool of threads
+
+        my $pool = Thread::Pool-&gt;new(
+         {
+          workers =&gt; 10,
+          do =&gt; \&amp;do,
+          monitor =&gt; \&amp;monitor,
+         }
+        );
+
+        # Submit each line as a job to the pool
+
+        $pool-&gt;job( $_ ) while &lt;&gt;;
+
+        #--------------------------------------------------------------------
+        # Handle a single job
+        #  IN: 1 log line to resolve
+        # OUT: 1 resolved log line
+
+        sub do {
+
+        # Substitute the IP number at the start with the name or with the original
+        # Return the adapted value
+
+          $_[0] =~ s#^(\d+\.\d+\.\d+\.\d+)#
+           $resolved{$1} ||= gethostbyaddr( pack( 'C4',split(/\./,$1)),2 ) || $1#e;
+          $_[0];
+        } #do
+
+        #--------------------------------------------------------------------
+        # Output the results in the order they were submitted
+        #  IN: 1 resolved log line
+
+        sub monitor { print $_[0] } #monitor
+
+       This  is  a  very  simple  filter.   The main drawback is that many threads can be looking up the same IP
+       number at the same time.
+
+   <b>another</b> <b>asynchronous</b> <b>log</b> <b>file</b> <b>resolving</b> <b>filter</b>
+       This is an example of a not so very simple asynchronous log file resolver filter.  This is  in  fact  the
+       base code for the Thread::Pool::Resolve module.
+
+       In  this  example,  the dont_set_result and set_result methods are used to put up all lines with the same
+       unresolved IP number in the same thread until the DNS server returns, either with or  without  a  result.
+       Then  all  the  lines  with that IP number are handled by that thread: the other threads have long before
+       that already continued attempting to handle other lines.
+
+       Because only the "do" subroutine is different from the previous example, we're only showing that.
+
+        #--------------------------------------------------------------------
+        # Handle a single job
+        #  IN: 1 log line to resolve
+        # OUT: 1 resolved log line (if already resolved, else ignored)
+
+        sub do {
+
+        # Obtain the line to work with
+        # Return it now if it is already resolved (at least not an IP number there)
+        # Save the IP number for later usage, line is now without IP number
+
+          my $line = shift;
+          return $line unless $line =~ s#^(\d+\.\d+\.\d+\.\d+)##;
+          my $ip = $1;
+
+        # Make sure we're the only one to access the resolved hash now
+        # If there is already information for this IP number
+        #  Return what is there with the line if it was resolved already
+
+          {lock( %resolved );
+           if (exists( $resolved{$ip} )) {
+             return ($resolved{$ip} || $ip).$line unless ref( $resolved{$ip} );
+
+        #  Set the rest of the line in the todo hash, keyed to jobid
+        #  Set the flag that this result should not be set in the result hash
+        #  And return without anything (thread will continue with next job)
+
+             $resolved{$ip}-&gt;{Thread::Pool-&gt;jobid} = $line;
+             Thread::Pool-&gt;dont_set_result;
+             return;
+
+        # Else (first time this IP number is encountered)
+        #  Create a empty shared hash
+        #  Save a reference to the hash in the todo hash as info for this IP number
+
+           } else {
+             my %hash : shared;
+             $resolved{$ip} = \%hash;
+           }
+          } #%resolved
+
+        # Do the actual name resolving (may take quite some time) or use IP number
+        # Obtain local copy of the Thread::Pool object
+        # Obtain local copy of the todo hash
+
+          my $domain = gethostbyaddr( pack( 'C4',split(/\./,$ip)),2 ) || $ip;
+          my $pool = Thread::Pool-&gt;self;
+          my $todo = $resolved{$ip};
+
+        # Make sure we're the only one accessing the resolved hash (rest of this sub)
+        # For all the lines with this IP number
+        #  Set the results
+        # Remove the todo hash and replace by domain or blank string if unresolvable
+        # Return the result for this job
+
+          lock( %resolved );
+          while (my $key = each %{$todo}) {
+              $pool-&gt;set_result( $key,$domain.$todo-&gt;{$key} )
+          }
+          $resolved{$ip} = $domain eq $ip ? undef : $domain;
+          $domain.$line;
+        } #do
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Elizabeth Mattijsen, &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.
+
+       Maintained by LNATION &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;
+
+       Please report bugs to &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2002, 2003, 2010 Elizabeth Mattijsen &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;. 2025 LNATION &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt; All
+       rights reserved.  This program is free software; you can redistribute it and/or modify it under the  same
+       terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       threads, Thread::Conveyor, Thread::Conveyor::Monitored, Thread::Serialize.
+
+perl v5.40.1                                       2025-04-24                                  <u>Thread::<a href="../man3pm/Pool.3pm.html">Pool</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

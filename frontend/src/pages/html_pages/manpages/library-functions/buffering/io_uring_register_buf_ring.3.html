@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>io_uring_register_buf_ring - register buffer ring for provided buffers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liburing-dev">liburing-dev_2.9-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       io_uring_register_buf_ring - register buffer ring for provided buffers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;liburing.h&gt;</b>
+
+       <b>int</b> <b>io_uring_register_buf_ring(struct</b> <b>io_uring</b> <b>*</b><u>ring</u><b>,</b>
+                                      <b>struct</b> <b>io_uring_buf_reg</b> <b>*</b><u>reg</u><b>,</b>
+                                      <b>unsigned</b> <b>int</b> <u>flags</u><b>);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b><a href="../man3/io_uring_register_buf_ring.3.html">io_uring_register_buf_ring</a></b>(3)  function  registers  a  shared  buffer  ring to be used with provided
+       buffers. For the request types that support it, provided buffers  are  given  to  the  ring  and  one  is
+       selected  by  a  request if it has <b>IOSQE_BUFFER_SELECT</b> set in the SQE <u>flags</u>, when the request is ready to
+       receive data. This allows both  clear  ownership  of  the  buffer  lifetime,  and  a  way  to  have  more
+       read/receive type of operations in flight than buffers available.
+
+       The <u>reg</u> argument must be filled in with the appropriate information. It looks as follows:
+
+           struct io_uring_buf_reg {
+               __u64 ring_addr;
+               __u32 ring_entries;
+               __u16 bgid;
+               __u16 pad;
+               __u64 resv[3];
+           };
+
+       The  <u>ring_addr</u>  field must contain the address to the memory allocated to fit this ring.  The memory must
+       be page aligned and hence allocated appropriately using eg <b><a href="../man3/posix_memalign.3.html">posix_memalign</a></b>(3) or similar. The size of  the
+       ring  is  the  product  of <u>ring_entries</u> and the size of <u>struct</u> <u>io_uring_buf</u>.  <u>ring_entries</u> is the desired
+       size of the ring, and must be a power-of-2 in size. The maximum size allowed is 2^15  (32768).   <u>bgid</u>  is
+       the  buffer  group ID associated with this ring. SQEs that select a buffer have a buffer group associated
+       with them in their <u>buf_group</u> field, and the associated CQEs will have <b>IORING_CQE_F_BUFFER</b>  set  in  their
+       <u>flags</u>  member, which will also contain the specific ID of the buffer selected. The rest of the fields are
+       reserved and must be cleared to zero.
+
+       The <u>flags</u> argument can be set to one of the following values:
+
+       <b>IOU_PBUF_RING_INC</b>
+              The buffers in this ring can be incrementally consumed. With partial consumption, each  completion
+              of  a  given  buffer  ID  will  continue  where the previous one left off, or from the start if no
+              completions have been seen yet.  When more completions should be expected for a given  buffer  ID,
+              the CQE will have <b>IORING_CQE_F_BUF_MORE</b> set in the <u>flags</u> member. Available since 6.12.
+
+       A shared buffer ring looks as follows:
+
+           struct io_uring_buf_ring {
+               union {
+                   struct {
+                       __u64 resv1;
+                       __u32 resv2;
+                       __u16 resv3;
+                       __u16 tail;
+                   };
+                   struct io_uring_buf bufs[0];
+               };
+           };
+
+       where  <u>tail</u> is the index at which the application can insert new buffers for consumption by requests, and
+       <u>struct</u> <u>io_uring_buf</u> is buffer definition:
+
+           struct io_uring_buf {
+               __u64 addr;
+               __u32 len;
+               __u16 bid;
+               __u16 resv;
+           };
+
+       where <u>addr</u> is the address for the buffer, <u>len</u> is the length of the buffer in bytes, and <u>bid</u> is the buffer
+       ID that will be returned in the CQE once consumed.
+
+       Reserved fields must not be touched. Applications must use <b><a href="../man3/io_uring_buf_ring_init.3.html">io_uring_buf_ring_init</a></b>(3)  to  initialise  the
+       buffer ring before use. Applications may use <b><a href="../man3/io_uring_buf_ring_add.3.html">io_uring_buf_ring_add</a></b>(3) and <b><a href="../man3/io_uring_buf_ring_advance.3.html">io_uring_buf_ring_advance</a></b>(3) or
+       <b><a href="../man3/io_uring_buf_ring_cq_advance.3.html">io_uring_buf_ring_cq_advance</a></b>(3) to provide buffers, which will set these fields and update the tail.
+
+       Available since 5.19.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       On success <b><a href="../man3/io_uring_register_buf_ring.3.html">io_uring_register_buf_ring</a></b>(3) returns 0. On failure it returns <b>-errno</b>.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Unless  manual  setup  is  needed,  it's  recommended  to use <b><a href="../man3/io_uring_setup_buf_ring.3.html">io_uring_setup_buf_ring</a></b>(3) as it provides a
+       simpler way to setup a provided buffer ring.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/io_uring_buf_ring_init.3.html">io_uring_buf_ring_init</a></b>(3),             <b><a href="../man3/io_uring_buf_ring_add.3.html">io_uring_buf_ring_add</a></b>(3),              <b><a href="../man3/io_uring_setup_buf_ring.3.html">io_uring_setup_buf_ring</a></b>(3),
+       <b><a href="../man3/io_uring_buf_ring_advance.3.html">io_uring_buf_ring_advance</a></b>(3), <b><a href="../man3/io_uring_buf_ring_cq_advance.3.html">io_uring_buf_ring_cq_advance</a></b>(3)
+
+liburing-2.2                                      May 18, 2022                     <u><a href="../man3/io_uring_register_buf_ring.3.html">io_uring_register_buf_ring</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

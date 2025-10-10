@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inline::Pdlpp - Write PDL Subroutines inline with PDL::PP</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pdl">pdl_2.100-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Inline::Pdlpp - Write PDL Subroutines inline with PDL::PP
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use strict; use warnings;
+         use PDL;
+         use Inline Pdlpp =&gt; 'DATA';
+
+         # make data with: echo -n 'ATCGZATCG' &gt;input.data
+         # use it with aa_to_int.pl input.data
+
+         my $file; ($file = shift, -f $file) || die "Usage: $0 filename";
+         my $size = -s $file;
+         my $pdl = zeroes(byte, $size);
+         ${$pdl-&gt;get_dataref} = do { open my $fh, $file or die "$file: $!"; local $/; &lt;$fh&gt; };
+         $pdl-&gt;upd_data;
+         $pdl-&gt;inplace-&gt;aa_to_int;
+         print $pdl, "\n";
+
+         __DATA__
+         __Pdlpp__
+         pp_def('aa_to_int',
+          Pars =&gt; 'i();[o] o()',
+          GenericTypes =&gt; ['B'],
+          Inplace =&gt; 1,
+          Code =&gt; &lt;&lt;'EOF',
+         switch($i()) {
+          case 'A': $o() = 0; break;
+          case 'T': $o() = 1; break;
+          case 'C': $o() = 2; break;
+          case 'G': $o() = 3; break;
+          default: $o() = 255; break;
+         }
+         EOF
+          Doc =&gt; "=for ref\n\nConvert amino acid names to integers.\n",
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Inline::Pdlpp" is a module that allows you to write PDL subroutines in the PDL::PP style. The big
+       benefit compared to plain "PDL::PP" is that you can write these definitions inline in any old perl script
+       (without the normal hassle of creating Makefiles, building, etc).  Since version 0.30 the Inline module
+       supports multiple programming languages and each language has its own support module. This document
+       describes how to use Inline with PDL::PP (or rather, it will once these docs are complete ";)".
+
+       For more information on Inline in general, see Inline.
+
+       Some example scripts demonstrating "Inline::Pdlpp" usage can be found in the <u>Example/InlinePdlpp</u>
+       directory.
+
+       "Inline::Pdlpp" is a subclass of Inline::C. Most Kudos goes to Brian I.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       You never actually use "Inline::Pdlpp" directly. It is just a support module for using "Inline.pm" with
+       "PDL::PP". So the usage is always:
+
+           use Inline Pdlpp =&gt; ...;
+
+       or
+
+           bind Inline Pdlpp =&gt; ...;
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Pending availability of full docs a few quick examples that illustrate typical usage.
+
+   <b>A</b> <b>simple</b> <b>example</b>
+          # example script inlpp.pl
+          use PDL; # must be called before (!) 'use Inline Pdlpp' calls
+
+          use Inline Pdlpp; # the actual code is in the __Pdlpp__ block below
+
+          $x = sequence 10;
+          print $x-&gt;inc,"\n";
+          print $x-&gt;inc-&gt;dummy(1,10)-&gt;tcumul,"\n";
+
+          __DATA__
+
+          __Pdlpp__
+
+          pp_def('inc',
+                 Pars =&gt; 'i();[o] o()',
+                 Code =&gt; '$o() = $i() + 1;',
+                );
+
+          pp_def('tcumul',
+                 Pars =&gt; 'in(n);[o] mul()',
+                 Code =&gt; '$mul() = 1;
+                          loop(n) %{
+                            $mul() *= $in();
+                          %}',
+          );
+          # end example script
+
+       If you call this script it should generate output similar to this:
+
+          prompt&gt; perl inlpp.pl
+          Inline running PDL::PP version 2.2...
+          [1 2 3 4 5 6 7 8 9 10]
+          [3628800 3628800 3628800 3628800 3628800 3628800 3628800 3628800 3628800 3628800]
+
+       Usage of "Inline::Pdlpp" in general is similar to "Inline::C".  In the absence of full docs for
+       "Inline::Pdlpp" you might want to compare Inline::C.
+
+   <b>Use</b> <b>of</b> <b>PMCode</b>
+       If you need to pre/post-process data around your new PDL operation, a quirk of this module is that it
+       makes a dynamic library that can be loaded in, but does not load in the PDL-generated Perl code. You can
+       work around that as follows:
+
+         use Inline Pdlpp =&gt; &lt;&lt;'EOF';
+         pp_def('collatz_pdl',
+         Pars =&gt; 'beg(); end(); [o]number();  [o]highest()',
+         GenericTypes =&gt; ['Q'],
+         PMCode =&gt; '', # trigger the _int but keep the Perl code in main body
+         Code =&gt; '
+           /*...*/
+         '
+         );
+         EOF
+         sub PDL::collatz_pdl {
+           PDL::_collatz_pdl_int(@_, my $n = PDL-&gt;null, my $h = PDL-&gt;null);
+           # Perl scalars because is across forked processes in MCE
+           map $_-&gt;sclr, $n, $h;
+         }
+
+       See &lt;https://www.perlmonks.org/?node_id=11115392&gt; for context.
+
+   <b>Code</b> <b>that</b> <b>uses</b> <b>external</b> <b>libraries,</b> <b>etc</b>
+       The script below is somewhat more complicated in that it uses code from an external library (here from
+       Numerical Recipes). All the relevant information regarding include files, libraries and boot code is
+       specified in a config call to "Inline". For more experienced Perl hackers it might be helpful to know
+       that the format is similar to that used with ExtUtils::MakeMaker. The keywords are largely equivalent to
+       those used with "Inline::C". Please see below for further details on the usage of "INC", "LIBS",
+       "AUTO_INCLUDE" and "BOOT".
+
+          use PDL; # this must be called before (!) 'use Inline Pdlpp' calls
+
+          use Inline Pdlpp =&gt; Config =&gt;
+            INC =&gt; "-I$ENV{HOME}/include",
+            LIBS =&gt; "-L$ENV{HOME}<a href="file:/lib">/lib</a> -lnr -lm",
+            # code to be included in the generated XS
+            AUTO_INCLUDE =&gt; &lt;&lt;'EOINC',
+          #include &lt;<a href="file:/usr/include/math.h">math.h</a>&gt;
+          #include "nr.h"    /* for poidev */
+          #include "nrutil.h"  /* for err_handler */
+
+          static void nr_barf(char *err_txt)
+          {
+            fprintf(stderr,"Now calling croak...\n");
+            croak("NR runtime error: %s",err_txt);
+          }
+          EOINC
+          # install our error handler when loading the Inline::Pdlpp code
+          BOOT =&gt; 'set_nr_err_handler(nr_barf);';
+
+          use Inline Pdlpp; # the actual code is in the __Pdlpp__ block below
+
+          $x = <a href="../man10/zeroes.10.html">zeroes</a>(10) + 30;;
+          print $x-&gt;<a href="../man5/poidev.5.html">poidev</a>(5),"\n";
+
+          __DATA__
+
+          __Pdlpp__
+
+          pp_def('poidev',
+                  Pars =&gt; 'xm(); [o] pd()',
+                  GenericTypes =&gt; [L,F,D],
+                  OtherPars =&gt; 'long idum',
+                  Code =&gt; '$pd() = poidev((float) $xm(), &amp;$COMP(idum));',
+          );
+
+</pre><h4><b>MAKING</b> <b>AN</b> <b>INSTALLABLE</b> <b>MODULE</b></h4><pre>
+       It is possible, using Inline::Module, to create an installable <u>.pm</u> file with inline PDL code.
+       PDLA::IO::HDF is a working example. Here's how. You make a Perl module as usual, with a package
+       declaration in the normal way. Then (assume your package is "PDLA::IO::HDF::SD"):
+
+         package PDLA::IO::HDF::SD;
+         # ...
+         use FindBin;
+         use Alien::HDF4::Install::Files;
+         use PDLA::IO::HDF::SD::Inline Pdlapp =&gt; 'DATA',
+           package =&gt; __PACKAGE__, # if you have any pp_addxs - else don't bother
+           %{ Alien::HDF4::Install::Files-&gt;Inline('C') }, # EUD returns empty if !"C"
+           typemaps =&gt; "$FindBin::Bin/lib/PDLA/IO/HDF/typemap.hdf",
+           ;
+         # ...
+         1;
+         __DATA__
+         __Pdlapp__
+         pp_addhdr(&lt;&lt;'EOH');
+         /* ... */
+         EOH
+         use FindBin;
+         use lib "$FindBin::Bin/..<a href="file:/../../../../../..">/../../../../../..</a>";
+         require 'buildfunc.noinst';
+         # etc
+
+       Note that for any files that you need to access for build purposes (they won't be touched during post-
+       install runtime), FindBin is useful, albeit slightly complicated.
+
+       In the main <u>.pm</u> body, FindBin will find the build directory, as illustrated above. However, in the
+       "inline" parts, "FindBin" will be within the Inline::Module build directory. At the time of writing, this
+       is under <u>.inline</u> within the build directory, in a subdirectory named after the package. The example shown
+       above has seven <u>..</u>: two for <u>.inline/build</u>, and five more for <u>PDLA/IO/HDF/SD/Inline</u>.
+
+       The rest of the requirements are given in the Inline::Module documentation.
+
+       This technique avoids having to use PDL::Core::Dev, create a <u>Makefile.PL</u>, have one directory per <u>.pd</u>,
+       etc. It will even build / install faster, since unlike a build of an ExtUtils::MakeMaker distribution
+       with multiple directories, it can be built in parallel. This is because the EUMM build changes into each
+       directory, and waits for each one to complete. This technique can run concurrently without problems.
+
+</pre><h4><b>PDLPP</b> <b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+       For information on how to specify Inline configuration options, see Inline. This section describes each
+       of the configuration options available for Pdlpp. Most of the options correspond either to MakeMaker or
+       XS options of the same name. See ExtUtils::MakeMaker and perlxs.
+
+   <b>AUTO_INCLUDE</b>
+       Specifies extra statements to automatically included. They will be added onto the defaults. A newline
+       char will be automatically added.  Does essentially the same as a call to "pp_addhdr". For short bits of
+       code "AUTO_INCLUDE" is probably syntactically nicer.
+
+           use Inline Pdlpp =&gt; Config =&gt; AUTO_INCLUDE =&gt; '#include "yourheader.h"';
+
+   <b>BLESS</b>
+       Same as "pp_bless" command. Specifies the package (i.e. class) to which your new <u>pp_def</u>ed methods will be
+       added. Defaults to "PDL" if omitted.
+
+           use Inline Pdlpp =&gt; Config =&gt; BLESS =&gt; 'PDL::MyPackage';
+
+       cf "PACKAGE", equivalent for "pp_addxs" in PDL::PP.
+
+   <b>BOOT</b>
+       Specifies C code to be executed in the XS BOOT section. Corresponds to the XS parameter. Does the same as
+       the "pp_add_boot" command. Often used to execute code only once at load time of the module, e.g. a
+       library initialization call.
+
+   <b>CC</b>
+       Specify which compiler to use.
+
+   <b>CCFLAGS</b>
+       Specify extra compiler flags.
+
+   <b>INC</b>
+       Specifies an include path to use. Corresponds to the MakeMaker parameter.
+
+           use Inline Pdlpp =&gt; Config =&gt; INC =&gt; '-I/inc/path';
+
+   <b>LD</b>
+       Specify which linker to use.
+
+   <b>LDDLFLAGS</b>
+       Specify which linker flags to use.
+
+       NOTE: These flags will completely override the existing flags, instead of just adding to them. So if you
+       need to use those too, you must respecify them here.
+
+   <b>LIBS</b>
+       Specifies external libraries that should be linked into your code. Corresponds to the MakeMaker
+       parameter.
+
+           use Inline Pdlpp =&gt; Config =&gt; LIBS =&gt; '-lyourlib';
+
+       or
+
+           use Inline Pdlpp =&gt; Config =&gt; LIBS =&gt; '-L/your/path -lyourlib';
+
+   <b>MAKE</b>
+       Specify the name of the 'make' utility to use.
+
+   <b>MYEXTLIB</b>
+       Specifies a user compiled object that should be linked in. Corresponds to the MakeMaker parameter.
+
+           use Inline Pdlpp =&gt; Config =&gt; MYEXTLIB =&gt; '/your/path/yourmodule.so';
+
+   <b>OPTIMIZE</b>
+       This controls the MakeMaker OPTIMIZE setting. By setting this value to '-g', you can turn on debugging
+       support for your Inline extensions. This will allow you to be able to set breakpoints in your C code
+       using a debugger like gdb.
+
+   <b>PACKAGE</b>
+       Controls into which package the created XSUBs from "pp_addxs" in PDL::PP go. E.g.:
+
+           use Inline Pdlpp =&gt; 'DATA', =&gt; PACKAGE =&gt; 'Other::Place';
+
+       will put the created routines into "Other::Place", not the calling package (which is the default). Note
+       this differs from "BLESS", which is where "pp_def" in PDL::PPs go.
+
+   <b>TYPEMAPS</b>
+       Specifies extra typemap files to use. Corresponds to the MakeMaker parameter.
+
+           use Inline Pdlpp =&gt; Config =&gt; TYPEMAPS =&gt; '/your/path/typemap';
+
+   <b>NOISY</b>
+       Show the output of any compilations going on behind the scenes. Turns on "BUILD_NOISY" in Inline::C.
+
+</pre><h4><b>BUGS</b></h4><pre>
+   <b>"do"ing</b> <b>inline</b> <b>scripts</b>
+       Beware that there is a problem when you use the __DATA__ keyword style of Inline definition and want to
+       "do" your script containing inlined code. For example
+
+          # myscript.pl contains inlined code
+          # in the __DATA__ section
+          perl -e 'do "myscript.pl";'
+        One or more DATA sections were not processed by Inline.
+
+       According to Brian Ingerson (of Inline fame) the workaround is to include an "Inline-&gt;init" call in your
+       script, e.g.
+
+         use PDL;
+         use Inline Pdlpp;
+         Inline-&gt;init;
+
+         # perl code
+
+         __DATA__
+         __Pdlpp__
+
+         # pp code
+
+   <b>"PDL::NiceSlice"</b> <b>and</b> <b>"Inline::Pdlpp"</b>
+       There is currently an undesired interaction between PDL::NiceSlice and "Inline::Pdlpp".  Since PP code
+       generally contains expressions of the type $var() (to access ndarrays, etc) PDL::NiceSlice recognizes
+       those incorrectly as slice expressions and does its substitutions. For the moment (until hopefully the
+       parser can deal with that) it is best to explicitly switch PDL::NiceSlice off before the section of
+       inlined Pdlpp code. For example:
+
+         use PDL::NiceSlice;
+         use Inline::Pdlpp;
+
+         $x = sequence 10;
+         $x(0:3)++;
+         $x-&gt;inc;
+
+         no PDL::NiceSlice;
+
+         __DATA__
+
+         __C__
+
+         ppdef (...); # your full pp definition here
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Brian Ingerson for creating the Inline infrastructure.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Christian Soeller &lt;<a href="mailto:soellermail@excite.com">soellermail@excite.com</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       PDL
+       PDL::PP
+       Inline
+       Inline::C
+       Inline::Module
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2001. Christian Soeller. All rights reserved.
+
+       This  program  is  free  software;  you  can redistribute it and/or modify it under the same terms as PDL
+       itself.
+
+       See <a href="http://pdl.perl.org">http://pdl.perl.org</a>
+
+perl v5.40.1                                       2025-03-27                                 <u>Inline::<a href="../man3pm/Pdlpp.3pm.html">Pdlpp</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

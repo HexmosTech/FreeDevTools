@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Test::MemoryGrowth" - assert that code does not cause growth in memory usage</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-memorygrowth-perl">libtest-memorygrowth-perl_0.05-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Test::MemoryGrowth" - assert that code does not cause growth in memory usage
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Test::More;
+          use Test::MemoryGrowth;
+
+          use Some::Class;
+
+          no_growth {
+             my $obj = Some::Class-&gt;new;
+          } 'Constructing Some::Class does not grow memory';
+
+          my $obj = Some::Class-&gt;new;
+          no_growth {
+             $obj-&gt;do_thing;
+          } 'Some::Class-&gt;do_thing does not grow memory';
+
+          #### This test will fail ####
+          my @list;
+          no_growth {
+             push @list, "Hello world";
+          } 'pushing to an array does not grow memory';
+
+          done_testing;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a function to check that a given block of code does not result in the process
+       consuming extra memory once it has finished. Despite the name of this module it does not, in the
+       strictest sense of the word, test for a memory leak: that term is specifically applied to cases where
+       memory has been allocated but all record of it has been lost, so it cannot possibly be reclaimed. While
+       the method employed by this module can detect such bugs, it can also detect cases where memory is still
+       referenced and reachable, but the usage has grown more than would be expected or necessary.
+
+       The block of code will be run a large number of times (by default 10,000), and the difference in memory
+       usage by the process before and after is compared. If the memory usage has now increased by more than one
+       byte per call, then the test fails.
+
+       In order to give the code a chance to load initial resources it needs, it will be run a few times first
+       (by default 10); giving it a chance to load files, AUTOLOADs, caches, or any other information that it
+       requires. Any extra memory usage here will not count against it.
+
+       This simple method is not a guaranteed indicator of the absence of memory resource bugs from a piece of
+       code; it has the possibility to fail in both a false-negative and a false-positive way.
+
+       False Negative
+           It  is  possible  that  a  piece of code causes memory usage growth that this module does not detect.
+           Because it only detects memory growth of at least one byte per call, it cannot detect cases of linear
+           memory growth at lower rates than this. Most memory usage growth  comes  either  from  Perl-level  or
+           C-level  bugs  where  memory  objects  are created at every call and not reclaimed again.  (These are
+           either genuine memory leaks, or needless allocations of objects that are stored somewhere  and  never
+           reclaimed). It is unlikely such a bug would result in a growth rate smaller than one byte per call.
+
+           A  second  failure  case  comes  from the fact that memory usage is taken from the Operating System's
+           measure of the process's Virtual Memory size, so as to be able to detect memory  usage  growth  in  C
+           libraries  or  XS-level  wrapping code, as well as Perl functions. Because Perl does not aggressively
+           return unused memory to the Operating System, it is possible that a  piece  of  code  could  use  un-
+           allocated  but un-reclaimed memory to grow into; resulting in an increase in its requirements despite
+           not requesting extra memory from the Operating System.
+
+       False Positive
+           It is possible that the test will claim that a function grows in memory, when  the  behaviour  is  in
+           fact  perfectly  normal for the code in question. For example, the code could simply be some function
+           whose behaviour is required to store extra state; for example, adding a new item into a list. In this
+           case it is in fact expected that the memory usage of the process will increase.
+
+       By careful use of this test module, false indications can be minimised. By splitting  tests  across  many
+       test  scripts, each one can be started in a new process state, where most of the memory assigned from the
+       Operating System is in use by Perl, so anything extra that the code requires will have to  request  more.
+       This should reduce the false negative indications.
+
+       By  keeping  in mind that the module simply measures the change in allocated memory size, false positives
+       can be minimised, by not attempting to assert that certain pieces of code do not grow in memory, when  in
+       fact it would be expected that they do.
+
+   <b>Devel::Gladiator</b> <b>Integration</b>
+       <u>Since</u> <u>version</u> <u>0.04.</u>
+
+       If  Devel::Gladiator is installed, this test module will use it as a second potential source of detecting
+       memory growth. A walk of the Perl memory heap is taken before running the code, in  order  to  count  the
+       number  of  every  kind  of object present. This is then compared to a second count taken afterwards. Any
+       object types that have increased by at least one per call are reported.
+
+       For example, the output might contain the following extra lines of diagnostic output:
+
+          # Growths in arena object counts:
+          #   ARRAY 1735 -&gt; 11735 (1.00 per call)
+          #   HASH 459 -&gt; 10459 (1.00 per call)
+          #   REF 1387 -&gt; 21387 (2.00 per call)
+          #   REF-ARRAY 163 -&gt; 10163 (1.00 per call)
+          #   REF-HASH 66 -&gt; 10066 (1.00 per call)
+          #   WithContainerSlots 10 -&gt; 10010 (1.00 per call)
+
+   <b>Devel::MAT</b> <b>Integration</b>
+       If Devel::MAT is installed, this test module will use it to dump the state of the memory after a failure.
+       It will create a <u>.pmat</u> file named the same as the unit test, but with the  trailing  <u>.t</u>  suffix  replaced
+       with  <u>-TEST.pmat</u> where "TEST" is the number of the test that failed (in case there was more than one). It
+       will then run the code under test one more time, before writing another file whose name is suffixed  with
+       <u>-TEST-after.pmat</u>.  This pair of files may be useful for differential analysis.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>no_growth</b>
+          no_growth { CODE } %opts, $name;
+
+       Assert that the code block does not consume extra memory.
+
+       Takes the following named arguments:
+
+       calls =&gt; INT
+               The number of times to call the code during growth testing.
+
+       burn_in =&gt; INT
+               The number of times to call the code initially, before watching for memory usage.
+
+</pre><h4><b>TODO</b></h4><pre>
+       •       More OS portability
+
+               Currently,  this  module uses OS-specific methods of determining process memory usage (namely, by
+               inspecting <u><a href="file:/proc/self/status">/proc/self/status</a></u> on Linux or calling <u>procstat</u>  on  FreeBSD).  It  would  be  nice  to
+               support more OSes, and potentially find a better abstraction for doing so.
+
+               Currently  I  am unaware of a simple portable mechanism to query this. Patches very much welcome.
+               :)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2024-09-21                            <u>Test::<a href="../man3pm/MemoryGrowth.3pm.html">MemoryGrowth</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

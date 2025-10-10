@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sub::Recursive - Anonymous memory leak free recursive subroutines</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsub-recursive-perl">libsub-recursive-perl_0.05-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Sub::Recursive - Anonymous memory leak free recursive subroutines
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Sub::Recursive;
+
+           # LEAK FREE recursive subroutine.
+           my $fac = recursive {
+               my ($n) = @_;
+               return 1 if $n &lt; 1;
+               return $n * $REC-&gt;($n - 1);
+           };
+
+           # Recursive anonymous definition in one line, plus invocation.
+           print recursive { $_[0] &lt;= 1 ? 1 : $_[0] * $REC-&gt;($_[0] - 1) } -&gt; (5);
+
+           # Experimental interface
+           use Sub::Recursive qw/ mutually_recursive %REC /;
+
+           my ($odd, $even) = mutually_recursive(
+               odd  =&gt; sub { $_[0] == 0 ? 0 : $REC{even}-&gt;($_[0] - 1) },
+               even =&gt; sub { $_[0] == 0 ? 1 : $REC{odd }-&gt;($_[0] - 1) },
+           );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Recursive closures suffer from a severe memory leak. "Sub::Recursive" makes the problem go away cleanly
+       and at the same time allows you to write recursive subroutines as expressions and can make them truly
+       anonymous. There's no significant speed difference between using "recursive" and writing the simpler
+       leaking solution.
+
+   <b>The</b> <b>problem</b>
+       The following won't work:
+
+           my $fac = sub {
+               my ($n) = @_;
+               return 1 if $n &lt; 1;
+               return $n * $fac-&gt;($n - 1);
+           };
+
+       because of the recursive use of $fac which isn't available until after the statement. The common fix is
+       to do
+
+           my $fac;
+           $fac = sub {
+               my ($n) = @_;
+               return 1 if $n &lt; 1;
+               return $n * $fac-&gt;($n - 1);
+           };
+
+       Unfortunately, this introduces another problem.
+
+       Because of perl's reference count system, the code above is a memory leak. $fac references the anonymous
+       sub which references $fac, thus creating a circular reference. This module does not suffer from that
+       memory leak.
+
+       There are two more reasons why I don't like to write recursive closures like that: (a) you have to first
+       declare it, then assign it thus requiring more than a simple expression (b) you have to name it one way
+       or another.
+
+   <b>The</b> <b>solution</b>
+       This module fixes all those issues. Just change "sub" for "recursive" and use "$REC-&gt;(...)" for the
+       recursive call:
+
+           use Sub::Recursive;
+
+           my $fac = recursive {
+               my ($n) = @_;
+               return 1 if $n &lt; 1;
+               return $n * $REC-&gt;($n - 1);
+           };
+
+       It also makes it easy to pass it directly to a subroutine,
+
+           foo(recursive { ... });
+
+       just as any other anonymous subroutine.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       If no arguments are given to the "use" statement $REC and "recursive" are exported. If any arguments are
+       given only those given are exported. ":ALL" exports everything exportable.
+
+   <b>$REC</b> <b>-</b> <b>exported</b> <b>by</b> <b>default</b>
+       $REC holds a reference to the current subroutine inside subroutines created with "recursive". Don't ever
+       touch $REC inside or outside the subroutine except for the recursive call.
+
+   <b>"recursive"</b> <b>-</b> <b>exported</b> <b>by</b> <b>default</b>
+       "recursive" takes one argument and that's an anonymous sub defined in the same package as the call to
+       "recursive" is in. It's prototyped with "&amp;" so bare-block calling style is encouraged.
+
+           recursive { ... }
+
+       The return value is an anonymous closure that has "$REC-&gt;(...)" working in it.
+
+   <b>%REC</b>
+       This is an experimental part of the API.
+
+       %REC holds the subroutine references given to &amp;mutually_recursive, with the same keys.
+
+       Don't ever touch %REC inside or outside the subroutines except for the recursive calls.
+
+   <b>"mutually_recursive"</b>
+       This is an experimental part of the API.
+
+       "mutually_recursive" works like "recursive" except it takes a list of key/value pairs where the key names
+       are the names used for the keys in %REC and the values are the subroutine references. The return values
+       in list context are the subroutine references, ordered as given to "mutually_recursive".
+
+           my ($odd, $even) = mutually_recursive(
+               odd  =&gt; sub { $_[0] == 0 ? 0 : $REC{even}-&gt;($_[0] - 1) },
+               even =&gt; sub { $_[0] == 0 ? 1 : $REC{odd }-&gt;($_[0] - 1) },
+           );
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If you follow the rest of the manual you don't have to read this section. I include this section anyway
+       to make debugging simpler.
+
+       $REC is a package global and as such there are some gotchas. You won't encounter any of these bugs below
+       if you just use
+
+           recursive { ... }
+
+       and don't mention $REC outside of such an expression. In short: it's quite unlikely you'll get bitten by
+       any of these bugs.
+
+       "my" and "our"
+           Don't  declare  $REC  with  "my". That'll make $REC mean your lexical variable rather than the global
+           that "Sub::Recursive" uses.
+
+           Don't declare $REC with "our". In particular, problem arise the "our" scopes over  several  packages.
+           If you do
+
+               package Foo;
+               use Sub::Recursive;
+               our $REC;
+
+               # Below, in the same file:
+
+               package Bar;
+
+               my $fatal = recursive { $REC-&gt;() };
+
+           $REC  in  $fatal will be using the value of $Foo::REC but "Sub::Recursive" has no way of knowing that
+           and will think you use $Bar::REC.
+
+           If you for some reason need to have $REC declared you can as a last  resort  get  around  both  these
+           issues by fully qualifying $REC to the package in which the subroutine is created.
+
+               package Foo;
+               use Sub::Recursive;
+               my $REC;                                 # Bad.
+               my $fatal = recursive { $Foo::REC-&gt;() }; # Still works.
+
+       Subroutine reference defined in another package
+           This is a really far out edge case.
+
+           If  the  subroutine  reference  given  to  "recursive" is defined in another package than the call to
+           "recursive" in it then it won't work.
+
+               package Foo;
+               my $foo = sub { $REC-&gt;() };
+
+               package Bar;
+               use Sub::Recursive;
+               my $bar = &amp;recursive($foo); # Won't work.
+
+           The subroutine referenced by $foo is using $Foo::REC but "recursive"  thinks  it's  using  $Bar::REC.
+           Note that you have to circumvent prototyping in order to encounter this bug.
+
+           Why you'd want to do this escapes me. Please contact me if you find a reason for doing this.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Some  algorithms are perhaps best written recursively. For simplicity, let's say I have a tree consisting
+       of arrays of array with arbitrary depth. I want to map over this data structure, translating every  value
+       to another. For this I might use
+
+           my $translator = recursive {
+               [ map { ref() ? $REC-&gt;($_) : $translate{$_} } @{$_[0]} ]
+           };
+
+           my $bar = $translator-&gt;($foo);
+
+       Now,  a  tree mapper isn't perhaps the best example as it's a pretty general problem to solve, and should
+       perhaps be abstracted but it still serves as an example of how this module can be handy.
+
+       A similar but more specialized task would be to find all men who share their Y chromosome.
+
+           # A person data structure looks like this.
+           my $person = {
+               name =&gt; ...,
+               sons =&gt; [ ... ],        # objects like $person
+               daughters =&gt; [ ... ],   # objects like $person
+           };
+
+           my @names = recursive {
+               my ($person) = @_;
+
+               return
+                   $person-&gt;{name},
+                   map $REC-&gt;($_), @{$person-&gt;{sons}}
+           } -&gt; ($forefather);
+
+       This particular example isn't a closure as it doesn't reference any lexicals  outside  itself  (and  thus
+       could've  been  written  as  a  named subroutine). It's easy enough to think of a case when it would be a
+       closure though. For instance if some branches should be excluded. A simple flag would solve that.
+
+           my %exclude = ...;
+
+           my @names = recursive {
+               my ($person) = @_;
+
+               return if $exclude{$person};
+
+               return
+                   $person-&gt;{name},
+                   map $REC-&gt;($_), @{$person-&gt;{sons}}
+           } -&gt; ($forefather);
+
+       Hopefully this illustrates how this module allows you to write recursive algorithms inline like any other
+       algorithm.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Johan Lodin &lt;<a href="mailto:lodin@cpan.org">lodin@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2004-2015 Johan Lodin. All rights reserved.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       perlref
+
+perl v5.34.0                                       2022-06-17                                <u>Sub::<a href="../man3pm/Recursive.3pm.html">Recursive</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

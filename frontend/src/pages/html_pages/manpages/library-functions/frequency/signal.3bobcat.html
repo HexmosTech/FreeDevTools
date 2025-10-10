@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBB::Signal - Signal Handler</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbobcat-dev">libbobcat-dev_6.07.01-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FBB::Signal - Signal Handler
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;bobcat/signal&gt;</b>
+       Linking option: <u>-lbobcat</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Signals  have  the well known drawback that signals arrive free of context. E.g., assume a program runs a
+       flow control loop like this:
+
+       void Class::run()
+       {
+           while (d_continue)
+               handleTasks();
+           cleanup();
+       }
+
+       then if the program needs to recognize  a termination signal then the typical signal handler  looks  like
+       this:
+
+       void signalHandler(int signal)
+       {
+           // perform required actions
+       }
+
+       Since  the  <u>signalHandler</u>  is called asynchronically, there is no context available, and the usual way of
+       communicating between objects and signal handlers is via static variables, like this:
+
+       // declared as static bool s_continue;
+       bool Class::s_continue = true;
+
+       void Class::run()
+       {
+           while (s_continue)
+               handleTasks();
+           cleanup();
+       }
+
+       // declared as static void signalHander(int signal);
+       void Class::signalHandler(int signal)
+       {
+           s_continue = false;
+       }
+
+       The class <u>Signal</u> allows the signal handler to operate in the context of a class. The advantage of this is
+       that static data members are no longer required and that the signal may be used to control  data  members
+       of individual objects.
+
+       The signal is now handled by an object, whose class must define a member
+
+           void signalHandler(size_t signum) override;
+
+       and  this  function is responsible for handling the received signal. Since it is a member function it may
+       affect its object’s local variables and it may call its object’s member functions.  Static  data  members
+       are not required anymore (see below for an example).
+
+       Note  that,  as  the  signal  may  arrive  at  unpredicable  times  data  members that can be modified by
+       <u>signalHandler</u> should be declared using the <u>volatile</u> modifier. Moreover, data that can be modified by  the
+       <u>signalHandler</u>  member  and  by  other  class members should be protected by <u>mutexes</u> (cf. the <b>C++-11</b> class
+       <u>std::mutex</u> or <b><a href="../man3posix/pthread_mutex_lock.3posix.html">pthread_mutex_lock</a></b>(3posix)).
+
+</pre><h4><b>NAMESPACE</b></h4><pre>
+       <b>FBB</b>
+       All constructors, members, operators and manipulators, mentioned in this man-page,  are  defined  in  the
+       namespace <b>FBB</b>.
+
+</pre><h4><b>INHERITS</b> <b>FROM</b></h4><pre>
+       <u>Signal</u>  is  not  derived  from other classes, but the classes for which signals must be handled by <u>Signal</u>
+       must themselves publicly be derived from the class <u>FBB::SignalHandler</u> and must implement a member
+
+           void signalHandler(size_t signum) override;
+
+       handling the received signal.
+
+</pre><h4><b>CONSTRUCTORS</b> <b>AND</b> <b>OVERLOADED</b> <b>OPERATORS</b></h4><pre>
+       <u>Signal</u> is defined as a <u>singleton</u>, and does not offer public or protected constructors, nor does it  offer
+       overloaded operators.
+
+</pre><h4><b>STATIC</b> <b>MEMBER</b> <b>FUNCTION</b></h4><pre>
+       o      <b>static</b> <b>Signal</b> <b>&amp;instance()</b>:
+              This static member can be used to access a reference to the program’s single <u>Signal</u> object.
+
+</pre><h4><b>MEMBER</b> <b>FUNCTIONS</b></h4><pre>
+       All  of  <u>Signal</u>’s member functions can only be called through a reference to the program’s <u>Signal</u> object,
+       returning a reference to the program’s single <u>Signal</u> object:
+
+       o      <b>void</b> <b>add(size_t</b> <b>signum,</b> <b>SignalHandler</b> <b>&amp;object)</b>:
+              <u>SignalHandler</u> <u>object</u> is activated on arrival of signal <u>signum</u>. If multiple  <u>SignalHandler</u>  objects
+              must   be   called   then   multiple   <u>Signal::add</u>   calls   can  be  provided,  and  the  various
+              <u>SignalHandler::signalHandler</u>  members  are  called  in  the  same  sequence  as  their  respective
+              <u>Signal::add</u>  calls.  If one of the earlier <u>signalHandler</u> members terminates the program then later
+              <u>signalHandler</u> members are not activated anymore. If <u>Signal::add</u> is called by,  e.g.,  an  object’s
+              constructor, then its destructor should call <u>Signal::remove</u> to prevent the object’s signal handler
+              from being called after its destruction.
+
+       o      <b>void</b> <b>remove(size_t</b> <b>signum,</b> <b>SignalHandler</b> <b>&amp;object)</b>:
+              <u>SignalHandler</u> <u>object</u> for signal <u>signum</u> is removed from the <u>Signal</u> object. It is the responsibility
+              of  <u>object</u> to deregister itself from <u>Signal</u> just before <u>object</u> goes out of scope. Objects can only
+              deregister themselves if they’ve previously registered themselves using <u>add</u>.
+
+       o      <b>void</b> <b>ignore(size_t</b> <b>signum)</b>:
+              Any previously installed <u>SignalHandler</u> object is no longer activated on arrival of signal  <u>signum</u>.
+              In  addition,  if  possible,  signal  <u>signum</u> is completely ignored (some signals cannot be caught,
+              blocked, of ignored, like <u>SIGKILL</u> and <u>SIGSTOP</u> (cf. <b><a href="../man7/signal.7.html">signal</a></b>(7))).
+
+       o      <b>void</b> <b>reset(size_t</b> <b>signum)</b>:
+              Any previously installed <u>SignalHandler</u> object is no longer activated on arrival of signal  <u>signum</u>.
+              In  addition, the default action the program takes on arrival of signal <u>signum</u> is reinstalled (cf.
+              <b><a href="../man7/signal.7.html">signal</a></b>(7)).
+
+       If the <u>signum</u> value that is  passed  to  <u>Signal</u>’s  members  is  not  a  defined  signal  value,  then  an
+       <b>FBB::Exception</b> exception is thrown.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       #include &lt;sys/types.h&gt;
+       #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+
+       #include &lt;iostream&gt;
+
+       #include &lt;bobcat/signal&gt;
+
+       class SignalDemo: public FBB::SignalHandler
+       {
+           volatile size_t d_signal;
+           volatile bool d_continue;
+           pid_t d_pid;
+
+           public:
+               SignalDemo();
+               void run();
+
+           private:
+               void signalHandler(size_t signum) override;
+       };
+
+       using namespace std;
+       using namespace FBB;
+
+       SignalDemo::SignalDemo()
+       :
+           <a href="../man0/d_signal.0.html">d_signal</a>(0),
+           d_continue(true),
+           d_pid(getpid())
+       {}
+
+       void SignalDemo::run()
+       {
+           while (d_continue)
+           {
+               cout &lt;&lt; "Send a SIGINT (2) or SIGTERM (15) ... to process " &lt;&lt;
+                           d_pid &lt;&lt; endl;
+
+               <a href="../man1/sleep.1.html">sleep</a>(1);
+           }
+           cout &lt;&lt; "Ending `run’ after receiving signal " &lt;&lt; d_signal &lt;&lt; endl;
+       }
+
+       void SignalDemo::signalHandler(size_t signal)
+       {
+           if (signal == SIGINT)
+               cout &lt;&lt; "Process " &lt;&lt; d_pid &lt;&lt; " received SIGINT" &lt;&lt; endl;
+           else if (signal == SIGTERM)
+           {
+               cout &lt;&lt; "Process " &lt;&lt; d_pid &lt;&lt; " received SIGTERM" &lt;&lt; endl;
+               d_signal = SIGTERM;
+               d_continue = false;
+           }
+       }
+
+       int main()
+       {
+           SignalDemo signalDemo;
+
+           Signal::instance().add(SIGINT, signalDemo);
+           Signal::instance().add(SIGTERM, signalDemo);
+
+           signalDemo.run();
+       }
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>bobcat/signal</u> - defines the class interface
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/bobcat.7.html">bobcat</a></b>(7), <b><a href="../man3posix/pthread_mutex_lock.3posix.html">pthread_mutex_lock</a></b>(3posix), <b><a href="../man7/signal.7.html">signal</a></b>(7),
+       and the <b>C++-11</b> class <u>std::mutex</u>.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None Reported.
+
+</pre><h4><b>BOBCAT</b> <b>PROJECT</b> <b>FILES</b></h4><pre>
+       o      <u>https://fbb-git.gitlab.io/bobcat/</u>: gitlab project page;
+
+       Debian Bobcat project files:
+
+       o      <u>libbobcat6</u>: debian package containing the shared library, changelog and copyright note;
+
+       o      <u>libbobcat-dev</u>:  debian package containing the static library, headers, manual pages, and developer
+              info;
+
+</pre><h4><b>BOBCAT</b></h4><pre>
+       Bobcat is an acronym of `Brokken’s Own Base Classes And Templates’.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This is free software, distributed under the terms of the GNU General Public License (GPL).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Frank B. Brokken (<b><a href="mailto:f.b.brokken@rug.nl">f.b.brokken@rug.nl</a></b>).
+
+libbobcat-dev_6.07.01                               2005-2025                               <u>FBB::<a href="../man3bobcat/Signal.3bobcat.html">Signal</a></u>(3bobcat)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

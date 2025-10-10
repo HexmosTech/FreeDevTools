@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_aio_connect_unix - connect to the NBD server over a Unix domain socket</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_aio_connect_unix - connect to the NBD server over a Unix domain socket
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        int nbd_aio_connect_unix (
+              struct nbd_handle *h, const char *unixsocket
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Begin connecting to the NBD server over Unix domain socket ("unixsocket").  Parameters behave as
+       documented in <b><a href="../man3/nbd_connect_unix.3.html">nbd_connect_unix</a></b>(3).
+
+       You can check if the connection attempt is still underway by calling <b><a href="../man3/nbd_aio_is_connecting.3.html">nbd_aio_is_connecting</a></b>(3).  If
+       <b><a href="../man3/nbd_set_opt_mode.3.html">nbd_set_opt_mode</a></b>(3) is enabled, the connection is ready for manual option negotiation once
+       <b><a href="../man3/nbd_aio_is_negotiating.3.html">nbd_aio_is_negotiating</a></b>(3) returns true; otherwise, the connection attempt will include the NBD handshake,
+       and is ready for use once <b><a href="../man3/nbd_aio_is_ready.3.html">nbd_aio_is_ready</a></b>(3) returns true.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       If the call is successful the function returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h", "unixsocket".  For more information see "Non-NULL
+       parameters" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_aio_connect_unix can be called when the handle is in the following state:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ✅ allowed              │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ❌ error                │
+        │ Connected to the server             │ ❌ error                │
+        │ Connection shut down                │ ❌ error                │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If you need to test if this function is available at compile time check if the following macro is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_AIO_CONNECT_UNIX 1
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       This example is also available as <u>examples/aio-connect-read.c</u> in the libnbd source code.
+
+        /* This example shows how to use the AIO (asynchronous) low
+         * level API to connect to a server and read the disk.
+         *
+         * Here are a few ways to try this example:
+         *
+         * nbdkit -U - linuxdisk . \
+         *   --run './aio-connect-read $unixsocket'
+         *
+         * nbdkit -U - floppy . \
+         *   --run './aio-connect-read $unixsocket'
+         *
+         * nbdkit -U - pattern size=1M \
+         *   --run './aio-connect-read $unixsocket'
+         */
+
+        #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdint.h">stdint.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/inttypes.h">inttypes.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/errno.h">errno.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/assert.h">assert.h</a>&gt;
+
+        #include &lt;libnbd.h&gt;
+
+        #define NR_SECTORS 32
+        #define SECTOR_SIZE 512
+
+        struct data {
+          uint64_t offset;
+          char sector[SECTOR_SIZE];
+        };
+
+        static int
+        hexdump (void *user_data, int *error)
+        {
+          struct data *data = user_data;
+          FILE *pp;
+
+          if (*error) {
+            errno = *error;
+            perror ("failed to read");
+            exit (EXIT_FAILURE);
+          }
+
+          printf ("sector at offset 0x%" PRIx64 ":\n",
+                  data-&gt;offset);
+          pp = popen ("hexdump -C", "w");
+          if (pp == NULL) {
+            perror ("popen: hexdump");
+            exit (EXIT_FAILURE);
+          }
+          fwrite (data-&gt;sector, SECTOR_SIZE, 1, pp);
+          pclose (pp);
+          printf ("\n");
+
+          /* Returning 1 from the callback automatically retires
+           * the command.
+           */
+          return 1;
+        }
+
+        static struct data data[NR_SECTORS];
+
+        int
+        main (int argc, char *argv[])
+        {
+          struct nbd_handle *nbd;
+          size_t i;
+
+          if (argc != 2) {
+            fprintf (stderr, "%s socket\n", argv[0]);
+            exit (EXIT_FAILURE);
+          }
+
+          /* Create the libnbd handle. */
+          nbd = nbd_create ();
+          if (nbd == NULL) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Connect to the NBD server over a Unix domain socket.
+           * This only starts the connection.
+           */
+          if (nbd_aio_connect_unix (nbd, argv[1]) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Wait for the connection to complete.  The use of
+           * nbd_poll here is only as an example.  You could also
+           * integrate this with <a href="../man2/poll.2.html">poll</a>(2), glib or another main
+           * loop.  Read <a href="../man3/libnbd.3.html">libnbd</a>(3) and the source file lib/poll.c.
+           */
+          while (!nbd_aio_is_ready (nbd)) {
+            if (nbd_poll (nbd, -1) == -1) {
+              fprintf (stderr, "%s\n", nbd_get_error ());
+              exit (EXIT_FAILURE);
+            }
+          }
+
+          assert (nbd_get_size (nbd) &gt;= NR_SECTORS * SECTOR_SIZE);
+
+          /* Issue read commands for the first NR sectors. */
+          for (i = 0; i &lt; NR_SECTORS; ++i) {
+            data[i].offset = i * SECTOR_SIZE;
+
+            /* The callback (hexdump) is called when the command
+             * completes.  The buffer must continue to exist while
+             * the command is running.
+             */
+            if (nbd_aio_pread (nbd, data[i].sector, SECTOR_SIZE,
+                               data[i].offset,
+                               (nbd_completion_callback) {
+                                 .callback = hexdump,
+                                 .user_data = &amp;data[i],
+                               }, 0) == -1) {
+              fprintf (stderr, "%s\n", nbd_get_error ());
+              exit (EXIT_FAILURE);
+            }
+          }
+
+          /* Run the main loop until all the commands have
+           * completed and retired.  Again the use of nbd_poll
+           * here is only as an example.
+           */
+          while (nbd_aio_in_flight (nbd) &gt; 0) {
+            if (nbd_poll (nbd, -1) == -1) {
+              fprintf (stderr, "%s\n", nbd_get_error ());
+              exit (EXIT_FAILURE);
+            }
+          }
+
+          /* Close the libnbd handle. */
+          nbd_close (nbd);
+
+          exit (EXIT_SUCCESS);
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_aio_is_connecting.3.html">nbd_aio_is_connecting</a></b>(3), <b><a href="../man3/nbd_aio_is_negotiating.3.html">nbd_aio_is_negotiating</a></b>(3), <b><a href="../man3/nbd_aio_is_ready.3.html">nbd_aio_is_ready</a></b>(3), <b><a href="../man3/nbd_connect_unix.3.html">nbd_connect_unix</a></b>(3),
+       <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3), <b><a href="../man3/nbd_set_opt_mode.3.html">nbd_set_opt_mode</a></b>(3), <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                            <u><a href="../man3/nbd_aio_connect_unix.3.html">nbd_aio_connect_unix</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

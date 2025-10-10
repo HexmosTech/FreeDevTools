@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tie::DBI - Tie hashes to DBI relational databases</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtie-dbi-perl">libtie-dbi-perl_1.08-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tie::DBI - Tie hashes to DBI relational databases
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Tie::DBI;
+         tie %h,'Tie::DBI','mysql:test','test','id',{CLOBBER=&gt;1};
+
+         tie %h,'Tie::DBI',{db       =&gt; 'mysql:test',
+                          table    =&gt; 'test',
+                          key      =&gt; 'id',
+                          user     =&gt; 'nobody',
+                          password =&gt; 'ghost',
+                          CLOBBER  =&gt; 1};
+
+         # fetching keys and values
+         @keys = keys %h;
+         @fields = keys %{$h{$keys[0]}};
+         print $h{'id1'}-&gt;{'field1'};
+         while (($key,$value) = each %h) {
+           print "Key = $key:\n";
+           foreach (sort keys %$value) {
+               print "\t$_ =&gt; $value-&gt;{$_}\n";
+           }
+         }
+
+         # changing data
+         $h{'id1'}-&gt;{'field1'} = 'new value';
+         $h{'id1'} = { field1 =&gt; 'newer value',
+                       field2 =&gt; 'even newer value',
+                       field3 =&gt; "so new it's squeaky clean" };
+
+         # other functions
+         tied(%h)-&gt;commit;
+         tied(%h)-&gt;rollback;
+         tied(%h)-&gt;select_where('price &gt; 1.20');
+         @fieldnames = tied(%h)-&gt;fields;
+         $dbh = tied(%h)-&gt;dbh;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module allows you to tie Perl associative arrays (hashes) to SQL databases using the DBI interface.
+       The tied hash is associated with a table in a local or networked database.  One column becomes the hash
+       key.  Each row of the table becomes an associative array, from which individual fields can be set or
+       retrieved.
+
+</pre><h4><b>USING</b> <b>THE</b> <b>MODULE</b></h4><pre>
+       To use this module, you must have the DBI interface and at least one DBD (database driver) installed.
+       Make sure that your database is up and running, and that you can connect to it and execute queries using
+       DBI.
+
+   <b>Creating</b> <b>the</b> <b>tie</b>
+          tie %var,'Tie::DBI',[database,table,keycolumn] [,\%options]
+
+       Tie a variable to a database by providing the variable name, the tie interface (always "Tie::DBI"), the
+       data source name, the table to tie to, and the column to use as the hash key.  You may also pass various
+       flags to the interface in an associative array.
+
+       database
+           The   database   may   either   be   a   valid   DBI-style   data   source   string   of   the   form
+           "dbi:driver:database_name[:other information]", or a database handle that has previously been opened.
+           See the documentation for DBI and your DBD driver for details.  Because the initial "dbi"  is  always
+           present in the data source, Tie::DBI will add it for you if necessary.
+
+           Note that some drivers (Oracle in particular) have an irritating habit of appending blanks to the end
+           of fixed-length fields.  This will screw up Tie::DBI's routines for getting key names.  To avoid this
+           you  should  create  the  database  handle  with  a <b>ChopBlanks</b> option of TRUE.  You should also use a
+           <b>PrintError</b> option of true to avoid complaints during STORE and LISTFIELD calls.
+
+       table
+           The table in the database to bind to.  The table must previously have been created with a SQL  CREATE
+           statement.  This module will not create tables for you or modify the schema of the database.
+
+       key The  column to use as the hash key.  This column must prevoiusly have been defined when the table was
+           created.  In order for this module to work correctly, the key column <u>must</u> be declared unique and  not
+           nullable.   For  best  performance,  the  column  should  be  also  be  declared  a key.  These three
+           requirements are automatically satisfied for primary keys.
+
+       It is possible to omit the database, table and keycolumn arguments, in which case  the  module  tries  to
+       retrieve  the values from the options array.  The options array contains a set of option/value pairs.  If
+       not provided, defaults are assumed.  The options are:
+
+       user
+           Account name to use for database authentication, if  necessary.   Default  is  an  empty  string  (no
+           authentication necessary).
+
+       password
+           Password  to  use  for  database  authentication,  if  necessary.   Default  is  an  empty string (no
+           authentication necessary).
+
+       db  The database to bind to the hash, if not provided in the argument list.  It may be a  DBI-style  data
+           source string, or a previously-opened database handle.
+
+       table
+           The name of the table to bind to the hash, if not provided in the argument list.
+
+       key The name of the column to use as the hash key, if not provided in the argument list.
+
+       CLOBBER (default 0)
+           This  controls whether the database is writable via the bound hash.  A zero value (the default) makes
+           the database essentially read only.  An attempt to store to the hash will result in a fatal error.  A
+           CLOBBER value of 1 will allow you to change individual fields in the  database,  and  to  insert  new
+           records,  but  not  to delete entire records.  A CLOBBER value of 2 allows you to delete records, but
+           not to erase the entire table.  A CLOBBER value of 3 or higher will allow you  to  erase  the  entire
+           table.
+
+               Operation                       Clobber      Comment
+
+               $i = $h{strawberries}-&gt;{price}     0       All read operations
+               $h{strawberries}-&gt;{price} += 5     1       Update fields
+               $h{bananas}={price=&gt;23,quant=&gt;3}   1       Add records
+               delete $h{strawberries}            2       Delete records
+               %h = ()                            3       Clear entire table
+               undef %h                           3       Another clear operation
+
+           All  database  operations  are contingent upon your access privileges.  If your account does not have
+           write permission to the database, hash store operations will fail despite the setting of CLOBBER.
+
+       AUTOCOMMIT (default 1)
+           If set to a true value, the "autocommit" option causes the database  driver  to  commit  after  every
+           store  statement.   If  set  to  a false value, this option will not commit to the database until you
+           explicitly call the Tie::DBI <b>commit()</b> method.
+
+           The autocommit option defaults to true.
+
+       DEBUG (default 0)
+           When the DEBUG option is set to a non-zero value the module will echo the contents of SQL  statements
+           and  other  debugging  information  to standard error.  Higher values of DEBUG result in more verbose
+           (and annoying) output.
+
+       WARN (default 1)
+           If set to a non-zero value, warns of illegal operations, such as attempting to delete  the  value  of
+           the key column.  If set to a zero value, these errors will be ignored silently.
+
+       CASESENSITIV (default 0)
+           If  set to a non-zero value, all Fieldnames are casesensitiv. Keep in mind, that your database has to
+           support casesensitiv Fields if you want to use it.
+
+</pre><h4><b>USING</b> <b>THE</b> <b>TIED</b> <b>ARRAY</b></h4><pre>
+       The tied array represents the database table.  Each entry in the hash is a record, keyed  on  the  column
+       chosen  in  the  <b>tie()</b>  statement.   Ordinarily this will be the table's primary key, although any unique
+       column will do.
+
+       Fetching an individual record returns a reference to a  hash  of  field  names  and  values.   This  hash
+       reference is itself a tied object, so that operations on it directly affect the database.
+
+   <b>Fetching</b> <b>information</b>
+       In the following examples, we will assume a database table structured like this one:
+
+                           -produce-
+           produce_id    price   quantity   description
+
+           strawberries  1.20    8          Fresh Maine strawberries
+           apricots      0.85    2          Ripe Norwegian apricots
+           bananas       1.30    28         Sweet Alaskan bananas
+           kiwis         1.50    9          Juicy New York kiwi fruits
+           eggs          1.00   12          Farm-fresh Atlantic eggs
+
+       We tie the variable %produce to the table in this way:
+
+           tie %produce,'Tie::DBI',{db    =&gt; 'mysql:stock',
+                                  table =&gt; 'produce',
+                                  key   =&gt; 'produce_id',
+                                  CLOBBER =&gt; 2 # allow most updates
+                                  };
+
+       We can get the list of keys this way:
+
+           print join(",",keys %produce);
+              =&gt; strawberries,apricots,bananas,kiwis
+
+       Or get the price of eggs thusly:
+
+           $price = $produce{eggs}-&gt;{price};
+           print "The price of eggs = $price";
+               =&gt; The price of eggs = 1.2
+
+       String interpolation works as you would expect:
+
+           print "The price of eggs is still $produce{eggs}-&gt;{price}"
+               =&gt; The price of eggs is still 1.2
+
+       Various types of syntactic sugar are allowed.  For example, you can refer to $produce{eggs}{price} rather
+       than $produce{eggs}-&gt;{price}.  Array slices are fully supported as well:
+
+           ($apricots,$kiwis) = @produce{apricots,kiwis};
+           print "Kiwis are $kiwis-&gt;{description};
+               =&gt; Kiwis are Juicy New York kiwi fruits
+
+           ($price,$description) = @{$produce{eggs}}{price,description};
+               =&gt; (2.4,'Farm-fresh Atlantic eggs')
+
+       If  you  provide  the tied hash with a comma-delimited set of record names, and you are <b>not</b> requesting an
+       array slice, then the module does something interesting.   It  generates  a  single  SQL  statement  that
+       fetches  the  records from the database in a single pass (rather than the multiple passes required for an
+       array slice) and returns the result as a reference to an array.  For  many  records,  this  can  be  much
+       faster.  For example:
+
+            $result = $produce{apricots,bananas};
+                =&gt; <a href="../man0x828a8ac/ARRAY.0x828a8ac.html">ARRAY</a>(0x828a8ac)
+
+            ($apricots,$bananas) = @$result;
+            print "The price of apricots is $apricots-&gt;{price}";
+                =&gt; The price of apricots is 0.85
+
+       Field names work in much the same way:
+
+            ($price,$quantity) = @{$produce{apricots}{price,quantity}};
+            print "There are $quantity apricots at $price each";
+                =&gt; There are 2 apricots at 0.85 each";
+
+       Note   that  this  takes  advantage  of  a  bit  of  Perl  syntactic  sugar  which  automagically  treats
+       $h{'a','b','c'} as if the keys were packed together with the $; pack character.  Be careful not  to  fall
+       into this trap:
+
+            $result = $h{join( ',', 'apricots', 'bananas' )};
+                =&gt; undefined
+
+       What you really want is this:
+
+            $result = $h{join( $;, 'apricots', 'bananas' )};
+                =&gt; <a href="../man0x828a8ac/ARRAY.0x828a8ac.html">ARRAY</a>(0x828a8ac)
+
+   <b>Updating</b> <b>information</b>
+       If  CLOBBER  is set to a non-zero value (and the underlying database privileges allow it), you can update
+       the database with new values.  You can operate on entire records at once or on individual fields within a
+       record.
+
+       To insert a new record or update an existing one, assign a hash reference to the  record.   For  example,
+       you can create a new record in %produce with the key "avocados" in this manner:
+
+          $produce{avocados} = { price       =&gt; 2.00,
+                                 quantity    =&gt; 8,
+                                 description =&gt; 'Choice Irish avocados' };
+
+       This  will  work  with  any  type  of  hash  reference, including records extracted from another table or
+       database.
+
+       Only keys that correspond to valid fields in the table will be accepted.   You  will  be  warned  if  you
+       attempt  to  set  a  field that doesn't exist, but the other fields will be correctly set.  Likewise, you
+       will be warned if you attempt to set the key field.  These warnings can be turned off by setting the WARN
+       option to a zero value.  It is not currently possible to add new columns to the table.  You must do  this
+       manually with the appropriate SQL commands.
+
+       The same syntax can be used to update an existing record.  The fields given in the hash reference replace
+       those  in the record.  Fields that aren't explicitly listed in the hash retain their previous values.  In
+       the following example, the price and quantity of the "kiwis" record  are  updated,  but  the  description
+       remains the same:
+
+           $produce{kiwis} = { price=&gt;1.25,quantity=&gt;20 };
+
+       You may update existing records on a field-by-field manner in the natural way:
+
+           $produce{eggs}{price} = 1.30;
+           $produce{eggs}{price} *= 2;
+           print "The price of eggs is now $produce{eggs}{price}";
+               =&gt; The price of eggs is now 2.6.
+
+       Obligingly    enough,    you    can    use   this   syntax   to   insert   new   records   too,   as   in
+       $produce{mangoes}{description}="Sun-ripened Idaho mangoes".  However, this type of update is  inefficient
+       because  a separate SQL statement is generated for each field.  If you need to update more than one field
+       at a time, use the record-oriented syntax shown earlier.  It's much more efficient because  it  gets  the
+       work done with a single SQL command.
+
+       Insertions and updates may fail for any of a number of reasons, most commonly:
+
+       1. You do not have sufficient privileges to update the database
+       2. The update would violate an integrity constraint, such as making a non-nullable field null,
+       overflowing a numeric field, storing a string value in a numeric field, or violating a uniqueness
+       constraint.
+
+       The module dies with an error message when it encounters an error during an update.  To trap these erorrs
+       and continue processing, wrap the update an <b>eval()</b>.
+
+   <b>Other</b> <b>functions</b>
+       The tie object supports several useful methods.  In order to call these methods, you must either save the
+       function  result  from  the  <b>tie()</b> call (which returns the object), or call <b>tied()</b> on the tie variable to
+       recover the object.
+
+       <b>connect()</b>, <b>error()</b>, <b>errstr()</b>
+           These are low-level class methods.  <b>Connect()</b> is responsible for establishing the connection with the
+           DBI database.  <b>Errstr()</b> and <b>error()</b> return $DBI::errstr and $DBI::error respectively.   You  may  may
+           override  these  methods in subclasses if you wish.  For example, replace <b>connect()</b> with this code in
+           order to use persistent database connections in Apache modules:
+
+            use Apache::DBI;  # somewhere in the declarations
+            sub connect {
+            my ($class,$dsn,$user,$password,$options) = @_;
+               return Apache::DBI-&gt;connect($dsn,$user,
+                                           $password,$options);
+            }
+
+       <b>commit()</b>
+              (tied %produce)-&gt;commit();
+
+           When using a database with the autocommit option turned off, values that are  stored  into  the  hash
+           will  not  become  permanent  until <b>commit()</b> is called.  Otherwise they are lost when the application
+           terminates or the hash is untied.
+
+           Some SQL databases don't support transactions, in which case you will see a warning  message  if  you
+           attempt to use this function.
+
+       <b>rollback()</b>
+              (tied %produce)-&gt;rollback();
+
+           When  using a database with the autocommit option turned off, this function will roll back changes to
+           the database to the state they were in at the last <b>commit()</b>.  This function has no effect on database
+           that don't support transactions.
+
+       <b>select_where()</b>
+              @keys=(tied %produce)-&gt;select_where('price &gt; 1.00 and quantity &lt; 10');
+
+           This executes a limited form of select statement on the tied table and returns a list of records that
+           satisfy the conditions.  The argument you provide should be the contents of a SQL WHERE clause, minus
+           the keyword "WHERE" and everything that ordinarily precedes it.  Anything that is legal in the  WHERE
+           clause  is  allowed, including function calls, ordering specifications, and sub-selects.  The keys to
+           those records that meet the specified conditions are returned as an array, in the order in which  the
+           select statement returned them.
+
+           Don't  expect too much from this function.  If you want to execute a complex query, you're better off
+           using the database handle (see below) to make the SQL query yourself with the DBI interface.
+
+       <b>dbh()</b>
+              $dbh = (tied %produce)-&gt;dbh();
+
+           This returns the tied hash's underlying database handle.  You can  use  this  handle  to  create  and
+           execute your own SQL queries.
+
+       CLOBBER, DEBUG, WARN
+           You can get and set the values of CLOBBER, DEBUG and WARN by directly accessing the object's hash:
+
+               (tied %produce)-&gt;{DEBUG}++;
+
+           This  lets  you  change  the  behavior of the tied hash on the fly, such as temporarily granting your
+           program write permission.
+
+           There are other variables there too, such as the name of the key column and database  table.   Change
+           them at your own risk!
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       What  is  the  performance  hit when you use this module rather than the direct DBI interface?  It can be
+       significant.  To measure the overhead, I used a simple benchmark in which Perl parsed a  6180  word  text
+       file  into individual words and stored them into a database, incrementing the word count with each store.
+       The benchmark then read out the words and their counts in an <b>each()</b> loop.  The database driver was mySQL,
+       running on a 133 MHz Pentium laptop with Linux 2.0.30.  I compared Tie::RDBM, to DB_File, and to the same
+       task using vanilla DBI SQL statements.  The results are shown below:
+
+                     UPDATE         FETCH
+         Tie::DBI      70 s        6.1  s
+         Vanilla DBI   14 s        2.0  s
+         DB_File        3 s        1.06 s
+
+       There is about a five-fold penalty for updates, and a three-fold penalty  for  fetches  when  using  this
+       interface.   Some  of  the  penalty  is due to the overhead for creating sub-objects to handle individual
+       fields, and some of it is due to the inefficient way the store and fetch operations are implemented.  For
+       example, using the tie interface, a statement like $h{record}{field}++ requires as much as four trips  to
+       the  database:  one  to  verify  that  the  record  exists,  one to fetch the field, and one to store the
+       incremented field back.  If the record doesn't already exist, an  additional  statement  is  required  to
+       perform  the  insertion.   I have experimented with cacheing schemes to reduce the number of trips to the
+       database, but the overhead of maintaining the cache is nearly equal to the performance  improvement,  and
+       cacheing raises a number of potential concurrency problems.
+
+       Clearly  you would not want to use this interface for applications that require a large number of updates
+       to be processed rapidly.
+
+</pre><h4><b>BUGS</b></h4><pre>
+</pre><h4><b>BUGS</b></h4><pre>
+       The <b>each()</b> call produces a fatal error when used with the Sybase driver to access Microsoft  SQL  server.
+       This  is  because this server only allows one query to be active at a given time.  A workaround is to use
+       <b>keys()</b> to fetch all the keys yourself.  It is not known whether real Sybase  databases  suffer  from  the
+       same problem.
+
+       The  <b>delete()</b>  operator  will  not  work correctly for setting field values to null with DBD::CSV or with
+       DBD::Pg.  CSV files do not have a good conception of database nulls.  Instead you will set the  field  to
+       an empty string.  DBD::Pg just seems to be broken in this regard.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein, <a href="mailto:lstein@cshl.org">lstein@cshl.org</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+         Copyright (c) 1998, Lincoln D. Stein
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       The latest version can be obtained from:
+
+          <a href="http://www.genome.wi.mit.edu/~lstein/Tie-DBI/">http://www.genome.wi.mit.edu/~lstein/Tie-DBI/</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1), <b><a href="../man3/DBI.3.html">DBI</a></b>(3), <b>Tie::<a href="../man3/RDBM.3.html">RDBM</a></b>(3)
+
+perl v5.36.0                                       2022-10-13                                      <u>Tie::<a href="../man3pm/DBI.3pm.html">DBI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

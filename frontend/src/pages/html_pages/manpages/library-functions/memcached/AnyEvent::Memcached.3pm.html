@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnyEvent::Memcached - AnyEvent memcached client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libanyevent-memcached-perl">libanyevent-memcached-perl_0.08-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       AnyEvent::Memcached - AnyEvent memcached client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use AnyEvent::Memcached;
+
+           my $memd = AnyEvent::Memcached-&gt;new(
+               servers =&gt; [ "10.0.0.15:11211", "10.0.0.15:11212" ], # same as in Cache::Memcached
+               debug   =&gt; 1,
+               compress_threshold =&gt; 10000,
+               namespace =&gt; 'my-namespace:',
+
+               # May use another hashing algo:
+               hasher  =&gt; 'AnyEvent::Memcached::Hash::WithNext',
+
+               cv      =&gt; $cv, # AnyEvent-&gt;condvar: group callback
+           );
+
+           $memd-&gt;set_servers([ "10.0.0.15:11211", "10.0.0.15:11212" ]);
+
+           # Basic methods are like in Cache::Memcached, but with additional cb =&gt; sub { ... };
+           # first argument to cb is return value, second is the error(s)
+
+           $memd-&gt;set( key =&gt; $value, cb =&gt; sub {
+               shift or warn "Set failed: @_"
+           } );
+
+           # Single get
+           $memd-&gt;get( 'key', cb =&gt; sub {
+               my ($value,$err) = shift;
+               $err and return warn "Get failed: @_";
+               warn "Value for key is $value";
+           } );
+
+           # Multi-get
+           $memd-&gt;get( [ 'key1', 'key2' ], cb =&gt; sub {
+               my ($values,$err) = shift;
+               $err and return warn "Get failed: @_";
+               warn "Value for key1 is $values-&gt;{key1} and value for key2 is $values-&gt;{key2}"
+           } );
+
+           # Additionally there is rget (see memcachedb-1.2.1-beta)
+
+           $memd-&gt;rget( 'fromkey', 'tokey', cb =&gt; sub {
+               my ($values,$err) = shift;
+               $err and warn "Get failed: @_";
+               while (my ($key,$value) = each %$values) {
+                   # ...
+               }
+           } );
+
+           # Rget with sorted response values
+           $memd-&gt;rget( 'fromkey', 'tokey', rv =&gt; 'array' cb =&gt; sub {
+               my ($values,$err) = shift;
+               $err and warn "Get failed: @_";
+               for (0 .. $#values/2) {
+                   my ($key,$value) = @$values[$_*2,$_*2+1];
+               }
+           } );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Asynchronous "memcached/memcachedb" client for AnyEvent framework
+
+</pre><h4><b>NOTICE</b></h4><pre>
+       There is a notices in Cache::Memcached::AnyEvent related to this module. They all has been fixed
+
+       Prerequisites
+           We  no  longer  need  Object::Event  and  Devel::Leak::Cb.  At  all,  the  dependency list is like in
+           Cache::Memcached + AnyEvent
+
+       Binary protocol
+           It seems to me, that usage of binary protocol from pure perl gives very little advantage. So for  now
+           I don't implement it
+
+       Unimplemented Methods
+           There  is  a  note, that get_multi is not implementeted. In fact, it was implemented by method "get",
+           but the documentation was wrong.
+
+       In general, this module follows the spirit of AnyEvent rather  than  correspondence  to  Cache::Memcached
+       interface.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b> <b>%args</b>
+       Currently supported options:
+
+       servers =item namespace =item debug =item cv =item compress_threshold =item compress_enable =item timeout
+       =item hasher
+           If  set,  will  use instance of this class for hashing instead of default.  For implementing your own
+           hashing, see sources of AnyEvent::Memcached::Hash and AnyEvent::Memcached::Hash::With::Next
+
+       noreply
+           If true, additional connection will established for noreply commands.
+
+       cas If true, will enable cas/gets commands (since they are not suppotred in memcachedb)
+
+   <b>set_servers</b>
+           Setup server list
+
+   <b>connect</b>
+           Establish connection to all servers and invoke event C&lt;connected&gt;, when ready
+
+   <b>set(</b> <b>$key,</b> <b>$value,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Unconditionally sets a key to a given value in the memcache.
+
+       $rc is
+
+       '1' Successfully stored
+
+       '0' Item was not stored
+
+       undef
+           Error happens, see $err
+
+   <b>cas(</b> <b>$key,</b> <b>$cas,</b> <b>$value,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+           $memd-&gt;gets($key, cb =&gt; sub {
+               my $value = shift;
+               unless (@_) { # No errors
+                   my ($cas,$val) = @$value;
+                   # Change your value in $val
+                   $memd-&gt;cas( $key, $cas, $value, cb =&gt; sub {
+                       my $rc = shift;
+                       if ($rc) {
+                           # stored
+                       } else {
+                           # ...
+                       }
+                   });
+               }
+           })
+
+       $rc is the same, as for "set"
+
+       Store the $value on the server under the $key, but only if CAS value associated with this key is equal to
+       $cas. See also "gets"
+
+   <b>add(</b> <b>$key,</b> <b>$value,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Like "set", but only stores in memcache if the key doesn't already exist.
+
+   <b>replace(</b> <b>$key,</b> <b>$value,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Like "set", but only stores in memcache if the key already exists. The opposite of add.
+
+   <b>append(</b> <b>$key,</b> <b>$value,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Append the $value to the current value on the server under the $key.
+
+       <b>append</b> command first appeared in memcached 1.2.4.
+
+   <b>prepend(</b> <b>$key,</b> <b>$value,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Prepend the $value to the current value on the server under the $key.
+
+       <b>prepend</b> command first appeared in memcached 1.2.4.
+
+   <b>get(</b> <b>$key,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Retrieve the value for a $key. $key should be a scalar
+
+   <b>get(</b> <b>$keys</b> <b>:</b> <b>ARRAYREF,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$values_hash,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Retrieve the values for a $keys. Return a hash with keys/values
+
+   <b>gets(</b> <b>$key,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Retrieve the value and its CAS for a $key. $key should be a scalar.
+
+       $rc is a reference to an array [$cas, $value], or nothing for non-existent key
+
+   <b>gets(</b> <b>$keys</b> <b>:</b> <b>ARRAYREF,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>expire</b> <b>=&gt;</b> <b>$expire</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Retrieve the values and their CAS for a $keys.
+
+       $rc is a hash reference with $rc-&gt;{$key} is a reference to an array [$cas, $value]
+
+   <b>delete(</b> <b>$key,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>noreply</b> <b>=&gt;</b> <b>1</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Delete $key and its value from the cache.
+
+       If "noreply" is true, cb doesn't required
+
+   <b>del</b>
+       Alias for "delete"
+
+   <b>remove</b>
+       Alias for "delete"
+
+   <b>incr(</b> <b>$key,</b> <b>$increment,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>noreply</b> <b>=&gt;</b> <b>1</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Increment the value for the $key by $delta. Starting with memcached 1.3.3 $key should be set to a  number
+       or the command will fail.  Note that the server doesn't check for overflow.
+
+       If "noreply" is true, cb doesn't required, and if passed, simply called with rc = 1
+
+       Similar to DBI, zero is returned as "0E0", and evaluates to true in a boolean context.
+
+   <b>decr(</b> <b>$key,</b> <b>$decrement,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>noreply</b> <b>=&gt;</b> <b>1</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Opposite to "incr"
+
+   <b>rget(</b>  <b>$from,</b>  <b>$till,</b> <b>[</b> <b>max</b> <b>=&gt;</b> <b>100</b> <b>],</b> <b>[</b> <b>'+left'</b> <b>=&gt;</b> <b>1</b> <b>],</b> <b>[</b> <b>'+right'</b> <b>=&gt;</b> <b>1</b> <b>],</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>rv</b> <b>=&gt;</b> <b>'array'</b> <b>],</b> <b>cb</b>
+       <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Memcachedb 1.2.1-beta implements rget method, that allows one to look through the whole storage
+
+       $from
+           the starting key
+
+       $till
+           finishing key
+
+       +left
+           If true, then starting key will be included in results. true by default
+
+       +right
+           If true, then finishing key will be included in results. true by default
+
+       max Maximum number of results to fetch. 100 is the maximum and is the default
+
+       rv  If passed rv =&gt; 'array', then the return value will be arrayref with values  in  order,  returned  by
+           memcachedb.
+
+   <b>incadd</b> <b>(</b> <b>$key,</b> <b>$increment,</b> <b>[cv</b> <b>=&gt;</b> <b>$cv],</b> <b>[</b> <b>noreply</b> <b>=&gt;</b> <b>1</b> <b>],</b> <b>cb</b> <b>=&gt;</b> <b>$cb-&gt;(</b> <b>$rc,</b> <b>$err</b> <b>)</b> <b>)</b>
+       Increment key, and if it not exists, add it with initial value. If add fails, try again to incr or fail
+
+   <b>destroy</b>
+       Shutdown object as much, as possible, incl cleaning of incapsulated objects
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Feature requests are welcome
+
+       Bug reports are welcome
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mons Anderson, "&lt;mons at cpan.org&gt;"
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2009 Mons Anderson, all rights reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-06-06                           <u>AnyEvent::<a href="../man3pm/Memcached.3pm.html">Memcached</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

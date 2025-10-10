@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bread::Board::Manual::Concepts - An overview of the concepts in Bread::Board</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbread-board-perl">libbread-board-perl_0.37-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bread::Board::Manual::Concepts - An overview of the concepts in Bread::Board
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.37
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       This document attempts to convey the central concepts of Bread::Board and show how they work together to
+       manage both object lifecycles and object dependencies.
+
+       In this document we use the raw OO syntax of Bread::Board, this is so that the concepts being illustrated
+       are not clouded by syntactic sugar. We only introduce the <u>sugar</u> layer at the end, at which point we hope
+       that it will become clear what is going on "under the hood" when you use it.
+
+</pre><h4><b>CONCEPTS</b></h4><pre>
+   <b>What</b> <b>is</b> <b>Inversion</b> <b>of</b> <b>Control?</b>
+       Inversion of Control (or IoC) is the very simple idea of releasing control of some part of your
+       application over to some other part of your application, be it your code or an outside framework.
+
+       IoC is a common paradigm in GUI frameworks, whereby you give up control of your application flow to the
+       framework and install your code at callbacks hooks within the framework. For example, take a very simple
+       command line interface; the application asks a question, the user responds, the application processes the
+       answer and asks another question, and so on until it is done. Now consider the GUI approach for the same
+       application; the application displays a screen and goes into an event loop, users actions are processed
+       with event handlers and callback functions. The GUI framework has inverted the control of the application
+       flow and relieved your code from having to deal with it.
+
+       IoC is also sometimes referred to as 'Dependency Injection' or the 'Dependency Injection Principle', and
+       many people confused the two.  However IoC and dependency injection are not the same, in fact the
+       concepts behind dependency injection are actually just an <u>example</u> <u>of</u> IoC principles in action, in
+       particular about your applications dependency relationships. IoC is also sometimes referred to as the
+       Hollywood Principle because of the <u>don't</u> <u>call</u> <u>us</u> <u>we'll</u> <u>call</u> <u>you</u> approach of things like callback
+       functions and event handlers.
+
+       Howard Lewis Ship, the creator of the HiveMind IoC Framework, once referred to dependency injection as
+       being the inverse of garbage collection. With garbage collection you hand over the details of the
+       destruction of your objects to the garbage collector. With dependency injection you are handing over
+       control of object creation, which also includes the satisfaction of your dependency relationships.
+
+       The following sections will explain the basis concepts around the Bread::Board and how it relates to the
+       concept of IoC.
+
+   <b>Containers</b>
+       The central part of just about any IoC framework is the container.  A container's responsibilities are
+       roughly to dispense services and to handle the resolution of said service's dependency relationships.
+
+       First we can start with a simple container for our services to live in. We give the container a name so
+       that we can address it later on, think of this like a package namespace.
+
+         my $c = Bread::Board::Container-&gt;new( name =&gt; 'Application' );
+
+       Next we need to add a service to that container (we will explain services a little later on).
+
+         $c-&gt;add_service(
+             Bread::Board::BlockInjection-&gt;new(
+                 name  =&gt; 'logger',
+                 block =&gt; sub { Logger-&gt;new() }
+             )
+         );
+
+       Now if we want an instance of our 'logger' service, we simply ask the container for it.
+
+         my $logger_service = $c-&gt;fetch('logger');
+
+       And we then can ask the service to give us an instance of our Logger object.
+
+         my $logger = $logger_service-&gt;get;
+
+       Or if we want to make this even simpler we can use the "resolve" method of the container object.
+
+         my $logger = $c-&gt;resolve( service =&gt; 'logger' );
+
+       The "resolve" method will look up the service asked for and return the instance, which is basically
+       equivalent to the chained "fetch" and "get" calls above.
+
+   <b>Dependency</b> <b>Management</b>
+       Dependency management is also quite simple, and is easily shown with an example. But first lets create
+       another component for our container, a database connection.
+
+         $c-&gt;add_service(
+             Bread::Board::BlockInjection-&gt;new(
+                 name  =&gt; 'db_conn',
+                 block =&gt; sub { DBI-&gt;connect('dbi:mysql:test', '', '') }
+             )
+         );
+
+       Now lets add an authenticator to our container. The authenticator requires both a database connection and
+       a logger instance in its constructor. We specify dependency relationships between services by providing a
+       HASH of Bread::Board::Dependency objects which themselves have a path to the services they depend upon.
+       In this case since all these services are in the same container, the service path is simply the name.
+
+         $c-&gt;add_service(
+             Bread::Board::BlockInjection-&gt;new(
+                 name  =&gt; 'authenticator',
+                 block =&gt; sub {
+                       my $service = shift;
+                       Authenticator-&gt;new(
+                           db_conn =&gt; $service-&gt;param('db_conn'),
+                           logger  =&gt; $service-&gt;param('logger')
+                       );
+                 },
+                 dependencies =&gt; {
+                     db_conn =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; 'db_conn'
+                     ),
+                     logger  =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; 'logger'
+                     ),
+                 }
+             )
+         );
+
+       As you can see, the first argument to our service subroutine is actually our service instance. Through
+       this we can access the resolved dependencies and use them in our Authenticator object's constructor.
+
+       The above example is deceptively simple, but really powerful.  What you don't see on the surface is that
+       Bread::Board is completely managing initialization order for you. No longer to do you need to worry if
+       your database is connected or your logger initialized and in what order you need to do that
+       initialization, Bread::Board handles that all for you, including circular dependencies. This may not seem
+       terribly interesting in such a small example, but the larger an application grows, the more sensitive it
+       becomes to these kinds of initialization order issues.
+
+   <b>Lifecycle</b> <b>Management</b>
+       The default lifecycle for Bread::Board::Service components is a 'prototype' lifecycle, which means each
+       time we ask for say, the logger, we will get a new instance back. There is also another option for
+       lifecycle management that we call 'Singleton'. Here is an example of how we would use the 'Singleton'
+       lifecycle to ensure that you always get back the same logger instance.
+
+         $c-&gt;add_service(
+             Bread::Board::BlockInjection-&gt;new(
+                 lifecycle =&gt; 'Singleton',
+                 name      =&gt; 'logger',
+                 block     =&gt; sub { Logger-&gt;new() }
+             )
+         );
+
+       Now each time we request a new logger component from our container we will get the exact same instance.
+       Being able to change between the different lifecycles by simply changing one service parameter can come
+       in very handy as you application grows. Extending this idea, it is possible to see how you could create
+       your own custom service objects to manage your specific lifecycle needs, such as a pool of database
+       connections.
+
+   <b>Services</b>
+       Up until now, we have shown the default way of creating a service by using the
+       Bread::Board::BlockInjection and an anonymous subroutine. But this is not the only way to go about this.
+       Those who have encountered IoC in the Java world may be familiar with the idea that there are 3 'types'
+       of IoC/Dependency Injection; Constructor Injection, Setter Injection, and Interface Injection.  In
+       Bread::Board we support both Constructor and Setter injection, it is the authors opinion though that
+       Interface injection was not only too complex, but highly java specific and the concept did not adapt
+       itself well to perl.
+
+       Block Injection
+           While  not  in  the 'official' 3 types (mostly because it's not possible in Java), but found in a few
+           Ruby IoC frameworks, BlockInjection is  by  far  the  most  versatile  type.  It  simply  requires  a
+           subroutine and a name and you do all the rest of it yourself.
+
+             $c-&gt;add_service(
+                 Bread::Board::BlockInjection-&gt;new(
+                     name  =&gt; 'logger',
+                     class =&gt; 'ComplexLogger',
+                     block =&gt; sub {
+                         my $s = shift;
+                         my $l = ComplexLogger-&gt;new(
+                             file =&gt; $s-&gt;param('log_file')
+                         );
+                         $l-&gt;init_with_timezone( $s-&gt;param('timezone') );
+                         $l-&gt;log_timestamp;
+                         $l;
+                     },
+                     dependencies =&gt; {
+                         log_file =&gt; Bread::Board::Dependency-&gt;new(
+                             service_path =&gt; 'log_file'
+                         ),
+                         timezone =&gt; Bread::Board::Dependency-&gt;new(
+                             service_path =&gt; 'timezone'
+                         ),
+                     }
+                 )
+             );
+
+           BlockInjection  comes in really handy when your object requires more then just constructor parameters
+           and needs some more complex initialization code. As long as your subroutine block returns an  object,
+           everything  else  is  fair  game.  Also note the optional 'class' parameter, which when supplied will
+           perform a basic type check on the result of the subroutine block.
+
+       Constructor Injection
+           Bread::Board also supports Constructor Injection. With constructor injection, the service  calls  the
+           class's  constructor  and feeds it the dependencies you specify. This promotes what is called a "Good
+           Citizen" object, or an object who is completely initialized upon construction.
+
+             $c-&gt;add_service(
+                 Bread::Board::ConstructorInjection-&gt;new(
+                     name         =&gt; 'authenticator',
+                     class        =&gt; 'Authenticator',
+                     dependencies =&gt; {
+                         db_conn =&gt; Bread::Board::Dependency-&gt;new(
+                             service_path =&gt; 'db_conn'
+                         ),
+                         logger  =&gt; Bread::Board::Dependency-&gt;new(
+                             service_path =&gt; 'logger'
+                         ),
+                     }
+                 )
+             );
+
+           Since Bread::Board is built both with Moose and for use with Moose objects, it makes  the  assumption
+           here  that the constructor takes named arguments. Here is our earlier authenticator service rewritten
+           to use constructor injection. This is by far the simplest injection type as it requires  little  more
+           then a class name and a HASH of dependencies.
+
+       Setter Injection
+           Bread::Board  also  supports  Setter  Injection.  The  idea  behind setter injection is that for each
+           component dependency a corresponding setter method must exist. This style has been popularized by the
+           Spring java framework. I will be honest, I don't find this type of injection as useful  as  block  or
+           constructor,  but  it  can come in handy if your object prefers you to call setters to initialize it.
+           Here is a fairly contrived example using the JSON module.
+
+             $c-&gt;add_service(
+                 Bread::Board::SetterInjection-&gt;new(
+                     name         =&gt; 'json',
+                     class        =&gt; 'JSON',
+                     dependencies =&gt; {
+                         utf8   =&gt; Bread::Board::Literal-&gt;new(
+                             name  =&gt; 'true',
+                             value =&gt; 1
+                         )
+                         pretty =&gt; Bread::Board::Literal-&gt;new(
+                             name  =&gt; 'true',
+                             value =&gt; 1
+                         )
+                     }
+                 )
+             );
+
+           Setter injection actually creates the object without passing any arguments to the  constructor,  then
+           loops through the keys in the dependency HASH and treats each key as a method name, and each value as
+           that method's argument. In this case, the above is the equivalent of doing:
+
+              my $json = JSON-&gt;new;
+              $json-&gt;<a href="../man1/utf8.1.html">utf8</a>(1);
+              $json-&gt;<a href="../man1/pretty.1.html">pretty</a>(1);
+
+           You  might  have  been wondering about the fact we didn't specify Bread::Board::Dependency objects in
+           our dependency HASH, but instead supplied Bread::Board::Literal instances.  Bread::Board::Literal  is
+           just  another  Service  type  that simply holds a literal value, or a constant. When dependencies are
+           specified like this,  Bread::Board  internally  converts  them  into  Bread::Board::Dependency  whose
+           service is already resolved to that service.
+
+   <b>Hierarchical</b> <b>Containers</b>
+       Up  until  now,  we  have  seen  basic  containers  which only have a single level of components. As your
+       application grows larger it may become useful to have a more hierarchical approach  to  your  containers.
+       Bread::Board::Container supports this behavior through its many sub-container methods. Here is an example
+       of how we might re-arrange the previous examples using sub-containers.
+
+         my $app_c = Bread::Board::Container-&gt;new( name =&gt; 'app' );
+
+         my $db_c = Bread::Board::Container-&gt;new( name =&gt; 'database' );
+         $db_c-&gt;add_service(
+             Bread::Board::BlockInjection-&gt;new(
+                 name  =&gt; 'db_conn'
+                 block =&gt; sub {
+                     my $s = shift;
+                     return DBI-&gt;connect(
+                         $s-&gt;param('dsn'),
+                         $s-&gt;param('username'),
+                         $s-&gt;param('password')
+                     );
+                 },
+                 dependencies =&gt; {
+                     dsn      =&gt; Bread::Board::Literal-&gt;new(
+                         name  =&gt; 'dsn',
+                         value =&gt; 'dbi:mysql:test'
+                     ),
+                     username =&gt; Bread::Board::Literal-&gt;new(
+                         name  =&gt; 'username',
+                         value =&gt; 'user'
+                     ),
+                     password =&gt; Bread::Board::Literal-&gt;new(
+                         name  =&gt; 'password',
+                         value =&gt; '****'
+                     ),
+                 }
+             )
+         );
+
+         $app_c-&gt;add_sub_container( $db_c );
+
+         my $log_c = Bread::Board::Container-&gt;new( name =&gt; 'logging' );
+         $log_c-&gt;add_service(
+             Bread::Board::Literal-&gt;new(
+                 name  =&gt; 'log_file',
+                 value =&gt; '/var/log/app.log'
+             )
+         );
+         $log_c-&gt;add_service(
+             Bread::Board::ConstructorInjection-&gt;new(
+                 name  =&gt; 'logger',
+                 class =&gt; 'Logger',
+                 dependencies =&gt; {
+                     log_file =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; 'log_file'
+                     )
+                 }
+             )
+         );
+
+         $app_c-&gt;add_sub_container( $log_c );
+
+         my $sec_c = Bread::Board::Container-&gt;new( name =&gt; 'security' );
+         $sec_c-&gt;add_service(
+             Bread::Board::ConstructorInjection-&gt;new(
+                 name         =&gt; 'authenticator',
+                 class        =&gt; 'Authenticator',
+                 dependencies =&gt; {
+                     db_conn =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; '../database/db_conn'
+                     ),
+                     logger  =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; '../logging/logger'
+                     ),
+                 }
+             )
+         );
+
+         $app_c-&gt;add_sub_container( $sec_c );
+
+         $app_c-&gt;add_service(
+             Bread::Board::ConstructorInjection-&gt;new(
+                 name         =&gt; 'app',
+                 class        =&gt; 'Application',
+                 dependencies =&gt; {
+                     auth    =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; '/security/authenticator'
+                     ),
+                     db_conn =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; '/database/db_conn'
+                     ),
+                     logger  =&gt; Bread::Board::Dependency-&gt;new(
+                         service_path =&gt; '/logging/logger'
+                     ),
+                 }
+             )
+         );
+
+       So, as an example that can be seen above, hierarchical containers can be used as a form of namespacing to
+       organize  your  Bread::Board configuration better. As it is shown with the 'authenticator' service, it is
+       possible to  address  services  outside  of  your  container  using  path  notation.  In  this  case  the
+       'authenticator'  service  makes  the  assumption  that  its  parent container has both a 'database' and a
+       'logging' sub-container and they contain a 'db_conn' and 'logger' service respectively. And as  is  shown
+       in the 'app' service, it is also possible to address services using an absolute path notation.
+
+   <b>Sugar</b> <b>Layer</b>
+       So,  up  until  now  we have been creating all our Bread::Board objects by hand. As you can tell, this is
+       both verbose and tedious. To make your life easier, Bread::Board provides a simple <u>sugar</u> layer over these
+       objects. Here is the equivalent of the above Bread::Board configuration using the sugar layer.
+
+         my $c = container 'app' =&gt; as {
+
+             container 'database' =&gt; as {
+                 service 'db_conn' =&gt; (
+                     block =&gt; sub {
+                         my $s = shift;
+                         return DBI-&gt;connect(
+                             $s-&gt;param('dsn'),
+                             $s-&gt;param('username'),
+                             $s-&gt;param('password')
+                         );
+                     },
+                     dependencies =&gt; {
+                         dsn      =&gt; ( service 'dsn'      =&gt; 'dbi:mysql:test' ),
+                         username =&gt; ( service 'username' =&gt; 'user' ),
+                         password =&gt; ( service 'password' =&gt; '****' ),
+                     }
+                 )
+             };
+
+             container 'logging' =&gt; as {
+                 service 'log_file' =&gt; '/var/log/app.log';
+                 service 'logger' =&gt; (
+                     class        =&gt; 'Logger',
+                     dependencies =&gt; {
+                         log_file =&gt; depends_on('log_file'),
+                     }
+                 )
+              };
+
+             container 'security' =&gt; as {
+                 service 'authenticator' =&gt; (
+                     class =&gt; 'Authenticator',
+                     dependencies =&gt; {
+                         db_conn =&gt; depends_on('../database/db_conn'),
+                         logger  =&gt; depends_on('../logging/logger'),
+                     }
+                 )
+             };
+
+             service 'app' =&gt; (
+                 class =&gt; 'Application',
+                 dependencies =&gt; {
+                     auth    =&gt; depends_on('/security/authenticator'),
+                     db_conn =&gt; depends_on('/database/db_conn'),
+                     logger  =&gt; depends_on('/logging/logger'),
+                 }
+             )
+         };
+
+       As you can see this not only makes the code shorter, but more declarative and easier to read.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This article is based on an article I wrote for The Perl  Journal  about  my  earlier  IOC  module.  That
+       article can be found online at &lt;<a href="http://www.drdobbs.com/windows/184416179">http://www.drdobbs.com/windows/184416179</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stevan Little &lt;<a href="mailto:stevan@iinteractive.com">stevan@iinteractive.com</a>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please     report     any     bugs     or     feature     requests     on    the    bugtracker    website
+       https://github.com/stevan/BreadBoard/issues
+
+       When submitting a bug or request, please include a test-file or a patch to  an  existing  test-file  that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2019, 2017, 2016, 2015, 2014, 2013, 2011, 2009 by Infinity Interactive.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-12                <u>Bread::Board::Manual::<a href="../man3pm/Concepts.3pm.html">Concepts</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

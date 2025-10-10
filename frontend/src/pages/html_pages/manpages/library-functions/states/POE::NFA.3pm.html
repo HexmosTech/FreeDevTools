@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::NFA - an event-driven state machine (nondeterministic finite automaton)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::NFA - an event-driven state machine (nondeterministic finite automaton)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use POE::Kernel;
+         use POE::NFA;
+         use POE::Wheel::ReadLine;
+
+         # Spawn an NFA and enter its initial state.
+         POE::NFA-&gt;spawn(
+           inline_states =&gt; {
+             initial =&gt; {
+               setup =&gt; \&amp;setup_stuff,
+             },
+             state_login =&gt; {
+               on_entry =&gt; \&amp;login_prompt,
+               on_input =&gt; \&amp;save_login,
+             },
+             state_password =&gt; {
+               on_entry =&gt; \&amp;password_prompt,
+               on_input =&gt; \&amp;check_password,
+             },
+             state_cmd =&gt; {
+               on_entry =&gt; \&amp;command_prompt,
+               on_input =&gt; \&amp;handle_command,
+             },
+           },
+         )-&gt;goto_state(initial =&gt; "setup");
+
+         POE::Kernel-&gt;run();
+         exit;
+
+         sub setup_stuff {
+           $_[RUNSTATE]{io} = POE::Wheel::ReadLine-&gt;new(
+             InputEvent =&gt; 'on_input',
+           );
+           $_[MACHINE]-&gt;goto_state(state_login =&gt; "on_entry");
+         }
+
+         sub login_prompt { $_[RUNSTATE]{io}-&gt;get('Login: '); }
+
+         sub save_login {
+           $_[RUNSTATE]{login} = $_[ARG0];
+           $_[MACHINE]-&gt;goto_state(state_password =&gt; "on_entry");
+         }
+
+         sub password_prompt { $_[RUNSTATE]{io}-&gt;get('Password: '); }
+
+         sub check_password {
+           if ($_[RUNSTATE]{login} eq $_[ARG0]) {
+             $_[MACHINE]-&gt;goto_state(state_cmd =&gt; "on_entry");
+           }
+           else {
+             $_[MACHINE]-&gt;goto_state(state_login =&gt; "on_entry");
+           }
+         }
+
+         sub command_prompt { $_[RUNSTATE]{io}-&gt;get('Cmd: '); }
+
+         sub handle_command {
+           $_[RUNSTATE]{io}-&gt;put("  &lt;&lt;$_[ARG0]&gt;&gt;");
+           if ($_[ARG0] =~ /^(?:quit|stop|exit|halt|bye)$/i) {
+             $_[RUNSTATE]{io}-&gt;put('Bye!');
+             $_[MACHINE]-&gt;stop();
+           }
+           else {
+             $_[MACHINE]-&gt;goto_state(state_cmd =&gt; "on_entry");
+           }
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::NFA implements a different kind of POE session: A non-deterministic finite automaton.  Let's break
+       that down.
+
+       A finite automaton is a state machine with a bounded number of states and transitions.  Technically,
+       POE::NFA objects may modify themselves at run time, so they aren't really "finite".  Run-time
+       modification isn't currently supported by the API, so plausible deniability is maintained!
+
+       Deterministic state machines are ones where all possible transitions are known at compile time.  POE::NFA
+       is "non-deterministic" because transitions may change based on run-time conditions.
+
+       But more simply, POE::NFA is like POE::Session but with banks of event handlers that may be swapped
+       according to the session's run-time state.  Consider the SYNOPSIS example, which has "on_entry" and
+       "on_input" handlers that do different things depending on the run-time state.  POE::Wheel::ReadLine
+       throws "on_input", but different things happen depending whether the session is in its "login",
+       "password" or "command" state.
+
+       POE::NFA borrows heavily from POE::Session, so this document will only discuss the differences.  Please
+       see POE::Session for things which are similar.
+
+</pre><h4><b>PUBLIC</b> <b>METHODS</b></h4><pre>
+       This document mainly focuses on the differences from POE::Session.
+
+   <b>get_current_state</b>
+       Each machine state has a name.  <b>get_current_state()</b> returns the name of the machine's current state.
+       <b>get_current_state()</b> is mainly used to retrieve the state of some other machine.  It's easier (and faster)
+       to use $_[STATE] in a machine's own event handlers.
+
+   <b>get_runstate</b>
+       <b>get_runstate()</b> returns the machine's current runstate.  Runstates are equivalent to POE::Session HEAPs,
+       so this method does pretty much the same as POE::Session's <b>get_heap()</b>.  It's easier (and faster) to use
+       $_[RUNSTATE] in a machine's own event handlers, however.
+
+   <b>spawn</b> <b>STATE_NAME</b> <b>=&gt;</b> <b>HANDLERS_HASHREF[,</b> <b>...]</b>
+       <b>spawn()</b> is POE::NFA's constructor.  The name reflects the idea that new state machines are spawned like
+       threads or processes rather than instantiated like objects.
+
+       The machine itself is defined as a list of state names and hashes that map events to handlers within each
+       state.
+
+         my %states = (
+           state_1 =&gt; {
+             event_1 =&gt; \&amp;handler_1,
+             event_2 =&gt; \&amp;handler_2,
+           },
+           state_2 =&gt; {
+             event_1 =&gt; \&amp;handler_3,
+             event_2 =&gt; \&amp;handler_4,
+           },
+         );
+
+       A single event may be handled by many states.  The proper handler will be called depending on the
+       machine's current state.  For example, if "event_1" is dispatched while the machine is in "state_2", then
+       <b>handler_3()</b> will be called to handle the event.  The state -&gt; event -&gt; handler map looks like this:
+
+         $machine{state_2}{event_1} = \&amp;handler_3;
+
+       Instead of "inline_states", "object_states" or "package_states" may be used. These map the events of a
+       state to an object or package method respectively.
+
+         object_states =&gt; {
+           state_1 =&gt; [
+             $object_1 =&gt; [qw(event_1 event_2)],
+           ],
+           state_2 =&gt; [
+             $object_2 =&gt; {
+               event_1 =&gt; method_1,
+               event_2 =&gt; method_2,
+             }
+           ]
+         }
+
+       In the example above, in the case of "event_1" coming in while the machine is in "state_1", method
+       "event_1" will be called on $object_1. If the machine is in "state_2", method "method_1" will be called
+       on $object_2.
+
+       "package_states" is very similar, but instead of using an $object, you pass in a "Package::Name"
+
+       The "runstate" parameter allows "RUNSTATE" to be initialized differently at instantiation time.
+       "RUNSTATE", like heaps, are usually anonymous hashrefs, but "runstate" may set them to be array
+       references or even objects.
+
+       State transitions are not necessarily executed immediately by default.  Rather, they are placed in POEs
+       event queue behind any currently pending events.  Enabling the "immediate" option causes state
+       transitions to occur immediately, regardless of any queued events.
+
+   <b>goto_state</b> <b>NEW_STATE[,</b> <b>ENTRY_EVENT[,</b> <b>EVENT_ARGS]]</b>
+       <b>goto_state()</b> puts the machine into a new state.  If an ENTRY_EVENT is specified, then that event will be
+       dispatched after the machine enters the new state.  EVENT_ARGS, if included, will be passed to the entry
+       event's handler via "ARG0..$#_".
+
+         # Switch to the next state.
+         $_[MACHINE]-&gt;goto_state( 'next_state' );
+
+         # Switch to the next state, and call a specific entry point.
+         $_[MACHINE]-&gt;goto_state( 'next_state', 'entry_event' );
+
+         # Switch to the next state; call an entry point with some values.
+         $_[MACHINE]-&gt;goto_state( 'next_state', 'entry_event', @parameters );
+
+   <b>stop</b>
+       <b>stop()</b> forces a machine to stop.  The machine will also stop gracefully if it runs out of things to do,
+       just like POE::Session.
+
+       <b>stop()</b> is heavy-handed.  It will force resources to be cleaned up.  However, circular references in the
+       machine's "RUNSTATE" are not POE's responsibility and may cause memory leaks.
+
+         $_[MACHINE]-&gt;stop();
+
+   <b>call_state</b> <b>RETURN_EVENT,</b> <b>NEW_STATE[,</b> <b>ENTRY_EVENT[,</b> <b>EVENT_ARGS]]</b>
+       <b>call_state()</b> is similar to <b>goto_state()</b>, but it pushes the current state on a stack.  At some later
+       point, a handler can call <b>return_state()</b> to pop the call stack and return the machine to its old state.
+       At that point, a "RETURN_EVENT" will be posted to notify the old state of the return.
+
+         $machine-&gt;call_state( 'return_here', 'new_state', 'entry_event' );
+
+       As with <b>goto_state()</b>, "ENTRY_EVENT" is the event that will be emitted once the machine enters its new
+       state.  "ENTRY_ARGS" are parameters passed to the "ENTRY_EVENT" handler via "ARG0..$#_".
+
+   <b>return_state</b> <b>[RETURN_ARGS]</b>
+       <b>return_state()</b> returns to the most recent state in which <b>call_state()</b> was invoked.  If the preceding
+       <b>call_state()</b> included a return event then its handler will be invoked along with some optional
+       "RETURN_ARGS".  The "RETURN_ARGS" will be passed to the return handler via "ARG0..$#_".
+
+         $_[MACHINE]-&gt;return_state( 'success', @success_values );
+
+   <b>Methods</b> <b>that</b> <b>match</b> <b>POE::Session</b>
+       The following methods behave identically to the ones in POE::Session.
+
+       ID
+       option
+       postback
+       callback
+
+   <b>About</b> <b>new()</b> <b>and</b> <b>create()</b>
+       POE::NFA's constructor is <b>spawn()</b>, not <b>new()</b> or <b>create()</b>.
+
+</pre><h4><b>PREDEFINED</b> <b>EVENT</b> <b>FIELDS</b></h4><pre>
+       POE::NFA's predefined event fields are the same as POE::Session's with the following three exceptions.
+
+   <b>MACHINE</b>
+       "MACHINE" is equivalent to Session's "SESSION" field.  It holds a reference to the current state machine,
+       and is useful for calling its methods.
+
+       See POE::Session's "SESSION" field for more information.
+
+         $_[MACHINE]-&gt;goto_state( $next_state, $next_state_entry_event );
+
+   <b>RUNSTATE</b>
+       "RUNSTATE"  is  equivalent  to Session's "HEAP" field.  It holds an anonymous hash reference which POE is
+       guaranteed not to touch.  Data stored in "RUNSTATE" will persist between handler invocations.
+
+   <b>STATE</b>
+       "STATE" contains the name of the machine's  current  state.   It  is  not  equivalent  to  anything  from
+       POE::Session.
+
+   <b>EVENT</b>
+       "EVENT"  is  equivalent  to  Session's  "STATE"  field.  It holds the name of the event which invoked the
+       current handler.  See POE::Session's "STATE" field for more information.
+
+</pre><h4><b>PREDEFINED</b> <b>EVENT</b> <b>NAMES</b></h4><pre>
+       POE::NFA defines four events of its own.  These events are used internally and may not be  overridden  by
+       application code.
+
+       See POE::Session's "PREDEFINED EVENT NAMES" section for more information about other predefined events.
+
+       The events are: "poe_nfa_goto_state", "poe_nfa_push_state", "poe_nfa_pop_state", "poe_nfa_stop".
+
+       Yes,  all the internal events begin with "poe_nfa_".  More may be forthcoming, but they will always begin
+       the same way.  Therefore please do not define events beginning with "poe_nfa_".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Many of POE::NFA's features are taken directly from  POE::Session.   Please  see  POE::Session  for  more
+       information.
+
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       See POE::Session's documentation.
+
+       POE::NFA is not as feature-complete as POE::Session.  Your feedback is appreciated.
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                                      <u>POE::<a href="../man3pm/NFA.3pm.html">NFA</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

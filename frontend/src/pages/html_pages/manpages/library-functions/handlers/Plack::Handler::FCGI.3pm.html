@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plack::Handler::FCGI - FastCGI handler for Plack</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libplack-perl">libplack-perl_1.0051-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Plack::Handler::FCGI - FastCGI handler for Plack
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Run as a standalone daemon
+         plackup -s FCGI --listen /tmp/fcgi.sock --daemonize --nproc 10
+
+         # Run from your web server like mod_fastcgi
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> plackup -s FCGI
+         my $app = sub { ... };
+
+         # Roll your own
+         my $server = Plack::Handler::FCGI-&gt;new(
+             nproc  =&gt; $num_proc,
+             listen =&gt; [ $port_or_socket ],
+             detach =&gt; 1,
+         );
+         $server-&gt;run($app);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a handler module to run any PSGI application as a standalone FastCGI daemon or a .fcgi script.
+
+   <b>OPTIONS</b>
+       listen
+               listen =&gt; [ '/path/to/socket' ]
+               listen =&gt; [ ':8080' ]
+
+           Listen on a socket path, hostname:port, or :port.
+
+       port
+           listen via TCP on port on all interfaces (Same as "listen =&gt; ":$port"")
+
+       leave-umask
+           Set to 1 to disable setting umask to 0 for socket open
+
+       nointr
+           Do not allow the listener to be interrupted by Ctrl+C
+
+       nproc
+           Specify a number of processes for FCGI::ProcManager
+
+       pid Specify a filename for the pid file
+
+       manager
+           Specify  either  a  FCGI::ProcManager subclass, or an actual FCGI::ProcManager-compatible object.  If
+           you do not want a FCGI::ProcManager but instead run in a single process, set this to undef.
+
+             use FCGI::ProcManager::Dynamic;
+             Plack::Handler::FCGI-&gt;new(
+                 manager =&gt; FCGI::ProcManager::Dynamic-&gt;new(...),
+             );
+
+       daemonize
+           Daemonize the process.
+
+       proc-title
+           Specify process title
+
+       keep-stderr
+           Send psgi.errors to STDERR instead of to the FCGI error stream.
+
+       backlog
+           Maximum length of the queue of pending connections, defaults to 100.
+
+   <b>EXTENSIONS</b>
+       Supported PSGI::Extensions.
+
+       psgix.cleanup
+               push @{ $env-&gt;{'psgix.cleanup.handlers'} }, sub { warn "Did this later" }
+                   if $env-&gt;{'psgix.cleanup'};
+
+           Supports  the  "psgix.cleanup"  extension,  in  order  to  use  it,  just  push   a   callback   onto
+           "$env-&gt;{'psgix.cleanup.handlers'".  These callbacks are run after the "pm_post_dispatch" hook.
+
+       psgix.harakiri
+               $env-&gt;{'psgix.harakiri.commit'} = 1
+                   if $env-&gt;{'psgix.harakiri'};
+
+           If    there    is    a    "manager",    then   "psgix.harakiri"   will   be   enabled   and   setting
+           "$env-&gt;{'psgix.harakiri.commit'}" to a true value will cause "$manager-&gt;pm_exit" to be  called  after
+           the request is finished.
+
+   <b>WEB</b> <b>SERVER</b> <b>CONFIGURATIONS</b>
+       In  all  cases,  you will want to install FCGI and FCGI::ProcManager.  You may find it most convenient to
+       simply install Task::Plack which includes both of these.
+
+       <u>nginx</u>
+
+       This is an example nginx configuration to run your FCGI daemon on a Unix domain socket and run it at  the
+       server's root URL (/).
+
+         http {
+           server {
+             listen 3001;
+             location / {
+               set $script "";
+               set $path_info $uri;
+               fastcgi_pass unix:/tmp/fastcgi.sock;
+               fastcgi_param  SCRIPT_NAME      $script;
+               fastcgi_param  PATH_INFO        $path_info;
+               fastcgi_param  QUERY_STRING     $query_string;
+               fastcgi_param  REQUEST_METHOD   $request_method;
+               fastcgi_param  CONTENT_TYPE     $content_type;
+               fastcgi_param  CONTENT_LENGTH   $content_length;
+               fastcgi_param  REQUEST_URI      $request_uri;
+               fastcgi_param  SERVER_PROTOCOL  $server_protocol;
+               fastcgi_param  REMOTE_ADDR      $remote_addr;
+               fastcgi_param  REMOTE_PORT      $remote_port;
+               fastcgi_param  SERVER_ADDR      $server_addr;
+               fastcgi_param  SERVER_PORT      $server_port;
+               fastcgi_param  SERVER_NAME      $server_name;
+             }
+           }
+         }
+
+       If you want to host your application in a non-root path, then you should mangle this configuration to set
+       the path to "SCRIPT_NAME" and the rest of the path in "PATH_INFO".
+
+       See &lt;https://www.nginx.com/resources/wiki/start/topics/examples/fastcgiexample/&gt; for more details.
+
+       <u>Apache</u> <u>mod_fastcgi</u>
+
+       After  installing  "mod_fastcgi",  you  should  add  the "FastCgiExternalServer" directive to your Apache
+       config:
+
+         FastCgiExternalServer /tmp/myapp.fcgi -socket /tmp/fcgi.sock
+
+         ## Then set up the location that you want to be handled by fastcgi:
+
+         # EITHER from a given path
+         Alias /myapp/ /tmp/myapp.fcgi/
+
+         # OR at the root
+         Alias / /tmp/myapp.fcgi/
+
+       Now you can use plackup to listen to the socket that you've just configured in Apache.
+
+         $  plackup -s FCGI --listen /tmp/myapp.sock psgi/myapp.psgi
+
+       The above describes the "standalone" method, which is usually  appropriate.   There  are  other  methods,
+       described  in  more  detail  at  "Standalone_server_mode"  in  Catalyst::Engine::FastCGI (with regards to
+       Catalyst, but which may be set up similarly for Plack).
+
+       See  also   &lt;<a href="http://www.fastcgi.com/mod_fastcgi/docs/mod_fastcgi.html">http://www.fastcgi.com/mod_fastcgi/docs/mod_fastcgi.html</a>#FastCgiExternalServer&gt;   for   more
+       details.
+
+       <u>lighttpd</u>
+
+       To  host  the  app  in  the  root  path,  you're  recommended  to  use  lighttpd  1.4.23  or  newer  with
+       "fix-root-scriptname" flag like below.
+
+         fastcgi.server = ( "/" =&gt;
+            ((
+              "socket" =&gt; "/tmp/fcgi.sock",
+              "check-local" =&gt; "disable",
+              "fix-root-scriptname" =&gt; "enable",
+            ))
+
+       If you use lighttpd older than 1.4.22 where you don't have "fix-root-scriptname", mounting apps under the
+       root causes wrong "SCRIPT_NAME" and "PATH_INFO" set. Also, mounting under the empty root ("") or  a  path
+       that  has  a  trailing  slash would still cause weird values set even with "fix-root-scriptname". In such
+       cases you can use Plack::Middleware::LighttpdScriptNameFix to fix it.
+
+       To mount in the non-root path over TCP:
+
+         fastcgi.server = ( "/foo" =&gt;
+            ((
+              "host" = "127.0.0.1",
+              "port" = "5000",
+              "check-local" =&gt; "disable",
+            ))
+
+       It's recommended that your mount path does <b>NOT</b> have the trailing slash. If you <u>really</u> need to  have  one,
+       you  should consider using Plack::Middleware::LighttpdScriptNameFix to fix the wrong <b>PATH_INFO</b> values set
+       by lighttpd.
+
+   <b>Authorization</b>
+       Most fastcgi configuration does not pass  "Authorization"  headers  to  "HTTP_AUTHORIZATION"  environment
+       variable     by     default     for    security    reasons.    Authentication    middleware    such    as
+       Plack::Middleware::Auth::Basic or Catalyst::Authentication::Credential::HTTP requires the variable to  be
+       set  up.  Plack::Handler::FCGI  supports  extracting  the "Authorization" environment variable when it is
+       configured that way.
+
+       Apache2 with mod_fastcgi:
+
+         --pass-header Authorization
+
+       mod_fcgid:
+
+         FcgidPassHeader Authorization
+
+   <b>Server::Starter</b>
+       This plack handler supports Server::Starter as a superdaemon.  Simply launch  plackup  from  start_server
+       with a path option.  The listen option is ignored when launched from Server::Starter.
+
+         start_server --path=/tmp/socket -- plackup -s FCGI app.psgi
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Plack
+
+perl v5.38.2                                       2024-01-20                          <u>Plack::Handler::<a href="../man3pm/FCGI.3pm.html">FCGI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

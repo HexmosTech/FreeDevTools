@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPC::Run::Timer -- Timer channels for IPC::Run.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libipc-run-perl">libipc-run-perl_20231003.0-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IPC::Run::Timer -- Timer channels for IPC::Run.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use IPC::Run qw( run  timer timeout );
+          ## or IPC::Run::Timer ( timer timeout );
+          ## or IPC::Run::Timer ( :all );
+
+          ## A non-fatal timer:
+          $t = timer( 5 ); # or...
+          $t = IO::Run::Timer-&gt;new( 5 );
+          run $t, ...;
+
+          ## A timeout (which is a timer that dies on expiry):
+          $t = timeout( 5 ); # or...
+          $t = IO::Run::Timer-&gt;new( 5, exception =&gt; "harness timed out" );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class and module allows timers and timeouts to be created for use by IPC::Run.  A timer simply
+       expires when it's time is up.  A timeout is a timer that throws an exception when it expires.
+
+       Timeouts are usually a bit simpler to use  than timers: they throw an exception on expiration so you
+       don't need to check them:
+
+          ## Give @cmd 10 seconds to get started, then 5 seconds to respond
+          my $t = timeout( 10 );
+          $h = start(
+             \@cmd, \$in, \$out,
+             $t,
+          );
+          pump $h until $out =~ /prompt/;
+
+          $in = "some stimulus";
+          $out = '';
+          $t-&gt;time( 5 )
+          pump $h until $out =~ /expected response/;
+
+       You do need to check timers:
+
+          ## Give @cmd 10 seconds to get started, then 5 seconds to respond
+          my $t = timer( 10 );
+          $h = start(
+             \@cmd, \$in, \$out,
+             $t,
+          );
+          pump $h until $t-&gt;is_expired || $out =~ /prompt/;
+
+          $in = "some stimulus";
+          $out = '';
+          $t-&gt;time( 5 )
+          pump $h until $out =~ /expected response/ || $t-&gt;is_expired;
+
+       Timers and timeouts that are reset get started by <b>start()</b> and <b>pump()</b>.  Timers change state only in
+       <b>pump()</b>.  Since <b>run()</b> and <b>finish()</b> both call <b>pump()</b>, they act like <b>pump()</b> with respect to timers.
+
+       Timers and timeouts have three states: reset, running, and expired.  Setting the timeout value resets the
+       timer, as does calling the <b>reset()</b> method.  The <b>start()</b> method starts (or restarts) a timer with the most
+       recently set time value, no matter what state it's in.
+
+   <b>Time</b> <b>values</b>
+       All time values are in seconds.  Times may be any kind of perl number, e.g. as integer or floating point
+       seconds, optionally preceded by punctuation-separated days, hours, and minutes.
+
+       Examples:
+
+          1           1 second
+          1.1         1.1 seconds
+          60          60 seconds
+          1:0         1 minute
+          1:1         1 minute, 1 second
+          1:90        2 minutes, 30 seconds
+          1:2:3:4.5   1 day, 2 hours, 3 minutes, 4.5 seconds
+          'inf'       the infinity perl special number (the timer never finishes)
+
+       Absolute date/time strings are *not* accepted: year, month and day-of-month parsing is not available
+       (patches welcome :-).
+
+   <b>Interval</b> <b>fudging</b>
+       When calculating an end time from a start time and an interval, IPC::Run::Timer instances add a little
+       fudge factor.  This is to ensure that no time will expire before the interval is up.
+
+       First a little background.  Time is sampled in discrete increments.  We'll call the exact moment that the
+       reported time increments from one interval to the next a tick, and the interval between ticks as the time
+       period.  Here's a diagram of three ticks and the periods between them:
+
+           -0-0-0-0-0-0-0-0-0-0-1-1-1-1-1-1-1-1-1-1-2-...
+           ^                   ^                   ^
+           |&lt;--- period 0 ----&gt;|&lt;--- period 1 ----&gt;|
+           |                   |                   |
+         tick 0              tick 1              tick 2
+
+       To see why the fudge factor is necessary, consider what would happen when a timer with an interval of 1
+       second is started right at the end of period 0:
+
+           -0-0-0-0-0-0-0-0-0-0-1-1-1-1-1-1-1-1-1-1-2-...
+           ^                ^  ^                   ^
+           |                |  |                   |
+           |                |  |                   |
+         tick 0             |tick 1              tick 2
+                            |
+                        start $t
+
+       Assuming that <b>check()</b> is called many times per period, then the timer is likely to expire just after tick
+       1, since the time reported will have lept from the value '0' to the value '1':
+
+           -0-0-0-0-0-0-0-0-0-0-1-1-1-1-1-1-1-1-1-1-2-...
+           ^                ^  ^   ^               ^
+           |                |  |   |               |
+           |                |  |   |               |
+         tick 0             |tick 1|             tick 2
+                            |      |
+                        start $t   |
+                                   |
+                               check $t
+
+       Adding a fudge of '1' in this example means that the timer is guaranteed not to expire before tick 2.
+
+       The fudge is not added to an interval of '0'.
+
+       This means that intervals guarantee a minimum interval.  Given that the process running perl may be
+       suspended for some period of time, or that it gets busy doing something time-consuming, there are no
+       other guarantees on how long it will take a timer to expire.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       INCOMPATIBLE CHANGE: Due to the awkwardness introduced by ripping pseudohashes out of Perl, this class <u>no</u>
+       <u>longer</u> uses the fields pragma.
+
+</pre><h4><b>FUNCTIONS</b> <b>&amp;</b> <b>METHODS</b></h4><pre>
+       timer
+           A constructor function (not method) of IPC::Run::Timer instances:
+
+              $t = timer( 5 );
+              $t = timer( 5, name =&gt; 'stall timer', debug =&gt; 1 );
+
+              $t = timer;
+              $t-&gt;interval( 5 );
+
+              run ..., $t;
+              run ..., $t = timer( 5 );
+
+           This convenience function is a shortened spelling of
+
+              IPC::Run::Timer-&gt;new( ... );
+
+           .  It returns a timer in the reset state with a given interval.
+
+           If  an  exception  is  provided,  it  will  be  thrown when the timer notices that it has expired (in
+           <b>check()</b>).  The name is for debugging usage, if you plan on having multiple timers around.  If no name
+           is provided, a name like "timer #1" will be provided.
+
+       timeout
+           A constructor function (not method) of IPC::Run::Timer instances:
+
+              $t = timeout( 5 );
+              $t = timeout( 5, exception =&gt; "kablooey" );
+              $t = timeout( 5, name =&gt; "stall", exception =&gt; "kablooey" );
+
+              $t = timeout;
+              $t-&gt;interval( 5 );
+
+              run ..., $t;
+              run ..., $t = timeout( 5 );
+
+           A This convenience function is a shortened spelling of
+
+              IPC::Run::Timer-&gt;new( exception =&gt; "IPC::Run: timeout ...", ... );
+
+           .  It returns a timer in the reset state that will throw an exception when it expires.
+
+           Takes the same parameters as "timer", any exception passed in overrides the default exception.
+
+       new
+              IPC::Run::Timer-&gt;new()  ;
+              IPC::Run::Timer-&gt;new( 5 )  ;
+              IPC::Run::Timer-&gt;new( 5, exception =&gt; 'kablooey' )  ;
+
+           Constructor.  See "timer" for details.
+
+       check
+              check $t;
+              check $t, $now;
+              $t-&gt;check;
+
+           Checks to see if a timer has expired since the last check.  Has  no  effect  on  non-running  timers.
+           This will throw an exception if one is defined.
+
+           <b>IPC::Run::pump()</b> calls this routine for any timers in the harness.
+
+           You  may  pass  in  a version of now, which is useful in case you have it lying around or you want to
+           check several timers with a consistent concept of the current time.
+
+           Returns the time left before end_time or 0 if end_time is no longer in the future or the timer is not
+           running (unless, of course, <b>check()</b> <b>expire()</b>s the timer  and  this  results  in  an  exception  being
+           thrown).
+
+           Returns  undef  if  the  timer is not running on entry, 0 if <b>check()</b> expires it, and the time left if
+           it's left running.
+
+       debug
+           Sets/gets the current setting of the debugging flag for this timer.  This has no effect if  debugging
+           is not enabled for the current harness.
+
+       end_time
+              $et = $t-&gt;end_time;
+              $et = end_time $t;
+
+              $t-&gt;end_time( time + 10 );
+
+           Returns the time when this timer will or did expire.  Even if this time is in the past, the timer may
+           not be expired, since <b>check()</b> may not have been called yet.
+
+           Note  that  this end_time is not start_time($t) + interval($t), since some small extra amount of time
+           is added to make sure that the timer does not expire before <b>interval()</b> elapses.  If this were not so,
+           then
+
+           Changing <b>end_time()</b> while a timer is running will set the expiration time.  Changing it while  it  is
+           expired has no affect, since <b>reset()</b>ing a timer always clears the <b>end_time()</b>.
+
+       exception
+              $x = $t-&gt;exception;
+              $t-&gt;exception( $x );
+              $t-&gt;exception( undef );
+
+           Sets/gets the exception to throw, if any.  'undef' means that no exception will be thrown.  Exception
+           does not need to be a scalar: you may ask that references be thrown.
+
+       interval
+              $i = interval $t;
+              $i = $t-&gt;interval;
+              $t-&gt;interval( $i );
+
+           Sets the interval.  Sets the end time based on the <b>start_time()</b> and the interval (and a little fudge)
+           if the timer is running.
+
+       expire
+              expire $t;
+              $t-&gt;expire;
+
+           Sets  the  state to expired (undef).  Will throw an exception if one is defined and the timer was not
+           already expired.  You can expire a reset timer without starting it.
+
+       is_running
+       is_reset
+       is_expired
+       name
+           Sets/gets this timer's name.  The name is only used for debugging purposes  so  you  can  tell  which
+           freakin' timer is doing what.
+
+       reset
+              reset $t;
+              $t-&gt;reset;
+
+           Resets the timer to the non-running, non-expired state and clears the <b>end_time()</b>.
+
+       start
+              start $t;
+              $t-&gt;start;
+              start $t, $interval;
+              start $t, $interval, $now;
+
+           Starts  or  restarts  a  timer.   This always sets the start_time.  It sets the end_time based on the
+           interval if the timer is running or if no end time has been set.
+
+           You may pass an optional interval or current time value.
+
+           Not passing a defined interval causes the previous interval setting to be re-used unless the timer is
+           reset and an end_time has been set (an exception is thrown if no interval has been set).
+
+           Not passing a defined current time value causes the current time to be used.
+
+           Passing a current time value is useful if you happen to have a time value lying around or if you want
+           to make sure that several timers are started with the same concept of start  time.   You  might  even
+           need to lie to an IPC::Run::Timer, occasionally.
+
+       start_time
+           Sets/gets  the  start  time,  in  seconds since the epoch.  Setting this manually is a bad idea, it's
+           better to call "start"() at the correct time.
+
+       state
+              $s = state $t;
+              $t-&gt;state( $s );
+
+           Get/Set the current state.  Only use this if you really need  to  transfer  the  state  to/from  some
+           variable.  Use "expire", "start", "reset", "is_expired", "is_running", "is_reset".
+
+           Note:  Setting the state to 'undef' to expire a timer will not throw an exception.
+
+</pre><h4><b>TODO</b></h4><pre>
+       use Time::HiRes; if it's present.
+
+       Add detection and parsing of [[[HH:]MM:]SS formatted times and intervals.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Barrie Slaymaker &lt;<a href="mailto:barries@slaysys.com">barries@slaysys.com</a>&gt;
+
+perl v5.38.2                                       2024-04-01                               <u>IPC::Run::<a href="../man3pm/Timer.3pm.html">Timer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

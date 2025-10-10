@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Controller::REST - A RESTful controller</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-action-rest-perl">libcatalyst-action-rest-perl_1.21-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Controller::REST - A RESTful controller
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Foo::Controller::Bar;
+           use Moose;
+           use namespace::autoclean;
+
+           BEGIN { extends 'Catalyst::Controller::REST' }
+
+           sub thing : Local : ActionClass('REST') { }
+
+           # Answer GET requests to "thing"
+           sub thing_GET {
+              my ( $self, $c ) = @_;
+
+              # Return a 200 OK, with the data in entity
+              # serialized in the body
+              $self-&gt;status_ok(
+                   $c,
+                   entity =&gt; {
+                       some =&gt; 'data',
+                       foo  =&gt; 'is real bar-y',
+                   },
+              );
+           }
+
+           # Answer PUT requests to "thing"
+           sub thing_PUT {
+               my ( $self, $c ) = @_;
+
+               $radiohead = $c-&gt;req-&gt;data-&gt;{radiohead};
+
+               $self-&gt;status_created(
+                   $c,
+                   location =&gt; $c-&gt;req-&gt;uri,
+                   entity =&gt; {
+                       radiohead =&gt; $radiohead,
+                   }
+               );
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Catalyst::Controller::REST implements a mechanism for building RESTful services in Catalyst.  It does
+       this by extending the normal Catalyst dispatch mechanism to allow for different subroutines to be called
+       based on the HTTP Method requested, while also transparently handling all the
+       serialization/deserialization for you.
+
+       This is probably best served by an example.  In the above controller, we have declared a Local Catalyst
+       action on "sub thing", and have used the ActionClass('REST').
+
+       Below, we have declared "thing_GET" and "thing_PUT".  Any GET requests to thing will be dispatched to
+       "thing_GET", while any PUT requests will be dispatched to "thing_PUT".
+
+       Any unimplemented HTTP methods will be met with a "405 Method Not Allowed" response, automatically
+       containing the proper list of available methods.  You can override this behavior through implementing a
+       custom "thing_not_implemented" method.
+
+       If you do not provide an OPTIONS handler, we will respond to any OPTIONS requests with a "200 OK",
+       populating the Allowed header automatically.
+
+       Any data included in "$c-&gt;stash-&gt;{'rest'}" will be serialized for you.  The serialization format will be
+       selected based on the content-type of the incoming request.  It is probably easier to use the "STATUS
+       HELPERS", which are described below.
+
+       "The HTTP POST, PUT, and OPTIONS methods will all automatically deserialize the contents of
+       "$c-&gt;request-&gt;body" into the "$c-&gt;request-&gt;data" hashref", based on the request's "Content-type" header.
+       A list of understood serialization formats is below.
+
+       If we do not have (or cannot run) a serializer for a given content-type, a 415 "Unsupported Media Type"
+       error is generated.
+
+       To make your Controller RESTful, simply have it
+
+         BEGIN { extends 'Catalyst::Controller::REST' }
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       See "CONFIGURATION" in Catalyst::Action::Serialize. Note that the "serialize" key has been deprecated.
+
+</pre><h4><b>SERIALIZATION</b></h4><pre>
+       Catalyst::Controller::REST will automatically serialize your responses, and deserialize any POST, PUT or
+       OPTIONS requests. It evaluates which serializer to use by mapping a content-type to a Serialization
+       module.  We select the content-type based on:
+
+       <b>The</b> <b>Content-Type</b> <b>Header</b>
+           If the incoming HTTP Request had a Content-Type header set, we will use it.
+
+       <b>The</b> <b>content-type</b> <b>Query</b> <b>Parameter</b>
+           If this is a GET request, you can supply a content-type query parameter.
+
+       <b>Evaluating</b> <b>the</b> <b>Accept</b> <b>Header</b>
+           Finally, if the client provided an Accept header, we will evaluate it and use the best-ranked choice.
+
+</pre><h4><b>AVAILABLE</b> <b>SERIALIZERS</b></h4><pre>
+       A  given  serialization  mechanism  is  only available if you have the underlying modules installed.  For
+       example, you can't use XML::Simple if it's not already installed.
+
+       In addition, each serializer has its quirks in terms of what sorts of data structures  it  will  properly
+       handle.  Catalyst::Controller::REST makes no attempt to save you from yourself in this regard. :)
+
+       • "text/x-yaml" =&gt; "YAML::Syck"
+
+         Returns YAML generated by YAML::Syck.
+
+       • "text/html" =&gt; "YAML::HTML"
+
+         This  uses  YAML::Syck  and URI::Find to generate YAML with all URLs turned to hyperlinks.  Only usable
+         for Serialization.
+
+       • "application/json" =&gt; "JSON"
+
+         Uses JSON to generate JSON output.  It is strongly  advised  to  also  have  JSON::XS  installed.   The
+         "text/x-json" content type is supported but is deprecated and you will receive warnings in your log.
+
+         You  can  also  add a hash in your controller config to pass options to the json object.  There are two
+         options. "json_options" are used when decoding incoming JSON, and "json_options_encode"  is  used  when
+         encoding JSON for output.
+
+         For instance, to relax permissions when deserializing input, add:
+
+           __PACKAGE__-&gt;config(
+             json_options =&gt; { relaxed =&gt; 1 }
+           )
+
+         To indent the JSON output so it becomes more human readable, add:
+
+           __PACKAGE__-&gt;config(
+             json_options_encode =&gt; { indent =&gt; 1 }
+           )
+
+       • "text/javascript" =&gt; "JSONP"
+
+         If    a    callback=?    parameter   is   passed,   this   returns   javascript   in   the   form   of:
+         $callback($serializedJSON);
+
+         Note - this is disabled by default as it can be a security risk if you are unaware.
+
+         The usual MIME types for this serialization format are: 'text/javascript',  'application/x-javascript',
+         'application/javascript'.
+
+       • "text/x-data-dumper" =&gt; "Data::Serializer"
+
+         Uses the Data::Serializer module to generate Data::Dumper output.
+
+       • "text/x-data-denter" =&gt; "Data::Serializer"
+
+         Uses the Data::Serializer module to generate Data::Denter output.
+
+       • "text/x-data-taxi" =&gt; "Data::Serializer"
+
+         Uses the Data::Serializer module to generate Data::Taxi output.
+
+       • "text/x-config-general" =&gt; "Data::Serializer"
+
+         Uses the Data::Serializer module to generate Config::General output.
+
+       • "text/x-php-serialization" =&gt; "Data::Serializer"
+
+         Uses the Data::Serializer module to generate PHP::Serialization output.
+
+       • "text/xml" =&gt; "XML::Simple"
+
+         Uses  XML::Simple  to  generate XML output.  This is probably not suitable for any real heavy XML work.
+         Due to XML::Simples requirement that the data you serialize be a HASHREF, we transform outgoing data to
+         be in the form of:
+
+           { data =&gt; $yourdata }
+
+       • View
+
+         Uses a regular Catalyst view.  For example, if you wanted to have your "text/html" and "text/xml" views
+         rendered by TT, set:
+
+           __PACKAGE__-&gt;config(
+               map =&gt; {
+                   'text/html' =&gt; [ 'View', 'TT' ],
+                   'text/xml'  =&gt; [ 'View', 'XML' ],
+               }
+           );
+
+         Your views should have a "process" method like this:
+
+           sub process {
+               my ( $self, $c, $stash_key ) = @_;
+
+               my $output;
+               eval {
+                   $output = $self-&gt;serialize( $c-&gt;stash-&gt;{$stash_key} );
+               };
+               return $@ if $@;
+
+               $c-&gt;response-&gt;body( $output );
+               return 1;  # important
+           }
+
+           sub serialize {
+               my ( $self, $data ) = @_;
+
+               my $serialized = ... process $data here ...
+
+               return $serialized;
+           }
+
+       • Callback
+
+         For infinite flexibility, you can provide a callback for the deserialization/serialization steps.
+
+           __PACKAGE__-&gt;config(
+               map =&gt; {
+                   'text/xml'  =&gt; [ 'Callback', { deserialize =&gt; \&amp;parse_xml, serialize =&gt; \&amp;render_xml } ],
+               }
+           );
+
+         The "deserialize" callback is passed a string that is the body of the request and is expected to return
+         a scalar value that results from the deserialization.  The "serialize"  callback  is  passed  the  data
+         structure  that  needs  to  be  serialized  and must return a string suitable for returning in the HTTP
+         response.  In addition to receiving the scalar to act on, both  callbacks  are  passed  the  controller
+         object and the context (i.e. $c) as the second and third arguments.
+
+       By  default, Catalyst::Controller::REST will return a "415 Unsupported Media Type" response if an attempt
+       to use an unsupported content-type is made.  You can ensure that something is always returned by  setting
+       the "default" config option:
+
+         __PACKAGE__-&gt;config(default =&gt; 'text/x-yaml');
+
+       would make it always fall back to the serializer plugin defined for "text/x-yaml".
+
+</pre><h4><b>CUSTOM</b> <b>SERIALIZERS</b></h4><pre>
+       Implementing  new  Serialization  formats is easy!  Contributions are most welcome!  If you would like to
+       implement a custom serializer, you should create two new modules in the  Catalyst::Action::Serialize  and
+       Catalyst::Action::Deserialize  namespace.  Then assign your new class to the content-type's you want, and
+       you're done.
+
+       See Catalyst::Action::Serialize and Catalyst::Action::Deserialize for more information.
+
+</pre><h4><b>STATUS</b> <b>HELPERS</b></h4><pre>
+       Since so much of REST is in using HTTP, we provide these Status Helpers.  Using them will ensure that you
+       are responding with the proper codes, headers, and entities.
+
+       These  helpers  try  and  conform  to  the  HTTP  1.1  Specification.   You   can   refer   to   it   at:
+       &lt;<a href="http://www.w3.org/Protocols/rfc2616/rfc2616.txt">http://www.w3.org/Protocols/rfc2616/rfc2616.txt</a>&gt;.    These  routines  are  all  implemented  as  regular
+       subroutines, and as such require you pass the current context ($c) as the first argument.
+
+       status_ok
+           Returns a "200 OK" response.  Takes an "entity" to serialize.
+
+           Example:
+
+             $self-&gt;status_ok(
+               $c,
+               entity =&gt; {
+                   radiohead =&gt; "Is a good band!",
+               }
+             );
+
+       status_created
+           Returns a "201 CREATED" response.  Takes an "entity" to serialize, and a "location" where the created
+           object can be found.
+
+           Example:
+
+             $self-&gt;status_created(
+               $c,
+               location =&gt; $c-&gt;req-&gt;uri,
+               entity =&gt; {
+                   radiohead =&gt; "Is a good band!",
+               }
+             );
+
+           In the above example, we use the requested URI as our location.  This is probably what you  want  for
+           most PUT requests.
+
+       status_accepted
+           Returns  a  "202 ACCEPTED" response.  Takes an "entity" to serialize.  Also takes optional "location"
+           for queue type scenarios.
+
+           Example:
+
+             $self-&gt;status_accepted(
+               $c,
+               location =&gt; $c-&gt;req-&gt;uri,
+               entity =&gt; {
+                   status =&gt; "queued",
+               }
+             );
+
+       status_no_content
+           Returns a "204 NO CONTENT" response.
+
+       status_multiple_choices
+           Returns a "300 MULTIPLE CHOICES" response. Takes an "entity" to serialize, which should provide  list
+           of possible locations. Also takes optional "location" for preferred choice.
+
+       status_found
+           Returns a "302 FOUND" response. Takes an "entity" to serialize.  Also takes optional "location".
+
+       status_bad_request
+           Returns  a "400 BAD REQUEST" response.  Takes a "message" argument as a scalar, which will become the
+           value of "error" in the serialized response.
+
+           Example:
+
+             $self-&gt;status_bad_request(
+               $c,
+               message =&gt; "Cannot do what you have asked!",
+             );
+
+       status_forbidden
+           Returns a "403 FORBIDDEN" response.  Takes a "message" argument as a scalar, which  will  become  the
+           value of "error" in the serialized response.
+
+           Example:
+
+             $self-&gt;status_forbidden(
+               $c,
+               message =&gt; "access denied",
+             );
+
+       status_not_found
+           Returns  a  "404  NOT FOUND" response.  Takes a "message" argument as a scalar, which will become the
+           value of "error" in the serialized response.
+
+           Example:
+
+             $self-&gt;status_not_found(
+               $c,
+               message =&gt; "Cannot find what you were looking for!",
+             );
+
+       gone
+           Returns a "41O GONE" response.  Takes a "message" argument as a scalar, which will become  the  value
+           of "error" in the serialized response.
+
+           Example:
+
+             $self-&gt;status_gone(
+               $c,
+               message =&gt; "The document have been deleted by foo",
+             );
+
+       status_see_other
+           Returns  a "303 See Other" response.  Takes an optional "entity" to serialize, and a "location" where
+           the client should redirect to.
+
+           Example:
+
+             $self-&gt;status_see_other(
+               $c,
+               location =&gt; $some_other_url,
+               entity =&gt; {
+                   radiohead =&gt; "Is a good band!",
+               }
+             );
+
+       status_moved
+           Returns a "301 MOVED" response.  Takes an "entity" to serialize, and a "location" where  the  created
+           object can be found.
+
+           Example:
+
+            $self-&gt;status_moved(
+              $c,
+              location =&gt; '/somewhere/else',
+              entity =&gt; {
+                radiohead =&gt; "Is a good band!",
+              },
+            );
+
+</pre><h4><b>MANUAL</b> <b>RESPONSES</b></h4><pre>
+       If  you  want  to  construct  your  responses  yourself,  all  you  need to do is put the object you want
+       serialized in $c-&gt;stash-&gt;{'rest'}.
+
+</pre><h4><b>IMPLEMENTATION</b> <b>DETAILS</b></h4><pre>
+       This    Controller    ties    together    Catalyst::Action::REST,     Catalyst::Action::Serialize     and
+       Catalyst::Action::Deserialize.   It  should  be suitable for most applications.  You should be aware that
+       it:
+
+       Configures the Serialization Actions
+           This class provides a default configuration for Serialization.  It is currently:
+
+             __PACKAGE__-&gt;config(
+                 'stash_key' =&gt; 'rest',
+                 'map'       =&gt; {
+                    'text/html'          =&gt; 'YAML::HTML',
+                    'text/xml'           =&gt; 'XML::Simple',
+                    'text/x-yaml'        =&gt; 'YAML',
+                    'application/json'   =&gt; 'JSON',
+                    'text/x-json'        =&gt; 'JSON',
+                    'text/x-data-dumper' =&gt; [ 'Data::Serializer', 'Data::Dumper' ],
+                    'text/x-data-denter' =&gt; [ 'Data::Serializer', 'Data::Denter' ],
+                    'text/x-data-taxi'   =&gt; [ 'Data::Serializer', 'Data::Taxi'   ],
+                    'application/x-storable'   =&gt; [ 'Data::Serializer', 'Storable' ],
+                    'application/x-freezethaw' =&gt; [ 'Data::Serializer', 'FreezeThaw' ],
+                    'text/x-config-general'    =&gt; [ 'Data::Serializer', 'Config::General' ],
+                    'text/x-php-serialization' =&gt; [ 'Data::Serializer', 'PHP::Serialization' ],
+                 },
+             );
+
+           You can read the full set of options for this configuration block in Catalyst::Action::Serialize.
+
+       Sets a "begin" and "end" method for you
+           The    "begin"    method    uses    Catalyst::Action::Deserialize.     The    "end"    method    uses
+           Catalyst::Action::Serialize.   If  you  want  to  override either behavior, simply implement your own
+           "begin" and "end" actions and forward to another action with the Serialize and/or Deserialize  action
+           classes:
+
+             package Foo::Controller::Monkey;
+             use Moose;
+             use namespace::autoclean;
+
+             BEGIN { extends 'Catalyst::Controller::REST' }
+
+             sub begin : Private {
+               my ($self, $c) = @_;
+               ... do things before Deserializing ...
+               $c-&gt;forward('deserialize');
+               ... do things after Deserializing ...
+             }
+
+             sub deserialize : ActionClass('Deserialize') {}
+
+             sub end :Private {
+               my ($self, $c) = @_;
+               ... do things before Serializing ...
+               $c-&gt;forward('serialize');
+               ... do things after Serializing ...
+             }
+
+             sub serialize : ActionClass('Serialize') {}
+
+           If you need to deserialize multipart requests (i.e. REST data in one part and file uploads in others)
+           you can do so by using the Catalyst::Action::DeserializeMultiPart action class.
+
+</pre><h4><b>A</b> <b>MILD</b> <b>WARNING</b></h4><pre>
+       I  have  code  in production using Catalyst::Controller::REST.  That said, it is still under development,
+       and it's possible that things may change between releases.  I promise to not break things  unnecessarily.
+       :)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Catalyst::Action::REST, Catalyst::Action::Serialize, Catalyst::Action::Deserialize
+
+       For help with REST in general:
+
+       The HTTP 1.1 Spec is required reading. <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.txt">http://www.w3.org/Protocols/rfc2616/rfc2616.txt</a>
+
+       Wikipedia! <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">http://en.wikipedia.org/wiki/Representational_State_Transfer</a>
+
+       The REST Wiki: <a href="http://rest.blueoxen.net/cgi-bin/wiki.pl">http://rest.blueoxen.net/cgi-bin/wiki.pl</a>?FrontPage
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       See Catalyst::Action::REST for authors.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       You may distribute this code under the same terms as Perl itself.
+
+perl v5.34.0                                       2022-06-09                    <u>Catalyst::Controller::<a href="../man3pm/REST.3pm.html">REST</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

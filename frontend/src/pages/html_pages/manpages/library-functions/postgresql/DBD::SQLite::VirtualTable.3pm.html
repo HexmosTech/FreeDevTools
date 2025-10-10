@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBD::SQLite::VirtualTable -- SQLite virtual tables implemented in Perl</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbd-sqlite3-perl">libdbd-sqlite3-perl_1.76-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBD::SQLite::VirtualTable -- SQLite virtual tables implemented in Perl
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # register the virtual table module within sqlite
+         $dbh-&gt;sqlite_create_module(mod_name =&gt; "DBD::SQLite::VirtualTable::Subclass");
+
+         # create a virtual table
+         $dbh-&gt;do("CREATE VIRTUAL TABLE vtbl USING mod_name(arg1, arg2, ...)")
+
+         # use it as any regular table
+         my $sth = $dbh-&gt;prepare("SELECT * FROM vtbl WHERE ...");
+
+       <b>Note</b> : VirtualTable subclasses or instances are not called directly from Perl code; everything happens
+       indirectly through SQL statements within SQLite.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is an abstract class for implementing SQLite virtual tables, written in Perl. Such tables
+       look like regular tables, and are accessed through regular SQL instructions and regular DBI API; but the
+       implementation is done through hidden calls to a Perl class.  This is the same idea as Perl's tied
+       variables, but at the SQLite level.
+
+       The current abstract class cannot be used directly, so the synopsis above is just to give a general idea.
+       Concrete, usable classes bundled with the present distribution are :
+
+       •   DBD::SQLite::VirtualTable::FileContent : implements a virtual column that exposes file contents. This
+           is especially useful in conjunction with a fulltext index; see DBD::SQLite::Fulltext_search.
+
+       •   DBD::SQLite::VirtualTable::PerlData : binds to a Perl array within the Perl program. This can be used
+           for simple import/export operations, for debugging purposes, for joining data from different sources,
+           etc.
+
+       Other Perl virtual tables may also be published separately on CPAN.
+
+       The  following  chapters  document  the  structure  of  the  abstract  class and explain how to write new
+       subclasses; this is meant for <b>module</b> <b>authors</b>, not for end users. If you just need to use a virtual  table
+       module, refer to that module's documentation.
+
+</pre><h4><b>ARCHITECTURE</b></h4><pre>
+   <b>Classes</b>
+       A virtual table module for SQLite is implemented through a pair of classes :
+
+       •   the <b>table</b> class implements methods for creating or connecting a virtual table, for destroying it, for
+           opening new searches, etc.
+
+       •   the <b>cursor</b> class implements methods for performing a specific SQL statement
+
+   <b>Methods</b>
+       Most methods in both classes are not called directly from Perl code : instead, they are callbacks, called
+       from the sqlite kernel.  Following common Perl conventions, such methods have names in uppercase.
+
+</pre><h4><b>TABLE</b> <b>METHODS</b></h4><pre>
+   <b>Class</b> <b>methods</b> <b>for</b> <b>registering</b> <b>the</b> <b>module</b>
+       <u>CREATE_MODULE</u>
+
+         $class-&gt;CREATE_MODULE($sqlite_module_name);
+
+       Called when the client code invokes
+
+         $dbh-&gt;sqlite_create_module($sqlite_module_name =&gt; $class);
+
+       The default implementation is empty.
+
+       <u>DESTROY_MODULE</u>
+
+         $class-&gt;DESTROY_MODULE();
+
+       Called automatically when the database handle is disconnected.  The default implementation is empty.
+
+   <b>Class</b> <b>methods</b> <b>for</b> <b>creating</b> <b>a</b> <b>vtable</b> <b>instance</b>
+       <u>CREATE</u>
+
+         $class-&gt;CREATE($dbh_ref, $module_name, $db_name, $vtab_name, @args);
+
+       Called when sqlite receives a statement
+
+         CREATE VIRTUAL TABLE $db_name.$vtab_name USING $module_name(@args)
+
+       The default implementation just calls "NEW".
+
+       <u>CONNECT</u>
+
+         $class-&gt;CONNECT($dbh_ref, $module_name, $db_name, $vtab_name, @args);
+
+       Called  when  attempting  to  access  a  virtual  table  that  had  been created during previous database
+       connection. The creation arguments were stored within the sqlite database and are  passed  again  to  the
+       CONNECT method.
+
+       The default implementation just calls "NEW".
+
+       <b>_</b><u>PREPARE_SELF</u>
+
+         $class-&gt;_PREPARE_SELF($dbh_ref, $module_name, $db_name, $vtab_name, @args);
+
+       Prepares the datastructure for a virtual table instance.  @args is
+        just the collection of strings (comma-separated) that were given
+        within the "CREATE VIRTUAL TABLE" statement; each subclass should
+        decide what to do with this information,
+
+       The  method parses @args to differentiate between <u>options</u> (strings of shape $key=$value or $key="$value",
+       stored in "$self-&gt;{options}"), and <u>columns</u> (other @args, stored  in  "$self-&gt;{columns}").  It  creates  a
+       hashref with the following fields :
+
+       "dbh_ref"
+           a  weak  reference  to  the  $dbh  database  handle  (see  Scalar::Util  for  an  explanation of weak
+           references).
+
+       "module_name"
+           name of the module as declared to sqlite (not to be confounded with the Perl class name).
+
+       "db_name"
+           name of the database (usuallly 'main' or 'temp'), but it may also be an attached database
+
+       "vtab_name"
+           name of the virtual table
+
+       "columns"
+           arrayref of column declarations
+
+       "options"
+           hashref of option declarations
+
+       This method should not be redefined, since it performs general work which is supposed to  be  useful  for
+       all subclasses.  Instead, subclasses may override the "NEW" method.
+
+       <u>NEW</u>
+
+         $class-&gt;NEW($dbh_ref, $module_name, $db_name, $vtab_name, @args);
+
+       Instantiates a virtual table.
+
+   <b>Instance</b> <b>methods</b> <b>called</b> <b>from</b> <b>the</b> <b>sqlite</b> <b>kernel</b>
+       <u>DROP</u>
+
+       Called whenever a virtual table is destroyed from the database through the "DROP TABLE" SQL instruction.
+
+       Just  after  the  DROP() call, the Perl instance will be destroyed (and will therefore automatically call
+       the DESTROY() method if such a method is present).
+
+       The default implementation for DROP is empty.
+
+       <b>Note</b> : this corresponds to the "xDestroy" method in the SQLite  documentation;  here  it  was  not  named
+       "DESTROY", to avoid any confusion with the standard Perl method "DESTROY" for object destruction.
+
+       <u>DISCONNECT</u>
+
+       Called for every virtual table just before the database handle is disconnected.
+
+       Just  after  the DISCONNECT() call, the Perl instance will be destroyed (and will therefore automatically
+       call the DESTROY() method if such a method is present).
+
+       The default implementation for DISCONNECT is empty.
+
+       <u>VTAB_TO_DECLARE</u>
+
+       This method is called automatically just after "CREATE" or "CONNECT", to  register  the  columns  of  the
+       virtual  table  within  the  sqlite  kernel.   The method should return a string containing a SQL "CREATE
+       TABLE" statement; but only the column declaration parts will be considered.  Columns may be declared with
+       the special keyword "HIDDEN", which means that they  are  used  internally  for  the  the  virtual  table
+       implementation,  and  are  not  visible  to  users -- see &lt;<a href="http://sqlite.org/c3ref/declare_vtab.html">http://sqlite.org/c3ref/declare_vtab.html</a>&gt; and
+       &lt;<a href="http://www.sqlite.org/vtab.html">http://www.sqlite.org/vtab.html</a>#hiddencol&gt; for detailed explanations.
+
+       The default implementation returns:
+
+         CREATE TABLE $self-&gt;{vtab_name}(@{$self-&gt;{columns}})
+
+       <u>BEST_INDEX</u>
+
+         my $index_info = $vtab-&gt;BEST_INDEX($constraints, $order_by)
+
+       This is the most complex method to redefined in subclasses.  This method will be called at the  beginning
+       of  a  new query on the virtual table; the job of the method is to assemble some information that will be
+       used
+
+       a)  by the sqlite kernel to decide about the best search strategy
+
+       b)  by the cursor "FILTER" method to produce the desired subset of rows from the virtual table.
+
+       By calling this method, the SQLite core is saying to the virtual table  that  it  needs  to  access  some
+       subset  of  the  rows in the virtual table and it wants to know the most efficient way to do that access.
+       The "BEST_INDEX" method replies with information that  the  SQLite  core  can  then  use  to  conduct  an
+       efficient search of the virtual table.
+
+       The  method  takes  as  input  a  list of $constraints and a list of $order_by instructions. It returns a
+       hashref of indexing  properties,  described  below;  furthermore,  the  method  also  adds  supplementary
+       information    within    the    input    $constraints.     Detailed    explanations    are    given    in
+       &lt;<a href="http://sqlite.org/vtab.html">http://sqlite.org/vtab.html</a>#xbestindex&gt;.
+
+       Input constraints
+
+       Elements of the $constraints arrayref correspond to specific clauses of the "WHERE ..." part of  the  SQL
+       query.  Each constraint is a hashref with keys :
+
+       "col"
+           the integer index of the column on the left-hand side of the constraint
+
+       "op"
+           the comparison operator, expressed as string containing '=', '&gt;', '&gt;=', '&lt;', '&lt;=' or 'MATCH'.
+
+       "usable"
+           a  boolean  indicating  if that constraint is usable; some constraints might not be usable because of
+           the way tables are ordered in a join.
+
+       The $constraints arrayref is used both for input and for output.  While iterating  over  the  array,  the
+       method should add the following keys into usable constraints :
+
+       "argvIndex"
+           An  index into the @values array that will be passed to the cursor's "FILTER" method. In other words,
+           if the current constraint corresponds to the SQL fragment "WHERE ... AND foo  &lt;  123  ...",  and  the
+           corresponding  "argvIndex"  takes  value  5,  this means that the "FILTER" method will receive 123 in
+           $values[5].
+
+       "omit"
+           A boolean telling to the sqlite core that it can safely omit to double check that  constraint  before
+           returning  the  resultset to the calling program; this means that the FILTER method has fulfilled the
+           filtering job on that constraint and there is no need to do any further checking.
+
+       The "BEST_INDEX" method will not necessarily receive all constraints from the SQL "WHERE"  clause  :  for
+       example  a  constraint  like  "col1  &lt;  col2  +  col3"  cannot be handled at this level.  Furthemore, the
+       "BEST_INDEX" might decide to ignore some of the received constraints. This is why a second pass over  the
+       results will be performed by the sqlite core.
+
+       "order_by" input information
+
+       The  $order_by  arrayref  corresponds to the "ORDER BY" clauses in the SQL query. Each entry is a hashref
+       with keys :
+
+       "col"
+           the integer index of the column being ordered
+
+       "desc"
+           a boolean telling of the ordering is DESCending or ascending
+
+       This information could be used by some subclasses for optimizing the query  strategfy;  but  usually  the
+       sqlite core will perform another sorting pass once all results are gathered.
+
+       Hashref information returned by BEST_INDEX
+
+       The method should return a hashref with the following keys :
+
+       "idxNum"
+           An arbitrary integer associated with that index; this information will be passed back to "FILTER".
+
+       "idxStr"
+           An arbitrary str associated with that index; this information will be passed back to "FILTER".
+
+       "orderByConsumed"
+           A boolean telling the sqlite core if the $order_by information has been taken into account or not.
+
+       "estimatedCost"
+           A float that should be set to the estimated number of disk access operations required to execute this
+           query  against  the  virtual  table.  The  SQLite core will often call BEST_INDEX multiple times with
+           different constraints, obtain multiple cost estimates, then choose the  query  plan  that  gives  the
+           lowest estimate.
+
+       "estimatedRows"
+           An integer giving the estimated number of rows returned by that query.
+
+       <u>OPEN</u>
+
+       Called  to  instantiate  a  new  cursor.   The  default  implementation appends "::Cursor" to the current
+       classname and calls NEW() within that cursor class.
+
+       <b>_</b><u>SQLITE_UPDATE</u>
+
+       This is the dispatch  method  implementing  the  xUpdate()  callback  for  virtual  tables.  The  default
+       implementation applies the algorithm described in &lt;<a href="http://sqlite.org/vtab.html">http://sqlite.org/vtab.html</a>#xupdate&gt; to decide to call
+       "INSERT", "DELETE" or "UPDATE"; so there is no reason to override this method in subclasses.
+
+       <u>INSERT</u>
+
+         my $rowid = $vtab-&gt;INSERT($new_rowid, @values);
+
+       This  method  should  be  overridden  in  subclasses to implement insertion of a new row into the virtual
+       table.   The  size  of  the  @values  array  corresponds  to  the  number  of  columns  declared  through
+       "VTAB_TO_DECLARE".   The  $new_rowid  may  be  explicitly  given, or it may be "undef", in which case the
+       method must compute a new id and return it as the result of the method call.
+
+       <u>DELETE</u>
+
+         $vtab-&gt;INSERT($old_rowid);
+
+       This method should be overridden in subclasses to implement deletion of a row from the virtual table.
+
+       <u>UPDATE</u>
+
+         $vtab-&gt;UPDATE($old_rowid, $new_rowid, @values);
+
+       This method should be overridden in subclasses to implement  a  row  update  within  the  virtual  table.
+       Usually $old_rowid is equal to $new_rowid, which is a regular update; however, the rowid could be changed
+       from a SQL statement such as
+
+         UPDATE table SET rowid=rowid+1 WHERE ...;
+
+       <u>FIND_FUNCTION</u>
+
+         $vtab-&gt;FIND_FUNCTION($num_args, $func_name);
+
+       When a function uses a column from a virtual table as its first argument, this method is called to see if
+       the  virtual  table  would  like  to overload the function. Parameters are the number of arguments to the
+       function, and the name of the function. If no overloading is desired, this method should return false. To
+       overload the function, this method should return a coderef to the function implementation.
+
+       Each virtual table keeps a cache of results from FIND_FUNCTION calls, so the method will be  called  only
+       once for each pair "($num_args, $func_name)".
+
+       <u>BEGIN_TRANSACTION</u>
+
+       Called to begin a transaction on the virtual table.
+
+       <u>SYNC_TRANSACTION</u>
+
+       Called to signal the start of a two-phase commit on the virtual table.
+
+       <u>SYNC_TRANSACTION</u>
+
+       Called to commit a virtual table transaction.
+
+       <u>ROLLBACK_TRANSACTION</u>
+
+       Called to rollback a virtual table transaction.
+
+       <u>RENAME</u>
+
+         $vtab-&gt;RENAME($new_name)
+
+       Called to rename a virtual table.
+
+       <u>SAVEPOINT</u>
+
+         $vtab-&gt;SAVEPOINT($savepoint)
+
+       Called to signal the virtual table to save its current state at savepoint $savepoint (an integer).
+
+       <u>ROLLBACK_TO</u>
+
+         $vtab-&gt;ROLLBACK_TO($savepoint)
+
+       Called  to  signal  the  virtual  table  to  return  to  the  state $savepoint.  This will invalidate all
+       savepoints with values greater than $savepoint.
+
+       <u>RELEASE</u>
+
+         $vtab-&gt;RELEASE($savepoint)
+
+       Called to invalidate all savepoints with values greater or equal to $savepoint.
+
+   <b>Utility</b> <b>instance</b> <b>methods</b>
+       Methods in this section are in lower case, because they are not called directly from the  sqlite  kernel;
+       these are utility methods to be called from other methods described above.
+
+       <u>dbh</u>
+
+       This method returns the database handle ($dbh) associated with the current virtual table.
+
+</pre><h4><b>CURSOR</b> <b>METHODS</b></h4><pre>
+   <b>Class</b> <b>methods</b>
+       <u>NEW</u>
+
+         my $cursor = $cursor_class-&gt;NEW($vtable, @args)
+
+       Instantiates  a new cursor.  The default implementation just returns a blessed hashref with keys "vtable"
+       and "args".
+
+   <b>Instance</b> <b>methods</b>
+       <u>FILTER</u>
+
+         $cursor-&gt;FILTER($idxNum, $idxStr, @values);
+
+       This method begins a search of a virtual table.
+
+       The $idxNum and $idxStr arguments correspond to values returned by "BEST_INDEX" for the chosen index. The
+       specific meanings of those values are unimportant to SQLite, as long as "BEST_INDEX" and  "FILTER"  agree
+       on what that meaning is.
+
+       The "BEST_INDEX" method may have requested the values of certain expressions using the "argvIndex" values
+       of the $constraints list. Those values are passed to "FILTER" through the @values array.
+
+       If  the  virtual  table contains one or more rows that match the search criteria, then the cursor must be
+       left point at the first row. Subsequent calls to "EOF" must return false. If there  are  no  rows  match,
+       then  the cursor must be left in a state that will cause "EOF" to return true. The SQLite engine will use
+       the "COLUMN" and "ROWID" methods to access that row content. The "NEXT" method will be used to advance to
+       the next row.
+
+       <u>EOF</u>
+
+       This method must return false if the cursor currently points to a valid row of data, or  true  otherwise.
+       This method is called by the SQL engine immediately after each "FILTER" and "NEXT" invocation.
+
+       <u>NEXT</u>
+
+       This  method  advances the cursor to the next row of a result set initiated by "FILTER". If the cursor is
+       already pointing at the last row when this method is called, then the cursor no longer  points  to  valid
+       data  and  a subsequent call to the "EOF" method must return true. If the cursor is successfully advanced
+       to another row of content, then subsequent calls to "EOF" must return false.
+
+       <u>COLUMN</u>
+
+         my $value = $cursor-&gt;COLUMN($idxCol);
+
+       The SQLite core invokes this method in order to find the value for the N-th column of the current row.  N
+       is zero-based so the first column is numbered 0.
+
+       <u>ROWID</u>
+
+         my $value = $cursor-&gt;ROWID;
+
+       Returns the <u>rowid</u> of row that the cursor is currently pointing at.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       SQLite::VirtualTable  is  another module for virtual tables written in Perl, but designed for the reverse
+       use case : instead of starting a Perl program, and embedding the SQLite library into it, the intended use
+       is to start an sqlite program, and embed the Perl interpreter into it.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami &lt;<a href="mailto:dami@cpan.org">dami@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright Laurent Dami, 2014.
+
+       Parts of the code are borrowed from SQLite::VirtualTable, copyright (C) 2006, 2009 by Qindel Formacion  y
+       Servicios, S. L.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.0                                       2024-10-28                     <u>DBD::SQLite::<a href="../man3pm/VirtualTable.3pm.html">VirtualTable</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

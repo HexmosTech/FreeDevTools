@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Duo::Object - Helper base class for Duo objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-duo-perl">libnet-duo-perl_1.02-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Duo::Object - Helper base class for Duo objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Net::Duo::Admin::Token 1.00;
+
+           use parent qw(Net::Duo::Object);
+
+           sub fields {
+               return {
+                   token_id =&gt; 'simple',
+                   type     =&gt; 'simple',
+                   serial   =&gt; 'simple',
+                   users    =&gt; 'Net::Duo::Admin::User',
+               };
+           }
+
+           Net::Duo::Admin::Token-&gt;install_accessors;
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       Perl 5.14 or later and the modules HTTP::Request and HTTP::Response (part of HTTP::Message), JSON, LWP
+       (also known as libwww-perl), Perl6::Slurp, Sub::Install, and URI::Escape (part of URI), all of which are
+       available from CPAN.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Duo API contains a variety of objects, represented as JSON objects with multiple fields.  This
+       objects often embed other objects inside them.  To provide a nice Perl API with getters, setters, and
+       commit and delete methods on individual objects, we want to wrap these Duo REST API objects in Perl
+       classes.
+
+       This module serves as a base class for such objects and does the dirty work of constructing an object
+       from decoded JSON data and building the accessors automatically from a field specification.
+
+       This class should normally be considered an internal implementation detail of the Net::Duo API.  Only
+       developers of the Net::Duo modules should need to worry about it.  Callers can use other Net::Duo API
+       objects without knowing anything about how this class works.
+
+</pre><h4><b>FIELD</b> <b>SPECIFICATION</b></h4><pre>
+       Any class that wants to use Net::Duo::Object to construct itself must provide a field specification.
+       This is a data structure that describes all the data fields in that object.  It is used by the generic
+       Net::Duo::Object constructor to build the Perl data structure for an object, and by the
+       <b>install_accessors()</b> class method to create the accessors for the class.
+
+       The client class must provide a class method named <b>_fields()</b> that returns a reference to a hash.  The
+       keys of the hash are the field names of the data stored in an object of that class.  The values specify
+       the type of data stored in that field.  Each value may be either a simple string or a reference to an
+       array, in which case the first value is the type and the remaining values are flags.  The types must be
+       chosen from the following:
+
+       "array"
+           An array of simple text, number, or boolean values.
+
+       "simple"
+           A simple text, number, or boolean field,
+
+       <u>class</u>
+           The  name  of  a  class.   This  field should then contain an array of zero or more instances of that
+           class, and the constructor for that class will be called with the resulting structures.
+
+       The flags must be chosen from the following:
+
+       "boolean"
+           This is a boolean field.  Convert all values to "true" or "false" before sending  the  data  to  Duo.
+           Only makes sense with a field of type "simple".
+
+       "set"
+           Generate  a  setter  for  this  field.   <b>install_accessors()</b>  will, in addition to adding a method to
+           retrieve the value, will add a method named after the field but prefixed with "set_"  that  will  set
+           the  value  of  that  field and remember that it's been changed locally.  Changed fields will then be
+           pushed back to Duo via the <b>commit()</b> method.
+
+       "zero_or_one"
+           This is a boolean field that wants values of 0 or 1.  Convert all values to 1 or 0 before sending the
+           data to Duo.  Only makes sense with a field of type "simple".
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       create(DUO, URI, DATA)
+           A general constructor for creating a new object in Duo.  Takes a Net::Duo object, the URI of the REST
+           endpoint for object creation, and a reference to a hash  of  object  data.   This  method  should  be
+           overridden by subclasses to provide the URI and only expose the DUO and DATA arguments to the caller.
+           Returns the newly-blessed object containing the data returned by Duo.
+
+       <b>install_accessors()</b>
+           Using  the  field specification, creates accessor functions for each data field that return copies of
+           the data stored in that field, or undef if there is no data.
+
+       new(DUO, DATA)
+           A general constructor for Net::Duo objects.  Takes a Net::Duo object and a reference to a hash, which
+           contains the data for an object of the class being constructed.  Using the  field  specification  for
+           that  class,  the data will be copied out of the object into a Perl data structure, converting nested
+           objects to other Net::Duo objects as required.
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+       commit(URI)
+           A general method for committing changes to an object to Duo.  Takes the URI of the REST endpoint  for
+           object  modification.   This  method  should  be overridden by subclasses to provide the URI and only
+           expose an argument-less method.
+
+           After <b>commit()</b>, the internal representation of the object will be refreshed to  match  the  new  data
+           returned  by  the  Duo  API  for that object.  Therefore, other fields of the object may change after
+           <b>commit()</b> if some other user has changed other, unrelated fields in the object.
+
+           It's best to think of this  method  as  a  synchronize  operation:  changed  data  is  written  back,
+           overwriting  what's in Duo, and unchanged data may be overwritten by whatever is currently in Duo, if
+           it is different.
+
+       <b>json()</b>
+           Convert the data stored in the object to JSON and return the  results.   The  resulting  JSON  should
+           match the JSON that one would get back from the Duo web service when retrieving the same object (plus
+           any  changes  made  locally  to  the  object  via  set_*()  methods).  This is primarily intended for
+           debugging dumps or for passing Duo objects to other systems via further JSON APIs.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Russ Allbery &lt;<a href="mailto:rra@cpan.org">rra@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2015 Russ Allbery &lt;<a href="mailto:rra@cpan.org">rra@cpan.org</a>&gt;
+
+       Copyright 2014 The Board of Trustees of the Leland Stanford Junior University
+
+       Permission is hereby granted, free of charge, to any  person  obtaining  a  copy  of  this  software  and
+       associated  documentation  files (the "Software"), to deal in the Software without restriction, including
+       without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,  and/or  sell
+       copies  of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+       following conditions:
+
+       The above copyright notice and this permission notice shall be included  in  all  copies  or  substantial
+       portions of the Software.
+
+       THE  SOFTWARE  IS  PROVIDED  "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+       LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  NONINFRINGEMENT.   IN
+       NO  EVENT  SHALL  THE  AUTHORS  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+       WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT  OF  OR  IN  CONNECTION  WITH  THE
+       SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::Duo
+
+       This  module  is  part  of  the Net::Duo distribution.  The current version of Net::Duo is available from
+       CPAN, or directly from its web site at &lt;https://www.eyrie.org/~eagle/software/net-duo/&gt;.
+
+perl v5.36.0                                       2022-12-18                              <u>Net::Duo::<a href="../man3pm/Object.3pm.html">Object</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

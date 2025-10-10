@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Filter - protocol abstractions for POE::Wheel and standalone use</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Filter - protocol abstractions for POE::Wheel and standalone use
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       To use with POE::Wheel classes, pass a POE::Filter object to one of the "...Filter" constructor
+       parameters:
+
+         #!perl
+
+         use POE qw(Filter::Line Wheel::FollowTail);
+
+         POE::Session-&gt;create(
+           inline_states =&gt; {
+             _start =&gt; sub {
+               $_[HEAP]{tailor} = POE::Wheel::FollowTail-&gt;new(
+                 Filename =&gt; "/var/log/system.log",
+                 InputEvent =&gt; "got_log_line",
+                 Filter =&gt; POE::Filter::Line-&gt;new(),
+               );
+             },
+             got_log_line =&gt; sub {
+               print "Log: $_[ARG0]\n";
+             }
+           }
+         );
+
+         POE::Kernel-&gt;run();
+         exit;
+
+       Standalone use without POE:
+
+         #!perl
+
+         use warnings;
+         use strict;
+         use POE::Filter::Line;
+
+         my $filter = POE::Filter::Line-&gt;new( Literal =&gt; "\n" );
+
+         # Prints three lines: one, two three.
+
+         $filter-&gt;get_one_start(["one\ntwo\nthr", "ee\nfour"]);
+         while (1) {
+           my $line = $filter-&gt;get_one();
+           last unless @$line;
+           print $line-&gt;[0], "\n";
+         }
+
+         # Prints two lines: four, five.
+
+         $filter-&gt;get_one_start(["\nfive\n"]);
+         while (1) {
+           my $line = $filter-&gt;get_one();
+           last unless @$line;
+           print $line-&gt;[0], "\n";
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Filter objects plug into the wheels and define how the data will be serialized for writing and
+       parsed after reading.  POE::Wheel objects are responsible for moving data, and POE::Filter objects define
+       how the data should look.
+
+       POE::Filter objects are simple by design.  They do not use POE internally, so they are limited to
+       serialization and parsing.  This may complicate implementation of certain protocols (like HTTP 1.x), but
+       it allows filters to be used in stand-alone programs.
+
+       Stand-alone use is very important.  It allows application developers to create lightweight blocking
+       libraries that may be used as simple clients for POE servers.  POE::Component::IKC::ClientLite is a
+       notable example.  This lightweight, blocking event-passing client supports thin clients for gridded POE
+       applications.  The canonical use case is to inject events into an IKC application or grid from CGI
+       interfaces, which require lightweight resource use.
+
+       POE filters and drivers pass data in array references.  This is slightly awkward, but it minimizes the
+       amount of data that must be copied on Perl's stack.
+
+</pre><h4><b>PUBLIC</b> <b>INTERFACE</b></h4><pre>
+       All POE::Filter classes must support the minimal interface, defined here.  Specific filters may implement
+       and document additional methods.
+
+   <b>new</b> <b>PARAMETERS</b>
+       <b>new()</b> creates and initializes a new filter.  Constructor parameters vary from one POE::Filter subclass to
+       the next, so please consult the documentation for your desired filter.
+
+   <b>clone</b>
+       <b>clone()</b> creates and initializes a new filter based on the constructor parameters of the existing one.
+       The new filter is a near-identical copy, except that its buffers are empty.
+
+       Certain components, such as POE::Component::Server::TCP, use <b>clone()</b>.  These components accept a master
+       or template filter at creation time, then <b>clone()</b> that filter for each new connection.
+
+         my $new_filter = $old_filter-&gt;clone();
+
+   <b>get_one_start</b> <b>ARRAYREF</b>
+       <b>get_one_start()</b> accepts an array reference containing unprocessed stream chunks.  The chunks are added to
+       the filter's internal buffer for parsing by <b>get_one()</b>.
+
+       The "SYNOPSIS" shows <b>get_one_start()</b> in use.
+
+   <b>get_one</b>
+       <b>get_one()</b> parses zero or one complete item from the filter's internal buffer.  The data is returned as an
+       ARRAYREF suitable for passing to another filter or a POE::Wheel object.  Filters will return empty
+       ARRAYREFs if they don't have enough raw data to build a complete item.
+
+       <b>get_one()</b> is the lazy form of <b>get()</b>.  It only parses only one item at a time from the filter's buffer.
+       This is vital for applications that may switch filters in mid-stream, as it ensures that the right filter
+       is in use at any given time.
+
+       The "SYNOPSIS" shows <b>get_one()</b> in use.  Note how it assumes the return is always an ARRAYREF, and it
+       implicitly handles empty ones.
+
+   <b>get</b> <b>ARRAYREF</b>
+       <b>get()</b> is the greedy form of <b>get_one()</b>.  It accepts an array reference containing unprocessed stream
+       chunks, and it adds that data to the filter's internal buffer.  It then parses as many full items as
+       possible from the buffer and returns them in another array reference.  Any unprocessed data remains in
+       the filter's buffer for the next call.
+
+       As with <b>get_one()</b>, <b>get()</b> will return an empty array reference if the filter doesn't contain enough raw
+       data to build a complete item.
+
+       In fact, <b>get()</b> is implemented in POE::Filter in terms of <b>get_one_start()</b> and <b>get_one()</b>.
+
+       Here's the <b>get()</b> form of the SYNOPSIS stand-alone example:
+
+         #!perl
+
+         use warnings;
+         use strict;
+         use POE::Filter::Line;
+
+         my $filter = POE::Filter::Line-&gt;new( Literal =&gt; "\n" );
+
+         # Prints three lines: one, two three.
+
+         my $lines = $filter-&gt;get(["one\ntwo\nthr", "ee\nfour"]);
+         foreach my $line (@$lines) {
+           print "$line\n";
+         }
+
+         # Prints two lines: four, five.
+
+         $lines = $filter-&gt;get(["\nfive\n"]);
+         foreach my $line (@$lines) {
+           print "$line\n";
+         }
+
+       <b>get()</b> should not be used with wheels that support filter switching.  Its greedy nature means that it
+       often parses streams well in advance of a wheel's events.  By the time an application changes the wheel's
+       filter, it's too late: The old filter has already parsed the rest of the received data.
+
+       Consider a stream of letters, numbers, and periods.  The periods signal when to switch filters from one
+       that parses letters to one that parses numbers.
+
+       In our hypothetical application, letters must be handled one at a time, but numbers may be handled in
+       chunks.  We'll use POE::Filter::Block with a BlockSize of 1 to parse letters, and POE::FIlter::Line with
+       a Literal terminator of "." to handle numbers.
+
+       Here's the sample stream:
+
+         abcdefg.1234567.hijklmnop.890.q
+
+       We'll start with a ReadWrite wheel configured to parse characters.
+
+         $_[HEAP]{wheel} = POE::Wheel::ReadWrite-&gt;new(
+           Filter =&gt; POE::Filter::Block-&gt;new( BlockSize =&gt; 1 ),
+           Handle =&gt; $socket,
+           InputEvent =&gt; "got_letter",
+         );
+
+       The "got_letter" handler will be called 8 times.  One for each letter from a through g, and once for the
+       period following g.  Upon receiving the period, it will switch the wheel into number mode.
+
+         sub handle_letter {
+           my $letter = $_[ARG0];
+           if ($letter eq ".") {
+             $_[HEAP]{wheel}-&gt;set_filter(
+               POE::Filter::Line-&gt;new( Literal =&gt; "." )
+             );
+             $_[HEAP]{wheel}-&gt;event( InputEvent =&gt; "got_number" );
+           }
+           else {
+             print "Got letter: $letter\n";
+           }
+         }
+
+       If the greedy <b>get()</b> were used, the entire input stream would have been parsed as characters in advance of
+       the first <b>handle_letter()</b> call.  The <b>set_filter()</b> call would have been moot, since there would be no data
+       left to be parsed.
+
+       The "got_number" handler receives contiguous runs of digits as period-terminated lines.  The greedy <b>get()</b>
+       would cause a similar problem as above.
+
+         sub handle_numbers {
+           my $numbers = $_[ARG0];
+           print "Got number(s): $numbers\n";
+           $_[HEAP]-&gt;{wheel}-&gt;set_filter(
+             POE::Filter::Block-&gt;new( BlockSize =&gt; 1 )
+           );
+           $_[HEAP]-&gt;{wheel}-&gt;event( InputEvent =&gt; "got_letter" );
+         }
+
+       So don't do it!
+
+   <b>put</b> <b>ARRAYREF</b>
+       <b>put()</b> serializes items into a stream of octets that may be written to a file or sent across a socket.  It
+       accepts a reference to a list of items, and it returns a reference to a list of marshalled stream chunks.
+       The number of output chunks is not necessarily related to the number of input items.
+
+       In stand-alone use, <b>put()</b>'s output may be sent directly:
+
+         my $line_filter = POE::Filter::Line-&gt;new();
+         my $lines = $line_filter-&gt;put(\@list_of_things);
+         foreach my $line (@$lines) {
+           print $line;
+         }
+
+       The list reference it returns may be passed directly to a driver or filter.  Drivers and filters
+       deliberately share the same <b>put()</b> interface so that things like this are possible:
+
+         $driver-&gt;put(
+           $transfer_encoding_filter-&gt;put(
+             $content_encoding_filter-&gt;put(
+               \@items
+             )
+           )
+         );
+
+         1 while $driver-&gt;flush(\*STDOUT);
+
+   <b>get_pending</b>
+       <b>get_pending()</b> returns any data remaining in a filter's input buffer.  The filter's input buffer is not
+       cleared, however.  <b>get_pending()</b> returns a list reference if there's any data, or undef if the filter was
+       empty.
+
+       POE::Wheel objects use <b>get_pending()</b> during filter switching.  Unprocessed data is fetched from the old
+       filter with <b>get_pending()</b> and injected into the new filter with <b>get_one_start()</b>.
+
+         use POE::Filter::Line;
+         use POE::Filter::Stream;
+
+         my $line_filter = POE::Filter::Line-&gt;new();
+         $line_filter-&gt;get_one_start([ "not a complete line" ]);
+
+         my $stream_filter = POE::Filter::Stream-&gt;new();
+         my $line_buffer = $line_filter-&gt;get_pending();
+         $stream_filter-&gt;get_one_start($line_buffer) if $line_buffer;
+
+         print "Stream: $_\n" foreach (@{ $stream_filter-&gt;get_one });
+
+       Full items are serialized whole, so there is no corresponding "put" buffer or accessor.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+       POE is bundled with the following filters:
+
+       POE::Filter::Block POE::Filter::Grep POE::Filter::HTTPD POE::Filter::Line POE::Filter::Map
+       POE::Filter::RecordBlock POE::Filter::Reference POE::Filter::Stackable POE::Filter::Stream
+
+</pre><h4><b>BUGS</b></h4><pre>
+       In theory, filters should be interchangeable.  In practice, stream and block protocols tend to be
+       incompatible.
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                                   <u>POE::<a href="../man3pm/Filter.3pm.html">Filter</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pod::Simple::Subclassing -- write a formatter as a Pod::Simple subclass</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/perl-doc">perl-doc_5.40.1-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Pod::Simple::Subclassing -- write a formatter as a Pod::Simple subclass
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Pod::SomeFormatter;
+         use Pod::Simple;
+         @ISA = qw(Pod::Simple);
+         $VERSION = '1.01';
+         use strict;
+
+         sub _handle_element_start {
+           my($parser, $element_name, $attr_hash_r) = @_;
+           ...
+         }
+
+         sub _handle_element_end {
+           my($parser, $element_name, $attr_hash_r) = @_;
+           # NOTE: $attr_hash_r is only present when $element_name is "over" or "begin"
+           # The remaining code excerpts will mostly ignore this $attr_hash_r, as it is
+           # mostly useless. It is documented where "over-*" and "begin" events are
+           # documented.
+           ...
+         }
+
+         sub _handle_text {
+           my($parser, $text) = @_;
+           ...
+         }
+         1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document is about using Pod::Simple to write a Pod processor, generally a Pod formatter. If you just
+       want to know about using an existing Pod formatter, instead see its documentation and see also the docs
+       in Pod::Simple.
+
+       <b>The</b> <b>zeroeth</b> <b>step</b> in writing a Pod formatter is to make sure that there isn't already a decent one in
+       CPAN. See &lt;<a href="http://search.cpan.org/">http://search.cpan.org/</a>&gt;, and run a search on the name of the format you want to render to.
+       Also consider joining the Pod People list &lt;<a href="http://lists.perl.org/showlist.cgi">http://lists.perl.org/showlist.cgi</a>?name=pod-people&gt; and asking
+       whether anyone has a formatter for that format -- maybe someone cobbled one together but just hasn't
+       released it.
+
+       <b>The</b> <b>first</b> <b>step</b> in writing a Pod processor is to read perlpodspec, which contains information on writing a
+       Pod parser (which has been largely taken care of by Pod::Simple), but also a lot of requirements and
+       recommendations for writing a formatter.
+
+       <b>The</b> <b>second</b> <b>step</b> is to actually learn the format you're planning to format to -- or at least as much as
+       you need to know to represent Pod, which probably isn't much.
+
+       <b>The</b> <b>third</b> <b>step</b> is to pick which of Pod::Simple's interfaces you want to use:
+
+       Pod::Simple
+           The   basic  Pod::Simple  interface  that  uses  _handle_element_start(),  _handle_element_end()  and
+           _handle_text().
+
+       Pod::Simple::Methody
+           The Pod::Simple::Methody interface is event-based, similar to that of HTML::Parser  or  XML::Parser's
+           "Handlers".
+
+       Pod::Simple::PullParser
+           Pod::Simple::PullParser provides a token-stream interface, sort of like HTML::TokeParser's interface.
+
+       Pod::Simple::SimpleTree
+           Pod::Simple::SimpleTree provides a simple tree interface, rather like XML::Parser's "Tree" interface.
+           Users  familiar  with  XML  handling  will  be  comfortable  with this interface. Users interested in
+           outputting XML, should look into the modules that produce an XML representation of  the  Pod  stream,
+           notably  Pod::Simple::XMLOutStream;  you  can feed the output of such a class to whatever XML parsing
+           system you are most at home with.
+
+       <b>The</b> <b>last</b> <b>step</b> is to write your code based on how the events (or tokens, or tree-nodes,  or  the  XML,  or
+       however  you're  parsing)  will  map  to constructs in the output format. Also be sure to consider how to
+       escape text nodes containing arbitrary text, and what to do with text nodes that  represent  preformatted
+       text (from verbatim sections).
+
+</pre><h4><b>Events</b></h4><pre>
+       TODO intro... mention that events are supplied for implicits, like for missing &gt;'s
+
+       In  the  following  section,  we  use  XML  to represent the event structure associated with a particular
+       construct.  That is, an opening tag represents the element start, the attributes of that opening tag  are
+       the attributes given to the callback, and the closing tag represents the end element.
+
+       Three  callback  methods  must  be supplied by a class extending Pod::Simple to receive the corresponding
+       event:
+
+       "$parser-&gt;_handle_element_start( <u>element_name</u>, <u>attr_hashref</u> )"
+       "$parser-&gt;_handle_element_end( <u>element_name</u>  )"
+       "$parser-&gt;_handle_text(  <u>text_string</u>  )"
+
+       Here's the comprehensive list of values  you  can  expect  as  <u>element_name</u>  in  your  implementation  of
+       "_handle_element_start" and "_handle_element_end"::
+
+       events with an element_name of Document
+           Parsing a document produces this event structure:
+
+             &lt;Document start_line="543"&gt;
+               ...all events...
+             &lt;/Document&gt;
+
+           The  value  of  the  <u>start_line</u>  attribute  will be the line number of the first Pod directive in the
+           document.
+
+           If there is no Pod in the given document, then the event structure will be this:
+
+             &lt;Document contentless="1" start_line="543"&gt;
+             &lt;/Document&gt;
+
+           In that case,  the  value  of  the  <u>start_line</u>  attribute  will  not  be  meaningful;  under  current
+           implementations, it will probably be the line number of the last line in the file.
+
+       events with an element_name of Para
+           Parsing  a  plain  (non-verbatim,  non-directive, non-data) paragraph in a Pod document produces this
+           event structure:
+
+               &lt;Para start_line="543"&gt;
+                 ...all events in this paragraph...
+               &lt;/Para&gt;
+
+           The value of the <u>start_line</u> attribute will be the line number of the start of the paragraph.
+
+           For example, parsing this paragraph of Pod:
+
+             The value of the I&lt;start_line&gt; attribute will be the
+             line number of the start of the paragraph.
+
+           produces this event structure:
+
+               &lt;Para start_line="129"&gt;
+                 The value of the
+                 &lt;I&gt;
+                   start_line
+                 &lt;/I&gt;
+                 attribute will be the line number of the first Pod directive
+                 in the document.
+               &lt;/Para&gt;
+
+       events with an element_name of B, C, F, or I.
+           Parsing a B&lt;...&gt; formatting code (or of course any of its semantically identical  syntactic  variants
+           B&lt;&lt; ... &gt;&gt;, or B&lt;&lt;&lt;&lt; ... &gt;&gt;&gt;&gt;, etc.)  produces this event structure:
+
+                 &lt;B&gt;
+                   ...stuff...
+                 &lt;/B&gt;
+
+           Currently, there are no attributes conveyed.
+
+           Parsing C, F, or I codes produce the same structure, with only a different element name.
+
+           If your parser object has been set to accept other formatting codes, then they will be presented like
+           these B/C/F/I codes -- i.e., without any attributes.
+
+       events with an element_name of S
+           Normally,  parsing  an  S&lt;...&gt;  sequence  produces this event structure, just as if it were a B/C/F/I
+           code:
+
+                 &lt;S&gt;
+                   ...stuff...
+                 &lt;/S&gt;
+
+           However, Pod::Simple (and presumably all derived parsers) offers the "nbsp_for_S"  option  which,  if
+           enabled,  will  suppress  all  S events, and instead change all spaces in the content to non-breaking
+           spaces. This is intended for formatters that output to a format that has no code that means the  same
+           as S&lt;...&gt;, but which has a code/character that means non-breaking space.
+
+       events with an element_name of X
+           Normally,  parsing  an  X&lt;...&gt;  sequence  produces this event structure, just as if it were a B/C/F/I
+           code:
+
+                 &lt;X&gt;
+                   ...stuff...
+                 &lt;/X&gt;
+
+           However, Pod::Simple (and presumably all derived parsers) offers the "nix_X_codes" option  which,  if
+           enabled,  will  suppress all X events and ignore their content.  For formatters/processors that don't
+           use X events, this is presumably quite useful.
+
+       events with an element_name of L
+           Because the L&lt;...&gt; is the most complex construct in the language, it should not surprise you that the
+           events it generates are the most complex in the language. Most of complexity is hidden  away  in  the
+           attribute  values,  so  for  those  of  you  writing a Pod formatter that produces a non-hypertextual
+           format, you can just ignore the attributes and treat an L event structure like a  formatting  element
+           that  (presumably)  doesn't  actually  produce a change in formatting.  That is, the content of the L
+           event structure (as opposed to its attributes) is always what text should be displayed.
+
+           There are, at first glance, three kinds of L links: URL, man, and pod.
+
+           When a L&lt;<u>some_url</u>&gt; code is parsed, it produces this event structure:
+
+             &lt;L content-implicit="yes" raw="that_url" to="that_url" type="url"&gt;
+               that_url
+             &lt;/L&gt;
+
+           The "type="url"" attribute is always specified for this type of L code.
+
+           For example, this Pod source:
+
+             L&lt;<a href="http://www.perl.com/CPAN/authors/">http://www.perl.com/CPAN/authors/</a>&gt;
+
+           produces this event structure:
+
+             &lt;L content-implicit="yes" raw="<a href="http://www.perl.com/CPAN/authors/">http://www.perl.com/CPAN/authors/</a>" to="<a href="http://www.perl.com/CPAN/authors/">http://www.perl.com/CPAN/authors/</a>" type="url"&gt;
+               <a href="http://www.perl.com/CPAN/authors/">http://www.perl.com/CPAN/authors/</a>
+             &lt;/L&gt;
+
+           When a L&lt;<u>manpage(section)</u>&gt; code is parsed (and these are fairly rare and  not  terribly  useful),  it
+           produces this event structure:
+
+             &lt;L content-implicit="yes" raw="manpage(section)" to="manpage(section)" type="man"&gt;
+               manpage(section)
+             &lt;/L&gt;
+
+           The "type="man"" attribute is always specified for this type of L code.
+
+           For example, this Pod source:
+
+             L&lt;<a href="../man5/crontab.5.html">crontab</a>(5)&gt;
+
+           produces this event structure:
+
+             &lt;L content-implicit="yes" raw="<a href="../man5/crontab.5.html">crontab</a>(5)" to="<a href="../man5/crontab.5.html">crontab</a>(5)" type="man"&gt;
+               <a href="../man5/crontab.5.html">crontab</a>(5)
+             &lt;/L&gt;
+
+           In  the  rare  cases  where  a  man page link has a section specified, that text appears in a <u>section</u>
+           attribute. For example, this Pod source:
+
+             L&lt;<a href="../man5/crontab.5.html">crontab</a>(5)/"ENVIRONMENT"&gt;
+
+           will produce this event structure:
+
+             &lt;L content-implicit="yes" raw="<a href="../man5/crontab.5.html">crontab</a>(5)/&amp;quot;ENVIRONMENT&amp;quot;" section="ENVIRONMENT" to="<a href="../man5/crontab.5.html">crontab</a>(5)" type="man"&gt;
+               "ENVIRONMENT" in <a href="../man5/crontab.5.html">crontab</a>(5)
+             &lt;/L&gt;
+
+           In the rare case where the Pod document has code like L&lt;<u>sometext</u>|<u>manpage(section)</u>&gt;, then the <u>sometext</u>
+           will appear as the content of the element, the <u>manpage(section)</u> text will appear only as the value of
+           the <u>to</u> attribute, and there will be no "content-implicit="yes"" attribute (whose presence means  that
+           the  Pod  parser  had  to infer what text should appear as the link text -- as opposed to cases where
+           that attribute is absent, which means that the Pod parser did  <u>not</u>  have  to  infer  the  link  text,
+           because that L code explicitly specified some link text.)
+
+           For example, this Pod source:
+
+             L&lt;hell itself!|<a href="../man5/crontab.5.html">crontab</a>(5)&gt;
+
+           will produce this event structure:
+
+             &lt;L raw="hell itself!|<a href="../man5/crontab.5.html">crontab</a>(5)" to="<a href="../man5/crontab.5.html">crontab</a>(5)" type="man"&gt;
+               hell itself!
+             &lt;/L&gt;
+
+           The  last type of L structure is for links to/within Pod documents. It is the most complex because it
+           can have a <u>to</u> attribute, <u>or</u> a <u>section</u> attribute,  or  both.  The  "type="pod""  attribute  is  always
+           specified for this type of L code.
+
+           In the most common case, the simple case of a L&lt;podpage&gt; code produces this event structure:
+
+             &lt;L content-implicit="yes" raw="podpage" to="podpage" type="pod"&gt;
+               podpage
+             &lt;/L&gt;
+
+           For example, this Pod source:
+
+             L&lt;Net::Ping&gt;
+
+           produces this event structure:
+
+             &lt;L content-implicit="yes" raw="Net::Ping" to="Net::Ping" type="pod"&gt;
+               Net::Ping
+             &lt;/L&gt;
+
+           In  cases  where  there  is  link-text  explicitly specified, it is to be found in the content of the
+           element (and not the attributes), just as with the L&lt;<u>sometext</u>|<u>manpage(section)</u>&gt; case discussed above.
+           For example, this Pod source:
+
+             L&lt;Perl Error Messages|perldiag&gt;
+
+           produces this event structure:
+
+             &lt;L raw="Perl Error Messages|perldiag" to="perldiag" type="pod"&gt;
+               Perl Error Messages
+             &lt;/L&gt;
+
+           In cases of links to a section in the current Pod document, there is a <u>section</u> attribute instead of a
+           <u>to</u> attribute.  For example, this Pod source:
+
+             L&lt;/"Member Data"&gt;
+
+           produces this event structure:
+
+             &lt;L content-implicit="yes" raw="/&amp;quot;Member Data&amp;quot;" section="Member Data" type="pod"&gt;
+               "Member Data"
+             &lt;/L&gt;
+
+           As another example, this Pod source:
+
+             L&lt;the various attributes|/"Member Data"&gt;
+
+           produces this event structure:
+
+             &lt;L raw="the various attributes|/&amp;quot;Member Data&amp;quot;" section="Member Data" type="pod"&gt;
+               the various attributes
+             &lt;/L&gt;
+
+           In cases of links to a section in a different Pod document, there are both a <u>section</u> attribute and  a
+           to attribute.  For example, this Pod source:
+
+             L&lt;perlsyn/"Basic BLOCKs and Switch Statements"&gt;
+
+           produces this event structure:
+
+             &lt;L content-implicit="yes" raw="perlsyn/&amp;quot;Basic BLOCKs and Switch Statements&amp;quot;" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod"&gt;
+               "Basic BLOCKs and Switch Statements" in perlsyn
+             &lt;/L&gt;
+
+           As another example, this Pod source:
+
+             L&lt;SWITCH statements|perlsyn/"Basic BLOCKs and Switch Statements"&gt;
+
+           produces this event structure:
+
+             &lt;L raw="SWITCH statements|perlsyn/&amp;quot;Basic BLOCKs and Switch Statements&amp;quot;" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod"&gt;
+               SWITCH statements
+             &lt;/L&gt;
+
+           Incidentally, note that we do not distinguish between these syntaxes:
+
+             L&lt;/"Member Data"&gt;
+             L&lt;"Member Data"&gt;
+             L&lt;/Member Data&gt;
+             L&lt;Member Data&gt;    [deprecated syntax]
+
+           That is, they all produce the same event structure (for the most part), namely:
+
+             &lt;L content-implicit="yes" raw="$depends_on_syntax" section="Member Data" type="pod"&gt;
+               &amp;#34;Member Data&amp;#34;
+             &lt;/L&gt;
+
+           The <u>raw</u> attribute depends on what the raw content of the "L&lt;&gt;" is, so that is why the event structure
+           is the same "for the most part".
+
+           If  you  have  not guessed it yet, the <u>raw</u> attribute contains the raw, original, unescaped content of
+           the "L&lt;&gt;" formatting code. In addition to the examples above, take  notice  of  the  following  event
+           structure produced by the following "L&lt;&gt;" formatting code.
+
+             L&lt;click B&lt;here&gt;|page/About the C&lt;-M&gt; switch&gt;
+
+             &lt;L raw="click B&lt;here&gt;|page/About the C&lt;-M&gt; switch" section="About the -M switch" to="page" type="pod"&gt;
+               click B&lt;here&gt;
+             &lt;/L&gt;
+
+           Specifically, notice that the formatting codes are present and unescaped in <u>raw</u>.
+
+           There is a known bug in the <u>raw</u> attribute where any surrounding whitespace is condensed into a single
+           ' '. For example, given L&lt;   link&gt;, <u>raw</u> will be " link".
+
+       events with an element_name of E or Z
+           While  there  are  Pod codes E&lt;...&gt; and Z&lt;&gt;, these <u>do</u> <u>not</u> produce any E or Z events -- that is, there
+           are no such events as E or Z.
+
+       events with an element_name of Verbatim
+           When a Pod verbatim paragraph (AKA "codeblock") is parsed, it produces this event structure:
+
+             &lt;Verbatim start_line="543" xml:space="preserve"&gt;
+               ...text...
+             &lt;/Verbatim&gt;
+
+           The value of the <u>start_line</u> attribute will be the line number of the  first  line  of  this  verbatim
+           block.  The <u>xml:space</u> attribute is always present, and always has the value "preserve".
+
+           The text content will have tabs already expanded.
+
+       events with an element_name of head1 .. head4
+           When a "=head1 ..." directive is parsed, it produces this event structure:
+
+             &lt;head1&gt;
+               ...stuff...
+             &lt;/head1&gt;
+
+           For example, a directive consisting of this:
+
+             =head1 Options to C&lt;new&gt; et al.
+
+           will produce this event structure:
+
+             &lt;head1 start_line="543"&gt;
+               Options to
+               &lt;C&gt;
+                 new
+               &lt;/C&gt;
+               et al.
+             &lt;/head1&gt;
+
+           "=head2"  through  "=head4"  directives  are  the  same,  except  for  the element names in the event
+           structure.
+
+       events with an element_name of encoding
+           In the default case, the events corresponding to "=encoding" directives are  not  emitted.  They  are
+           emitted  if  "keep_encoding_directive"  is  true.   In  that  case they produce event structures like
+           "events with an element_name of head1 .. head4" above.
+
+       events with an element_name of over-bullet
+           When an "=over ... =back" block is parsed where the items are a bulleted list, it will  produce  this
+           event structure:
+
+             &lt;over-bullet indent="4" start_line="543"&gt;
+               &lt;item-bullet start_line="545"&gt;
+                 ...Stuff...
+               &lt;/item-bullet&gt;
+               ...more item-bullets...
+             &lt;/over-bullet fake-closer="1"&gt;
+
+           The  attribute  <u>fake-closer</u> is only present if it is a true value; it is not present if it is a false
+           value. It is shown in the above example to illustrate where the attribute is (in the <b>closing</b> tag). It
+           signifies that the "=over" did not have a matching "=back", and thus Pod::Simple had to create a fake
+           closer.
+
+           For example, this Pod source:
+
+             =over
+
+             =item *
+
+             Something
+
+             =back
+
+           Would produce an event structure that does <b>not</b> have  the  <u>fake-closer</u>  attribute,  whereas  this  Pod
+           source:
+
+             =over
+
+             =item *
+
+             Gasp! An unclosed =over block!
+
+           would. The rest of the over-* examples will not demonstrate this attribute, but they all can have it.
+           See Pod::Checker's source for an example of this attribute being used.
+
+           The  value of the <u>indent</u> attribute is whatever value is after the "=over" directive, as in "=over 8".
+           If no such value is specified in the directive, then the <u>indent</u> attribute has the value "4".
+
+           For example, this Pod source:
+
+             =over
+
+             =item *
+
+             Stuff
+
+             =item *
+
+             Bar I&lt;baz&gt;!
+
+             =back
+
+           produces this event structure:
+
+             &lt;over-bullet indent="4" start_line="10"&gt;
+               &lt;item-bullet start_line="12"&gt;
+                 Stuff
+               &lt;/item-bullet&gt;
+               &lt;item-bullet start_line="14"&gt;
+                 Bar &lt;I&gt;baz&lt;/I&gt;!
+               &lt;/item-bullet&gt;
+             &lt;/over-bullet&gt;
+
+       events with an element_name of over-number
+           When an "=over ... =back" block is parsed where the items are a numbered list, it will  produce  this
+           event structure:
+
+             &lt;over-number indent="4" start_line="543"&gt;
+               &lt;item-number number="1" start_line="545"&gt;
+                 ...Stuff...
+               &lt;/item-number&gt;
+               ...more item-number...
+             &lt;/over-bullet&gt;
+
+           This  is like the "over-bullet" event structure; but note that the contents are "item-number" instead
+           of "item-bullet", and note that they will have a "number" attribute, which some formatters/processors
+           may  ignore  (since,  for  example,  there's  no  need   for   it   in   HTML   when   producing   an
+           "&lt;UL&gt;&lt;LI&gt;...&lt;/LI&gt;...&lt;/UL&gt;" structure), but which any processor may use.
+
+           Note  that  the  values  for the <u>number</u> attributes of "item-number" elements in a given "over-number"
+           area <u>will</u> start at 1 and go up by one each time.  If the Pod source doesn't follow that  order  (even
+           though it really should!), whatever numbers it has will be ignored (with the correct values being put
+           in the <u>number</u> attributes), and an error message might be issued to the user.
+
+       events with an element_name of over-text
+           These  events  are  somewhat  unlike  the other over-* structures, as far as what their contents are.
+           When an "=over ... =back" block is parsed where the items are a list of text "subheadings",  it  will
+           produce this event structure:
+
+             &lt;over-text indent="4" start_line="543"&gt;
+               &lt;item-text&gt;
+                 ...stuff...
+               &lt;/item-text&gt;
+               ...stuff (generally Para or Verbatim elements)...
+               &lt;item-text&gt;
+               ...more item-text and/or stuff...
+             &lt;/over-text&gt;
+
+           The <u>indent</u> and <u>fake-closer</u> attributes are as with the other over-* events.
+
+           For example, this Pod source:
+
+             =over
+
+             =item Foo
+
+             Stuff
+
+             =item Bar I&lt;baz&gt;!
+
+             Quux
+
+             =back
+
+           produces this event structure:
+
+             &lt;over-text indent="4" start_line="20"&gt;
+               &lt;item-text start_line="22"&gt;
+                 Foo
+               &lt;/item-text&gt;
+               &lt;Para start_line="24"&gt;
+                 Stuff
+               &lt;/Para&gt;
+               &lt;item-text start_line="26"&gt;
+                 Bar
+                   &lt;I&gt;
+                     baz
+                   &lt;/I&gt;
+                 !
+               &lt;/item-text&gt;
+               &lt;Para start_line="28"&gt;
+                 Quux
+               &lt;/Para&gt;
+             &lt;/over-text&gt;
+
+       events with an element_name of over-block
+           These  events  are  somewhat  unlike  the other over-* structures, as far as what their contents are.
+           When an "=over ... =back" block is parsed where there are  no  items,  it  will  produce  this  event
+           structure:
+
+             &lt;over-block indent="4" start_line="543"&gt;
+               ...stuff (generally Para or Verbatim elements)...
+             &lt;/over-block&gt;
+
+           The <u>indent</u> and <u>fake-closer</u> attributes are as with the other over-* events.
+
+           For example, this Pod source:
+
+             =over
+
+             For cutting off our trade with all parts of the world
+
+             For transporting us beyond seas to be tried for pretended offenses
+
+             He is at this time transporting large armies of foreign mercenaries to
+             complete the works of death, desolation and tyranny, already begun with
+             circumstances of cruelty and perfidy scarcely paralleled in the most
+             barbarous ages, and totally unworthy the head of a civilized nation.
+
+             =back
+
+           will produce this event structure:
+
+             &lt;over-block indent="4" start_line="2"&gt;
+               &lt;Para start_line="4"&gt;
+                 For cutting off our trade with all parts of the world
+               &lt;/Para&gt;
+               &lt;Para start_line="6"&gt;
+                 For transporting us beyond seas to be tried for pretended offenses
+               &lt;/Para&gt;
+               &lt;Para start_line="8"&gt;
+                 He is at this time transporting large armies of [...more text...]
+               &lt;/Para&gt;
+             &lt;/over-block&gt;
+
+       events with an element_name of over-empty
+           <b>Note:</b> <b>These</b> <b>events</b> <b>are</b> <b>only</b> <b>triggered</b> <b>if</b> <b>parse_empty_lists()</b> <b>is</b> <b>set</b> <b>to</b> <b>a</b> <b>true</b> <b>value.</b>
+
+           These  events  are  somewhat  unlike  the other over-* structures, as far as what their contents are.
+           When an "=over ... =back" block is parsed where there is no  content,  it  will  produce  this  event
+           structure:
+
+             &lt;over-empty indent="4" start_line="543"&gt;
+             &lt;/over-empty&gt;
+
+           The <u>indent</u> and <u>fake-closer</u> attributes are as with the other over-* events.
+
+           For example, this Pod source:
+
+             =over
+
+             =over
+
+             =back
+
+             =back
+
+           will produce this event structure:
+
+             &lt;over-block indent="4" start_line="1"&gt;
+               &lt;over-empty indent="4" start_line="3"&gt;
+               &lt;/over-empty&gt;
+             &lt;/over-block&gt;
+
+           Note  that  the  outer "=over" is a block because it has no "=item"s but still has content: the inner
+           "=over". The inner "=over", in turn, is completely empty, and is treated as such.
+
+       events with an element_name of item-bullet
+           See "events with an element_name of over-bullet", above.
+
+       events with an element_name of item-number
+           See "events with an element_name of over-number", above.
+
+       events with an element_name of item-text
+           See "events with an element_name of over-text", above.
+
+       events with an element_name of for
+           TODO...
+
+       events with an element_name of Data
+           TODO...
+
+</pre><h4><b>More</b> <b>Pod::Simple</b> <b>Methods</b></h4><pre>
+       Pod::Simple provides a lot of methods that aren't generally interesting to the end user  of  an  existing
+       Pod formatter, but some of which you might find useful in writing a Pod formatter. They are listed below.
+       The  first  several  methods  (the  accept_*  methods) are for declaring the capabilities of your parser,
+       notably what "=for <u>targetname</u>" sections it's interested in, what extra N&lt;...&gt; codes it accepts beyond the
+       ones described in the <u>perlpod</u>.
+
+       "$parser-&gt;accept_targets( <u>SOMEVALUE</u> )"
+           As the parser sees sections like:
+
+               =for html  &lt;img src="fig1.jpg"&gt;
+
+           or
+
+               =begin html
+
+                 &lt;img src="fig1.jpg"&gt;
+
+               =end html
+
+           ...the parser will ignore these sections unless your subclass has specified  that  it  wants  to  see
+           sections targeted to "html" (or whatever the formatter name is).
+
+           If you want to process all sections, even if they're not targeted for you, call this before you start
+           parsing:
+
+             $parser-&gt;accept_targets('*');
+
+       "$parser-&gt;accept_targets_as_text(  <u>SOMEVALUE</u>  )"
+           This  is  like  accept_targets,  except  that it specifies also that the content of sections for this
+           target should be treated as Pod text even if the target name in "=for <u>targetname</u>" doesn't start  with
+           a ":".
+
+           At time of writing, I don't think you'll need to use this.
+
+       "$parser-&gt;accept_codes( <u>Codename</u>, <u>Codename</u>...  )"
+           This tells the parser that you accept additional formatting codes, beyond just the standard ones (I B
+           C  L  F S X, plus the two weird ones you don't actually see in the parse tree, Z and E). For example,
+           to also accept codes "N", "R", and "W":
+
+               $parser-&gt;accept_codes( qw( N R W ) );
+
+           <b>TODO:</b> <b>document</b> <b>how</b> <b>this</b> <b>interacts</b> <b>with</b> <b>=extend,</b> <b>and</b> <b>long</b> <b>element</b> <b>names</b>
+
+       "$parser-&gt;accept_directive_as_data( <u>directive_name</u> )"
+       "$parser-&gt;accept_directive_as_verbatim( <u>directive_name</u> )"
+       "$parser-&gt;accept_directive_as_processed( <u>directive_name</u> )"
+           In the unlikely situation that you need to tell the parser that you will accept additional directives
+           ("=foo" things), you need to first set the parser to treat its content  as  data  (i.e.,  not  really
+           processed  at  all),  or  as  verbatim  (mostly  just  expanding tabs), or as processed text (parsing
+           formatting codes like B&lt;...&gt;).
+
+           For example, to accept a new directive "=method", you'd presumably use:
+
+               $parser-&gt;accept_directive_as_processed("method");
+
+           so that you could have Pod lines like:
+
+               =method I&lt;$whatever&gt; thing B&lt;um&gt;
+
+           Making up your own directives breaks compatibility with other Pod formatters, in  a  way  that  using
+           "=for  <u>target</u>  ..."  lines doesn't; however, you may find this useful if you're making a Pod superset
+           format where you don't need to worry about compatibility.
+
+       "$parser-&gt;nbsp_for_S( <u>BOOLEAN</u> );"
+           Setting this attribute to a true value (and by default it is false) will turn "S&lt;...&gt;" sequences into
+           sequences of words separated by "\xA0" (non-breaking space) characters. For  example,  it  will  take
+           this:
+
+               I like S&lt;Dutch apple pie&gt;, don't you?
+
+           and treat it as if it were:
+
+               I like DutchE&lt;nbsp&gt;appleE&lt;nbsp&gt;pie, don't you?
+
+           This  is  handy for output formats that don't have anything quite like an "S&lt;...&gt;" code, but which do
+           have a code for non-breaking space.
+
+           There is currently no method for going the other way; but I can probably provide one upon request.
+
+       "$parser-&gt;version_report()"
+           This returns a string reporting the $VERSION value from your module (and its classname)  as  well  as
+           the $VERSION value of Pod::Simple.  Note that perlpodspec requires output formats (wherever possible)
+           to  note  this  detail  in a comment in the output format.  For example, for some kind of SGML output
+           format:
+
+               print OUT "&lt;!-- \n", $parser-&gt;version_report, "\n --&gt;";
+
+       "$parser-&gt;pod_para_count()"
+           This returns the count of Pod paragraphs seen so far.
+
+       "$parser-&gt;line_count()"
+           This is the current line number being parsed. But you might find the  "line_number"  event  attribute
+           more accurate, when it is present.
+
+       "$parser-&gt;nix_X_codes(  <u>SOMEVALUE</u>  )"
+           This  attribute, when set to a true value (and it is false by default) ignores any "X&lt;...&gt;" sequences
+           in the document being parsed.  Many formats don't actually use the content of these codes, so have no
+           reason to process them.
+
+       "$parser-&gt;keep_encoding_directive(  <u>SOMEVALUE</u>  )"
+           This attribute, when set to a true value (it is false by  default)  will  keep  "=encoding"  and  its
+           content  in  the  event  structure.  Most  formats  don't  actually need to process the content of an
+           "=encoding" directive, even when this directive sets the encoding and the processor makes use of  the
+           encoding  information.  Indeed,  it is possible to know the encoding without processing the directive
+           content.
+
+       "$parser-&gt;merge_text(  <u>SOMEVALUE</u>  )"
+           This attribute, when set to a true value (and it is false by default) makes sure that only one  event
+           (or  token,  or  node)  will  be  created  for  any single contiguous sequence of text.  For example,
+           consider this somewhat contrived example:
+
+               I just LOVE Z&lt;&gt;hotE&lt;32&gt;apple pie!
+
+           When that is parsed and events are about to be called  on  it,  it  may  actually  seem  to  be  four
+           different  text events, one right after another: one event for "I just LOVE ", one for "hot", one for
+           " ", and one for "apple pie!". But if you have merge_text on, then you're guaranteed that it will  be
+           fired as one text event:  "I just LOVE hot apple pie!".
+
+       "$parser-&gt;code_handler(  <u>CODE_REF</u>  )"
+           This specifies code that should be called when a code line is seen (i.e., a line outside of the Pod).
+           Normally  this  is undef, meaning that no code should be called.  If you provide a routine, it should
+           start out like this:
+
+               sub get_code_line {  # or whatever you'll call it
+                 my($line, $line_number, $parser) = @_;
+                 ...
+               }
+
+           Note, however, that sometimes the Pod events aren't processed in exactly the same order as  the  code
+           lines  are -- i.e., if you have a file with Pod, then code, then more Pod, sometimes the code will be
+           processed (via whatever you have code_handler call) before the all of  the  preceding  Pod  has  been
+           processed.
+
+       "$parser-&gt;cut_handler(  <u>CODE_REF</u>  )"
+           This  is just like the code_handler attribute, except that it's for "=cut" lines, not code lines. The
+           same caveats apply.  "=cut"  lines  are  unlikely  to  be  interesting,  but  this  is  included  for
+           completeness.
+
+       "$parser-&gt;pod_handler(  <u>CODE_REF</u>  )"
+           This  is just like the code_handler attribute, except that it's for "=pod" lines, not code lines. The
+           same caveats apply.  "=pod"  lines  are  unlikely  to  be  interesting,  but  this  is  included  for
+           completeness.
+
+       "$parser-&gt;whiteline_handler(  <u>CODE_REF</u>  )"
+           This is just like the code_handler attribute, except that it's for lines that are seemingly blank but
+           have  whitespace  ("  " and/or "\t") on them, not code lines. The same caveats apply. These lines are
+           unlikely to be interesting, but this is included for completeness.
+
+       "$parser-&gt;whine( <u>linenumber</u>, <u>complaint</u> <u>string</u> )"
+           This notes a problem in the Pod, which will be reported in the "Pod Errors" section of  the  document
+           and/or  sent  to STDERR, depending on the values of the attributes "no_whining", "no_errata_section",
+           and "complain_stderr".
+
+       "$parser-&gt;scream( <u>linenumber</u>, <u>complaint</u> <u>string</u> )"
+           This notes an error like "whine" does, except that it is not  suppressible  with  "no_whining".  This
+           should be used only for very serious errors.
+
+       "$parser-&gt;<a href="../man1/source_dead.1.html">source_dead</a>(1)"
+           This  aborts  parsing  of  the current document, by switching on the flag that indicates that EOF has
+           been seen.  In particularly drastic cases, you might want to do this.  It's rather  nicer  than  just
+           calling "die"!
+
+       "$parser-&gt;hide_line_numbers( <u>SOMEVALUE</u> )"
+           Some  subclasses  that  indiscriminately  dump event attributes (well, except for ones beginning with
+           "~") can use this object attribute for refraining to dump the "start_line" attribute.
+
+       "$parser-&gt;no_whining( <u>SOMEVALUE</u> )"
+           This attribute, if set to true, will suppress reports of non-fatal error messages.  The default value
+           is false, meaning that complaints <u>are</u> reported.  How they get reported depends on the values  of  the
+           attributes "no_errata_section" and "complain_stderr".
+
+       "$parser-&gt;no_errata_section( <u>SOMEVALUE</u> )"
+           This  attribute, if set to true, will suppress generation of an errata section.  The default value is
+           false -- i.e., an errata section will be generated.
+
+       "$parser-&gt;complain_stderr( <u>SOMEVALUE</u> )"
+           This attribute, if set to true will send complaints to STDERR.  The default value is false  --  i.e.,
+           complaints do not go to STDERR.
+
+       "$parser-&gt;bare_output( <u>SOMEVALUE</u> )"
+           Some  formatter  subclasses  use  this as a flag for whether output should have prologue and epilogue
+           code omitted. For example, setting this  to  true  for  an  HTML  formatter  class  should  omit  the
+           "&lt;html&gt;&lt;head&gt;&lt;title&gt;...&lt;/title&gt;&lt;body&gt;..." prologue and the "&lt;/body&gt;&lt;/html&gt;" epilogue.
+
+           If  you  want  to  set  this  to  true,  you  should  probably  also  set  "no_whining"  or  at least
+           "no_errata_section" to true.
+
+       "$parser-&gt;preserve_whitespace( <u>SOMEVALUE</u> )"
+           If you set this attribute to a true value, the parser will try to preserve whitespace in the  output.
+           This  means  that  such  formatting  conventions as two spaces after periods will be preserved by the
+           parser.  This is primarily useful for output formats that treat whitespace as  significant  (such  as
+           text or *roff, but not HTML).
+
+       "$parser-&gt;parse_empty_lists( <u>SOMEVALUE</u> )"
+           If  this  attribute is set to true, the parser will not ignore empty "=over"/"=back" blocks. The type
+           of "=over" will be <u>empty</u>, documented above, "events with an element_name of over-empty".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Pod::Simple -- event-based Pod-parsing framework
+
+       Pod::Simple::Methody  --  like  Pod::Simple,  but  each  sort  of  event  calls  its  own  method   (like
+       "start_head3")
+
+       Pod::Simple::PullParser -- a Pod-parsing framework like Pod::Simple, but with a token-stream interface
+
+       Pod::Simple::SimpleTree -- a Pod-parsing framework like Pod::Simple, but with a tree interface
+
+       Pod::Simple::Checker  --  a  simple Pod::Simple subclass that reads documents, and then makes a plaintext
+       report of any errors found in the document
+
+       Pod::Simple::DumpAsXML -- for dumping Pod documents as tidily indented XML, showing each event on its own
+       line
+
+       Pod::Simple::XMLOutStream -- dumps a Pod  document  as  XML  (without  introducing  extra  whitespace  as
+       Pod::Simple::DumpAsXML does).
+
+       Pod::Simple::DumpAsText  --  for dumping Pod documents as tidily indented text, showing each event on its
+       own line
+
+       Pod::Simple::LinkSection -- class for objects representing the values of the TODO and TODO attributes  of
+       L&lt;...&gt; elements
+
+       Pod::Escapes -- the module that Pod::Simple uses for evaluating E&lt;...&gt; content
+
+       Pod::Simple::Text -- a simple plaintext formatter for Pod
+
+       Pod::Simple::TextContent -- like Pod::Simple::Text, but makes no effort for indent or wrap the text being
+       formatted
+
+       Pod::Simple::HTML -- a simple HTML formatter for Pod
+
+       perlpod
+
+       perlpodspec
+
+       perldoc
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Questions  or  discussion  about POD and Pod::Simple should be sent to the <a href="mailto:pod-people@perl.org">pod-people@perl.org</a> mail list.
+       Send an empty email to <a href="mailto:pod-people-subscribe@perl.org">pod-people-subscribe@perl.org</a> to subscribe.
+
+       This module is managed in an open GitHub repository, &lt;https://github.com/perl-pod/pod-simple/&gt;. Feel free
+       to fork and contribute, or to clone &lt;https://github.com/perl-pod/pod-simple.git&gt; and send patches!
+
+       Patches against Pod::Simple are welcome. Please send bug reports to &lt;<a href="mailto:bug-pod-simple@rt.cpan.org">bug-pod-simple@rt.cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>DISCLAIMERS</b></h4><pre>
+       Copyright (c) 2002 Sean M. Burke.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       This  program  is  distributed in the hope that it will be useful, but without any warranty; without even
+       the implied warranty of merchantability or fitness for a particular purpose.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Pod::Simple was created by Sean M. Burke &lt;<a href="mailto:sburke@cpan.org">sburke@cpan.org</a>&gt;.  But don't bother him, he's retired.
+
+       Pod::Simple is maintained by:
+
+       •   Allison Randal "<a href="mailto:allison@perl.org">allison@perl.org</a>"
+
+       •   Hans Dieter Pearcey "<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>"
+
+       •   David E. Wheeler "<a href="mailto:dwheeler@cpan.org">dwheeler@cpan.org</a>"
+
+perl v5.40.1                                       2025-07-03                    <u>Pod::Simple::<a href="../man3perl/Subclassing.3perl.html">Subclassing</a></u>(3perl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

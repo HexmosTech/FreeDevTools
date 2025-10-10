@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Plugin::Session - Generic Session plugin - ties together server side storage and client side</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-plugin-session-perl">libcatalyst-plugin-session-perl_0.43-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Plugin::Session - Generic Session plugin - ties together server side storage and client side
+       state required to maintain session data.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # To get sessions to "just work", all you need to do is use these plugins:
+
+           use Catalyst qw/
+             Session
+             Session::Store::FastMmap
+             Session::State::Cookie
+             /;
+
+           # you can replace Store::FastMmap with Store::File - both have sensible
+           # default configurations (see their docs for details)
+
+           # more complicated backends are available for other scenarios (DBI storage,
+           # etc)
+
+           # after you've loaded the plugins you can save session data
+           # For example, if you are writing a shopping cart, it could be implemented
+           # like this:
+
+           sub add_item : Local {
+               my ( $self, $c ) = @_;
+
+               my $item_id = $c-&gt;req-&gt;param("item");
+
+               # $c-&gt;session is a hash ref, a bit like $c-&gt;stash
+               # the difference is that it' preserved across requests
+
+               push @{ $c-&gt;session-&gt;{items} }, $item_id;
+
+               $c-&gt;forward("MyView");
+           }
+
+           sub display_items : Local {
+               my ( $self, $c ) = @_;
+
+               # values in $c-&gt;session are restored
+               $c-&gt;stash-&gt;{items_to_display} =
+                 [ map { MyModel-&gt;retrieve($_) } @{ $c-&gt;session-&gt;{items} } ];
+
+               $c-&gt;forward("MyView");
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Session plugin is the base of two related parts of functionality required for session management in
+       web applications.
+
+       The first part, the State, is getting the browser to repeat back a session key, so that the web
+       application can identify the client and logically string several requests together into a session.
+
+       The second part, the Store, deals with the actual storage of information about the client. This data is
+       stored so that the it may be revived for every request made by the same client.
+
+       This plugin links the two pieces together.
+
+</pre><h4><b>RECOMENDED</b> <b>BACKENDS</b></h4><pre>
+       Session::State::Cookie
+           The only really sane way to do state is using cookies.
+
+       Session::Store::File
+           A portable backend, based on Cache::File.
+
+       Session::Store::FastMmap
+           A fast and flexible backend, based on Cache::FastMmap.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       sessionid
+           An accessor for the session ID value.
+
+       session
+           Returns  a  hash  reference that might contain unserialized values from previous requests in the same
+           session, and whose modified value will be saved for future requests.
+
+           This method will automatically create a new session and session ID if none exists.
+
+           You can also set session keys by passing a list of key/value pairs or a hashref.
+
+               $c-&gt;session-&gt;{foo} = "bar";      # This works.
+               $c-&gt;session(one =&gt; 1, two =&gt; 2); # And this.
+               $c-&gt;session({ answer =&gt; 42 });   # And this.
+
+       session_expires
+           This method returns the time when the current session will expire,  or  0  if  there  is  no  current
+           session.  If  there  is  a session and it already expired, it will delete the session and return 0 as
+           well.
+
+       flash
+           This is like Ruby on Rails' flash data structure. Think of it as a stash that lasts for  longer  than
+           one request, letting you redirect instead of forward.
+
+           The  flash  data  will  be cleaned up only on requests on which actually use $c-&gt;flash (thus allowing
+           multiple redirections), and the policy is to delete all the keys  which  haven't  changed  since  the
+           flash data was loaded at the end of every request.
+
+           Note  that  use  of  the  flash  is  an  easy way to get data across requests, but it's also strongly
+           disrecommended, due it it being inherently  plagued  with  race  conditions.  This  means  that  it's
+           unlikely  to  work  well if your users have multiple tabs open at once, or if your site does a lot of
+           AJAX requests.
+
+           Catalyst::Plugin::StatusMessage is the recommended alternative solution, as this doesn't suffer  from
+           these issues.
+
+               sub moose : Local {
+                   my ( $self, $c ) = @_;
+
+                   $c-&gt;flash-&gt;{beans} = 10;
+                   $c-&gt;response-&gt;redirect( $c-&gt;uri_for("foo") );
+               }
+
+               sub foo : Local {
+                   my ( $self, $c ) = @_;
+
+                   my $value = $c-&gt;flash-&gt;{beans};
+
+                   # ...
+
+                   $c-&gt;response-&gt;redirect( $c-&gt;uri_for("bar") );
+               }
+
+               sub bar : Local {
+                   my ( $self, $c ) = @_;
+
+                   if ( exists $c-&gt;flash-&gt;{beans} ) { # false
+
+                   }
+               }
+
+       clear_flash
+           Zap all the keys in the flash regardless of their current state.
+
+       keep_flash @keys
+           If  you  want  to  keep  a  flash  key  for  the  next  request  too, even if it hasn't changed, call
+           "keep_flash" and pass in the keys as arguments.
+
+       delete_session REASON
+           This method is used to invalidate a session. It takes an optional parameter which will  be  saved  in
+           "session_delete_reason" if provided.
+
+           NOTE: This method will <b>also</b> delete your flash data.
+
+       session_delete_reason
+           This accessor contains a string with the reason a session was deleted. Possible values include:
+
+           •   "address mismatch"
+
+           •   "session expired"
+
+       session_expire_key $key, $ttl
+           Mark  a  key to expire at a certain time (only useful when shorter than the expiry time for the whole
+           session).
+
+           For example:
+
+               __PACKAGE__-&gt;config('Plugin::Session' =&gt; { expires =&gt; 10000000000 }); # "forever"
+               (NB If this number is too large, Y2K38 breakage could result.)
+
+               # later
+
+               $c-&gt;session_expire_key( __user =&gt; 3600 );
+
+           Will make the session data survive, but the user will still be logged out after an hour.
+
+           Note that these values are not auto extended.
+
+       change_session_id
+           By calling this method you can force a session id change while keeping all session data. This  method
+           might come handy when you are paranoid about some advanced variations of session fixation attack.
+
+           If you want to prevent this session fixation scenario:
+
+               0) let us have WebApp with anonymous and authenticated parts
+               1) a hacker goes to vulnerable WebApp and gets a real sessionid,
+                  just by browsing anonymous part of WebApp
+               2) the hacker inserts (somehow) this values into a cookie in victim's browser
+               3) after the victim logs into WebApp the hacker can enter his/her session
+
+           you should call change_session_id in your login controller like this:
+
+                 if ($c-&gt;authenticate( { username =&gt; $user, password =&gt; $pass } )) {
+                   # login OK
+                   $c-&gt;change_session_id;
+                   ...
+                 } else {
+                   # login FAILED
+                   ...
+                 }
+
+       change_session_expires $expires
+           You can change the session expiration time for this session;
+
+               $c-&gt;change_session_expires( 4000 );
+
+           Note that this only works to set the session longer than the config setting.
+
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+       setup
+           This   method   is   extended   to   also   make  calls  to  "check_session_plugin_requirements"  and
+           "setup_session".
+
+       check_session_plugin_requirements
+           This method ensures that a State and a Store plugin are also in use by the application.
+
+       setup_session
+           This  method  populates  "$c-&gt;config('Plugin::Session')"  with   the   default   values   listed   in
+           "CONFIGURATION".
+
+       prepare_action
+           This method is extended.
+
+           Its  only  effect is if the (off by default) "flash_to_stash" configuration parameter is on - then it
+           will copy the contents of the flash to the stash at prepare time.
+
+       finalize_headers
+           This method is extended and will extend the expiry time before sending the response.
+
+       finalize_body
+           This method is extended and will call finalize_session before the other  finalize_body  methods  run.
+           Here we persist the session data if a session exists.
+
+       initialize_session_data
+           This  method  will  initialize  the internal structure of the session, and is called by the "session"
+           method if appropriate.
+
+       create_session_id
+           Creates a new session ID using "generate_session_id" if there is no session ID yet.
+
+       validate_session_id SID
+           Make sure a session ID is of the right format.
+
+           This currently ensures that the session ID string is  any  amount  of  case  insensitive  hexadecimal
+           characters.
+
+       generate_session_id
+           This  method will return a string that can be used as a session ID. It is supposed to be a reasonably
+           random string with enough bits to prevent  collision.  It  basically  takes  "session_hash_seed"  and
+           hashes it using SHA-1, MD5 or SHA-256, depending on the availability of these modules.
+
+       session_hash_seed
+           This method is actually rather internal to generate_session_id, but should be overridable in case you
+           want to provide more random data.
+
+           Currently it returns a concatenated string which contains:
+
+           •   A counter
+
+           •   The current time
+
+           •   One value from "rand".
+
+           •   The stringified value of a newly allocated hash reference
+
+           •   The stringified value of the Catalyst context object
+
+           in  the  hopes  that those combined values are entropic enough for most uses. If this is not the case
+           you can replace "session_hash_seed" with e.g.
+
+               sub session_hash_seed {
+                   open my $fh, "&lt;", "/dev/random";
+                   read $fh, my $bytes, 20;
+                   close $fh;
+                   return $bytes;
+               }
+
+           Or even more directly, replace "generate_session_id":
+
+               sub generate_session_id {
+                   open my $fh, "&lt;", "/dev/random";
+                   read $fh, my $bytes, 20;
+                   close $fh;
+                   return unpack("H*", $bytes);
+               }
+
+           Also have a look at Crypt::Random and the various openssl bindings - these modules provide  APIs  for
+           cryptographically secure random data.
+
+       finalize_session
+           Clean up the session during "finalize".
+
+           This clears the various accessors after saving to the store.
+
+       dump_these
+           See  "dump_these"  in  Catalyst - ammends the session data structure to the list of dumped objects if
+           session ID is defined.
+
+       calculate_extended_session_expires
+       calculate_initial_session_expires
+       create_session_id_if_needed
+       delete_session_id
+       extend_session_expires
+           Note: this is *not* used to give an individual user a longer session. See 'change_session_expires'.
+
+       extend_session_id
+       get_session_id
+       reset_session_expires
+       session_is_valid
+       set_session_id
+       initial_session_expires
+
+</pre><h4><b>USING</b> <b>SESSIONS</b> <b>DURING</b> <b>PREPARE</b></h4><pre>
+       The earliest point in time at which you may use the session  data  is  after  Catalyst::Plugin::Session's
+       "prepare_action" has finished.
+
+       State   plugins   must   set   $c-&gt;session   ID  before  "prepare_action",  and  during  "prepare_action"
+       Catalyst::Plugin::Session will actually load the data from the store.
+
+           sub prepare_action {
+               my $c = shift;
+
+               # don't touch $c-&gt;session yet!
+
+               $c-&gt;NEXT::prepare_action( @_ );
+
+               $c-&gt;session;  # this is OK
+               $c-&gt;sessionid; # this is also OK
+           }
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+           $c-&gt;config('Plugin::Session' =&gt; {
+               expires =&gt; 1234,
+           });
+
+       All configuation parameters are provided in a hash reference  under  the  "Plugin::Session"  key  in  the
+       configuration hash.
+
+       expires
+           The time-to-live of each session, expressed in seconds. Defaults to 7200 (two hours).
+
+       expiry_threshold
+           Only update the session expiry time if it would otherwise expire within this many seconds from now.
+
+           The  purpose of this is to keep the session store from being updated when nothing else in the session
+           is updated.
+
+           Defaults to 0 (in which case, the expiration will always be updated).
+
+       verify_address
+           When true, "$c-&gt;request-&gt;address" will be checked at prepare time. If it  is  not  the  same  as  the
+           address that initiated the session, the session is deleted.
+
+           Defaults to false.
+
+       verify_user_agent
+           When  true,  "$c-&gt;request-&gt;user_agent"  will be checked at prepare time. If it is not the same as the
+           user agent that initiated the session, the session is deleted.
+
+           Defaults to false.
+
+       flash_to_stash
+           This option makes it easier to have actions behave  the  same  whether  they  were  forwarded  to  or
+           redirected to. On prepare time it copies the contents of "flash" (if any) to the stash.
+
+</pre><h4><b>SPECIAL</b> <b>KEYS</b></h4><pre>
+       The hash reference returned by "$c-&gt;session" contains several keys which are automatically set:
+
+       __expires
+           This key no longer exists. Use "session_expires" instead.
+
+       __updated
+           The last time a session was saved to the store.
+
+       __created
+           The time when the session was first created.
+
+       __address
+           The  value  of  "$c-&gt;request-&gt;address"  at  the  time  the  session  was created.  This value is only
+           populated if "verify_address" is true in the configuration.
+
+       __user_agent
+           The value of "$c-&gt;request-&gt;user_agent" at the time the session  was  created.   This  value  is  only
+           populated if "verify_user_agent" is true in the configuration.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+   <b>Round</b> <b>the</b> <b>Robin</b> <b>Proxies</b>
+       "verify_address"  could  make  your site inaccessible to users who are behind load balanced proxies. Some
+       ISPs may give a different IP to each request by the  same  client  due  to  this  type  of  proxying.  If
+       addresses are verified these users' sessions cannot persist.
+
+       To  let these users access your site you can either disable address verification as a whole, or provide a
+       checkbox in the login dialog that tells the server that it's OK for the address of the client to  change.
+       When  the  server  sees  that  this  box is checked it should delete the "__address" special key from the
+       session hash when the hash is first created.
+
+   <b>Race</b> <b>Conditions</b>
+       In this day and age where cleaning detergents and Dutch football (not the American kind) teams  roam  the
+       plains  in  great  numbers,  requests  may  happen  simultaneously. This means that there is some risk of
+       session data being overwritten, like this:
+
+       1.  request a starts, request b starts, with the same session ID
+
+       2.  session data is loaded in request a
+
+       3.  session data is loaded in request b
+
+       4.  session data is changed in request a
+
+       5.  request a finishes, session data is updated and written to store
+
+       6.  request b finishes, session data is updated and written to store, overwriting changes by request a
+
+       For applications where any given user's session is only making one request at a time this  plugin  should
+       be safe enough.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Andy Grundman
+
+       Christian Hansen
+
+       Yuval Kogman, "<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>"
+
+       Sebastian Riedel
+
+       Tomas Doran (t0m) "<a href="mailto:bobtfish@bobtfish.net">bobtfish@bobtfish.net</a>" (current maintainer)
+
+       Sergio Salvi
+
+       kmx "<a href="mailto:kmx@volny.cz">kmx@volny.cz</a>"
+
+       Florian Ragwitz (rafl) "<a href="mailto:rafl@debian.org">rafl@debian.org</a>"
+
+       Kent Fredric (kentnl)
+
+       And countless other contributers from #catalyst. Thanks guys!
+
+</pre><h4><b>Contributors</b></h4><pre>
+       Devin Austin (dhoss) &lt;<a href="mailto:dhoss@cpan.org">dhoss@cpan.org</a>&gt;
+
+       Robert Rothenberg &lt;<a href="mailto:rrwo@cpan.org">rrwo@cpan.org</a>&gt; (on behalf of Foxtons Ltd.)
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+           Copyright (c) 2005 the aforementioned authors. All rights
+           reserved. This program is free software; you can redistribute
+           it and/or modify it under the same terms as Perl itself.
+
+perl v5.34.0                                       2022-06-03                     <u>Catalyst::Plugin::<a href="../man3pm/Session.3pm.html">Session</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

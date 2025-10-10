@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Stats::Kmeans -- classic k-means cluster analysis</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libpdl-stats-perl">libpdl-stats-perl_0.81-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Stats::Kmeans -- classic k-means cluster analysis
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Assumes that we have data pdl dim [observation, variable] and the goal is to put observations into
+       clusters based on their values on the variables. The terms "observation" and "variable" are quite
+       arbitrary but serve as a reminder for "that which is being clustered" and "that which is used to
+       cluster".
+
+       The terms FUNCTIONS and METHODS are arbitrarily used to refer to methods that are threadable and methods
+       that are non-threadable, respectively.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Implement a basic k-means procedure,
+
+           use PDL::LiteF;
+           use PDL::NiceSlice;
+           use PDL::Stats;
+
+           my ($data, $idv, $ido) = rtable( $file );
+           # or generate random data:
+           $data = grandom(200, 2); # two vars as below
+
+           my ($cluster, $centroid, $ss_centroid, $cluster_last);
+
+             # start out with 8 random clusters
+           $cluster = random_cluster( $data-&gt;<a href="../man0/dim.0.html">dim</a>(0), 8 );
+             # iterate to minimize total ss
+             # stop when no more changes in cluster membership
+           do {
+             $cluster_last = $cluster;
+             ($centroid, $ss_centroid) = $data-&gt;centroid( $cluster );
+             $cluster = $data-&gt;assign( $centroid );
+           } while sum(abs($cluster - $cluster_last)) &gt; 0;
+
+       or, use the <b>kmeans</b> function provided here,
+
+           my %k = $data-&gt;kmeans( \%opt );
+           print "$_\t$k{$_}\n" for (sort keys %k);
+
+       plot the clusters if there are only 2 vars in $data,
+
+           use PDL::Graphics::PGPLOT::Window;
+
+           my ($win, $c);
+           $win = pgwin 'xs';
+           $win-&gt;env($data( ,0)-&gt;minmax, $data( ,1)-&gt;minmax);
+
+           $win-&gt;points( $data-&gt;dice_axis(0,which($k{cluster}-&gt;(,$_)))-&gt;dog,
+                         {COLOR=&gt;++$c} )
+             for (0 .. $k{cluster}-&gt;<a href="../man1/dim.1.html">dim</a>(1)-1);
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>random_cluster</b>
+         Signature: (short [o]cluster(o,c); int obs=&gt;o; int clu=&gt;c)
+
+       Creates masks for random mutually exclusive clusters. Accepts two parameters, num_obs and num_cluster.
+       Extra parameter turns into extra dim in mask. May loop a long time if num_cluster approaches num_obs
+       because empty cluster is not allowed.
+
+           my $cluster = random_cluster( $num_obs, $num_cluster );
+
+   <b>which_cluster</b>
+         Signature: (short a(o,c); indx [o]b(o))
+
+       Given cluster mask dim [obs x clu], returns the cluster index to which an obs belong.
+
+       Does not support overlapping clusters. If an obs has TRUE value for multiple clusters, the returned index
+       is the first cluster the obs belongs to. If an obs has no TRUE value for any cluster, the return val is
+       set to -1 or BAD if the input mask has badflag set.
+
+       Usage:
+
+             # create a cluster mask dim [obs x clu]
+           perldl&gt; p $c_mask = iv_cluster [qw(a a b b c c)]
+           [
+            [1 1 0 0 0 0]
+            [0 0 1 1 0 0]
+            [0 0 0 0 1 1]
+           ]
+             # get cluster membership list dim [obs]
+           perldl&gt; p $ic = $c_mask-&gt;which_cluster
+           [0 0 1 1 2 2]
+
+       which_cluster processes bad values.  It will set the bad-value flag of all output ndarrays if the flag is
+       set for any of the input ndarrays.
+
+   <b>assign</b>
+         Signature: (data(o,v); centroid(c,v); short [o]cluster(o,c))
+
+       Takes data pdl dim [obs x var] and centroid pdl dim [cluster x var] and returns mask dim [obs x cluster]
+       to cluster membership. An obs is assigned to the first cluster with the smallest distance (ie sum squared
+       error) to cluster centroid. With bad value, obs is assigned by smallest mean squared error across
+       variables.
+
+           perldl&gt; $centroid = ones 2, 3
+           perldl&gt; $centroid(0,) .= 0
+           perldl&gt; p $centroid
+           [
+            [0 1]
+            [0 1]
+            [0 1]
+           ]
+
+           perldl&gt; $b = qsort( random 4, 3 )
+           perldl&gt; p $b
+           [
+            [0.022774068 0.032513883  0.13890034  0.30942479]
+            [ 0.16943853  0.50262636  0.56251531   0.7152271]
+            [ 0.23964483  0.59932745  0.60967495  0.78452117]
+           ]
+             # notice that 1st 3 obs in $b are on average closer to 0
+             # and last obs closer to 1
+           perldl&gt; p $b-&gt;assign( $centroid )
+           [
+            [1 1 1 0]    # cluster 0 membership
+            [0 0 0 1]    # cluster 1 membership
+           ]
+
+       assign processes bad values.  It will set the bad-value flag of all output ndarrays if the flag is set
+       for any of the input ndarrays.
+
+   <b>centroid</b>
+         Signature: (data(o,v); cluster(o,c); float+ [o]m(c,v); float+ [o]ss(c,v))
+
+       Takes data dim [obs x var] and mask dim [obs x cluster], returns mean and ss (ms when data contains bad
+       values) dim [cluster x var], using data where mask == 1. Multiple cluster membership for an obs is okay.
+       If a cluster is empty all means and ss are set to zero for that cluster.
+
+             # data is 10 obs x 3 var
+           perldl&gt; p $d = sequence 10, 3
+           [
+            [ 0  1  2  3  4  5  6  7  8  9]
+            [10 11 12 13 14 15 16 17 18 19]
+            [20 21 22 23 24 25 26 27 28 29]
+           ]
+             # create two clusters by value on 1st var
+           perldl&gt; p $a = $d( ,(0)) &lt;= 5
+           [1 1 1 1 1 1 0 0 0 0]
+
+           perldl&gt; p $b = $d( ,(0)) &gt; 5
+           [0 0 0 0 0 0 1 1 1 1]
+
+           perldl&gt; p $c = cat $a, $b
+           [
+            [1 1 1 1 1 1 0 0 0 0]
+            [0 0 0 0 0 0 1 1 1 1]
+           ]
+
+           perldl&gt; p $d-&gt;centroid($c)
+             # mean for 2 cluster x 3 var
+           [
+            [ 2.5  7.5]
+            [12.5 17.5]
+            [22.5 27.5]
+           ]
+             # ss for 2 cluster x 3 var
+           [
+            [17.5    5]
+            [17.5    5]
+            [17.5    5]
+           ]
+
+       centroid processes bad values.  It will set the bad-value flag of all output ndarrays if the flag is set
+       for any of the input ndarrays.
+
+   <b>kmeans</b>
+       Implements classic k-means cluster analysis. Given a number of observations with values on a set of
+       variables, kmeans puts the observations into clusters that maximizes within-cluster similarity with
+       respect to the variables. Tries several different random seeding and clustering in parallel. Stops when
+       cluster assignment of the observations no longer changes. Returns the best result in terms of R2 from the
+       random-seeding trials.
+
+       Instead of random seeding, kmeans also accepts manual seeding. This is done by providing a centroid to
+       the function, in which case clustering will proceed from the centroid and there is no multiple tries.
+
+       There are two distinct advantages from seeding with a centroid compared to seeding with predefined
+       cluster membership of a subset of the observations ie "seeds",
+
+       (1) a centroid could come from a previous study with a different set of observations;
+
+       (2) a centroid could even be "fictional", or in more proper parlance, an idealized prototype with respect
+       to the actual data. For example, if there are 10 person's ratings of 1 to 5 on 4 movies, ie a ratings pdl
+       of dim [10 obs x 4 var], providing a centroid like
+
+         [
+          [5 0 0 0]
+          [0 5 0 0]
+          [0 0 5 0]
+          [0 0 0 5]
+         ]
+
+       will produce 4 clusters of people with each cluster favoring a different one of the 4 movies. Clusters
+       from an idealized centroid may not give the best result in terms of R2, but they sure are a lot more
+       interpretable.
+
+       If clustering has to be done from predefined clusters of seeds, simply calculate the centroid using the
+       <b>centroid</b> function and feed it to kmeans,
+
+         my ($centroid, $ss) = $rating($iseeds, )-&gt;centroid( $seeds_cluster );
+
+         my %k = $rating-&gt;kmeans( { CNTRD=&gt;$centroid } );
+
+       kmeans supports bad value*.
+
+       Default options (case insensitive):
+
+         V     =&gt; 1,         # prints simple status
+         FULL  =&gt; 0,         # returns results for all seeding trials
+
+         CNTRD =&gt; PDL-&gt;null, # optional. pdl [clu x var]. disables next 3 opts
+
+         NTRY  =&gt; 5,         # num of random seeding trials
+         NSEED =&gt; 1000,      # num of initial seeds, use NSEED up to max obs
+         NCLUS =&gt; 3,         # num of clusters
+
+       Usage:
+
+         # suppose we have 4 person's ratings on 5 movies
+
+         perldl&gt; p $rating = ceil( random(4, 5) * 5 )
+         [
+          [3 2 2 3]
+          [2 4 5 4]
+          [5 3 2 3]
+          [3 3 1 5]
+          [4 3 3 2]
+         ]
+
+         # we want to put the 4 persons into 2 groups
+
+         perldl&gt; %k = $rating-&gt;kmeans( {NCLUS=&gt;2} )
+
+         # by default prints back options used
+         # as well as info for all tries and iterations
+
+         CNTRD =&gt; Null
+         FULL  =&gt; 0
+         NCLUS =&gt; 2
+         NSEED =&gt; 4
+         NTRY  =&gt; 5
+         V     =&gt; 1
+         ss total:     20.5
+         iter 0 R2 [0.024390244 0.024390244 0.26829268  0.4796748  0.4796748]
+         iter 1 R2 [0.46341463 0.46341463  0.4796748  0.4796748  0.4796748]
+
+         perldl&gt; p "$_\t$k{$_}\n" for (sort keys %k)
+
+         R2      0.479674796747968
+         centroid       # mean ratings for 2 group x 5 movies
+         [
+          [         3  2.3333333]
+          [         2  4.3333333]
+          [         5  2.6666667]
+          [         3          3]
+          [         4  2.6666667]
+         ]
+
+         cluster        # 4 persons' membership in two groups
+         [
+          [1 0 0 0]
+          [0 1 1 1]
+         ]
+
+         n       [1 3]  # cluster size
+         ss
+         [
+          [         0 0.66666667]
+          [         0 0.66666667]
+          [         0 0.66666667]
+          [         0          8]
+          [         0 0.66666667]
+         ]
+
+       Now, for the valiant, kmeans is threadable. Say you gathered 10 persons' ratings on 5 movies from 2
+       countries, so the data is dim [10,5,2], and you want to put the 10 persons from each country into 3
+       clusters, just specify NCLUS =&gt; [3,1], and there you have it. The key is for NCLUS to include
+       $data-&gt;ndims - 1 numbers. The 1 in [3,1] turns into a dummy dim, so the 3-cluster operation is repeated
+       on both countries. Similarly, when seeding, CNTRD needs to have ndims that at least match the data ndims.
+       Extra dims in CNTRD will lead to threading (convenient if you want to try out different centroid
+       locations, for example, but you will have to hand pick the best result). See stats_kmeans.t for examples
+       w 3D and 4D data.
+
+       *With bad value, R2 is based on average of variances instead of sum squared error.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>iv_cluster</b>
+       Turns an independent variable into a cluster pdl. Returns cluster pdl and level-to-pdl_index mapping in
+       list context and cluster pdl only in scalar context.
+
+       This is the method used for mean and var in anova. The difference between iv_cluster and dummy_code is
+       that iv_cluster returns pdl dim [obs x level] whereas dummy_code returns pdl dim [obs x (level - 1)].
+
+       Usage:
+
+           perldl&gt; @bake = qw( y y y n n n )
+
+           # accepts @ ref or 1d pdl
+
+           perldl&gt; p $bake = iv_cluster( \@bake )
+           [
+            [1 1 1 0 0 0]
+            [0 0 0 1 1 1]
+           ]
+
+           perldl&gt; p $rating = sequence 6
+           [0 1 2 3 4 5]
+
+           perldl&gt; p $rating-&gt;centroid( $bake )
+           # mean for each iv level
+           [
+            [1 4]
+           ]
+           # ss
+           [
+            [2 2]
+           ]
+
+   <b>pca_cluster</b>
+       Assign variables to components ie clusters based on pca loadings or scores. One way to seed kmeans (see
+       Ding &amp; He, 2004, and Su &amp; Dy, 2004 for other ways of using pca with kmeans). Variables are assigned to
+       their most associated component. Note that some components may not have any variable that is most
+       associated with them, so the returned number of clusters may be smaller than NCOMP.
+
+       Default options (case insensitive):
+
+         V     =&gt; 1,
+         ABS   =&gt; 1,     # high pos and neg loadings on a comp in same cluster
+         NCOMP =&gt; undef, # max number of components to consider. determined by
+                         # scree plot black magic if not specified
+         PLOT  =&gt; 0,     # pca scree plot with cutoff at NCOMP
+
+       Usage:
+
+           # say we need to cluster a group of documents
+           # $data is pdl dim [word x doc]
+         ($data, $idd, $idw) = get_data 'doc_word_info.txt';
+
+         perldl&gt; %p = $data-&gt;pca;
+           # $cluster is pdl mask dim [doc x ncomp]
+         perldl&gt; $cluster  = $p{loading}-&gt;pca_cluster;
+
+           # pca clusters var while kmeans clusters obs. hence transpose
+         perldl&gt; ($m, $ss) = $data-&gt;transpose-&gt;centroid( $cluster );
+         perldl&gt; %k = $data-&gt;transpose-&gt;kmeans( { cntrd=&gt;$m } );
+
+           # take a look at cluster 0 doc ids
+         perldl&gt; p join("\n", @$idd[ list which $k{cluster}-&gt;( ,0) ]);
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       Ding, C., &amp; He, X. (2004). K-means clustering via principal component analysis. Proceedings of the 21st
+       International Conference on Machine Learning, 69, 29.
+
+       Su, T., &amp; Dy, J. (2004). A deterministic method for initializing K-means clustering. 16th IEEE
+       International Conference on Tools with Artificial Intelligence, 784-786.
+
+       Romesburg, H.C. (1984). Cluster Analysis for Researchers. NC: Lulu Press.
+
+       Wikipedia (retrieved June, 2009). K-means clustering. <a href="http://en.wikipedia.org/wiki/K-means_algorithm">http://en.wikipedia.org/wiki/K-means_algorithm</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (C) 2009 Maggie J. Xiong &lt;maggiexyz users.sourceforge.net&gt;
+
+       All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation
+       as described in the file COPYING in the PDL distribution.
+
+perl v5.34.0                                       2022-02-06                                        <u><a href="../man3pm/Kmeans.3pm.html">Kmeans</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

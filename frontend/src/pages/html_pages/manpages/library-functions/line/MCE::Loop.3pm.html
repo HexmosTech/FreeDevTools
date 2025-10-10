@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Loop - MCE model for building parallel loops</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Loop - MCE model for building parallel loops
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Loop version 1.901
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a parallel loop implementation through Many-Core Engine.  MCE::Loop is not MCE::Map
+       but more along the lines of an easy way to spin up a MCE instance and have user_func pointing to your
+       code block. If you want something similar to map, then see MCE::Map.
+
+        ## Construction when chunking is not desired
+
+        use MCE::Loop;
+
+        MCE::Loop-&gt;init(
+           max_workers =&gt; 5, chunk_size =&gt; 1
+        );
+
+        mce_loop {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           MCE-&gt;say("$chunk_id: $_");
+        } 40 .. 48;
+
+        -- Output
+
+        3: 42
+        1: 40
+        2: 41
+        4: 43
+        5: 44
+        6: 45
+        7: 46
+        8: 47
+        9: 48
+
+        ## Construction for 'auto' or greater than 1
+
+        use MCE::Loop;
+
+        MCE::Loop-&gt;init(
+           max_workers =&gt; 5, chunk_size =&gt; 'auto'
+        );
+
+        mce_loop {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           for (@{ $chunk_ref }) {
+              MCE-&gt;say("$chunk_id: $_");
+           }
+        } 40 .. 48;
+
+        -- Output
+
+        1: 40
+        2: 42
+        1: 41
+        4: 46
+        2: 43
+        5: 48
+        3: 44
+        4: 47
+        3: 45
+
+</pre><h4><b>SYNOPSIS</b> <b>when</b> <b>CHUNK_SIZE</b> <b>EQUALS</b> <b>1</b></h4><pre>
+       All models in MCE default to 'auto' for chunk_size. The arguments for the block are the same as writing a
+       user_func block using the Core API.
+
+       Beginning with MCE 1.5, the next input item is placed into the input scalar variable $_ when chunk_size
+       equals 1. Otherwise, $_ points to $chunk_ref containing many items. Basically, line 2 below may be
+       omitted from your code when using $_. One can call MCE-&gt;chunk_id to obtain the current chunk id.
+
+        line 1:  user_func =&gt; sub {
+        line 2:     my ($mce, $chunk_ref, $chunk_id) = @_;
+        line 3:
+        line 4:     $_ points to $chunk_ref-&gt;[0]
+        line 5:        in MCE 1.5 when chunk_size == 1
+        line 6:
+        line 7:     $_ points to $chunk_ref
+        line 8:        in MCE 1.5 when chunk_size  &gt; 1
+        line 9:  }
+
+       Follow this synopsis when chunk_size equals one. Looping is not required from inside the block. Hence,
+       the block is called once per each item.
+
+        ## Exports mce_loop, mce_loop_f, and mce_loop_s
+        use MCE::Loop;
+
+        MCE::Loop-&gt;init(
+           chunk_size =&gt; 1
+        );
+
+        ## Array or array_ref
+        mce_loop { do_work($_) } 1..10000;
+        mce_loop { do_work($_) } \@list;
+
+        ## Important; pass an array_ref for deeply input data
+        mce_loop { do_work($_) } [ [ 0, 1 ], [ 0, 2 ], ... ];
+        mce_loop { do_work($_) } \@deeply_list;
+
+        ## File path, glob ref, IO::All::{ File, Pipe, STDIO } obj, or scalar ref
+        ## Workers read directly and not involve the manager process
+        mce_loop_f { chomp; do_work($_) } "/path/to/file"; # efficient
+
+        ## Involves the manager process, therefore slower
+        mce_loop_f { chomp; do_work($_) } $file_handle;
+        mce_loop_f { chomp; do_work($_) } $io;
+        mce_loop_f { chomp; do_work($_) } \$scalar;
+
+        ## Sequence of numbers (begin, end [, step, format])
+        mce_loop_s { do_work($_) } 1, 10000, 5;
+        mce_loop_s { do_work($_) } [ 1, 10000, 5 ];
+
+        mce_loop_s { do_work($_) } {
+           begin =&gt; 1, end =&gt; 10000, step =&gt; 5, format =&gt; undef
+        };
+
+</pre><h4><b>SYNOPSIS</b> <b>when</b> <b>CHUNK_SIZE</b> <b>is</b> <b>GREATER</b> <b>THAN</b> <b>1</b></h4><pre>
+       Follow this synopsis when chunk_size equals 'auto' or greater than 1.  This means having to loop through
+       the chunk from inside the block.
+
+        use MCE::Loop;
+
+        MCE::Loop-&gt;init(           ## Chunk_size defaults to 'auto' when
+           chunk_size =&gt; 'auto'    ## not specified. Therefore, the init
+        );                         ## function may be omitted.
+
+        ## Syntax is shown for mce_loop for demonstration purposes.
+        ## Looping inside the block is the same for mce_loop_f and
+        ## mce_loop_s.
+
+        ## Array or array_ref
+        mce_loop { do_work($_) for (@{ $_ }) } 1..10000;
+        mce_loop { do_work($_) for (@{ $_ }) } \@list;
+
+        ## Important; pass an array_ref for deeply input data
+        mce_loop { do_work($_) for (@{ $_ }) } [ [ 0, 1 ], [ 0, 2 ], ... ];
+        mce_loop { do_work($_) for (@{ $_ }) } \@deeply_list;
+
+        ## Resembles code using the core MCE API
+        mce_loop {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+
+           for (@{ $chunk_ref }) {
+              do_work($_);
+           }
+
+        } 1..10000;
+
+       Chunking reduces the number of IPC calls behind the scene. Think in terms of chunks whenever processing a
+       large amount of data. For relatively small data, choosing 1 for chunk_size is fine.
+
+</pre><h4><b>OVERRIDING</b> <b>DEFAULTS</b></h4><pre>
+       The following list options which may be overridden when loading the module.
+
+        use Sereal qw( encode_sereal decode_sereal );
+        use CBOR::XS qw( encode_cbor decode_cbor );
+        use JSON::XS qw( encode_json decode_json );
+
+        use MCE::Loop
+            max_workers =&gt; 4,                # Default 'auto'
+            chunk_size =&gt; 100,               # Default 'auto'
+            tmp_dir =&gt; "/path/to/app/tmp",   # $MCE::Signal::tmp_dir
+            freeze =&gt; \&amp;encode_sereal,       # \&amp;Storable::freeze
+            thaw =&gt; \&amp;decode_sereal,         # \&amp;Storable::thaw
+            init_relay =&gt; 0,                 # Default undef; MCE 1.882+
+            use_threads =&gt; 0,                # Default undef; MCE 1.882+
+        ;
+
+       From MCE 1.8 onwards, Sereal 3.015+ is loaded automatically if available.  Specify "Sereal =&gt; 0" to use
+       Storable instead.
+
+        use MCE::Loop Sereal =&gt; 0;
+
+</pre><h4><b>CUSTOMIZING</b> <b>MCE</b></h4><pre>
+       MCE::Loop-&gt;init ( options )
+       MCE::Loop::init { options }
+
+       The init function accepts a hash of MCE options.
+
+       In  scalar  context  (API available since 1.897), call "MCE::Loop-"finish&gt; automatically upon leaving the
+       scope or program.
+
+        use MCE::Loop;
+
+        my $guard = MCE::Loop-&gt;init(
+           chunk_size =&gt; 1, max_workers =&gt; 4,
+
+           user_begin =&gt; sub {
+              print "## ", MCE-&gt;wid, " started\n";
+           },
+
+           user_end =&gt; sub {
+              print "## ", MCE-&gt;wid, " completed\n";
+           }
+        );
+
+        my %a = mce_loop { MCE-&gt;gather($_, $_ * $_) } 1..100;
+
+        print "\n", "@a{1..100}", "\n";
+
+        -- Output
+
+        ## 3 started
+        ## 1 started
+        ## 2 started
+        ## 4 started
+        ## 1 completed
+        ## 2 completed
+        ## 3 completed
+        ## 4 completed
+
+        1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324 361
+        400 441 484 529 576 625 676 729 784 841 900 961 1024 1089 1156
+        1225 1296 1369 1444 1521 1600 1681 1764 1849 1936 2025 2116 2209
+        2304 2401 2500 2601 2704 2809 2916 3025 3136 3249 3364 3481 3600
+        3721 3844 3969 4096 4225 4356 4489 4624 4761 4900 5041 5184 5329
+        5476 5625 5776 5929 6084 6241 6400 6561 6724 6889 7056 7225 7396
+        7569 7744 7921 8100 8281 8464 8649 8836 9025 9216 9409 9604 9801
+        10000
+
+</pre><h4><b>API</b> <b>DOCUMENTATION</b></h4><pre>
+       The following assumes chunk_size equals 1 in order to demonstrate all  the  possibilities  for  providing
+       input data.
+
+       MCE::Loop-&gt;run ( sub { code }, list )
+       mce_loop { code } list
+
+       Input data may be defined using a list, an array ref, or a hash ref.
+
+        # $_ contains the item when chunk_size =&gt; 1
+
+        mce_loop { do_work($_) } 1..1000;
+        mce_loop { do_work($_) } \@list;
+
+        # Important; pass an array_ref for deeply input data
+
+        mce_loop { do_work($_) } [ [ 0, 1 ], [ 0, 2 ], ... ];
+        mce_loop { do_work($_) } \@deeply_list;
+
+        # Chunking; any chunk_size =&gt; 1 or greater
+
+        my %res = mce_loop {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           my %ret;
+           for my $item (@{ $chunk_ref }) {
+              $ret{$item} = $item * 2;
+           }
+           MCE-&gt;gather(%ret);
+        }
+        \@list;
+
+        # Input hash; current API available since 1.828
+
+        my %res = mce_loop {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           my %ret;
+           for my $key (keys %{ $chunk_ref }) {
+              $ret{$key} = $chunk_ref-&gt;{$key} * 2;
+           }
+           MCE-&gt;gather(%ret);
+        }
+        \%hash;
+
+       MCE::Loop-&gt;run_file ( sub { code }, file )
+       mce_loop_f { code } file
+
+       The  fastest of these is the /path/to/file. Workers communicate the next offset position among themselves
+       with zero interaction by the manager process.
+
+       "IO::All" { File, Pipe, STDIO } is supported since MCE 1.845.
+
+        # $_ contains the line when chunk_size =&gt; 1
+
+        mce_loop_f { $_ } "/path/to/file";  # faster
+        mce_loop_f { $_ } $file_handle;
+        mce_loop_f { $_ } $io;              # IO::All
+        mce_loop_f { $_ } \$scalar;
+
+        # chunking, any chunk_size =&gt; 1 or greater
+
+        my %res = mce_loop_f {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           my $buf = '';
+           for my $line (@{ $chunk_ref }) {
+              $buf .= $line;
+           }
+           MCE-&gt;gather($chunk_id, $buf);
+        }
+        "/path/to/file";
+
+       MCE::Loop-&gt;run_seq ( sub { code }, $beg, $end [, $step, $fmt ] )
+       mce_loop_s { code } $beg, $end [, $step, $fmt ]
+
+       Sequence may be defined as a list, an array reference, or a hash reference.  The functions  require  both
+       begin  and  end  values  to  run. Step and format are optional. The format is passed to sprintf (% may be
+       omitted below).
+
+        my ($beg, $end, $step, $fmt) = (10, 20, 0.1, "%4.1f");
+
+        # $_ contains the sequence number when chunk_size =&gt; 1
+
+        mce_loop_s { $_ } $beg, $end, $step, $fmt;
+        mce_loop_s { $_ } [ $beg, $end, $step, $fmt ];
+
+        mce_loop_s { $_ } {
+           begin =&gt; $beg, end =&gt; $end,
+           step =&gt; $step, format =&gt; $fmt
+        };
+
+        # chunking, any chunk_size =&gt; 1 or greater
+
+        my %res = mce_loop_s {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           my $buf = '';
+           for my $seq (@{ $chunk_ref }) {
+              $buf .= "$seq\n";
+           }
+           MCE-&gt;gather($chunk_id, $buf);
+        }
+        [ $beg, $end ];
+
+       The sequence engine can compute 'begin' and 'end' items only, for the chunk, and not the items in between
+       (hence boundaries only). This option applies to sequence only and has no effect when chunk_size equals 1.
+
+       The time to run is 0.006s below. This becomes 0.827s without the bounds_only option due to computing  all
+       items  in  between, thus creating a very large array. Basically, specify bounds_only =&gt; 1 when boundaries
+       is all you need for looping inside the block; e.g. Monte Carlo simulations.
+
+       Time was measured using 1 worker to emphasize the difference.
+
+        use MCE::Loop;
+
+        MCE::Loop-&gt;init(
+           max_workers =&gt; 1, chunk_size =&gt; 1_250_000,
+           bounds_only =&gt; 1
+        );
+
+        # Typically, the input scalar $_ contains the sequence number
+        # when chunk_size =&gt; 1, unless the bounds_only option is set
+        # which is the case here. Thus, $_ points to $chunk_ref.
+
+        mce_loop_s {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+
+           # $chunk_ref contains 2 items, not 1_250_000
+           # my ( $begin, $end ) = ( $_-&gt;[0], $_-&gt;[1] );
+
+           my $begin = $chunk_ref-&gt;[0];
+           my $end   = $chunk_ref-&gt;[1];
+
+           # for my $seq ( $begin .. $end ) {
+           #    ...
+           # }
+
+           MCE-&gt;printf("%7d .. %8d\n", $begin, $end);
+        }
+        [ 1, 10_000_000 ];
+
+        -- Output
+
+              1 ..  1250000
+        1250001 ..  2500000
+        2500001 ..  3750000
+        3750001 ..  5000000
+        5000001 ..  6250000
+        6250001 ..  7500000
+        7500001 ..  8750000
+        8750001 .. 10000000
+
+       MCE::Loop-&gt;run ( sub { code }, iterator )
+       mce_loop { code } iterator
+
+       An iterator reference may be specified for input_data. Iterators are described under section "SYNTAX  for
+       INPUT_DATA" at MCE::Core.
+
+        mce_loop { $_ } make_iterator(10, 30, 2);
+
+</pre><h4><b>GATHERING</b> <b>DATA</b></h4><pre>
+       Unlike  MCE::Map  where gather and output order are done for you automatically, the gather method is used
+       to have results sent back to the manager process.
+
+        use MCE::Loop chunk_size =&gt; 1;
+
+        ## Output order is not guaranteed.
+        my @a1 = mce_loop { MCE-&gt;gather($_ * 2) } 1..100;
+        print "@a1\n\n";
+
+        ## Outputs to a hash instead (key, value).
+        my %h1 = mce_loop { MCE-&gt;gather($_, $_ * 2) } 1..100;
+        print "@h1{1..100}\n\n";
+
+        ## This does the same thing due to chunk_id starting at one.
+        my %h2 = mce_loop { MCE-&gt;gather(MCE-&gt;chunk_id, $_ * 2) } 1..100;
+        print "@h2{1..100}\n\n";
+
+       The gather method may be called multiple times within the block  unlike  return  which  would  leave  the
+       block. Therefore, think of gather as yielding results immediately to the manager process without actually
+       leaving the block.
+
+        use MCE::Loop chunk_size =&gt; 1, max_workers =&gt; 3;
+
+        my @hosts = qw(
+           hosta hostb hostc hostd hoste
+        );
+
+        my %h3 = mce_loop {
+           my ($output, $error, $status); my $host = $_;
+
+           ## Do something with $host;
+           $output = "Worker ". MCE-&gt;wid .": Hello from $host";
+
+           if (MCE-&gt;chunk_id % 3 == 0) {
+              ## Simulating an error condition
+              local $? = 1; $status = $?;
+              $error = "Error from $host"
+           }
+           else {
+              $status = 0;
+           }
+
+           ## Ensure unique keys (key, value) when gathering to
+           ## a hash.
+           MCE-&gt;gather("$host.out", $output);
+           MCE-&gt;gather("$host.err", $error) if (defined $error);
+           MCE-&gt;gather("$host.sta", $status);
+
+        } @hosts;
+
+        foreach my $host (@hosts) {
+           print $h3{"$host.out"}, "\n";
+           print $h3{"$host.err"}, "\n" if (exists $h3{"$host.err"});
+           print "Exit status: ", $h3{"$host.sta"}, "\n\n";
+        }
+
+        -- Output
+
+        Worker 2: Hello from hosta
+        Exit status: 0
+
+        Worker 1: Hello from hostb
+        Exit status: 0
+
+        Worker 3: Hello from hostc
+        Error from hostc
+        Exit status: 1
+
+        Worker 2: Hello from hostd
+        Exit status: 0
+
+        Worker 1: Hello from hoste
+        Exit status: 0
+
+       The  following  uses  an  anonymous  array  containing  3  elements when gathering data. Serialization is
+       automatic behind the scene.
+
+        my %h3 = mce_loop {
+           ...
+
+           MCE-&gt;gather($host, [$output, $error, $status]);
+
+        } @hosts;
+
+        foreach my $host (@hosts) {
+           print $h3{$host}-&gt;[0], "\n";
+           print $h3{$host}-&gt;[1], "\n" if (defined $h3{$host}-&gt;[1]);
+           print "Exit status: ", $h3{$host}-&gt;[2], "\n\n";
+        }
+
+       Although MCE::Map comes to mind, one may want additional control when gathering data  such  as  retaining
+       output order.
+
+        use MCE::Loop;
+
+        sub preserve_order {
+           my %tmp; my $order_id = 1; my $gather_ref = $_[0];
+
+           return sub {
+              $tmp{ (shift) } = \@_;
+
+              while (1) {
+                 last unless exists $tmp{$order_id};
+                 push @{ $gather_ref }, @{ delete $tmp{$order_id++} };
+              }
+
+              return;
+           };
+        }
+
+        my @m2;
+
+        MCE::Loop-&gt;init(
+           chunk_size =&gt; 'auto', max_workers =&gt; 'auto',
+           gather =&gt; preserve_order(\@m2)
+        );
+
+        mce_loop {
+           my @a; my ($mce, $chunk_ref, $chunk_id) = @_;
+
+           ## Compute the entire chunk data at once.
+           push @a, map { $_ * 2 } @{ $chunk_ref };
+
+           ## Afterwards, invoke the gather feature, which
+           ## will direct the data to the callback function.
+           MCE-&gt;gather(MCE-&gt;chunk_id, @a);
+
+        } 1..100000;
+
+        MCE::Loop-&gt;finish;
+
+        print scalar @m2, "\n";
+
+       All  6  models  support  'auto'  for chunk_size unlike the Core API. Think of the models as the basis for
+       providing JIT for MCE. They create the instance, tune  max_workers,  and  tune  chunk_size  automatically
+       regardless of the hardware.
+
+       The following does the same thing using the Core API.
+
+        use MCE;
+
+        sub preserve_order {
+           ...
+        }
+
+        my $mce = MCE-&gt;new(
+           max_workers =&gt; 'auto', chunk_size =&gt; 8000,
+
+           user_func =&gt; sub {
+              my @a; my ($mce, $chunk_ref, $chunk_id) = @_;
+
+              ## Compute the entire chunk data at once.
+              push @a, map { $_ * 2 } @{ $chunk_ref };
+
+              ## Afterwards, invoke the gather feature, which
+              ## will direct the data to the callback function.
+              MCE-&gt;gather(MCE-&gt;chunk_id, @a);
+           }
+        );
+
+        my @m2;
+
+        $mce-&gt;process({ gather =&gt; preserve_order(\@m2) }, [1..100000]);
+        $mce-&gt;shutdown;
+
+        print scalar @m2, "\n";
+
+</pre><h4><b>MANUAL</b> <b>SHUTDOWN</b></h4><pre>
+       MCE::Loop-&gt;finish
+       MCE::Loop::finish
+
+       Workers  remain  persistent  as  much  as  possible after running. Shutdown occurs automatically when the
+       script terminates. Call finish when workers are no longer needed.
+
+        use MCE::Loop;
+
+        MCE::Loop-&gt;init(
+           chunk_size =&gt; 20, max_workers =&gt; 'auto'
+        );
+
+        mce_loop { ... } 1..100;
+
+        MCE::Loop-&gt;finish;
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Core
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                     <u>MCE::<a href="../man3pm/Loop.3pm.html">Loop</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

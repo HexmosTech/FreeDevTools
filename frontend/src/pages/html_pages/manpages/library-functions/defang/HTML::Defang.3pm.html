@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML::Defang - Cleans HTML as well as CSS of scripting and other executable contents, and neutralises XSS</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhtml-defang-perl">libhtml-defang-perl_1.07-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTML::Defang - Cleans HTML as well as CSS of scripting and other executable contents, and neutralises XSS
+       attacks.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $InputHtml = "&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;";
+
+         my $Defang = HTML::Defang-&gt;new(
+           context =&gt; $Self,
+           fix_mismatched_tags =&gt; 1,
+           tags_to_callback =&gt; [ br embed img ],
+           tags_callback =&gt; \&amp;DefangTagsCallback,
+           url_callback =&gt; \&amp;DefangUrlCallback,
+           css_callback =&gt; \&amp;DefangCssCallback,
+           attribs_to_callback =&gt; [ qw(border src) ],
+           attribs_callback =&gt; \&amp;DefangAttribsCallback,
+           content_callback =&gt; \&amp;ContentCallback,
+         );
+
+         my $SanitizedHtml = $Defang-&gt;defang($InputHtml);
+
+         # Callback for custom handling specific HTML tags
+         sub DefangTagsCallback {
+           my ($Self, $Defang, $OpenAngle, $lcTag, $IsEndTag, $AttributeHash, $CloseAngle, $HtmlR, $OutR) = @_;
+
+           # Explicitly defang this tag, eventhough safe
+           return DEFANG_ALWAYS if $lcTag eq 'br';
+
+           # Explicitly whitelist this tag, eventhough unsafe
+           return DEFANG_NONE if $lcTag eq 'embed';
+
+           # I am not sure what to do with this tag, so process as HTML::Defang normally would
+           return DEFANG_DEFAULT if $lcTag eq 'img';
+         }
+
+         # Callback for custom handling URLs in HTML attributes as well as style tag/attribute declarations
+         sub DefangUrlCallback {
+           my ($Self, $Defang, $lcTag, $lcAttrKey, $AttrValR, $AttributeHash, $HtmlR) = @_;
+
+           # Explicitly allow this URL in tag attributes or stylesheets
+           return DEFANG_NONE if $$AttrValR =~ /safesite.com/i;
+
+           # Explicitly defang this URL in tag attributes or stylesheets
+           return DEFANG_ALWAYS if $$AttrValR =~ /evilsite.com/i;
+         }
+
+         # Callback for custom handling style tags/attributes
+         sub DefangCssCallback {
+           my ($Self, $Defang, $Selectors, $SelectorRules, $Tag, $IsAttr) = @_;
+           my $i = 0;
+           foreach (@$Selectors) {
+             my $SelectorRule = $$SelectorRules[$i];
+             foreach my $KeyValueRules (@$SelectorRule) {
+               foreach my $KeyValueRule (@$KeyValueRules) {
+                 my ($Key, $Value) = @$KeyValueRule;
+
+                 # Comment out any '!important' directive
+                 $$KeyValueRule[2] = DEFANG_ALWAYS if $Value =~ '!important';
+
+                 # Comment out any 'position=fixed;' declaration
+                 $$KeyValueRule[2] = DEFANG_ALWAYS if $Key =~ 'position' &amp;&amp; $Value =~ 'fixed';
+               }
+             }
+             $i++;
+           }
+         }
+
+         # Callback for custom handling HTML tag attributes
+         sub DefangAttribsCallback {
+           my ($Self, $Defang, $lcTag, $lcAttrKey, $AttrValR, $HtmlR) = @_;
+
+           # Change all 'border' attribute values to zero.
+           $$AttrValR = '0' if $lcAttrKey eq 'border';
+
+           # Defang all 'src' attributes
+           return DEFANG_ALWAYS if $lcAttrKey eq 'src';
+
+           return DEFANG_NONE;
+         }
+
+         # Callback for all content between tags (except &lt;style&gt;, &lt;script&gt;, etc)
+         sub DefangContentCallback {
+           my ($Self, $Defang, $ContentR) = @_;
+
+           $$ContentR =~ s/remove this content//;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module accepts an input HTML and/or CSS string and removes any executable code including scripting,
+       embedded objects, applets, etc., and neutralises any XSS attacks. A whitelist based approach is used
+       which means only HTML known to be safe is allowed through.
+
+       HTML::Defang uses a custom html tag parser. The parser has been designed and tested to work with nasty
+       real world html and to try and emulate as close as possible what browsers actually do with strange
+       looking constructs. The test suite has been built based on examples from a range of sources such as
+       <a href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a> and <a href="http://imfo.ru/csstest/css_hacks/import.php">http://imfo.ru/csstest/css_hacks/import.php</a> to ensure that as many as
+       possible XSS attack scenarios have been dealt with.
+
+       HTML::Defang can make callbacks to client code when it encounters the following:
+
+       •   When a specified tag is parsed
+
+       •   When a specified attribute is parsed
+
+       •   When a URL is parsed as part of an HTML attribute, or CSS property value.
+
+       •   When style data is parsed, as part of an HTML style attribute, or as part of an HTML &lt;style&gt; tag.
+
+       The  callbacks  include  details  about  the current tag/attribute that is being parsed, and also gives a
+       scalar reference to the input HTML. Querying <b>pos()</b> on the input HTML should indicate where the module  is
+       with parsing. This gives the client code flexibility in working with HTML::Defang.
+
+       HTML::Defang  can defang whole tags, any attribute in a tag, any URL that appear as an attribute or style
+       property, or any CSS declaration in a declaration block in a style rule. This helps  to  precisely  block
+       the  most  specific  unwanted  elements  in  the  contents(for example, block just an offending attribute
+       instead of the whole tag), while retaining any safe HTML/CSS.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       <u>HTML::Defang-&gt;new(%Options)</u>
+           Constructs a new HTML::Defang object. The following options are supported:
+
+           <b>Options</b>
+               <b>tags_to_callback</b>
+                   Array reference of tags for which a call back should be made. If  a  tag  in  this  array  is
+                   parsed, the subroutine <b>tags_callback()</b> is invoked.
+
+               <b>attribs_to_callback</b>
+                   Array  reference  of  tag attributes for which a call back should be made. If an attribute in
+                   this array is parsed, the subroutine <b>attribs_callback()</b> is invoked.
+
+               <b>tags_callback</b>
+                   Subroutine reference to be invoked when a tag listed in @$tags_to_callback is parsed.
+
+               <b>attribs_callback</b>
+                   Subroutine reference to be invoked when  an  attribute  listed  in  @$attribs_to_callback  is
+                   parsed.
+
+               <b>url_callback</b>
+                   Subroutine  reference  to be invoked when a URL is detected in an HTML tag attribute or a CSS
+                   property.
+
+               <b>css_callback</b>
+                   Subroutine reference to be invoked when CSS data is found either as the contents of a 'style'
+                   attribute in an HTML tag, or as the contents of a &lt;style&gt; HTML tag.
+
+               <b>content_callback</b>
+                   Subroutine reference to be invoked when standard content between HTML tags in found.
+
+               <b>fix_mismatched_tags</b>
+                   This property, if set, fixes mismatched tags in the HTML input. By default, tags  present  in
+                   the  default  %mismatched_tags_to_fix  hash  are fixed. This set of tags can be overridden by
+                   passing in an array reference $mismatched_tags_to_fix to the constructor. Any opened tags  in
+                   the  set  are automatically closed if no corresponding closing tag is found. If an unbalanced
+                   closing tag is found, that is commented out.
+
+               <b>mismatched_tags_to_fix</b>
+                   Array reference of tags for which the code would check for matching opening and closing tags.
+                   See the property $fix_mismatched_tags.
+
+               <b>context</b>
+                   You can pass an arbitrary scalar as a  'context'  value  that's  then  passed  as  the  first
+                   parameter to all callback functions. Most commonly this is something like '$Self'
+
+               <b>allow_double_defang</b>
+                   If  this  is  true,  then  tag  names and attribute names which already begin with the defang
+                   string ("defang_" by default) will have an additional copy of the defang string prepended  if
+                   they are flagged to be defanged by the return value of a callback, or if the tag or attribute
+                   name is unknown.
+
+                   The  default is to assume that tag names and attribute names beginning with the defang string
+                   are already made safe, and need no further modification, even  if  they  are  flagged  to  be
+                   defanged by the return value of a callback.  Any tag or attribute modifications made directly
+                   by a callback are still performed.
+
+               <b>delete_defang_content</b>
+                   Normally  defanged tags are turned into comments and prefixed by defang_, and defanged styles
+                   are surrounded by /* ... *<a href="file:/.">/.</a> If this is set to true, then defanged content is deleted instead
+
+               <b>Debug</b>
+                   If set, prints debugging output.
+
+       <u>HTML::Defang-&gt;new_bodyonly(%Options)</u>
+           Constructs a new HTML::Defang object that has the following implicit options
+
+           <b>fix_mismatched_tags</b> <b>=</b> <b>1</b>
+           <b>delete_defang_content</b> <b>=</b> <b>1</b>
+           <b>tags_to_callback</b> <b>=</b> <b>[</b> <b>qw(html</b> <b>head</b> <b>link</b> <b>body</b> <b>meta</b> <b>title</b> <b>bgsound)</b> <b>]</b>
+           <b>tags_callback</b> <b>=</b> <b>{</b> <b>...</b> <b>remove</b> <b>all</b> <b>above</b> <b>tags</b> <b>and</b> <b>related</b> <b>content</b> <b>...</b> <b>}</b>
+           <b>url_callback</b> <b>=</b> <b>{</b> <b>...</b> <b>explicity</b> <b>DEFANG_NONE</b> <b>to</b> <b>leave</b> <b>everything</b> <b>alone</b> <b>...</b> <b>}</b>
+
+           Basically this is a easy way to remove all html boiler plate content and return only  the  html  body
+           content.
+
+</pre><h4><b>CALLBACK</b> <b>METHODS</b></h4><pre>
+       <b>COMMON</b> <b>PARAMETERS</b>
+           A  number  of  the  callbacks share the same parameters. These common parameters are documented here.
+           Certain variables may have  specific  meanings  in  certain  callbacks,  so  be  sure  to  check  the
+           documentation for that method first before referring this section.
+
+           <u>$context</u>
+               You  can  pass an arbitrary scalar as a 'context' value that's then passed as the first parameter
+               to all callback functions. Most commonly this is something like '$Self'
+
+           <u>$Defang</u>
+               Current HTML::Defang instance
+
+           <u>$OpenAngle</u>
+               Opening angle(&lt;) sign of the current tag.
+
+           <u>$lcTag</u>
+               Lower case version of the HTML tag that is currently being parsed.
+
+           <u>$IsEndTag</u>
+               Has the value '/' if the current tag is a closing tag.
+
+           <u>$AttributeHash</u>
+               A reference to a hash containing the attributes of the current tag and their values.  Each  value
+               is  a  scalar  reference  to  the  value, rather than just a scalar value. You can add attributes
+               (remember to make it a scalar ref, eg $AttributeHash{"newattr"} = \"newval"), delete  attributes,
+               or  modify  attribute values in this hash, and any changes you make will be incorporated into the
+               output HTML stream.
+
+               The attribute values will have any entity references decoded before being passed to you, and  any
+               unsafe values we be re-encoded back into the HTML stream.
+
+               So for instance, the tag:
+
+                 &lt;div title="&amp;lt;&amp;quot;Hi there &amp;#x003C;"&gt;
+
+               Will have the attribute hash:
+
+                 { title =&gt; \q[&lt;"Hi there &lt;] }
+
+               And will be turned back into the HTML on output:
+
+                 &lt;div title="&amp;lt;&amp;quot;Hi there &amp;lt;"&gt;
+
+           <u>$CloseAngle</u>
+               Anything after the end of last attribute including the closing HTML angle(&gt;)
+
+           <u>$HtmlR</u>
+               A scalar reference to the input HTML. The input HTML is parsed using m/\G$SomeRegex/c constructs,
+               so  to  continue  from  where  HTML:Defang  left,  clients  can  use m/\G$SomeRegex/c for further
+               processing on the input. This will resume parsing from where HTML::Defang left. One can also  use
+               the   <b>pos()</b>   function  to  determine  where  HTML::Defang  left  off.  This  combined  with  the
+               <b>add_to_output()</b> method should give reasonable flexibility for the client to process the input.
+
+           <u>$OutR</u>
+               A scalar reference to the processed output HTML so far.
+
+       <u>tags_callback($context,</u> <u>$Defang,</u> <u>$OpenAngle,</u> <u>$lcTag,</u> <u>$IsEndTag,</u> <u>$AttributeHash,</u> <u>$CloseAngle,</u> <u>$HtmlR,</u>
+       <u>$OutR)</u>
+           If   $Defang-&gt;{tags_callback}   exists,   and   HTML::Defang   has   parsed   a   tag    preset    in
+           $Defang-&gt;{tags_to_callback},  the above callback is made to the client code. The return value of this
+           method determines whether the tag is defanged or not. More details below.
+
+           <b>Return</b> <b>values</b>
+               DEFANG_NONE
+                   The current tag will not be defanged.
+
+               DEFANG_ALWAYS
+                   The current tag will be defanged.
+
+               DEFANG_DEFAULT
+                   The current tag will be processed normally by HTML:Defang as if there was no callback  method
+                   specified.
+
+       <u>attribs_callback($context,</u> <u>$Defang,</u> <u>$lcTag,</u> <u>$lcAttrKey,</u> <u>$AttrVal,</u> <u>$HtmlR,</u> <u>$OutR)</u>
+           If   $Defang-&gt;{attribs_callback}  exists,  and  HTML::Defang  has  parsed  an  attribute  present  in
+           $Defang-&gt;{attribs_to_callback}, the above callback is made to the client code. The  return  value  of
+           this method determines whether the attribute is defanged or not. More details below.
+
+           <b>Method</b> <b>parameters</b>
+               <u>$lcAttrKey</u>
+                   Lower case version of the HTML attribute that is currently being parsed.
+
+               <u>$AttrVal</u>
+                   Reference to the HTML attribute value that is currently being parsed.
+
+                   See $AttributeHash for details of decoding.
+
+           <b>Return</b> <b>values</b>
+               DEFANG_NONE
+                   The current attribute will not be defanged.
+
+               DEFANG_ALWAYS
+                   The current attribute will be defanged.
+
+               DEFANG_DEFAULT
+                   The  current  attribute will be processed normally by HTML:Defang as if there was no callback
+                   method specified.
+
+       <u>url_callback($context,</u> <u>$Defang,</u> <u>$lcTag,</u> <u>$lcAttrKey,</u> <u>$AttrVal,</u> <u>$AttributeHash,</u> <u>$HtmlR,</u> <u>$OutR)</u>
+           If $Defang-&gt;{url_callback} exists, and HTML::Defang has parsed a URL, the above callback is  made  to
+           the  client code. The return value of this method determines whether the attribute containing the URL
+           is defanged or not. URL callbacks can be made from &lt;style&gt; tags as well style  attributes,  in  which
+           case the particular style declaration will be commented out. More details below.
+
+           <b>Method</b> <b>parameters</b>
+               <u>$lcAttrKey</u>
+                   Lower  case  version  of  the  HTML attribute that is currently being parsed. However if this
+                   callback is made as a result of parsing a URL in a style attribute, $lcAttrKey will be set to
+                   the string <u>style</u>, or will be set to <u>undef</u> if this callback is made as a result of  parsing  a
+                   URL inside a style tag.
+
+               <u>$AttrVal</u>
+                   Reference to the URL value that is currently being parsed.
+
+               <u>$AttributeHash</u>
+                   A  reference  to  a  hash containing the attributes of the current tag and their values. Each
+                   value is a scalar reference to the value, rather than  just  a  scalar  value.  You  can  add
+                   attributes  (remember  to  make  it  a scalar ref, eg $AttributeHash{"newattr"} = \"newval"),
+                   delete attributes, or modify attribute values in this hash, and any changes you make will  be
+                   incorporated into the output HTML stream. Will be set to <u>undef</u> if the callback is made due to
+                   URL in a &lt;style&gt; tag or attribute.
+
+           <b>Return</b> <b>values</b>
+               DEFANG_NONE
+                   The current URL will not be defanged.
+
+               DEFANG_ALWAYS
+                   The current URL will be defanged.
+
+               DEFANG_DEFAULT
+                   The  current URL will be processed normally by HTML:Defang as if there was no callback method
+                   specified.
+
+       <u>css_callback($context,</u> <u>$Defang,</u> <u>$Selectors,</u> <u>$SelectorRules,</u> <u>$lcTag,</u> <u>$IsAttr,</u> <u>$OutR)</u>
+           If $Defang-&gt;{css_callback} exists, and HTML::Defang has parsed a &lt;style&gt; tag or style attribtue,  the
+           above  callback  is  made  to  the  client code. The return value of this method determines whether a
+           particular declaration in the style rules is defanged or not. More details below.
+
+           <b>Method</b> <b>parameters</b>
+               <u>$Selectors</u>
+                   Reference to an array containing the selectors in a style tag or attribute.
+
+               <u>$SelectorRules</u>
+                   Reference to an array containing the style declaration blocks of all selectors in a style tag
+                   or attribute. Consider the below CSS:
+
+                     a { b:c; d:e}
+                     j { k:l; m:n}
+
+                   The declaration blocks will get parsed into the following data structure:
+
+                     [
+                       [
+                         [ "b", "c", DEFANG_DEFAULT ],
+                         [ "d", "e", DEFANG_DEFAULT ]
+                       ],
+                       [
+                         [ "k", "l", DEFANG_DEFAULT ],
+                         [ "m", "n", DEFANG_DEFAULT ]
+                       ]
+                     ]
+
+                   So, generally each property:value pair in a declaration is parsed into an array of the form
+
+                     ["property", "value", X]
+
+                   where X can be DEFANG_NONE, DEFANG_ALWAYS or DEFANG_DEFAULT, and DEFANG_DEFAULT  the  default
+                   value.  A  client  can  manipulate  this  value  to  instruct  HTML::Defang  to  defang  this
+                   property:value pair.
+
+                   DEFANG_NONE - Do not defang
+
+                   DEFANG_ALWAYS - Defang the style:property value
+
+                   DEFANG_DEFAULT - Process this as if there is no callback specified
+
+               <u>$IsAttr</u>
+                   True if the currently processed item is a style attribute. False if the  currently  processed
+                   item is a style tag.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>PUBLIC</b> <b>METHODS</b>
+           <u>defang($InputHtml,</u> <u>\%Opts)</u>
+               Cleans up $InputHtml of any executable code including scripting, embedded objects, applets, etc.,
+               and defang any XSS attacks.
+
+               <b>Method</b> <b>parameters</b>
+                   <u>$InputHtml</u>
+                       The input HTML string that needs to be sanitized.
+
+               Returns   the   cleaned   HTML.   If   fix_mismatched_tags  is  set,  any  tags  that  appear  in
+               @$mismatched_tags_to_fix that are unbalanced are automatically commented or closed.
+
+           <u>add_to_output($String)</u>
+               Appends $String to the output after the current parsed tag ends. Can be used by  client  code  in
+               callback methods to add HTML text to the processed output. If the HTML text needs to be defanged,
+               client code can safely call HTML::Defang-&gt;<b>defang()</b> recursively from within the callback.
+
+               <b>Method</b> <b>parameters</b>
+                   <u>$String</u>
+                       The string that is added after the current parsed tag ends.
+
+       <b>INTERNAL</b> <b>METHODS</b>
+           Generally  these  methods  never  need  to be called by users of the class, because they'll be called
+           internally as the appropriate tags are encountered, but they may be useful for  some  users  in  some
+           cases.
+
+           <u>defang_script_tag($OutR,</u> <u>$HtmlR,</u> <u>$TagOps,</u> <u>$OpenAngle,</u> <u>$IsEndTag,</u> <u>$Tag,</u> <u>$TagTrail,</u> <u>$Attributes,</u>
+           <u>$CloseAngle)</u>
+               This  method  is invoked when a &lt;script&gt; tag is parsed. Defangs the &lt;script&gt; opening tag, and any
+               closing tag. Any scripting content is also commented out, so browsers don't display them.
+
+               Returns 1 to indicate that the &lt;script&gt; tag must be defanged.
+
+               <b>Method</b> <b>parameters</b>
+                   <u>$OutR</u>
+                       A reference to the processed output HTML before the tag that is currently being parsed.
+
+                   <u>$HtmlR</u>
+                       A scalar reference to the input HTML.
+
+                   <u>$TagOps</u>
+                       Indicates what operation should be done on a tag.  Can  be  undefined,  integer  or  code
+                       reference.  Undefined  indicates an unknown tag to HTML::Defang, 1 indicates a known safe
+                       tag, 0 indicates a known unsafe tag, and a code reference  indicates  a  subroutine  that
+                       should  be  called  to  parse the current tag. For example, &lt;style&gt; and &lt;script&gt; tags are
+                       parsed by dedicated subroutines.
+
+                   <u>$OpenAngle</u>
+                       Opening angle(&lt;) sign of the current tag.
+
+                   <u>$IsEndTag</u>
+                       Has the value '/' if the current tag is a closing tag.
+
+                   <u>$Tag</u>
+                       The HTML tag that is currently being parsed.
+
+                   <u>$TagTrail</u>
+                       Any space after the tag, but before attributes.
+
+                   <u>$Attributes</u>
+                       A reference to an array of the attributes and  their  values,  including  any  surrouding
+                       spaces. Each element of the array is added by 'push' calls like below.
+
+                         push @$Attributes, [ $AttributeName, $SpaceBeforeEquals, $EqualsAndSubsequentSpace, $QuoteChar, $AttributeValue, $QuoteChar, $SpaceAfterAtributeValue ];
+
+                   <u>$CloseAngle</u>
+                       Anything after the end of last attribute including the closing HTML angle(&gt;)
+
+           <u>defang_style_text($Content,</u> <u>$lcTag,</u> <u>$IsAttr,</u> <u>$AttributeHash,</u> <u>$HtmlR,</u> <u>$OutR)</u>
+               Defang some raw css data and return the defanged content
+
+               <b>Method</b> <b>parameters</b>
+                   <u>$Content</u>
+                       The input style string that is defanged.
+
+                   <u>$IsAttr</u>
+                       True if $Content is from an attribute, otherwise from a &lt;style&gt; block
+
+           <u>cleanup_style($StyleString)</u>
+               Helper function to clean up CSS data. This function directly operates on the input string without
+               taking a copy.
+
+               <b>Method</b> <b>parameters</b>
+                   <u>$StyleString</u>
+                       The input style string that is cleaned.
+
+           <u>defang_stylerule($SelectorsIn,</u> <u>$StyleRules,</u> <u>$lcTag,</u> <u>$IsAttr,</u> <u>$AttributeHash,</u> <u>$HtmlR,</u> <u>$OutR)</u>
+               Defangs style data.
+
+               <b>Method</b> <b>parameters</b>
+                   <u>$SelectorsIn</u>
+                       An array reference to the selectors in the style tag/attribute contents.
+
+                   <u>$StyleRules</u>
+                       An array reference to the declaration blocks in the style tag/attribute contents.
+
+                   <u>$lcTag</u>
+                       Lower case version of the HTML tag that is currently being parsed.
+
+                   <u>$IsAttr</u>
+                       Whether  we are currently parsing a style attribute or style tag. $IsAttr will be true if
+                       we are currently parsing a style attribute.
+
+                   <u>$HtmlR</u>
+                       A scalar reference to the input HTML.
+
+                   <u>$OutR</u>
+                       A scalar reference to the processed output so far.
+
+           <u>defang_attributes($OutR,</u> <u>$HtmlR,</u> <u>$TagOps,</u> <u>$OpenAngle,</u> <u>$IsEndTag,</u> <u>$Tag,</u> <u>$TagTrail,</u> <u>$Attributes,</u>
+           <u>$CloseAngle)</u>
+               Defangs attributes, defangs tags, does tag, attrib, css and url callbacks.
+
+               <b>Method</b> <b>parameters</b>
+                   For a description of the method parameters, see documentation of <b>defang_script_tag()</b> method
+
+           <u>cleanup_attribute($AttributeString)</u>
+               Helper function to cleanup attributes
+
+               <b>Method</b> <b>parameters</b>
+                   <u>$AttributeString</u>
+                       The value of the attribute.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;<a href="http://mailtools.anomy.net/">http://mailtools.anomy.net/</a>&gt;,         &lt;<a href="http://htmlcleaner.sourceforge.net/">http://htmlcleaner.sourceforge.net/</a>&gt;,         <u>HTML::StripScripts</u>,
+       <u>HTML::Detoxifier</u>, <u>HTML::Sanitizer</u>, <u>HTML::Scrubber</u>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kurian  Jose  Aerthail  &lt;<a href="mailto:cpan@kurianja.fastmail.fm">cpan@kurianja.fastmail.fm</a>&gt;.  Thanks  to  Rob Mueller &lt;<a href="mailto:cpan@robm.fastmail.fm">cpan@robm.fastmail.fm</a>&gt; for
+       initial code, guidance and support and bug fixes.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2003-2013 by FastMail Pty Ltd
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2022-12-04                                  <u>HTML::<a href="../man3pm/Defang.3pm.html">Defang</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

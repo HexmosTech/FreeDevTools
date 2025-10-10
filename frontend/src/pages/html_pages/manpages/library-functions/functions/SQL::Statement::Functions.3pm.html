@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL::Statement::Functions - built-in & user-defined SQL functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsql-statement-perl">libsql-statement-perl_1.414-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SQL::Statement::Functions - built-in &amp; user-defined SQL functions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        SELECT Func(args);
+        SELECT * FROM Func(args);
+        SELECT * FROM x WHERE Funcs(args);
+        SELECT * FROM x WHERE y &lt; Funcs(args);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module contains the built-in functions for SQL::Parser and SQL::Statement.  All of the functions are
+       also available in any DBDs that subclass those modules (e.g. DBD::CSV, DBD::DBM, DBD::File, DBD::AnyData,
+       DBD::Excel, etc.).
+
+       This documentation covers built-in functions and also explains how to create your own functions to
+       supplement the built-in ones.  It's easy.  If you create one that is generally useful, see below for how
+       to submit it to become a built-in function.
+
+</pre><h4><b>Function</b> <b>syntax</b></h4><pre>
+       When using SQL::Statement/SQL::Parser directly to parse SQL, functions (either built-in or user-defined)
+       may occur anywhere in a SQL statement that values, column names, table names, or predicates may occur.
+       When using the modules through a DBD or in any other context in which the SQL is both parsed and
+       executed, functions can occur in the same places except that they can not occur in the column selection
+       clause of a SELECT statement that contains a FROM clause.
+
+        # valid for both parsing and executing
+
+            SELECT MyFunc(args);
+            SELECT * FROM MyFunc(args);
+            SELECT * FROM x WHERE MyFuncs(args);
+            SELECT * FROM x WHERE y &lt; MyFuncs(args);
+
+        # valid only for parsing (won't work from a DBD)
+
+            SELECT MyFunc(args) FROM x WHERE y;
+
+</pre><h4><b>User-Defined</b> <b>Functions</b></h4><pre>
+   <b>Loading</b> <b>User-Defined</b> <b>Functions</b>
+       In addition to the built-in functions, you can create any number of your own user-defined functions
+       (UDFs).  In order to use a UDF in a script, you first have to create a perl subroutine (see below), then
+       you need to make the function available to your database handle with the CREATE FUNCTION or LOAD
+       commands:
+
+        # load a single function "foo" from a subroutine
+        # named "foo" in the current package
+
+             $dbh-&gt;do(" CREATE FUNCTION foo EXTERNAL ");
+
+        # load a single function "foo" from a subroutine
+        # named "bar" in the current package
+
+             $dbh-&gt;do(" CREATE FUNCTION foo EXTERNAL NAME bar");
+
+        # load a single function "foo" from a subroutine named "foo"
+        # in another package
+
+             $dbh-&gt;do(' CREATE FUNCTION foo EXTERNAL NAME "Bar::Baz::foo" ');
+
+        # load all the functions in another package
+
+             $dbh-&gt;do(' LOAD "Bar::Baz" ');
+
+       Functions themselves should follow SQL identifier naming rules.  Subroutines loaded with CREATE FUNCTION
+       can have any valid perl subroutine name.  Subroutines loaded with LOAD must start with SQL_FUNCTION_ and
+       then the actual function name.  For example:
+
+        package Qux::Quimble;
+        sub SQL_FUNCTION_FOO { ... }
+        sub SQL_FUNCTION_BAR { ... }
+        sub some_other_perl_subroutine_not_a_function { ... }
+        1;
+
+        # in another package
+        $dbh-&gt;do("LOAD Qux::Quimble");
+
+        # This loads FOO and BAR as SQL functions.
+
+   <b>Creating</b> <b>User-Defined</b> <b>Functions</b>
+       User-defined functions (UDFs) are perl subroutines that return values appropriate to the context of the
+       function in a SQL statement.  For example the built-in CURRENT_TIME returns a string value and therefore
+       may be used anywhere in a SQL statement that a string value can.  Here' the entire perl code for the
+       function:
+
+        # CURRENT_TIME
+        #
+        # arguments : none
+        # returns   : string containing current time as hh::mm::ss
+        #
+        sub SQL_FUNCTION_CURRENT_TIME {
+            sprintf "%02s::%02s::%02s",(localtime)[2,1,0]
+        }
+
+       More complex functions can make use of a number of arguments always passed to functions automatically.
+       Functions always receive these values in @_:
+
+        sub FOO {
+            my($self,$sth,@params);
+        }
+
+       The first argument, $self, is whatever class the function is defined in, not generally useful unless you
+       have an entire module to support the function.
+
+       The second argument, $sth is the active statement handle of the current statement.  Like all active
+       statement handles it contains the current database handle in the {Database} attribute so you can have
+       access to the database handle in any function:
+
+        sub FOO {
+            my($self,$sth,@params);
+            my $dbh = $sth-&gt;{Database};
+            # $dbh-&gt;do( ...), etc.
+        }
+
+       In actual practice you probably want to use $sth-&gt;{Database} directly rather than making a local copy, so
+       $sth-&gt;{Database}-&gt;do(...).
+
+       The remaining arguments, @params, are arguments passed by users to the function, either directly or with
+       placeholders; another silly example which just returns the results of multiplying the arguments passed to
+       it:
+
+        sub MULTIPLY {
+            my($self,$sth,@params);
+            return $params[0] * $params[1];
+        }
+
+        # first make the function available
+        #
+        $dbh-&gt;do("CREATE FUNCTION MULTIPLY");
+
+        # then multiply col3 in each row times seven
+        #
+        my $sth=$dbh-&gt;prepare("SELECT col1 FROM tbl1 WHERE col2 = MULTIPLY(col3,7)");
+        $sth-&gt;execute;
+        #
+        # or
+        #
+        my $sth=$dbh-&gt;prepare("SELECT col1 FROM tbl1 WHERE col2 = MULTIPLY(col3,?)");
+        $sth-&gt;<a href="../man7/execute.7.html">execute</a>(7);
+
+   <b>Creating</b> <b>In-Memory</b> <b>Tables</b> <b>with</b> <b>functions</b>
+       A function can return almost anything, as long is it is an appropriate return for the context the
+       function will be used in.  In the special case of table-returning functions, the function should return a
+       reference to an array of array references with the first row being the column names and the remaining
+       rows the data.  For example:
+
+       <b>1.</b> <b>create</b> <b>a</b> <b>function</b> <b>that</b> <b>returns</b> <b>an</b> <b>AoA</b>,
+
+         sub Japh {[
+             [qw( id word   )],
+             [qw( 1 Hacker  )],
+             [qw( 2 Perl    )],
+             [qw( 3 Another )],
+             [qw( 4 Just    )],
+         ]}
+
+       <b>2.</b> <b>make</b> <b>your</b> <b>database</b> <b>handle</b> <b>aware</b> <b>of</b> <b>the</b> <b>function</b>
+
+         $dbh-&gt;do("CREATE FUNCTION 'Japh');
+
+       <b>3.</b> <b>Access</b> <b>the</b> <b>data</b> <b>in</b> <b>the</b> <b>AoA</b> <b>from</b> <b>SQL</b>
+
+         $sth = $dbh-&gt;prepare("SELECT word FROM Japh ORDER BY id DESC");
+
+       Or here's an example that does a join on two in-memory tables:
+
+         sub Prof  {[ [qw(pid pname)],[qw(1 Sue )],[qw(2 Bob)],[qw(3 Tom )] ]}
+         sub Class {[ [qw(pid cname)],[qw(1 Chem)],[qw(2 Bio)],[qw(2 Math)] ]}
+         $dbh-&gt;do("CREATE FUNCTION $_) for qw(Prof Class);
+         $sth = $dbh-&gt;prepare("SELECT * FROM Prof NATURAL JOIN Class");
+
+       The "Prof" and "Class" functions return tables which can be used like any SQL table.
+
+       More complex functions might do something like scrape an RSS feed, or search a file system and put the
+       results in AoA.  For example, to search a directory with SQL:
+
+        sub Dir {
+            my($self,$sth,$dir)=@_;
+            opendir D, $dir or die "'$dir':$!";
+            my @files = readdir D;
+            my $data = [[qw(fileName fileExt)]];
+            for (@files) {
+                my($fn,$ext) = /^(.*)(\.[^\.]+)$/;
+                push @$data, [$fn,$ext];
+            }
+            return $data;
+        }
+        $dbh-&gt;do("CREATE FUNCTION Dir");
+        printf "%s\n", join'   ',@{ $dbh-&gt;selectcol_arrayref("
+            SELECT fileName FROM Dir('./') WHERE fileExt = '.pl'
+        ")};
+
+       Obviously, that function could be expanded with File::Find and/or stat to provide more information and it
+       could be made to accept a list of directories rather than a single directory.
+
+       Table-Returning functions are a way to turn *anything* that can be modeled as an AoA into a DBI data
+       source.
+
+</pre><h4><b>Built-in</b> <b>Functions</b></h4><pre>
+   <b>SQL-92/ODBC</b> <b>Compatibility</b>
+       All ODBC 3.0 functions are available except for the following:
+
+        ### SQL-92 / ODBC Functions
+
+        # CONVERT / CAST - Complex to implement, but a draft is in the works.
+        # DIFFERENCE     - Function is not clearly defined in spec and has very limited applications
+        # EXTRACT        - Contains a FROM keyword and requires rather freeform datetime/interval expression
+
+        ### ODBC 3.0 Time/Date Functions only
+
+        # DAYOFMONTH, DAYOFWEEK, DAYOFYEAR, HOUR, MINUTE, MONTH, MONTHNAME, QUARTER, SECOND, TIMESTAMPDIFF,
+        #    WEEK, YEAR - Requires freeform datetime/interval expressions.  In a later release, these could
+        #                    be implemented with the help of Date::Parse.
+
+       ODBC 3.0 functions that are implemented with differences include:
+
+        # SOUNDEX  - Returns true/false, instead of a SOUNDEX code
+        # RAND     - Seed value is a second parameter with a new first parameter for max limit
+        # LOG      - Returns base X (or 10) log of number, not natural log.  LN is used for natural log, and
+        #               LOG10 is still available for standards compatibility.
+        # POSITION - Does not use 'IN' keyword; cannot be fixed as previous versions of SQL::Statement defined
+        #               the function as such.
+        # REPLACE / SUBSTITUTE - Uses a regular expression string for the second parameter, replacing the last two
+        #                           parameters of the typical ODBC function
+
+   <b>Aggregate</b> <b>Functions</b>
+       <u>MIN,</u> <u>MAX,</u> <u>AVG,</u> <u>SUM,</u> <u>COUNT</u>
+
+       Aggregate functions are handled elsewhere, see SQL::Parser for documentation.
+
+   <b>Date</b> <b>and</b> <b>Time</b> <b>Functions</b>
+       These functions can be used without parentheses.
+
+       <u>CURRENT_DATE</u> <u>aka</u> <u>CURDATE</u>
+
+        # purpose   : find current date
+        # arguments : none
+        # returns   : string containing current date as yyyy-mm-dd
+
+       <u>CURRENT_TIME</u> <u>aka</u> <u>CURTIME</u>
+
+        # purpose   : find current time
+        # arguments : optional seconds precision
+        # returns   : string containing current time as hh:mm:ss (or ss.sss...)
+
+       <u>CURRENT_TIMESTAMP</u> <u>aka</u> <u>NOW</u>
+
+        # purpose   : find current date and time
+        # arguments : optional seconds precision
+        # returns   : string containing current timestamp as yyyy-mm-dd hh:mm:ss (or ss.sss...)
+
+       <u>UNIX_TIMESTAMP</u>
+
+        # purpose   : find the current time in UNIX epoch format
+        # arguments : optional seconds precision (unlike the MySQL version)
+        # returns   : a (64-bit) number, possibly with decimals
+
+   <b>String</b> <b>Functions</b>
+       <u>ASCII</u> <u>&amp;</u> <u>CHAR</u>
+
+        # purpose   : same as ord and chr, respectively (NULL for any NULL args)
+        # arguments : string or character (or number for CHAR); CHAR can have any amount of numbers for a string
+
+       <u>BIT_LENGTH</u>
+
+        # purpose   : length of the string in bits
+        # arguments : string
+
+       <u>CHARACTER_LENGTH</u> <u>aka</u> <u>CHAR_LENGTH</u>
+
+        # purpose   : find length in characters of a string
+        # arguments : a string
+        # returns   : a number - the length of the string in characters
+
+       <u>COALESCE</u> <u>aka</u> <u>NVL</u> <u>aka</u> <u>IFNULL</u>
+
+        # purpose   : return the first non-NULL value from a list
+        # arguments : 1 or more expressions
+        # returns   : the first expression (reading left to right)
+        #             which is not NULL; returns NULL if all are NULL
+        #
+
+       <u>CONCAT</u>
+
+        # purpose   : concatenate 1 or more strings into a single string;
+        #                      an alternative to the '||' operator
+        # arguments : 1 or more strings
+        # returns   : the concatenated string
+        #
+        # example   : SELECT CONCAT(first_string, 'this string', ' that string')
+        #              returns "&lt;value-of-first-string&gt;this string that string"
+        # note      : if any argument evaluates to NULL, the returned value is NULL
+
+       <u>CONV</u>
+
+        # purpose   : convert a number X from base Y to base Z (from base 2 to 64)
+        # arguments : X (can by a number or string depending on the base), Y, Z (Z defaults to 10)
+                      Valid bases for Y and Z are: 2, 8, 10, 16 and 64
+        # returns   : either a string or number, in base Z
+        # notes     : Behavioral table
+        #
+        #      base | valuation
+        #     ------+-----------
+        #         2 | binary, base 2 - (0,1)
+        #         8 | octal, base 8 - (0..7)
+        #        10 | decimal, base 10 - (0..9)
+        #        16 | hexadecimal, base 16 - (0..9,a..f)
+        #        64 | 0-63 from MIME::Base64
+        #
+
+       <u>DECODE</u>
+
+        # purpose   : compare the first argument against
+        #             succeeding arguments at position 1 + 2N
+        #             (N = 0 to (# of arguments - 2)/2), and if equal,
+        #                              return the value of the argument at 1 + 2N + 1; if no
+        #             arguments are equal, the last argument value is returned
+        # arguments : 4 or more expressions, must be even # of arguments
+        # returns   : the value of the argument at 1 + 2N + 1 if argument 1 + 2N
+        #             is equal to argument1; else the last argument value
+        #
+        # example   : SELECT DECODE(some_column,
+        #                    'first value', 'first value matched'
+        #                    '2nd value', '2nd value matched'
+        #                    'no value matched'
+        #                    )
+
+       <u>INSERT</u>
+
+        # purpose   : string where L characters have been deleted from STR1, beginning at S,
+        #             and where STR2 has been inserted into STR1, beginning at S.  NULL for any NULL args.
+        # arguments : STR1, S, L, STR2
+
+       <u>HEX</u> <u>&amp;</u> <u>OCT</u> <u>&amp;</u> <u>BIN</u>
+
+        # purpose   : convert number X from decimal to hex/octal/binary; equiv. to CONV(X, 10, 16/8/2)
+        # arguments : X
+
+       <u>LEFT</u> <u>&amp;</u> <u>RIGHT</u>
+
+        # purpose   : leftmost or rightmost L characters in STR, or NULL for any NULL args
+        # arguments : STR1, L
+
+       <u>LOCATE</u> <u>aka</u> <u>POSITION</u>
+
+        # purpose   : starting position (one-based) of the first occurrence of STR1
+                      within STR2; 0 if it doesn't occur and NULL for any NULL args
+        # arguments : STR1, STR2, and an optional S (starting position to search)
+
+       <u>LOWER</u> <u>&amp;</u> <u>UPPER</u> <u>aka</u> <u>LCASE</u> <u>&amp;</u> <u>UCASE</u>
+
+        # purpose   : lower-case or upper-case a string
+        # arguments : a string
+        # returns   : the sting lower or upper cased
+
+       <u>LTRIM</u> <u>&amp;</u> <u>RTRIM</u>
+
+        # purpose   : left/right counterparts for TRIM
+        # arguments : string
+
+       <u>OCTET_LENGTH</u>
+
+        # purpose   : length of the string in bytes (not characters)
+        # arguments : string
+
+       <u>REGEX</u>
+
+        # purpose   : test if a string matches a perl regular expression
+        # arguments : a string and a regex to match the string against
+        # returns   : boolean value of the regex match
+        #
+        # example   : ... WHERE REGEX(col3,'/^fun/i') ... matches rows
+        #             in which col3 starts with "fun", ignoring case
+
+       <u>REPEAT</u>
+
+        # purpose   : string composed of STR1 repeated C times, or NULL for any NULL args
+        # arguments : STR1, C
+
+       <u>REPLACE</u> <u>aka</u> <u>SUBSTITUTE</u>
+
+        # purpose   : perform perl subsitution on input string
+        # arguments : a string and a substitute pattern string
+        # returns   : the result of the substitute operation
+        #
+        # example   : ... WHERE REPLACE(col3,'s/fun(\w+)nier/$1/ig') ... replaces
+        #                      all instances of /fun(\w+)nier/ in col3 with the string
+        #                      between 'fun' and 'nier'
+
+       <u>SOUNDEX</u>
+
+        # purpose   : test if two strings have matching soundex codes
+        # arguments : two strings
+        # returns   : true if the strings share the same soundex code
+        #
+        # example   : ... WHERE SOUNDEX(col3,'fun') ... matches rows
+        #             in which col3 is a soundex match for "fun"
+
+       <u>SPACE</u>
+
+        # purpose   : a string of spaces
+        # arguments : number of spaces
+
+       <u>SUBSTRING</u>
+
+         SUBSTRING( string FROM start_pos [FOR length] )
+
+       Returns the substring starting at start_pos and extending for "length" character or until the end of the
+       string, if no "length" is supplied.  Examples:
+
+         SUBSTRING( 'foobar' FROM 4 )       # returns "bar"
+
+         SUBSTRING( 'foobar' FROM 4 FOR 2)  # returns "ba"
+
+       Note: The SUBSTRING function is implemented in SQL::Parser and SQL::Statement and, at the current time,
+       can not be over-ridden.
+
+       <u>SUBSTR</u>
+
+        # purpose   : same as SUBSTRING, except with comma-delimited params, instead of
+                      words (NULL for any NULL args)
+        # arguments : string, start_pos, [length]
+
+       <u>TRANSLATE</u>
+
+        # purpose   : transliteration; replace a set of characters in a string with another
+                      set of characters (a la tr///), or NULL for any NULL args
+        # arguments : string, string to replace, replacement string
+
+       <u>TRIM</u>
+
+         TRIM ( [ [LEADING|TRAILING|BOTH] ['trim_char'] FROM ] string )
+
+       Removes all occurrences of &lt;trim_char&gt; from the front, back, or both sides of a string.
+
+        BOTH is the default if neither LEADING nor TRAILING is specified.
+
+        Space is the default if no trim_char is specified.
+
+        Examples:
+
+        TRIM( string )
+          trims leading and trailing spaces from string
+
+        TRIM( LEADING FROM str )
+          trims leading spaces from string
+
+        TRIM( 'x' FROM str )
+          trims leading and trailing x's from string
+
+       Note: The TRIM function is implemented in SQL::Parser and SQL::Statement and, at the current time, can
+       not be over-ridden.
+
+       <u>UNHEX</u>
+
+        # purpose   : convert each pair of hexadecimal digits to a byte (or a Unicode character)
+        # arguments : string of hex digits, with an optional encoding name of the data string
+
+   <b>Numeric</b> <b>Functions</b>
+       <u>ABS</u>
+
+        # purpose   : find the absolute value of a given numeric expression
+        # arguments : numeric expression
+
+       <u>CEILING</u> <u>(aka</u> <u>CEIL)</u> <u>&amp;</u> <u>FLOOR</u>
+
+        # purpose   : rounds up/down to the nearest integer
+        # arguments : numeric expression
+
+       <u>EXP</u>
+
+        # purpose   : raise e to the power of a number
+        # arguments : numeric expression
+
+       <u>LOG</u>
+
+        # purpose   : base B logarithm of X
+        # arguments : B, X or just one argument of X for base 10
+
+       <u>LN</u> <u>&amp;</u> <u>LOG10</u>
+
+        # purpose   : natural logarithm (base e) or base 10 of X
+        # arguments : numeric expression
+
+       <u>MOD</u>
+
+        # purpose   : modulus, or remainder, left over from dividing X / Y
+        # arguments : X, Y
+
+       <u>POWER</u> <u>aka</u> <u>POW</u>
+
+        # purpose   : X to the power of Y
+        # arguments : X, Y
+
+       <u>RAND</u>
+
+        # purpose   : random fractional number greater than or equal to 0 and less than the value of X
+        # arguments : X (with optional seed value of Y)
+
+       <u>ROUND</u>
+
+        # purpose   : round X with Y number of decimal digits (precision)
+        # arguments : X, optional Y defaults to 0
+
+       <u>SIGN</u>
+
+        # purpose   : returns -1, 0, 1, NULL for negative, 0, positive, NULL values, respectively
+        # arguments : numeric expression
+
+       <u>SQRT</u>
+
+        # purpose   : square root of X
+        # arguments : X
+
+       <u>TRUNCATE</u> <u>aka</u> <u>TRUNC</u>
+
+        # purpose   : similar to ROUND, but removes the decimal
+        # arguments : X, optional Y defaults to 0
+
+   <b>Trigonometric</b> <b>Functions</b>
+       All of these functions work exactly like their counterparts in Math::Trig; go there for documentation.
+
+       ACOS
+       ACOSEC
+       ACOSECH
+       ACOSH
+       ACOT
+       ACOTAN
+       ACOTANH
+       ACOTH
+       ACSC
+       ACSCH
+       ASEC
+       ASECH
+       ASIN
+       ASINH
+       ATAN
+       ATANH
+       COS
+       COSEC
+       COSECH
+       COSH
+       COT
+       COTAN
+       COTANH
+       COTH
+       CSC
+       CSCH
+       SEC
+       SECH
+       SIN
+       SINH
+       TAN
+       TANH
+           Takes a single parameter.  All of Math::Trig's aliases are included.
+
+       ATAN2
+           The y,x version of arc tangent.
+
+       DEG2DEG
+       DEG2GRAD
+       DEG2RAD
+           Converts out-of-bounds values into its correct range.
+
+       GRAD2DEG
+       GRAD2GRAD
+       GRAD2RAD
+       RAD2DEG
+       RAD2GRAD
+       RAD2RAD
+           Like  their  Math::Trig's counterparts, accepts an optional 2nd boolean parameter (like <b>TRUE</b>) to keep
+           prevent range wrapping.
+
+       DEGREES
+       RADIANS
+           <b>DEGREES</b> and <b>RADIANS</b>  are  included  for  SQL-92  compatibility,  and  map  to  <b>RAD2DEG</b>  and  <b>DEG2RAD</b>,
+           respectively.
+
+       PI  <b>PI</b> can be used without parentheses.
+
+   <b>System</b> <b>Functions</b>
+       <u>DBNAME</u> <u>&amp;</u> <u>USERNAME</u> <u>(aka</u> <u>USER)</u>
+
+        # purpose   : name of the database / username
+        # arguments : none
+
+   <b>Special</b> <b>Utility</b> <b>Functions</b>
+       <u>IMPORT</u>
+
+        CREATE TABLE foo AS IMPORT(?)    ,{},$external_executed_sth
+        CREATE TABLE foo AS IMPORT(?)    ,{},$AoA
+
+       <u>RUN</u>
+
+       Takes  the  name  of  a  file  containing  SQL  statements  and  runs the statements; see SQL::Parser for
+       documentation.
+
+</pre><h4><b>Submitting</b> <b>built-in</b> <b>functions</b></h4><pre>
+       If you make a generally useful UDF, why not submit it to me and have it (and your name) included with the
+       built-in functions?  Please follow the format  shown  in  the  module  including  a  description  of  the
+       arguments  and  return  values for the function as well as an example.  Send them to the <a href="mailto:dbi-dev@perl.org">dbi-dev@perl.org</a>
+       mailing list (see &lt;<a href="http://dbi.perl.org">http://dbi.perl.org</a>&gt;).
+
+       Thanks in advance :-).
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Dean  Arnold  supplied  DECODE,  COALESCE,  REPLACE,  many   thanks!    Brendan   Byrd   added   in   the
+       Numeric/Trig/System functions and filled in the SQL92/ODBC gaps for the date/string functions.
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright  (c)  2005  by  Jeff  Zucker:  jzuckerATcpan.org  Copyright  (c)  2009-2020  by  Jens  Rehsack:
+       rehsackATcpan.org
+
+       All rights reserved.
+
+       The module may be freely distributed under the same terms as Perl itself using either the  "GPL  License"
+       or the "Artistic License" as specified in the Perl README file.
+
+perl v5.30.3                                       2020-10-23                     <u>SQL::Statement::<a href="../man3pm/Functions.3pm.html">Functions</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

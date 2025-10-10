@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tangram::Relational::Mappings - Mapping inheritance</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtangram-perl">libtangram-perl_2.12-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tangram::Relational::Mappings - Mapping inheritance
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       There are many ways of representing inheritance relationships in a relational database. This document
+       describes three popular ways and how Tangram supports them.
+
+</pre><h4><b>STRATEGIES</b> <b>FOR</b> <b>MAPPING</b> <b>INHERITANCE</b></h4><pre>
+       Inheritance is a concept that has no equivalent in the relational world. However, it is possible to
+       implement it by using strict disciplines and a combination of relational features like tables and foreign
+       keys.
+
+       One of the paramount issues about mapping inheritance is how well the mapping supports polymorphism.  Any
+       Object-Oriented persistence facility that deserves its name needs to allow the retrieval of all the
+       Fruits, and return a heterogeneous collection of Apples, Oranges and Bananas.  Also, it must perform this
+       operation in an efficient manner.  In particular, polymorphic retrieval should not cost one SELECT per
+       retrieved object.
+
+       A secondary - yet important - issue is how well the mapping plays by the rules of orthogonal orthodoxy.
+
+       Another issue we'll examine is how well the mapping supports 'complex' queries, that is, queries that
+       involve several objects.
+
+       Three strategies are in common use, that go by the name Vertical, Horizontal and Filtered mapping.  They
+       all have advantages and disadvantages.
+
+       The following sections describe the three strategies in details. They make use of a simple object model
+       to illustrate the mappings.
+
+                                 +---------------------+
+                                 |        Person       |
+                                 |      {abstract}     |
+            +---------&lt;------- 1 +---------------------+
+            |                    | name: string        |
+            |                    +---------------------+
+            |                               |
+            |                               ^
+            |                               |
+            |            +------------------+---------------------+
+            |            |                                        |
+            |   +---------------+                        +-----------------+
+            V   | NaturalPerson |                        |    LegalPerson  |
+            |   +---------------+                        +-----------------+
+            |   |  age: integer |                        | form: string    |
+            |   +---------------+                        +-----------------+
+            |
+            |
+            |
+            |                    +---------------------+
+            +--------&gt;-------- * |        Vehicle      |
+                                 |       {abstract}    |
+                                 +---------------------+
+                                 | make: string        |
+                                 +---------------------+
+                                            |
+                                            ^
+                                            |
+                         +------------------+-------------------+
+                         |                                      |
+                +---------------+                      +-----------------+
+                |      Car      |                      |      Plane      |
+                +---------------+                      +-----------------+
+                | plate: string |                      | ident: string   |
+                +---------------+                      +-----------------+
+
+</pre><h4><b>Horizontal</b> <b>Mapping</b></h4><pre>
+</pre><h4><b>description</b></h4><pre>
+       Each <u>concrete</u> class is mapped onto a single table. Each row in the table describes the persistent state
+       of one object.
+
+       The attributes are mapped onto columns, usually one column per attribute but not necessarily. For
+       example, collections may be stored elsewhere (for example on a link table) and thus require no column on
+       the class' table.
+
+       In effect, the database looks like this:
+
+                +---------------+
+                | NaturalPerson |
+                +------+--------+-------+------+
+                |  id  |  name          | age  |
+                ================================
+                |  17  | Bill Gates     |  46  |
+                +------+----------------+------+
+                |  23  | Georges Bush   |  50  |
+                +------+----------------+------+
+
+                +-------------+
+                | LegalPerson |
+                +------+------+---------+------+
+                |  id  |  name          | form |
+                ================================
+                |  36  |  Microsoft     |  Inc |
+                +------+----------------+------+
+
+                +------+
+                | Car  |
+                +------+-------+----------------+--------+
+                |  id  | owner |  make          | plate  |
+                ==========================================
+                |  12  |  17   | Saab           | BILL-1 |
+                +------+-------+----------------+--------+
+                |  50  |  36   | Miata          | MS-001 |
+                +------+-------+----------------+--------+
+                |  51  |  36   | Miata          | MS-002 |
+                +------+-------+----------------+--------+
+
+                +-------+
+                | Plane |
+                +------++-----+----------------+--------+
+                |  id  | owner|  make          | ident  |
+                =========================================
+                |  29  |  23  |  Boeing        | AF-001 |
+                +------+------+----------------+--------+
+
+   <b>advantages</b>
+       Polymorphic retrieval costs one SELECT per concrete conforming class; retrieving all the Persons costs
+       two SELECTs. These SELECTs, however, don't use joins - an expensive operation. In our example, retrieving
+       all the Persons requires the following two SELECTs:
+
+          SELECT id, name, age FROM NaturalPerson
+          SELECT id, name, form FROM LegalPerson
+
+   <b>disadvantages</b>
+       This mapping is reasonable with regard to relational orthodoxy, but not perfect: the 'name' column is
+       present on two different tables, with the same semantic.
+
+       The biggest drawback, however, happens when you try to perfrom complex queries.  Suppose oyu want to
+       retrieve all the Persons (Natural- or Legal-) that own a Vehicle of make 'Saab' (be it a Car or a Plane).
+       Sticking with equijoins, the cost of the operation is four SELECTs:
+
+          SELECT NaturalPerson.id, NaturalPerson.name, NaturalPerson.age
+             FROM NaturalPerson, Car
+             WHERE Car.owner = NaturalPerson.id
+
+          SELECT NaturalPerson.id, NaturalPerson.name, NaturalPerson.age
+             FROM NaturalPerson, Plane
+             WHERE Plane.owner = NaturalPerson.id
+
+          SELECT LegalPerson.id, LegalPerson.name, LegalPerson.form
+             FROM LegalPerson, Car
+             WHERE Car.owner = LegalPerson.id
+
+          SELECT LegalPerson.id, LegalPerson.name, LegalPerson.form
+             FROM LegalPerson, Plane
+             WHERE Plane.owner = LegalPerson.id
+
+       When the depth of the hierarchies increase, the combinatory explosion makes complex queries prohibitive.
+
+</pre><h4><b>Vertical</b> <b>Mapping</b></h4><pre>
+   <b>description</b>
+       Each class has its corresponding table, which contains only the class' direct fields. In other words, the
+       table doesn't store the inherited fields. Both concrete and abstract classes get a table. The state of an
+       object is thus scattered over several tables.
+
+       For example:
+
+                +--------+
+                | Person |
+                +------+-+------+-------+
+                |  id  |  name          |
+                =========================
+                |  17  | Bill Gates     |
+                +------+----------------+
+                |  23  | Georges Bush   |
+                +------+----------------+
+                |  36  | Microsoft      |
+                +------+----------------+
+
+                +---------------+     +-------------+
+                | NaturalPerson |     | LegalPerson |
+                +------+--------+     +-------+-----++
+                |  id  | age    |     |  id   | form |
+                =================     ================
+                |  17  |  46    |     |  36   |  Inc |
+                +------+--------+     +-------+------+
+                |  23  |  50    |
+                +------+--------+
+
+                +---------+
+                | Vehicle |
+                +------+--+----+----------------+
+                |  id  | owner |  make          |
+                =================================
+                |  12  | 17    | Saab           |
+                +------+-------+----------------+
+                |  29  | 23    | AF-001         |
+                +------+-------+----------------+
+                |  50  | 36    | Miata          |
+                +------+-------+----------------+
+                |  51  | 36    | Miata          |
+                +------+-------+----------------+
+
+                +------+              +-------+
+                | Car  |              | Plane |
+                +------++--------+    +-------+--------+
+                |  id   | plate  |    |  id   | ident  |
+                ==================    ==================
+                |  12   | BILL-1 |    |  29   | AF-001 |
+                +-------+--------+    +-------+--------+
+                |  50   | MS-001 |
+                +-------+--------+
+                |  51   | MS-002 |
+                +-------+--------+
+
+       Polymorphic retrieval is achieved by issuing one SELECT per concrete conforming class; retrieving In our
+       example, retrieving all the Persons requires the following two SELECTs:
+
+          SELECT Person.id, Person.name, NaturalPerson.age
+             FROM Person, NaturalPerson
+             WHERE Person.id = NaturalPerson.id
+
+          SELECT Person.id, Person.name, LegalPerson.form
+             FROM Person, LegalPerson
+             WHERE Person.id = LegalPerson.id
+
+       This mapping sometimes needs an extra column that carries a type identifier. In our example, we take the
+       very resonable assumption that Person is an abstract class. Had we decided to allow 'pure' Persons, we
+       would have been faced with the following problem: the Person table would contain rows that describe pure
+       Persons, but also rows that describe the Person part of Natural- and LegalPersons. We would need to
+       filter those incomplete objects out when retrieving the pure Persons. Thus the Person table would look
+       like this:
+
+                +--------+
+                | Person |
+                +-----+--+---+----------------+
+                | id  | type |  name          |
+                ===============================
+                | 13  | 1    | Pure Person    |
+                +-----+------+----------------+
+                | 17  | 2    | Bill Gates     |
+                +-----+------+----------------+
+                | 23  | 2    | Georges Bush   |
+                +-----+------+----------------+
+                | 36  | 3    | Microsoft      |
+                +-----+------+----------------+
+
+       In this case, we need an extra SELECT for retrieving pure Persons:
+
+          SELECT Person.id, Person.name
+             FROM Person
+             WHERE Person.type IN (1)
+
+   <b>advantages</b>
+       From the relational point of view, this mapping is excellent: the resulting database is in third normal
+       form.
+
+       This mapping also supports complex queries very well. Take the Saab owners example again: we don't need
+       to involve the Car nor Plane tables in the query. As a result, two SELECTs suffice:
+
+          SELECT Person.id, Person.name, NaturalPerson.age
+             FROM Person, NaturalPerson, Vehicle
+             WHERE Person.id = NaturalPerson.id AND Vehicle.owner = Person.id
+
+          SELECT Person.id, Person.name, LegalPerson.form
+             FROM Person, LegalPerson, Vehicle
+             WHERE Person.id = LegalPerson.id AND Vehicle.owner = Person.id
+
+   <b>disadvantages</b>
+       The mapping potentially has the highest performance cost: it requires multiple SELECTs like the
+       horizontal mapping, but in addition, these SELECTs use joins.
+
+</pre><h4><b>Filtered</b> <b>Mapping</b></h4><pre>
+   <b>description</b>
+       Entire hierarchies are mapped onto a single table. Two rows may describe objects of different types,
+       maybe completely unrelated. The set of columns is the uperset of all the columns needed by all the
+       attributes of any of the classes involved in the mapping.
+
+       A special 'type' column contains an value that uniquely identifies the concrete class of the object
+       described by the row.
+
+       All the columns related to attributes that don't occur in all the classes must be declared as NULLABLE.
+       Indeed, the table may contain mostly NULL values.
+
+       In our example, the database may look either like this:
+
+                +---------+
+                | Persons |
+                +-----+---+--+----------------+------+------+
+                | id  | type |  name          | age  | form |
+                =============================================
+                | 17  |  1   | Bill Gates     |  46  | NULL |
+                +-----+------+----------------+------+------+
+                | 23  |  1   | Georges Bush   |  50  | NULL |
+                +-----+------+----------------+------+------+
+                | 36  |  2   | Microsoft      | NULL |  Inc |
+                +-----+------+----------------+------+------+
+
+                +---------+
+                | Persons |
+                +-----+---+--+----------------+------+------+
+                | id  | type |  name          | age  | form |
+                =============================================
+                | 17  |  1   | Bill Gates     |  46  | NULL |
+                +-----+------+----------------+------+------+
+                | 23  |  1   | Georges Bush   |  50  | NULL |
+                +-----+------+----------------+------+------+
+                | 36  |  2   | Microsoft      | NULL |  Inc |
+                +-----+------+----------------+------+------+
+                | 36  |  2   | Microsoft      | NULL |  Inc |
+                +-----+------+----------------+------+------+
+
+                +----------+
+                | Vehicles |
+                +-----+----+-+-------+----------------+--------+--------+
+                | id  | type | owner |  make          | plate  | ident  |
+                =========================================================
+                | 12  |  3   |  17   | Saab           | BILL-1 | NULL   |
+                +-----+------+-------+----------------+--------+--------+
+                | 29  |  4   |  23   | Boeing         | NULL   | AF-001 |
+                +-----+------+-------+----------------+--------+--------+
+                | 50  |  3   |  36   | Miata          | MS-001 | NULL   |
+                +-----+------+-------+----------------+--------+--------+
+                | 51  |  3   |  36   | Miata          | MS-002 | NULL   |
+                +-----+------+-------+----------------+--------+--------+
+
+       Retrieving all the Persons requires only one SELECT:
+
+          SELECT id, name, age, form FROM Persons
+
+       When retrieving NaturalPersons we must take care to filter out the rows that belog to LegalPersons:
+
+          SELECT id, name, age FROM Persons WHERE type = 1
+
+       We may even decide to place unrelated hierarchies on the same table:
+
+          +---------+
+          | Objects |
+          +-----+---+--+---------------+------+------+--------+--------+--------+
+          | id  | type |  name         | age  | form | make   | plate  | ident  |
+          =======================================================================
+          | 17  |  1   | Bill Gates    |  46  | NULL | NULL   | NULL   | NULL   |
+          +-----+------+---------------+------+------+--------+--------+--------+
+          | 23  |  1   | Georges Bush  |  50  | NULL | NULL   | NULL   | NULL   |
+          +-----+------+---------------+------+------+--------+--------+--------+
+          | 36  |  2   | Microsoft     | NULL | Inc  | NULL   | NULL   | NULL   |
+          +-----+------+---------------+------+------+--------+--------+--------+
+          | 12  |  3   | NULL          | NULL | NULL | Saab   | BILL-1 | NULL   |
+          +-----+------+---------------+------+------+--------+--------+--------+
+          | 29  |  4   | NULL          | NULL | NULL | Boeing | NULL   | AF-001 |
+          +-----+------+---------------+------+------+--------+--------+--------+
+          | 50  |  3   | NULL          | NULL | NULL | Miata  | MS-001 | NULL   |
+          +-----+------+---------------+------+------+--------+--------+--------+
+          | 51  |  3   | NULL          | NULL | NULL | Miata  | MS-002 | NULL   |
+          +-----+------+---------------+------+------+--------+--------+--------+
+
+   <b>advantages</b>
+       Polymorphic retrieval costs exactly one SELECT, regardless of the number of conforming types. Thus this
+       mapping potentially is the most efficient.
+
+   <b>disadvantages</b>
+       This mapping is very questionable according to relational orthodoxy. Even if one decides to forgo these
+       rules, using such a mapping takes away many of the interesting features offered by modern RDBM systems.
+       Because nearly all the columns must allow NULL values, we cannot take advantage of features like
+       referential integrity constraints, domain constraints, indexes, etc.
+
+       Also, as the table becomes cluttered with NULL values, the relative number of significant columns in any
+       given row tends towards zero: we may end up retrieving rows consisting of a little information swimming
+       in a sea of NULLs.
+
+       In effect, this mapping may end up hindering performance instead of improving it in presence of deep
+       hierarchies with many attributes.
+
+</pre><h4><b>MAPPINGS</b> <b>SUPPORTED</b> <b>BY</b> <b>TANGRAM</b></h4><pre>
+       Tangram supports both vertical mapping and filtered mapping, and any hybrid of the two.
+
+       The 'table' attribute in the class description in the Schema can be used to put the state of several
+       classes on the same table. The table name defaults to the class name, resulting in a vertical mapping.
+
+       For example, the following schema:
+
+          Tangram::Relational-&gt;schema( {
+               classes =&gt;
+                 [ Person =&gt;
+                   {
+                    table =&gt; 'Persons',
+                    fields =&gt; { string =&gt; [ qw( name ) ] }
+                   },
+
+                   NaturalPerson =&gt;
+                   {
+                    table =&gt; 'Persons',
+                    fields =&gt; { int =&gt; [ qw( age ) ] }
+                   },
+
+                   LegalPerson =&gt;
+                   {
+                    table =&gt; 'Persons',
+                    fields =&gt; { string =&gt; [ qw( form ) ] }
+                   }
+                 ] } );
+
+       ...specifies a pure filtered mapping for the Person hierarchy:
+
+          CREATE TABLE Persons
+          (
+            id INTEGER NOT NULL,
+            PRIMARY KEY( id ),
+            type INTEGER NOT NULL,
+            form <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NULL,
+            age INT NULL,
+            name <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NULL
+          );
+
+       The following schema:
+
+          Tangram::Relational-&gt;schema( {
+               classes =&gt;
+                 [ Person =&gt;
+                   {
+                    table =&gt; 'Person',
+                    fields =&gt; { string =&gt; [ qw( name ) ] }
+                   },
+
+                   NaturalPerson =&gt;
+                   {
+                    table =&gt; 'NaturalPerson',
+                    fields =&gt; { int =&gt; [ qw( age ) ] }
+                   },
+
+                   LegalPerson =&gt;
+                   {
+                    table =&gt; 'Person',
+                    fields =&gt; { string =&gt; [ qw( form ) ] }
+                   }
+                 ] } );
+
+       ...gives NaturalPerson its own table, but LegalPerson shares the Person table:
+
+          CREATE TABLE Person
+          (
+            id INTEGER NOT NULL,
+            PRIMARY KEY( id ),
+            type INTEGER NOT NULL,
+            form <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NULL,
+            name <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NULL
+          );
+
+          CREATE TABLE NaturalPerson
+          (
+            id INTEGER NOT NULL,
+            PRIMARY KEY( id ),
+            type INTEGER NOT NULL,
+            age INT NULL
+          );
+
+perl v5.36.0                                       2022-10-16                 <u>Tangram::Relational::<a href="../man3pm/Mappings.3pm.html">Mappings</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

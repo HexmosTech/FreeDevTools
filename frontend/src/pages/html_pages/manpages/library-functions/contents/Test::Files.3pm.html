@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Files - A Test::Builder <https://metacpan.org/pod/Test::Builder> based module to ease testing with</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-files-perl">libtest-files-perl_0.26-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Files - A Test::Builder &lt;https://metacpan.org/pod/Test::Builder&gt; based module to ease testing with
+       files and dirs.
+
+       In general, the following can be tested:
+
+       • If the contents of the file being tested match the expected pattern.
+
+       • If  the  file  being  tested  is  identical  to  the  expected  file in regard to contents, or size, or
+         existence.  If necessary, some parts of the contents can be excluded from the comparison.
+
+       • If the directory being tested contains all expected files.
+
+       • If the files in the directory being tested are identical to the files in  the  reference  directory  in
+         regard  to contents, or size, or existence.  If necessary, some files as well as some parts of contents
+         can be excluded from the comparison.
+
+       • If all files in the directory being tested fulfill certain requirements.
+
+       • If the  archive  (container)  being  tested  is  logically  identical  to  the  the  reference  archive
+         (container).   If necessary, some members of archives, as well as some parts of their contents, as well
+         as some metadata can be excluded from the comparison.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       All  examples  listed  below  can  be  found  and  executed  using  <b>xt/synopsis.t</b>   located   on   GitHub
+       &lt;https://github.com/jsf116/Test-Files&gt;.
+
+         use Path::Tiny qw( path );
+         use Test::Files;
+
+         my $got_file       = path( 'path' )-&gt;child( qw( got file ) );
+         my $reference_file = path( 'path' )-&gt;child( qw( reference file ) );
+         my $got_dir        = path( 'path' )-&gt;child( qw( got dir ) );
+         my $reference_dir  = path( 'path' )-&gt;child( qw( reference dir with some stuff ) );
+         my @file_list      = qw( expected file );
+         my ( $content_check, $expected, $filter, $options );
+
+         plan( 24 );
+
+         # Simply compares file contents to a string:
+         $expected = "contents\nof file";
+         file_ok( $got_file, $expected, 'got file has expected contents' );
+
+         # Two identical variants comparing file contents
+         # to a string ignoring differences in time stamps:
+         $expected = "filtered contents\nof file\ncreated at 00:00:00";
+         $filter   = sub {
+           shift =~ s{ \b (?: [01] \d | 2 [0-3] ) : (?: [0-5] \d ) : (?: [0-5] \d ) \b }
+                     {00:00:00}grx
+         };
+         $options  = { FILTER =&gt; $filter };
+         file_ok       (
+           $got_file, $expected, $options,
+           "'$got_file' has contents expected after filtering"
+         );
+         file_filter_ok(
+           $got_file, $expected, $filter,
+           "'$got_file' has contents expected after filtering"
+         );
+
+         # Simply compares two file contents:
+         compare_ok( $got_file, $reference_file, 'files are the same' );
+
+         # Two identical variants comparing contents of two files
+         # ignoring differences in time stamps:
+         $filter  = sub {
+           shift =~ s{ \b (?: [01] \d | 2 [0-3] ) : (?: [0-5] \d ) : (?: [0-5] \d ) \b }
+                     {00:00:00}grx
+         };
+         $options = { FILTER =&gt; $filter };
+         compare_ok       (
+           $got_file, $reference_file, $options, 'files are almost the same'
+         );
+         compare_filter_ok(
+           $got_file, $reference_file, $filter,  'files are almost the same'
+         );
+
+         # Verifies if both got file and reference file exist:
+         $options = { EXISTENCE_ONLY =&gt; 1 };
+         compare_ok( $got_file, $reference_file, $options, 'both files exist' );
+
+         # Verifies if got file and reference file have identical size:
+         $options = { SIZE_ONLY =&gt; 1 };
+         compare_ok(
+           $got_file, $reference_file, $options, 'both files have identical size'
+         );
+
+         # Verifies if the directory has all expected files (not recursively!):
+         $expected = [ qw( files got_dir must contain ) ];
+         dir_contains_ok( $got_dir, $expected, 'directory has all files in list' );
+
+         # Two identical variants doing the same verification as before,
+         # but additionally verifying if the directory has nothing
+         # but the expected files (not recursively!):
+         $options = { SYMMETRIC =&gt; 1 };
+         dir_contains_ok     (
+           $got_dir, $expected, $options, 'directory has exactly the files in the list'
+         );
+         dir_only_contains_ok(
+           $got_dir, $expected,           'directory has exactly the files in the list'
+         );
+
+         # The same as before, but recursive:
+         $options = { RECURSIVE =&gt; 1, SYMMETRIC =&gt; 1 };
+         dir_contains_ok(
+           $got_dir, $expected, $options,
+           'directory and its subdirectories have exactly the files in the list'
+         );
+
+         # The same as before, but ignoring files,
+         # which names do not match the required pattern (file "must" will be skipped):
+         $options = { NAME_PATTERN =&gt; '^[cfg]', RECURSIVE =&gt; 1, SYMMETRIC =&gt; 1 };
+         dir_contains_ok(
+           $got_dir, $expected, $options,
+           'directory and its subdirectories ' .
+           "have exactly the files in the list except of file 'must'"
+         );
+
+         # Compares two directories by comparing file contents (not recursively!):
+         compare_dirs_ok(
+           $got_dir, $reference_dir,
+           "all files from '$got_dir' are the same in '$reference_dir' " .
+           '(same names, same contents), subdirs are skipped'
+         );
+
+         # The same as before, but subdirectories are considered, too:
+         $options = { RECURSIVE =&gt; 1 };
+         compare_dirs_ok(
+           $got_dir, $reference_dir, $options,
+           "all files from '$got_dir' and its subdirs are the same in '$reference_dir'"
+         );
+
+         # The same as before, but only file sizes are compared:
+         $options = { RECURSIVE =&gt; 1, SIZE_ONLY =&gt; 1 };
+         compare_dirs_ok(
+           $got_dir, $reference_dir, $options,
+           "all files from '$got_dir' and its subdirs have same sizes in '$reference_dir'"
+         );
+
+         # The same as before, but only file existence is verified:
+         $options = { EXISTENCE_ONLY =&gt; 1, RECURSIVE =&gt; 1 };
+         compare_dirs_ok(
+           $got_dir, $reference_dir, $options,
+           "all files from '$got_dir' and its subdirs exist in '$reference_dir'"
+         );
+
+         # The same as before, but only files with base names starting with 'A' are considered:
+         $options = { EXISTENCE_ONLY =&gt; 1, NAME_PATTERN =&gt; '^A', RECURSIVE =&gt; 1 };
+         compare_dirs_ok(
+           $got_dir, $reference_dir, $options,
+           "all files from '$got_dir' and its subdirs " .
+           "with base names starting with 'A' exist in '$reference_dir'"
+         );
+
+         # The same as before, but the symmetric verification is requested:
+         $options = {
+           EXISTENCE_ONLY =&gt; 1,
+           NAME_PATTERN   =&gt; '^A',
+           RECURSIVE      =&gt; 1,
+           SYMMETRIC      =&gt; 1,
+         };
+         compare_dirs_ok(
+           $got_dir, $reference_dir, $options,
+           "all files from '$got_dir' and its subdirs with base names " .
+           "starting with 'A' exist in '$reference_dir' and vice versa"
+         );
+
+         # Two identical variants of comparison of two directories by file contents,
+         # whereas these contents are first filtered
+         # so that time stamps in form of 'HH:MM:SS' are replaced by '00:00:00'
+         # like in examples for file_filter_ok and compare_filter_ok:
+         $filter  = sub {
+           shift =~ s{ \b (?: [01] \d | 2 [0-3] ) : (?: [0-5] \d ) : (?: [0-5] \d ) \b }
+                     {00:00:00}grx
+         };
+         $options = { FILTER =&gt; $filter };
+         compare_dirs_ok(
+           $got_dir, $reference_dir, $options,
+           "all files from '$got_dir' are the same in '$reference_dir', " .
+           'subdirs are skipped, differences of time stamps ignored'
+         );
+         compare_dirs_filter_ok(
+           $got_dir, $reference_dir, $filter,
+           "all files from '$got_dir' are the same in '$reference_dir', " .
+           'subdirs are skipped, differences of time stamps ignored'
+         );
+
+         # Verifies if all plain files in directory and its subdirectories
+         # contain the word 'good' (take into consideration the -f test below
+         # excluding special files from comparison!):
+         $content_check = sub {
+           my ( $file ) = @_;
+           ! -f $file or path( $file )-&gt;slurp =~ / \b good \b /x;
+         };
+         $options       = { RECURSIVE =&gt; 1 };
+         find_ok(
+           $got_dir, $content_check, $options,
+           "all files from '$got_dir' and subdirectories contain the word 'good'"
+         );
+
+         # Compares PKZIP archives considering both global and file comments.
+         # Both archives contain the same members in different order:
+         my $extract = sub {
+           my ( $file ) = @_;
+           my $zip = Archive::Zip-&gt;new();
+           die( "Cannot read '$file'" ) if $zip-&gt;read( $file ) != AZ_OK;
+           die( "Cannot extract from '$file'" ) if $zip-&gt;extractTree != AZ_OK;
+         };
+         my $meta_data = sub {
+           my ( $file ) = @_;
+           my $zip = Archive::Zip-&gt;new();
+           die( "Cannot read '$file'" ) if $zip-&gt;read( $file ) != AZ_OK;
+           my %meta_data = ( '' =&gt; $zip-&gt;zipfileComment );
+           $meta_data{ $_-&gt;fileName } = $_-&gt;fileComment foreach $zip-&gt;members;
+           return \%meta_data;
+         };
+         my $got_compressed_content       = path( "$got_file.zip"       )-&gt;slurp;
+         my $reference_compressed_content = path( "$reference_file.zip" )-&gt;slurp;
+         ok(
+           $got_compressed_content ne $reference_compressed_content,
+           "'$got_file.zip' and '$reference_file.zip' are physically different, but"
+         );
+         compare_archives_ok(
+           "$got_file.zip", "$reference_file.zip", { EXTRACT =&gt; $extract, META_DATA =&gt; $meta_data },
+           "'$got_file.zip' and '$reference_file.zip' are logically identical"
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This    module    is    like    Test2::V0    &lt;https://metacpan.org/pod/Test2::V0&gt;    or    Test::Expander
+       &lt;https://metacpan.org/pod/Test::Expander&gt;, in fact you should use that first as shown above.  It supports
+       comparison of files and directories in different ways.
+
+       Any file or directory passed to functions of this module can be both a string or an object of  Path::Tiny
+       &lt;https://metacpan.org/pod/Path::Tiny&gt;.
+
+       Though the test names i.e. the last parameter of every function is optional, you should provide a name of
+       each test for a better maintainability.
+
+       You    should    follow    the    lead    of    the    "SYNOPSIS"    examples    and    use    Path::Tiny
+       &lt;https://metacpan.org/pod/Path::Tiny&gt;        or,        if         you         prefer,         File::Spec
+       &lt;https://metacpan.org/pod/File::Spec&gt;.   This  makes  it  much more likely that your tests will pass on a
+       different operating system.
+
+       All of the contents comparison routines provide diff diagnostic output when  they  report  failure.   The
+       diff output style can be changed using the option <b>STYLE</b> (see below).
+
+       The  filter function receives each line of each file.  It may perform any necessary transformations (like
+       excising dates), then it must return the line in (possibly) transformed state.  For  example,  the  first
+       filter of Phil Crow &lt;https://metacpan.org/author/PHILCROW&gt;, the creator of this module was
+
+         sub chop_dates {
+           my $line = shift;
+           $line =~ s/\d{4}(.\d\d){5}//g;
+           return $line;
+         }
+
+       This  removes  all  strings  like  <b>2003.10.14.14.17.37</b>.   Everything  else is unchanged and failing tests
+       started passing when they should.  If you want to exclude  the  line  from  consideration,  return  empty
+       string or <b>undef</b>.
+
+   <b>FUNCTIONS</b>
+       <u>file_ok</u>
+
+       There are two forms of calls:
+
+       The generic form.
+         <b>file_ok(</b> <b>$got_file,</b> <b>$expected_string,</b> <b>\%options,</b> <b>$test_name</b> <b>)</b>
+
+       The short form, which is also backward compatible.
+         <b>file_ok(</b> <b>$got_file,</b> <b>$expected_string,</b> <b>$test_name</b> <b>)</b>
+
+       Compares the contents of a file <b>$got_file</b> to a string <b>$expected_string</b>.
+
+       In  the  generic form, if the parameter <b>\%options</b> is passed and contains the key <b>FILTER</b>, <b>file_ok</b> provides
+       the same functionality as <b>file_filter_ok</b>.
+
+       Supported options:
+
+       <b>FILTER</b>
+         Code reference providing filtering of file contents before comparison.  The only expected parameter  is
+         the current line from the file contents, the return value replaces this line.  In addition, the special
+         variable  <b>$.</b>  representing the number of the current line in the file can be used.  If the return value
+         is undefined, empty string is returned instead.  Line breaks are neither removed nor  added  after  the
+         execution.
+
+         Defaults to <b>undef</b> i.e. no filtering is provided.
+
+       All options supported by Text::Diff &lt;https://metacpan.org/pod/Text::Diff&gt; except of <b>FILENAME_A</b> and
+       <b>FILENAME_B</b>.
+         The  most  useful  of  them  seems  to  be  <b>STYLE</b> defining the style of output for content differences.
+         Defaults to <b>Unified</b>.
+
+       <u>file_filter_ok</u>
+
+       There is only one  form  of  call  namely  <b>file_filter_ok(</b>  <b>$got_file,</b>  <b>$expected_string,</b>  <b>\&amp;filter_func,</b>
+       <b>$test_name</b> <b>)</b>.
+
+       Works  like  <b>file_ok</b> with the option <b>FILTER</b> i.e. compares the contents of a file to a string, but filters
+       the file first using <b>&amp;filter_func</b> for that. The string contents must be filtered before if necessary.
+
+       This function is deprecated and stays for backward compatibility reasons only.
+
+       <u>compare_ok</u>
+
+       There are two forms of calls:
+
+       The generic form.
+         <b>compare_ok(</b> <b>$got_file,</b> <b>$reference_file,</b> <b>\%options,</b> <b>$test_name</b> <b>)</b>
+
+       The short form, which is also backward compatible.
+         <b>compare_ok(</b> <b>$got_file,</b> <b>$reference_file,</b> <b>$test_name</b> <b>)</b>
+
+       Compares two files.
+
+       In the generic form, if the parameter <b>\%options</b>  is  passed  and  contains  the  key  <b>FILTER</b>,  <b>compare_ok</b>
+       provides the same functionality as <b>compare_filter_ok</b>.
+
+       Supported options:
+
+       <b>EXISTENCE_ONLY</b>
+         Boolean. If set to <b>true</b>, only existence of both <b>$got_file</b> and <b>$reference_file</b> is compared.
+
+         Defaults to <b>false</b>.
+
+       <b>FILTER</b>
+         Code  reference  providing  filtering  of  file  contents  before  comparison and being applied to both
+         <b>$got_file</b> and <b>$reference_file</b>.  The only expected parameter is the current line from the file contents,
+         the return value replaces this line.  In addition, the special variable <b>$.</b> representing the  number  of
+         the  current  line in the file can be used.  If the return value is undefined, empty string is returned
+         instead.  Line breaks are neither removed nor added after the execution.
+
+         Ignored if either <b>EXISTENCE_ONLY</b> or <b>SIZE_ONLY</b> is set to <b>true</b>.
+
+         Defaults to <b>undef</b> i.e. no filtering is provided.
+
+       <b>SIZE_ONLY</b>
+         Boolean.  If  set  to  <b>true</b>  and  the  options  <b>EXISTENCE_ONLY</b>  is  not  set  to  <b>true</b>,  <b>$got_file</b>  and
+         <b>$reference_file</b> are compared by size only.
+
+         Defaults to <b>false</b>.
+
+       All options supported by Text::Diff &lt;https://metacpan.org/pod/Text::Diff&gt; except of <b>FILENAME_A</b> and
+       <b>FILENAME_B</b>.
+         The  most  useful  of  them  seems  to  be  <b>STYLE</b> defining the style of output for content differences.
+         Defaults to <b>Unified</b>.
+
+       <u>compare_filter_ok</u>
+
+       There is only one form of  call  namely  <b>compare_filter_ok(</b>  <b>$got_file,</b>  <b>$reference_file,</b>  <b>\&amp;filter_func,</b>
+       <b>$test_name</b> <b>)</b>.
+
+       Works  like  <b>compare_ok</b>  with  option <b>FILTER</b> i.e. compares the contents of two files, but sends each line
+       through the filter <b>&amp;filter_func</b> so things that shouldn't count against success can be stripped.
+
+       This function is deprecated and stays for backward compatibility reasons only.
+
+       <u>dir_contains_ok</u>
+
+       There are two forms of calls:
+
+       The generic form.
+         <b>dir_contains_ok(</b> <b>$got_dir,</b> <b>\@file_list,</b> <b>\%options,</b> <b>$test_name</b> <b>)</b>
+
+       The short form, which is also backward compatible.
+         <b>dir_contains_ok(</b> <b>$got_dir,</b> <b>\@file_list,</b> <b>$test_name</b> <b>)</b>
+
+       Verifies the directory <b>$got_dir</b> for the presence of a  list  files  in  <b>@file_list</b>.   If  <b>$got_dir</b>  is  a
+       symlink,  this  will be accepted, but symlinks therein are not followed.  Subdirectories are not involved
+       in the verification, but files located therein are considered if recursive appraoch is required (see  the
+       option  <b>RECURSIVE</b>  below).   Special  files like named pipes are involved in the verification only if the
+       sole file existence is required (see the option <b>EXISTENCE_ONLY</b> below), otherwise  they  are  skipped  and
+       reported as error.
+
+       In  the  generic  form,  if the parameter <b>\%options</b> is passed and contains the key <b>SYMMETRIC</b> set to <b>true</b>,
+       <b>dirs_contains_ok</b> provides the same functionality as <b>dir_only_contains_ok</b>.
+
+       Supported options:
+
+       <b>NAME_PATTERN</b>
+         String containing RegEx. Files with base names not matching this RegEx will be skipped.
+
+         Defaults to the dot sign (<b>.</b>) i.e. no file will be skipped.
+
+       <b>RECURSIVE</b>
+         Boolean. If set to <b>true</b>, subdirectories of <b>$got_dir</b> will be checked, too.
+
+         Defaults to <b>false</b>.
+
+       <b>SYMMETRIC</b>
+         Boolean. If set to <b>true</b>, additionally verifies if all files from <b>$got_dir</b> are listed in <b>@file_list</b>.
+
+         Defaults to <b>false</b>.
+
+       <u>dir_only_contains_ok</u>
+
+       There is only one form of call namely <b>dir_only_contains_ok(</b> <b>$got_dir,</b> <b>\@file_list,</b> <b>$test_name</b> <b>)</b>.
+
+       Works like <b>dir_contains_ok</b> with option <b>SYMMETRIC</b> set to <b>true</b> i.e.   checks  directory  without  following
+       symlinks therein to ensure that the listed files are present and that they are the only ones present.
+
+       This function is deprecated and stays for backward compatibility reasons only.
+
+       <u>compare_dirs_ok</u>
+
+       There are two forms of calls:
+
+       The generic form.
+         <b>compare_dirs_ok(</b> <b>$got_dir,</b> <b>$reference_dir,</b> <b>\%options,</b> <b>$test_name</b> <b>)</b>
+
+       The short form, which is also backward compatible.
+         <b>compare_dirs_ok(</b> <b>$got_dir,</b> <b>$reference_dir,</b> <b>$test_name</b> <b>)</b>
+
+       Compares  all files in the directories <b>$got_dir</b> and <b>$reference_dir</b> reporting differences.  If <b>$got_dir</b> or
+       <b>$reference_dir</b> is a symlink, this will be accepted, but symlinks therein are not followed.
+
+       In the generic form, if the parameter <b>\%options</b> is passed and contains the  key  <b>FILTER</b>,  <b>compare_dirs_ok</b>
+       provides the same functionality as <b>compare_dirs_filter_ok</b>.
+
+       Supported options:
+
+       <b>EXISTENCE_ONLY</b>
+         Boolean. If set to <b>true</b>, only checks if every file from <b>$reference_dir</b> is found in <b>$got_dir</b>.
+
+         Defaults to <b>false</b>.
+
+       <b>FILTER</b>
+         Code  reference  providing  filtering of file contents before comparison and applied to files from both
+         <b>$got_dir</b> and <b>$reference_dir</b>.  The only expected parameter is the current line from the  file  contents,
+         the  return  value replaces this line.  In addition, the special variable <b>$.</b> representing the number of
+         the current line in the file can be used.  If the return value is undefined, empty string  is  returned
+         instead.  Line breaks are neither removed nor added after the execution.
+
+         Ignored if either <b>EXISTENCE_ONLY</b> or <b>SIZE_ONLY</b> is set to <b>true</b>.
+
+         Defaults to <b>undef</b> i.e. no filtering is provided.
+
+       <b>NAME_PATTERN</b>
+         String  containing  RegEx.   Files  with  base  names  not  matching this RegEx will be skipped both in
+         <b>$got_dir</b> and <b>$reference_dir</b>.
+
+         Defaults to the dot sign (<b>.</b>) i.e. no file will be skipped.
+
+       <b>RECURSIVE</b>
+         Boolean. If set to <b>true</b>, subdirectories of both <b>$got_dir</b> and <b>$reference_dir</b> will be checked, too.
+
+         Defaults to <b>false</b>.
+
+       <b>SIZE_ONLY</b>
+         Boolean. If set to <b>true</b> and the options <b>EXISTENCE_ONLY</b> is not set to  <b>true</b>,  files  from  <b>$got_dir</b>  and
+         <b>$reference_dir</b> are compared by size only.
+
+         Defaults to <b>false</b>.
+
+       <b>SYMMETRIC</b>
+         Boolean. If set to <b>true</b>, additionally verifies if all files from <b>$got_dir</b> exist in <b>$reference_dir</b>, too.
+
+         Defaults to <b>false</b>.
+
+       All options supported by Text::Diff &lt;https://metacpan.org/pod/Text::Diff&gt; except of <b>FILENAME_A</b> and
+       <b>FILENAME_B</b>.
+         The  most  useful  of  them  seems  to  be  <b>STYLE</b> defining the style of output for content differences.
+         Defaults to <b>Unified</b>.
+
+       <u>compare_dirs_filter_ok</u>
+
+       There is only one form of call namely <b>compare_dirs_filter_ok(</b>  <b>$got_dir,</b>  <b>$reference_dir,</b>  <b>\&amp;filter_func,</b>
+       <b>$test_name</b> <b>)</b>.
+
+       Works like <b>compare_dirs_ok</b> with option <b>FILTER</b> i.e. calls the filter function <b>&amp;filter_func</b> on each line of
+       every  file  allowing  you  to  exclude  or  alter  some  text to avoid spurious failures (like timestamp
+       disagreements).
+
+       This function is deprecated and stays for backward compatibility reasons only.
+
+       <u>find_ok</u>
+
+       The signature is <b>find_ok(</b> <b>$got_dir,</b> <b>\&amp;content_check_func,</b> <b>\%options,</b> <b>$test_name</b> <b>)</b>.
+
+       Verifies if the condition <b>&amp;content_check_func</b> is true for all files  in  directory  <b>$got_dir</b>.   The  code
+       reference  <b>&amp;content_check_func</b>  returning boolean is called for any type of file except of directory i.e.
+       for symlinks, devices, etc and the only parameter is the  full-qualified  file  name.   If  you  want  to
+       consider plain files only, you must apply the test operator <b>-f</b> to the parameter like shown in "SYNOPSIS".
+
+       Supported options:
+
+       <b>RECURSIVE</b>
+         Boolean. If set to <b>true</b>, subdirectories of <b>$got_dir</b> will be checked, too.
+
+         Defaults to <b>false</b>.
+
+       <u>compare_archives_ok</u>
+
+       The signature is <b>compare_archives_ok(</b> <b>$got_archive,</b> <b>$reference_archive,</b> <b>\%options,</b> <b>$test_name</b> <b>)</b>.
+
+       Verifies  if  the archives (containers) <b>$got_archive</b> and <b>$reference_archive</b> are logically identical.  The
+       term "logically identical" means that these files  might  be  physically  different  e.g.  because  their
+       members  are  stored  in different order, or because some members are marked as deleted, but the metadata
+       relevant for the current test case and the members are identical.
+
+       Which metadata and which members must be compared can be controlled using <b>\%options</b>.
+
+       The comparison itself begins with the extraction and comparison of metadata; if they are  not  identical,
+       no  further  comparison  is provided and the test fails.  If the metadata comparison succeeds, members of
+       <b>$got_archive</b> and <b>$reference_archive</b> are extracted in temporary  directories  and  compared  in  the  same
+       manner like <b>compare_dirs_ok</b> this does.
+
+       Supported options:
+
+       All options supported by <b>compare_dirs_ok</b>.
+       <b>EXTRACT</b>
+         Code  reference.  Extracts  members  from  the  archive  in  the  current directory.  The only expected
+         parameter is the archive file name.  The current directory  at  the  time  point  of  extraction  is  a
+         temporary directory that is removed after the test.
+
+         The return value is ignored.
+
+         Defaults to empty function <b>sub</b> <b>{}</b>.
+
+       <b>META_DATA</b>
+         Code  reference.  Returns  metadata e.g. comments from a PKZIP archive.  The only expected parameter is
+         the archive file name.
+
+         Defaults to empty function <b>sub</b> <b>{}</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Consult            Test::Simple            &lt;https://metacpan.org/pod/Test::Simple&gt;,             Test2::V0
+       &lt;https://metacpan.org/pod/Test2::V0&gt;, and Test::Builder &lt;https://metacpan.org/pod/Test::Builder&gt; for more
+       testing     help.      This     module     really    just    adds    functions    to    what    Test2::V0
+       &lt;https://metacpan.org/pod/Test2::V0&gt;   does.    As   recommended   by   the    author    of    Test::More
+       &lt;https://metacpan.org/pod/Test::More&gt;  and  Test2::V0  &lt;https://metacpan.org/pod/Test2::V0&gt;,  the  latter
+       module should be preferred, that's why Test::More &lt;https://metacpan.org/pod/Test::More&gt; is not listed  in
+       "SYNOPSIS".
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please     report    any    bugs    or    feature    requests    through    the    web    interface    at
+       &lt;https://github.com/jsf116/Test-Files/issues&gt;.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Although this module can cope with  binary  files,  too,  confirming  their  equality,  but  in  case  of
+       differences a proper representation of comparison results is not guaranteed.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Phil Crow, &lt;<a href="mailto:philcrow2000@yahoo.com">philcrow2000@yahoo.com</a>&gt;
+
+       Jurij Fajnberg, &lt;<a href="mailto:fajnbergj@gmail.com">fajnbergj@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2003-2007 by Phil Crow
+
+       Copyright 2020-2024 by Jurij Fajnberg
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.38.2                                       2024-03-16                                   <u>Test::<a href="../man3pm/Files.3pm.html">Files</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

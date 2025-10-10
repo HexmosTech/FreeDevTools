@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>io - Asynchronous IO</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libaio-dev">libaio-dev_0.3.113-8_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       io - Asynchronous IO
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/errno.h">errno.h</a>&gt;</b>
+
+       <b>#include</b> <b>&lt;libaio.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>libaio</b>  library  defines  a  new  set  of  I/O operations which can significantly reduce the time an
+       application spends waiting at I/O.  The new functions allow  a  program  to  initiate  one  or  more  I/O
+       operations and then immediately resume normal work while the I/O operations are executed in parallel.
+
+       These functions are part of the library with realtime functions named <b>libaio</b>.  They are not actually part
+       of the <b>libc</b> binary.  The implementation of these functions can be done using support in the kernel.
+
+       All  IO  operations  operate  on  files  which  were  opened previously.  There might be arbitrarily many
+       operations running for one file.  The asynchronous I/O operations are controlled using a  data  structure
+       named <b>struct</b> <b>iocb</b> It is defined in <u>libaio.h</u> as follows.
+
+       typedef struct io_context *io_context_t;
+
+       typedef enum io_iocb_cmd {
+               IO_CMD_PREAD = 0,
+               IO_CMD_PWRITE = 1,
+
+               IO_CMD_FSYNC = 2,
+               IO_CMD_FDSYNC = 3,
+
+               IO_CMD_POLL = 5,
+               IO_CMD_NOOP = 6,
+       } io_iocb_cmd_t;
+
+       struct io_iocb_common {
+               void            *buf;
+               unsigned        __pad1;
+               long            nbytes;
+               unsigned        __pad2;
+               long long       offset;
+               long long       __pad3, __pad4;
+       };      /* result code is the amount read or -'ve errno */
+
+       struct iocb {
+               void            *data;
+               unsigned        key;
+               short           aio_lio_opcode;
+               short           aio_reqprio;
+               int             aio_fildes;
+               union {
+                       struct io_iocb_common           c;
+                       struct io_iocb_vector           v;
+                       struct io_iocb_poll             poll;
+                       struct io_iocb_sockaddr saddr;
+               } u;
+       };
+
+       <b>int</b> <u>aio_fildes</u>
+              This  element  specifies  the  file  descriptor  to be used for the operation.  It must be a legal
+              descriptor, otherwise the operation will fail.
+
+              The device on which the file is opened must allow the seek operation.  I.e., it is not possible to
+              use any of the IO operations on devices like terminals where an <b><a href="../man2/lseek.2.html">lseek</a></b>(2) call  would  lead  to  an
+              error.
+
+       <b>long</b> <u>u.c.offset</u>
+              This  element  specifies  the  offset  in  the  file  at  which the operation (input or output) is
+              performed.  Since the operations are carried out in arbitrary order and more  than  one  operation
+              for  one  file  descriptor  can be started, one cannot expect a current read/write position of the
+              file descriptor.
+
+       <b>void</b> <b>*</b><u>buf</u>
+              This is a pointer to the buffer with the data to be written or the place where the  read  data  is
+              stored.
+
+       <b>long</b> <u>u.c.nbytes</u>
+              This element specifies the length of the buffer pointed to by <u>io_buf</u>.
+
+       <b>int</b> <u>aio_reqprio</u>
+              Is not currently used.
+
+       <b>IO_CMD_PREAD</b>
+              Start  a  read operation.  Read from the file at position <u>u.c.offset</u> and store the next <u>u.c.nbytes</u>
+              bytes in the buffer pointed to by <u>buf</u>.
+
+       <b>IO_CMD_PWRITE</b>
+              Start a write operation.  Write <u>u.c.nbytes</u> bytes  starting  at  <u>buf</u>  into  the  file  starting  at
+              position <u>u.c.offset</u>.
+
+       <b>IO_CMD_NOP</b>
+              Do  nothing  for  this control block.  This value is useful sometimes when an array of <b>struct</b> <b>iocb</b>
+              values contains holes, i.e., some of the values must not be handled although the  whole  array  is
+              presented to the <b><a href="../man3/io_submit.3.html">io_submit</a></b>(3) function.
+
+       <b>IO_CMD_FSYNC</b>
+       <b>IO_CMD_POLL</b>
+              This is experimental.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       /*
+        * Simplistic version of copy command using async i/o
+        *
+        * From:   Stephen Hemminger &lt;<a href="mailto:shemminger@osdl.org">shemminger@osdl.org</a>&gt;
+        * Copy file by using a async I/O state machine.
+        * 1. Start read request
+        * 2. When read completes turn it into a write request
+        * 3. When write completes decrement counter and free resources
+        *
+        *
+        * Usage: aiocp file(s) destination
+        */
+
+       #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;sys/types.h&gt;
+       #include &lt;sys/stat.h&gt;
+       #include &lt;sys/param.h&gt;
+       #include &lt;<a href="file:/usr/include/fcntl.h">fcntl.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/errno.h">errno.h</a>&gt;
+
+       #include &lt;libaio.h&gt;
+
+       #define AIO_BLKSIZE (64*1024)
+       #define AIO_MAXIO   32
+
+       static int busy = 0;          // # of I/O's in flight
+       static int tocopy = 0;        // # of blocks left to copy
+       static int dstfd = -1;        // destination file descriptor
+       static const char *dstname = NULL;
+       static const char *srcname = NULL;
+
+       /* Fatal error handler */
+       static void io_error(const char *func, int rc)
+       {
+           if (rc == -ENOSYS)
+            fprintf(stderr, "AIO not in this kernel\n");
+           else if (rc &lt; 0 &amp;&amp; -rc &lt; sys_nerr)
+            fprintf(stderr, "%s: %s\n", func, sys_errlist[-rc]);
+           else
+            fprintf(stderr, "%s: error %d\n", func, rc);
+
+           if (dstfd &gt; 0)
+            close(dstfd);
+           if (dstname)
+            unlink(dstname);
+           <a href="../man1/exit.1.html">exit</a>(1);
+       }
+
+       /*
+        * Write complete callback.
+        * Adjust counts and free resources
+        */
+       static void wr_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
+       {
+           if (res2 != 0) {
+            io_error("aio write", res2);
+           }
+           if (res != iocb-&gt;u.c.nbytes) {
+            fprintf(stderr, "write missed bytes expect %d got %d\n", iocb-&gt;u.c.nbytes, res2);
+            <a href="../man1/exit.1.html">exit</a>(1);
+           }
+           --tocopy;
+           --busy;
+           free(iocb-&gt;u.c.buf);
+
+           memset(iocb, 0xff, sizeof(iocb));  // paranoia
+           free(iocb);
+           write(2, "w", 1);
+       }
+
+       /*
+        * Read complete callback.
+        * Change read iocb into a write iocb and start it.
+        */
+       static void rd_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
+       {
+           /* library needs accessors to look at iocb? */
+           int iosize = iocb-&gt;u.c.nbytes;
+           char *buf = iocb-&gt;u.c.buf;
+           off_t offset = iocb-&gt;u.c.offset;
+
+           if (res2 != 0)
+            io_error("aio read", res2);
+           if (res != iosize) {
+            fprintf(stderr, "read missing bytes expect %d got %d\n", iocb-&gt;u.c.nbytes, res);
+            <a href="../man1/exit.1.html">exit</a>(1);
+           }
+
+           /* turn read into write */
+           io_prep_pwrite(iocb, dstfd, buf, iosize, offset);
+           io_set_callback(iocb, wr_done);
+           if (1 != (res = io_submit(ctx, 1, &amp;iocb)))
+            io_error("io_submit write", res);
+           write(2, "r", 1);
+       }
+
+       int main(int argc, char *const *argv)
+       {
+           int srcfd;
+           struct stat st;
+           off_t length = 0, offset = 0;
+           io_context_t myctx;
+
+           if (argc != 3 || argv[1][0] == '-') {
+            fprintf(stderr, "Usage: aiocp SOURCE DEST");
+            <a href="../man1/exit.1.html">exit</a>(1);
+           }
+           if ((srcfd = open(srcname = argv[1], O_RDONLY)) &lt; 0) {
+            perror(srcname);
+            <a href="../man1/exit.1.html">exit</a>(1);
+           }
+           if (fstat(srcfd, &amp;st) &lt; 0) {
+            perror("fstat");
+            <a href="../man1/exit.1.html">exit</a>(1);
+           }
+           length = st.st_size;
+
+           if ((dstfd = open(dstname = argv[2], O_WRONLY | O_CREAT, 0666)) &lt; 0) {
+            close(srcfd);
+            perror(dstname);
+            <a href="../man1/exit.1.html">exit</a>(1);
+           }
+
+           /* initialize state machine */
+           memset(&amp;myctx, 0, <a href="../manmyctx/sizeof.myctx.html">sizeof</a>(myctx));
+           io_queue_init(AIO_MAXIO, &amp;myctx);
+           tocopy = howmany(length, AIO_BLKSIZE);
+
+           while (tocopy &gt; 0) {
+            int i, rc;
+            /* Submit as many reads as once as possible up to AIO_MAXIO */
+            int n = MIN(MIN(AIO_MAXIO - busy, AIO_MAXIO / 2),
+                     howmany(length - offset, AIO_BLKSIZE));
+            if (n &gt; 0) {
+                struct iocb *ioq[n];
+
+                for (i = 0; i &lt; n; i++) {
+                 struct iocb *io = (struct iocb *) malloc(sizeof(struct iocb));
+                 int iosize = MIN(length - offset, AIO_BLKSIZE);
+                 char *buf = (char *) malloc(iosize);
+
+                 if (NULL == buf || NULL == io) {
+                     fprintf(stderr, "out of memory\n");
+                     <a href="../man1/exit.1.html">exit</a>(1);
+                 }
+
+                 io_prep_pread(io, srcfd, buf, iosize, offset);
+                 io_set_callback(io, rd_done);
+                 ioq[i] = io;
+                 offset += iosize;
+                }
+
+                rc = io_submit(myctx, n, ioq);
+                if (rc &lt; 0)
+                 io_error("io_submit", rc);
+
+                busy += n;
+            }
+
+            // Handle IO's that have completed
+            rc = <a href="../manmyctx/io_queue_run.myctx.html">io_queue_run</a>(myctx);
+            if (rc &lt; 0)
+                io_error("io_queue_run", rc);
+
+            // if we have maximum number of i/o's in flight
+            // then wait for one to complete
+            if (busy == AIO_MAXIO) {
+                rc = io_queue_wait(myctx, NULL);
+                if (rc &lt; 0)
+                 io_error("io_queue_wait", rc);
+            }
+
+           }
+
+           close(srcfd);
+           close(dstfd);
+           <a href="../man0/exit.0.html">exit</a>(0);
+       }
+
+       /*
+        * Results look like:
+        * [alanm@toolbox <a href="file:~/MOT3">~/MOT3</a>]$ ../taio kernel-source-2.4.8-0.4g.ppc.rpm abc
+        * rrrrrrrrrrrrrrrwwwrwrrwwrrwrwwrrwrwrwwrrwrwrrrrwwrwwwrrwrrrwwwwwwwwwwwwwwwww
+        * rrrrrrrrrrrrrrwwwrrwrwrwrwrrwwwwwwwwwwwwwwrrrrrrrrrrrrrrrrrrwwwwrwrwwrwrwrwr
+        * wrrrrrrrwwwwwwwwwwwwwrrrwrrrwrrwrwwwwwwwwwwrrrrwwrwrrrrrrrrrrrwwwwwwwwwwwrww
+        * wwwrrrrrrrrwwrrrwwrwrwrwwwrrrrrrrwwwrrwwwrrwrwwwwwwwwrrrrrrrwwwrrrrrrrwwwwww
+        * wwwwwwwrwrrrrrrrrwrrwrrwrrwrwrrrwrrrwrrrwrwwwwwwwwwwwwwwwwwwrrrwwwrrrrrrrrrr
+        * rrwrrrrrrwrrwwwwwwwwwwwwwwwwrwwwrrwrwwrrrrrrrrrrrrrrrrrrrwwwwwwwwwwwwwwwwwww
+        * rrrrrwrrwrwrwrrwrrrwwwwwwwwrrrrwrrrwrwwrwrrrwrrwrrrrwwwwwwwrwrwwwwrwwrrrwrrr
+        * rrrwwwwwwwrrrrwwrrrrrrrrrrrrwrwrrrrwwwwwwwwwwwwwwrwrrrrwwwwrwrrrrwrwwwrrrwww
+        * rwwrrrrrrrwrrrrrrrrrrrrwwwwrrrwwwrwrrwwwwwwwwwwwwwwwwwwwwwrrrrrrrwwwwwwwrw
+        */
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/io_cancel.3.html">io_cancel</a></b>(3),   <b><a href="../man3/io_fsync.3.html">io_fsync</a></b>(3),   <b><a href="../man3/io_getevents.3.html">io_getevents</a></b>(3),  <b><a href="../man3/io_prep_fsync.3.html">io_prep_fsync</a></b>(3),  <b><a href="../man3/io_prep_pread.3.html">io_prep_pread</a></b>(3),  <b><a href="../man3/io_prep_pwrite.3.html">io_prep_pwrite</a></b>(3),
+       <b><a href="../man3/io_queue_init.3.html">io_queue_init</a></b>(3),    <b><a href="../man3/io_queue_release.3.html">io_queue_release</a></b>(3),    <b><a href="../man3/io_queue_run.3.html">io_queue_run</a></b>(3),    <b><a href="../man3/io_queue_wait.3.html">io_queue_wait</a></b>(3),    <b><a href="../man3/io_set_callback.3.html">io_set_callback</a></b>(3),
+       <b><a href="../man3/io_submit.3.html">io_submit</a></b>(3), <b><a href="../man3/errno.3.html">errno</a></b>(3).
+
+Linux                                              2019-07-23                                              <u><a href="../man3/io.3.html">io</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

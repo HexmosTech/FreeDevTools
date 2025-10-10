@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text::BibTeX::Structure - provides base classes for user structure modules</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtext-bibtex-perl">libtext-bibtex-perl_0.91-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Text::BibTeX::Structure - provides base classes for user structure modules
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          # Define a 'Foo' structure for BibTeX databases: first, the
+          # structure class:
+
+          package Text::BibTeX::FooStructure;
+          @ISA = ('Text::BibTeX::Structure');
+
+          sub known_option
+          {
+             my ($self, $option) = @_;
+
+             ...
+          }
+
+          sub default_option
+          {
+             my ($self, $option) = @_;
+
+             ...
+          }
+
+          sub describe_entry
+          {
+             my $self = shift;
+
+             $self-&gt;set_fields ($type,
+                                \@required_fields,
+                                \@optional_fields,
+                                [$constraint_1, $constraint_2, ...]);
+             ...
+          }
+
+          # Now, the structured entry class
+
+          package Text::BibTeX::FooEntry;
+          @ISA = ('Text::BibTeX::StructuredEntry');
+
+          # define whatever methods you like
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The module "Text::BibTeX::Structure" provides two classes that form the basis of the <b>btOOL</b> "structure
+       module" system.  This system is how database structures are defined and imposed on BibTeX files, and
+       provides an elegant synthesis of object-oriented techniques with BibTeX-style database structures.
+       Nothing described here is particularly deep or subtle; anyone familiar with object-oriented programming
+       should be able to follow it.  However, a fair bit of jargon in invented and tossed around, so pay
+       attention.
+
+       A <u>database</u> <u>structure</u>, in <b>btOOL</b> parlance, is just a set of allowed entry types and the rules for fields in
+       each of those entry types.  Currently, there are three kinds of rules that apply to fields: some fields
+       are <u>required</u>, meaning they must be present in every entry for a given type; some are <u>optional</u>, meaning
+       they may be present, and will be used if they are; other fields are members of <u>constraint</u> <u>sets</u>, which are
+       explained in "Field lists and constraint sets" below.
+
+       A <b>btOOL</b> structure is implemented with two classes: the <u>structure</u> <u>class</u> and the <u>structured</u> <u>entry</u> <u>class</u>.
+       The former defines everything that applies to the structure as a whole (allowed types and field rules).
+       The latter provides methods that operate on individual entries which conform (or are supposed to conform)
+       to the structure.  The two classes provided by the "Text::BibTeX::Structure" module are
+       "Text::BibTeX::Structure" and "Text::BibTeX::StructuredEntry"; these serve as base classes for,
+       respectively, all structure classes and all structured entry classes.  One canonical structure is
+       provided as an example with <b>btOOL</b>: the "Bib" structure, which (via the "BibStructure" and "BibEntry"
+       classes) provides the same functionality as the standard style files of BibTeX 0.99.  It is hoped that
+       other programmers will write new bibliography-related structures, possibly deriving from the "Bib"
+       structure, to emulate some of the functionality that is available through third-party BibTeX style files.
+
+       The purpose of this manual page is to describe the whole "structure module" system.  It is mainly for
+       programmers wishing to implement a new database structure for data files with BibTeX syntax; if you are
+       interested in the particular rules for the BibTeX-emulating "Bib" structure, see Text::BibTeX::Bib.
+
+       Please note that the "Text::BibTeX" prefix is dropped from most module and class names in this manual
+       page, except where necessary.
+
+</pre><h4><b>STRUCTURE</b> <b>CLASSES</b></h4><pre>
+       Structure classes have two roles: to define the list of allowed types and field rules, and to handle
+       <u>structure</u> <u>options</u>.
+
+   <b>Field</b> <b>lists</b> <b>and</b> <b>constraint</b> <b>sets</b>
+       Field lists and constraint sets define the database structure for a particular entry type: that is, they
+       specify the rules which an entry must follow to conform to the structure (assuming that entry is of an
+       allowed type).  There are three components to the field rules for each entry type: a list of required
+       fields, a list of optional fields, and <u>field</u> <u>constraints</u>.  Required and optional fields should be obvious
+       to anyone with BibTeX experience: all required fields must be present, and any optional fields that are
+       present have some meaning to the structure.  (One could conceive of a "strict" interpretation, where any
+       field not mentioned in the official definition is disallowed; this would be contrary to the open spirit
+       of BibTeX databases, but could be useful in certain applications where a stricter level of control is
+       desired.  Currently, <b>btOOL</b> does not offer such an option.)
+
+       Field constraints capture the "one or the other, but not both" type of relationships present for some
+       entry types in the BibTeX standard style files.  Most BibTeX documentation glosses over the distinction
+       between mutually constrained fields and required/optional fields.  For instance, one of the standard
+       entry types is "book", and ""author" or "editor"" is given in the list of required fields for that type.
+       The meaning of this is that an entry of type "book" must have <u>either</u> the "author" or "editor" fields, but
+       not both.  Likewise, the ""volume" or "number"" are listed under the "optional fields" heading for "book"
+       entries; it would be more accurate to say that every "book" entry may have one or the other, or neither,
+       of "volume" or "number"---but not both.
+
+       <b>btOOL</b> attempts to clarify this situation by creating a third category of fields, those that are mutually
+       constrained.  For instance, neither "author" nor "editor" appears in the list of required fields for the
+       "inbook" type according to <b>btOOL</b>; rather, a field constraint is created to express this relationship:
+
+          [1, 1, ['author', 'editor']]
+
+       That is, a field constraint is a reference to a three-element list.  The last element is a reference to
+       the <u>constraint</u> <u>set</u>, the list of fields to which the constraint applies.  (Calling this a set is a bit
+       inaccurate, as there are conditions in which the order of fields matters---see the
+       "check_field_constraints" method in "METHODS 2: BASE STRUCTURED ENTRY CLASS".)  The first two elements
+       are the minimum and maximum number of fields from the constraint set that must be present for an entry to
+       conform to the constraint.  This constraint thus expresses that there must be exactly one (&gt;= 1 and &lt;= 1)
+       of the fields "author" and "editor" in a "book" entry.
+
+       The "either one or neither, but not both" constraint that applies to the "volume" and "number" fields for
+       "book" entries is expressed slightly differently:
+
+          [0, 1, ['volume', 'number']]
+
+       That is, either 0 or 1, but not the full 2, of "volume" and "number" may be present.
+
+       It is important to note that checking and enforcing field constraints is based purely on counting which
+       fields from a set are actually present; this mechanism can't capture "x must be present if y is"
+       relationships.
+
+       The requirements imposed on the actual structure class are simple: it must provide a method
+       "describe_entry" which sets up a fancy data structure describing the allowed entry types and all the
+       field rules for those types.  The "Structure" class provides methods (inherited by a particular structure
+       class) to help particular structure classes create this data structure in a consistent, controlled way.
+       For instance, the "describe_structure" method in the BibTeX 0.99-emulating "BibStructure" class is quite
+       simple:
+
+          sub describe_entry
+          {
+             my $self = shift;
+
+             # series of 13 calls to $self-&gt;set_fields (one for each standard
+             # entry type)
+          }
+
+       One of those calls to the "set_fields" method defines the rules for "book" entries:
+
+          $self-&gt;set_fields ('book',
+                             [qw(title publisher year)],
+                             [qw(series address edition month note)],
+                             [1, 1, [qw(author editor)]],
+                             [0, 1, [qw(volume number)]]);
+
+       The first field list is the list of required fields, and the second is the list of optional fields.  Any
+       number of field constraints may follow the list of optional fields; in this case, there are two, one for
+       each of the constraints ("author"/"editor" and "volume"/"number") described above.  At no point is a list
+       of allowed types explicitly supplied; rather, each call to "set_fields" adds one more allowed type.
+
+       New structure modules that derive from existing ones will probably use the "add_fields" method (and
+       possibly "add_constraints") to augment an existing entry type.  Adding new types should be done with
+       "set_fields", though.
+
+   <b>Structure</b> <b>options</b>
+       The other responsibility of structure classes is to handle <u>structure</u> <u>options</u>.  These are scalar values
+       that let the user customize the behaviour of both the structure class and the structured entry class.
+       For instance, one could have an option to enable "extended structure", which might add on a bunch of new
+       entry types and new fields.  (In this case, the "describe_entry" method would have to pay attention to
+       this option and modify its behaviour accordingly.)  Or, one could have options to control how the
+       structured entry class sorts or formats entries (for bibliography structures such as "Bib").
+
+       The easy way to handle structure options is to provide two methods, "known_option" and "default_option".
+       These return, respectively, whether a given option is supported, and what its default value is.  (If your
+       structure doesn't support any options, you can just inherit these methods from the "Structure" class.
+       The default "known_option" returns false for all options, and its companion "default_option" crashes with
+       an "unknown option" error.)
+
+       Once "known_option" and "default_option" are provided, the structure class can sit back and inherit the
+       more visible "set_options" and "get_options" methods from the "Structure" class.  These are the methods
+       actually used to modify/query options, and will be used by application programs to customize the
+       structure module's behaviour, and by the structure module itself to pay attention to the user's wishes.
+
+       Options should generally have pure string values, so that the generic set_options method doesn't have to
+       parse user-supplied strings into some complicated structure.  However, "set_options" will take any scalar
+       value, so if the structure module clearly documents its requirements, the application program could
+       supply a structure that meets its needs.  Keep in mind that this requires cooperation between the
+       application and the structure module; the intermediary code in "Text::BibTeX::Structure" knows nothing
+       about the format or syntax of your structure's options, and whatever scalar the application passes via
+       "set_options" will be stored for your module to retrieve via "get_options".
+
+       As an example, the "Bib" structure supports a number of "markup" options that allow applications to
+       control the markup language used for formatting bibliographic entries.  These options are naturally
+       paired, as formatting commands in markup languages generally have to be turned on and off.  The "Bib"
+       structure thus expects references to two-element lists for markup options; to specify LaTeX 2e-style
+       emphasis for book titles, an application such as "btformat" would set the "btitle_mkup" option as
+       follows:
+
+          $structure-&gt;set_options (btitle_mkup =&gt; ['\emph{', '}']);
+
+       Other options for other structures might have a more complicated structure, but it's up to the structure
+       class to document and enforce this.
+
+</pre><h4><b>STRUCTURED</b> <b>ENTRY</b> <b>CLASSES</b></h4><pre>
+       A <u>structured</u> <u>entry</u> <u>class</u> defines the behaviour of individual entries under the regime of a particular
+       database structure.  This is the <u>raison</u> <u>d'être</u> for any database structure: the structure class merely
+       lays out the rules for entries to conform to the structure, but the structured entry class provides the
+       methods that actually operate on individual entries.  Because this is completely open-ended, the
+       requirements of a structured entry class are much less rigid than for a structure class.  In fact, all of
+       the requirements of a structured entry class can be met simply by inheriting from
+       "Text::BibTeX::StructuredEntry", the other class provided by the "Text::BibTeX::Structure" module.  (For
+       the record, those requirements are: a structured entry class must provide the entry
+       parse/query/manipulate methods of the "Entry" class, and it must provide the "check", "coerce", and
+       "silently_coerce" methods of the "StructuredEntry" class.  Since "StructuredEntry" inherits from "Entry",
+       both of these requirements are met "for free" by structured entry classes that inherit from
+       "Text::BibTeX::StructuredEntry", so naturally this is the recommended course of action!)
+
+       There are deliberately no other methods required of structured entry classes.  A particular application
+       (eg. "btformat" for bibliography structures) will require certain methods, but it's up to the application
+       and the structure module to work out the requirements through documentation.
+
+</pre><h4><b>CLASS</b> <b>INTERACTIONS</b></h4><pre>
+       Imposing a database structure on your entries sets off a chain reaction of interactions between various
+       classes in the "Text::BibTeX" library that should be transparent when all goes well.  It could prove
+       confusing if things go wrong and you have to go wading through several levels of application program,
+       core "Text::BibTeX" classes, and some structure module.
+
+       The justification for this complicated behaviour is that it allows you to write programs that will use a
+       particular structured module without knowing the name of the structure when you write the program.  Thus,
+       the user can supply a database structure, and ultimately the entry objects you manipulate will be blessed
+       into a class supplied by the structure module.  A short example will illustrate this.
+
+       Typically, a "Text::BibTeX"-based program is based around a kernel of code like this:
+
+          $bibfile = Text::BibTeX::File-&gt;new("foo.bib");
+          while ($entry = Text::BibTeX::Entry-&gt;new($bibfile))
+          {
+             # process $entry
+          }
+
+       In this case, nothing fancy is happening behind the scenes: the $bibfile object is blessed into the
+       "Text::BibTeX::File" class, and $entry is blessed into "Text::BibTeX::Entry".  This is the conventional
+       behaviour of Perl classes, but it is not the only possible behaviour.  Let us now suppose that $bibfile
+       is expected to conform to a database structure specified by $structure (presumably a user-supplied value,
+       and thus unknown at compile-time):
+
+          $bibfile = Text::BibTeX::File-&gt;new("foo.bib");
+          $bibfile-&gt;set_structure ($structure);
+          while ($entry = Text::BibTeX::Entry-&gt;new($bibfile))
+          {
+             # process $entry
+          }
+
+       A lot happens behind the scenes with the call to $bibfile's "set_structure" method.  First, a new
+       structure object is created from $structure.  The structure name implies the name of a Perl module---the
+       structure module---which is "require"'d by the "Structure" constructor.  (The main consequence of this is
+       that any compile-time errors in your structure module will not be revealed until a
+       "Text::BibTeX::File::set_structure" or "Text::BibTeX::Structure::new" call attempts to load it.)
+
+       Recall that the first responsibility of a structure module is to define a structure class.  The
+       "structure object" created by the "set_structure" method call is actually an object of this class; this
+       is the first bit of trickery---the structure object (buried behind the scenes) is blessed into a class
+       whose name is not known until run-time.
+
+       Now, the behaviour of the "Text::BibTeX::Entry::new" constructor changes subtly: rather than returning an
+       object blessed into the "Text::BibTeX::Entry" class as you might expect from the code, the object is
+       blessed into the structured entry class associated with $structure.
+
+       For example, if the value of $structure is "Foo", that means the user has supplied a module implementing
+       the "Foo" structure.  (Ordinarily, this module would be called "Text::BibTeX::Foo"---but you can
+       customize this.)  Calling the "set_structure" method on $bibfile will attempt to create a new structure
+       object via the "Text::BibTeX::Structure" constructor, which loads the structure module
+       "Text::BibTeX::Foo".  Once this module is successfully loaded, the new object is blessed into its
+       structure class, which will presumably be called "Text::BibTeX::FooStructure" (again, this is
+       customizable).  The new object is supplied with the user's structure options via the "set_options" method
+       (usually inherited), and then it is asked to describe the actual entry layout by calling its
+       "describe_entry" method.  This, in turn, will usually call the inherited "set_fields" method for each
+       entry type in the database structure.  When the "Structure" constructor is finished, the new structure
+       object is stored in the "File" object (remember, we started all this by calling "set_structure" on a
+       "File" object) for future reference.
+
+       Then, when a new "Entry" object is created and parsed from that particular "File" object, some more
+       trickery happens.  Trivially, the structure object stored in the "File" object is also stored in the
+       "Entry" object.  (The idea is that entries could belong to a database structure independently of any
+       file, but usually they will just get the structure that was assigned to their database file.)  More
+       importantly, the new "Entry" object is re-blessed into the structured entry class supplied by the
+       structure module---presumably, in this case, "Text::BibTeX::FooEntry" (also customizable).
+
+       Once all this sleight-of-hand is accomplished, the application may treat its entry objects as objects of
+       the structured entry class for the "Foo" structure---they may call the check/coerce methods inherited
+       from "Text::BibTeX::StructuredEntry", and they may also call any methods specific to entries for this
+       particular database structure.  What these methods might be is up to the structure implementor to decide
+       and document; thus, applications may be specific to one particular database structure, or they may work
+       on all structures that supply certain methods.  The choice is up to the application developer, and the
+       range of options open to him depends on which methods structure implementors provide.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       For example code, please refer to the source of the "Bib" module and the "btcheck", "btsort", and
+       "btformat" applications supplied with "Text::BibTeX".
+
+</pre><h4><b>METHODS</b> <b>1:</b> <b>BASE</b> <b>STRUCTURE</b> <b>CLASS</b></h4><pre>
+       The first class provided by the "Text::BibTeX::Structure" module is "Text::BibTeX::Structure".  This
+       class is intended to provide methods that will be inherited by user-supplied structure classes; such
+       classes should not override any of the methods described here (except "known_option" and
+       "default_option") without very good reason.  Furthermore, overriding the "new" method would be useless,
+       because in general applications won't know the name of your structure class---they can only call
+       "Text::BibTeX::Structure::new" (usually via "Text::BibTeX::File::set_structure").
+
+       Finally, there are three methods that structure classes should implement: "known_option",
+       "default_option", and "describe_entry".  The first two are described in "Structure options" above, the
+       latter in "Field lists and constraint sets".  Note that "describe_entry" depends heavily on the
+       "set_fields", "add_fields", and "add_constraints" methods described here.
+
+   <b>Constructor/simple</b> <b>query</b> <b>methods</b>
+       new (STRUCTURE, [OPTION =&gt; VALUE, ...])
+           Constructs  a  new  structure  object---<u>not</u>  a "Text::BibTeX::Structure" object, but rather an object
+           blessed into the structure class associated with STRUCTURE.  More precisely:
+
+           •   Loads (with "require") the module implementing STRUCTURE.  In the absence of  other  information,
+               the  module  name  is  derived  by  appending  STRUCTURE  to  "Text::BibTeX::"---thus, the module
+               "Text::BibTeX::Bib" implements the "Bib" structure.  Use the pseudo-option "module"  to  override
+               this module name.  For instance, if the structure "Foo" is implemented by the module "Foo":
+
+                  $structure = Text::BibTeX::Structure-&gt;new
+                     ('Foo', module =&gt; 'Foo');
+
+               This method "die"s if there are any errors loading/compiling the structure module.
+
+           •   Verifies  that the structure module provides a structure class and a structured entry class.  The
+               structure class is named by appending "Structure" to the name of the module, and  the  structured
+               entry  class  by appending "Entry".  Thus, in the absence of a "module" option, these two classes
+               (for    the    "Bib"    structure)    would    be    named    "Text::BibTeX::BibStructure"    and
+               "Text::BibTeX::BibEntry".   Either or both of the default class names may be overridden by having
+               the structure module return a reference to a hash (as opposed to the traditional  1  returned  by
+               modules).   This  hash could then supply a "structure_class" element to name the structure class,
+               and an "entry_class" element to name the structured entry class.
+
+               Apart from ensuring that the two  classes  actually  exist,  "new"  verifies  that  they  inherit
+               correctly  (from "Text::BibTeX::Structure" and "Text::BibTeX::StructuredEntry" respectively), and
+               that  the  structure  class  provides  the   required   "known_option",   "default_option",   and
+               "describe_entry" methods.
+
+           •   Creates  the  new  structure  object,  and blesses it into the structure class.  Supplies it with
+               options  by  passing  all  (OPTION,  VALUE)  pairs  to  its  "set_options"  method.   Calls   its
+               "describe_entry"  method, which should list the field requirements for all entry types recognized
+               by this structure.  "describe_entry" will most likely  use  some  or  all  of  the  "set_fields",
+               "add_fields", and "add_constraints" methods---described below---for this.
+
+       name ()
+           Returns the name of the structure described by the object.
+
+       entry_class ()
+           Returns the name of the structured entry class associated with this structure.
+
+   <b>Field</b> <b>structure</b> <b>description</b> <b>methods</b>
+       add_constraints (TYPE, CONSTRAINT, ...)
+           Adds  one or more field constraints to the structure.  A field constraint is specified as a reference
+           to a three-element list; the last element is a reference to the list  of  fields  affected,  and  the
+           first two elements are the minimum and maximum number of fields from the constraint set allowed in an
+           entry  of  type  TYPE.   See  "Field  lists  and  constraint  sets"  for  a full explanation of field
+           constraints.
+
+       add_fields (TYPE, REQUIRED [, OPTIONAL [, CONSTRAINT, ...]])
+           Adds fields to the required/optional lists for entries of type TYPE.  Can also add field constraints,
+           but you can just as easily use "add_constraints" for that.
+
+           REQUIRED and OPTIONAL, if defined, should be references to lists of fields to add to  the  respective
+           field lists.  The CONSTRAINTs, if given, are exactly as described for "add_constraints" above.
+
+       set_fields (TYPE, REQUIRED [, OPTIONAL [, CONSTRAINTS, ...]])
+           Sets  the  lists  of  required/optional  fields for entries of type TYPE.  Identical to "add_fields",
+           except that the field lists and list of constraints are set from  scratch  here,  rather  than  being
+           added to.
+
+   <b>Field</b> <b>structure</b> <b>query</b> <b>methods</b>
+       types ()
+           Returns the list of entry types supported by the structure.
+
+       known_type (TYPE)
+           Returns true if TYPE is a supported entry type.
+
+       known_field (TYPE, FIELD)
+           Returns  true  if  FIELD  is  in  the required list, optional list, or one of the constraint sets for
+           entries of type TYPE.
+
+       required_fields (TYPE)
+           Returns the list of required fields for entries of type TYPE.
+
+       optional_fields ()
+           Returns the list of optional fields for entries of type TYPE.
+
+       field_constraints ()
+           Returns the list of field constraints (in the format supplied to "add_constraints")  for  entries  of
+           type TYPE.
+
+   <b>Option</b> <b>methods</b>
+       known_option (OPTION)
+           Returns  false.   This  is  mainly for the use of derived structures that don't have any options, and
+           thus don't need to provide their own "known_option" method.  Structures that actually  offer  options
+           should override this method; it should return true if OPTION is a supported option.
+
+       default_option (OPTION)
+           Crashes with an "unknown option" message.  Again, this is mainly for use by derived structure classes
+           that  don't  actually offer any options.  Structures that handle options should override this method;
+           every option handled by "known_option" should have a default value (which might just be "undef") that
+           is returned by "default_option".  Your "default_options" method should crash on  an  unknown  option,
+           perhaps  by  calling  "SUPER::default_option"  (in  order  to ensure consistent error messages).  For
+           example:
+
+              sub default_option
+              {
+                 my ($self, $option) = @_;
+                 return $default_options{$option}
+                    if exists $default_options{$option};
+                 $self-&gt;SUPER::default_option ($option);   # crash
+              }
+
+           The default value for an option  is  returned  by  "get_options"  when  that  options  has  not  been
+           explicitly set with "set_options".
+
+       set_options (OPTION =&gt; VALUE, ...)
+           Sets one or more option values.  (You can supply as many "OPTION =&gt; VALUE" pairs as you like, just so
+           long  as there are an even number of arguments.)  Each OPTION must be handled by the structure module
+           (as indicated by the "known_option" method); if not "set_options" will "croak".  Each  VALUE  may  be
+           any scalar value; it's up to the structure module to validate them.
+
+       get_options (OPTION, ...)
+           Returns  the value(s) of one or more options.  Any OPTION that has not been set by "set_options" will
+           return its default value, fetched using the "default_value" method.  If OPTION is  not  supported  by
+           the  structure  module,  then  your  program  either  already  crashed  (when it tried to set it with
+           "set_option"), or it will crash here (thanks to calling "default_option").
+
+</pre><h4><b>METHODS</b> <b>2:</b> <b>BASE</b> <b>STRUCTURED</b> <b>ENTRY</b> <b>CLASS</b></h4><pre>
+       The other class provided by  the  "Structure"  module  is  "StructuredEntry",  the  base  class  for  all
+       structured  entry  classes.   This  class  inherits  from "Entry", so all of its entry query/manipulation
+       methods are available.  "StructuredEntry" adds methods  for  checking  that  an  entry  conforms  to  the
+       database structure defined by a structure class.
+
+       It  only  makes sense for "StructuredEntry" to be used as a base class; you would never create standalone
+       "StructuredEntry" objects.  The superficial reason for this  is  that  only  particular  structured-entry
+       classes  have  an  actual structure class associated with them, "StructuredEntry" on its own doesn't have
+       any information about allowed types, required fields,  field  constraints,  and  so  on.   For  a  deeper
+       understanding, consult "CLASS INTERACTIONS" above.
+
+       Since  "StructuredEntry"  derives  from  "Entry",  it  naturally  operates on BibTeX entries.  Hence, the
+       following descriptions refer to "the entry"---this is just the object (entry) being  operated  on.   Note
+       that  these  methods  are  presented  in  bottom-up order, meaning that the methods you're most likely to
+       actually use---"check", "coerce", and "silently_coerce" are at the bottom.  On a  first  reading,  you'll
+       probably want to skip down to them for a quick summary.
+
+       structure ()
+           Returns  the  object that defines the structure the entry to which is supposed to conform.  This will
+           be an instantiation of some structure class, and exists mainly so the check/coerce methods can  query
+           the  structure about the types and fields it recognizes.  If, for some reason, you wanted to query an
+           entry's structure about the validity of type "foo", you might do this:
+
+              # assume $entry is an object of some structured entry class, i.e.
+              # it inherits from Text::BibTeX::StructuredEntry
+              $structure = $entry-&gt;structure;
+              $foo_known = $structure-&gt;known_type ('foo');
+
+       check_type ([WARN])
+           Returns true if the entry has a valid type according to its structure.  If  WARN  is  true,  then  an
+           invalid type results in a warning being printed.
+
+       check_required_fields ([WARN [, COERCE]])
+           Checks that all required fields are present in the entry.  If WARN is true, then a warning is printed
+           for every missing field.  If COERCE is true, then missing fields are set to the empty string.
+
+           This isn't generally used by other code; see the "check" and "coerce" methods below.
+
+       check_field_constraints ([WARN [, COERCE]])
+           Checks that the entry conforms to all of the field constraints imposed by its structure.  Recall that
+           a  field  constraint  consists  of a list of fields, and a minimum and maximum number of those fields
+           that must be present in an entry.  For each constraint, "check_field_constraints" simply  counts  how
+           many  fields  in  the  constraint's  field set are present.  If this count falls below the minimum or
+           above the maximum for that constraint and WARN is true,  a  warning  is  issued.   In  general,  this
+           warning  is  of  the  form  "between  x and y of fields foo, bar, and baz must be present".  The more
+           common cases are handled specially to generate more useful and human-friendly warning messages.
+
+           If COERCE is true, then  the  entry  is  modified  to  force  it  into  conformance  with  all  field
+           constraints.   How  this  is  done  depends on whether the violation is a matter of not enough fields
+           present in the entry, or of too many fields present.  In the former  case,  just  enough  fields  are
+           added  (as  empty strings) to meet the requirements of the constraint; in the latter case, fields are
+           deleted.  Which fields to add or delete is controlled by the order  of  fields  in  the  constraint's
+           field list.
+
+           An  example  should  clarify  this.   For instance, a field constraint specifying that exactly one of
+           "author" or "editor" must appear in an entry would look like this:
+
+              [1, 1, ['author', 'editor']]
+
+           Suppose the following entry is parsed and expected to conform to this structure:
+
+              @inbook{unknown:1997a,
+                title = "An Unattributed Book Chapter",
+                booktitle = "An Unedited Book",
+                publisher = "Foo, Bar \&amp; Company",
+                year = 1997
+              }
+
+           If "check_field_constraints" is called on this method with COERCE true (which is done by any  of  the
+           "full_check",  "coerce",  and "silently_coerce" methods), then the "author" field is set to the empty
+           string.  (We go through the list of fields in the constraint's field set in order --  since  "author"
+           is  the  first  missing  field,  we  supply  it;  with  that  done,  the  entry  now  conforms to the
+           "author"/"editor" constraint, so we're done.)
+
+           However, if the same structure was applied to this entry:
+
+              @inbook{smith:1997a,
+                author = "John Smith",
+                editor = "Fred Jones",
+                ...
+              }
+
+           then the "editor" field would be deleted.  In this case, we allow the first field in the constraint's
+           field list---"author".  Since only one field from the set may be present, all fields after the  first
+           one are in violation, so they are deleted.
+
+           Again,  this  method isn't generally used by other code; rather, it is called by "full_check" and its
+           friends below.
+
+       full_check ([WARN [, COERCE]])
+           Returns true if an entry's  type  and  fields  are  all  valid.   That  is,  it  calls  "check_type",
+           "check_required_fields",  and  "check_field_constraints";  if  all  of them return true, then so does
+           "full_check".  WARN and COERCE are simply passed  on  to  the  three  "check_*"  methods:  the  first
+           controls the printing of warnings, and the second decides whether we should modify the entry to force
+           it into conformance.
+
+       check ()
+           Checks  that  the  entry  conforms to the requirements of its associated database structure: the type
+           must be known, all required fields must be present, and all  field  constraints  must  be  met.   See
+           "check_type", "check_required_fields", and "check_field_constraints" for details.
+
+           Calling "check" is the same as calling "full_check" with WARN true and COERCE false.
+
+       coerce ()
+           Same  as  "check", except entries are coerced into conformance with the database structure---that is,
+           it's just like "full_check" with both WARN and COERCE true.
+
+       silently_coerce ()
+           Same as "coerce", except warnings aren't printed---that is, it's just  like  "full_check"  with  WARN
+           false and COERCE true.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Text::BibTeX, Text::BibTeX::Entry, Text::BibTeX::File
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Greg Ward &lt;<a href="mailto:gward@python.net">gward@python.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  (c) 1997-2000 by Gregory P. Ward.  All rights reserved.  This file is part of the Text::BibTeX
+       library.  This library is free software; you may redistribute it and/or modify it under the same terms as
+       Perl itself.
+
+perl v5.40.0                                       2025-01-31                       <u>Text::BibTeX::<a href="../man3pm/Structure.3pm.html">Structure</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

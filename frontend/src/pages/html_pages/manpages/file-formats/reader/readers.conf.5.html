@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>readers.conf - Access control and configuration for nnrpd</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/inn2">inn2_2.7.3-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       readers.conf - Access control and configuration for nnrpd
+
+</pre><h4><b>IN</b> <b>A</b> <b>NUTSHELL</b></h4><pre>
+       The <u>readers.conf</u> file parameters who is allowed to connect as a news reader and what they're allowed to
+       do after they connect.  Bear in mind that in <u>readers.conf</u>, authentication and authorization are
+       configured in different blocks.  First, a user is authenticated, and assigned an identity (in an "auth"
+       block).  Then this identity is authorized to access certain newsgroups with certain rights (in an
+       "access" block).
+
+       As for authentication, your "auth" block for password users could look like this:
+
+           auth "foreignokay" {
+               auth: "ckpasswd -f &lt;pathdb in inn.conf&gt;/newsusers"
+               default: "&lt;unauthenticated&gt;"
+           }
+
+       See the documentation of the <b>-f</b> flag in the <a href="../man8/ckpasswd.8.html">ckpasswd</a>(8) man page for how to generate passwords and make
+       use of this <u>newsusers</u> file.
+
+       This way, with the "foreignokay" authentication block, a user successfully authenticated as user
+       "myusername" will be assigned the identity "myusername".  If authentication fails, it will be assigned
+       the default identity "&lt;unauthenticated&gt;" that will later be checked in "access" blocks.
+
+       Authentication blocks are checked from the last one in the <u>readers.conf</u> file to the first one (bottom
+       up).  As soon as one matches, the corresponding identity is assigned to the user.
+
+       As for authorization, let's do something in an "access" block for people successfully authenticated with
+       passwords:
+
+           access "authenticatedpeople" {
+               users: "*"
+               newsgroups: "*,!junk,!control,!control.*"
+           }
+
+       And then something like one of the following two, depending on whether unauthenticated users get any
+       access:
+
+           access "restrictive" {
+               users: "&lt;unauthenticated&gt;"
+               newsgroups: "!*"
+           }
+
+           access "readonly" {
+               users: "&lt;unauthenticated&gt;"
+               read: "local.*"
+               post: "!*"
+           }
+
+       Please note that the "authenticatedpeople" block must appear in <u>readers.conf</u> before "restrictive" or
+       "readonly" blocks because access blocks are checked from the last one in the <u>readers.conf</u> file to the
+       first one (bottom up).  As soon as one matches the identity previously assigned by an authentication
+       block, it is chosen.  The "authenticatedpeople" access block matches every user that has not been
+       assigned "&lt;unauthenticated&gt;" as identity.
+
+       More examples and features are detailed below in this man page (notably without any password file, with
+       PAM, with Perl or Python hooks).
+
+       You don't need to reload anything after modifying <u>readers.conf</u>; every time a news client connects to the
+       server, a new <b>nnrpd</b> process is spawned and reads its configuration from disk.  Nonetheless, after any
+       changes, you can run "inncheck" to perform basic syntax checks against the modified <u>readers.conf</u> file.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>readers.conf</u> in <u>pathetc</u> specifies access control for <a href="../man8/nnrpd.8.html">nnrpd</a>(8).  It controls who is allowed to connect as
+       a news reader and what they're allowed to do after they connect.  <b>nnrpd</b> reads this file every time a news
+       client connects to the server, even when running in daemon mode with <b>-D</b>, which means that any changes on
+       this file take effect immediately on all subsequent connections.  (The location of <u>readers.conf</u> in
+       <u>pathetc</u> is only the default; the same format applies to any file specified with "nnrpd -c".)
+
+       There are two types of entries in <u>readers.conf</u>: parameter/value pairs and configuration groups.  Blank
+       lines and anything after a number sign ("#") are ignored, unless the character "#" is escaped with "\".
+       The maximum number of characters on each line is 8,191.
+
+       Parameter/value pairs consist of a keyword immediately followed by a colon, at least one whitespace
+       character, and a value.  The case of the parameter is significant (parameter should generally be in all
+       lowercase), and a parameter may contain any characters except colon, "#", and whitespace.  An example:
+
+           hosts: *.example.com
+
+       Values that contain whitespace should be quoted with double quotes, as in:
+
+           hosts: "*.example.com, *.example.net"
+
+       If the parameter does not contain whitespace, such as:
+
+           hosts: *.example.com,*.example.net
+
+       it's not necessary to quote it, although you may wish to anyway for clarity.
+
+       There is no way to continue a line on the next line, and therefore no way to have a single parameter with
+       a value longer than about 8,180 characters.
+
+       Many parameters take a boolean value.  For all such parameters, the value may be specified as "true",
+       "yes", or "on" to turn it on and may be any of "false", "no", or "off" to turn it off.  The case of these
+       values is not significant.
+
+       There are two basic types of configuration groups: auth and access.  The auth group provides mechanisms
+       to establish the identity of the user, who they are.  The access group determines, given the user's
+       identity, what that user is permitted to do.  Writing a <u>readers.conf</u> file for your setup is a two-step
+       process: first assigning an identity to each incoming connection using auth groups, and then giving each
+       identity appropriate privileges with access group.  We recommend <u>not</u> intermingling auth groups and access
+       groups in the config file; it is often more sensible (in the absence of the <u>key</u> parameter) to put all of
+       the auth groups first, and all of the access groups below.
+
+       A user identity, as established by an auth group, looks like an e-mail address if a domain is specified
+       (like "&lt;username&gt;@&lt;domain&gt;") or otherwise just "&lt;username&gt;".
+
+       If <u>nnrpdauthsender</u> is set in <u>inn.conf</u>, the user identity is also put into the Sender header field of
+       posts made by that user.  See the documentation of that option in <a href="../man5/inn.conf.5.html">inn.conf</a>(5) for more details.
+
+       An auth group definition looks like:
+
+           auth &lt;name&gt; {
+               hosts: &lt;host-wildmat&gt;
+               auth: &lt;auth-program&gt;
+               res: &lt;res-program&gt;
+               default: &lt;defuser&gt;
+               default-domain: &lt;defdomain&gt;
+               # ...possibly other settings
+           }
+
+       The &lt;name&gt; is used as a label for the group and is only for documentation purposes.  (If your syslog
+       configuration records the "news.debug" facility, the &lt;name&gt; will appear in the debugging output of <b>nnrpd</b>.
+       Examining that output can be very helpful in understanding why your configuration doesn't do what you
+       expect it to.)
+
+       A given auth group applies only to hosts whose name or IP address matches the wildmat expression given
+       with the <u>hosts</u> parameter (comma-separated wildmat expressions are allowed, but "@" is not supported).
+       Rather than wildmat expressions, you may also use CIDR notation to match any IP address in a netblock;
+       for example, "10.10.10.0/24" will match any IP address between 10.10.10.0 and 10.10.10.255 inclusive.
+
+       If compiled against the TLS/SSL or SASL libraries, an auth group with the <u>require_encryption</u> parameter
+       set to true only applies if the incoming connection is using an encryption layer, either from the
+       beginning if the <b>-S</b> flag was passed to <b>nnrpd</b>, or after a successful use of STARTTLS, or after a
+       successful authentication using an SASL mechanism which negotiates an encryption layer.
+
+       For any connection from a host that matches that wildmat expression or netblock, each &lt;res-program&gt;
+       (multiple <u>res</u> lines may be present in a block; they are run in sequence until one succeeds), if any, is
+       run to determine the identity of the user just from the connection information.  If all the resolvers
+       fail, or if the <u>res</u> parameter isn't present, the user is assigned an identity of "&lt;defuser&gt;@&lt;defdomain&gt;";
+       in other words, the values of the <u>default</u> and <u>default-domain</u> parameters are used.  If &lt;res-program&gt; only
+       returns a username, &lt;defdomain&gt; is used as the domain.
+
+       If the user later authenticates via the AUTHINFO USER/PASS commands, the provided username and password
+       are passed to each &lt;auth-program&gt; (multiple <u>auth</u>, <u>perl_auth</u>, or <u>python_auth</u> lines may be present in a
+       block; they are run in sequence until one succeeds), if any.  If one succeeds and returns a different
+       identity than the one assigned at the time of the connection, it is matched against the available access
+       groups again and the actions the user is authorized to do may change.  The most common &lt;auth-program&gt; to
+       use is <b>ckpasswd</b>, which supports several ways of checking passwords including using PAM.  See the
+       <a href="../man8/ckpasswd.8.html">ckpasswd</a>(8) man page for more details.
+
+       When matching auth groups, the last auth group in the file that matches a given connection and
+       username/password combination is used.
+
+       An access group definition usually looks like:
+
+           access &lt;name&gt; {
+               users: &lt;identity-wildmat&gt;
+               newsgroups: &lt;group-wildmat&gt;
+               # ...possibly other settings
+           }
+
+       Again, &lt;name&gt; is just for documentation purposes.  This says that all users whose identity matches
+       &lt;identity-wildmat&gt; can read and post to all newsgroups matching &lt;group-wildmat&gt; (as before, comma-
+       separated wildmat expressions are allowed, but "@" is not supported).  Alternately, you can use the form:
+
+           access &lt;name&gt; {
+               users: &lt;identity-wildmat&gt;
+               read: &lt;read-wildmat&gt;
+               post: &lt;post-wildmat&gt;
+           }
+
+       and matching users will be able to read any group that matches &lt;read-wildmat&gt; and post to any group that
+       matches &lt;post-wildmat&gt;.  You can also set several other things in the access group as well as override
+       various <a href="../man5/inn.conf.5.html">inn.conf</a>(5) parameters for just a particular group of users.
+
+       Just like with auth groups, when matching access groups the last matching one in the file is used to
+       determine the user's permissions.  There is an exception to this rule: if the auth group which matched
+       the client contains a <u>perl_access</u> or <u>python_access</u> parameter, then the script given as argument is used
+       to dynamically generate an access group.  This new access group is then used to determine the access
+       rights of the client; the access groups in the file are ignored.
+
+       There is one additional special case to be aware of.  When forming particularly complex authentication
+       and authorization rules, it is sometimes useful for the identities provided by a given auth group to only
+       apply to particular access groups; in other words, rather than checking the identity against the <u>users</u>
+       parameter of every access group, it's checked against the <u>users</u> parameter of only some specific access
+       groups.  This is done with the <u>key</u> parameter.  For example:
+
+           auth example {
+               key: special
+               hosts: *.example.com
+               default: &lt;SPECIAL&gt;
+           }
+
+           access example {
+               key: special
+               users: &lt;SPECIAL&gt;
+               newsgroups: *
+               addcanlockuser: none
+           }
+
+       In this case, the two <u>key</u> parameters bind this auth group with this access group.  For any incoming
+       connection matching "*.example.com" (assuming there isn't any later auth group that also matches such
+       hosts), no access group that doesn't have "key: special" will even be considered.  Similarly, the above
+       access group will only be checked if the user was authenticated with an auth group containing "key:
+       special".  This mechanism normally isn't useful; there is almost always a better way to achieve the same
+       result.
+
+       Also note in the example that there's no <u>default-domain</u> parameter, which means that no domain is appended
+       to the default username and the identity for such connections is just "&lt;SPECIAL&gt;".  Note that some
+       additional add-ons to INN may prefer that authenticated identities always return a full e-mail address
+       (including a domain), so you may want to set up your system that way if you are using add-ons.  As
+       several different persons can be assigned the same "&lt;SPECIAL&gt;" identity, no user-specific Cancel-Lock
+       hashes should be generated.
+
+       Configuration files can be included in other configuration files via the syntax:
+
+           include &lt;filename&gt;
+
+       The file named &lt;filename&gt; is then included.  This syntax is allowed only at top-level.
+
+       Below is the full list of allowable parameters for auth groups and access groups, and after that are some
+       examples that may make this somewhat clearer.
+
+</pre><h4><b>AUTH</b> <b>GROUP</b> <b>PARAMETERS</b></h4><pre>
+       An auth group without at least one of the <u>res</u>, <u>auth</u>, <u>perl_auth</u>, <u>python_auth</u>, or <u>default</u> parameters makes
+       no sense (and in practice will just be ignored).
+
+       <u>auth</u>
+           A  simple  command line for a user authenticator (shell metacharacters are not supported).  If a full
+           path is not given, the program executed must be located in  the  <u>pathbin</u>/auth/passwd  directory.   An
+           authenticator is a program used to handle a user-supplied username and password, via a mechanism such
+           as AUTHINFO USER/PASS.  Like with <u>res</u>, one auth group can have multiple <u>auth</u> parameters; they will be
+           tried in order and the results of the first successful one will be used.  See also <u>perl_auth</u>.
+
+           The most common authenticator to use is <a href="../man8/ckpasswd.8.html">ckpasswd</a>(8); see its man page for more information.
+
+       <u>default</u>
+           The  default username for connections matching this auth group.  This is the username assigned to the
+           user at connection time if all resolvers fail or if there are no <u>res</u> parameters.  Note that it can be
+           either a bare username, in which case <u>default-domain</u> (if present) is appended after an "@", or a full
+           identity string containing an "@", in which case it will be used verbatim.
+
+       <u>default-domain</u>
+           The default domain string for this auth group.  If a user resolver or authenticator doesn't provide a
+           domain, or if the default username is used and it doesn't contain an "@", this domain is used to form
+           the user identity.  (Note that for a lot of setups, it's not really necessary for user identities  to
+           be qualified with a domain name, in which case there's no need to use this parameter.)
+
+       <u>hosts</u>
+           A  comma-separated  list of remote hosts, wildmat patterns matching either hostnames or IP addresses,
+           or IP netblocks specified in CIDR notation.  If a user connects from a host that doesn't  match  this
+           parameter, this auth group will not match the connection and is ignored.
+
+           Note  that if you have a large number of patterns that can't be merged into broader patterns (such as
+           a large number of individual systems scattered around the net that should  have  access),  the  <u>hosts</u>
+           parameter may exceed the maximum line length of 8,192 characters.  In that case, you'll need to break
+           that  auth  group  into  multiple  auth  groups, each with a portion of the hosts listed in its <u>hosts</u>
+           parameter, and each assigning the same user identity.
+
+           All hosts match if this parameter is not given.
+
+       <u>key</u> If this parameter is present, any connection matching  this  auth  group  will  have  its  privileges
+           determined only by the subset of access groups containing a matching key parameter.
+
+       <u>localaddress</u>
+           A comma-separated list of local host or address patterns with the same syntax as the <u>hosts</u> parameter.
+           If  this  parameter is specified, its auth group will only match connections made to a matching local
+           interface.  (Obviously, this is only useful for servers with multiple interfaces.)
+
+           All local addresses match if this parameter is not given.
+
+       <u>perl_access</u>
+           A path to a Perl script for dynamically generating  an  access  group.   If  an  auth  group  matches
+           successfully  and  contains  a  <u>perl_access</u>  parameter, then the argument Perl script will be used to
+           create an access group.  This group will then determine the access rights of the  client,  overriding
+           any  access  groups in <u>readers.conf</u>.  If and only if a successful auth group contains the <u>perl_access</u>
+           parameter, <u>readers.conf</u> access groups are ignored and the  client's  rights  are  instead  determined
+           dynamically.   This  parameter is only valid if INN is compiled with Perl support (<b>--with-perl</b> passed
+           to "configure").  More information may be found in the file <u>doc/hook-perl</u>.
+
+       <u>perl_auth</u>
+           A path to a Perl script for authentication.  The <u>perl_auth</u> parameter works exactly like <u>auth</u>,  except
+           that  it  calls the named script using the Perl hook rather than an external program.  Multiple/mixed
+           use of the <u>auth</u>, <u>perl_auth</u>, and <u>python_auth</u> parameters is permitted within any auth group; each  line
+           is  tried  in  the  order  it  appears.   <u>perl_auth</u>  has more power than <u>auth</u> in that it provides the
+           authentication program with additional information about the client and  the  ability  to  return  an
+           error  string  and  a  username.   This  parameter is only valid if INN is compiled with Perl support
+           (<b>--with-perl</b> passed to "configure").  More information may be found in <u>doc/hook-perl</u>.
+
+       <u>python_access</u>
+           A Python script for dynamically generating an access group.  If an auth  group  matches  successfully
+           and  contains  a  <u>python_access</u>  parameter,  then  the  argument script (without its ".py" extension)
+           located in the <u>pathfilter</u> directory will be used to create an access group.   This  group  will  then
+           determine the access rights of the client, overriding any access groups in <u>readers.conf</u>.
+
+           If  and  only  if  a  successful auth group contains the <u>python_access</u> parameter, <u>readers.conf</u> access
+           groups are ignored and the client's rights are instead determined dynamically.
+
+           This parameter is only valid if  INN  is  compiled  with  Python  support  (<b>--with-python</b>  passed  to
+           "configure").  More information may be found in the file <u>doc/hook-python</u>.
+
+       <u>python_auth</u>
+           A  Python  script for authentication.  The <u>python_auth</u> parameter works exactly like <u>auth</u>, except that
+           it calls the named script (without its ".py" extension) located in the <u>pathfilter</u> directory using the
+           Python hook rather than an  external  program.   Multiple/mixed  use  of  the  <u>auth</u>,  <u>perl_auth</u>,  and
+           <u>python_auth</u>  parameters  is  permitted  within  any  auth  group;  each line is tried in the order it
+           appears.  <u>python_auth</u> has more power than <u>auth</u> in that it provides the  authentication  program  with
+           additional information about the client and the ability to return an error string and a username.
+
+           This  parameter  is  only  valid  if  INN  is  compiled  with Python support (<b>--with-python</b> passed to
+           "configure").  More information may be found in <u>doc/hook-python</u>.
+
+       <u>python_dynamic</u>
+           A Python script for applying access control dynamically on a per newsgroup basis.  If an  auth  group
+           matches  successfully  and contains a <u>python_dynamic</u> parameter, then the argument script (without its
+           ".py" extension) located in the <u>pathfilter</u> directory will be used to  determine  the  clients  rights
+           each  time  the  user  attempts  to  view  a newsgroup, or read or post an article.  Access rights as
+           determined by <u>python_dynamic</u> override the values of access group parameters such as <u>newsgroups</u>,  <u>read</u>
+           and <u>post</u>.
+
+           This  parameter  is  only  valid  if  INN  is  compiled  with Python support (<b>--with-python</b> passed to
+           "configure").  More information may be found in the file <u>doc/hook-python</u>.
+
+       <u>require_encryption</u>
+           If set to true, an incoming connection only matches this auth group if it is encrypted,  either  from
+           the  beginning  if the <b>-S</b> flag was passed to <b>nnrpd</b>, or after a successful use of STARTTLS, or after a
+           successful authentication using  an  SASL  mechanism  which  negotiates  an  encrypted  layer.   This
+           parameter  is  only  valid if INN is compiled with TLS/SSL or SASL support (by default if the OpenSSL
+           SSL and crypto libraries or the Cyrus SASL library are found at configure  time,  otherwise  see  the
+           <b>--with-openssl</b> and <b>--with-sasl</b> flags passed to "configure").
+
+       <u>res</u> A  simple  command line for a user resolver (shell metacharacters are not supported).  If a full path
+           is not given, the program executed must be in the <u>pathbin</u>/auth/resolv directory.  A  resolver  is  an
+           authentication program which attempts to figure out the identity of the connecting user using nothing
+           but  the  connection information (in other words, the user has not provided a username and password).
+           An example of a resolver would be a program that assigns an identity from an ident callback  or  from
+           the user's hostname.
+
+           One  auth group can have multiple <u>res</u> parameters, and they will be tried in the order they're listed.
+           The results of the first successful one will be used.
+
+           Alternatively, a res block can be used instead of a <u>res</u> parameter.  The recognized parameters in such
+           res blocks are:
+
+           <u>log</u>
+             A string to log in <u>pathlog</u>/news.notice (with "res also-log:"  prepended)  before  the  resolver  is
+             tried.   One  res  group  can  have  multiple  <u>log</u> parameters, and they will be logged in the order
+             they're listed.
+
+           <u>program</u>
+             This parameter is mandatory in a res block.  Its meaning is the same  as  the  <u>res</u>  parameter  used
+             directly in an auth block.
+
+                 auth &lt;auth-name&gt; {
+                     res: &lt;res-program&gt;
+                 }
+
+             is therefore equivalent to:
+
+                 auth &lt;auth-name&gt; {
+                     res &lt;res-name&gt; {
+                         program: &lt;res-program&gt;
+                     }
+                 }
+
+</pre><h4><b>ACCESS</b> <b>GROUP</b> <b>PARAMETERS</b></h4><pre>
+       <u>access</u>
+           A  set  of letters specifying the permissions granted to the client.  The letters are chosen from the
+           following set:
+
+           A   The client may post articles with Approved header fields (in other words,  may  approve  articles
+               for moderated newsgroups).  By default, this is not allowed.
+
+           I   The  client may inject articles with IHAVE.  Note that in order to inject articles with the IHAVE
+               command, the user must also have POST permission (the "P" option).  Articles injected with  IHAVE
+               are  treated  as  though they were injected with POST, that is to say such articles must not have
+               been previously injected (they must not contain header fields like Injection-Info).
+
+           L   The client may post to newsgroups that are set to disallow local posting (status fields "j",  "n"
+               and "x" in the <a href="../man5/active.5.html">active</a>(5) file).
+
+           N   The client may use the NEWNEWS command, overriding the global setting.
+
+           P   The client may post articles.
+
+           R   The client may read articles.
+
+           Note  that  if  this parameter is given, <u>allownewnews</u> in <u>inn.conf</u> is ignored for connections matching
+           this access group and the ability of the client to use NEWNEWS is entirely determined by the presence
+           of "N" in the access string.  If you want to support NEWNEWS, make sure to include "N" in the  access
+           string when you use this parameter.
+
+           Note  that  if  this parameter is given and "R" isn't present in the access string, the client cannot
+           read regardless of <u>newsgroups</u> or <u>read</u> parameters.  Similarly, if this  parameter  is  given  and  "P"
+           isn't present, the client cannot post.  This use of <u>access</u> is deprecated and confusing; it's strongly
+           recommended that if the <u>access</u> parameter is used, "R" and "P" always be included in the access string
+           and  <u>newsgroups</u>,  <u>read</u>,  and  <u>post</u>  be  used to control access.  (To grant read access but no posting
+           access, one can have just a <u>read</u> parameter and no <u>post</u> parameter.)
+
+       <u>addcanlockuser</u>
+           If set to "none", posts made by these users will not have a user-specific  hash  in  the  Cancel-Lock
+           header  field (only the admin hash will be generated).  No Cancel-Key header field will be present in
+           cancel or supersede requests.  This is a string value and the default is "username", that is to say a
+           user-specific hash based on the identity assigned to the connection is used.
+
+           Another possible value to this parameter is "ip", in which case a user-specific hash based on the  IP
+           of the connection is used (which should be a static IP so as to actually identify users).
+
+           See  <a href="../man5/inn-secrets.conf.5.html">inn-secrets.conf</a>(5)  for more information about Cancel-Lock.  The main reason for this parameter
+           is to deactivate this authentication mechanism when the same identity or IP can  be  assigned  by  an
+           access  group  to  different  people.   Otherwise,  any  of  these  people  would  be able to send an
+           authenticated withdrawal of an article originally sent by another person with the  same  identity  or
+           IP.
+
+       <u>domain</u>
+           When  set, the value of this parameter is used for the domain part (the right-hand side after "@") of
+           autogenerated Message-IDs, as well as for the server name indicated in Injection-Info header fields.
+
+           By default, the value of this parameter is inherited from the eponym parameter in <u>inn.conf</u>.  However,
+           if <u>domain</u> is not explicitly set in <u>readers.conf</u>, the specific  behaviour  described  above  won't  be
+           triggered unless <u>virtualhost</u> is set to true.
+
+           You  may also want to set the <u>fromhost</u> parameter (inherited from <u>inn.conf</u>) for the complaints address
+           in the Injection-Info header field, if its default  value  should  be  changed,  and  the  <u>complaints</u>
+           parameter is not already set or <u>newsmaster</u> does not already contain an "@".
+
+       <u>groupexactcount</u>
+           This parameter controls the threshold below with <b>nnrpd</b> should give the exact number of still existing
+           articles  present  in  newsgroups instead of an estimate.  The exact number is usually updated once a
+           day during the expiry process by <b>expirover</b> (run by <b>news.daily</b>), and  is  updated  when  new  articles
+           arrive  but  not  necessarily  when  articles  are  cancelled or overwritten in self-expiring storage
+           methods like CNFS.
+
+           When the estimated count of articles is strictly smaller than <u>groupexactcount</u>, <b>nnrpd</b> will recount the
+           number of still existing articles, and report the exact value.  If <u>groupexactcount</u>  is  set  to  "0",
+           <b>nnrpd</b> will always recount.  If set to "1", it will never recount.
+
+           Though  exact  article counts are not required, they may be useful to distinguish empty newsgroups by
+           reporting an exact count of "0" instead of an estimate of "1" (when it happens, the news  client  may
+           show  that  1 article is present in the newsgroup, then it tries to retrieve the article, and finally
+           does not show anything to the user).
+
+           It is not recommended to set a high value to this parameter because it will  slow  the  responses  to
+           news  clients  (recounting  existing  articles  takes  time,  especially  on newsgroups with a lot of
+           articles).
+
+           This is an integer value, and the default is "5".
+
+       <u>key</u> If this parameter is present, this access group is only considered when finding privileges for  users
+           matching auth groups with this same <u>key</u> parameter.
+
+       <u>localtime</u>
+           If  a Date or an Injection-Date header field is not included in a posted article, <b>nnrpd</b> normally adds
+           these header fields in UTC.  If this is set to true, the Date header field will be formatted in local
+           time instead.  (The  Injection-Date  header  field  is  added  according  to  the  behaviour  of  the
+           <u>addinjectiondate</u> parameter in <u>inn.conf</u>, and will remain in UTC, though.)  This is a boolean value and
+           the default is false.
+
+           This parameter permits handling a relatively unusual corner case.  It is mostly a tool for people who
+           <u>want</u>  to  disclose  their  local  time  zone  (it  can  be  useful  information  in  certain types of
+           discussions), but whose clients don't for some reason, and who can arrange for the server  to  be  in
+           the same time zone as the client.
+
+       <u>max_rate</u>
+           If  this  parameter is present (and non-zero), it is used for <b>nnrpd</b>'s rate-limiting code.  The client
+           will only be able to download at this speed (in bytes/second).  Note that if an encryption  layer  is
+           being used, limiting is applied to the pre-encryption datastream.
+
+       <u>newsgroups</u>
+           Users  that  match  this  access  group  are allowed to read and post to all newsgroups matching this
+           comma-separated list of wildmat patterns.  The empty string is equivalent to "newsgroups: *"; if this
+           parameter is missing, the connection will be rejected (unless <u>read</u> and/or <u>post</u> are used instead).
+
+       <u>newsmaster</u>
+           Used as the contact address in the help message returned by <a href="../man8/nnrpd.8.html">nnrpd</a>(8), if the  virtualhost:  parameter
+           is set to true.
+
+       <u>perlfilter</u>
+           If  set  to  false,  posts  made  by  these  users  do not pass through the Perl filter even if it is
+           otherwise enabled.  This is a boolean value and the default is true.
+
+       <u>post</u>
+           Like the <u>newsgroups</u> parameter, but the client is only  given  permission  to  post  to  the  matching
+           newsgroups.   This  parameter  is often used with <u>read</u> to define the patterns for reading and posting
+           separately (usually to give the user permission to read more newsgroups  than  they're  permitted  to
+           post to).  It cannot be used in the same access group with a <u>newsgroups</u> parameter.
+
+       <u>pythonfilter</u>
+           If  set  to  false,  posts  made  by  these users do not pass through the Python filter even if it is
+           otherwise enabled.  This is a boolean value and the default is true.
+
+           This parameter currently has no effect as Python filtering is not implemented yet in <b>nnrpd</b>.   If  you
+           want to do Python filtering, you have to use the one implemented in <b>innd</b>.
+
+       <u>read</u>
+           Like  the  <u>newsgroups</u>  parameter,  but  the  client  is  only  given  permission to read the matching
+           newsgroups.  This parameter is often used with <u>post</u> to specify some read-only groups;  it  cannot  be
+           used in the same access group with a <u>newsgroups</u> parameter.  (If <u>read</u> is used and <u>post</u> is missing, the
+           client will have only read-only access.)
+
+       <u>reject_with</u>
+           If  this  parameter  is present, a client matching this block will be disconnected with a "Permission
+           denied" message containing the contents (a "reason" string) of this parameter.  Some newsreaders will
+           then display the reason to the user.
+
+       <u>strippath</u>
+           If set to true, any Path header field provided by a user in a post is stripped rather  than  used  as
+           the  beginning of the Path header field body of the article.  This is a boolean value and the default
+           is false.
+
+       <u>users</u>
+           The privileges given by this access group apply to  any  user  identity  which  matches  this  comma-
+           separated  list  of wildmat patterns.  If this parameter isn't given, the access group applies to all
+           users (and is essentially equivalent to "users: *").
+
+       <u>virtualhost</u>
+           Set this parameter to true in order to make <b>nnrpd</b> behave as if it is  running  on  a  server  with  a
+           different name than it actually has.  The <u>domain</u> parameter must then be set, either in <u>inn.conf</u> or in
+           the  same  access  group.   All  articles and overview data displayed to clients will have their Xref
+           header field bodies altered to appear to be from the server named in <u>domain</u>, and posted articles will
+           use that server name in the Message-ID and Injection-Info header field bodies.  (Moreover, if the  <b>-I</b>
+           flag  was  given  to  <b>nnrpd</b>, posting agents will be proposed to use Message-IDs containing the string
+           specified with <b>-I</b>.)
+
+           Similarly, the Path header field bodies displayed to clients or generated in posted articles will use
+           the value of <u>domain</u> (if <u>pathhost</u> is not set in the  access  group,  or  has  the  same  value  as  in
+           <u>inn.conf</u>)  or  <u>pathhost</u> (if <u>pathhost</u> is set in the access group to something different than is set in
+           <u>inn.conf</u>).
+
+           Also, the domain part (the right-hand side after "@") of the newsmaster e-mail mentioned in the  help
+           message  returned  by <b>nnrpd</b> will use the value of <u>domain</u> if the <u>newsmaster</u> parameter does not already
+           have a domain part.
+
+           At least one of the <u>domain</u> or <u>pathhost</u> parameters must be  set  in  the  access  group  to  something
+           different than in <u>inn.conf</u>, otherwise <b>nnrpd</b> will fail to start.
+
+           Note  that  setting this parameter requires the server modify all posts before presenting them to the
+           client and therefore may decrease performance slightly.
+
+       In addition, all of the following parameters are valid in access groups and override the  global  setting
+       in <u>inn.conf</u>.  See <a href="../man5/inn.conf.5.html">inn.conf</a>(5) for the descriptions of these parameters:
+
+           addinjectiondate, addinjectionpostingaccount,
+           addinjectionpostinghost, backoff_auth, backoff_db, backoff_k,
+           backoff_postfast, backoff_postslow, backoff_trigger,
+           checkincludedtext, clienttimeout, complaints, fromhost,
+           localmaxartsize, moderatormailer, nnrpdauthsender, nnrpdcheckart,
+           nnrpdoverstats, nnrpdposthost, nnrpdpostport, organization,
+           pathhost, readertrack, spoolfirst, strippostcc.
+
+</pre><h4><b>SUMMARY</b></h4><pre>
+       Here's a basic summary of what happens when a client connects:
+
+       •   All  auth  groups  are  scanned and the ones that don't match the client (due to <u>hosts</u>, <u>localaddress</u>,
+           <u>require_encryption</u>, etc.) are eliminated.
+
+       •   The remaining auth groups are scanned from the last to the first, and an attempt is made to apply  it
+           to  the current connection.  This means running <u>res</u> programs, if any, and otherwise applying <u>default</u>.
+           The first auth group (starting from the bottom) to return a valid user is kept  as  the  active  auth
+           group.
+
+       •   If  no  auth  groups yield a valid user (none have <u>default</u> parameters or successful <u>res</u> programs) but
+           some of the auth groups have <u>auth</u> lines (indicating a possibility that the user can authenticate  and
+           then  obtain permissions), the connection is considered to have no valid auth group (which means that
+           the access groups are ignored completely) but the connection isn't closed.  Instead, a  480  response
+           code   (meaning  that  authentication  is  required)  is  returned  for  everything  until  the  user
+           authenticates.
+
+       •   When the user authenticates, the auth groups are rescanned, and only the matching ones which  contain
+           at least one <u>auth</u>, <u>perl_auth</u>, or <u>python_auth</u> line are considered.  These auth groups are scanned from
+           the  last  to  the first, running <u>auth</u> programs and <u>perl_auth</u> or <u>python_auth</u> scripts.  The first auth
+           group (starting from the bottom) to return a valid user is kept as the active auth group.
+
+       •   Regardless of how an auth group is established, as soon as one is, that auth group is used to  assign
+           a  user identity by taking the result of the successful <u>res</u>, <u>auth</u>, <u>perl_auth</u>, or <u>python_auth</u> line (or
+           the <u>default</u> if necessary), and  appending  <u>default-domain</u>  if  necessary.   (If  the  <u>perl_access</u>  or
+           <u>python_access</u> parameter is present.)
+
+       •   Finally,  an  access  group  is selected by scanning the access groups from bottom up and finding the
+           first match.  (If the established auth group contained  a  <u>perl_access</u>  or  <u>python_access</u>  line,  the
+           dynamically  generated  access  group  returned by the script is used instead.)  User permissions are
+           granted based on the established access group.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Probably the simplest useful example of a complete <u>readers.conf</u>, this gives permissions to read and  post
+       to  all  groups  to  any  connections  from  the  "example.com"  domain, except for Bob's machine, and no
+       privileges for anyone connecting elsewhere:
+
+           auth example.com {
+               hosts: "*.example.com, example.com, !bob.example.com"
+               default: "&lt;EXAMPLE&gt;"
+           }
+
+           access full {
+               users: "&lt;EXAMPLE&gt;"
+               newsgroups: *
+               addcanlockuser: none
+           }
+
+       Note that the above access realm could also be written without the <u>users</u> key, in which case it applies to
+       any user identity (though in this example, the user identity  that  will  be  assigned  to  all  matching
+       connections  is  "&lt;EXAMPLE&gt;").   It  is however recommended to keep an explicit <u>users</u> key so as to better
+       view to whom the access block applies.
+
+       As the only available auth realm only matches hosts in the "example.com"  domain,  any  connections  from
+       other hosts will be rejected immediately.
+
+       If you have some systems that should only have read-only access to the server, you can modify the example
+       above slightly by adding an additional auth and access group:
+
+           auth lab {
+               hosts: "*.lab.example.com"
+               default: &lt;LAB&gt;
+           }
+
+           access lab {
+               users: &lt;LAB&gt;
+               read: *
+           }
+
+       If  those  are put in the file after the above example, they'll take precedence (because they're later in
+       the file) for any user coming from a machine in the lab.example.com domain, everyone will only have  read
+       access, not posting access.
+
+       Here's  a  similar example for a news server that accepts connections from anywhere but requires the user
+       to specify a username and password.  The username and password are  first  checked  against  an  external
+       database of usernames and passwords, and then make use of PAM:
+
+           auth all {
+               auth: "ckpasswd -f &lt;pathdb in inn.conf&gt;/newsusers"
+               auth: ckpasswd
+           }
+
+           access full {
+               users: *
+               newsgroups: *
+           }
+
+       When  the  user  first  connects,  there  are no <u>res</u> keys and no default, so they don't receive any valid
+       identity and the connection won't match any access groups  (even  ones  with  "users:  *").   Such  users
+       receive nothing but authentication-required responses from <b>nnrpd</b> until they authenticate.
+
+       If they then later authenticate, the username and password are checked first by running <b>ckpasswd</b> with the
+       <b>-f</b>  option  for  an  external  file  of encrypted passwords, and then uses PAM (if INN was built with PAM
+       support) to check the password (and if that fails, it tries to check the password  against  the  password
+       field  returned  by  <a href="../man3/getpwnam.3.html">getpwnam</a>(3)).   If  both  of those fail, the user will continue to have no identity;
+       otherwise, an identity will be assigned (usually the supplied username, perhaps with a  domain  appended,
+       although  an authenticator technically can provide a completely different username for the identity), and
+       the access group will match, giving full access.
+
+       It may be educational to consider how to combine the above examples; general groups always go first.  The
+       order of the auth groups actually doesn't  matter,  since  the  "hosts:  example.com"  one  only  matches
+       connections  before  username/password  is  sent,  and the "auth: ckpasswd" one only matches after; order
+       would matter if either group applied to both cases.  The order of the access groups  in  this  case  does
+       matter, provided the <u>newsgroups</u> lines differ; the access group with no <u>users</u> line needs to be first, with
+       the "users: &lt;LOCAL&gt;" group after.
+
+       Here's  an  example of another common case: a server that only allows connections from a local domain and
+       has an additional hierarchy that's password-restricted.
+
+           auth "example.com" {
+               hosts: "*.example.com"
+               auth: "ckpasswd -f &lt;pathdb in inn.conf&gt;/newsusers"
+               default: "anonymous"
+           }
+
+           access regular {
+               newsgroups: "*,!example.restricted.*"
+               addcanlockuser: none
+           }
+
+           access full {
+               users: "*,!anonymous"
+               newsgroups: *
+           }
+
+       In this example, unauthenticated users get the identity "anonymous", which matches only the first  access
+       group and hence doesn't get access to the "example.restricted.*" hierarchy.  No user-specific Cancel-Lock
+       elements  should  be  generated  for  anonymous  users.  Anyone who authenticates using a password in the
+       <u>newsusers</u> file gets full access to all groups.  However, note  that  the  only  authentication  block  is
+       limited  to hostnames in the example.com domain; connections outside of that domain will never be allowed
+       access nor have an opportunity to authenticate.
+
+       Here's a very complicated  example.   This  is  for  an  organization  that  has  an  internal  hierarchy
+       "example.*"  only  available  to  local  shell users, who are on machines where <a href="../man8/identd.8.html">identd</a>(8) can be trusted.
+       Dialup users must provide a username and password, which is then checked against  RADIUS.   Remote  users
+       have  to  use a username and password that's checked against a database on the news server.  Finally, the
+       admin staff (users "joe" and "jane") can post anywhere (including the "example.admin.*" groups  that  are
+       read-only for everyone else), and are exempted from the Perl filter.  For an additional twist, posts from
+       dialup users have their Sender header field replaced by their authenticated identity.
+
+       Since  this  organization  has some internal moderated newsgroups, the admin staff can also post messages
+       with Approved header fields, but other users cannot.
+
+           auth default {
+               auth: "ckpasswd -f &lt;pathdb in inn.conf&gt;/newsusers"
+               default: &lt;FAIL&gt;
+               default-domain: example.com
+           }
+
+           auth shell {
+               hosts: *.shell.example.com
+               res: ident
+               auth: ckpasswd
+               default: &lt;FAIL&gt;
+               default-domain: shell.example.com
+           }
+
+           auth dialup {
+               hosts: *.dialup.example.com
+               auth: radius
+               default: &lt;FAIL&gt;
+               default-domain: dialup.example.com
+           }
+
+           access shell {
+               users: *@shell.example.com
+               read: *
+               post: "*, !example.admin.*"
+           }
+
+           access dialup {
+               users: *@dialup.example.com
+               newsgroups: *,!example.*
+               nnrpdauthsender: true
+           }
+
+           access other {
+               users: "*@example.com, !&lt;FAIL&gt;@example.com"
+               newsgroups: *,!example.*
+           }
+
+           access fail {
+               users: "&lt;FAIL&gt;@*"
+               newsgroups: !*
+           }
+
+           access admin {
+               users: "joe@*,jane@*"
+               newsgroups: *
+               access: "RPA"
+               perlfilter: false
+           }
+
+       Note the use of different domains to separate dialup from shell users easily.  Another  way  to  do  that
+       would  be with <u>key</u> parameters, but this way provides slightly more intuitive identity strings.  Note also
+       that the fail access group catches not only failing connections  from  external  users  but  also  failed
+       authentication  of  shell  and dialup users before they've authenticated.  The identity string given for,
+       say, dialup users before RADIUS authentication has been attempted matches both the  dialup  access  group
+       and  the  fail  access  group,  since it's "&lt;FAIL&gt;@dialup.example.com", but the fail group is last, so it
+       takes precedence.
+
+       The shell auth group has an <u>auth</u> parameter so that users "joe"  and  "jane"  can,  if  they  choose,  use
+       username  and  password  authentication  to  gain their special privileges even if they're logged on as a
+       different user on the shell machines (or if ident isn't working).  When they first connect,  they'd  have
+       the default access for that user, but they could then authenticate in order to get their extended access.
+
+       Also  note  that  if  the  users  "joe"  and  "jane" are using their own accounts, they get their special
+       privileges regardless of how they connect, whether the dialups, the shell machines,  or  even  externally
+       with a username and password.
+
+       Finally, here's a very simple example of a configuration for a public server for a particular hierarchy.
+
+           auth default {
+               hosts: *
+               default: &lt;PUBLIC&gt;
+           }
+
+           access default {
+               users: &lt;PUBLIC&gt;
+               newsgroups: example.*
+               addcanlockuser: none
+           }
+
+       Notice  that  clients  aren't  allowed  to  read any other groups; this keeps them from getting access to
+       administrative groups or reading control messages, just as a precaution.  When running  a  public  server
+       like  this,  be aware that many public hierarchies will later be pulled down and reinjected into the main
+       Usenet, so it's highly recommended that you also run a Perl or  Python  filter  to  reject  any  messages
+       crossposted  out  of  your  local hierarchy, and any messages containing a Supersedes header field.  This
+       will keep messages posted to your public hierarchy from hurting any of the rest of Usenet  if  they  leak
+       out.
+
+       For  more  complex  cases,  or  if  you  just  prefer  to  use  a database to store authentication and/or
+       authorization information, you can use Perl or Python  scripts  to  dynamically  authenticate  the  users
+       and/or  generate  their  access  blocks.   You  may then put all the related information (user, password,
+       newsgroups for reading, newsgroups for posting, etc.) for instance in an  SQLite  database,  and  use  an
+       <u>nnrpd_auth.pl</u>   or  <u>nnrpd_auth.py</u>  script  to  authenticate  the  users,  and/or  an  <u>nnrpd_access.pl</u>  or
+       <u>nnrpd_access.py</u> script to grant the access.  Then <u>readers.conf</u> only needs defining:
+
+           auth checkcredentials {
+               perl_auth: "/path/to/script/nnrpd_auth.pl"
+               perl_access: "/path/to/script/nnrpd_access.pl"
+           }
+
+       or:
+
+           auth checkcredentials {
+               python_auth: "nnrpd_auth"
+               python_access: "nnrpd_access"
+           }
+
+       The advantage of these external scripts is that you can code whatever rules you want, possibly based on a
+       database shared between your news service and other services you may provide to your users.  You can more
+       easily handle hundreds or thousands of users with external scripts than with the mere use of <u>readers.conf</u>
+       stock blocks and a flat file for the credentials of each listed user.
+
+</pre><h4><b>SECURITY</b> <b>CONSIDERATIONS</b></h4><pre>
+       In general, separate passwords should be used for NNTP wherever possible; the NNTP protocol  itself  does
+       not  protect  passwords  from  casual  interception, and many implementations (including this one) do not
+       "lock out" accounts or otherwise discourage password-guessing attacks.  So it is best to  ensure  that  a
+       compromised password has minimal effects.
+
+       Authentication  using  the  AUTHINFO  USER/PASS  commands  passes  unencrypted over the network.  Extreme
+       caution should therefore be used especially with system passwords (e.g. "auth: ckpasswd -s").   Passwords
+       can  be  protected by using NNTP over TLS/SSL or through ssh tunnels, and this usage can be enforced by a
+       well-considered server configuration that only permits certain auth  groups  to  be  applied  in  certain
+       cases.  One can also authenticate using a strong SASL mechanism.  Here are some ideas:
+
+       •   To  restrict connections on the standard NNTP port (119) to use an encryption layer for some (or all)
+           of the auth groups to match, use the <u>require_encryption</u>  parameter.   Note  that  a  client  can  use
+           STARTTLS  to  negotiate  an  encrypted  TLS connection.  A secure layer can also be negotiated during
+           authentication via AUTHINFO SASL.
+
+       •   If you consider your local network (but not the internet)  secure,  have  some  auth  groups  with  a
+           restrictive <u>hosts</u> parameter; they would go above, with ones having global applicability below.
+
+       •   Consider running <b>nnrpd</b> with the <b>-S</b> flag (either also with <b>-D</b>, or out of "super-server" like <b>inetd</b>) on
+           the  NNTPS  port  (563) for clients that support TLS/SSL.  See <a href="../man8/nnrpd.8.html">nnrpd</a>(8) for more details about how to
+           configure that.  You can use the <u>require_encryption</u> parameter or the <b>-c</b> flag to specify an  alternate
+           <u>readers.conf</u> file if you want a substantially different configuration for this case.
+
+       •   If  you  want  to  restrict  an  auth  group  to  only  match loopback connections (for users running
+           newsreaders on localhost or connecting via an ssh tunnel), use the <u>localaddress</u> parameter.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Written by Aidan Cully &lt;<a href="mailto:aidan@panix.com">aidan@panix.com</a>&gt;  for  InterNetNews.   Substantially  expanded  by  Russ  Allbery
+       &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man8/auth_krb5.8.html">auth_krb5</a>(8),  <a href="../man8/ckpasswd.8.html">ckpasswd</a>(8),  <a href="../man5/inn.conf.5.html">inn.conf</a>(5), <a href="../man8/innd.8.html">innd</a>(8), <a href="../man5/inn-secrets.conf.5.html">inn-secrets.conf</a>(5), <a href="../man3/libinn_uwildmat.3.html">libinn_uwildmat</a>(3), <a href="../man5/newsfeeds.5.html">newsfeeds</a>(5),
+       <a href="../man8/nnrpd.8.html">nnrpd</a>(8).
+
+INN 2.7.3                                          2025-05-19                                    <u><a href="../man5/READERS.CONF.5.html">READERS.CONF</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

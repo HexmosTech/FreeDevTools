@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mrcal-convert-lensmodel - Converts a camera model from one lens model to another</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/mrcal">mrcal_2.4.1-4build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mrcal-convert-lensmodel - Converts a camera model from one lens model to another
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         $ mrcal-convert-lensmodel
+             --viz LENSMODEL_OPENCV4 left.cameramodel
+
+         ... lots of output as the solve runs ...
+         RMS error of the solution: 3.40256580058 pixels.
+         Wrote 'left-LENSMODEL_OPENCV4.cameramodel'
+
+         ... a plot pops up showing the differences ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Given one camera model, this tool computes another camera model that represents the same camera, but
+       utilizes a different lens model. While lens models all exist to solve the same problem, the different
+       representations don't map to one another perfectly, and this tool finds the best-fitting parameters of
+       the target lens model. Two different methods are implemented:
+
+       1. If the given cameramodel file contains optimization_inputs, then we have all
+          the data that was used to compute this model in the first place, and we can
+          re-run the original optimization, using the new lens model. This is the
+          default behavior, and is the preferred choice. However it can only work with
+          models that were computed by mrcal originally. We re-run the full original
+          solve, even it contained multiple cameras, unless --monocular is given. With
+          that option, we re-solve only the subset of the images observed by the one
+          requested camera
+
+       2. We can sample a grid of points on the imager, unproject them to observation
+          vectors in the camera coordinate system, and then fit a new camera model that
+          reprojects these vectors as closely to the original pixel coordinates as
+          possible. This can be applied to models that didn't come from mrcal. Select
+          this mode by passing --sampled.
+
+       Since camera models (lens parameters AND geometry) are computed off real pixel observations, the
+       confidence of the projections varies greatly across the imager and across observation distances. The
+       first method uses the original data, so it implicitly respects these uncertainties: uncertain areas in
+       the original model will be uncertain in the new model as well. The second method, however, doesn't have
+       this information: it doesn't know which parts of the imager and space are reliable, so the results
+       suffer.
+
+       As always, the intrinsics have some baked-in geometry information. Both methods optimize intrinsics AND
+       extrinsics, and output cameramodels with updated versions of both. If --sampled: we can request that only
+       the intrinsics be optimized by passing --intrinsics-only.
+
+       Also, if --sampled and not --intrinsics-only: we fit the extrinsics off 3D points, not just observation
+       directions. The distance from the camera to the points is set by --distance. This can take a comma-
+       separated list of distances to use. It's STRONGLY recommended to ask for two different distances:
+
+       - A "near" distance: where we expect the intrinsics to have the most accuracy.
+         At the range of the chessboards, usually
+
+       - A "far" distance: at "infinity". A few km is good usually.
+
+       The reason for this is that --sampled solves at a single distance aren't sufficiently constrained. If we
+       ask for a single far distance: "--distance 1000" for instance, we can easily get an extrinsics shift of
+       100m. This is aphysical: changing the intrinsics could shift the camera origin by a few mm, but not 100m.
+       Conceptually we want to perform a rotation-only extrinsics solve, but this isn't yet implemented. Passing
+       both a near and far distance appears to constrain the extrinsics well in practice. The computed
+       extrinsics transform is printed on the console, with a warning if an aphysical shift was computed. Do pay
+       attention to the console output.
+
+       Sampled solves are sometimes sensitive to the optimization seed. To control for this, pass --num-trials
+       to evaluate the solve multiple times from different random seeds, and to pick the best one. These solves
+       are usually quick, so there's no harm in passing something like "--num-trials 10".
+
+       We need to consider that the model we're trying to fit may not fit the original model in all parts of the
+       imager. Usually this is a factor when converting wide-angle cameramodels to use a leaner model: a decent
+       fit will be possible at the center, with more and more divergence as we move towards the edges. We handle
+       this with the --where and --radius options to allow the user to select the area of the imager that is
+       used for the fit: observations outside the selected area are thrown out. This region is centered on the
+       point given by --where (or at the center of the imager, if --where is omitted). The radius of this region
+       is given by --radius. If '--radius 0' then we use ALL the data. A radius&lt;0 can be used to set the size of
+       the no-data margin at the corners; in this case I'll use
+
+           r = sqrt(width^2 + height^2)/2. - abs(radius)
+
+       There's a balance to strike here. A larger radius means that we'll try to fit as well as we can in a
+       larger area. This might mean that we won't fit well anywhere, but we won't do terribly anywhere, either.
+       A smaller area means that we give up on the outer regions entirely (resulting in very poor fits there),
+       but we'll be able to fit much better in the areas that remain. Generally empirical testing is required to
+       find a good compromise: pass --viz to see the resulting differences. Note that --radius and --where
+       applies only if we're optimizing sampled reprojections; if we're using the original optimization inputs,
+       the options are illegal.
+
+       The output is written to a file on disk, with the same filename as the input model, but with the new
+       lensmodel added to the filename.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+   <b>POSITIONAL</b> <b>ARGUMENTS</b>
+         to                    The target lens model
+         model                 Input camera model. If omitted or "-", we read
+                               standard input and write to standard output
+
+   <b>OPTIONAL</b> <b>ARGUMENTS</b>
+         -h, --help            show this help message and exit
+         --sampled             Instead of solving the original calibration problem
+                               using the new lens model, use sampled imager points.
+                               This produces biased results, but can be used even if
+                               the original optimization_inputs aren't available
+         --gridn GRIDN GRIDN   Used if --sampled. How densely we should sample the
+                               imager. By default we use a 30x20 grid
+         --distance DISTANCE   Required if --sampled and not --intrinsics-only. A
+                               sampled solve fits the intrinsics and extrinsics to
+                               match up reprojections of a grid of observed pixels.
+                               The points being projected are set a particular
+                               distance (set by this argument) from the camera. Set
+                               this to the distance that is expected to be most
+                               confident for the given cameramodel. Points at
+                               infinity aren't supported yet: specify a high distance
+                               instead. We can fit multiple distances at the same
+                               time by passing them here in a comma-separated,
+                               whitespace-less list. If multiple distances are given,
+                               we fit the model using ALL the distances, but --viz
+                               displays the difference for the FIRST distance given.
+                               See the description above. Without --sampled, this is
+                               used for the visualization only
+         --intrinsics-only     Used if --sampled. By default I optimize the
+                               intrinsics and extrinsics to find the closest
+                               reprojection. If for whatever reason we know that the
+                               camera coordinate system was already right, or we need
+                               to keep the original extrinsics, pass --intrinsics-
+                               only. The resulting extrinsics will be the same, but
+                               the fit will not be as good. In many cases, optimizing
+                               extrinsics is required to get a usable fit, so
+                               --intrinsics-only may not be an option if accurate
+                               results are required.
+         --where WHERE WHERE   Used with or without --sampled. I use a subset of the
+                               imager to compute the fit. The active region is a
+                               circle centered on this point. If omitted, we will
+                               focus on the center of the imager
+         --radius RADIUS       Used with or without --sampled. I use a subset of the
+                               imager to compute the fit. The active region is a
+                               circle with a radius given by this parameter. If
+                               radius == 0, I'll use the whole imager for the fit. If
+                               radius &lt; 0, this parameter specifies the width of the
+                               region at the corners that I should ignore: I will use
+                               sqrt(width^2 + height^2)/2. - abs(radius). This is
+                               valid ONLY if we're focusing at the center of the
+                               imager. By default I ignore a large-ish chunk area at
+                               the corners.
+         --monocular           Used if not --sampled. By default we re-solve the full
+                               calibration problem that was used to originally obtain
+                               the input model, even if it contained multiple
+                               cameras. If --monocular, we re-solve only a subset of
+                               the original problem, using ONLY the observations made
+                               by THIS camera
+         --viz                 Visualize the differences between the input and output
+                               models. If we have --distance, the FIRST given
+                               distance is used to display the fit error
+         --cbmax CBMAX         Maximum range of the colorbar
+         --title TITLE         Used if --viz. Title string for the diff plot.
+                               Overrides the default title. Exclusive with
+                               --extratitle
+         --extratitle EXTRATITLE
+                               Used if --viz. Additional string for the plot to
+                               append to the default title. Exclusive with --title
+         --hardcopy HARDCOPY   Used if --viz. Write the diff output to disk, instead
+                               of making an interactive plot
+         --terminal TERMINAL   Used if --viz. gnuplotlib terminal. The default is
+                               good almost always, so most people don't need this
+                               option
+         --set SET             Used if --viz. Extra 'set' directives to gnuplotlib.
+                               Can be given multiple times
+         --unset UNSET         Used if --viz. Extra 'unset' directives to gnuplotlib.
+                               Can be given multiple times
+         --force, -f           By default existing models on disk are not
+                               overwritten. Pass --force to overwrite them without
+                               complaint
+         --outdir OUTDIR       Directory to write the output into. If omitted, we use
+                               the directory of the input model
+         --num-trials NUM_TRIALS
+                               If given, run the solve more than once. Useful in case
+                               random initialization produces noticeably different
+                               results. By default we run just one trial, which is
+                               enough most of the time
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       &lt;https://www.github.com/dkogan/mrcal&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dima Kogan, "&lt;<a href="mailto:dima@secretsauce.net">dima@secretsauce.net</a>&gt;"
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2017-2023 California Institute of Technology ("Caltech"). U.S.  Government sponsorship
+       acknowledged. All rights reserved.
+
+       Licensed under the Apache License, Version 2.0 (the "License"); You may obtain a copy of the License at
+
+           <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+
+mrcal 2.4.1-4build1                                2025-03-04                                           <u><a href="../man1/MRCAL.1.html">MRCAL</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

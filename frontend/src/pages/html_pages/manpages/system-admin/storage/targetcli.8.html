@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>targetcli - administration shell for storage targets</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/targetcli-fb">targetcli-fb_2.1.53-1.3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>targetcli</b> - administration shell for storage targets
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>targetcli</b> is a shell for viewing, editing, and saving the configuration of the kernel's target subsystem,
+       also known as LIO. It enables the administrator to assign local storage resources backed by either files,
+       volumes,  local  SCSI devices, or ramdisk, and export them to remote systems via network fabrics, such as
+       iSCSI or FCoE.
+
+       There is a daemon component for targetcli, which will greatly improve the overall execution time taken by
+       targetcli commands at scale. For more details about switching to daemonized mode refer  to  <a href="../man8/targetclid.8.html">targetclid</a>(8)
+       man page.
+
+       The configuration layout is tree-based, similar to a filesystem, and is navigated in a similar manner.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       <b>targetcli</b>
+
+       <b>targetcli</b> <b>[cmd]</b>
+
+       Invoke <b>targetcli</b> as root to enter the configuration shell, or follow with a command to execute but do not
+       enter the shell.  Use <b>ls</b> to list nodes below the current path.  Moving around the tree is accomplished by
+       the <b>cd</b> command, or by entering the new location directly. Objects are created using <b>create</b>, removed using
+       <b>delete</b>.   Use  <b>help</b>  <b>&lt;cmd&gt;</b> for additional usage information. Tab-completion is available for commands and
+       command arguments.
+
+       Configuration changes in targetcli are made immediately to the underlying  kernel  target  configuration.
+       Settings  will not be retained across reboot unless <b>saveconfig</b> is either explicitly called, or implicitly
+       by exiting the shell with the global preference <b>auto_save_on_exit</b> set to <b>true</b>, the default.
+
+</pre><h4><b>QUICKSTART</b></h4><pre>
+       To create an iSCSI target and share a file-backed LUN without any auth checks:
+
+       $ sudo targetcli
+       /&gt; backstores/fileio create test /tmp/test.img 100m
+       /&gt; iscsi/ create iqn.2006-04.com.example:test-target
+       /&gt; cd iscsi/iqn.2006-04.com.example:test-target/tpg1/
+       tpg1/&gt; luns/ create /backstores/fileio/test
+       tpg1/&gt; set attribute generate_node_acls=1
+       tpg1/&gt; exit
+
+       Although by default targetcli saves the running configuration upon exit, a distribution-specific  service
+       must  be  enabled  to  restore  the  saved  configuration  on  reboot. See distribution documentation for
+       specifics, but for example:
+
+       $ sudo systemctl enable target.service
+
+       See <b>EXAMPLES</b> below for more detailed information on commands and using the shell.
+
+</pre><h4><b>BACKSTORES</b></h4><pre>
+       <b>Backstores</b> are different kinds of local storage resources that the kernel target uses to "back" the  SCSI
+       devices  it  exports.  The  mappings  to  local  storage resources that each backstore creates are called
+       <b>storage</b> <b>objects</b>.
+
+   <b>FILEIO</b>
+       Allows files to be treated as disk images. When storage objects  of  this  type  are  created,  they  can
+       support  either  write-back or write-thru operation. Using write-back enables the local filesystem cache,
+       which will improve performance but increase the risk of data loss. It is also possible to use fileio with
+       local block device files, if buffered operation is needed.
+
+       Fileio also supports using an existing file, or creating a new file. New files are sparsely allocated  by
+       default.
+
+   <b>BLOCK</b>
+       Allows a local disk block device to be shared.
+
+   <b>PSCSI</b>
+       Allows  a  local  SCSI  device  of  any  type  to  be shared. It is generally advised to prefer the block
+       backstore if sharing a block SCSI device is desired.
+
+   <b>RAMDISK</b>
+       Allows kernel memory to be shared as a block SCSI device. Since memory is volatile, the contents  of  the
+       ramdisk will be lost if the system restarts, and this backstore is best used for testing only.
+
+       It  also  supports "nullio" mode, which is not backed by any storage. It discards all writes, and returns
+       all-zeroes for reads.
+
+   <b>USERSPACE-BACKED</b>
+       Backstores starting with "user:" are not supported in the kernel, but rely  on  a  userspace  process  to
+       handle requests. See <b><a href="../man8/tcmu-runner.8.html">tcmu-runner</a></b>(8) for more information on creating backstores of this type.
+
+</pre><h4><b>TARGETS</b></h4><pre>
+       <b>Targets</b>  are  instances of a <b>fabric</b>, which adapts the kernel target to a specific transport protocol such
+       as iSCSI, Fibre Channel, or SBP-2. Creating a target in targetcli enables that target to  be  configured.
+       The  name  of  the  target,  its WWN (world wide name), may link the configuration to a specific hardware
+       endpoint, like SRP for example, or it may not, like iSCSI.
+
+       Aside from "backstores", all other top-level configuration nodes in targetcli are fabrics that  may  have
+       targets  created  for  them. Fabrics that require hardware are only listed if the hardware is present and
+       configured properly.
+
+   <b>CREATING</b> <b>A</b> <b>TARGET</b>
+       Use the <b>create</b> command within a fabric's node to create a target. If the fabric's  targets  are  tied  to
+       hardware  then  targetcli  will constrain the WWN to available hardware WWNs. These can be shown via tab-
+       completion. If the fabric is not tied to hardware, such  as  iSCSI,  then  targetcli  will  either  auto-
+       generate  a  WWN  if  none  is  given,  or  check that the given WWN has the correct format. All WWNs are
+       prefaced by their type, such as "iqn", "naa", or "ib", and may be given with or without colons.
+
+       iSCSI supports multiple WWN formats: iqn, naa, and eui. Other fabrics support single formats only.
+
+</pre><h4><b>CONFIGURING</b> <b>A</b> <b>TARGET</b></h4><pre>
+       Not  all  fabrics  have  the  same  capabilities.  Targets  on  different  fabrics  will  have  different
+       configuration  node  layouts.  iSCSI  has the most to configure; other fabrics present subsets of iSCSI's
+       feature set.
+
+</pre><h4><b>CONFIGURING</b> <b>ISCSI</b></h4><pre>
+       iSCSI has the most options for configuration.
+
+   <b>TPGS</b>
+       TPGs (Target Portal Groups) allow the iSCSI  to  support  multiple  complete  configurations  within  one
+       target. This is useful for complex quality-of-service configurations. targetcli will automatically create
+       one TPG when the target is created, and almost all setups only need one.
+
+   <b>PORTALS</b>
+       An  iSCSI  target  may  be  reached via multiple IP addresses and ports. These addr:port pairs are called
+       <b>portals</b>.  Both IPv4 and IPv6 addresses are supported.
+
+       When a target is created, targetcli  automatically  creates  a  default  portal  listening  on  all  IPv4
+       addresses  (shown  as  0.0.0.0) on port 3260.  If a different configuration is needed, the default portal
+       can be removed and portals configured as desired.
+
+       If the hardware supports it, <b>iSER</b> (iSCSI Extensions for RDMA) may be enabled via the <b>enable_iser</b>  command
+       within  each  portal's  node.   Or,  if the hardware supports it, hardware offload may be enabled via the
+       <b>enable_offload</b> command within each portal's node.
+
+   <b>LUNS</b>
+       The kernel target exports SCSI Logical Units, also called  <b>LUNs</b>.   This  section  links  the  previously-
+       defined  storage  objects  with the target, and defines which number (the Logical Unit Number) the device
+       will use. Note that if ACLs are being used, a <b>lun</b> <b>mapping</b> must be created under the ACL that refers  back
+       to the TPG LUN.
+
+   <b>ACLS</b>
+       ACLs  (Access Control Lists) allow different configuration, depending on the initiator that is connecting
+       to the target. This includes both per-initiator authentication settings  as  well  as  per-initiator  LUN
+       mappings.
+
+       <b>create</b>  <b>&lt;wwn&gt;</b>  in  the <b>acls</b> node creates an ACL for an initiator, and <b>create</b> within the ACL creates a LUN
+       mapping. (This can either refer to the TPG LUN, or to the storage object, in which case the TPG LUN  will
+       be configured as well.) Global setting <b>auto_add_mapped_luns</b> affects this, see below.
+
+   <b>AUTHENTICATION</b>
+       iSCSI  supports  authentication  via the CHAP protocol, which uses a username and password. The initiator
+       may be required to supply valid credentials to the target, and the target may also be required to  supply
+       credentials back to the initiator. The latter is referred to as <b>mutual</b> <b>authentication</b>.
+
+       Furthermore,  authentication  credentials  may be different for each session phase (Discovery or Normal),
+       and authentication in a Normal session may be set at the TPG level, or per-ACL.
+
+       <b>Discovery</b> <b>Authentication</b>
+       iSCSI Discovery sessions allow the initiator to connect  to  a  portal  and  discover  targets  with  the
+       SendTargets  command,  but  not  access  them.  The  four parameters <b>userid</b>, <b>password</b>, <b>mutual_userid</b>, and
+       <b>mutual_password</b> are configured via <b>set</b> <b>discovery_auth</b> command within the  top-level  iscsi  configuration
+       node.  1-way  authentication is enabled if userid and password are both set, and mutual authentication is
+       enabled if all four are set. Authentication is disabled by unsetting the parameters.
+
+       <b>Normal</b> <b>Authentication</b>
+       Similarly, the four parameters <b>userid</b>, <b>password</b>, <b>mutual_userid</b>, and <b>mutual_password</b>  are  configured  via
+       <b>set</b> <b>auth</b> command within the TPG node and ACL nodes. However, LIO only uses one or the other, depending on
+       the TPG's <b>generate_node_acls</b> attribute setting. If generate_node_acls is 1, the TPG-wide settings will be
+       used. If generate_node_acls is 0, then the user-created ACLs' settings will be used.
+
+       Enable  generate_node_acls  with  <b>set</b>  <b>attribute</b>  <b>generate_node_acls=1</b>  within  the TPG node. This can be
+       thought of as "ignore ACLs mode" -- both authentication and LUN mapping will then use the TPG settings.
+
+       <b>No</b> <b>Authentication</b>
+       Authentication  is  disabled  by   clearing   the   TPG   "authentication"   attribute:   <b>set</b>   <b>attribute</b>
+       <b>authentication=0</b>.   Although initiator names are trivially forgeable, generate_node_acls still works here
+       to either ignore user-defined ACLs and allow all,  or  check  that  an  ACL  exists  for  the  connecting
+       initiator.
+
+</pre><h4><b>CONFIGURING</b> <b>FIBRE</b> <b>CHANNEL</b> <b>(QLA2XXX)</b></h4><pre>
+       Operation as a target requires that <b>/sys/module/qla2xxx/parameters/qlini_mode</b> report "disabled". This may
+       require passing the <b>qlini_mode=disabled</b> parameter to the qla2xxx module when it loads.
+
+</pre><h4><b>CONFIGURING</b> <b>FIBRE</b> <b>CHANNEL</b> <b>OVER</b> <b>ETHERNET</b> <b>(TCM_FC)</b></h4><pre>
+       Ensure <b>fcoeadm</b> <b>-i</b> shows a working endpoint.
+
+</pre><h4><b>CONFIGURING</b> <b>SRP</b></h4><pre>
+       SRP (SCSI RDMA Protocol) requires that RDMA-capable hardware is present. It uses "ib" WWNs.
+
+</pre><h4><b>CONFIGURING</b> <b>LOOPBACK</b></h4><pre>
+       Storage objects may be re-exported as local SCSI devices with this fabric.
+
+</pre><h4><b>CONFIGURING</b> <b>OTHER</b> <b>FABRICS</b></h4><pre>
+       Other fabrics may be present. They are for specialized uses. Use at your own risk.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>DEFINING</b> <b>A</b> <b>STORAGE</b> <b>OBJECT</b> <b>WITHIN</b> <b>A</b> <b>BACKSTORE</b>
+       <b>backstores/fileio</b> <b>create</b> <b>disk1</b> <b>/disks/disk1.img</b> <b>140M</b>
+       Creates  a  storage  object  named  <u>disk1</u>  with  the given path and size.  <b>targetcli</b> supports common size
+       abbreviations like 'M', 'G', and 'T'.
+
+   <b>EXPORTING</b> <b>A</b> <b>STORAGE</b> <b>OBJECT</b> <b>VIA</b> <b>ISCSI</b>
+       <b>iscsi/</b> <b>create</b>
+       Creates an iSCSI target with a default WWN. It will also create an initial  target  portal  group  called
+       <u>tpg1</u>.
+
+       <b>iqn.2003-01.org.linux-iscsi.test2.x8664:sn123456789012/tpg1/</b>
+       An  example of changing to the configuration node for the given target's first target portal group (TPG).
+       This is equivalent to giving the command prefixed by "cd". (Although  more  can  be  useful  for  certain
+       setups, most configurations have a single TPG per target. In this case, configuring the TPG is equivalent
+       to configuring the overall target.)
+
+       <b>portals/</b> <b>create</b>
+       Add  a  portal, i.e. an IP address and TCP port via which the target can be contacted by initiators. Only
+       required if the default 0.0.0.0:3260 portal is not present.
+
+       <b>luns/</b> <b>create</b> <b>/backstores/fileio/disk1</b>
+       Create a new LUN in the TPG, attached to the storage object that has previously been defined. The storage
+       object now shows up under the /backstores configuration node as activated.
+
+       <b>acls/</b> <b>create</b> <b>iqn.1994-05.com.redhat:4321576890</b>
+       Creates an ACL (access control list) entry for the given iSCSI initiator.
+
+       <b>acls/iqn.1994-05.com.redhat:4321576890</b> <b>create</b> <b>2</b> <b>0</b>
+       Gives the initiator access to the first exported LUN (lun0), which the initiator will see  as  lun2.  The
+       default  is  to  give the initiator read/write access; if read-only access was desired, an additional "1"
+       argument would be added to enable write-protect. (Note: if global setting <b>auto_add_mapped_luns</b>  is  true,
+       this step is not necessary.)
+
+   <b>EXPORTING</b> <b>A</b> <b>STORAGE</b> <b>OBJECT</b> <b>VIA</b> <b>FCOE</b>
+       <b>tcm_fc/</b> <b>create</b> <b>20:00:00:19:99:a8:34:bc</b>
+       Create  an  FCoE  target with the given WWN.  <b>targetcli</b> can tab-complete the WWN based on registered FCoE
+       interfaces. If none are found, verify that they are properly configured and are shown in  the  output  of
+       <b>fcoeadm</b> <b>-i</b>.
+
+       <b>tcm_fc/20:00:00:19:99:a8:34:bc/</b>
+       If  <b>auto_cd_after_create</b>  is  set  to  false,  change  to  the  configuration  node for the given target,
+       equivalent to giving the command prefixed by <b>cd</b>.
+
+       <b>luns/</b> <b>create</b> <b>/backstores/fileio/disk1</b>
+       Create a new LUN for the interface, attached to a previously defined storage object. The  storage  object
+       now shows up under the /backstores configuration node as <b>activated</b>.
+
+       <b>acls/</b> <b>create</b> <b>00:99:88:77:66:55:44:33</b>
+       Create  an  ACL  (access control list), for defining the resources each initiator may access. The default
+       behavior is to auto-map existing LUNs to the ACL; see help for more information.
+
+       The LUN should now be accessible via FCoE.
+
+</pre><h4><b>OTHER</b> <b>COMMANDS</b></h4><pre>
+       <b>saveconfig</b>
+       Save the current configuration settings to a file, from which settings will be restored if the system  is
+       rebooted. By default, this will save the configuration to <u>/etc/rtslib-fb-target/saveconfig.json</u>.
+
+       This command is executed from the configuration root node.
+
+       <b>restoreconfig</b>
+       Restore  target  configuration  from  a file, the default is the file listed under <b>saveconfig</b>.  This will
+       fail if there is already an established config, unless the <u>clear_existing</u> option is set to <u>true</u>.
+
+       This command is executed from the configuration root node.
+
+       <b>clearconfig</b>
+       Clears the entire current local configuration. The parameter  <u>confirm=true</u>  must  also  be  given,  as  a
+       precaution.
+
+       This command is executed from the configuration root node.
+
+       <b>sessions</b> <b>[</b> <b>list</b> <b>|</b> <b>detail</b> <b>]</b> <b>[sid]</b>
+       Lists the current open sessions or a specific session, with or without details.
+
+       This command is executed from the configuration root node.
+
+       <b>exit</b>
+       Leave the configuration shell.
+
+</pre><h4><b>SETTINGS</b> <b>GROUPS</b></h4><pre>
+       Settings  are  broken  into  groups.  Individual  settings  are accessed by <b>get</b> <b>&lt;group&gt;</b> <b>&lt;setting&gt;</b> and <b>set</b>
+       <b>&lt;group&gt;</b> <b>&lt;setting&gt;=&lt;value&gt;</b>, and the settings of an entire group may be  displayed  by  <b>get</b>  <b>&lt;group&gt;</b>.   All
+       except for <u>global</u> are associated with a particular configuration node.
+
+   <b>GLOBAL</b>
+       Shell-related  user-specific  settings  are in <u>global</u>, and are visible from all configuration nodes. They
+       are mostly shell display options, but some starting with  <b>auto_</b>  affect  shell  behavior  and  may  merit
+       customization.   These   include  <b>auto_save_on_exit</b>,  which  controls  if  exiting  targetcli  saves  the
+       configuration; <b>auto_add_mapped_luns</b>, to automatically add existing LUNs to new  ACLs,  and  new  LUNS  to
+       existing  ACLs; and <b>auto_cd_after_create</b>, to change working path to newly-created nodes.  Global settings
+       are user-specific and are saved to <a href="file:~/.targetcli/">~/.targetcli/</a> upon exit, unlike other groups,  which  are  system-wide
+       and kept in <b>/etc/rtslib-fb-target/saveconfig.json</b>.
+
+   <b>BACKSTORE-SPECIFIC</b>
+       <b>attribute</b>
+       /backstore/&lt;type&gt;/&lt;name&gt;  configuration  node.  Contains  values  relating  to  the backstore and storage
+       object.
+
+   <b>ISCSI-SPECIFIC</b>
+       <b>discovery_auth</b>
+       /iscsi configuration node. Set the normal and mutual authentication userid  and  password  for  discovery
+       sessions, as well as enabling or disabling it. By default it is disabled -- no authentication is required
+       for discovery.
+
+       <b>parameter</b>
+       /iscsi/&lt;target_iqn&gt;/tpgX    configuration   node.   ISCSI-specific   parameters   such   as   <u>AuthMethod</u>,
+       <u>MaxBurstLength</u>, <u>IFMarker</u>, <u>DataDigest</u>, and similar.
+
+       <b>attribute</b>
+       /iscsi/&lt;target_iqn&gt;/tpgX configuration node. Contains implementation-specific settings for the TPG,  such
+       as <b>authentication</b>, to enforce or disable authentication for the full-feature phase (i.e. non-discovery).
+
+       <b>auth</b>
+       /iscsi/&lt;target_iqn&gt;/tpgX/acls/&lt;initiator_iqn&gt;  configuration  node. Set the userid and password for full-
+       feature phase for this ACL.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <b>/etc/rtslib-fb-target/saveconfig.json</b>
+       <b>/etc/rtslib-fb-target/backup/*</b>
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+   <b>TARGETCLI_HOME</b>
+       If set, this variable points to a directory that should be used instead of <a href="file:~/.targetcli">~/.targetcli</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/targetclid.8.html">targetclid</a></b>(8), <b><a href="../man8/targetctl.8.html">targetctl</a></b>(8), <b><a href="../man8/tcmu-runner.8.html">tcmu-runner</a></b>(8)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Written by Jerome Martin &lt;<a href="mailto:jxm@risingtidesystems.com">jxm@risingtidesystems.com</a>&gt;.
+       Man page written by Andy Grover &lt;<a href="mailto:agrover@redhat.com">agrover@redhat.com</a>&gt;.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs via &lt;<a href="mailto:targetcli-fb-devel@lists.fedorahosted.org">targetcli-fb-devel@lists.fedorahosted.org</a>&gt;
+       or &lt;https://github.com/open-iscsi/targetcli-fb/issues&gt;
+
+                                                                                                    <u><a href="../man8/targetcli.8.html">targetcli</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

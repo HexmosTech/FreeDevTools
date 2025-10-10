@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-sh-plugin - nbdkit shell, script or executable plugin</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/nbdkit">nbdkit_1.42.6-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-sh-plugin - nbdkit shell, script or executable plugin
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit sh /path/to/script [arguments...]
+
+        nbdkit sh - &lt;&lt;'EOF'
+        ... shell script ...
+        EOF
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-sh-plugin" allows you to write plugins for <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) using arbitrary scripting languages,
+       including shells like <b><a href="../man1/bash.1.html">bash</a></b>(1), <b><a href="../man1/dash.1.html">dash</a></b>(1), <b><a href="../man1/csh.1.html">csh</a></b>(1), <b><a href="../man1/zsh.1.html">zsh</a></b>(1) etc., other scripting environments, or any
+       executable.
+
+       Note if you want to use an established scripting language like Perl or Python, then nbdkit has specific
+       plugins to handle those languages and those will be more efficient (see <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) for a complete list).
+
+       To use shell script fragments from the nbdkit command line (rather than a separate script) see
+       <b><a href="../man1/nbdkit-eval-plugin.1.html">nbdkit-eval-plugin</a></b>(1).
+
+   <b>If</b> <b>you</b> <b>have</b> <b>been</b> <b>given</b> <b>an</b> <b>nbdkit</b> <b>sh</b> <b>plugin</b>
+       Assuming you have a shell script which is an nbdkit plugin, you run it like this:
+
+        nbdkit sh /path/to/script
+
+       You may have to add further "key=value" arguments to the command line.  The script must be executable
+       ("chmod +x").
+
+   <b>Inline</b> <b>shell</b> <b>scripts</b>
+       It is also possible to write a shell script plugin "inline" using "-" as the name of the script, like
+       this:
+
+        nbdkit sh - &lt;&lt;'EOF'
+          case "$1" in
+            get_size) echo 1M ;;
+            pread) dd if=/dev/zero count=$3 iflag=count_bytes ;;
+            *) exit 2 ;;
+          esac
+        EOF
+
+       By default the inline script runs under <u><a href="file:/bin/sh">/bin/sh</a></u>.  You can add a shebang ("#!") to use other scripting
+       languages.  Of course, reading an inline script from stdin is incompatible with the <u>-s</u> (<u>--single</u>) mode of
+       nbdkit that connects a client on stdin.
+
+</pre><h4><b>WRITING</b> <b>AN</b> <b>NBDKIT</b> <b>SH</b> <b>PLUGIN</b></h4><pre>
+       For example plugins written in Bash, see:
+       https://gitlab.com/nbdkit/nbdkit/blob/master/plugins/sh/examples/
+
+       Broadly speaking, nbdkit shell plugins work like C ones, so you should read <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3) first.
+
+   <b>Programming</b> <b>model</b>
+       This plugin has a simple programming model: For every plugin method that needs to be called, the external
+       script is invoked with parameters describing the method and its arguments.  The first parameter is always
+       the method name.  For example:
+
+        /path/to/script config file disk.img
+                          │      │   │
+                          │      │   └─ value ($3)
+                          │      └── key ($2)
+                      method ($1)
+
+        /path/to/script pread &lt;handle&gt; &lt;count&gt; &lt;offset&gt;
+                          │       │       │       │
+                          │       │       │       └─ offset in bytes ($4)
+                          │       │       └── request size in bytes ($3)
+                      method ($1) └── handle ($2) ─ see "Handles" below
+
+       Scripts should ignore extra parameters that they don't understand since we may add new parameters in
+       future.
+
+   <b>Exit</b> <b>codes</b>
+       The script should exit with specific exit codes:
+
+       0   The method was executed successfully.
+
+       1 and 16-255
+           There  was an error.  The script may print on stderr an errno name, optionally followed by whitespace
+           and a message, for example:
+
+            echo 'ENOSPC Out of space' &gt;&amp;2
+            exit 1
+
+           or if you don't need the log message:
+
+            echo ENOSPC &gt;&amp;2
+            exit 1
+
+           If the script doesn't print anything or the output cannot be parsed then nbdkit assumes error  "EIO".
+           Note  that  output  to  stderr  is  ignored  if the command succeeds, so it is acceptable to output a
+           potential error message prefix prior to attempting a command which will  add  further  details  if  a
+           failure occurs.
+
+       2   The requested method is not supported by the script.
+
+       3   For methods which return booleans, this code indicates false.
+
+       4 and 5
+           Triggers  a  call  to  the  C function <b><a href="../man3/nbdkit_shutdown.3.html">nbdkit_shutdown</a></b>(3), which requests an asynchronous exit of the
+           nbdkit server (disconnecting all clients).  The client will usually get a response before shutdown is
+           complete (although this is racy); so once the shutdown is requested, code 4 then behaves like code  0
+           (stderr  is  ignored,  and  the  server tries to return success), and code 5 behaves like code 1 (the
+           server tries to return an error to the client parsed from stderr, although a missing  error  defaults
+           to "ESHUTDOWN" instead of "EIO").
+
+       6   Triggers  a  call  to the C function <b><a href="../man3/nbdkit_disconnect.3.html">nbdkit_disconnect</a></b>(3) with "force" set to true, which requests an
+           abrupt disconnect of the current client.  The contents of stderr are  irrelevant  with  this  status,
+           since the client will not get a response.
+
+       7 and 8
+           Triggers  a  call  to the C function <b><a href="../man3/nbdkit_disconnect.3.html">nbdkit_disconnect</a></b>(3) with "force" set to false, which requests a
+           soft disconnect of the current client (future client requests are rejected with  "ESHUTDOWN"  without
+           calling  into  the  plugin, but current requests may complete).  Since the client will likely get the
+           response to this command, code 7 then behaves like code 0 (stderr is ignored, and the server tries to
+           return success), and code 8 behaves like code 1 (the server tries to return an error  to  the  client
+           parsed from stderr, although a missing error defaults to "ESHUTDOWN" instead of "EIO").
+
+       9-15
+           These  exit  codes  are reserved for future use.  Note that versions of nbdkit &lt; 1.34 documented that
+           codes 8 through 15 behaved like code 1; although it is unlikely that  many  scripts  relied  on  this
+           similarity in practice.
+
+       In  nbdkit  &gt;  1.34, it is possible to probe whether additional exit codes have been assigned meaning, by
+       looking for the line <b>max_known_status=</b> in the output of <b>nbdkit</b> <b>--dump-plugin</b> <b>sh</b>.  If  this  line  is  not
+       present, exit codes 4 and above behave like status 1.
+
+   <b>Temporary</b> <b>directory</b>
+       A  fresh  script  is  invoked for each method call (ie. scripts are stateless), so if the script needs to
+       store state it has to store it somewhere in the filesystem in a format and location which is left  up  to
+       the author of the script.
+
+       However  nbdkit  helps  by  creating  a  randomly  named, empty directory for the script.  This directory
+       persists for the lifetime of nbdkit and is deleted when nbdkit exits.   The  name  of  the  directory  is
+       passed to each script invocation in the $tmpdir environment variable.
+
+   <b>Handles</b>
+       Handles are arbitrary strings, but it is best to limit them to short alphanumeric strings.
+
+       <u>Per-connection</u> <u>state</u>
+
+       The  temporary  directory  described  above can be used for state for the lifetime of the nbdkit instance
+       (across multiple connections).  If you want to store state per connection then one way to  do  it  is  to
+       create a randomly named subdirectory under the temporary directory:
+
+        case "$1" in
+          ...
+          open)
+            mktemp -d $tmpdir/handle-XXXXXX ;;
+
+       The  handle  will  be  the  subdirectory  name,  returned to the script as $2 in all connected calls (eg.
+       "pread", "get_size").  You can delete the subdirectory explicitly in "close":
+
+        case "$1" in
+          ...
+          close)
+            rm -rf "$2" ;;
+
+       or rely on nbdkit deleting the whole temporary directory including all per-handle subdirectories when  it
+       exits.
+
+   <b>Performance</b>
+       This  plugin  has  to  fork  on every request, so performance will never be great.  For best performance,
+       consider using the <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3) API directly.  Having said that, if you have a sh plugin and want  to
+       improve performance then the following tips may help:
+
+       Relax the thread model.
+           The  default  "thread_model" is "serialize_all_requests" meaning that two instances of the script can
+           never be running at the same time.  This is safe but slow.  If your script is safe to  be  called  in
+           parallel, set this to "parallel".
+
+       Implement the "zero" method.
+           If  the  "zero"  method  is  not  implemented  then  nbdkit will fall back to using "pwrite" which is
+           considerably slower because nbdkit has to send blocks of zeroes to the script.
+
+       You don't have to write shell scripts.
+           This plugin can run any external binary, not only shell scripts.  You should get more performance  by
+           rewriting the shell script as a program in a compiled language.
+
+   <b>Methods</b>
+       This  just  documents  the  arguments to the script corresponding to each plugin method, and any way that
+       they differ from the C callbacks.  In all other respects they work the same way as the  C  callbacks,  so
+       you should go and read <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3).
+
+       "load"
+            /path/to/script load
+
+       "unload"
+            /path/to/script unload
+
+           This is called just before nbdkit exits.  Errors from this method are ignored.
+
+       "dump_plugin"
+            /path/to/script dump_plugin
+
+       "config"
+            /path/to/script config &lt;key&gt; &lt;value&gt;
+
+       "config_complete"
+            /path/to/script config_complete
+
+       "magic_config_key"
+            /path/to/script magic_config_key
+
+           If a magic config key is needed, this should echo it to stdout.  See "Magic parameters" in <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1).
+
+       "thread_model"
+            /path/to/script thread_model
+
+           On  success this should print the desired thread model of the script, one of "serialize_connections",
+           "serialize_all_requests", "serialize_requests", or "parallel".
+
+           This method is  <u>not</u>  required;  if  omitted,  then  the  plugin  will  be  executed  under  the  safe
+           "serialize_all_requests" model.  However, this means that this method <b>must</b> be provided if you want to
+           use the "parallel" or "serialize_requests" model.  Even then your request may be restricted for other
+           reasons;  look  for  "thread_model"  in  the  output  of "nbdkit --dump-plugin sh script" to see what
+           actually gets selected.
+
+           If an error occurs, the script should output an error message and exit with  status  1;  unrecognized
+           output is ignored.
+
+       "get_ready"
+            /path/to/script get_ready
+
+       "after_fork"
+            /path/to/script after_fork
+
+       "preconnect"
+            /path/to/script preconnect &lt;readonly&gt;
+
+       "list_exports"
+            /path/to/script list_exports &lt;readonly&gt; &lt;tls&gt;
+
+           The "readonly" and "tls" parameters will be "true" or "false".
+
+           The first line of output informs nbdkit how to parse the rest of the output, the remaining lines then
+           supply the inputs of the C "nbdkit_add_export" function (see <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3)), as follows:
+
+           NAMES
+               The  remaining  output  provides  one  export  name  per  line,  and  no  export  will be given a
+               description.  For convenience, this form is also assumed if the first output line does not  match
+               one of the recognized parse modes.
+
+           INTERLEAVED
+               The remaining output provides pairs of lines, the first line being an export name, and the second
+               the corresponding description.
+
+           NAMES+DESCRIPTIONS
+               The number of remaining lines is counted, with the first half being used as export names, and the
+               second half providing descriptions to pair with names from the first half.
+
+               An  example  of  using  this form to list files in the current directory, followed by their <b><a href="../man1/ls.1.html">ls</a></b>(1)
+               long description, would be:
+
+                echo NAMES+DESCRIPTIONS
+                ls
+                ls -l
+
+           Note that other output modes might be introduced in the future; in particular, none of  the  existing
+           modes allow a literal newline in an export name or description, although this could be possible under
+           a new mode supporting escape sequences.
+
+           This  method  is  <u>not</u> required; if it is absent, the list of exports advertised by nbdkit will be the
+           single name result of "default_export" and no description.
+
+       "default_export"
+            /path/to/script default_export &lt;readonly&gt; &lt;tls&gt;
+
+           The "readonly" and "tls" parameters will be "true" or "false".
+
+           On success this should print a name on stdout to use in place of the default  export  "",  then  exit
+           with  code 0.  For convenience, the output can be any of the list forms recognized by "list_exports",
+           in which case the first listed export name is used, and where an  empty  list  uses  "".   Given  the
+           current  set  of  recognized  export  lists,  it  is not possible for the resulting name to include a
+           newline.
+
+           This method is <u>not</u> required; if it is absent, the default export name will be the empty string, "".
+
+       "open"
+            /path/to/script open &lt;readonly&gt; &lt;exportname&gt; &lt;tls&gt;
+
+           The "readonly" parameter will be "true" or "false".  The "exportname" parameter, if present,  is  the
+           export name passed to the server from the client.  The "tls" parameter, if present, will be "true" or
+           "false" depending on whether the client is using TLS.
+
+           On  success  this should print the handle (any string) on stdout and exit with code 0.  If the handle
+           ends with a newline character then the newline is removed.
+
+           Unlike C plugins, this method is <u>not</u> required.  If omitted then the handle will be "" (empty string).
+
+       "close"
+            /path/to/script close &lt;handle&gt;
+
+       "export_description"
+            /path/to/script export_description &lt;handle&gt;
+
+           The script should print a human-readable description of the disk image on stdout.  If the description
+           ends with a newline character then the newline is removed.
+
+           This method is <u>not</u> required; if it is absent, no export description will be provided to the client.
+
+       "get_size"
+            /path/to/script get_size &lt;handle&gt;
+
+           The script should print the size of the disk image on stdout.  You can print the size  in  bytes,  or
+           use any format understood by <b><a href="../man3/nbdkit_parse_size.3.html">nbdkit_parse_size</a></b>(3) such as "1M".
+
+           This method is required.
+
+       "block_size"
+            /path/to/script block_size &lt;handle&gt;
+
+           This  script should print three numbers on stdout, separated by whitespace.  These are (in order) the
+           minimum block size, the preferred block size, and the maximum block size.  You can print the sizes in
+           bytes or use any format understood by <b><a href="../man3/nbdkit_parse_size.3.html">nbdkit_parse_size</a></b>(3) such as "1M".
+
+       "can_write"
+       "can_flush"
+       "can_trim"
+       "can_zero"
+       "can_extents"
+           Unlike in other languages, you <b>must</b> provide the "can_*" methods otherwise they  are  assumed  to  all
+           return  false  and your "pwrite", "flush", "trim", "zero" and "extents" methods will never be called.
+           The reason for this is obscure: In other languages we can detect if (eg) a "pwrite" method is defined
+           and synthesize an appropriate response if no actual "can_write" method is defined.  However detecting
+           if methods are present without running them is not possible with this plugin.
+
+            /path/to/script can_write &lt;handle&gt;
+            /path/to/script can_flush &lt;handle&gt;
+            /path/to/script can_trim &lt;handle&gt;
+            /path/to/script can_zero &lt;handle&gt;
+            /path/to/script can_extents &lt;handle&gt;
+
+           The script should exit with code 0 for true or code 3 for false.
+
+       "is_rotational"
+       "can_fast_zero"
+            /path/to/script is_rotational &lt;handle&gt;
+            /path/to/script can_fast_zero &lt;handle&gt;
+
+           The script should exit with code 0 for true or code 3 for false.
+
+       "can_fua"
+       "can_cache"
+            /path/to/script can_fua &lt;handle&gt;
+            /path/to/script can_cache &lt;handle&gt;
+
+           These control Forced Unit Access (FUA) and caching behaviour of the core server.
+
+           Unlike the other "can_*" callbacks, these two are <u>not</u> a boolean.   They  must  print  either  "none",
+           "emulate"   or  "native"  to  stdout.   The  meaning  of  these  is  described  in  <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3).
+           Furthermore, you <b>must</b> provide a "can_cache" method if you desire the "cache" callback to be utilized,
+           similar to the reasoning behind requiring "can_write" to utilize "pwrite".
+
+       "can_multi_conn"
+            /path/to/script can_multi_conn &lt;handle&gt;
+
+           The script should exit with code 0 for true or code 3 for false.
+
+       "pread"
+            /path/to/script pread &lt;handle&gt; &lt;count&gt; &lt;offset&gt;
+
+           The script should print the requested binary data on stdout.  Exactly "count" bytes must be printed.
+
+           This method is required.
+
+       "pwrite"
+            /path/to/script pwrite &lt;handle&gt; &lt;count&gt; &lt;offset&gt; &lt;flags&gt;
+
+           The script should read the binary data to be written from stdin.
+
+           The "flags" parameter can be an empty string or "fua".  In the  future,  a  comma-separated  list  of
+           flags may be present.
+
+           Unlike  in  other  languages,  if  you  provide a "pwrite" method you <b>must</b> also provide a "can_write"
+           method which exits with code 0 (true).
+
+       "flush"
+            /path/to/script flush &lt;handle&gt;
+
+           Unlike in other languages, if you provide a "flush" method you <b>must</b> also provide a "can_flush" method
+           which exits with code 0 (true).
+
+       "trim"
+            /path/to/script trim &lt;handle&gt; &lt;count&gt; &lt;offset&gt; &lt;flags&gt;
+
+           The "flags" parameter can be an empty string or "fua".  In the  future,  a  comma-separated  list  of
+           flags may be present.
+
+           Unlike  in  other languages, if you provide a "trim" method you <b>must</b> also provide a "can_trim" method
+           which exits with code 0 (true).
+
+       "zero"
+            /path/to/script zero &lt;handle&gt; &lt;count&gt; &lt;offset&gt; &lt;flags&gt;
+
+           The "flags" parameter can be an  empty  string  or  a  comma-separated  list  of  the  flags:  "fua",
+           "may_trim", and "fast" (eg. "", "fua", "fua,may_trim,fast" are some of the 8 possible values).
+
+           Unlike  in  other languages, if you provide a "zero" method you <b>must</b> also provide a "can_zero" method
+           which exits with code 0 (true).
+
+           To trigger a fallback to "pwrite" on a normal zero request, or to respond quickly to the "fast"  flag
+           that  a  specific  zero  request  is  no  faster  than  a corresponding write, the script must output
+           "ENOTSUP" or "EOPNOTSUPP" to stderr (possibly followed  by  a  description  of  the  problem)  before
+           exiting with code 1 (failure).
+
+       "extents"
+            /path/to/script extents &lt;handle&gt; &lt;count&gt; &lt;offset&gt; &lt;flags&gt;
+
+           The "flags" parameter can be an empty string or "req_one".
+
+           This must print, one per line on stdout, a list of one or more extents in the format:
+
+            offset length type
+
+           which  correspond  to  the  inputs of the C "nbdkit_add_extent" function (see <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3)).  The
+           "offset" and "length" fields may use any format understood  by  <b><a href="../man3/nbdkit_parse_size.3.html">nbdkit_parse_size</a></b>(3).   The  optional
+           "type"  field  may  be an integer, missing (same as 0), or a comma-separated list of the words "hole"
+           and "zero".  An example of a valid set of extents covering a "10M" disk where the first megabyte only
+           is allocated data:
+
+            0  1M
+            1M 9M  hole,zero
+
+           Unlike in other languages, if you provide an "extents" method you <b>must</b> also provide  a  "can_extents"
+           method which exits with code 0 (true).
+
+       "cache"
+            /path/to/script cache &lt;handle&gt; &lt;count&gt; &lt;offset&gt;
+
+           Unlike in other languages, if you provide a "cache" method you <b>must</b> also provide a "can_cache" method
+           which prints "native" and exits with code 0 (true).
+
+   <b>Missing</b> <b>callbacks</b>
+       Missing: "name", "version", "longname", "description", "config_help"
+           These are not yet supported.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$plugindir/nbdkit-sh-plugin.so</u>
+           The plugin.
+
+           Use "nbdkit --dump-config" to find the location of $plugindir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-sh-plugin" first appeared in nbdkit 1.8.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3), <b><a href="../man1/nbdkit-eval-plugin.1.html">nbdkit-eval-plugin</a></b>(1), <b><a href="../man1/nbdkit-cc-plugin.1.html">nbdkit-cc-plugin</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.6                                      2025-08-01                                <u><a href="../man3/nbdkit-sh-plugin.3.html">nbdkit-sh-plugin</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

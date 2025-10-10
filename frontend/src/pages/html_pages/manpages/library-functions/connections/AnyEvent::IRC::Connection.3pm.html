@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnyEvent::IRC::Connection - An IRC connection abstraction</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libanyevent-irc-perl">libanyevent-irc-perl_0.97-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       AnyEvent::IRC::Connection - An IRC connection abstraction
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use AnyEvent;
+          use AnyEvent::IRC::Connection;
+
+          my $c = AnyEvent-&gt;condvar;
+
+          my $con = new AnyEvent::IRC::Connection;
+
+          $con-&gt;connect ("localhost", 6667);
+
+          $con-&gt;reg_cb (
+             connect =&gt; sub {
+                my ($con) = @_;
+                $con-&gt;send_msg (NICK =&gt; 'testbot');
+                $con-&gt;send_msg (USER =&gt; 'testbot', '*', '0', 'testbot');
+             },
+             irc_001 =&gt; sub {
+                my ($con) = @_;
+                print "$_[1]-&gt;{prefix} says I'm in the IRC: $_[1]-&gt;{params}-&gt;[-1]!\n";
+                $c-&gt;broadcast;
+             }
+          );
+
+          $c-&gt;wait;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The connection class. Here the actual interesting stuff can be done, such as sending and receiving IRC
+       messages. And it also handles TCP connecting and even enabling of TLS.
+
+       Please note that CTCP support is available through the functions "encode_ctcp" and "decode_ctcp" provided
+       by AnyEvent::IRC::Util.
+
+   <b>METHODS</b>
+       $con = AnyEvent::IRC::Connection-&gt;new ()
+           This constructor doesn't take any arguments.
+
+           <b>NOTE:</b> You are free to use the hash member "heap" (which contains a hash) to store any associated data
+           with this object. For example retry timers or anything else.
+
+           You can also access that member via the "heap" method.
+
+       $con-&gt;connect ($host, $port [, $prepcb_or_timeout])
+           Tries  to  open a socket to the host $host and the port $port.  If an error occurred it will die (use
+           eval to catch the exception).
+
+           If you want to connect via TLS/SSL you have to call the "enable_ssl" method before to enable it.
+
+           $prepcb_or_timeout can either be a callback with the semantics of a prepare callback for the function
+           "tcp_connect" in AnyEvent::Socket or a simple number which stands for a timeout.
+
+       $con-&gt;enable_ssl ()
+           This method will enable SSL for new connections that are initiated by "connect".
+
+       $con-&gt;disconnect ($reason)
+           Unregisters the connection  in  the  main  AnyEvent::IRC  object,  closes  the  sockets  and  send  a
+           'disconnect' event with $reason as argument.
+
+       $con-&gt;is_connected
+           Returns true when this connection is connected.  Otherwise false.
+
+       $con-&gt;heap ()
+           Returns  the hash reference stored in the "heap" member, that is local to this connection object that
+           lets you store any information you want.
+
+       $con-&gt;send_raw ($ircline)
+           This method sends $ircline straight to the server without any further processing done.
+
+       $con-&gt;send_msg ($command, @params)
+           This  function  sends   a   message   to   the   server.   @ircmsg   is   the   argument   list   for
+           "AnyEvent::IRC::Util::mk_msg (undef, $command, @params)".
+
+   <b>EVENTS</b>
+       Following  events are emitted by this module and shouldn't be emitted from a module user call to "event".
+       See also the documents Object::Event about registering event callbacks.
+
+       connect =&gt; $error
+           This event is generated when the socket  was  successfully  connected  or  an  error  occurred  while
+           connecting. The error is given as second argument ($error) to the callback then.
+
+       disconnect =&gt; $reason
+           This  event  will be generated if the connection is somehow terminated.  It will also be emitted when
+           "disconnect" is called.  The second argument to the callback is $reason, a  string  that  contains  a
+           clue about why the connection terminated.
+
+           If you want to reestablish a connection, call "connect" again.
+
+       send =&gt; $ircmsg
+           Emitted  when  a  message  is  about  to  be  sent. $ircmsg is an array reference to the arguments of
+           "mk_msg" (see AnyEvent::IRC::Util). You may modify the array reference to change the message or  even
+           intercept it completely by calling "stop_event" (see Object::Event API):
+
+              $con-&gt;reg_cb (
+                 send =&gt; sub {
+                    my ($con, $ircmsg) = @_;
+
+                    if ($ircmsg-&gt;[1] eq 'NOTICE') {
+                       $con-&gt;stop_event; # prevent any notices from being sent.
+
+                    } elsif ($ircmsg-&gt;[1] eq 'PRIVMSG') {
+                       $ircmsg-&gt;[-1] =~ s/sex/XXX/i; # censor any outgoing private messages.
+                    }
+                 }
+              );
+
+       sent =&gt; @ircmsg
+           Emitted   when  a  message  (@ircmsg)  was  sent  to  the  server.   @ircmsg  are  the  arguments  to
+           "AnyEvent::IRC::Util::mk_msg".
+
+       irc_* =&gt; $msg
+       irc_&lt;lowercase command&gt; =&gt; $msg
+       read =&gt; $msg
+           Emitted when a message ($msg) was read from the server.  $msg  is  the  hash  reference  returned  by
+           "AnyEvent::IRC::Util::parse_irc_msg";
+
+           Note: '&lt;lowercase command&gt;' stands for the command of the message in (ASCII) lower case.
+
+       buffer_empty
+           This  event  is  emitted when the write buffer of the underlying connection is empty and all data has
+           been given to the kernel. See also "samples/notify" about a usage example.
+
+           Please note that this buffer is NOT the queue mentioned in AnyEvent::IRC::Client!
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Robin Redeker, "&lt;<a href="mailto:elmex@ta-sa.org">elmex@ta-sa.org</a>&gt;"
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       AnyEvent::IRC
+
+       AnyEvent::IRC::Client
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2006-2009 Robin Redeker, all rights reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.34.0                                       2022-06-06                     <u>AnyEvent::IRC::<a href="../man3pm/Connection.3pm.html">Connection</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

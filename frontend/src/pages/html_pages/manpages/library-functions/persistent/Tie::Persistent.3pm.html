@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tie::Persistent - persistent data structures via tie made easy</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtie-persistent-perl">libtie-persistent-perl_1.00-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tie::Persistent - persistent data structures via tie made easy
+
+</pre><h4><b>VERSION</b></h4><pre>
+       1.00
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Tie::Persistent;
+
+        tie %DB, 'Tie::Persistent', 'file', 'rw'; # read data from 'file'
+
+        (tied %DB)-&gt;<a href="../man1/autosync.1.html">autosync</a>(1);       # turn on write back on every modify
+
+        # now create/add/modify datastruct
+        $DB{key} = "value";
+        (tied %DB)-&gt;sync();            # can be called manually
+
+        untie %DB;                     # stores data back into 'file'
+
+        # read stored data, no modification of file data
+        tie %ReadOnly, 'Tie::Persistent', 'file';
+        foreach (keys %ReadOnly) {
+          print "$_ =&gt; $ReadOnly{$_}\n";
+        }
+        untie %ReadOnly;               # modifications not stored back
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Tie::Persistent package makes working with persistent data real easy by using the "tie" interface.
+
+       It works by storing data contained in a variable into a file (not unlike a database). The primary
+       advantage is speed, as the whole datastructure is kept in memory (which is also a limitation), and, of
+       course, that you can use arbitrary data structures inside the variable (unlike DB_File).
+
+       Note that it is most useful if the data structure fits into memory.  For larger data structures I
+       recommend MLDBM.
+
+       If you want to make an arbitrary object persistent, just store its ref in a scalar tied to
+       'Tie::Persistent'.
+
+       <b>Beware</b>: not every data structure or object can be made persistent.  For example, it may not contain GLOB
+       or CODE refs, as these are not really dumpable (yet?).
+
+       Also, it works only for variables, you cannot use it for file handles.
+
+       [A persistent file handle? Hmmm... Hmmm! I've got an idea: I could start a server and send the file
+       descriptor to it via ioctl(FD_SEND) or sendmsg.  Later, I could retrieve it back, so it's persistent as
+       long as the server process keeps running.  But the whole file handle may contain more than just the file
+       descriptor.  There may be an output routine associated with it that I'd somehow have to dump.  Now let's
+       see, there was some way to get the bytecode converted back into perl code... &lt;wanders off into the
+       darkness mumbling&gt; ... ]
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       "tie" %Hash,   'Tie::Persistent', <b>file</b>, <b>mode</b>, <u>other...</u>;
+
+       "tie" @Array,  'Tie::Persistent', <b>file</b>, <b>mode</b>, <u>other...</u>;
+
+       "tie" $Scalar, 'Tie::Persistent', <b>file</b>, <b>mode</b>, <u>other...</u>;
+
+       <b>file</b>
+           Filename to store the data in. No naming convention is enforced, but I personally use the suffix 'pd'
+           for "Perl Data" (or "Persistent Data"?). No file locking is done; see the section on locking below.
+
+       <b>mode</b> (optional)
+           Same  as  mode for POSIX <b>fopen()</b> or IO::File::open. Basically a combination of 'r', 'w', 'a' and '+'.
+           Semantics:
+
+            'r' .... read only. Modifications in the data are not stored back
+                     into the file. A non-existing file gives an error. This is
+                     the default if no mode is given.
+
+            'rw' ... read/write. Modifications are stored back, if the file does
+                     not exist, it is created.
+
+            'w' .... write only. The file is not read, the variable starts out empty.
+
+            'a', '+' ... append. Same as 'w', but creates numbered backup files.
+
+            'ra', 'r+' ... Same as 'rw', but creates numbered backup files.
+
+           When some kind of write access is specified, a backup file of the  old  dataset  is  always  created.
+           [You'll  thank  me  for  that, believe me.]  The reason is simple: when you tie a variable read-write
+           (the contents get restored from the file), and your program isn't fully debugged yet, it may  die  in
+           the  middle  of  some  modifications,  but  the data will still be written back to the file, possibly
+           leaving them inconsistent. Then you always have at least the previous version that  you  can  restore
+           from.
+
+           The  default  backup filenames follow the Emacs notation, i.e. a '~' is appended; for numbered backup
+           files (specified as 'a' or '+'), an additional number and a '~' is appended.
+
+           For a file 'data.pd', the normal backup file would be 'data.pd~' and the numbered backup files  would
+           be  'data.pd~1~',  'data.pd~2~' and so on. The latest backup file is the one with the highest number.
+           The backup filename format can be overridden, see below.
+
+       <u>other</u> (optional, experimental)
+           This can be a reference to another (possibly tied) variable or a name of another tieable package.
+
+           If a ref is given, it is used internally to store the variable data instead of an anonymous  variable
+           ref. This allows one to make other tied datastructures persistent, e.g. you could first tie a hash to
+           Tie::IxHash to make it order-preserving and then give it to Tie::Persistent to make it persistent.
+
+           A  plain  name  is used to create this tied variable internally. Trailing arguments are passed to the
+           other tieable package.
+
+           Example:
+
+            tie %h, 'Tie::Persistent', 'file', 'rw', 'Tie::IxHash';
+
+           or
+
+            tie %ixh, 'Tie::IxHash';
+            tie %ph,  'Tie::Persistent', 'file', 'w', \%ixh;
+            # you can now use %ixh as an alias for %ph
+
+           <b>NOTE</b>: This is an experimental feature. It may or may not work with other Tie:: packages. I have  only
+           tested it with 'Tie::IxHash'.  Please report success or failure.
+
+</pre><h4><b>LOCKING</b></h4><pre>
+       The  data  file  is  not automatically locked. Locking has to be done outside of the package. I recommend
+       using a module like 'Lockfile::Simple' for that.
+
+       There are typical two scenarios for locking: you either lock just the 'tie' and/or 'untie' calls, but not
+       the data manipulation, or you lock the whole 'tie' - modify data - 'untie' sequence.
+
+</pre><h4><b>KEEPING</b> <b>DATA</b> <b>SYCHRONIZED</b></h4><pre>
+       It often is useful to store snapshots of the tied data struct back to the file, e.g. to safeguard against
+       program crashes.  You have two possibilities to do that:
+
+       •   use <b>sync()</b> to do it manually or
+
+       •   set <b>autosync()</b> to do it on every modification.
+
+       Note that <b>sync()</b> and <b>autosync()</b> are methods of the tied object, so you have to call them like this:
+
+        (tied %hash)-&gt;sync();
+
+       and
+
+        (tied @array)-&gt;<a href="../man1/autosync.1.html">autosync</a>(1);  # or '0' to turn off autosync
+
+       There is a global variable $Autosync (see there) that you can set to change the  behaviour  on  a  global
+       level for all subsequent ties.
+
+       Enabling  autosync  of  course means a quite hefty performance penalty, so think carefully if and how you
+       need it.  Maybe there are natural synchronisation points in your application where a manual sync is  good
+       enough.  Alternatively use MLDBM (if your top-level struct is a hash).
+
+       Note:  autosync  only works if the top-level element of the data structure is modified.  If you have more
+       complex data structures and modify elements somewhere deep down, you have  to  synchronize  manually.   I
+       therefore recommend the following approach, especially if the topmost structure is a hash:
+
+       •   fetch the top-level element into a temporary variable
+
+       •   modify the datastructure
+
+       •   store back the top-level element, thus triggering a sync.
+
+       E.g.
+
+         my $ref = $Hash{$key};      # fetch substructure
+         $ref-&gt;{$subkey} = $newval;  # modify somewhere down under
+         $Hash{$key} = $ref;         # store back
+
+       This  programming  style has the added advantage that you can switch over to other database packages (for
+       example the MLDBM package, in case your data  structures  outgrow  your  memory)  quite  easily  by  just
+       changing the 'tie' line!
+
+</pre><h4><b>CONFIGURATION</b> <b>VARIABLES</b></h4><pre>
+       <b>$Tie::Persistent::Readable</b>  controls which format to use to store the data inside the file. 'false' means
+       to use 'Storable', which is faster (and the default), 'true' means to use 'Data::Dumper', which is slower
+       but much more readable and thus meant for debugging.  This only influences the way the  datastructure  is
+       <u>written</u>, format detection on read is automatic.
+
+       <b>$Tie::Persistent::Autosync</b>  gives  the  default for all tied vars, so modifying it affects all subsequent
+       ties.  It's set to 'false' by default.
+
+       <b>$Tie::Persistent::BackupFile</b> points to a sub that determines the backup  filename  format.  It  gets  the
+       filename as $_[0] and returns the backup filename. The default is
+
+        sub { "$_[0]~"; }
+
+       which is the Emacs backup format. For NT, you might want to change this to
+
+        sub { "$_[0].bak"; }
+
+       or something.
+
+       <b>$Tie::Persistent::NumberedBackupFile</b> points to a sub that determines the numbered backup filename format.
+       It  gets  the  filename and a number as $_[0] and $_[1] respectively and returns the backup filename. The
+       default is
+
+        sub { "$_[0]~$_[1]~"; }
+
+       which is the extended Emacs backup format.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       •   'Tie::Persistent' uses 'Storable' and 'Data::Dumper' internally, so these must be installed (the CPAN
+           module will do this for you automatically).  Actually, 'Storable' is  optional  but  recommended  for
+           speed.
+
+       •   For testing, I use 'Tie::IxHash', but 'make test' still does some tests if it is not installed.
+
+       •   There are two mailing lists at SourceForge.net:
+
+           <a href="http://lists.sourceforge.net/mailman/listinfo/persistent-announce">http://lists.sourceforge.net/mailman/listinfo/persistent-announce</a> for announcements of new releases.
+
+           <a href="http://lists.sourceforge.net/mailman/listinfo/persistent-discuss">http://lists.sourceforge.net/mailman/listinfo/persistent-discuss</a>   for   user  feedback  and  feature
+           discussions.
+
+       •   The package is available through CPAN and SourceForge.net <a href="http://sourceforge.net/projects/persistent/">http://sourceforge.net/projects/persistent/</a>
+
+       •   There is an initiative at SourceForge.net to get authors of persistence-packages of any kind to  talk
+           to one another.  See <a href="http://sourceforge.net/projects/POOP/">http://sourceforge.net/projects/POOP/</a>
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Numbered  backupfile  creation  might  have problems if the filename (not the backup number) contains the
+       first six digits of the speed of light (in m/s).
+
+       All other bugs, please tell me!
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Original version by Roland Giersig &lt;<a href="mailto:RGiersig@cpan.org">RGiersig@cpan.org</a>&gt;
+
+       Benjamin Liberman &lt;<a href="mailto:beanjamman@yahoo.com">beanjamman@yahoo.com</a>&gt; added autosyncing and fixed splice.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 1999-2002 Roland Giersig. All rights reserved.  This program  is  free  software;  you  can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Storable, Data::Dumper, MLDBM.
+
+perl v5.36.0                                       2022-11-20                                    <u><a href="../man3pm/Persistent.3pm.html">Persistent</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::TCP - testing TCP program</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-tcp-perl">libtest-tcp-perl_2.22-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::TCP - testing TCP program
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Test::TCP;
+
+           my $server = Test::TCP-&gt;new(
+               listen =&gt; 1,
+               code =&gt; sub {
+                   my $socket = shift;
+                   ...
+               },
+           );
+           my $client = MyClient-&gt;new(host =&gt; '127.0.0.1', port =&gt; $server-&gt;port);
+           undef $server; # kill child process on DESTROY
+
+       If using a server that can only accept a port number, e.g. memcached:
+
+           use Test::TCP;
+
+           my $memcached = Test::TCP-&gt;new(
+               code =&gt; sub {
+                   my $port = shift;
+
+                   exec $bin, '-p' =&gt; $port;
+                   die "cannot execute $bin: $!";
+               },
+           );
+           my $memd = Cache::Memcached-&gt;new({servers =&gt; ['127.0.0.1:' . $memcached-&gt;port]});
+           ...
+
+       <b>N.B.</b>: This is vulnerable to race conditions, if another process binds to the same port after
+       Net::EmptyPort found it available.
+
+       And functional interface is available:
+
+           use Test::TCP;
+           test_tcp(
+               listen =&gt; 1,
+               client =&gt; sub {
+                   my ($port, $server_pid) = @_;
+                   # send request to the server
+               },
+               server =&gt; sub {
+                   my $socket = shift;
+                   # run server, calling $socket-&gt;accept
+               },
+           );
+
+           test_tcp(
+               client =&gt; sub {
+                   my ($port, $server_pid) = @_;
+                   # send request to the server
+               },
+               server =&gt; sub {
+                   my $port = shift;
+                   # run server, binding to $port
+               },
+           );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test::TCP is a test utility to test TCP/IP-based server programs.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       test_tcp
+           Functional interface.
+
+               test_tcp(
+                   listen =&gt; 1,
+                   client =&gt; sub {
+                       my $port = shift;
+                       # send request to the server
+                   },
+                   server =&gt; sub {
+                       my $socket = shift;
+                       # run server
+                   },
+                   # optional
+                   host =&gt; '127.0.0.1', # specify '::1' to test using IPv6
+                   port =&gt; 8080,
+                   max_wait =&gt; 3, # seconds
+               );
+
+           If "listen" is false, "server" is instead passed a port number that was free before it was called.
+
+       wait_port
+               <a href="../man8080/wait_port.8080.html">wait_port</a>(8080);
+
+           Waits for a particular port is available for connect.
+
+</pre><h4><b>Object</b> <b>Oriented</b> <b>interface</b></h4><pre>
+       my $server = Test::TCP-&gt;new(%args);
+           Create new instance of Test::TCP.
+
+           Arguments are following:
+
+           $args{auto_start}: Boolean
+               Call "$server-&gt;start()" after create instance.
+
+               Default: true
+
+           $args{code}: CodeRef
+               The callback function. Argument for callback function is: "$code-&gt;($socket)" or "$code-&gt;($port)",
+               depending on the value of "listen".
+
+               This parameter is required.
+
+           $args{max_wait} : Number
+               Will wait for at most $max_wait seconds before checking port.
+
+               See also Net::EmptyPort.
+
+               <u>Default:</u> <u>10</u>
+
+           $args{listen} : Boolean
+               If  true,  open a listening socket and pass this to the callback.  Otherwise find a free port and
+               pass the number of it to the callback.
+
+       $server-&gt;<b>start()</b>
+           Start the server process. Normally, you don't need to call this method.
+
+       $server-&gt;<b>stop()</b>
+           Stop the server process.
+
+       my $pid = $server-&gt;<b>pid()</b>;
+           Get the pid of child process.
+
+       my $port = $server-&gt;<b>port()</b>;
+           Get the port number of child process.
+
+</pre><h4><b>FAQ</b></h4><pre>
+       How to invoke two servers?
+           You can call <b>test_tcp()</b> twice!
+
+               test_tcp(
+                   client =&gt; sub {
+                       my $port1 = shift;
+                       test_tcp(
+                           client =&gt; sub {
+                               my $port2 = shift;
+                               # some client code here
+                           },
+                           server =&gt; sub {
+                               my $port2 = shift;
+                               # some server2 code here
+                           },
+                       );
+                   },
+                   server =&gt; sub {
+                       my $port1 = shift;
+                       # some server1 code here
+                   },
+               );
+
+           Or use the OO interface instead.
+
+               my $server1 = Test::TCP-&gt;new(code =&gt; sub {
+                   my $port1 = shift;
+                   ...
+               });
+               my $server2 = Test::TCP-&gt;new(code =&gt; sub {
+                   my $port2 = shift;
+                   ...
+               });
+
+               # your client code here.
+               ...
+
+       How do you test server program written in other languages like memcached?
+           You can use "exec()" in child process.
+
+               use strict;
+               use warnings;
+               use utf8;
+               use Test::More;
+               use Test::TCP 1.08;
+               use File::Which;
+
+               my $bin = scalar which 'memcached';
+               plan skip_all =&gt; 'memcached binary is not found' unless defined $bin;
+
+               my $memcached = Test::TCP-&gt;new(
+                   code =&gt; sub {
+                       my $port = shift;
+
+                       exec $bin, '-p' =&gt; $port;
+                       die "cannot execute $bin: $!";
+                   },
+               );
+
+               use Cache::Memcached;
+               my $memd = Cache::Memcached-&gt;new({servers =&gt; ['127.0.0.1:' . $memcached-&gt;port]});
+               $memd-&gt;set(foo =&gt; 'bar');
+               is $memd-&gt;get('foo'), 'bar';
+
+               done_testing;
+
+       How do I use address other than "127.0.0.1" for testing?
+           You can use the "host" parameter to specify the bind address.
+
+               # let the server bind to "0.0.0.0" for testing
+               test_tcp(
+                   client =&gt; sub {
+                       ...
+                   },
+                   server =&gt; sub {
+                       ...
+                   },
+                   host =&gt; '0.0.0.0',
+               );
+
+       How should I write IPv6 tests?
+           You should use the "can_bind" in Net::EmptyPort function to check if the  program  can  bind  to  the
+           loopback  address  of IPv6, as well as the "host" parameter of the "test_tcp" function to specify the
+           same address as the bind address.
+
+               use Net::EmptyPort qw(can_bind);
+
+               plan skip_all =&gt; "IPv6 not available"
+                   unless can_bind('::1');
+
+               test_tcp(
+                   client =&gt; sub {
+                       ...
+                   },
+                   server =&gt; sub {
+                       ...
+                   },
+                   host =&gt; '::1',
+               );
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tokuhiro Matsuno &lt;<a href="mailto:tokuhirom@gmail.com">tokuhirom@gmail.com</a>&gt;
+
+</pre><h4><b>THANKS</b> <b>TO</b></h4><pre>
+       kazuhooku
+
+       dragon3
+
+       charsbar
+
+       Tatsuhiko Miyagawa
+
+       lestrrat
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.30.3                                       2020-09-08                                     <u>Test::<a href="../man3pm/TCP.3pm.html">TCP</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

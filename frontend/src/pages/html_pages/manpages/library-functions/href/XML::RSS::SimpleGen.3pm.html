@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::RSS::SimpleGen - for writing RSS files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-rss-simplegen-perl">libxml-rss-simplegen-perl_11.11-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::RSS::SimpleGen - for writing RSS files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # A complete screen-scraper and RSS generator here:
+
+         use strict;
+         use XML::RSS::SimpleGen;
+         my $url = q&lt;<a href="http://www.exile.ru/">http://www.exile.ru/</a>&gt;;
+
+         rss_new( $url, "eXile", "Moscow-based Alternative Newspaper" );
+         rss_language( 'en' );
+         rss_webmaster( '<a href="mailto:xxxxx@yourdomain.com">xxxxx@yourdomain.com</a>' );
+         rss_twice_daily();
+
+         get_url( $url );
+
+         while(
+          m{&lt;h4&gt;\s*&lt;a href='/(.*?)'.*?&gt;(.*?)&lt;/a&gt;\s*&lt;/h4&gt;\s*&lt;p.*?&gt;(.*?)&lt;a href='/}sg
+         ) {
+           rss_item("$url$1", $2, $3);
+         }
+
+         die "No items in this content?! {{\n$_\n}}\nAborting"
+          unless rss_item_count();
+
+         rss_save( 'exile.rss', 45 );
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is for writing RSS files, simply. It transparently handles all the unpleasant details of RSS,
+       like proper XML escaping, and also has a good number of Do-What-I-Mean features, like not changing the
+       modtime on a written-out RSS file if the file content hasn't changed, and like automatically removing any
+       HTML tags from content you might pass in.
+
+       This module isn't meant to have the full expressive power of RSS; instead, it provides functions that are
+       most commonly needed by RSS-writing programs.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       This module provides a bunch of functions for starting an RSS feed in memory, putting items into it, and
+       saving it to disk (or printing it as a string, as in a CGI). If you prefer an object-oriented interface
+       (obviously more useful if you're composing several feeds at once), then you can use this module as a
+       class whose methods are the same as the function names minus "rss_". Except for this detail of the
+       naming, the functions and methods are the same, behave the same, and take the same arguments.
+
+       That is, this functional code:
+
+         use XML::RSS::SimpleGen;
+         my $url = q&lt;<a href="http://www.exile.ru/">http://www.exile.ru/</a>&gt;;
+
+         rss_new( $url, "eXile" );
+         rss_language( 'en' );
+         get_url( $url );
+         ...
+
+       does the same work as this OO code:
+
+         use XML::RSS::SimpleGen ();
+         my $url = q&lt;<a href="http://www.exile.ru/">http://www.exile.ru/</a>&gt;;
+         my $rss = XML::RSS::SimpleGen-&gt;new( $url, "eXile");
+         $rss-&gt;language( 'en' );
+         $rss-&gt;get_url( $url );
+         ...
+
+       (Note that the function "get_url" doesn't have a leading "rss_", so its method name is the same as its
+       function name.  It's the one exception.)
+
+       If this talk of objects puzzles you, see HTML::Tree::AboutObjects in the "HTML-Tree" dist, and/or see the
+       chapter "User's View of Object-Oriented Modules" in my book <u>Perl</u> <u>&amp;</u> <u>LWP</u>
+       (&lt;<a href="http://www.amazon.com/exec/obidos/ASIN/0596001789">http://www.amazon.com/exec/obidos/ASIN/0596001789</a>&gt;).  (The book is also useful as an extended
+       discussion of screen-scraping.)
+
+       Note: in the code below, I use the word "accessor" a lot, to refer to a function or method that you can
+       call two possible ways: 1) like "foo(<u>val</u>)" to set the "foo" attribute to the value <u>val</u>, or 2) like
+       "foo()" to return the value of the "foo" attribute.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       "rss_new( <u>url</u> );"
+       "rss_new( <u>url,</u> <u>title</u> );"
+       "rss_new( <u>url,</u> <u>title,</u> <u>description</u> );"
+       <u>or:</u> "$rss = XML::RSS::SimpleGen-&gt;new(...);"
+           This function creates a new RSS feed in memory.  This should be the first "rss_<u>whatever</u>" function you
+           call  in your program.  If you call it again, it erases the current object (if any) and sets up a new
+           one according to whatever parameters you pass.
+
+           The parameters are the full URL, the title, and the description of the site  (or  page)  that  you're
+           providing  an  RSS  feed  of.  The description is optional, but you should provide at least a URL and
+           title.
+
+           Examples:
+
+             rss_new( $url, "eXile", "Moscow-based Alternative Newspaper" );
+
+             rss_new( '<a href="http://www.mybazouki.com/news/">http://www.mybazouki.com/news/</a>', "Bazouki News!" );
+
+           (As a method, XML::RSS::SimpleGen-&gt;new simply returns a new RSS object.)
+
+       the accessor "rss_language(<u>language_tag</u>)"
+           This declares what language this RSS feed is in.  It must be  an  RFC3066-style  language  tags  like
+           "en",  or  "en-US",  or "zh-TW".  (See <u>I18N::LangTags::List</u> for a list.)  If you don't set the feed's
+           language, it defaults to "en", for generic English.
+
+           If you call this function without a parameter, it  returns  the  current  value  of  the  RSS  feed's
+           language.  For example:
+
+             print "I'm making an RSS feed for ", rss_language(), "!\n";
+
+           The same is true for all the functions that I label as "accessors".
+
+       the accessor "rss_item_limit(<u>number</u>)"
+           This sets the maximum number of items that this feed will show.
+
+           The default value is 0, meaning that there is no maximum.
+
+           If you set it to a positive number <u>N</u>, then the feed will show only the first <u>N</u> items that you declare
+           with  "rss_item".  (Or,  if you set "rss_history_file", then the newest <u>N</u> items that you declare with
+           "rss_item".)
+
+           If you set it to a negative number <u>-N</u>, then the feed will show only the last <u>N</u> items that you declare
+           with "rss_item". (Or, if you set "rss_history_file",  then  the  oldest  <u>N</u>  items  you  declare  with
+           "rss_item", which is unlikely to be useful!)
+
+       the accessor "rss_webMaster(<u>email-address</u>)"
+           This declares what email address you, the RSS generator manager, can be reached at.  Example:
+
+             rss_webMaster( '<a href="mailto:sburke@bazouki-news.int">sburke@bazouki-news.int</a>' );
+
+       "rss_history_file( <u>filename</u> )"
+           This declares that you want this RSS feed to keep track of what items are new, and to list them first
+           when  the RSS is emitted.  To do this, the RSS generator has to store information in a file, where it
+           tracks its "history", i.e., when was the first time it saw given URLs, and the most  recent  time  it
+           saw given URLs.
+
+           Typical usage is:
+
+             rss_history_file( 'thisrssfeed.dat' );
+
+           You should call "rss_history_file" <u>before</u> you make any calls to "rss_item".
+
+           The  history-file  feature  is  meant  for cases where your RSS-generator program calls "rss_item" on
+           <u>every</u> link it sees, but only wants the <u>new</u> links to appear in the RSS output. (This  can  be  a  good
+           approach  if you're making an RSS feed of a page like "<a href="http://www.guardian.co.uk/">http://www.guardian.co.uk/</a>" where there's some
+           new links (to the recently added stories), but also links to some days-old stories, and <u>also</u> links to
+           some always-there things like "Archive Search" and "Contact Us" pages.
+
+           Once you call rss_history_file, the specified file is read in.  The in-memory history (stored in  the
+           RSS object) is updated as you call "rss_item".  But the file isn't updated until you call rss_save.
+
+           (A  do-what-I-mean  side effect of calling "rss_history_file" is that it sets rss_item_limit to 25 if
+           it is currently 0.)
+
+           (Incidentally, if you're using rss_history_file as part of a CGI that emits RSS data,  instead  of  a
+           program  that  just  saves  to  an RSS file, then things will get complicated. You'll need to call an
+           internal method to explicitly commit the history file to disk, and you'll need a  semaphore  file  to
+           avoid race conditions. Email me for full info.)
+
+       "rss_item( <u>url</u> );"
+       "rss_item( <u>url,</u> <u>title</u> );"
+       "rss_item( <u>url,</u> <u>title,</u> <u>description</u> );"
+           This adds a new item to the current feed. You will need to specify the URL to add (and it should be a
+           valid-looking  URL,  starting with "<u>something:</u>", and not containing any spaces). You may also specify
+           the title, but it's optional. And finally,  you  can  optionally  specify  a  description.  (You  can
+           remember  this  because  it  starts  with  the  essential  item first, and progresses toward the most
+           optional.)
+
+           Leading and tailing whitespace is removed from whichever of <u>url,</u> <u>title,</u> and <u>description</u>  are  defined
+           values, and HTML is parsed out.
+
+           A simple usage:
+
+             rss_item(
+               "<a href="http://www.harpers.org/MostRecentWR.html">http://www.harpers.org/MostRecentWR.html</a>",
+               "Harper's Magazine's Weekly Review"
+             );
+
+           Although  in  practice,  a  typical  call  won't  have string constants, but will instead be like the
+           example in the Synopsis sectios, namely:
+
+             rss_item("$url$1", $2, $3);
+
+           Incidentally, as a do-what-I-mean feature, if the first parameter doesn't look like a URL but one  of
+           the  others  does, then this error is silently forgiven.  This is so you can occasionally slip up and
+           forget the order of the parameters.
+
+           (In the unlikely event where you <u>need</u> to avoid the HTML-removal features, you can do this by  passing
+           scalar-references instead of normal strings, like so: "rss_item($url, $title, \$not_to_be_escaped)".)
+
+       "rss_item_count()"
+           This returns the number of items you've declared.  I anticipate that its main usage will be something
+           like:
+
+             die "What, no objects found at $url ?!"
+              unless rss_item_count();
+
+           or, maybe...
+
+             exit unless rss_item_count();
+
+           ...depending  on how/whether you'd want to react to cases where you don't see anything to put into an
+           RSS feed.
+
+           Note that the parens are optional, since this command takes no options  (just  like  Perl's  "time()"
+           function).
+
+       "rss_image( <u>url,</u> <u>h,</u> <u>w</u> );"
+           This  declares  that  you  want  to declare a particular image as the logo for this feed.  Most feeds
+           don't have such a thing, and most readers just ignore it anyway, but if you want to declare it,  this
+           function  is  how.  The three parameters, which are all required, are: the image's URL, its height in
+           pixels, and its width in pixels.  According to various specs, the width should/must be between 1  and
+           144, an the height should/must be between 1 and 400.
+
+           A typical usage:
+
+             rss_image("<a href="http://interglacial.com/rss/weebl.gif">http://interglacial.com/rss/weebl.gif</a>", 106, 140);
+
+           Be careful not to mix up the height and width.
+
+       "rss_save( <u>filename</u> );"
+       "rss_save( <u>filename,</u> <u>max_age_days</u> );"
+           This  saves  the RSS date to the file you specify.  If the RSS data hasn't changed, the file (and its
+           modtime) aren't altered.  The optional <u>max_age_days</u> parameter means that if ever the file exists, and
+           its content hasn't changed for that many days or longer, then the program should die with  a  warning
+           message.   For  example,  in  the case of a screen-scraper for a site that we know should (in theory)
+           change its content at least weekly, we might save the RSS file with:
+
+             rss_save("whatever.rss", 17);
+              # Scream if the feed is unchanged for 17 days.
+
+           The seventeen there is gotten by assuming that just maybe  the  site  might  skip  two  weeks  for  a
+           vacation  now and then, and might even put out the pre-vacation issue a few days early -- but that if
+           ever the program notices that the data hasn't  changed  for  17  days,  then  it  should  emit  error
+           messages.  If you want to disable this feature on a one-time basis, just change the modtime (like via
+           "touch") on the <u>whatever.rss</u> file.
+
+           If  you  don't  specify  a  "max_age_days"  value,  then  this  whole complain-if-it's-old feature is
+           disabled.
+
+       "rss_as_string();"
+           This returns the RSS-XML data as a string.  This  function  is  called  internally  by  the  rss_save
+           function;  but  you  might want to call it explicitly, as in a CGI, where your CGI would probably end
+           like this:
+
+             print "Content-type: application/xml\n\n", rss_as_string();
+             exit;
+
+       "get_url( <u>url</u> );"
+       "$content = get_url( <u>url</u> );"
+       <u>or:</u> "$content = $rss-&gt;get_url(...);"
+       <u>or:</u> "$content-&gt;get_url(...);"
+           This tries to get the content of the given url, and returns it.
+
+           This is quite like LWP::Simple's "get" function, but with some additional features:
+
+           •   If it can't get the URL's content at first, it will sleep for a few seconds and try again, up  to
+               about  five  times.  (This  is to avoid the case of the URL being temporarily inaccessible simply
+               because the DNS is a bit slow, or because the server is too busy.)
+
+           •   If it can't get the content, even after several retries,  it  will  abort  the  program  (like  a
+               "die").  If you want to override this behavior, then call it as "eval { get_url($url) };"
+
+           •   If  you  call  the function in void context (i.e., not using its return value), then the function
+               assigns the URL's content to $_.  That's so you can write nice concise code like this:
+
+                          get_url $thatsite;
+                          m/Top Stories Tonight/ or die "What, no top stories?";
+                          while( m{&lt;a class="top" href="(.*?)"&gt;(.*?)&lt;/a&gt;}g ) {
+                            rss_item("$thatsite/$1", $2);
+                          }
+
+           •   This returns the content of the URL not exactly as-is, but after changing its newlines to  native
+               format.   That is, if the contents of the URL use CR-LF pairs to express newlines, then "get_url"
+               changes these to "\n"'s before returning the content.  (Similarly for old MacOS newline  format.)
+               Clearly  this  is wrong in you're dealing with binary data; in that case, use LWP::Simple's "get"
+               directly.
+
+           •   Finally, as a resource-conversation measure, this function will also try to call  "sleep"  a  few
+               times  if  it  sees  several quick calls to itself coming from a program that seems to be running
+               under crontab.  As most of my RSS-generators are crontabbed, I find it very  useful  that  I  can
+               have however many "get_url"'s in my crontabbed programs without worrying that they'll take even a
+               noticeable part of the server's bandwidth.
+
+       "rss_hourly" <u>or</u> "rss_daily" <u>or</u> "rss_twice_daily" <u>or</u> "rss_thrice_daily" <u>or</u> "rss_weekly" <u>or</u>
+       "rss_every_other_hour"
+           Calling one of these functions declares that this feed is usually generated at the same time(s) every
+           day  (or  every  week,  in the case of "rss_weekly"). And, where it's not just once a day/week, these
+           multiple times a day are  evenly  spaced.   These  functions  then  set  the  feed's  "updatePeriod",
+           "updateBase",  "updateFrequency",  "skipHours", "skipDays", and "ttl" elements appropriately, so that
+           RSS readers can know at at what times there could (or couldn't) be new content in this feed.
+
+           In other words: use "rss_twice_daily" if this feed is updated at about the same time  every  day  and
+           then  again  12  hours later.  Use "rss_thrice_daily" if this feed is updated at the same time daily,
+           and then 8 hours later, and then 8 hours later.  And use "rss_every_other_hour" if the  feed  updates
+           at about <u>n</u> minutes past every even numbered hour, or every odd-numbered hour.
+
+           Clearly  I  mean  these  functions  to  be  used in programs that are crontabbed to run at particular
+           intervals, as with a crontab line like one of these:
+
+                  52 * * * *         <a href="file:~/thingy">~/thingy</a>   # =&gt; rss_hourly
+                  52 23 * * *        <a href="file:~/thingy">~/thingy</a>   # =&gt; rss_daily
+                  52 4,16 * * *      <a href="file:~/thingy">~/thingy</a>   # =&gt; rss_twice_daily
+                  52 5,13,21 * * *   <a href="file:~/thingy">~/thingy</a>   # =&gt; rss_thrice_daily
+                  52 23 * * 3        <a href="file:~/thingy">~/thingy</a>   # =&gt; rss_weekly
+                  52 */2 * * *       <a href="file:~/thingy">~/thingy</a>   # =&gt; rss_every_other_hour
+
+           Clearly there aren't "rss_<u>interval</u>" functions for all the scheduling possibilities programs -- if you
+           have a program that has to run at 6am, 8am, 1pm, and 4pm, there's no function for that.  However, the
+           above crontab lines (or with minor changes, like "1,9,17" instead of "5,13,21")  are  just  fine  for
+           almost every RSS feed I've run.
+
+           An  aside:  I  recommend running the programs at about 52 minutes past the hour, generally in series,
+           like so:
+
+                  52 5,13,21 * * *   <a href="file:~/thingy">~/thingy</a> ; <a href="file:~/dodad">~/dodad</a> ; <a href="file:~/makething">~/makething</a> ; <a href="file:~/gizmo">~/gizmo</a>
+
+           However, your mileage may vary.
+
+           Incidentally, these functions take no arguments, so the parentheses are optional.  That is, these two
+           lines do the same thing:
+
+                  rss_hourly;
+                  rss_hourly();
+
+   <b>MINOR</b> <b>FUNCTIONS</b>
+       These are functions that you probably won't need often, or at all.  I  include  these  for  the  sake  of
+       completeness, and so that advanced users might find them useful in some cases.
+
+       "rss_skipHours( <u>gmt_hour_num,</u> <u>gmt_hour_num,</u> <u>...</u> );"
+           This function directly sets the "skipHours" element's values to the specified GMT hour numbers.
+
+       "rss_updateHours();"
+       "rss_updateHours( <u>gmt_hour_num,</u> <u>gmt_hour_num,</u> <u>...</u> );"
+           This  function  is  a wrapper around "rss_skipHours" -- you call "rss_updateHours" with a list of GMT
+           hour numbers, and "rss_updateHours" will call "rss_skipHours(0 .. 23)" except <u>without</u>  whatever  hour
+           numbers you specified.
+
+           If  you  call  with an empty list (i.e., "rss_updateHours();"), then we uses "gmtime" to find out the
+           current hour (and rounds it up if it's after 50 minutes past), basically just as if you'd called:
+
+                 rss_updateHours( (gmtime(600+time()))[2] );
+
+       "rss_skipDays();"
+       "rss_skipDays( <u>gmt_day_num,</u> <u>gmt_day_num,</u> <u>...</u> );"
+       "rss_skipDays( <u>gmt_day_name,</u> <u>gmt_day_name,</u> <u>...</u> );"
+           This function directly sets the "skipDays" element's values to the  specified  weekdays.   Note  that
+           this  accepts  either  integers  (like  6  for  Saturday, Sunday being either 0 or 7), or their exact
+           English names.
+
+           If you use the "skipDays" field, consider that it refers to days figured by GMT, not local time.  For
+           example, if I say to skip Saturdays, that means Saturdays GMT, which in my timezone  (Alaska)  starts
+           in the middle of Friday afternoon.
+
+       "rss_updateDays();"
+       "rss_updateDays( <u>gmt_day_num,</u> <u>gmt_day_num,</u> <u>...</u> );"
+       "rss_updateDays( <u>gmt_day_name,</u> <u>gmt_day_name,</u> <u>...</u> );"
+           This  function is a wrapper around "rss_skipDays" -- you call "rss_updateDays" with a list of GMT day
+           names/numbers, and "rss_updateDays" will call "rss_skipDays(0 .. 6)" except <u>without</u> whatever days you
+           specified.
+
+           If you call with an empty list (i.e., "rss_updateDays();"), then we uses "gmtime"  to  find  out  the
+           current day (GMT!), basically just as if you'd called:
+
+                 rss_updateDays( (gmtime(600+time()))[6] );
+
+       "rss_updatePeriod( <u>periodstring</u> );"
+           This  function directly sets the "sy:updatePeriod" element's value to the period specified.  You must
+           specify one of the strings:  "yearly",  "monthly",  "weekly",  "daily",  "hourly".   I  advise  using
+           "weekly"  only  if  you  know what you're doing, and "yearly", "monthly" only if you <u>really</u> know what
+           you're doing.
+
+       "rss_updatePeriod( <u>periodstring</u>, <u>int</u>, <u>base</u> );"
+           This is a shortcut for "rss_updatePeriod(<u>periodstring</u>); rss_updateFrequency(<u>int</u>)"
+
+       "rss_updatePeriod( <u>periodstring</u>, <u>int</u>, <u>base</u> );"
+           This    is    a    shortcut    for     "rss_updatePeriod(<u>periodstring</u>);     rss_updateFrequency(<u>int</u>);
+           rss_updateBase(<u>base</u>)"
+
+       "rss_updateBase( <u>iso_date_string</u> );"
+       "rss_updateBase( <u>epoch_time</u> );"
+           This function directly sets the "sy:updateBase" element's value to the moment specified.  If you pass
+           in an epoch time, it is converted to an ISO date string.
+
+       the accessor "rss_updateFrequency( <u>integer</u> );"
+           This  function  directly  sets  the "sy:updateFrequency" element's value to the value specified.  The
+           value has to be a nonzero positive integer.
+
+           For example, this means that this feed updates at/by the start of every hour and 30 minutes past:
+
+             rss_updateBase('2000-01-01T00:00-00:00');
+             <a href="../man2/rss_updateFrequency.2.html">rss_updateFrequency</a>(2);
+             rss_updatePeriod('hourly');  # 2*hourly means "twice an hour"
+
+           Recall that this can also be done with the the "rss_updatePeriod( <u>per</u>, <u>freq</u>, <u>base</u> )"  shortcut,  like
+           so:
+
+             rss_updateBase('hourly', 2, '2000-01-01T00:00-00:00');
+
+       the accessor "rss_retention(<u>number</u>)"
+           If you are using an "rss_history_file(<u>file</u>)", the history file will accrete a list of all URLs it has
+           seen.   But  to  keep  this file from potentially getting immense, items that haven't been seen for a
+           while are thrown out.  The period of time a feed's items go unseen before each is forgotten is called
+           that feed's <b>retention</b>, and is expressed in seconds.
+
+           The default retention value is 32 days (i.e., 32*24*60*60, the number of seconds in 32 days).  If you
+           wanted to change it to just a week, you would do this with "rss_retention(7*24*60*60)".
+
+           As a special case, a zero or negative value for the retention means to never clear anything from  the
+           history file, no matter how long it has gone unseen.
+
+       "rss_add_comment( <u>strings</u> );"
+           Call  this function if you want to add extra XML comments to this RSS file.  For example, if you call
+           this:
+
+                   rss_add_comment(
+                     "Our terms of use: <a href="http://wherever.int/rsstou.html">http://wherever.int/rsstou.html</a>",
+                     "Any questions? Ask <a href="mailto:jimmy@wherever.int">jimmy@wherever.int</a>",
+                   );
+
+           ...then this RSS feed will contain this XML fairly early on in the file:
+
+                   &lt;!-- Our terms of use: <a href="http://wherever.int/rsstou.html">http://wherever.int/rsstou.html</a> --&gt;
+                   &lt;!-- Any questions? Ask <a href="mailto:jimmy@wherever.int">jimmy@wherever.int</a> --&gt;
+
+       the accessor "rss_css( <u>url</u> )"
+           This defines the given URL as being the XML-CSS stylesheet for this RSS feed.  The default  value  is
+           "./rss.css" if "-e "rss.css"" is true, otherwise is the value <a href="http://www.interglacial.com/rss/rss.css">http://www.interglacial.com/rss/rss.css</a>
+
+       the accessor "rss_xsl( <u>url</u> )"
+           This  defines  the given URL as being the XML-XSL stylesheet for this RSS feed.  The default value is
+           none.
+
+       The accessors "rss_url( <u>string</u> ), rss_title( <u>string</u> ), rss_description( <u>string</u> )"
+           These define this feed's URL, title, and description.  These functions  are  just  for  completeness,
+           since it's simpler to just specify any/all of these parameters in the call to "rss_new".
+
+       the accessor "rss_ttl( <u>number</u> )"
+           This  sets  the  parameter of this RSS feed's "ttl" element, which suggests how long (in minutes, not
+           seconds!) an RSS reader should wait after it polls a feed until it  polls  it  again.   For  example,
+           "<a href="../man90/rss_ttl.90.html">rss_ttl</a>(90)" would suggest that a reader should not poll this feed more often than every 90 minutes.
+
+           (This  element  is somewhat obsolescent next to the newer and more informative "sy:update*" elements,
+           but is included for backward compatibility.)
+
+       the accessor "rss_allow_duplicates( <u>boolean</u> )"
+           This controls whether or not duplicate items are filtered out out the feed.  By default this  is  <u>on</u>.
+           Note that duplicates are detected only by their URL, so if you call this:
+
+                   rss_item('<a href="http://foo.int/donate">http://foo.int/donate</a>', "Give!");
+                   rss_item('<a href="http://foo.int/donate">http://foo.int/donate</a>', "We need money!");
+                   rss_save('begging.rss');
+
+           ...then only the first will appear in the feed, since the second item has a URL that is already being
+           saved  in  this  feed.   (However,  "rss_item_count"  is still 2, because filtering out duplicates is
+           something that only happens as the feed is saved.)
+
+       the accessor "rss_docs( <u>url</u> )"
+           This  sets  the  value  of  the  not-generally-useful  "doc"  RSS  element.   The  default  value  is
+           "./about_rss.html"        if        "-e        "about_rss.html""       is       true,       otherwise
+           "<a href="http://www.interglacial.com/rss/about.html">http://www.interglacial.com/rss/about.html</a>".
+
+       the accessors "rss_image_url(<u>url</u>), rss_image_width(<u>number</u>), rss_image_height(<u>number</u>),
+       rss_image_title(<u>text</u>), rss_image_link(<u>url</u>), rss_image_description(<u>text</u>)"
+           These are for manually setting the values of this feed's image element's subelements:
+
+             &lt;image&gt;
+                         &lt;url&gt; (rss_image_url)         &lt;/url&gt;
+                       &lt;width&gt; (rss_image_width)       &lt;/width&gt;
+                      &lt;height&gt; (rss_image_height)      &lt;/height&gt;
+                       &lt;title&gt; (rss_image_title)       &lt;/title&gt;
+                        &lt;link&gt; (rss_image_link)        &lt;/link&gt;
+                 &lt;description&gt; (rss_image_description) &lt;/description&gt;
+             &lt;/image&gt;
+
+           You rarely need to  call  any  of  these  "rss_image_<u>whatever</u>"  functions  --  usually  just  calling
+           "rss_image( <u>url,</u> <u>h,</u> <u>w</u> );" is enough.
+
+</pre><h4><b>RSS</b> <b>VERSION</b></h4><pre>
+       RSS  feeds  emitted  by this module are basically according to v0.92 RSS, with a very few extensions from
+       v2.0 RSS.  They are not RDF files.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       XML::RSS
+
+       &lt;<a href="http://my.netscape.com/publish/formats/rss-0.91.dtd">http://my.netscape.com/publish/formats/rss-0.91.dtd</a>&gt;
+
+       &lt;<a href="http://blogs.law.harvard.edu/tech/rss">http://blogs.law.harvard.edu/tech/rss</a>&gt;
+
+       &lt;<a href="http://directory.google.com/Top/Reference/Libraries/Library_and_Information_Science/Technical_Services/Cataloguing/Metadata/RDF/Applications/RSS/Specifications/">http://directory.google.com/Top/Reference/Libraries/Library_and_Information_Science/Technical_Services/Cataloguing/Metadata/RDF/Applications/RSS/Specifications/</a>&gt;
+
+       &lt;<a href="http://feedvalidator.org/">http://feedvalidator.org/</a>&gt;
+
+       You might also like my book <u>Perl</u> <u>and</u> <u>LWP</u>, which discusses the many screen-scraping  techniques  that  you
+       would use for extracting data from HTML to make into RSS feeds:
+
+       &lt;<a href="http://www.oreilly.com/catalog/perllwp/">http://www.oreilly.com/catalog/perllwp/</a>&gt;
+       &lt;<a href="http://www.amazon.com/exec/obidos/ASIN/0596001789/">http://www.amazon.com/exec/obidos/ASIN/0596001789/</a>&gt;
+       &lt;<a href="http://www.amazon.co.uk/exec/obidos/ASIN/0596001789/t">http://www.amazon.co.uk/exec/obidos/ASIN/0596001789/t</a>&gt;
+       &lt;<a href="http://interglacial.com/d/scrapers">http://interglacial.com/d/scrapers</a>&gt; -- examples of Perl programs that produce RSS's (which are visible
+       at &lt;<a href="http://interglacial.com/rss/">http://interglacial.com/rss/</a>&gt; )
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>DISCLAIMERS</b></h4><pre>
+       Copyright (c) 2003,4 Sean M. Burke.  All rights reserved.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       This program is distributed in the hope that it will be useful, but without any  warranty;  without  even
+       the implied warranty of merchantability or fitness for a particular purpose.
+
+       Portions  of  the  data  tables  in this module are derived from the entity declarations in the W3C XHTML
+       specification.
+
+       Currently (January 2004), that's these three:
+
+              <a href="http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent</a>
+              <a href="http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent</a>
+              <a href="http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent</a>
+
+       Portions of the code in this module were adapted from parts of Gisle Aas's LWP::Simple and the old (v2.x)
+       version of his HTML::Parser.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sean M. Burke "<a href="mailto:sburke@cpan.org">sburke@cpan.org</a>"
+
+perl v5.26.2                                       2018-05-06                           <u>XML::RSS::<a href="../man3pm/SimpleGen.3pm.html">SimpleGen</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

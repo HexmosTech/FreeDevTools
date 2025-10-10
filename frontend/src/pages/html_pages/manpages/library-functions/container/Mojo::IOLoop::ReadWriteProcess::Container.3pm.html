@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::IOLoop::ReadWriteProcess::Container - (kinda) Pure Perl containers.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojo-ioloop-readwriteprocess-perl">libmojo-ioloop-readwriteprocess-perl_0.34-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Container - (kinda) Pure Perl containers.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $container = container(
+             pid_isolation =&gt; 1,  # Best-effort, as depends on where you run it (you need CAP_SYS_ADMIN)
+             subreaper =&gt; 1,
+             group   =&gt; "my_org",
+             name    =&gt; "my_process",
+             process =&gt; process(
+               sub {
+                 # Exec, fork ..
+                 process(sub { warn "\o/"; sleep 42;  })-&gt;start;
+                 process(sub { warn "\o/"; sleep 42; })-&gt;start;
+                 process(
+                   sub {
+                     process(
+                       sub {
+                         process(sub { warn "\o/"; sleep 42; })-&gt;start;
+                         warn "\o/";
+                         sleep 400;
+                         warn "\o/";
+                       })-&gt;start;
+                     warn "Hey";
+                     sleep 42;
+                     warn "\o/";
+                   })-&gt;start;
+                 sleep 42;
+               }
+             )-&gt;<a href="../man0/separate_err.0.html">separate_err</a>(0));
+
+           $container-&gt;start();
+           $container-&gt;is_running;
+           $container-&gt;stop;
+
+           my @procs = $container-&gt;cgroups-&gt;first-&gt;processes;
+           $container-&gt;cgroups-&gt;first-&gt;pid-&gt;<a href="../man300/max.300.html">max</a>(300);
+
+           $container-&gt;process-&gt;on(stop =&gt; sub { print "Main container process stopped!" });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Container ties anonymous functions or a Mojo::IOLoop::ReadWriteProcess
+       object to different sets of Mojo::IOLoop::ReadWriteProcess::CGroup implementations.
+
+       When the "pid_isolation" attribute is set, it needs special permissions (CAP_SYS_ADMIN capabilities).
+       This module uses features that are only available on Linux, and requires cgroups and capability
+       (CAP_SYS_ADMIN) for unshare syscalls to achieve pid isolation.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess inherits all events from Mojo::EventEmitter and can emit the following new
+       ones.
+
+   <b>start</b>
+        $container-&gt;on(start =&gt; sub {
+          my ($process) = @_;
+           ...
+        });
+
+       Emitted when the container starts.
+
+   <b>stop</b>
+        $container-&gt;on(stop =&gt; sub {
+          my ($container) = @_;
+          ...
+        });
+
+       Emitted when the container stops.
+
+   <b>process_error</b>
+        $container-&gt;on(container_error =&gt; sub {
+          my ($e) = @_;
+          my @errors = @{$e};
+        });
+
+       Emitted when the container produce errors.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Container inherits all methods from Mojo::EventEmitter and implements the
+       following new ones.
+
+   <b>start</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container( name=&gt;"test", process =&gt; sub { print "Hello!" });
+           $c-&gt;start();
+
+       Starts the container, it's main process is a Mojo::IOLoop::ReadWriteProcess, contained in the "process()"
+       attribute. On stop it will terminate every process included in the cgroups attribute.
+
+   <b>is_running</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container( name=&gt;"test", process =&gt; sub { print "Hello!" });
+           $c-&gt;is_running();
+
+       Returns 1 if the container is running.
+
+   <b>stop</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container( name=&gt;"test", process =&gt; sub { print "Hello!" })-&gt;start;
+           $c-&gt;stop();
+
+       Stops the container and kill all the processes belonging to the cgroup.  It also registers all the
+       unknown processes to the current Mojo::IOLoop::ReadWriteProcess::Session.
+
+   <b>wait_stop</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container( name=&gt;"test", process =&gt; sub { print "Hello!" })-&gt;start;
+           $c-&gt;wait_stop();
+
+       Wait before stopping the container.
+
+   <b>wait</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container( name=&gt;"test", process =&gt; sub { print "Hello!" })-&gt;start;
+           $c-&gt;wait();
+
+       Wait the container to stop
+
+   <b>migrate_process</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container( name=&gt;"test", process =&gt; sub { print "Hello!" })-&gt;start;
+           $c-&gt;<a href="../man42/migrate_process.42.html">migrate_process</a>(42);
+
+       Migrate the given process to the container cgroup.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Container inherits all attributes from Mojo::EventEmitter and implements
+       the following new ones.
+
+   <b>name</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           use Mojo::IOLoop::ReadWriteProcess::CGroup qw(cgroupv1);
+           use Mojo::Collection 'c';
+
+           my $container = container( name =&gt; "test", process =&gt; sub { print "Hello!" } );
+
+           $container-&gt;session-&gt;on(register =&gt; sub { ... });
+           $container-&gt;start();
+
+       Sets the container name. It creates in the indicated (or default) cgroups a sub-tree with the container
+       name.
+
+       This means that cgroups settings can be done also outside of the container object:
+
+           use Mojo::IOLoop::ReadWriteProcess::CGroup qw(cgroupv1);
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+
+           my $container = container( name =&gt; "test", process =&gt; sub { print "Hello!" } );
+
+           cgroupv1-&gt;from($continer-&gt;cgroups-&gt;first-&gt;_group)-&gt;pid-&gt;<a href="../man100/max.100.html">max</a>(100);
+
+       As cgroups are represented by path, you can set options directly from controllers objects that are
+       pointing to the same cgroup slice.
+
+   <b>group</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           use Mojo::IOLoop::ReadWriteProcess::CGroup qw(cgroupv2);
+           use Mojo::Collection 'c';
+
+           my $container = container( name =&gt; "bar", group =&gt; "foo", process =&gt; sub { print "Hello!" } );
+           my $container2 = container( name =&gt; "bar2", group =&gt; "foo", process =&gt; sub { print "Hello!" } );
+
+           $container-&gt;start();
+           $container2-&gt;start();
+
+           my $group_cgroup = cgroupv2-&gt;from($container2-&gt;cgroups-&gt;first-&gt;parent);
+
+           $group_cgroup-&gt;pid-&gt;<a href="../man200/max.200.html">max</a>(200);
+
+       Sets the container group. If containers are sharing the same group they will inherit the same CGroup
+       parent path, in such way it is possible to create controllers pointing to it and set specific options for
+       the whole group.
+
+   <b>pid_isolation</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           use Mojo::IOLoop::ReadWriteProcess::CGroup qw(cgroupv1);
+           use Mojo::Collection 'c';
+
+           my $container = container( pid_isolation =&gt; 1, process =&gt; sub { print "Hello!" } );
+
+           $container-&gt;session-&gt;on(register =&gt; sub { ... });
+           $container-&gt;start();
+
+       If set, the process will see itself as PID 1. It needs CAP_SYS_ADMIN capabilities set on the executable
+       (or run as root).
+
+   <b>pre_migrate</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $container = container( pre_migrate =&gt; 1, process =&gt; sub { print "Hello!" } );
+
+           $container-&gt;session-&gt;on(register =&gt; sub { ... });
+           $container-&gt;start();
+
+       If set, the process will migrate itself into the cgroup.
+
+   <b>clean_cgroup</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $container = container( clean_cgroup =&gt; 1, process =&gt; sub { print "Hello!" });
+
+           $container-&gt;session-&gt;on(register =&gt; sub { ... });
+           $container-&gt;start();
+
+       If set, attempts to destroy the cgroup after the process terminated its execution.
+
+   <b>subreaper</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container(subreaper =&gt; 1, name=&gt;"test", process =&gt; sub { print "Hello!" });
+           $c-&gt;start();
+
+       Enable subreaper mode inside the child process.
+
+   <b>process</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container(process =&gt; sub { print "Hello!" });
+           my $c = container(process =&gt; sub { print "Hello!" });
+
+           $c-&gt;start();
+
+       The process to run. It can be an anonymous function or a Mojo::IOLoop::ReadWriteProcess object.
+
+   <b>namespace</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container(process =&gt; sub { print "Hello!" });
+           $c-&gt;namespace-&gt;<a href="../man0/unshare.0.html">unshare</a>(0); # All
+           $c-&gt;start();
+
+       Set/Return Mojo::IOLoop::ReadWriteProcess::Namespace object. It's main use is to invoke syscalls.
+
+   <b>session</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $c = container(process =&gt; process(sub { print "Hello!" }));
+           $c-&gt;session-&gt;on(register =&gt; sub { ... });
+           $c-&gt;start();
+
+       Returns/Set the Mojo::IOLoop::ReadWriteProcess::Session singleton object.
+
+   <b>unshare</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           use Mojo::IOLoop::ReadWriteProcess::Namespace qw( CLONE_NEWPID CLONE_NEWNS );
+
+           my $c = container( unshare=&gt; CLONE_NEWPID | CLONE_NEWNS, process =&gt; sub { print "Hello!" } );
+           $c-&gt;session-&gt;on(register =&gt; sub { ... });
+           $c-&gt;start();
+
+       Returns/Set the unshare syscall options. See man <b><a href="../man2/unshare.2.html">unshare</a></b>(2) for further documentation.
+
+   <b>cgroups</b>
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           use Mojo::IOLoop::ReadWriteProcess::CGroup qw(cgroupv1);
+           use Mojo::Collection 'c';
+
+           my $container = container(process =&gt; sub { print "Hello!" });
+           $container-&gt;cgroups( c(cgroupv1(controller =&gt; 'pids'), cgroupv1(controller =&gt; 'memory')) );
+
+           $container-&gt;session-&gt;on(register =&gt; sub { ... });
+           $container-&gt;start();
+
+       Returns/Set a Mojo::Collection collection of CGroups where the process should belong to.  If used with a
+       single CGroup, you don't need to pass the Mojo::Collection  object:
+
+           use Mojo::IOLoop::ReadWriteProcess::Container qw(container);
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           use Mojo::IOLoop::ReadWriteProcess::CGroup qw(cgroupv1);
+           use Mojo::Collection 'c';
+
+           my $container = container(cgroups=&gt; cgroupv1(controller =&gt; 'pids'), process =&gt; sub { print "Hello!" });
+
+           $container-&gt;session-&gt;on(register =&gt; sub { ... });
+           $container-&gt;start();
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the MOJO_EVENTEMITTER_DEBUG environment variable to get some advanced diagnostics information
+       printed to STDERR.
+
+           MOJO_EVENTEMITTER_DEBUG=1
+
+       Also, you can set MOJO_PROCESS_DEBUG environment variable to get diagnostics about the process execution.
+
+           MOJO_PROCESS_DEBUG=1
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (C) Ettore Di Giacinto.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ettore Di Giacinto &lt;<a href="mailto:edigiacinto@suse.com">edigiacinto@suse.com</a>&gt;
+
+perl v5.36.0                                       2023-10-26              <u>Mojo::IOLoop::...cess::<a href="../man3pm/Container.3pm.html">Container</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

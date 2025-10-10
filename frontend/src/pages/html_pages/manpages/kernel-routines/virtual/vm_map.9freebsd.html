@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vm_map — virtual address space portion of virtual memory subsystem</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vm_map — virtual address space portion of virtual memory subsystem
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/param.h&gt;</b>
+       <b>#include</b> <b>&lt;vm/vm.h&gt;</b>
+       <b>#include</b> <b>&lt;vm/vm_map.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>vm_map</b>  subsystem  is  used  to manage virtual address spaces.  This section describes the main data
+       structures used within the code.
+
+       The <u>struct</u> <u>vm_map</u> is a generic representation of an address space.  This address space may  belong  to  a
+       user  process  or the kernel.  The kernel actually uses several maps, which are maintained as subordinate
+       maps, created using the <u><a href="../man9/vm_map_submap.9.html">vm_map_submap</a></u>(9) function.
+
+             struct vm_map {
+                     struct vm_map_entry header;
+                     struct sx lock;
+                     struct mtx system_mtx;
+                     int nentries;
+                     vm_size_t size;
+                     u_int timestamp;
+                     u_char needs_wakeup;
+                     u_char system_map;
+                     vm_flags_t flags;
+                     vm_map_entry_t root;
+                     pmap_t pmap;
+                     int busy;
+             };
+
+       The fields of <u>struct</u> <u>vm_map</u> are as follows:
+
+       <u>header</u>        Head node of a circular, doubly linked list of <u>struct</u> <u>vm_map_entry</u>  objects.   Each  object
+                     defines a particular region within this map's address space.
+
+       <u>lock</u>          Used to serialize access to the structure.
+
+       <u>system_mtx</u>    A mutex which is used if the map is a system map.
+
+       <u>nentries</u>      A count of the members in use within the circular map entry list.
+
+       <u>size</u>          Specifies the size of the virtual address space.
+
+       <u>timestamp</u>     Used to determine if the map has changed since its last access.
+
+       <u>needs_wakeup</u>  Indicates  if  a  thread  is waiting for an allocation within the map.  Used only by system
+                     maps.
+
+       <u>system_map</u>    Set to TRUE to indicate that map is a system map; otherwise, it belongs to a user process.
+
+       <u>flags</u>         Map flags, described below.
+
+       <u>root</u>          Root node of a binary search tree used for fast lookup of map entries.
+
+       <u>pmap</u>          Pointer to the underlying physical map with which this virtual map is associated.
+
+       <u>busy</u>          Map busy counter, prevents forks.
+
+       Possible map flags:
+
+       MAP_WIREFUTURE        Wire all future pages in this map.
+
+       MAP_BUSY_WAKEUP       There are waiters for the map busy status.
+
+       The following flags can be passed to <u><a href="../man9/vm_map_find.9.html">vm_map_find</a></u>(9) and <u><a href="../man9/vm_map_insert.9.html">vm_map_insert</a></u>(9)  to  specify  the  copy-on-write
+       properties of regions within the map:
+
+       MAP_COPY_ON_WRITE     The mapping is copy-on-write.
+
+       MAP_NOFAULT           The mapping should not generate page faults.
+
+       MAP_PREFAULT          The mapping should be prefaulted into physical memory.
+
+       MAP_PREFAULT_PARTIAL  The mapping should be partially prefaulted into physical memory.
+
+       MAP_DISABLE_SYNCER    Do not periodically flush dirty pages; only flush them when absolutely necessary.
+
+       MAP_DISABLE_COREDUMP  Do not include the mapping in a core dump.
+
+       MAP_PREFAULT_MADVISE  Specify that the request is from a user process calling <u><a href="../man2/madvise.2.html">madvise</a></u>(2).
+
+       MAP_ACC_CHARGED       Region is already charged to the requestor by some means.
+
+       MAP_ACC_NO_CHARGE     Do not charge for allocated region.
+
+       The  <u>struct</u>  <u>vm_map_entry</u>  is  a generic representation of a region.  The region managed by each entry is
+       associated with a <u>union</u> <u>vm_map_object</u>, described below.
+
+             struct vm_map_entry {
+                     struct vm_map_entry *prev;
+                     struct vm_map_entry *next;
+                     struct vm_map_entry *left;
+                     struct vm_map_entry *right;
+                     vm_offset_t start;
+                     vm_offset_t end;
+                     vm_offset_t avail_ssize;
+                     vm_size_t adj_free;
+                     vm_size_t max_free;
+                     union vm_map_object object;
+                     vm_ooffset_t offset;
+                     vm_eflags_t eflags;
+                     /* Only in task maps: */
+                     vm_prot_t protection;
+                     vm_prot_t max_protection;
+                     vm_inherit_t inheritance;
+                     int wired_count;
+                     vm_pindex_t lastr;
+             };
+
+       The fields of <u>struct</u> <u>vm_map_entry</u> are as follows:
+
+       <u>prev</u>         Pointer to the previous node in a doubly-linked, circular list.
+
+       <u>next</u>         Pointer to the next node in a doubly-linked, circular list.
+
+       <u>left</u>         Pointer to the left node in a binary search tree.
+
+       <u>right</u>        Pointer to the right node in a binary search tree.
+
+       <u>start</u>        Lower address bound of this entry's region.
+
+       <u>end</u>          Upper address bound of this entry's region.
+
+       <u>avail_ssize</u>  If the entry is for a process stack, specifies how much the entry can grow.
+
+       <u>adj_free</u>     The amount of free, unmapped address space adjacent to and immediately  following  this  map
+                    entry.
+
+       <u>max_free</u>     The maximum amount of contiguous free space in this map entry's subtree.
+
+       <u>object</u>       Pointer to the <u>struct</u> <u>vm_map_object</u> with which this entry is associated.
+
+       <u>offset</u>       Offset within the <u>object</u> which is mapped from <u>start</u> onwards.
+
+       <u>eflags</u>       Flags applied to this entry, described below.
+
+       The following five members are only valid for entries forming part of a user process's address space:
+
+       <u>protection</u>      Memory protection bits applied to this region.
+
+       <u>max_protection</u>  Mask for the memory protection bits which may be actually be applied to this region.
+
+       <u>inheritance</u>     Contains flags which specify how this entry should be treated during fork processing.
+
+       <u>wired_count</u>     Count of how many times this entry has been wired into physical memory.
+
+       <u>lastr</u>           Contains the address of the last read which caused a page fault.
+
+       The following flags may be applied to each entry, by specifying them as a mask within the <u>eflags</u> member:
+
+       MAP_ENTRY_NOSYNC            The  system  should not flush the data associated with this map periodically,
+                                   but only when it needs to.
+
+       MAP_ENTRY_IS_SUB_MAP        If set, then the <u>object</u> member specifies a subordinate map.
+
+       MAP_ENTRY_COW               Indicate that this is a copy-on-write region.
+
+       MAP_ENTRY_NEEDS_COPY        Indicate that a copy-on-write region needs to be copied.
+
+       MAP_ENTRY_NOFAULT           Specifies that accesses within this region should never cause a  page  fault.
+                                   If a page fault occurs within this region, the system will panic.
+
+       MAP_ENTRY_USER_WIRED        Indicate that this region was wired on behalf of a user process.
+
+       MAP_ENTRY_BEHAV_NORMAL      The system should use the default paging behaviour for this region.
+
+       MAP_ENTRY_BEHAV_SEQUENTIAL  The  system  should  depress the priority of pages immediately preceding each
+                                   page within this region when faulted in.
+
+       MAP_ENTRY_BEHAV_RANDOM      Is a hint that pages within this region will be accessed randomly,  and  that
+                                   prefetching is likely not advantageous.
+
+       MAP_ENTRY_IN_TRANSITION     Indicate  that  wiring or unwiring of an entry is in progress, and that other
+                                   kernel threads should not attempt to modify fields in the structure.
+
+       MAP_ENTRY_NEEDS_WAKEUP      Indicate that there are kernel threads waiting  for  this  region  to  become
+                                   available.
+
+       MAP_ENTRY_NOCOREDUMP        The region should not be included in a core dump.
+
+       The  <u>inheritance</u>  member  has  type <u>vm_inherit_t</u>.  This governs the inheritance behaviour for a map entry
+       during fork processing.  The following values are defined for <u>vm_inherit_t</u>:
+
+       VM_INHERIT_SHARE    The object associated with the entry should be cloned and shared with the new map.  A
+                           new <u>struct</u> <u>vm_object</u> will be created if necessary.
+
+       VM_INHERIT_COPY     The object associated with the entry should be copied to the new map.
+
+       VM_INHERIT_NONE     The entry should not be copied to the new map.
+
+       VM_INHERIT_DEFAULT  Specifies the default behaviour, VM_INHERIT_COPY.
+
+       The <u>union</u> <u>vm_map_object</u> is used to specify the structure which a <u>struct</u> <u>vm_map_entry</u> is associated with.
+
+       The fields of <u>union</u> <u>vm_map_object</u> are as follows:
+
+             union vm_map_object {
+                     struct vm_object *vm_object;
+                     struct vm_map *sub_map;
+             };
+
+       Normally, the <u>sub_map</u> member is only used by system maps to indicate that a memory range is managed by  a
+       subordinate  system  map.   Within  a  user  process  map, each <u>struct</u> <u>vm_map_entry</u> is backed by a <u>struct</u>
+       <u>vm_object</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/pmap.9.html">pmap</a></u>(9),  <u><a href="../man9/vm_map_check_protection.9.html">vm_map_check_protection</a></u>(9),  <u><a href="../man9/vm_map_create.9.html">vm_map_create</a></u>(9),  <u><a href="../man9/vm_map_delete.9.html">vm_map_delete</a></u>(9),  <u><a href="../man9/vm_map_entry_resize_free.9.html">vm_map_entry_resize_free</a></u>(9),
+       <u><a href="../man9/vm_map_find.9.html">vm_map_find</a></u>(9), <u><a href="../man9/vm_map_findspace.9.html">vm_map_findspace</a></u>(9), <u><a href="../man9/vm_map_inherit.9.html">vm_map_inherit</a></u>(9), <u><a href="../man9/vm_map_init.9.html">vm_map_init</a></u>(9), <u><a href="../man9/vm_map_insert.9.html">vm_map_insert</a></u>(9), <u><a href="../man9/vm_map_lock.9.html">vm_map_lock</a></u>(9),
+       <u><a href="../man9/vm_map_lookup.9.html">vm_map_lookup</a></u>(9),  <u><a href="../man9/vm_map_madvise.9.html">vm_map_madvise</a></u>(9),  <u><a href="../man9/vm_map_max.9.html">vm_map_max</a></u>(9),  <u><a href="../man9/vm_map_min.9.html">vm_map_min</a></u>(9),  <u><a href="../man9/vm_map_pmap.9.html">vm_map_pmap</a></u>(9), <u><a href="../man9/vm_map_protect.9.html">vm_map_protect</a></u>(9),
+       <u><a href="../man9/vm_map_remove.9.html">vm_map_remove</a></u>(9),   <u><a href="../man9/vm_map_simplify_entry.9.html">vm_map_simplify_entry</a></u>(9),    <u><a href="../man9/vm_map_stack.9.html">vm_map_stack</a></u>(9),    <u><a href="../man9/vm_map_submap.9.html">vm_map_submap</a></u>(9),    <u><a href="../man9/vm_map_sync.9.html">vm_map_sync</a></u>(9),
+       <u><a href="../man9/vm_map_wire.9.html">vm_map_wire</a></u>(9)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was written by Bruce M Simpson &lt;<u><a href="mailto:bms@spc.org">bms@spc.org</a></u>&gt;.
+
+Debian                                            July 3, 2018                                         <u><a href="../man9/VM_MAP.9.html">VM_MAP</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

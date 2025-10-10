@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vsock - Linux VSOCK address family</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/manpages">manpages_6.9.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vsock - Linux VSOCK address family
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/socket.h&gt;</b>
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/linux/vm_sockets.h">linux/vm_sockets.h</a>&gt;</b>
+
+       <u>stream_socket</u> <b>=</b> <b>socket(AF_VSOCK,</b> <b>SOCK_STREAM,</b> <b>0);</b>
+       <u>datagram_socket</u> <b>=</b> <b>socket(AF_VSOCK,</b> <b>SOCK_DGRAM,</b> <b>0);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The VSOCK address family facilitates communication between virtual machines and the host they are running
+       on.   This  address  family  is  used  by guest agents and hypervisor services that need a communications
+       channel that is independent of virtual machine network configuration.
+
+       Valid socket types are <b>SOCK_STREAM</b> and <b>SOCK_DGRAM</b>.  <b>SOCK_STREAM</b> provides connection-oriented byte streams
+       with guaranteed, in-order delivery.  <b>SOCK_DGRAM</b> provides a connectionless datagram  packet  service  with
+       best-effort  delivery  and  best-effort ordering.  Availability of these socket types is dependent on the
+       underlying hypervisor.
+
+       A new socket is created with
+
+           socket(AF_VSOCK, socket_type, 0);
+
+       When a process wants to establish a connection, it calls  <b><a href="../man2/connect.2.html">connect</a></b>(2)  with  a  given  destination  socket
+       address.  The socket is automatically bound to a free port if unbound.
+
+       A process can listen for incoming connections by first binding to a socket address using <b><a href="../man2/bind.2.html">bind</a></b>(2) and then
+       calling <b><a href="../man2/listen.2.html">listen</a></b>(2).
+
+       Data is transmitted using the <b><a href="../man2/send.2.html">send</a></b>(2) or <b><a href="../man2/write.2.html">write</a></b>(2) families of system calls and data is received using the
+       <b><a href="../man2/recv.2.html">recv</a></b>(2) or <b><a href="../man2/read.2.html">read</a></b>(2) families of system calls.
+
+   <b>Address</b> <b>format</b>
+       A  socket  address  is  defined  as  a combination of a 32-bit Context Identifier (CID) and a 32-bit port
+       number.  The CID identifies the source or destination, which is either a virtual  machine  or  the  host.
+       The port number differentiates between multiple services running on a single machine.
+
+           struct sockaddr_vm {
+               sa_family_t    svm_family;    /* Address family: AF_VSOCK */
+               unsigned short svm_reserved1;
+               unsigned int   svm_port;      /* Port # in host byte order */
+               unsigned int   svm_cid;       /* Address in host byte order */
+               unsigned char  svm_zero[sizeof(struct sockaddr) -
+                                       sizeof(sa_family_t) -
+                                       sizeof(unsigned short) -
+                                       sizeof(unsigned int) -
+                                       sizeof(unsigned int)];
+           };
+
+       <u>svm_family</u>  is  always  set  to  <b>AF_VSOCK</b>.  <u>svm_reserved1</u> is always set to 0.  <u>svm_port</u> contains the port
+       number in host byte order.  The port numbers below 1024 are called <u>privileged</u> <u>ports</u>.  Only a process with
+       the <b>CAP_NET_BIND_SERVICE</b> capability may <b><a href="../man2/bind.2.html">bind</a></b>(2) to these port numbers.  <u>svm_zero</u> must be zero-filled.
+
+       There  are  several  special  addresses:  <b>VMADDR_CID_ANY</b>   (-1U)   means   any   address   for   binding;
+       <b>VMADDR_CID_HYPERVISOR</b> (0) is reserved for services built into the hypervisor; <b>VMADDR_CID_LOCAL</b> (1) is the
+       well-known  address  for local communication (loopback); <b>VMADDR_CID_HOST</b> (2) is the well-known address of
+       the host.
+
+       The special constant <b>VMADDR_PORT_ANY</b> (-1U) means any port number for binding.
+
+   <b>Live</b> <b>migration</b>
+       Sockets are affected by live  migration  of  virtual  machines.   Connected  <b>SOCK_STREAM</b>  sockets  become
+       disconnected  when  the  virtual  machine  migrates to a new host.  Applications must reconnect when this
+       happens.
+
+       The local CID may change across live migration if the old CID is not available on the  new  host.   Bound
+       sockets are automatically updated to the new CID.
+
+   <b>Ioctls</b>
+       The following ioctls are available on the <u>/dev/vsock</u> device.
+
+       <b>IOCTL_VM_SOCKETS_GET_LOCAL_CID</b>
+              Get the CID of the local machine.  The argument is a pointer to an <u>unsigned</u> <u>int</u>.
+
+                  ioctl(fd, IOCTL_VM_SOCKETS_GET_LOCAL_CID, &amp;cid);
+
+              Consider   using   <b>VMADDR_CID_ANY</b>   when   binding   instead   of   getting  the  local  CID  with
+              <b>IOCTL_VM_SOCKETS_GET_LOCAL_CID</b>.
+
+   <b>Local</b> <b>communication</b>
+       <b>VMADDR_CID_LOCAL</b> (1) directs packets to the same host that generated them.  This is  useful  for  testing
+       applications on a single host and for debugging.
+
+       The  local  CID  obtained with <b>IOCTL_VM_SOCKETS_GET_LOCAL_CID</b> can be used for the same purpose, but it is
+       preferable to use <b>VMADDR_CID_LOCAL</b>.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       <b>EACCES</b> Unable to bind to a privileged port without the <b>CAP_NET_BIND_SERVICE</b> capability.
+
+       <b>EADDRINUSE</b>
+              Unable to bind to a port that is already in use.
+
+       <b>EADDRNOTAVAIL</b>
+              Unable to find a free port for binding or unable to bind to a nonlocal CID.
+
+       <b>EINVAL</b> Invalid parameters.  This includes: attempting to bind a socket that is already  bound,  providing
+              an invalid struct <u>sockaddr_vm</u>, and other input validation errors.
+
+       <b>ENOPROTOOPT</b>
+              Invalid socket option in <b><a href="../man2/setsockopt.2.html">setsockopt</a></b>(2) or <b><a href="../man2/getsockopt.2.html">getsockopt</a></b>(2).
+
+       <b>ENOTCONN</b>
+              Unable to perform operation on an unconnected socket.
+
+       <b>EOPNOTSUPP</b>
+              Operation  not supported.  This includes: the <b>MSG_OOB</b> flag that is not implemented for the <b><a href="../man2/send.2.html">send</a></b>(2)
+              family of syscalls and <b>MSG_PEEK</b> for the <b><a href="../man2/recv.2.html">recv</a></b>(2) family of syscalls.
+
+       <b>EPROTONOSUPPORT</b>
+              Invalid socket protocol number.  The protocol should always be 0.
+
+       <b>ESOCKTNOSUPPORT</b>
+              Unsupported socket type in <b><a href="../man2/socket.2.html">socket</a></b>(2).  Only <b>SOCK_STREAM</b> and <b>SOCK_DGRAM</b> are valid.
+
+</pre><h4><b>VERSIONS</b></h4><pre>
+       Support for VMware (VMCI) has been available since Linux 3.9.  KVM (virtio) is supported since Linux 4.8.
+       Hyper-V is supported since Linux 4.14.
+
+       <b>VMADDR_CID_LOCAL</b> is supported since Linux 5.6.  Local communication in the  guest  and  on  the  host  is
+       available  since  Linux 5.6.  Previous versions supported only local communication within a guest (not on
+       the host), and with only some transports (VMCI and virtio).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man2/bind.2.html">bind</a></b>(2), <b><a href="../man2/connect.2.html">connect</a></b>(2), <b><a href="../man2/listen.2.html">listen</a></b>(2), <b><a href="../man2/recv.2.html">recv</a></b>(2), <b><a href="../man2/send.2.html">send</a></b>(2), <b><a href="../man2/socket.2.html">socket</a></b>(2), <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7)
+
+Linux man-pages 6.9.1                              2024-05-02                                           <u><a href="../man7/vsock.7.html">vsock</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

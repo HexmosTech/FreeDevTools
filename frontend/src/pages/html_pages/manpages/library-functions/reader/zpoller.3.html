@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zpoller - Class for trivial socket poller class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libczmq-dev">libczmq-dev_4.2.1-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       zpoller - Class for trivial socket poller class
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       //  This is a stable class, and may not change except for emergencies. It
+       //  is provided in stable builds.
+       //  Create new poller, specifying zero or more readers. The list of
+       //  readers ends in a NULL. Each reader can be a zsock_t instance, a
+       //  zactor_t instance, a libzmq socket (void *), or a file handle.
+       CZMQ_EXPORT zpoller_t *
+           zpoller_new (void *reader, ...);
+
+       //  Destroy a poller
+       CZMQ_EXPORT void
+           zpoller_destroy (zpoller_t **self_p);
+
+       //  Add a reader to be polled. Returns 0 if OK, -1 on failure. The reader may
+       //  be a libzmq void * socket, a zsock_t instance, a zactor_t instance or a
+       //  file handle.
+       CZMQ_EXPORT int
+           zpoller_add (zpoller_t *self, void *reader);
+
+       //  Remove a reader from the poller; returns 0 if OK, -1 on failure. The reader
+       //  must have been passed during construction, or in an zpoller_add () call.
+       CZMQ_EXPORT int
+           zpoller_remove (zpoller_t *self, void *reader);
+
+       //  By default the poller stops if the process receives a SIGINT or SIGTERM
+       //  signal. This makes it impossible to shut-down message based architectures
+       //  like zactors. This method lets you switch off break handling. The default
+       //  nonstop setting is off (false).
+       CZMQ_EXPORT void
+           zpoller_set_nonstop (zpoller_t *self, bool nonstop);
+
+       //  Poll the registered readers for I/O, return first reader that has input.
+       //  The reader will be a libzmq void * socket, a zsock_t, a zactor_t
+       //  instance or a file handle as specified in zpoller_new/zpoller_add. The
+       //  timeout should be zero or greater, or -1 to wait indefinitely. Socket
+       //  priority is defined by their order in the poll list. If you need a
+       //  balanced poll, use the low level zmq_poll method directly. If the poll
+       //  call was interrupted (SIGINT), or the ZMQ context was destroyed, or the
+       //  timeout expired, returns NULL. You can test the actual exit condition by
+       //  calling zpoller_expired () and zpoller_terminated (). The timeout is in
+       //  msec.
+       CZMQ_EXPORT void *
+           zpoller_wait (zpoller_t *self, int timeout);
+
+       //  Return true if the last zpoller_wait () call ended because the timeout
+       //  expired, without any error.
+       CZMQ_EXPORT bool
+           zpoller_expired (zpoller_t *self);
+
+       //  Return true if the last zpoller_wait () call ended because the process
+       //  was interrupted, or the parent context was destroyed.
+       CZMQ_EXPORT bool
+           zpoller_terminated (zpoller_t *self);
+
+       //  Self test of this class.
+       CZMQ_EXPORT void
+           zpoller_test (bool verbose);
+
+       Please add '@interface' section in './../src/zpoller.c'.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The zpoller class provides a minimalist interface to ZeroMQ’s zmq_poll API, for the very common case of
+       reading from a number of sockets. It does not provide polling for output, nor polling on file handles. If
+       you need either of these, use the zmq_poll API directly.
+
+       The class implements the poller using the zmq_poller API if that exists, else does the work itself.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       <b>From</b> <b>zpoller_test</b> <b>method</b>.
+
+           //  Create a few sockets
+           zsock_t *vent = zsock_new (ZMQ_PUSH);
+           assert (vent);
+           int port_nbr = zsock_bind (vent, "tcp://127.0.0.1:*");
+           assert (port_nbr != -1);
+           zsock_t *sink = zsock_new (ZMQ_PULL);
+           assert (sink);
+           int rc = zsock_connect (sink, "tcp://127.0.0.1:%d", port_nbr);
+           assert (rc != -1);
+           zsock_t *bowl = zsock_new (ZMQ_PULL);
+           assert (bowl);
+           zsock_t *dish = zsock_new (ZMQ_PULL);
+           assert (dish);
+
+           //  Set up poller
+           zpoller_t *poller = zpoller_new (bowl, dish, NULL);
+           assert (poller);
+
+           // Add a reader to the existing poller
+           rc = zpoller_add (poller, sink);
+           assert (rc == 0);
+
+           zstr_send (vent, "Hello, World");
+
+           //  We expect a message only on the sink
+           zsock_t *which = (zsock_t *) zpoller_wait (poller, -1);
+           assert (which == sink);
+           assert (zpoller_expired (poller) == false);
+           assert (zpoller_terminated (poller) == false);
+           char *message = zstr_recv (which);
+           assert (streq (message, "Hello, World"));
+           zstr_free (&amp;message);
+
+           //  Stop polling reader
+           rc = zpoller_remove (poller, sink);
+           assert (rc == 0);
+
+           // Removing a non-existent reader shall fail
+           rc = zpoller_remove (poller, sink);
+           assert (rc == -1);
+           assert (errno == EINVAL);
+
+           //  Check we can poll an FD
+           rc = zsock_connect (bowl, "tcp://127.0.0.1:%d", port_nbr);
+           assert (rc != -1);
+           SOCKET fd = zsock_fd (bowl);
+           rc = zpoller_add (poller, (void *) &amp;fd);
+           assert (rc != -1);
+           zstr_send (vent, "Hello again, world");
+           assert (zpoller_wait (poller, 500) == &amp;fd);
+
+           // Check zpoller_set_nonstop ()
+           zsys_interrupted = 1;
+           zpoller_wait (poller, 0);
+           assert (zpoller_terminated (poller));
+           zpoller_set_nonstop (poller, true);
+           zpoller_wait (poller, 0);
+           assert (!zpoller_terminated (poller));
+           zsys_interrupted = 0;
+
+           zpoller_destroy (&amp;poller);
+           zsock_destroy (&amp;vent);
+           zsock_destroy (&amp;sink);
+           zsock_destroy (&amp;bowl);
+           zsock_destroy (&amp;dish);
+
+           #ifdef ZMQ_SERVER
+           //  Check thread safe sockets
+           zpoller_destroy (&amp;poller);
+           zsock_t *client = zsock_new (ZMQ_CLIENT);
+           assert (client);
+           zsock_t *server = zsock_new (ZMQ_SERVER);
+           assert (server);
+           poller = zpoller_new (client, server, NULL);
+           assert (poller);
+           port_nbr = zsock_bind (server, "tcp://127.0.0.1:*");
+           assert (port_nbr != -1);
+           rc = zsock_connect (client, "tcp://127.0.0.1:%d", port_nbr);
+           assert (rc != -1);
+
+           zstr_send (client, "Hello, World");
+
+           //  We expect a message only on the server
+           which = (zsock_t *) zpoller_wait (poller, -1);
+           assert (which == server);
+           assert (zpoller_expired (poller) == false);
+           assert (zpoller_terminated (poller) == false);
+           message = zstr_recv (which);
+           assert (streq (message, "Hello, World"));
+           zstr_free (&amp;message);
+
+           zpoller_destroy (&amp;poller);
+           zsock_destroy (&amp;client);
+           zsock_destroy (&amp;server);
+           #endif
+
+           #if defined (__WINDOWS__)
+           zsys_shutdown();
+           #endif
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The czmq manual was written by the authors in the AUTHORS file.
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       Main web site:
+
+       Report bugs to the email &lt;<b><a href="mailto:zeromq-dev@lists.zeromq.org">zeromq-dev@lists.zeromq.org</a></b>[1]&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) the Contributors as noted in the AUTHORS file. This file is part of CZMQ, the high-level C
+       binding for 0MQ: <a href="http://czmq.zeromq.org">http://czmq.zeromq.org</a>. This Source Code Form is subject to the terms of the Mozilla
+       Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+       <a href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>. LICENSE included with the czmq distribution.
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:zeromq-dev@lists.zeromq.org">zeromq-dev@lists.zeromq.org</a>
+           <a href="mailto:zeromq-dev@lists.zeromq.org">mailto:zeromq-dev@lists.zeromq.org</a>
+
+CZMQ 4.2.1                                         05/24/2024                                         <u><a href="../man3/ZPOLLER.3.html">ZPOLLER</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alias - declare symbolic aliases for perl data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libalias-perl">libalias-perl_2.32-12build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       alias - declare symbolic aliases for perl data
+
+       attr  - auto-declare hash attributes for convenient access
+
+       const - define compile-time scalar constants
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Alias qw(alias const attr);
+           alias TEN =&gt; $ten, Ten =&gt; \$ten, Ten =&gt; \&amp;ten,
+                 Ten =&gt; \@ten, Ten =&gt; \%ten, TeN =&gt; \*ten;
+           {
+              local @Ten;
+              my $ten = [1..10];
+              alias Ten =&gt; $ten;   # local @Ten
+           }
+
+           const pi =&gt; 3.14, ten =&gt; 10;
+
+           package Foo;
+           use Alias;
+           sub new { bless {foo =&gt; 1, _bar =&gt; [2, 3]}, $_[0] }
+           sub a_method {
+              my $s = attr shift;
+              # $foo, @_bar are now local aliases for
+              # $_[0]{foo}, @{$_[0]{_bar}} etc.
+           }
+
+           sub b_method {
+             local $Alias::KeyFilter = "_";
+             local $Alias::AttrPrefix = "main::";
+             my $s = attr shift;
+             # local @::_bar is now available, ($foo, $::foo are not)
+           }
+
+           sub c_method {
+             local $Alias::KeyFilter = sub { $_ = shift; return (/^_/ ? 1 : 0) };
+             local $Alias::AttrPrefix = sub {
+                                              $_ = shift;
+                                              s/^_(.+)$/main::$1/;
+                                              return $_
+                                            };
+             my $s = attr shift;
+             # local @::bar is now available, ($foo, $::foo are not)
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Provides general mechanisms for aliasing perl data for convenient access.
+
+       This module works by putting some values on the symbol table with user-supplied names.  Values that are
+       references will get dereferenced into their base types.  This means that a value of "[1,2,3]" with a name
+       of "foo" will be made available as @foo, not $foo.
+
+       The exception to this rule is the default behavior of the "attr" function, which will not dereference
+       values which are blessed references (aka objects).  See $Alias::Deref for how to change this default
+       behavior.
+
+   <b>Functions</b>
+       alias
+           Given  a  list  of  name  =&gt;  value  pairs, declares aliases in the "caller"s namespace. If the value
+           supplied is a reference, the alias is created for the  underlying  value  instead  of  the  reference
+           itself  (there is no need to use this module to alias references--they are automatically "aliased" on
+           assignment).  This allows the user to alias most of the basic types.
+
+           If the value supplied is a scalar compile-time constant, the aliases become read-only. Any attempt to
+           write to them will fail with a run time error.
+
+           Aliases can be dynamically scoped by pre-declaring the target variable as "local".  Using "attr"  for
+           this purpose is more convenient, and recommended.
+
+       attr
+           Given  a hash reference, aliases the values of the hash to the names that correspond to the keys.  It
+           always returns the supplied value.  The aliases are local to the  enclosing  block.  If  any  of  the
+           values  are unblessed references, they are available as their dereferenced types.  Thus the action is
+           similar to saying:
+
+               alias %{$_[0]}
+
+           but, in addition, also localizes the aliases, and does not  dereference  objects.   Dereferencing  of
+           objects can be forced by setting the "Deref" option.  See $Alias::Deref.
+
+           This can be used for convenient access to hash values and hash-based object attributes.
+
+           Note that this makes available the semantics of "local" subroutines and methods.  That makes for some
+           nifty possibilities.  We could make truly private methods by putting anonymous subs within an object.
+           These  subs  would  be  available  within methods where we use "attr", and will not be visible to the
+           outside world as normal methods.  We could forbid recursion in methods by always putting an empty sub
+           in the object hash with the same key as the method name. This would be useful where a method  has  to
+           run code from other modules, but cannot be certain whether that module will call it back again.
+
+           The  default behavior is to create aliases for all the entries in the hash, in the callers namespace.
+           This can be controlled by setting a few options.  See "Configuration Variables" for details.
+
+       const
+           This is simply a function alias for "alias", described above.  Provided  on  demand  at  "use"  time,
+           since  it  reads  better  for  constant  declarations.   Note  that  hashes  and  arrays cannot be so
+           "const"rained.
+
+   <b>Configuration</b> <b>Variables</b>
+       The following configuration variables can be used to control the behavior of the "attr"  function.   They
+       are  typically  set  after  the "use Alias;" statement.  Another typical usage is to "local"ize them in a
+       block so that their values are only effective within that block.
+
+       $Alias::KeyFilter
+           Specifies the key prefix used for determining which hash entries will be interned by "attr".  Can  be
+           a  CODE  reference,  in  which case it will be called with the key, and the boolean return value will
+           determine if that hash entry is a candidate attribute.
+
+       $Alias::AttrPrefix
+           Specifies a prefix to prepend to the names of localized attributes created by "attr".  Can be a  CODE
+           reference,  in which case it will be called with the key, and the result will determine the full name
+           of the attribute.  The value can have embedded package delimiters ("::"  or  "'"),  which  cause  the
+           attributes  to  be  interned  in  that namespace instead of the "caller"s own namespace. For example,
+           setting it to "main::" makes "use strict 'vars';" somewhat more palatable (since we can refer to  the
+           attributes as $::foo, etc., without actually declaring the attributes).
+
+       $Alias::Deref
+           Controls  the  implicit  dereferencing  behavior of "attr".  If it is set to "" or 0, "attr" will not
+           dereference blessed references.  If it is a true value (anything but "", 0, or a CODE reference), all
+           references will be made available as their dereferenced types, including values that may be  objects.
+           The default is "".
+
+           This option can be used as a filter if it is set to a CODE reference, in which case it will be called
+           with  the  key  and  the value (whenever the value happens to be a reference), and the boolean return
+           value will determine if that particular reference must be dereferenced.
+
+   <b>Exports</b>
+       alias
+       attr
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Run these code snippets and observe the results to become more familiar with the features of this module.
+
+           use Alias qw(alias const attr);
+           $ten = 10;
+           alias TEN =&gt; $ten, Ten =&gt; \$ten, Ten =&gt; \&amp;ten,
+                 Ten =&gt; \@ten, Ten =&gt; \%ten;
+           alias TeN =&gt; \*ten;  # same as *TeN = *ten
+
+           # aliasing basic types
+           $ten = 20;
+           print "$TEN|$Ten|$ten\n";   # should print "20|20|20"
+           sub ten { print "10\n"; }
+           @ten = (1..10);
+           %ten = (a..j);
+           &amp;Ten;                       # should print "10"
+           print @Ten, "|", %Ten, "\n";
+
+           # this will fail at run time
+           const _TEN_ =&gt; 10;
+           eval { $_TEN_ = 20 };
+           print $@ if $@;
+
+           # dynamically scoped aliases
+           @DYNAMIC = qw(m n o);
+           {
+              my $tmp = [ qw(a b c d) ];
+              local @DYNAMIC;
+              alias DYNAMIC =&gt; $tmp, PERM =&gt; $tmp;
+
+              $DYNAMIC[2] = 'zzz';
+              # prints "abzzzd|abzzzd|abzzzd"
+              print @$tmp, "|", @DYNAMIC, "|", @PERM, "\n";
+
+              @DYNAMIC = qw(p q r);
+              # prints "pqr|pqr|pqr"
+              print @$tmp, "|", @DYNAMIC, "|", @PERM, "\n";
+           }
+
+           # prints "mno|pqr"
+           print @DYNAMIC, "|", @PERM, "\n";
+
+           # named closures
+           my($lex) = 'abcd';
+           $closure = sub { print $lex, "\n" };
+           alias NAMEDCLOSURE =&gt; \&amp;$closure;
+           NAMEDCLOSURE();            # prints "abcd"
+           $lex = 'pqrs';
+           NAMEDCLOSURE();            # prints "pqrs"
+
+           # hash/object attributes
+           package Foo;
+           use Alias;
+           sub new {
+             bless
+               { foo =&gt; 1,
+                 bar =&gt; [2,3],
+                 buz =&gt; { a =&gt; 4},
+                 privmeth =&gt; sub { "private" },
+                 easymeth =&gt; sub { die "to recurse or to die, is the question" },
+               }, $_[0];
+           }
+
+           sub easymeth {
+             my $s = attr shift;    # localizes $foo, @bar, %buz etc with values
+             eval { $s-&gt;easymeth }; # should fail
+             print $@ if $@;
+
+             # prints "1|2|3|a|4|private|"
+             print join '|', $foo, @bar, %buz, $s-&gt;privmeth, "\n";
+           }
+
+           $foo = 6;
+           @bar = (7,8);
+           %buz = (b =&gt; 9);
+           Foo-&gt;new-&gt;easymeth;       # this will not recurse endlessly
+
+           # prints "6|7|8|b|9|"
+           print join '|', $foo, @bar, %buz, "\n";
+
+           # this should fail at run-time
+           eval { Foo-&gt;new-&gt;privmeth };
+           print $@ if $@;
+
+</pre><h4><b>NOTES</b></h4><pre>
+       It is worth repeating that the aliases created by "alias" and "const" will be created  in  the  "caller"s
+       namespace  (we  can  use  the  "AttrPrefix" option to specify a different namespace for "attr").  If that
+       namespace happens to be "local"ized, the aliases created will be local to that block.   "attr"  localizes
+       the aliases for us.
+
+       Remember that references will be available as their dereferenced types.
+
+       Aliases cannot be lexical, since, by neccessity, they live on the symbol table.
+
+       Lexicals  can  be  aliased.  Note  that  this  provides a means of reversing the action of anonymous type
+       generators "\", "[]" and "{}".  This allows us to anonymously construct  data  or  code  and  give  it  a
+       symbol-table presence when we choose.
+
+       Any  occurrence  of  "::"  or  "'"  in names will be treated as package qualifiers, and the value will be
+       interned in that namespace.
+
+       Remember that aliases are very much like references, only we don't have to  dereference  them  as  often.
+       Which means we won't have to pound on the dollars so much.
+
+       We can dynamically make subroutines and named closures with this scheme.
+
+       It is possible to alias packages, but that might be construed as abuse.
+
+       Using this module will dramatically reduce noise characters in object-oriented perl code.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       "use  strict  'vars';"  is not very usable, since we <b>depend</b> so much on the symbol table.  You can declare
+       the attributes with "use vars" to avoid warnings.  Setting $Alias::AttrPrefix to "main::" is one  way  to
+       avoid "use vars" and frustration.
+
+       Tied variables cannot be aliased properly, yet.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 2.32       30 Apr 1999
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Gurusamy Sarathy                <a href="mailto:gsar@umich.edu">gsar@umich.edu</a>
+
+       Copyright  (c)  1995-99  Gurusamy  Sarathy.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1)
+
+perl v5.40.0                                       2024-10-20                                         <u><a href="../man3pm/Alias.3pm.html">Alias</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

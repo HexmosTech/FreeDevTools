@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::DBStag::Cookbook - building and querying databases from XML</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-dbstag-perl">libdbix-dbstag-perl_0.12-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+         DBIx::DBStag::Cookbook - building and querying databases from XML
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         stag-autoddl.pl
+         stag-storenode.pl
+         selectall_xml.pl
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This will give an outline of how to build a normalised relational database from XML source data, set up
+       SQL templates, issue relational queries that return hierarchical results (as XML or as perl objects), and
+       autogenerate a web query front end for this data.
+
+       Why would you want to do this? Well, it gives you the full power of the relational model and SQL,
+       combined with the convenience of representations which allow for the nesting of data entities (SQL query
+       results are typically flat relations which are inconvenient for complex hierarchical data).
+
+       The dataset we will use is the CIA World Factbook.
+
+       The web interface should end up looking something like this -
+       &lt;<a href="http://www.godatabase.org/cgi-bin/wfb/ubiq.cgi">http://www.godatabase.org/cgi-bin/wfb/ubiq.cgi</a>&gt;
+
+   <b>AUTOGENERATING</b> <b>A</b> <b>RELATIONAL</b> <b>DATABASE</b>
+       Download CIA world factbook in XML format; this has kindly been made available by The University of
+       Goettingen as part of their Mondial database project, see
+       &lt;<a href="http://www.dbis.informatik.uni-goettingen.de/Mondial/">http://www.dbis.informatik.uni-goettingen.de/Mondial/</a>&gt; for details.
+
+       The actual XML file is available via &lt;<a href="http://www.dbis.informatik.uni-goettingen.de/Mondial/cia.xml">http://www.dbis.informatik.uni-goettingen.de/Mondial/cia.xml</a>&gt;
+
+       Or from &lt;<a href="http://www.godatabase.org/wfb/cia.xml">http://www.godatabase.org/wfb/cia.xml</a>&gt;
+
+       <u>Pre-processing</u>
+
+       We need to do some pre-processing of the XML to make it more database-friendly. This is necessitated by
+       the way Stag handles attributes (Stag prefers XML documents that have a simple tree format). We also want
+       to turn XXX_id fields into XXX_ciaid, because we prefer to use XXX_id for surrogate keys in the database.
+
+         stag-mogrify.pl -w xml -r 's/text$/quant/'\
+                                -r 's/id$/ciaid/'\
+                                -r 's/(.*)\-//'\
+                                cia.xml &gt; cia-pp.xml
+
+       See also &lt;<a href="http://www.godatabase.org/wfb/cia-pp.xml">http://www.godatabase.org/wfb/cia-pp.xml</a>&gt;
+
+       <u>Generating</u> <u>the</u> <u>SQL</u> <u>DDL</u>
+
+       Next we generate the SQL <b>CREATE</b> <b>TABLE</b> statements
+
+         stag-autoddl.pl -t cia-pp2.xml cia-pp.xml &gt; cia-schema.sql
+
+       This does further post-processing of the XML, to make it suitable for relational storage; see the file
+       <b>cia-pp2.xml</b> which is generated as a side-effect of running the above script.
+
+       Load the database (the following instructions assume you have postgresql on your localhost; please
+       consult your DBMS manual if this is not the case)
+
+         createdb cia
+         psql -a -e cia &lt; cia-schema.sql &gt;&amp; create.log
+
+       (check there are no errors in the log file)
+
+       <u>LOAD</u> <u>THE</u> <u>DATA</u>
+
+       Turn the processed XML into relations:
+
+         stag-storenode.pl -d dbi:Pg:dbname=cia cia-pp2.xml &gt;&amp; load.log
+
+   <b>FETCHING</b> <b>TREE</b> <b>DATA</b> <b>USING</b> <b>SQL</b>
+       You can issue SQL queries (using optional stag-specific extensions) and get the results back in a
+       hierarchical format such as XML
+
+       <u>SQL</u> <u>to</u> <u>XML</u> <u>via</u> <u>the</u> <u>command</u> <u>line</u>
+
+       Fetch countries nested under continents:
+
+         selectall_xml.pl -d dbi:Pg:dbname=cia\
+         "SELECT * FROM continent INNER JOIN country ON (continent.name=country.continent)"
+
+       Or, edit a file containing the SQL (the following query fetches data on countries bordering other
+       countries on different continents)
+
+         cat &gt; myquery.sql
+         select c1.*, c2.*
+         from country AS c1
+                  inner join borders on (c1.country_id = borders.country_id)
+                  inner join country AS c2 on (borders.country=c2.ciaid)
+         where c1.continent != c2.continent
+         order by c1.name, c2.name
+         use nesting (set(c1(c2)));
+
+       (the final clause is a DBStag SQL extension - it nests country c2 under country c1)
+
+       Then query for XML
+
+         selectall_xml.pl -d dbi:Pg:dbname=cia -f myquery.sql &gt; myresults.xml
+
+       <u>SQL</u> <u>to</u> <u>XML</u> <u>via</u> <u>the</u> <u>Interactive</u> <u>Query</u> <u>Shell</u>
+
+       Query the data using the stag query shell (qsh). You type in SQL queries, and get results back as XML (or
+       any other tree format, such as indented text or S-Expressions).
+
+       The following can be cut and pasted directly onto the unix command line:
+
+       Simple query rooted at <b>country</b>:
+
+         stag-qsh -d dbi:Pg:dbname=cia
+         \l
+         SELECT * FROM country INNER JOIN country_coasts USING (country_id)
+         WHERE country.name = 'France';
+
+       (type \q to quit stag-qsh)
+
+       Or a more advanced query, still rooted at <b>country</b>
+
+         stag-qsh -d dbi:Pg:dbname=cia
+         \l
+         SELECT *
+         FROM country
+              LEFT OUTER JOIN religions USING (country_id)
+              LEFT OUTER JOIN languages USING (country_id)
+              INNER JOIN continent ON (continent.name=country.continent)
+         WHERE continent.ciaid = 'australia'
+         USE NESTING (set(country(religions)(languages)(continent)));
+
+       See DBIx::DBStag for more details on fetching hierarchical data from relational database
+
+   <b>USING</b> <b>TEMPLATES</b>
+       If you have a particular pattern of SQL you execute a lot, you can reuse this SQL by creating <b>templates</b>
+
+       <u>Creating</u> <u>Templates</u>
+
+       First create a place for your templates:
+
+         mkdir ./templates
+
+       (do not change directory after this)
+
+       The following command specifies a colon-separated path for directories containing templates (all
+       templates must end with .stg)
+
+         setenv DBSTAG_TEMPLATE_DIRS ".:templates:/usr/local/share/sql/templates"
+
+       Auto-generate templates (you can customize these later):
+
+         stag-autoschema.pl -w sxpr cia-pp2.xml &gt; cia-stagschema.sxpr
+         stag-autotemplate.pl -no_pp -s cia -dir ./templates  cia-stagschema.sxpr
+
+       The first command creates an S-Expression representation of the Schema; the second generates SQL
+       templates from these.
+
+       You may wish to examine a template:
+
+         more templates/cia-country.stg
+
+       You can hand generate as many templates as you like; see DBIx::DBStag::SQLTemplate for more details
+
+       For more example templates for this schema, see &lt;<a href="http://www.godatabase.org/cgi-bin/wfb/ubiq.cgi">http://www.godatabase.org/cgi-bin/wfb/ubiq.cgi</a>&gt;
+
+       <u>Executing</u> <u>Templates</u> <u>from</u> <u>the</u> <u>Command</u> <u>Line</u>
+
+       now execute a template from the command line:
+
+         selectall_xml.pl -d dbi:Pg:dbname=cia /cia-country country_name=Austria
+
+       You should get back a tree (rooted in <b>country</b>), that looks similar to this:
+
+         &lt;set&gt;
+           &lt;country&gt;
+             &lt;country_id&gt;3&lt;/country_id&gt;
+             &lt;government&gt;federal republic&lt;/government&gt;
+             &lt;population&gt;8023244&lt;/population&gt;
+             &lt;total_area&gt;83850&lt;/total_area&gt;
+             &lt;name&gt;Austria&lt;/name&gt;
+             &lt;inflation&gt;2.3&lt;/inflation&gt;
+             ...
+             &lt;languages&gt;
+               &lt;languages_id&gt;1&lt;/languages_id&gt;
+               &lt;name&gt;German&lt;/name&gt;
+               &lt;num&gt;100&lt;/num&gt;
+               &lt;country_id&gt;3&lt;/country_id&gt;
+             &lt;/languages&gt;
+             ...
+
+       <u>Executing</u> <u>Templates</u> <u>with</u> <u>the</u> <u>Stag</u> <u>Query</u> <u>Shell</u>
+
+       You can also do this interactively using qsh
+
+       First, we need to inform stag-qsh what the schema is. The schema is used to determine which templates are
+       appropriate. Later we will discover how to set up a resources file, which will allow stag to infer the
+       schema.
+
+       Call qsh from command line:
+
+         stag-qsh -d dbi:Pg:dbname=cia -s cia
+
+       Interactive perl/qsh:
+
+         \l
+         t cia-country
+         /borders_country=cid-cia-Germany
+
+       (do not leave spaces at the beginning of the line)
+
+       The above should fetch all countries bordering Germany
+
+       If we prefer objects over hierarchical formats such as XML, we can do this using perl. For example, to
+       print the religions of spanish speaking countries:
+
+       Still in qsh (multi-line mode), type the following:
+
+         # find all Spanish-speaking countries
+         $dataset =
+           $dbh-&gt;selectall_stag(-template=&gt;'cia-country',-bind=&gt;{languages_name=&gt;'Spanish'});
+         # get country objects from query results
+         @lcountry = $dataset-&gt;get_country;
+
+         foreach $country (@lcountry) {
+           printf("Country: %s\n  Religions:%s\n",
+                  $country-&gt;sget_name,
+                  join(' &amp; ',
+                       map {
+                            $_-&gt;get_name.' '.$_-&gt;get_quant.'%'
+                       } $country-&gt;get_religions))
+         }
+         print "\n\nDone!\n";
+         \q
+
+       See Data::Stag for more details on using Stag objects
+
+   <b>BUILDING</b> <b>A</b> <b>CGI/WEB</b> <b>INTERFACE</b>
+       We can construct a generic but powerful default cgi interface for our data, using ubiq.cgi, which should
+       come with your distribution.
+
+       You may have to modify some of the directories below, depending on your web server set up (we assume
+       Apache here).
+
+       We want to create the CGI, and give it access to our templates:
+
+         mkdir /usr/local/httpd/cgi-bin/cia
+         cp templates/*.stg /usr/local/httpd/cgi-bin/cia
+         cp `which ubiq.cgi` /usr/local/httpd/cgi-bin/cia
+         chmod +x /usr/local/httpd/cgi-bin/cia/ubiq.cgi
+         mkdir /usr/local/httpd/cgi-bin/cia/cache
+         chmod 777 /usr/local/httpd/cgi-bin/cia/cache
+
+       Set up the environment for the CGI script. It must be able to see the templates and the necessary perl
+       libraries (if not installed system-wide)
+
+         cat &gt; /usr/local/httpd/cgi-bin/cia/dbenv.pl
+         $ENV{DBSTAG_DBIMAP_FILE} = "./resources.conf";
+         $ENV{DBSTAG_TEMPLATE_DIRS} = ".:./templates:/usr/local/share/sql/templates";
+         $ENV{STAGLIB} = "/users/me/lib/DBIx-DBStag:/users/me/lib/stag";
+
+       We must create a basic resources file, currently containing one db:
+
+         cat &gt; /usr/local/httpd/cgi-bin/cia/resources.conf
+         cia              rdb               Pg:cia        schema=cia
+
+       Fields are whitespace delimited; do not leave a space before the initial 'cia'
+
+       (note that if you set DBSTAG_DBIMAP_FILE to the avove file on the command line, you can use the shortened
+       name of <b>cia</b> instead of <b>dbi:Pg:dbname=cia</b>)
+
+       You should be able to use the interface via <a href="http://localhost/cgi-bin/cia/ubiq.cgi">http://localhost/cgi-bin/cia/ubiq.cgi</a>
+
+       You can customize this by overriding some of the existing display functions;
+
+         cat &gt; /usr/local/httpd/cgi-bin/cia/ubiq-customize.pl
+         # --- CUSTOM SETTINGS
+         {
+          no warnings 'redefine';
+
+          *g_title = sub {
+              "U * B * I * Q - CIA World Factbook";
+          };
+          *short_intro = sub {
+              "Demo interface to CIA World Factbook"
+          };
+          add_initfunc(sub {
+                          $dbname = 'cia';
+                          $schema = 'cia';
+                      });
+         }
+
+       From here on you can customise the web interface, create new templates, integrate this with other data.
+       Consult DBIx::DBStag and the script <b>ubiq.cgi</b> for further details.
+
+   <b>FURTHER</b> <b>EXPLORATION</b>
+       This cookbook has focused on an example with relatively simple XML, with only a few layers of nesting.
+
+       There is a more complex example you can download from the Mondial project site here:
+       &lt;<a href="http://www.dbis.informatik.uni-goettingen.de/Mondial/mondial-2.0.xml">http://www.dbis.informatik.uni-goettingen.de/Mondial/mondial-2.0.xml</a>&gt;
+
+       This also integrates data on cities, which increases the depth of the XML tree.
+
+       You could use the tutorial above to try and turn this XML into a database.
+
+</pre><h4><b>WEBSITE</b></h4><pre>
+       &lt;<a href="http://stag.sourceforge.net">http://stag.sourceforge.net</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chris Mungall
+
+         cjm at fruitfly dot org
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2002 Chris Mungall
+
+       This module is free software.  You may distribute this module under the same terms as perl itself
+
+perl v5.36.0                                       2022-10-14                        <u>DBIx::DBStag::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

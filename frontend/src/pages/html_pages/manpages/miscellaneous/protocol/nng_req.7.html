@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nng_req - request protocol</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnng-dev">libnng-dev_1.10.1-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nng_req - request protocol
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #include &lt;nng/protocol/reqrep0/req.h&gt;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <u>req</u> protocol is one half of a request/reply pattern. In this pattern, a requester sends a message to
+       one replier, who is expected to reply. The request is resent if no reply arrives, until a reply is
+       received or the request times out.
+
+           <b>Tip</b>
+
+           This protocol is useful in setting up RPC-like services. It is also "reliable", in that a the
+           requester will keep retrying until a reply is received.
+
+           <b>Note</b>
+
+           Because requests are resent, it is important that they be idempotent to ensure predictable and
+           repeatable behavior even in the face of duplicated requests, which can occur (for example if a reply
+           message is lost for some reason.)
+
+       The requester generally only has one outstanding request at a time unless in raw mode (via NNG_OPT_RAW),
+       and it will generally attempt to spread work requests to different peer repliers.
+
+           <b>Tip</b>
+
+           This property, when combined with nng_device() can help provide a degree of load-balancing.
+
+       The <u>req</u> protocol is the requester side, and the <u>rep</u> protocol is the replier side.
+
+   <b>Socket</b> <b>Operations</b>
+       The nng_req0_open() functions create a requester socket. This socket may be used to send messages
+       (requests), and then to receive replies.
+
+       Generally a reply can only be received after sending a request. (Attempts to receive a message will
+       result in NNG_ESTATE if there is no outstanding request.)
+
+       Furthermore, only a single receive operation may be pending at a time. Attempts to post more receive
+       operations concurrently will result in NNG_ESTATE.
+
+       Requests may be canceled by sending a different request. This will cause the requester to discard any
+       reply from the earlier request, but it will not stop a replier from processing a request it has already
+       received or terminate a request that has already been placed on the wire.
+
+       Raw mode sockets ignore all these restrictions.
+
+   <b>Context</b> <b>Operations</b>
+       This protocol supports the creation of contexts for concurrent use cases using nng_ctx_open().
+
+       The NNG_OPT_REQ_RESENDTIME value may be configured differently on contexts created this way.
+
+       Each context may have at most one outstanding request, and operates independently from the others.
+
+       The restrictions for order of operations with sockets apply equally well for contexts, except that each
+       context will be treated as if it were a separate socket.
+
+   <b>Protocol</b> <b>Versions</b>
+       Only version 0 of this protocol is supported. (At the time of writing, no other versions of this protocol
+       have been defined.)
+
+   <b>Protocol</b> <b>Options</b>
+       The following protocol-specific option is available.
+
+       NNG_OPT_REQ_RESENDTIME
+           (nng_duration) When a new request is started, a timer of this duration is also started. If no reply
+           is received before this timer expires, then the request will be resent.
+
+           (Requests are also automatically resent if the peer to whom the original request was sent
+           disconnects, or if a peer becomes available while the requester is waiting for an available peer.)
+
+           Resending may be deferred up to the value of the NNG_OPT_RESENDTICK parameter.
+
+       NNG_OPT_REQ_RESENDTICK
+           (nng_duration) This is the granularity of the clock that is used to check for resending. The default
+           is a second. Setting this to a higher rate will allow for more timely resending to occur, but may
+           incur significant additional overhead when the socket has many outstanding requests (contexts).
+
+           When there are no requests outstanding that have a resend set, then the clock does not tick at all.
+
+           This option is shared for all contexts on a socket, and is only available for the socket itself.
+
+   <b>Protocol</b> <b>Headers</b>
+       This protocol uses a <u>backtrace</u> in the header. This form uses a stack of 32-bit big-endian identifiers.
+       There <b>must</b> be at least one identifier, the <u>request</u> <u>ID</u>, which will be the last element in the array, and
+       <b>must</b> have the most significant bit set.
+
+       There may be additional <u>peer</u> <u>ID</u>s preceding the request ID. These will be distinguishable from the request
+       ID by having their most significant bit clear.
+
+       When a request message is received by a forwarding node (see nng_device()), the forwarding node prepends
+       a 32-bit peer ID (which <b>must</b> have the most significant bit clear), which is the forwarder’s way of
+       identifying the directly connected peer from which it received the message. (This peer ID, except for the
+       most significant bit, has meaning only to the forwarding node itself.)
+
+       It may help to think of prepending a peer ID as pushing a peer ID onto the front of the stack of headers
+       for the message. (It will use the peer ID it popped from the front to determine the next intermediate
+       destination for the reply.)
+
+       When a reply message is created, it is created using the same headers that the request contained.
+
+       A forwarding node can pop the peer ID it originally pushed on the message, stripping it from the front of
+       the message as it does so.
+
+       When the reply finally arrives back at the initiating requester, it should have only a single element in
+       the message, which will be the request ID it originally used for the request.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man3/nng_ctx_open.3.html">nng_ctx_open</a>(3), <a href="../man3/nng_device.3.html">nng_device</a>(3), <a href="../man3/nng_req_open.3.html">nng_req_open</a>(3), <a href="../man5/nng_ctx.5.html">nng_ctx</a>(5), <a href="../man7/nng.7.html">nng</a>(7), <a href="../man7/nng_rep.7.html">nng_rep</a>(7)
+
+                                                   2025-04-20                                         <u><a href="../man7/NNG_REQ.7.html">NNG_REQ</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dl_iterate_phdr - walk through list of shared objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/manpages-dev">manpages-dev_6.9.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dl_iterate_phdr - walk through list of shared objects
+
+</pre><h4><b>LIBRARY</b></h4><pre>
+       Standard C library (<u>libc</u>, <u>-lc</u>)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#define</b> <b>_GNU_SOURCE</b>         /* See <a href="../man7/feature_test_macros.7.html">feature_test_macros</a>(7) */
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/link.h">link.h</a>&gt;</b>
+
+       <b>int</b> <b>dl_iterate_phdr(</b>
+                 <b>int</b> <b>(*</b><u>callback</u><b>)(struct</b> <b>dl_phdr_info</b> <b>*</b><u>info</u><b>,</b>
+                                 <b>size_t</b> <u>size</u><b>,</b> <b>void</b> <b>*</b><u>data</u><b>),</b>
+                 <b>void</b> <b>*</b><u>data</u><b>);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>dl_iterate_phdr</b>()  function  allows  an  application to inquire at run time to find out which shared
+       objects it has loaded, and the order in which they were loaded.
+
+       The <b>dl_iterate_phdr</b>() function walks through the list of an application's shared objects  and  calls  the
+       function  <u>callback</u>  once for each object, until either all shared objects have been processed or <u>callback</u>
+       returns a nonzero value.
+
+       Each call to <u>callback</u> receives three arguments: <u>info</u>, which  is  a  pointer  to  a  structure  containing
+       information  about  the  shared  object; <u>size</u>, which is the size of the structure pointed to by <u>info</u>; and
+       <u>data</u>, which is a copy of whatever value was passed by the calling program as the  second  argument  (also
+       named <u>data</u>) in the call to <b>dl_iterate_phdr</b>().
+
+       The <u>info</u> argument is a structure of the following type:
+
+           struct dl_phdr_info {
+               ElfW(Addr)        dlpi_addr;  /* Base address of object */
+               const char       *dlpi_name;  /* (Null-terminated) name of
+                                                object */
+               const ElfW(Phdr) *dlpi_phdr;  /* Pointer to array of
+                                                ELF program headers
+                                                for this object */
+               ElfW(Half)        dlpi_phnum; /* # of items in <u>dlpi_phdr</u> */
+
+               /* The following fields were added in glibc 2.4, after the first
+                  version of this structure was available.  Check the <u>size</u>
+                  argument passed to the dl_iterate_phdr callback to determine
+                  whether or not each later member is available.  */
+
+               unsigned long long dlpi_adds;
+                               /* Incremented when a new object may
+                                  have been added */
+               unsigned long long dlpi_subs;
+                               /* Incremented when an object may
+                                  have been removed */
+               size_t dlpi_tls_modid;
+                               /* If there is a PT_TLS segment, its module
+                                  ID as used in TLS relocations, else zero */
+               void  *dlpi_tls_data;
+                               /* The address of the calling thread's instance
+                                  of this module's PT_TLS segment, if it has
+                                  one and it has been allocated in the calling
+                                  thread, otherwise a null pointer */
+           };
+
+       (The  <u>ElfW</u>()  macro  definition  turns  its  argument  into the name of an ELF data type suitable for the
+       hardware architecture.  For example,  on  a  32-bit  platform,  <u>ElfW(Addr)</u>  yields  the  data  type  name
+       <u>Elf32_Addr</u>.  Further information on these types can be found in the <u>&lt;elf.h&gt;</u> and <u>&lt;link.h&gt;</u> header files.)
+
+       The  <u>dlpi_addr</u>  field  indicates  the base address of the shared object (i.e., the difference between the
+       virtual memory address of the shared object and the offset of that object in the file from which  it  was
+       loaded).   The  <u>dlpi_name</u>  field  is  a  null-terminated string giving the pathname from which the shared
+       object was loaded.
+
+       To understand the meaning of the <u>dlpi_phdr</u> and <u>dlpi_phnum</u> fields, we need to be aware that an ELF  shared
+       object  consists of a number of segments, each of which has a corresponding program header describing the
+       segment.  The <u>dlpi_phdr</u> field is a pointer to an array of the program headers  for  this  shared  object.
+       The <u>dlpi_phnum</u> field indicates the size of this array.
+
+       These program headers are structures of the following form:
+
+           typedef struct {
+               Elf32_Word  p_type;    /* Segment type */
+               Elf32_Off   p_offset;  /* Segment file offset */
+               Elf32_Addr  p_vaddr;   /* Segment virtual address */
+               Elf32_Addr  p_paddr;   /* Segment physical address */
+               Elf32_Word  p_filesz;  /* Segment size in file */
+               Elf32_Word  p_memsz;   /* Segment size in memory */
+               Elf32_Word  p_flags;   /* Segment flags */
+               Elf32_Word  p_align;   /* Segment alignment */
+           } Elf32_Phdr;
+
+       Note  that  we  can calculate the location of a particular program header, <u>x</u>, in virtual memory using the
+       formula:
+
+           addr == info-&gt;dlpi_addr + info-&gt;dlpi_phdr[x].p_vaddr;
+
+       Possible values for <u>p_type</u> include the following (see <u>&lt;elf.h&gt;</u> for further details):
+
+           #define PT_LOAD         1    /* Loadable program segment */
+           #define PT_DYNAMIC      2    /* Dynamic linking information */
+           #define PT_INTERP       3    /* Program interpreter */
+           #define PT_NOTE         4    /* Auxiliary information */
+           #define PT_SHLIB        5    /* Reserved */
+           #define PT_PHDR         6    /* Entry for header table itself */
+           #define PT_TLS          7    /* Thread-local storage segment */
+           #define PT_GNU_EH_FRAME 0x6474e550 /* GCC .eh_frame_hdr segment */
+           #define PT_GNU_STACK  0x6474e551 /* Indicates stack executability */
+           #define PT_GNU_RELRO  0x6474e552 /* Read-only after relocation */
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>dl_iterate_phdr</b>() function returns whatever value was returned by the last call to <u>callback</u>.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       For an explanation of the terms used in this section, see <b><a href="../man7/attributes.7.html">attributes</a></b>(7).
+       ┌─────────────────────────────────────────────────────────────────────────────┬───────────────┬─────────┐
+       │ <b>Interface</b>                                                                   │ <b>Attribute</b>     │ <b>Value</b>   │
+       ├─────────────────────────────────────────────────────────────────────────────┼───────────────┼─────────┤
+       │ <b>dl_iterate_phdr</b>()                                                           │ Thread safety │ MT-Safe │
+       └─────────────────────────────────────────────────────────────────────────────┴───────────────┴─────────┘
+
+</pre><h4><b>VERSIONS</b></h4><pre>
+       Various other systems provide a version of this function, although details of the  returned  <u>dl_phdr_info</u>
+       structure  differ.   On  the  BSDs  and  Solaris, the structure includes the fields <u>dlpi_addr</u>, <u>dlpi_name</u>,
+       <u>dlpi_phdr</u>, and <u>dlpi_phnum</u> in addition to other implementation-specific fields.
+
+       Future versions of the C library may add further fields to the <u>dl_phdr_info</u> structure; in that event, the
+       <u>size</u> argument provides a mechanism for the callback function to discover  whether  it  is  running  on  a
+       system with added fields.
+
+</pre><h4><b>STANDARDS</b></h4><pre>
+       None.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       glibc 2.2.4.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       The first object visited by <u>callback</u> is the main program.  For the main program, the <u>dlpi_name</u> field will
+       be an empty string.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  following program displays a list of pathnames of the shared objects it has loaded.  For each shared
+       object, the program lists some information (virtual address, size, flags,  and  type)  for  each  of  the
+       objects ELF segments.
+
+       The  following  shell  session  demonstrates the output produced by the program on an x86-64 system.  The
+       first shared object for which output is displayed (where the  name  is  an  empty  string)  is  the  main
+       program.
+
+           $ <b>./a.out</b>
+           Name: "" (9 segments)
+                0: [      0x400040; memsz:    1f8] flags: 0x5; PT_PHDR
+                1: [      0x400238; memsz:     1c] flags: 0x4; PT_INTERP
+                2: [      0x400000; memsz:    ac4] flags: 0x5; PT_LOAD
+                3: [      0x600e10; memsz:    240] flags: 0x6; PT_LOAD
+                4: [      0x600e28; memsz:    1d0] flags: 0x6; PT_DYNAMIC
+                5: [      0x400254; memsz:     44] flags: 0x4; PT_NOTE
+                6: [      0x400970; memsz:     3c] flags: 0x4; PT_GNU_EH_FRAME
+                7: [         (nil); memsz:      0] flags: 0x6; PT_GNU_STACK
+                8: [      0x600e10; memsz:    1f0] flags: 0x4; PT_GNU_RELRO
+           Name: "linux-vdso.so.1" (4 segments)
+                0: [0x7ffc6edd1000; memsz:    e89] flags: 0x5; PT_LOAD
+                1: [0x7ffc6edd1360; memsz:    110] flags: 0x4; PT_DYNAMIC
+                2: [0x7ffc6edd17b0; memsz:     3c] flags: 0x4; PT_NOTE
+                3: [0x7ffc6edd17ec; memsz:     3c] flags: 0x4; PT_GNU_EH_FRAME
+           Name: "/lib64/libc.so.6" (10 segments)
+                0: [0x7f55712ce040; memsz:    230] flags: 0x5; PT_PHDR
+                1: [0x7f557145b980; memsz:     1c] flags: 0x4; PT_INTERP
+                2: [0x7f55712ce000; memsz: 1b6a5c] flags: 0x5; PT_LOAD
+                3: [0x7f55716857a0; memsz:   9240] flags: 0x6; PT_LOAD
+                4: [0x7f5571688b80; memsz:    1f0] flags: 0x6; PT_DYNAMIC
+                5: [0x7f55712ce270; memsz:     44] flags: 0x4; PT_NOTE
+                6: [0x7f55716857a0; memsz:     78] flags: 0x4; PT_TLS
+                7: [0x7f557145b99c; memsz:   544c] flags: 0x4; PT_GNU_EH_FRAME
+                8: [0x7f55712ce000; memsz:      0] flags: 0x6; PT_GNU_STACK
+                9: [0x7f55716857a0; memsz:   3860] flags: 0x4; PT_GNU_RELRO
+           Name: "<a href="file:/lib64/ld-linux-x86-64.so.2">/lib64/ld-linux-x86-64.so.2</a>" (7 segments)
+                0: [0x7f557168f000; memsz:  20828] flags: 0x5; PT_LOAD
+                1: [0x7f55718afba0; memsz:   15a8] flags: 0x6; PT_LOAD
+                2: [0x7f55718afe10; memsz:    190] flags: 0x6; PT_DYNAMIC
+                3: [0x7f557168f1c8; memsz:     24] flags: 0x4; PT_NOTE
+                4: [0x7f55716acec4; memsz:    604] flags: 0x4; PT_GNU_EH_FRAME
+                5: [0x7f557168f000; memsz:      0] flags: 0x6; PT_GNU_STACK
+                6: [0x7f55718afba0; memsz:    460] flags: 0x4; PT_GNU_RELRO
+
+   <b>Program</b> <b>source</b>
+
+       #define _GNU_SOURCE
+       #include &lt;<a href="file:/usr/include/link.h">link.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdint.h">stdint.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+       static int
+       callback(struct dl_phdr_info *info, size_t size, void *data)
+       {
+           char *type;
+           int p_type;
+
+           printf("Name: \"%s\" (%d segments)\n", info-&gt;dlpi_name,
+                  info-&gt;dlpi_phnum);
+
+           for (size_t j = 0; j &lt; info-&gt;dlpi_phnum; j++) {
+               p_type = info-&gt;dlpi_phdr[j].p_type;
+               type = (p_type == PT_LOAD) ? "PT_LOAD" :
+                      (p_type == PT_DYNAMIC) ? "PT_DYNAMIC" :
+                      (p_type == PT_INTERP) ? "PT_INTERP" :
+                      (p_type == PT_NOTE) ? "PT_NOTE" :
+                      (p_type == PT_INTERP) ? "PT_INTERP" :
+                      (p_type == PT_PHDR) ? "PT_PHDR" :
+                      (p_type == PT_TLS) ? "PT_TLS" :
+                      (p_type == PT_GNU_EH_FRAME) ? "PT_GNU_EH_FRAME" :
+                      (p_type == PT_GNU_STACK) ? "PT_GNU_STACK" :
+                      (p_type == PT_GNU_RELRO) ? "PT_GNU_RELRO" : NULL;
+
+               printf("    %2zu: [%14p; memsz:%7jx] flags: %#jx; ", j,
+                      (void *) (info-&gt;dlpi_addr + info-&gt;dlpi_phdr[j].p_vaddr),
+                      (uintmax_t) info-&gt;dlpi_phdr[j].p_memsz,
+                      (uintmax_t) info-&gt;dlpi_phdr[j].p_flags);
+               if (type != NULL)
+                   printf("%s\n", type);
+               else
+                   printf("[other (%#x)]\n", p_type);
+           }
+
+           return 0;
+       }
+
+       int
+       main(void)
+       {
+           dl_iterate_phdr(callback, NULL);
+
+           exit(EXIT_SUCCESS);
+       }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/ldd.1.html">ldd</a></b>(1), <b><a href="../man1/objdump.1.html">objdump</a></b>(1), <b><a href="../man1/readelf.1.html">readelf</a></b>(1), <b><a href="../man3/dladdr.3.html">dladdr</a></b>(3), <b><a href="../man3/dlopen.3.html">dlopen</a></b>(3), <b><a href="../man5/elf.5.html">elf</a></b>(5), <b><a href="../man8/ld.so.8.html">ld.so</a></b>(8)
+
+       <u>Executable</u> <u>and</u> <u>Linking</u> <u>Format</u> <u>Specification</u>, available at various locations online.
+
+Linux man-pages 6.9.1                              2024-06-15                                 <u><a href="../man3/dl_iterate_phdr.3.html">dl_iterate_phdr</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

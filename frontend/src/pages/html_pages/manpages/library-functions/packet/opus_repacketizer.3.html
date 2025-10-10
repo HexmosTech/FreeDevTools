@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>opus_repacketizer - Repacketizer</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libopus-doc">libopus-doc_1.5.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       opus_repacketizer - Repacketizer
+
+        - The repacketizer can be used to merge multiple Opus packets into a single packet or alternatively to
+       split Opus packets that have previously been merged.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Typedefs</b>
+       typedef struct <b>OpusRepacketizer</b> <b>OpusRepacketizer</b>
+
+   <b>Functions</b>
+       int <b>opus_repacketizer_get_size</b> (void)
+           Gets the size of an OpusRepacketizer structure.
+       <b>OpusRepacketizer</b> * <b>opus_repacketizer_init</b> (<b>OpusRepacketizer</b> *rp)
+           (Re)initializes a previously allocated repacketizer state.
+       <b>OpusRepacketizer</b> * <b>opus_repacketizer_create</b> (void)
+           Allocates memory and initializes the new repacketizer with <b>opus_repacketizer_init()</b>.
+       void <b>opus_repacketizer_destroy</b> (<b>OpusRepacketizer</b> *rp)
+           Frees an OpusRepacketizer allocated by <b>opus_repacketizer_create()</b>.
+       int <b>opus_repacketizer_cat</b> (<b>OpusRepacketizer</b> *rp, const unsigned char *data, <b>opus_int32</b> len)
+           Add a packet to the current repacketizer state.
+       <b>opus_int32</b> <b>opus_repacketizer_out_range</b> (<b>OpusRepacketizer</b> *rp, int begin, int end, unsigned char *data,
+           <b>opus_int32</b> maxlen)
+           Construct a new packet from data previously submitted to the repacketizer state via
+           <b>opus_repacketizer_cat()</b>.
+       int <b>opus_repacketizer_get_nb_frames</b> (<b>OpusRepacketizer</b> *rp)
+           Return the total number of frames contained in packet data submitted to the repacketizer state so far
+           via <b>opus_repacketizer_cat()</b> since the last call to <b>opus_repacketizer_init()</b> or
+           <b>opus_repacketizer_create()</b>.
+       <b>opus_int32</b> <b>opus_repacketizer_out</b> (<b>OpusRepacketizer</b> *rp, unsigned char *data, <b>opus_int32</b> maxlen)
+           Construct a new packet from data previously submitted to the repacketizer state via
+           <b>opus_repacketizer_cat()</b>.
+       int <b>opus_packet_pad</b> (unsigned char *data, <b>opus_int32</b> len, <b>opus_int32</b> new_len)
+           Pads a given Opus packet to a larger size (possibly changing the TOC sequence).
+       <b>opus_int32</b> <b>opus_packet_unpad</b> (unsigned char *data, <b>opus_int32</b> len)
+           Remove all padding from a given Opus packet and rewrite the TOC sequence to minimize space usage.
+       int <b>opus_multistream_packet_pad</b> (unsigned char *data, <b>opus_int32</b> len, <b>opus_int32</b> new_len, int nb_streams)
+           Pads a given Opus multi-stream packet to a larger size (possibly changing the TOC sequence).
+       <b>opus_int32</b> <b>opus_multistream_packet_unpad</b> (unsigned char *data, <b>opus_int32</b> len, int nb_streams)
+           Remove all padding from a given Opus multi-stream packet and rewrite the TOC sequence to minimize
+           space usage.
+
+</pre><h4><b>Detailed</b> <b>Description</b></h4><pre>
+       The repacketizer can be used to merge multiple Opus packets into a single packet or alternatively to
+       split Opus packets that have previously been merged.
+
+       Splitting valid Opus packets is always guaranteed to succeed, whereas merging valid packets only succeeds
+       if all frames have the same mode, bandwidth, and frame size, and when the total duration of the merged
+       packet is no more than 120 ms. The 120 ms limit comes from the specification and limits decoder memory
+       requirements at a point where framing overhead becomes negligible.
+
+       The repacketizer currently only operates on elementary Opus streams. It will not manipualte multistream
+       packets successfully, except in the degenerate case where they consist of data from a single stream.
+
+       The repacketizing process starts with creating a repacketizer state, either by calling
+       <b>opus_repacketizer_create()</b> or by allocating the memory yourself, e.g.,
+
+       OpusRepacketizer *rp;
+       rp = (OpusRepacketizer*)malloc(opus_repacketizer_get_size());
+       if (rp != NULL)
+           opus_repacketizer_init(rp);
+
+       Then the application should submit packets with <b>opus_repacketizer_cat()</b>, extract new packets with
+       <b>opus_repacketizer_out()</b> or <b>opus_repacketizer_out_range()</b>, and then reset the state for the next set of
+       input packets via <b>opus_repacketizer_init()</b>.
+
+       For example, to split a sequence of packets into individual frames:
+
+       unsigned char *data;
+       int len;
+       while (get_next_packet(&amp;data, &amp;len))
+       {
+         unsigned char out[1276];
+         opus_int32 out_len;
+         int nb_frames;
+         int err;
+         int i;
+         err = opus_repacketizer_cat(rp, data, len);
+         if (err != OPUS_OK)
+         {
+           release_packet(data);
+           return err;
+         }
+         nb_frames = opus_repacketizer_get_nb_frames(rp);
+         for (i = 0; i &lt; nb_frames; i++)
+         {
+           out_len = opus_repacketizer_out_range(rp, i, i+1, out, sizeof(out));
+           if (out_len &lt; 0)
+           {
+              release_packet(data);
+              return (int)out_len;
+           }
+           output_next_packet(out, out_len);
+         }
+         opus_repacketizer_init(rp);
+         release_packet(data);
+       }
+
+       Alternatively, to combine a sequence of frames into packets that each contain up to TARGET_DURATION_MS
+       milliseconds of data:
+
+       // The maximum number of packets with duration TARGET_DURATION_MS occurs
+       // when the frame size is 2.5 ms, for a total of (TARGET_DURATION_MS*2/5)
+       // packets.
+       unsigned char *data[(TARGET_DURATION_MS*2/5)+1];
+       opus_int32 len[(TARGET_DURATION_MS*2/5)+1];
+       int nb_packets;
+       unsigned char out[1277*(TARGET_DURATION_MS*2/2)];
+       opus_int32 out_len;
+       int prev_toc;
+       nb_packets = 0;
+       while (get_next_packet(data+nb_packets, len+nb_packets))
+       {
+         int nb_frames;
+         int err;
+         nb_frames = opus_packet_get_nb_frames(data[nb_packets], len[nb_packets]);
+         if (nb_frames &lt; 1)
+         {
+           release_packets(data, nb_packets+1);
+           return nb_frames;
+         }
+         nb_frames += opus_repacketizer_get_nb_frames(rp);
+         // If adding the next packet would exceed our target, or it has an
+         // incompatible TOC sequence, output the packets we already have before
+         // submitting it.
+         // N.B., The nb_packets &gt; 0 check ensures we've submitted at least one
+         // packet since the last call to opus_repacketizer_init(). Otherwise a
+         // single packet longer than TARGET_DURATION_MS would cause us to try to
+         // output an (invalid) empty packet. It also ensures that prev_toc has
+         // been set to a valid value. Additionally, len[nb_packets] &gt; 0 is
+         // guaranteed by the call to opus_packet_get_nb_frames() above, so the
+         // reference to data[nb_packets][0] should be valid.
+         if (nb_packets &gt; 0 &amp;&amp; (
+             ((prev_toc &amp; 0xFC) != (data[nb_packets][0] &amp; 0xFC)) ||
+             opus_packet_get_samples_per_frame(data[nb_packets], 48000)*nb_frames &gt;
+             TARGET_DURATION_MS*48))
+         {
+           out_len = opus_repacketizer_out(rp, out, sizeof(out));
+           if (out_len &lt; 0)
+           {
+              release_packets(data, nb_packets+1);
+              return (int)out_len;
+           }
+           output_next_packet(out, out_len);
+           opus_repacketizer_init(rp);
+           release_packets(data, nb_packets);
+           data[0] = data[nb_packets];
+           len[0] = len[nb_packets];
+           nb_packets = 0;
+         }
+         err = opus_repacketizer_cat(rp, data[nb_packets], len[nb_packets]);
+         if (err != OPUS_OK)
+         {
+           release_packets(data, nb_packets+1);
+           return err;
+         }
+         prev_toc = data[nb_packets][0];
+         nb_packets++;
+       }
+       // Output the final, partial packet.
+       if (nb_packets &gt; 0)
+       {
+         out_len = opus_repacketizer_out(rp, out, sizeof(out));
+         release_packets(data, nb_packets);
+         if (out_len &lt; 0)
+           return (int)out_len;
+         output_next_packet(out, out_len);
+       }
+
+       An alternate way of merging packets is to simply call <b>opus_repacketizer_cat()</b> unconditionally until it
+       fails. At that point, the merged packet can be obtained with <b>opus_repacketizer_out()</b> and the input packet
+       for which <b>opus_repacketizer_cat()</b> needs to be re-added to a newly reinitialized repacketizer state.
+
+</pre><h4><b>Typedef</b> <b>Documentation</b></h4><pre>
+   <b>typedef</b> <b>struct</b> <b>OpusRepacketizer</b> <b>OpusRepacketizer</b>
+</pre><h4><b>Function</b> <b>Documentation</b></h4><pre>
+   <b>int</b> <b>opus_multistream_packet_pad</b> <b>(unsigned</b> <b>char</b> <b>*</b> <b>data,</b> <b>opus_int32</b> <b>len,</b> <b>opus_int32</b> <b>new_len,</b> <b>int</b> <b>nb_streams)</b>
+       Pads a given Opus multi-stream packet to a larger size (possibly changing the TOC sequence).
+
+       <b>Parameters</b>
+           <u>data</u> const unsigned char*: The buffer containing the packet to pad.
+           <u>len</u> opus_int32: The size of the packet. This must be at least 1.
+           <u>new_len</u> opus_int32: The desired size of the packet after padding. This must be at least 1.
+           <u>nb_streams</u> opus_int32: The number of streams (not channels) in the packet. This must be at least as
+           large as len.
+
+       <b>Returns</b>
+           an error code
+
+       <b>Return</b> <b>values</b>
+           <b>OPUS_OK</b> <u>on</u> <b>success.</b>
+           <b>OPUS_BAD_ARG</b> <u>len</u> <b>was</b> <b>less</b> <b>than</b> <b>1.</b>
+           <b>OPUS_INVALID_PACKET</b> <u>data</u> <b>did</b> <b>not</b> <b>contain</b> <b>a</b> <b>valid</b> <b>Opus</b> <b>packet.</b>
+
+   <b>opus_int32</b> <b>opus_multistream_packet_unpad</b> <b>(unsigned</b> <b>char</b> <b>*</b> <b>data,</b> <b>opus_int32</b> <b>len,</b> <b>int</b> <b>nb_streams)</b>
+       Remove all padding from a given Opus multi-stream packet and rewrite the TOC sequence to minimize space
+       usage.
+
+       <b>Parameters</b>
+           <u>data</u> const unsigned char*: The buffer containing the packet to strip.
+           <u>len</u> opus_int32: The size of the packet. This must be at least 1.
+           <u>nb_streams</u> opus_int32: The number of streams (not channels) in the packet. This must be at least 1.
+
+       <b>Returns</b>
+           The new size of the output packet on success, or an error code on failure.
+
+       <b>Return</b> <b>values</b>
+           <b>OPUS_BAD_ARG</b> <u>len</u> <b>was</b> <b>less</b> <b>than</b> <b>1</b> <b>or</b> <b>new_len</b> <b>was</b> <b>less</b> <b>than</b> <b>len.</b>
+           <b>OPUS_INVALID_PACKET</b> <u>data</u> <b>did</b> <b>not</b> <b>contain</b> <b>a</b> <b>valid</b> <b>Opus</b> <b>packet.</b>
+
+   <b>int</b> <b>opus_packet_pad</b> <b>(unsigned</b> <b>char</b> <b>*</b> <b>data,</b> <b>opus_int32</b> <b>len,</b> <b>opus_int32</b> <b>new_len)</b>
+       Pads a given Opus packet to a larger size (possibly changing the TOC sequence).
+
+       <b>Parameters</b>
+           <u>data</u> const unsigned char*: The buffer containing the packet to pad.
+           <u>len</u> opus_int32: The size of the packet. This must be at least 1.
+           <u>new_len</u> opus_int32: The desired size of the packet after padding. This must be at least as large as
+           len.
+
+       <b>Returns</b>
+           an error code
+
+       <b>Return</b> <b>values</b>
+           <b>OPUS_OK</b> <u>on</u> <b>success.</b>
+           <b>OPUS_BAD_ARG</b> <u>len</u> <b>was</b> <b>less</b> <b>than</b> <b>1</b> <b>or</b> <b>new_len</b> <b>was</b> <b>less</b> <b>than</b> <b>len.</b>
+           <b>OPUS_INVALID_PACKET</b> <u>data</u> <b>did</b> <b>not</b> <b>contain</b> <b>a</b> <b>valid</b> <b>Opus</b> <b>packet.</b>
+
+   <b>opus_int32</b> <b>opus_packet_unpad</b> <b>(unsigned</b> <b>char</b> <b>*</b> <b>data,</b> <b>opus_int32</b> <b>len)</b>
+       Remove all padding from a given Opus packet and rewrite the TOC sequence to minimize space usage.
+
+       <b>Parameters</b>
+           <u>data</u> const unsigned char*: The buffer containing the packet to strip.
+           <u>len</u> opus_int32: The size of the packet. This must be at least 1.
+
+       <b>Returns</b>
+           The new size of the output packet on success, or an error code on failure.
+
+       <b>Return</b> <b>values</b>
+           <b>OPUS_BAD_ARG</b> <u>len</u> <b>was</b> <b>less</b> <b>than</b> <b>1.</b>
+           <b>OPUS_INVALID_PACKET</b> <u>data</u> <b>did</b> <b>not</b> <b>contain</b> <b>a</b> <b>valid</b> <b>Opus</b> <b>packet.</b>
+
+   <b>int</b> <b>opus_repacketizer_cat</b> <b>(OpusRepacketizer</b> <b>*</b> <b>rp,</b> <b>const</b> <b>unsigned</b> <b>char</b> <b>*</b> <b>data,</b> <b>opus_int32</b> <b>len)</b>
+       Add a packet to the current repacketizer state. This packet must match the configuration of any packets
+       already submitted for repacketization since the last call to <b>opus_repacketizer_init()</b>. This means that it
+       must have the same coding mode, audio bandwidth, frame size, and channel count. This can be checked in
+       advance by examining the top 6 bits of the first byte of the packet, and ensuring they match the top 6
+       bits of the first byte of any previously submitted packet. The total duration of audio in the
+       repacketizer state also must not exceed 120 ms, the maximum duration of a single packet, after adding
+       this packet.
+
+       The contents of the current repacketizer state can be extracted into new packets using
+       <b>opus_repacketizer_out()</b> or <b>opus_repacketizer_out_range()</b>.
+
+       In order to add a packet with a different configuration or to add more audio beyond 120 ms, you must
+       clear the repacketizer state by calling <b>opus_repacketizer_init()</b>. If a packet is too large to add to the
+       current repacketizer state, no part of it is added, even if it contains multiple frames, some of which
+       might fit. If you wish to be able to add parts of such packets, you should first use another repacketizer
+       to split the packet into pieces and add them individually.
+
+       <b>See</b> <b>also</b>
+           <b>opus_repacketizer_out_range</b>
+
+           <b>opus_repacketizer_out</b>
+
+           <b>opus_repacketizer_init</b>
+
+       <b>Parameters</b>
+           <u>rp</u> OpusRepacketizer*: The repacketizer state to which to add the packet.
+           <u>data</u> const unsigned char*: The packet data. The application must ensure this pointer remains valid
+           until the next call to <b>opus_repacketizer_init()</b> or <b>opus_repacketizer_destroy()</b>.
+           <u>len</u> opus_int32: The number of bytes in the packet data.
+
+       <b>Returns</b>
+           An error code indicating whether or not the operation succeeded.
+
+       <b>Return</b> <b>values</b>
+           <b>OPUS_OK</b> <b>The</b> <b>packet's</b> <b>contents</b> <b>have</b> <b>been</b> <b>added</b> <b>to</b> <b>the</b> <b>repacketizer</b> <b>state.</b>
+           <b>OPUS_INVALID_PACKET</b> <b>The</b> <b>packet</b> <b>did</b> <b>not</b> <b>have</b> <b>a</b> <b>valid</b> <b>TOC</b> <b>sequence,</b> <b>the</b> <b>packet's</b> <b>TOC</b> <b>sequence</b> <b>was</b> <b>not</b>
+           <b>compatible</b> <b>with</b> <b>previously</b> <b>submitted</b> <b>packets</b> <b>(because</b> <b>the</b> <b>coding</b> <b>mode,</b> <b>audio</b> <b>bandwidth,</b> <b>frame</b> <b>size,</b>
+           <b>or</b> <b>channel</b> <b>count</b> <b>did</b> <b>not</b> <b>match),</b> <b>or</b> <b>adding</b> <b>this</b> <b>packet</b> <b>would</b> <b>increase</b> <b>the</b> <b>total</b> <b>amount</b> <b>of</b> <b>audio</b>
+           <b>stored</b> <b>in</b> <b>the</b> <b>repacketizer</b> <b>state</b> <b>to</b> <b>more</b> <b>than</b> <b>120</b> <b>ms.</b>
+
+   <b>OpusRepacketizer</b> <b>*</b> <b>opus_repacketizer_create</b> <b>(void)</b>
+       Allocates memory and initializes the new repacketizer with <b>opus_repacketizer_init()</b>.
+
+   <b>void</b> <b>opus_repacketizer_destroy</b> <b>(OpusRepacketizer</b> <b>*</b> <b>rp)</b>
+       Frees an OpusRepacketizer allocated by <b>opus_repacketizer_create()</b>.
+
+       <b>Parameters</b>
+           <u>rp</u> OpusRepacketizer*: State to be freed.
+
+   <b>int</b> <b>opus_repacketizer_get_nb_frames</b> <b>(OpusRepacketizer</b> <b>*</b> <b>rp)</b>
+       Return the total number of frames contained in packet data submitted to the repacketizer state so far via
+       <b>opus_repacketizer_cat()</b> since the last call to <b>opus_repacketizer_init()</b> or <b>opus_repacketizer_create()</b>.
+       This defines the valid range of packets that can be extracted with <b>opus_repacketizer_out_range()</b> or
+       <b>opus_repacketizer_out()</b>.
+
+       <b>Parameters</b>
+           <u>rp</u> OpusRepacketizer*: The repacketizer state containing the frames.
+
+       <b>Returns</b>
+           The total number of frames contained in the packet data submitted to the repacketizer state.
+
+   <b>int</b> <b>opus_repacketizer_get_size</b> <b>(void)</b>
+       Gets the size of an OpusRepacketizer structure.
+
+       <b>Returns</b>
+           The size in bytes.
+
+   <b>OpusRepacketizer</b> <b>*</b> <b>opus_repacketizer_init</b> <b>(OpusRepacketizer</b> <b>*</b> <b>rp)</b>
+       (Re)initializes a previously allocated repacketizer state. The state must be at least the size returned
+       by <b>opus_repacketizer_get_size()</b>. This can be used for applications which use their own allocator instead
+       of malloc(). It must also be called to reset the queue of packets waiting to be repacketized, which is
+       necessary if the maximum packet duration of 120 ms is reached or if you wish to submit packets with a
+       different Opus configuration (coding mode, audio bandwidth, frame size, or channel count). Failure to do
+       so will prevent a new packet from being added with <b>opus_repacketizer_cat()</b>.
+
+       <b>See</b> <b>also</b>
+           <b>opus_repacketizer_create</b>
+
+           <b>opus_repacketizer_get_size</b>
+
+           <b>opus_repacketizer_cat</b>
+
+       <b>Parameters</b>
+           <u>rp</u> OpusRepacketizer*: The repacketizer state to (re)initialize.
+
+       <b>Returns</b>
+           A pointer to the same repacketizer state that was passed in.
+
+   <b>opus_int32</b> <b>opus_repacketizer_out</b> <b>(OpusRepacketizer</b> <b>*</b> <b>rp,</b> <b>unsigned</b> <b>char</b> <b>*</b> <b>data,</b> <b>opus_int32</b> <b>maxlen)</b>
+       Construct a new packet from data previously submitted to the repacketizer state via
+       <b>opus_repacketizer_cat()</b>. This is a convenience routine that returns all the data submitted so far in a
+       single packet. It is equivalent to calling
+
+       opus_repacketizer_out_range(rp, 0, opus_repacketizer_get_nb_frames(rp),
+                                   data, maxlen)
+
+       <b>Parameters</b>
+           <u>rp</u> OpusRepacketizer*: The repacketizer state from which to construct the new packet.
+           <u>data</u> const unsigned char*: The buffer in which to store the output packet.
+           <u>maxlen</u> opus_int32: The maximum number of bytes to store in the output buffer. In order to guarantee
+           success, this should be at least 1277*opus_repacketizer_get_nb_frames(rp). However,
+           1*opus_repacketizer_get_nb_frames(rp) plus the size of all packet data submitted to the repacketizer
+           since the last call to <b>opus_repacketizer_init()</b> or <b>opus_repacketizer_create()</b> is also sufficient, and
+           possibly much smaller.
+
+       <b>Returns</b>
+           The total size of the output packet on success, or an error code on failure.
+
+       <b>Return</b> <b>values</b>
+           <b>OPUS_BUFFER_TOO_SMALL</b> <u>maxlen</u> <b>was</b> <b>insufficient</b> <b>to</b> <b>contain</b> <b>the</b> <b>complete</b> <b>output</b> <b>packet.</b>
+
+   <b>opus_int32</b> <b>opus_repacketizer_out_range</b> <b>(OpusRepacketizer</b> <b>*</b> <b>rp,</b> <b>int</b> <b>begin,</b> <b>int</b> <b>end,</b> <b>unsigned</b> <b>char</b> <b>*</b> <b>data,</b>
+       <b>opus_int32</b> <b>maxlen)</b>
+       Construct a new packet from data previously submitted to the repacketizer state via
+       <b>opus_repacketizer_cat()</b>.
+
+       <b>Parameters</b>
+           <u>rp</u> OpusRepacketizer*: The repacketizer state from which to construct the new packet.
+           <u>begin</u> int: The index of the first frame in the current repacketizer state to include in the output.
+           <u>end</u> int: One past the index of the last frame in the current repacketizer state to include in the
+           output.
+           <u>data</u> const unsigned char*: The buffer in which to store the output packet.
+           <u>maxlen</u> opus_int32: The maximum number of bytes to store in the output buffer. In order to guarantee
+           success, this should be at least 1276 for a single frame, or for multiple frames, 1277*(end-begin).
+           However, 1*(end-begin) plus the size of all packet data submitted to the repacketizer since the last
+           call to <b>opus_repacketizer_init()</b> or <b>opus_repacketizer_create()</b> is also sufficient, and possibly much
+           smaller.
+
+       <b>Returns</b>
+           The total size of the output packet on success, or an error code on failure.
+
+       <b>Return</b> <b>values</b>
+           <b>OPUS_BAD_ARG</b> <b>[begin,end)</b> <b>was</b> <b>an</b> <b>invalid</b> <b>range</b> <b>of</b> <b>frames</b> <b>(begin</b> <b>&lt;</b> <b>0,</b> <b>begin</b> <b>&gt;=</b> <b>end,</b> <b>or</b> <b>end</b> <b>&gt;</b>
+           <b>opus_repacketizer_get_nb_frames()).</b>
+           <b>OPUS_BUFFER_TOO_SMALL</b> <u>maxlen</u> <b>was</b> <b>insufficient</b> <b>to</b> <b>contain</b> <b>the</b> <b>complete</b> <b>output</b> <b>packet.</b>
+
+</pre><h4><b>Author</b></h4><pre>
+       Generated automatically by Doxygen for Opus from the source code.
+
+Version 1.5.2                                Wed Jul 3 2024 11:41:33                        <u><a href="../man3/opus_repacketizer.3.html">opus_repacketizer</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

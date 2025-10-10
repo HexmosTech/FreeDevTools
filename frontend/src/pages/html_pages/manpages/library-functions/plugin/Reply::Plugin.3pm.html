@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reply::Plugin - base class for Reply plugins</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libreply-perl">libreply-perl_0.42-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Reply::Plugin - base class for Reply plugins
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.42
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Reply::Plugin::Foo;
+         use strict;
+         use warnings;
+
+         use base 'Reply::Plugin';
+
+         # ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Reply plugin is an object which adds some functionality to a Reply instance by implementing some
+       specific methods which the Reply object will call at various points during execution. Plugins may
+       implement as many callback methods as necessary to implement their functionality (although the more
+       callbacks a given plugin implements, the more likely it is that the plugin may be more useful as multiple
+       independent plugins).
+
+       Callback methods have three potential calling conventions:
+
+       wrapped
+           Wrapped  callbacks  receive  a  coderef as their first argument (before any arguments to the callback
+           itself), and that coderef can be used to call the next callback in the list (if more than one  plugin
+           implements  a  given callback). In particular, this allows calling the next plugin multiple times, or
+           not at all if necessary. Wrapped plugins should always  call  their  coderef  in  list  context.  All
+           plugins listed below are wrapped plugins unless indicated otherwise.
+
+       chained
+           Chained  callbacks  receive  a  list  of  arguments, and return a new list of arguments which will be
+           passed to the next plugin in the chain. This allows each plugin a chance to  modify  a  value  before
+           it's actually used by the repl.
+
+       concatenate
+           Concatenate  callbacks receive a list of arguments, and return a list of response values. Each plugin
+           that implements the given callback will be called with the same arguments, and the  results  will  be
+           concatenated  together  into  a single list, which will be returned. Callbacks for published messages
+           are of this type.
+
+   <b>CALLBACKS</b>
+       prompt
+           Called to determine the prompt to use when reading the next line. Takes no arguments, and  returns  a
+           single string to use as the prompt. The default implementation returns "&gt;"
+
+       read_line
+           Called  to  actually  read a line from the user. Takes no arguments, and returns a single string. The
+           default implementation uses the "&lt;&gt;" operator to read a single line from "STDIN".
+
+       command_$name (chained)
+           If the line read from the user is of the form "#foo args...", then plugins will  be  searched  for  a
+           callback  method  named  "command_foo".  This  callback takes a single string containing the provided
+           arguments, and returns a new line to evaluate instead, if any.
+
+       mangle_line (chained)
+           Modifies the line read from the user before it's evaluated. Takes the line as a  string  and  returns
+           the modified line.
+
+       compile
+           Compiles  the  string  of  Perl code into a coderef. Takes the line of code as a string and a hash of
+           extra parameters,  and  returns  the  coderef  to  be  executed.   The  default  implementation  uses
+           Eval::Closure to compile the given string.
+
+           The hash of extra parameters is passed directly to "eval_closure".
+
+       execute
+           Executes the coderef which has just been compiled. Takes the coderef and a list of parameters to pass
+           to  it,  and  returns the list of results returned by calling the coderef. The default implementation
+           just calls the coderef directly.
+
+       mangle_error (chained)
+           If the "compile" or "execute" callbacks throw an exception, this callback will be  called  to  modify
+           the  exception  before  it  is  passed  to  "print_error".  It receives the exception and returns the
+           modified exception.
+
+       print_error
+           If the "compile" or "execute" callbacks throw an exception, this callback will be called  to  display
+           it  to  the user. It receives the exception and returns nothing. The default implementation just uses
+           "print" to print it to the screen.
+
+       mangle_result (chained)
+           This callback is used to modify the result of evaluating the line of code before it is displayed.  It
+           receives the list of results and returns a modified list of results.
+
+       print_result
+           This  callback displays to the user the results of evaluating the given line of code. It receives the
+           list of results, and returns nothing. The default implementation just uses "print" to print  them  to
+           the screen.
+
+       loop (chained)
+           This  callback  is  called  at  the  end  of  each  evaluation. It receives whether the repl has been
+           requested to terminate so far, and returns whether the repl should terminate.
+
+       Reply plugins can also communicate among each other via a pub/sub mechanism.  By  calling  the  "publish"
+       method,  all  plugins which respond to the given message (implement a method of the given name) will have
+       that method called with the given arguments, and all of the responses will  be  collected  and  returned.
+       Some messages used by the default plugins are:
+
+       tab_handler ($line)
+           Plugins  can  publish this message when they want to attempt tab completion.  Plugins that respond to
+           this message should return a list of potential completions of the line which is passed in.
+
+       lexical_environment
+           Plugins which wish to modify the lexical environment should do so by implementing this message, which
+           should return a hashref of variable names (including sigils) to value references. There can  be  more
+           than one lexical environment (each maintained by a different plugin), so plugins that wish to inspect
+           the  lexical  environment  should  do so by calling "$self-&gt;publish('lexical_environment')", and then
+           merging together all of the hashrefs which are returned.
+
+       package
+           Plugins which wish to modify the currently active package should do so by implementing this  message,
+           which should return the name of the current package.  Then, to access the currently active package, a
+           plugin can call "($self-&gt;publish('package'))[-1]".
+
+       Your  plugins,  however,  are  not  limited to these messages - you can use whatever messages you want to
+       communicate.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>publish</b> <b>($name,</b> <b>@args)</b>
+       Publish a message to other plugins which respond to it. All loaded plugins which implement a method named
+       $name will have it called with @args as the parameters. Returns a list of  everything  that  each  plugin
+       responded with.
+
+   <b>commands</b>
+       Returns  the  names of the "#" commands that this plugin implements. This can be used in conjunction with
+       "publish" - "$plugin-&gt;publish('commands')" will return a list of all commands which are available in  the
+       current Reply session.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jesse Luehrs &lt;<a href="mailto:doy@tozt.net">doy@tozt.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2016 by Jesse Luehrs.
+
+       This is free software, licensed under:
+
+         The MIT (X11) License
+
+perl v5.34.0                                       2022-06-17                                 <u>Reply::<a href="../man3pm/Plugin.3pm.html">Plugin</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

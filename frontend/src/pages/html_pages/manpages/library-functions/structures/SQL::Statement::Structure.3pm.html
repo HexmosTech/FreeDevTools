@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL::Statement::Structure - parse and examine structure of SQL queries</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsql-statement-perl">libsql-statement-perl_1.414-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SQL::Statement::Structure - parse and examine structure of SQL queries
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use SQL::Statement;
+           my $sql    = "SELECT a FROM b JOIN c WHERE c=? AND e=7 ORDER BY f DESC LIMIT 5,2";
+           my $parser = SQL::Parser-&gt;new();
+           $parser-&gt;{RaiseError}=1;
+           $parser-&gt;{PrintError}=0;
+           $parser-&gt;parse("LOAD 'MyLib::MySyntax' ");
+           my $stmt = SQL::Statement-&gt;new($sql,$parser);
+           printf "Command             %s\n",$stmt-&gt;command;
+           printf "Num of Placeholders %s\n",scalar $stmt-&gt;params;
+           printf "Columns             %s\n",join( ',', map {$_-&gt;name} $stmt-&gt;column_defs() );
+           printf "Tables              %s\n",join( ',', map {$_-&gt;name} $stmt-&gt;tables() );
+           printf "Where operator      %s\n",join( ',', $stmt-&gt;where-&gt;op() );
+           printf "Limit               %s\n",$stmt-&gt;limit();
+           printf "Offset              %s\n",$stmt-&gt;offset();
+
+           # these will work not before $stmt-&gt;execute()
+           printf "Order Columns       %s\n",join(',', map {$_-&gt;column} $stmt-&gt;order() );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The SQL::Statement module can be used by itself, without DBI and without a subclass to parse SQL
+       statements and to allow you to examine the structure of the statement (table names, column names, where
+       clause predicates, etc.).  It will also execute statements using in-memory tables.  That means that you
+       can create and populate some tables, then query them and fetch the results of the queries as well as
+       examine the differences between statement metadata during different phases of prepare, execute, fetch.
+       See the remainder of this document for a description of how to create and modify a parser object and how
+       to use it to parse and examine SQL statements.  See SQL::Statement for other uses of the module.
+
+</pre><h4><b>Creating</b> <b>a</b> <b>parser</b> <b>object</b></h4><pre>
+       The parser object only needs to be created once per script. It can then be reused to parse any number of
+       SQL statements. The basic creation of a parser is this:
+
+           my $parser = SQL::Parser-&gt;new();
+
+       You can set the error-reporting for the parser the same way you do in DBI:
+
+           $parser-&gt;{RaiseError}=1;   # turn on die-on-error behaviour
+           $parser-&gt;{PrinteError}=1;  # turn on warnings-on-error behaviour
+
+       As with DBI, RaiseError defaults to 0 (off) and PrintError defaults to 1 (on).
+
+       For many purposes, the built-in SQL syntax should be sufficient. However, if you need to, you can change
+       the behaviour of the parser by extending the supported SQL syntax either by loading a file containing
+       definitions; or by issuing SQL commands that modify the way the parser treats types, keywords, functions,
+       and operators.
+
+           $parser-&gt;parse("LOAD MyLib::MySyntax");
+           $parser-&gt;parse("CREATE TYPE myDataType");
+
+       See SQL::Statement::Syntax for details of the supported SQL syntax and for methods of extending the
+       syntax.
+
+</pre><h4><b>Parsing</b> <b>SQL</b> <b>statements</b></h4><pre>
+       While you only need to define a new SQL::Parser object once per script, you need to define a new
+       SQL::Statment object once for each statement you want to parse.
+
+           my $stmt = SQL::Statement-&gt;new($sql, $parser);
+
+       The call to <b>new()</b> takes two arguments - the SQL string you want to parse, and the SQL::Parser object you
+       previously created.  The call to new is the equivalent of a DBI call to <b>prepare()</b> - it parses the SQL
+       into a structure but does not attempt to execute the SQL unless you explicitly call <b>execute()</b>.
+
+</pre><h4><b>Examining</b> <b>the</b> <b>structure</b> <b>of</b> <b>SQL</b> <b>statements</b></h4><pre>
+       The following methods can be used to obtain information about a query:
+
+   <b>command</b>
+       Returns the SQL command. See SQL::Statement::Syntax for supported command. Example:
+
+           my $command = $stmt-&gt;command();
+
+   <b>column</b> <b>definitions</b>
+           my $numColumns = $stmt-&gt;column_defs();  # Scalar context
+           my @columnList = $stmt-&gt;column_defs();  # Array context
+           my($col1, $col2) = ($stmt-&gt;<a href="../man0/column_defs.0.html">column_defs</a>(0), $stmt-&gt;<a href="../man1/column_defs.1.html">column_defs</a>(1));
+
+       This method is used to retrieve column lists. The meaning depends on the query command:
+
+           SELECT $col1, $col2, ... $colN FROM $table WHERE ...
+           UPDATE $table SET $col1 = $val1, $col2 = $val2, ...
+               $colN = $valN WHERE ...
+           INSERT INTO $table ($col1, $col2, ..., $colN) VALUES (...)
+
+       When used without arguments, the method returns a list of the columns $col1, $col2, ..., $colN, you may
+       alternatively use a column number as argument. Note that the column list may be empty as in
+
+           INSERT INTO $table VALUES (...)
+
+       and in <u>CREATE</u> or <u>DROP</u> statements.
+
+       But what does "returning a column" mean? It is returning an "SQL::Statement::Util::Column" instance, a
+       class that implements the methods "table" and "name", both returning the respective scalar. For example,
+       consider the following statements:
+
+           INSERT INTO foo (bar) VALUES (1)
+           SELECT bar FROM foo WHERE ...
+           SELECT foo.bar FROM foo WHERE ...
+
+       In all these cases exactly one column instance would be returned with
+
+           $col-&gt;name() eq 'bar'
+           $col-&gt;table() eq 'foo'
+
+   <b>tables</b>
+           my $tableNum = $stmt-&gt;tables();  # Scalar context
+           my @tables = $stmt-&gt;tables();    # Array context
+           my($table1, $table2) = ($stmt-&gt;<a href="../man0/tables.0.html">tables</a>(0), $stmt-&gt;<a href="../man1/tables.1.html">tables</a>(1));
+
+       Similar to "columns", this method returns instances of "SQL::Statement::Table". For <u>UPDATE</u>, <u>DELETE</u>,
+       <u>INSERT</u>, <u>CREATE</u> and <u>DROP</u>, a single table will always be returned.  <u>SELECT</u> statements can return more than
+       one table, in case of joins. Table objects offer a single method, "name" which returns the table name.
+
+   <b>params</b>
+           my $paramNum = $stmt-&gt;params();  # Scalar context
+           my @params = $stmt-&gt;params();    # Array context
+           my($p1, $p2) = ($stmt-&gt;<a href="../man0/params.0.html">params</a>(0), $stmt-&gt;<a href="../man1/params.1.html">params</a>(1));
+
+       The "params" method returns information about the input parameters used in a statement. For example,
+       consider the following:
+
+           INSERT INTO foo VALUES (?, ?)
+
+       This would return two instances of "SQL::Statement::Param". Param objects implement a single method,
+       "$param-"<b>num()</b>&gt;, which retrieves the parameter number. (0 and 1, in the above example). As of now, not
+       very useful ... :-)
+
+   <b>row_values</b>
+           my $rowValueNum = $stmt-&gt;row_values(); # Scalar context
+           my @rowValues = $stmt-&gt;<a href="../man0/row_values.0.html">row_values</a>(0);  # Array context
+           my($rval1, $rval2) = ($stmt-&gt;row_values(0,0),
+                                 $stmt-&gt;row_values(0,1));
+
+       This method is used for statements like
+
+           UPDATE $table SET $col1 = $val1, $col2 = $val2, ...
+               $colN = $valN WHERE ...
+           INSERT INTO $table (...) VALUES ($val1, $val2, ..., $valN),
+                                           ($val1, $val2, ..., $valN)
+
+       to read the values $val1, $val2, ... $valN. It returns (lists of) scalar values or
+       "SQL::Statement::Param" instances.
+
+   <b>order</b>
+           my $orderNum = $stmt-&gt;order();   # Scalar context
+           my @order = $stmt-&gt;order();      # Array context
+           my($o1, $o2) = ($stmt-&gt;<a href="../man0/order.0.html">order</a>(0), $stmt-&gt;<a href="../man1/order.1.html">order</a>(1));
+
+       In <u>SELECT</u> statements you can use this for looking at the ORDER clause.  Example:
+
+           SELECT * FROM FOO ORDER BY id DESC, name
+
+       In this case, "order" could return 2 instances of "SQL::Statement::Order".  You can use the methods
+       "$o-&gt;table()", "$o-&gt;column()", "$o-&gt;direction()" and "$o-&gt;desc()" to examine the order object.
+
+   <b>limit</b>
+           my $limit = $stmt-&gt;limit();
+
+       In a SELECT statement you can use a "LIMIT" clause to implement cursoring:
+
+           SELECT * FROM FOO LIMIT 5
+           SELECT * FROM FOO LIMIT 5, 5
+           SELECT * FROM FOO LIMIT 10, 5
+
+       These three statements would retrieve the rows 0..4, 5..9, 10..14 of the table FOO, respectively. If no
+       "LIMIT" clause is used, then the method "$stmt-&gt;limit" returns undef. Otherwise it returns the limit
+       number (the maximum number of rows) from the statement (5 or 10 for the statements above).
+
+   <b>offset</b>
+           my $offset = $stmt-&gt;offset();
+
+       If no "LIMIT" clause is used, then the method "$stmt-&gt;limit" returns <u>undef</u>. Otherwise it returns the
+       offset number (the index of the first row to be included in the limit clause).
+
+   <b>where_hash</b>
+           my $where_hash = $stmt-&gt;where_hash();
+
+       To manually evaluate the <u>WHERE</u> clause, fetch the topmost where clause node with the "where_hash" method.
+       Then evaluate the left-hand and right-hand side of the operation, perhaps recursively. Once that is done,
+       apply the operator and finally negate the result, if required.
+
+       The where clause nodes have (up to) 4 attributes:
+
+       op          contains  the operator, one of "AND", "OR", "=", "&lt;&gt;", "&gt;=", "&gt;", "&lt;=", "&lt;", "LIKE", "CLIKE",
+                   "IS", "IN", "BETWEEN" or a user defined operator, if any.
+
+       arg1        contains the left-hand side of the operator. This can be a scalar value,  a  hash  containing
+                   column  or function definition, a parameter definition (hash has attribute "type" defined) or
+                   another operation (hash has attribute "op" defined).
+
+       arg2        contains the right-hand side of the operator. This can be a scalar value, a  hash  containing
+                   column  or function definition, a parameter definition (hash has attribute "type" defined) or
+                   another operation (hash has attribute "op" defined).
+
+       neg         contains a TRUE value, if the operation result must be negated after evaluation.
+
+       To illustrate the above, consider the following WHERE clause:
+
+           WHERE NOT (id &gt; 2 AND name = 'joe') OR name IS NULL
+
+       We can represent this clause by the following tree:
+
+                     (id &gt; 2)   (name = 'joe')
+                            \   /
+                 NOT         AND
+                                \      (name IS NULL)
+                                 \    /
+                                   OR
+
+       Thus the WHERE clause would return an SQL::Statement::Op instance with the <b>op()</b> field set  to  'OR'.  The
+       <b>arg2()</b>    field    would   return   another   SQL::Statement::Op   instance   with   <b>arg1()</b>   being   the
+       SQL::Statement::Column instance representing id, the <b>arg2()</b> field containing the value undef  (NULL)  and
+       the <b>op()</b> field being 'IS'.
+
+       The  <b>arg1()</b>  field  of  the  topmost Op instance would return an Op instance with <b>op()</b> eq 'AND' and <b>neg()</b>
+       returning TRUE. The <b>arg1()</b> and <b>arg2()</b> fields would be Op's representing "id &gt; 2" and "name = 'joe'".
+
+       Of course there's a ready-for-use method for WHERE clause evaluation:
+
+       The WHERE clause evaluation depends on an object being used for fetching  parameter  and  column  values.
+       Usually  this  can be an SQL::Statement::RAM::Table object or SQL::Eval object, but in fact it can be any
+       object that supplies the methods
+
+           $val = $eval-&gt;param($paramNum);
+           $val = $eval-&gt;column($table, $column);
+
+       Once you have such an object, you can call eval_where;
+
+           $match = $stmt-&gt;eval_where($eval);
+
+   <b>where</b>
+           my $where = $stmt-&gt;where();
+
+       This method is used to examine the syntax tree of the "WHERE" clause. It returns  <u>undef</u>  (if  no  "WHERE"
+       clause was used) or an instance of SQL::Statement::Term.
+
+       The  where clause is evaluated automatically on the current selected row of the table currently worked on
+       when it's "value()" method is invoked.
+
+       "SQL::Statement" creates the object tree for where clause evaluation directly after successfully  parsing
+       a statement from the given "where_clause", if any.
+
+</pre><h4><b>Executing</b> <b>and</b> <b>fetching</b> <b>data</b> <b>from</b> <b>SQL</b> <b>statements</b></h4><pre>
+   <b>execute</b>
+       When called from a DBD or other subclass of SQL::Statement, the <b>execute()</b> method will be executed against
+       whatever  data-source  (persistent  storage)  is  supplied by the DBD or the subclass (e.g. CSV files for
+       DBD::CSV, or BerkeleyDB for DBD::DBM). If  you  are  using  SQL::Statement  directly  rather  than  as  a
+       subclass,  you  can  call  the <b>execute()</b> method and the statements will be <b>executed()</b> using temporary in-
+       memory tables. When used directly, like that, you need to create a cache hashref and pass it as the first
+       argument to execute:
+
+         my $cache  = {};
+         my $parser = SQL::Parser-&gt;new();
+         my $stmt   = SQL::Statement-&gt;new('CREATE TABLE x (id INT)',$parser);
+         $stmt-&gt;execute( $cache );
+
+       If you are using a statement with placeholders, those can be passed to execute after the $cache:
+
+         $stmt      = SQL::Statement-&gt;new('INSERT INTO y VALUES(?,?)',$parser);
+         $stmt-&gt;execute( $cache, 7, 'foo' );
+
+   <b>fetch</b>
+       Only a single "fetch()" method is provided - it returns a single row of data as an arrayref. Use  a  loop
+       to fetch all rows:
+
+        while (my $row = $stmt-&gt;fetch()) {
+            # ...
+        }
+
+   <b>an</b> <b>example</b> <b>of</b> <b>executing</b> <b>and</b> <b>fetching</b>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -w
+        use strict;
+        use SQL::Statement;
+
+        my $cache={};
+        my $parser = SQL::Parser-&gt;new();
+        for my $sql(split /\n/,
+        "  CREATE TABLE a (b INT)
+           INSERT INTO a <a href="../man1/VALUES.1.html">VALUES</a>(1)
+           INSERT INTO a <a href="../man2/VALUES.2.html">VALUES</a>(2)
+           SELECT MAX(b) FROM a  "
+        )
+        {
+           $stmt = SQL::Statement-&gt;new($sql,$parser);
+           $stmt-&gt;execute($cache);
+           next unless $stmt-&gt;command eq 'SELECT';
+           while (my $row=$stmt-&gt;fetch)
+           {
+               print "@$row\n";
+           }
+        }
+        __END__
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright  (c) 2005, Jeff Zucker &lt;jzuckerATcpan.org&gt;, all rights reserved.  Copyright (c) 2009-2020, Jens
+       Rehsack &lt;rehsackATcpan.org&gt;, all rights reserved.
+
+       This document may be freely modified and distributed under the same terms as Perl itself.
+
+perl v5.30.3                                       2020-10-23                     <u>SQL::Statement::<a href="../man3pm/Structure.3pm.html">Structure</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

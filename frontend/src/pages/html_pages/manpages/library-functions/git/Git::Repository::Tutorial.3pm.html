@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git::Repository::Tutorial - Control git from Perl using Git::Repository</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgit-repository-perl">libgit-repository-perl_1.325-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Git::Repository::Tutorial - Control git from Perl using Git::Repository
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Git::Repository;
+
+           # do cool stuff with Git, using the following advice
+
+</pre><h4><b>HOW-TO</b></h4><pre>
+       A Git::Repository object represents an actual Git repository, against which you can <u>run</u> commands.
+
+   <b>Obtain</b> <b>a</b> <b>Git::Repository</b> <b>object</b> <b>from</b> <b>an</b> <b>existing</b> <b>repository</b>
+       If your script is expected to run against a repository in the current directory (like most Git commands),
+       let Git::Repository handle the magic:
+
+           $r = Git::Repository-&gt;new();
+
+       If the repository has a working copy (work tree):
+
+           $r = Git::Repository-&gt;new( work_tree =&gt; $dir );
+
+       In this case, the git dir is computed as the output of "git rev-parse --git-dir", and the the work tree
+       is normalized using "git rev-parse --show-cdup". To force the use of a different work tree, set the
+       "GIT_WORK_TREE" environment variable in the option hash.
+
+       If the repository is a bare repository, or you prefer to provide the location of the <u>.git</u> directory:
+
+           $r = Git::Repository-&gt;new( git_dir =&gt; $gitdir );
+
+       If the work tree and the git directory are in unrelated locations, you can also provide both:
+
+           $r = Git::Repository-&gt;new( work_tree =&gt; $dir, git_dir =&gt; $gitdir );
+
+       The constructor also accepts an option hash. The various options are detailed in the manual page for
+       Git::Repository::Command.
+
+   <b>Run</b> <b>any</b> <b>git</b> <b>command</b>
+       Git commands can be run against an existing Git::Repository object, or against the class itself (in which
+       case, git will try to deduce its context from the current directory and the environment).
+
+       The pattern for running commands is always the same:
+
+           $r-&gt;run( $command =&gt; @arguments, \%options );
+
+       The $command and @arguments are identical to those you'd pass to the "git" command-line tool. The options
+       hash contains options, as described in the manual page for Git::Repository::Command.
+
+   <b>Create</b> <b>a</b> <b>new</b> <b>repository</b>
+       Sometime, you'll need to create the Git repository from scratch:
+
+           # git version 1.6.5 and above
+           Git::Repository-&gt;run( init =&gt; $dir );
+           $r = Git::Repository-&gt;new( work_tree =&gt; $dir );
+
+       Any git older than 1.6.5 requires the command to be run in the work tree, so we use the "cwd" option:
+
+           # git version 1.5.0.rc1 and above
+           Git::Repository-&gt;run( init =&gt; { cwd =&gt; $dir } );
+           $r = Git::Repository-&gt;new( work_tree =&gt; $dir );
+
+           # older git versions
+           Git::Repository-&gt;run( 'init-db' =&gt; { cwd =&gt; $dir } );
+           $r = Git::Repository-&gt;new( work_tree =&gt; $dir );
+
+       Note that the old "create()" method is obsolete (as of Git::Repository 1.18, from April 16, 2011) and has
+       been removed (as of Git::Repository 1.301, January 21, 2013).
+
+   <b>Clone</b> <b>a</b> <b>repository</b>
+       Cloning works the same way:
+
+           Git::Repository-&gt;run( clone =&gt; $url =&gt; $dir );
+           $r = Git::Repository-&gt;new( work_tree =&gt; $dir );
+
+   <b>Run</b> <b>a</b> <b>simple</b> <b>command</b>
+       When you don't really care about the output of the command, just call it:
+
+           $r-&gt;run( add =&gt; '.' );
+           $r-&gt;run( commit =&gt; '-m', 'my commit message' );
+
+       In case of an error or warning, Git::Repository will "croak()" or "carp()" appropriately.
+
+   <b>Properly</b> <b>quote</b> <b>options</b>
+       It's common to work out the proper string of Git commands needed to achieve your goal in the shell,
+       before actually turning them into calls to "Git::Repository-&gt;run".
+
+       Some options might require quoting, to properly get the arguments to Git through the shell:
+
+           # shell
+           $ git log --since='Fri Jul 26 19:34:15 2013 +0200' --grep='report ticket'
+
+       Such quoting is of course not needed with Git::Repository:
+
+           $since = 'Fri Jul 26 19:34:15 2013 +0200';
+           $grep  = 'report ticket';
+           my $cmd = $r-&gt;command( log =&gt; "--since=$since", "--grep=$grep" );
+
+   <b>Be</b> <b>careful</b> <b>with</b> <b>spaces</b> <b>in</b> <b>options</b>
+       For the same reasons as above (individual arguments to "run" or "command" are turned into individual
+       "argv" elements for <b>git</b>, whitespace included), some command-line usages of <b>git</b> need to be slightly
+       reformatted to make them suitable for "run()".
+
+       For example, these two commands have the same effect when run from the shell:
+
+               shell&gt; git checkout -b sometopic
+               shell&gt; git checkout -bsometopic
+
+       In the first case, <b>git</b> receives three arguments in "argv": "checkout", "-b" and "sometopic". In the
+       second case, it receives two arguments: "checkout" and "-bsometopic", and then <b>git</b> recognizes the
+       beginning of the <u>-b</u> option and splits "sometopic" out of the second argument.
+
+       So, in a call such as:
+
+           $command = $repo-&gt;run( checkout =&gt; "-b$branch_name", { quiet =&gt; 0 } );
+
+       If $branch_name contains an initial space character, the call will be equivalent the following shell
+       command:
+
+               shell&gt; git checkout -b\ sometopic
+
+       and <b>git</b> will receive two arguments: "checkout" and "-b sometopic", from which it will split out "
+       sometopic" (note the initial space).
+
+       The space after <u>-b</u> must be removed, as otherwise the code attempts to create a branch called "
+       sometopic", which git rejects.
+
+   <b>Silence</b> <b>warnings</b> <b>for</b> <b>some</b> <b>Git</b> <b>commands</b>
+       Some Git porcelain commands provide additional information on "STDERR".  One typical example is "git
+       checkout":
+
+           $ git checkout mybranch
+           Switched to branch 'mybranch'
+
+       The "run()" method of Git::Repository treats all output on "STDERR" as a warning. Therefore, the
+       following code:
+
+           $r-&gt;run( checkout =&gt; 'mybranch' );
+
+       will output a warning like this one:
+
+           Switched to branch 'mybranch' at myscript.pl line 10.
+
+       In such a case, you can use the "quiet" option to silence the warning for a single command:
+
+           $r-&gt;run( checkout =&gt; 'mybranch', { quiet =&gt; 1 } );
+
+       To silence <u>all</u> warnings, you can pass the "quiet" option during the creation of the original repository
+       object:
+
+           my $r = Git::Repository-&gt;new( { quiet =&gt; 1 } );
+
+       This is not recommended, as it might hide important information from you.
+
+   <b>Process</b> <b>normal</b> <b>and</b> <b>error</b> <b>output</b>
+       The "run()" command doesn't capture "STDERR": it only warns (or dies) if something was printed on it. To
+       be able to actually capture error output, "command()" must be used.
+
+           my $cmd = $r-&gt;command( @cmd );
+           my @errput = $cmd-&gt;stderr-&gt;getlines();
+           $cmd-&gt;close;
+
+       "run()" also captures all output at once, which can lead to unnecessary memory consumption when capturing
+       the output of some really verbose commands.
+
+           my $cmd = $r-&gt;command( log =&gt; '--pretty=oneline', '--all' );
+           my $log = $cmd-&gt;stdout;
+           while (&lt;$log&gt;) {
+               ...;
+           }
+           $cmd-&gt;close;
+
+       Of course, as soon as one starts reading and writing to an external process' communication handles, a
+       risk of blocking exists.  <u>Caveat</u> <u>emptor</u>.
+
+   <b>Provide</b> <b>input</b> <b>on</b> <b>standard</b> <b>input</b>
+       Use the "input" option:
+
+           my $commit = $r-&gt;run( 'commit-tree', $tree, '-p', $parent,
+               { input =&gt; $message } );
+
+   <b>Change</b> <b>the</b> <b>environment</b> <b>of</b> <b>a</b> <b>command</b>
+       Use the "env" option:
+
+           $r-&gt;run(
+               'commit', '-m', 'log message',
+               {   env =&gt; {
+                       GIT_COMMITTER_NAME  =&gt; 'Git::Repository',
+                       GIT_COMMITTER_EMAIL =&gt; '<a href="mailto:book@cpan.org">book@cpan.org</a>',
+                   },
+               },
+           );
+
+       Note that Git::Repository::Command does small changes to the environment a command before running it.
+       Specifically, it:
+
+       •   deletes  "GIT_DIR"  and  "GIT_WORK_TREE",  and sets them to the corresponding values from the current
+           Git::Repository object
+
+       •   deletes "TERM"
+
+       •   replaces "PATH" with the value of the "env-&gt;{PATH}" option
+
+       The easiest way to preserve en environment variable is to pass it with the "env" option, for example:
+
+           $r-&gt;run( qw( config --get-colorbool githooks.color true ),
+               { env =&gt; { TERM =&gt; $ENV{TERM} } } );
+
+       See Git::Repository::Command and System::Command for other available options.
+
+   <b>Ignore</b> <b>the</b> <b>system</b> <b>and</b> <b>global</b> <b>configuration</b> <b>files</b>
+       Git has three levels of configuration files that can change the  output  of  porcelain  commands:  system
+       (<u>$(prefix)/etc/gitconfig</u>),   global   (<u>$HOME/.gitconfig</u>   and   <u>$XDG_CONFIG_HOME/git/config</u>)   and  local
+       (<u>.git/config</u> inside the repository).
+
+       To ensure the system and global configuration files will be ignored and won't interfere with the expected
+       output of your Git commands, you can add the following keys to the "env" option:
+
+           GIT_CONFIG_NOSYSTEM =&gt; 1,
+           XDG_CONFIG_HOME     =&gt; undef,
+           HOME                =&gt; undef,
+
+   <b>Ensure</b> <b>the</b> <b>output</b> <b>from</b> <b>Git</b> <b>commands</b> <b>is</b> <b>not</b> <b>localized</b>
+       Since version 1.7.9, Git translates its most common  interface  messages  into  the  user's  language  if
+       translations are available and the locale is appropriately set.
+
+       This means that naively parsing the output "porcelain" commands might fail if the program is unexpectedly
+       run under an unexpected locale.
+
+       The  easiest  way  to  ensure your Git commands will be run in a "locale-safe" environment, is to set the
+       "LC_ALL" environment variable to "C".
+
+       The brutal way:
+
+           $ENV{LC_ALL} = 'C';
+
+       The temporary way:
+
+           local $ENV{LC_ALL} = 'C';
+
+       The subtle way (restricted to the commands run on a given Git::Repository instance):
+
+           my $r = Git::Repository-&gt;new( { env =&gt; { LC_ALL =&gt; 'C' } } );
+
+       The stealthiest way (restricted to a single command):
+
+           $r-&gt;run( ..., { env =&gt; { LC_ALL =&gt; 'C' } } );
+
+   <b>Ensure</b> <b>the</b> <b>Git</b> <b>commands</b> <b>are</b> <b>run</b> <b>from</b> <b>the</b> <b>current</b> <b>working</b> <b>directory</b>
+       By default, Git::Repository::Command will "chdir()" to the root of the work  tree  before  launching  the
+       requested Git command.
+
+       This  means that no matter where your program "chdir()" to, commands on the Git::Repository instance will
+       by default be run from the root of the work tree. So, commands such as "add" need to use the "full"  path
+       (relative to "GIT_WORK_TREE") of the files to be added.
+
+       The  "cwd"  option  can  be  used to define where Git::Repository::Command will "chdir()" to. To instruct
+       Git::Repository::Command to <b>not</b> "chdir()" (and therefore run the Git command  from  the  <u>current</u>  <u>working</u>
+       <u>directory</u>), set the option to "undef":
+
+           # run from cwd for this command only
+           $r-&gt;run( ..., { cwd =&gt; undef } );
+
+           # always run git from cwd
+           my $r = Git::Repository-&gt;new( { cwd =&gt; undef } );
+
+   <b>Finely</b> <b>control</b> <b>when</b> <b>"run()"</b> <b>dies</b>
+       By default, "Git::Repository-&gt;run( ... )" dies if the Git command exited with a status code of 128 (fatal
+       error) or 129 (usage message).
+
+       Some commands will throw an error and exit with a status different from the previous two:
+
+           $r-&gt;run( checkout =&gt; 'does-not-exist' );    # exit status: 1
+
+       The above "run()" call does not die, and output the following warning:
+
+           error: pathspec 'does-not-exist' did not match any file(s) known to git.
+
+       The exit status (as given by "$? &gt;&gt; 8") is 1.
+
+       To  force  "run()"  to  die  when  the  Git command exits with status 1, use the "fatal" option (added in
+       version 1.304, May 25, 2013):
+
+           $r-&gt;run( checkout =&gt; 'does-not-exist', { fatal =&gt; 1 } );
+
+       By default, 128 and 129 remain in the list of fatal codes.
+
+       Here are a few examples:
+
+           # set the fatal codes for all call to run() on this object
+           $r = Git::Repository-&gt;new( { fatal =&gt; [ 1 .. 255 ] } );
+
+       As usual, setting the option to the Git::Repository object will set it for all commands run for it:
+
+           # "!0" is a shortcut for 1 .. 255
+           $r = Git::Repository-&gt;new( { fatal =&gt; [ "!0" ] } );
+
+       Using negative codes will make these values non-fatal:
+
+           # the above call to new() makes all exit codes fatal
+           # but 3 and 7 won't be fatal for this specific run
+           $r-&gt;run( ..., { fatal =&gt; [ -3, -7 ] } );
+
+       When the list contains a single item, there is no need to use an array reference:
+
+           # same as [ "!0" ]
+           $r = Git::Repository-&gt;new( { fatal =&gt; "!0" } );
+
+           # remove 17 from the list of fatal exit codes for this run only
+           $r-&gt;run( ..., { fatal =&gt; -17 } );
+
+       See Git::Repository::Command for other available options.
+
+   <b>Process</b> <b>the</b> <b>output</b> <b>of</b> <b>git</b> <b>log</b>
+       When creating a tool that needs to process the output of <b>git</b> <b>log</b>, you should always define precisely  the
+       expected format using the <u>--pretty</u> option, and choose a format that is easy to parse.
+
+       Assuming  <b>git</b>  <b>log</b>  will output the default format will eventually lead to problems, for example when the
+       user's git configuration defines "format.pretty" to be something else than the default of "medium".
+
+       See also Git::Repository::Plugin::Log for adding to your Git::Repository objects a  "log()"  method  that
+       will parse the log output for you.
+
+       Understanding the various options for <b>git</b> <b>log</b> can make it very simple to obtain a lot of information.
+
+       For example:
+
+           # all tags reachable from $committish
+           my @tags = map {
+               s/^ \((.*)\)/$1/;
+               ( map +( split /: / )[1], grep /^tag: /, split /, / )
+             }
+             $_-&gt;run( qw( log --simplify-by-decoration --pretty=%d ), $committish );
+
+   <b>Process</b> <b>the</b> <b>output</b> <b>of</b> <b>git</b> <b>shortlog</b>
+       <b>git</b>  <b>shortlog</b>  behaves differently when it detects it's not attached to a terminal. In that case, it just
+       tries to read some <b>git</b> <b>log</b> output from its standard input.
+
+       So this oneliner will hang, because <b>git</b> <b>shortlog</b> is waiting for some data from the program  connected  to
+       its standard input (the oneliner):
+
+           perl -MGit::Repository -le 'print scalar Git::Repository-&gt;run( shortlog =&gt; -5 )'
+
+       Whereas this one will "work" (as in "immediately return with no output"):
+
+           perl -MGit::Repository -le 'print scalar Git::Repository-&gt;run( shortlog =&gt; -5, { input =&gt; "" } )'
+
+       So, you need to give <b>git</b> <b>shortlog</b> <u>some</u> input (from <b>git</b> <b>log</b>):
+
+           perl -MGit::Repository -le 'print scalar Git::Repository-&gt;run( shortlog =&gt; { input =&gt; scalar Git::Repository-&gt;run( log =&gt; -5 ) } )'
+
+       If the log output is large, you'll probably be better off with something like the following:
+
+           use Git::Repository;
+
+           # start both git commands
+           my $log = Git::Repository-&gt;command('log')-&gt;stdout;
+           my $cmd = Git::Repository-&gt;command( shortlog =&gt; -ens );
+
+           # feed one with the output of the other
+           my $in = $cmd-&gt;stdin;
+           print {$in} $_ while &lt;$log&gt;;
+           close $in;
+
+           # and do something with the output
+           print $cmd-&gt;stdout-&gt;getlines;
+
+   <b>Wrap</b> <b>git</b> <b>in</b> <b>a</b> <b>sudo</b> <b>call</b>
+       If  for  a  given  repository  you  want to wrap all calls to git in a "sudo" call, you can use the "git"
+       option with an array ref:
+
+           my $r = Git::Repository-&gt;new( { git =&gt; [qw( sudo -u nobody git )] } );
+
+       In this case, every call to git from $r will actually call "sudo -u nobody git".
+
+   <b>Use</b> <b>submodules</b>
+       Because Git::Repository automatically sets the "GIT_DIR" and "GIT_WORK_TREE" environment variables,  some
+       "submodule" sub-commands may fail. For example:
+
+           $r-&gt;run( submodule =&gt; add =&gt; $repository =&gt; 'sub' );
+
+       will give the following error:
+
+           error: pathspec 'sub' did not match any file(s) known to git.
+
+       To  avoid this error, you should enforce the removal of the "GIT_WORK_TREE" variable from the environment
+       in which the command is run:
+
+           $r-&gt;run(
+               submodule =&gt; add =&gt; $repository =&gt; 'sub',
+               { env =&gt; { GIT_WORK_TREE =&gt; undef } }
+           );
+
+       Note that System::Command version 1.04 is required to be able to remove variables from the environment.
+
+   <b>Sort</b> <b>git</b> <b>versions</b>
+       Since version 1.318, Git::Repository lets Git::Version::Compare handle all version comparisons.
+
+       Sorting version numbers is therefore as simple as:
+
+           use Git::Version::Compare qw( cmp_git );
+
+           @sort_verson = sort cmp_git @versions;
+
+   <b>Add</b> <b>specialized</b> <b>methods</b> <b>to</b> <b>your</b> <b>Git::Repository</b> <b>objects</b>
+       Have a look at Git::Repository::Plugin and Git::Repository::Plugin::Log, to learn how  to  add  your  own
+       methods to Git::Repository.
+
+   <b>Run</b> <b>code</b> <b>on</b> <b>the</b> <b>output</b> <b>of</b> <b>a</b> <b>git</b> <b>command</b> <b>through</b> <b>callback</b>
+       Sometimes you need to process the output of a command by running a callback on each line of the output.
+
+           # code inspiration:
+           # https://github.com/dolmen/github-keygen/blob/24c501072ba7d890810de3008434c1fe1f757286/release.pl#L178
+
+           my %tree;
+           $r-&gt;run( 'ls-tree' =&gt; $commit, sub {
+               my ($mode, $type, $object, $file) = split;
+               $tree{$file} = [ $mode, $type, $object ];
+           } );
+
+       Note  that  the value returned by the callback will be returned as part of the "run()" output, instead of
+       the original line.
+
+   <b>Initialize</b> <b>a</b> <b>test</b> <b>repository</b> <b>with</b> <b>a</b> <b>bundle</b>
+       Instead of creating a test repository using a series of file editions and commits, one can simply  import
+       data  into  the  test repository using a bundle. Bundles are created with the "git bundle create" command
+       (see the Git documentation for details).
+
+       First create a temporary repository with the help of Test::Git:
+
+           use Test::Git;
+           my $r = test_repository();
+
+       then import the bundle data in your repository, and collect the references:
+
+           my @refs = $r-&gt;run( bundle =&gt; 'unbundle', $bundle_file );
+
+       and finally update the references:
+
+           for my $line (@refs) {
+               my ( $sha1, $ref ) = split / /, $line;
+               $r-&gt;run( 'update-ref', $ref =&gt; $sha1 );
+           }
+
+       Since Git version 1.6.5, it's also possible to clone directly from a bundle  (this  creates  an  "origin"
+       remote pointing to the bundle file):
+
+           my $r = test_repository( clone =&gt; [ $bundle_file ] );
+
+       A  bundle  from  a recipient repository's point of view is just like a regular remote repository. See the
+       documentation of <b>git</b> <b>bundle</b> for details of what's possible (e.g. incremental bundles).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Philippe Bruhat (BooK) &lt;<a href="mailto:book@cpan.org">book@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2010-2016 Philippe Bruhat (BooK), all rights reserved.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2023-03-22                     <u>Git::Repository::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

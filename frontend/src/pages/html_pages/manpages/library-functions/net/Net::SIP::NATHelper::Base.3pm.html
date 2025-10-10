@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SIP::NATHelper::Base - rewrite SDP and transport RTP for NAT</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-sip-perl">libnet-sip-perl_0.838-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SIP::NATHelper::Base - rewrite SDP and transport RTP for NAT
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module helps with doing NAT. It is implicitly used in <b>do_nat</b> from Net::SIP::StatelessProxy.
+
+       It cares about the rewriting the SDP bodies, forwarding RTP data for active sessions and expiring
+       sessions.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       new ( %ARGS )
+           Creates a new object.  %ARGS can be of:
+
+           max_sockets N
+                   Restricts the maximum number of sockets allocated inside the object to N.
+
+           max_sockets_in_group N
+                   Restricts  the  maximum  number of sockets allocated for a single socket group (e.g. a single
+                   call to <b>get_rtp_sockets</b>) to N.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       allocate_sockets ( NAT_BASIC,SIDE,ADDR,MEDIA )
+           This is called to allocate new local sockets for MEDIA. MEDIA is a \@list of specifications like  you
+           get  from  <b>get_media</b>  in  Net::SIP::SDP.  ADDR  is  the  local  address,  where the sockets should be
+           allocated.
+
+           NAT_BASIC  consists of "&lt;[ CALLID, CSEQ, IDFROM, IDTO, URI_FROM, URI_TO ]"&gt;.
+
+           IDFROM and IDTO represent the sides of the session, while SIDE helps  to  pick  the  right  side  for
+           allocation, e.g. if SIDE is 0 the sockets will be allocated on the IDFROM side, if it is 1 it will be
+           on the IDTO side. Thus for Requests SIDE will be 0, while for responses it will be 1.
+
+           CALLID  and  CSEQ  are  used  to  identify the SIP transaction, for which the NAT will be done, while
+           IDSIDE is either IDFROM or IDTO (see below) depending on the side, where the packet came in.
+
+           URI_FROM and URI_TO are primarily for information.
+
+           The methode will return  the \@list of new media in the  format  needed  by  <b>replace_media_listen</b>  in
+           Net::SIP::SDP, e.g tuples of "[ip,base_port]".
+
+           If the allocation of sockets failed (because of resource constraints) it will return undef. This will
+           usually  cause the caller do simply not forward the packet and wait for the reetransmit (at least for
+           UDP).
+
+       activate_session ( NAT_BASIC ,[\%PARAM] )
+           NAT_BASIC is as described in "allocate_sockets" Activates a session in  the  transaction  defined  by
+           CALLID,CSEQ.  This  will  cause  all  sessions for older transactions in the same call (identified by
+           CALLID) to shut down.
+
+           IDFROM and IDTO represent the sides of the session, e.g. for the activation to succeed there  had  to
+           be an <b>allocate_sockets</b> call for each of these sides.
+
+           PARAM is an optional hash reference. If given it will be added as user information to the new session
+           and  given  back  in the information hash returned by close_session etc.  URI_FROM and URI_TO will be
+           added to PARAM as "uri_from" and "uri_to".
+
+           The method returns  two  items:  The  first  is  information  about  the  session  like  returned  in
+           close_session,  the second is a flag, which is true, if the activation was for an already astablished
+           session.
+
+           The method is usually called whenever a SDP body is given and on ACK requests.
+
+       close_session ( NAT_BASIC )
+           NAT_BASIC is as described before.
+
+           This will cause the close of the session described by the arguments (which have the same meaning like
+           in <b>activate_session</b>). Usually called for BYE or CANCEL requests. For CANCEL it will  be  called  with
+           CSEQ  (because it should cancel a specific transaction) while for BYE it will called with CSEQ undef,
+           because it should end all sessions in this call.
+
+           It will return a list with infos about all closed sessions. Each of these infos is a reference  to  a
+           hash with the following items:
+
+           callid
+           cseq
+           idfrom
+           idto
+           bytes_from - number of bytes received on the 'from' side
+           bytes_to - number of bytes received on the 'to' side
+           from - space delimited list of "ip:port/range" for the media on the 'from' side
+           to - same for the 'to' side
+           created - "time_t" when the session was created
+
+           Stateless  proxies  should  forward  the packet even if the session did not exist, because the packet
+           might be a retransmit referring to an already closed session.
+
+       expire ( [ %ARGS ] )
+           This causes the sessions and sockets to expire.  It will return a list with a hash for  each  expired
+           session.  See close_session for details on the returned information.
+
+           With %ARGS the behavior can be customized:
+
+           time    Current time, can be given to save system call for getting current time.
+
+           unused  Expire time for unused sockets. Default ist 180, e.g. 3 minutes.
+
+           active  Expire  time  for active sessions. Default to 30 seconds. If no data gets transferred through
+                   the session for "active" seconds the session will be closed.
+
+           closed  Expire time for closed sessions, i.e.  the  time  after  which  the  sockets  from  a  closed
+                   (replaced)  session  will  be  closed  too.  They  are usually kept open a short time in case
+                   packets are still in transit. Default to 1 second.
+
+       callbacks
+           This will return a list (not a reference)  of  "[cbid,fd,callback]"  pairs,  where  fd  is  the  file
+           descriptor  of the socket and callback is a callback for <b>invoke_callback</b> in Net::SIP::Util. cbid is a
+           uniq id for each callback so that one get compare the result from different calls  to  callbacks  and
+           see, what changed.
+
+           Each  of  these  callbacks  should be invoked once the file descriptor gets readable and the callback
+           will then forward the received packet to the other side of the session.
+
+       sessions ( [ CALLBACK ] )
+           This will call CALLBACK on all sessions and return an array containing the results of  the  callbacks
+           together. If no CALLBACK is given it will return all session objects.
+
+           To use this function you might need to know the interna of the session objects (see source code), but
+           in most cases it is enough to know, that session objects have a method info_as_hash which will return
+           infos about the session as hash like described in close_session.
+
+       get_rtp_sockets ( NEW_ADDR, @MEDIA )
+           Allocates  sockets  for on address NEW_ADDR for @MEDIA. @MEDIA is in the format given by <b>get_media</b> in
+           Net::SIP::SDP.
+
+           Returns   reference   to   array   of   allocated   media,   each   item   in   the   array   is   "[
+           ADDR,BASE_PORT,\@SOCKS,\@TARGETS  ]",  where  ADDR  is  NEW_ADDR,  BASE_PORT  the  base  port for the
+           allocated sockets, @SOCKS the allocated sockets and @TARGETS the "sockaddr" of the original  targets,
+           e.g. where it needs to forward the data received on the sockets.
+
+           If not all necssary sockets could be allocated it will allocate none and return "()".
+
+           This  method  might  be redefined to better control resource allocation or to cache temporally unused
+           resources together with unget_rtp_sockets.
+
+       unget_rtp_sockets ( NEW_MEDIA )
+           Will take resources back. NEW_MEDIA is the result from <b>get_rtp_sockets</b>.  Returns nothing.
+
+           Together with get_rtp_sockets it could be redefined to not destroy resources but to  cache  them  for
+           future use.
+
+       dump
+           This  method  is  used  for  debugging only. It will return a string with information about all calls
+           within this nathelper and all sessions and allocated sockets within the calls.
+
+       number_of_calls
+           Returns the number of calls within the nathelper. This vaalue  has  not  much  association  with  the
+           result  of <b>callbacks</b> because there might be inactive sockets (not yet or no longer in active session)
+           which don't affect the result of <b>callbacks</b>.
+
+           This value can be used to determine if <b>expire</b> needs to be called at all.
+
+perl v5.40.0                                       2024-09-08                     <u>Net::SIP::NATHelper::<a href="../man3pm/Base.3pm.html">Base</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

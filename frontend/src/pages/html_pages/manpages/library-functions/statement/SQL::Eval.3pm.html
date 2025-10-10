@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL::Eval - Base for deriving evaluation objects for SQL::Statement</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsql-statement-perl">libsql-statement-perl_1.414-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SQL::Eval - Base for deriving evaluation objects for SQL::Statement
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           require SQL::Statement;
+           require SQL::Eval;
+
+           # Create an SQL statement; use a concrete subclass of
+           # SQL::Statement
+           my $stmt = MyStatement-&gt;new("SELECT * FROM foo, bar",
+                                       SQL::Parser-&gt;new('Ansi'));
+
+           # Get an eval object by calling open_tables; this
+           # will call MyStatement::open_table
+           my $eval = $stmt-&gt;open_tables($data);
+
+           # Set parameter 0 to 'Van Gogh'
+           $eval-&gt;param(0, 'Van Gogh');
+           # Get parameter 2
+           my $param = $eval-&gt;<a href="../man2/param.2.html">param</a>(2);
+
+           # Get the SQL::Eval::Table object referring the 'foo' table
+           my $fooTable = $eval-&gt;table('foo');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements two classes that can be used for deriving subclasses to evaluate SQL::Statement
+       objects. The SQL::Eval object can be thought as an abstract state engine for executing SQL queries and
+       the SQL::Eval::Table object is a table abstraction. It implements methods for fetching or storing rows,
+       retrieving column names and numbers and so on.  See the "test.pl" script as an example for implementing a
+       subclass.
+
+       While reading on, keep in mind that these are abstract classes, you *must* implement at least some of the
+       methods described below.  In addition, you need not derive from SQL::Eval or SQL::Eval::Table, you just
+       need to implement the method interface.
+
+       All methods throw a Perl exception in case of errors.
+
+   <b>Method</b> <b>interface</b> <b>of</b> <b>SQL::Eval</b>
+       new     Constructor; use it like this:
+
+                   $eval = SQL::Eval-&gt;new(\%attr);
+
+               Blesses the hash ref \%attr into the SQL::Eval class (or a subclass).
+
+       param   Used for getting or setting input parameters, as in the SQL query
+
+                   INSERT INTO foo VALUES (?, ?);
+
+               Example:
+
+                   $eval-&gt;param(0, $val);        # Set parameter 0
+                   $eval-&gt;<a href="../man0/param.0.html">param</a>(0);              # Get parameter 0
+
+       params  Used for getting or setting the complete array of input parameters. Example:
+
+                   $eval-&gt;params($params);       # Set the array
+                   $eval-&gt;params();              # Get the array
+
+       table   Returns or sets a table object. Example:
+
+                   $eval-&gt;table('foo', $fooTable);  # Set the 'foo' table object
+                   $eval-&gt;table('foo');             # Return the 'foo' table object
+
+       column  Return the value of a column with a given name; example:
+
+                   $col = $eval-&gt;column('foo', 'id');  # Return the 'id' column of
+                                                       # the current row in the
+                                                       # 'foo' table
+
+               This is equivalent to and a shorthand for
+
+                   $col = $eval-&gt;table('foo')-&gt;column('id');
+
+       _gen_access_fastpath
+               Return  a  subroutine  reference  for  fast  accessing columns for read-only access. This routine
+               simply returns the "_gen_access_fastpath" of the referenced table.
+
+   <b>Method</b> <b>interface</b> <b>of</b> <b>SQL::Eval::Table</b>
+       new     Constructor; use it like this:
+
+                   $eval = SQL::Eval::Table-&gt;new(\%attr);
+
+               Blesses the hash ref \%attr into the SQL::Eval::Table class (or a subclass).
+
+               The following attributes are used by "SQL::Eval::Table":
+
+               col_names   Array reference containing the names of the columns  in  order  they  appear  in  the
+                           table. This attribute <b>must</b> be provided by the derived class.
+
+               col_nums    Hash  reference containing the column names as keys and the column indexes as values.
+                           If this is omitted (does not exist), it will be created from "col_names".
+
+               capabilities
+                           Hash reference containing additional capabilities.
+
+               _gen_access_fastpath
+                           Return a subroutine reference for fast accessing columns for read-only  access.  When
+                           the  instantiated object does not provide own methods for "column" and "column_num" a
+                           subroutine reference is returned which directly access the internal data  structures.
+                           For all other cases a subroutine directly calling "$self-&gt;column($_[0])" is returned.
+
+       row     Used  to  get  the  current  row as an array ref. Do not confuse getting the current row with the
+               fetch_row method! In fact this method is valid  only  after  a  successful  "$table-&gt;fetchrow()".
+               Example:
+
+                   $row = $table-&gt;row();
+
+       column  Get  the  column  with  a  given  name  in  the  current  row.  Valid  only  after  a  successful
+               "$table-&gt;fetchrow()". Example:
+
+                   $col = $table-&gt;column($colName);
+
+       column_num
+               Return the number of the given column name. Column numbers start with  0.  Returns  undef,  if  a
+               column name is not defined, so that you can use this for verifying column names. Example:
+
+                   $colNum = $table-&gt;column_num($colNum);
+
+       col_nums
+               Returns  an  hash ref of column names with the column names as keys and the column indexes as the
+               values.
+
+       col_names
+               Returns an array ref of column names ordered by their index within the table.
+
+       capability
+               Returns a boolean value whether the table has the specified capability or not. This method  might
+               be  overridden  by  derived classes, but ensure that in that case the parent capability method is
+               called when the derived class does not handle the requested capability.
+
+               The following capabilities are used (and requested) by SQL::Statement:
+
+               update_one_row
+                           Defines whether the table is able to update one single row. This capability  is  used
+                           for backward compatibility and might have (depending on table implementation) several
+                           limitations.  Please carefully study the documentation of the table or ask the author
+                           of the table, if this information is not provided.
+
+                           This capability is evaluated automatically on first request and must not  be  handled
+                           by any derived classes.
+
+               update_specific_row
+                           Defines if the table is able to update one single row, but keeps the original content
+                           of the row to update.
+
+                           This  capability  is evaluated automatically on first request and must not be handled
+                           by derived classes.
+
+               update_current_row
+                           Defines if the table is able to update the currently  touched  row.  This  capability
+                           requires the capability of "inplace_update".
+
+                           This  capability  is evaluated automatically on first request and must not be handled
+                           by derived classes.
+
+               rowwise_update
+                           Defines  if  the  table  is  able  to  do  row-wise  updates  which  means   one   of
+                           "update_one_row",     "update_specific_row"     or     "update_current_row".      The
+                           "update_current_row"  is  only  evaluated  if  the  table  has  the  "inplace_update"
+                           capability.
+
+                           This  capability  is evaluated automatically on first request and must not be handled
+                           by derived classes.
+
+               inplace_update
+                           Defines if an update of a row has side effects (capability is not available)  or  can
+                           be done without harming any other currently running task on the table.
+
+                           Example:  The  table  storage is using a hash on the "PRIMARY KEY" of the table. Real
+                           perl hashes do not care when an item is updated while the  hash  is  traversed  using
+                           "each".  "SDBM_File" 1.06 has a bug, which does not adjust the traversal pointer when
+                           an item is deleted.
+
+                           "SQL::Statement::RAM::Table" recognizes such situations  and  adjusts  the  traversal
+                           pointer.
+
+                           This might not be possible for all implementations which can update single rows.
+
+                           This capability could be provided by a derived class only.
+
+               delete_one_row
+                           Defines whether the table can delete one single row by it's content or not.
+
+                           This  capability  is evaluated automatically on first request and must not be handled
+                           by derived classes.
+
+               delete_current_row
+                           Defines whether a table can delete the current traversed row or not. This  capability
+                           requires the "inplace_delete" capability.
+
+                           This  capability  is evaluated automatically on first request and must not be handled
+                           by derived classes.
+
+               rowwise_delete
+                           Defines if any row-wise delete operation is provided by the table. "row-wise"  delete
+                           capabilities are "delete_one_row" and "delete_current_row".
+
+                           This  capability  is evaluated automatically on first request and must not be handled
+                           by derived classes.
+
+               inplace_delete
+                           Defines if the deletion of a row has side effects (capability is  not  available)  or
+                           can be done without harming any other currently running task on the table.
+
+                           This capability should be provided by a derived class only.
+
+               insert_new_row
+                           Defines if a table can easily insert a new row without need to seek or truncate. This
+                           capability is provided by defining the table class method "insert_new_row".
+
+                           This  capability  is evaluated automatically on first request and must not be handled
+                           by derived classes.
+
+               If  the  capabilities  <u>rowwise_update</u>  and  <u>insert_new_row</u>  are  provided,  the  table  primitive
+               "push_row" is not required anymore and may be omitted.
+
+       The above methods are implemented by SQL::Eval::Table. The following methods are not, so that they *must*
+       be implemented by the subclass. See the "DBD::DBM::Table" or "DBD::CSV::Table" for example.
+
+       drop    Drops   the   table.   All   resources   allocated   by   the   table   must  be  released  after
+               "$table-"drop($data)&gt;.
+
+       fetch_row
+               Fetches the next row from the table. Returns "undef", if the last row was  already  fetched.  The
+               argument $data is for private use of the subclass. Example:
+
+                   $row = $table-&gt;fetch_row($data);
+
+               Note, that you may use
+
+                   $row = $table-&gt;row();
+
+               for retrieving the same row again, until the next call of "fetch_row".
+
+               "SQL::Statement"   requires  that  the  last  fetched  row  is  available  again  and  again  via
+               "$table-"<b>row()</b>&gt;.
+
+       push_row
+               As fetch_row except for storing rows. Example:
+
+                   $table-&gt;push_row($data, $row);
+
+       push_names
+               Used by the <u>CREATE</u> <u>TABLE</u> statement to set the column names of the new table.  Receives  an  array
+               ref of names. Example:
+
+                   $table-&gt;push_names($data, $names);
+
+       seek    Similar  to  the  seek  method of a filehandle; used for setting the number of the next row being
+               written. Example:
+
+                   $table-&gt;seek($data, $whence, $rowNum);
+
+               Actually the current implementation only uses "seek($data, 0, 0)" (first row) and "seek($data, 2,
+               0)" (beyond last row, end of file).
+
+       truncate
+               Truncates a table after the current row. Example:
+
+                   $table-&gt;truncate($data);
+
+</pre><h4><b>INTERNALS</b></h4><pre>
+       The current implementation is quite simple: An SQL::Eval object is an hash ref with only two  attributes.
+       The  "params"  attribute  is  an  array ref of parameters. The "tables" attribute is an hash ref of table
+       names (keys) and table objects (values).
+
+       SQL::Eval::Table instances are implemented as hash refs. Attributes used are "row" (the array ref of  the
+       current  row),  "col_nums"  (an  hash  ref  of  column  names  as  keys and column numbers as values) and
+       "col_names", an array ref of column names with the column numbers as indexes.
+
+</pre><h4><b>MULTITHREADING</b></h4><pre>
+       All methods are working with instance-local data only, thus the module is reentrant and thread  safe,  if
+       you either do not share handles between threads or grant serialized use.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please  report  any  bugs  or  feature requests to "bug-sql-statement at rt.cpan.org", or through the web
+       interface at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=SQL-Statement&gt;.  I  will  be  notified,  and
+       then you will automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc SQL::Eval
+           perldoc SQL::Statement
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=SQL-Statement&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/SQL-Statement">http://annocpan.org/dist/SQL-Statement</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/s/SQL-Statement">http://cpanratings.perl.org/s/SQL-Statement</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/SQL-Statement/">http://search.cpan.org/dist/SQL-Statement/</a>&gt;
+
+</pre><h4><b>AUTHOR</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Written by Jochen Wiedmann and currently maintained by Jens Rehsack.
+
+       This module is Copyright (C) 1998 by
+
+           Jochen Wiedmann
+           Am Eisteich 9
+           72555 Metzingen
+           Germany
+
+           Email: <a href="mailto:joe@ispsoft.de">joe@ispsoft.de</a>
+           Phone: +49 7123 14887
+
+       and Copyright (C) 2009, 2017 by
+
+            Jens Rehsack &lt; rehsackATcpan.org&gt;
+
+       All rights reserved.
+
+       You  may  distribute this module under the terms of either the GNU General Public License or the Artistic
+       License, as specified in the Perl README file.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>SQL::<a href="../man3/Statement.3.html">Statement</a></b>(3)
+
+perl v5.30.3                                       2020-10-23                                     <u>SQL::<a href="../man3pm/Eval.3pm.html">Eval</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ovn-trace - Open Virtual Network logical network tracing utility</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/ovn-common">ovn-common_25.03.0-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ovn-trace - Open Virtual Network logical network tracing utility
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>ovn-trace</b> [<u>options</u>] <u>[datapath]</u> <u>microflow</u>
+
+       <b>ovn-trace</b> [<u>options</u>] <b>--detach</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  utility  simulates  packet  forwarding within an OVN logical network. It can be used to run through
+       ``what-if’’ scenarios: if a packet originates at a logical port, what will happen to it and where will it
+       ultimately end up? Users already familiar with  the  Open  vSwitch  <b>ofproto/trace</b>  command  described  in
+       <b><a href="../man8/ovs-vswitch.8.html">ovs-vswitch</a></b>(8) will find <b>ovn-trace</b> to be a similar tool for logical networks.
+
+       <b>ovn-trace</b>  works  by  reading  the  <b>Logical_Flow</b>  and  other tables from the OVN southbound database (see
+       <b><a href="../man5/ovn-sb.5.html">ovn-sb</a></b>(5)). It simulates a packet’s path through logical networks by repeatedly  looking  it  up  in  the
+       logical flow table, following the entire tree of possibilities.
+
+       <b>ovn-trace</b> simulates only the OVN logical network. It does not simulate the physical elements on which the
+       logical network is layered. This means that, for example, it is unimportant how VMs are distributed among
+       hypervisors, or whether their hypervisors are functioning and reachable, so <b>ovn-trace</b> will yield the same
+       results  regardless.  There is one important exception: <b>ovn-northd</b>, the daemon that generates the logical
+       flows that <b>ovn-trace</b> simulates, treats logical ports differently based on whether they are  up  or  down.
+       Thus, if you see surprising results, ensure that the ports involved in a simulation are up.
+
+       The  simplest  way  to use <b>ovn-trace</b> is to provide the <u>microflow</u> (and optional <u>datapath</u>) arguments on the
+       command line. In this case, it simulates the behavior of a single packet  and  exits.  For  an  alternate
+       usage model, see <b>Daemon</b> <b>Mode</b> below.
+
+       The  optional  <u>datapath</u>  argument specifies the name of a logical datapath. Acceptable names are the <b>name</b>
+       from the northbound <b>Logical_Switch</b> or <b>Logical_Router</b> table, the UUID  of  a  record  from  one  of  those
+       tables,  or  the  UUID  of a record from the southbound <b>Datapath_Binding</b> table. (The <b>datapath</b> is optional
+       because <b>ovn-trace</b> can figure it out from the <u>inport</u> that the <u>microflow</u> matches.)
+
+       The <u>microflow</u> argument describes the packet whose forwarding is to be simulated, in the syntax of an  OVN
+       logical   expression,  as  described  in  <b><a href="../man5/ovn-sb.5.html">ovn-sb</a></b>(5),  to  express  constraints.  The  parser  understands
+       prerequisites; for example, if the expression refers to <b>ip4.src</b>, there is no need to explicitly state <b>ip4</b>
+       or <b>eth.type</b> <b>==</b> <b>0x800</b>.
+
+       For reasonable L2 behavior, the microflow should include at least <b>inport</b> and  <b>eth.dst</b>,  plus  <b>eth.src</b>  if
+       port security is enabled. For example:
+
+           <b>inport</b> <b>==</b> <b>"lp11"</b> <b>&amp;&amp;</b> <b>eth.src</b> <b>==</b> <b>00:01:02:03:04:05</b> <b>&amp;&amp;</b> <b>eth.dst</b> <b>==</b> <b>ff:ff:ff:ff:ff:ff</b>
+
+       For  reasonable  L3  behavior, <u>microflow</u> should also include <b>ip4.src</b> and <b>ip4.dst</b> (or <b>ip6.src</b> and <b>ip6.dst</b>)
+       and <b>ip.ttl</b>. For example:
+
+           <b>inport</b> <b>==</b> <b>"lp111"</b> <b>&amp;&amp;</b> <b>eth.src</b> <b>==</b> <b>f0:00:00:00:01:11</b> <b>&amp;&amp;</b> <b>eth.dst</b> <b>==</b> <b>00:00:00:00:ff:11</b>
+           <b>&amp;&amp;</b> <b>ip4.src</b> <b>==</b> <b>192.168.11.1</b> <b>&amp;&amp;</b> <b>ip4.dst</b> <b>==</b> <b>192.168.22.2</b> <b>&amp;&amp;</b> <b>ip.ttl</b> <b>==</b> <b>64</b>
+
+       Here’s an ARP microflow example:
+
+           <b>inport</b> <b>==</b> <b>"lp123"</b>
+           <b>&amp;&amp;</b> <b>eth.dst</b> <b>==</b> <b>ff:ff:ff:ff:ff:ff</b> <b>&amp;&amp;</b> <b>eth.src</b> <b>==</b> <b>f0:00:00:00:01:11</b>
+           <b>&amp;&amp;</b> <b>arp.op</b> <b>==</b> <b>1</b> <b>&amp;&amp;</b> <b>arp.sha</b> <b>==</b> <b>f0:00:00:00:01:11</b> <b>&amp;&amp;</b> <b>arp.spa</b> <b>==</b> <b>192.168.1.11</b>
+           <b>&amp;&amp;</b> <b>arp.tha</b> <b>==</b> <b>ff:ff:ff:ff:ff:ff</b> <b>&amp;&amp;</b> <b>arp.tpa</b> <b>==</b> <b>192.168.2.22</b>
+
+       <b>ovn-trace</b> will reject  erroneous  microflow  expressions,  which  beyond  syntax  errors  fall  into  two
+       categories.  First,  they  can  be ambiguous. For example, <b>tcp.src</b> <b>==</b> <b>80</b> is ambiguous because it does not
+       state IPv4 or IPv6 as the Ethernet type. <b>ip4</b> <b>&amp;&amp;</b> <b>tcp.src</b> <b>&gt;</b> <b>1024</b> is also  ambiguous  because  it  does  not
+       constrain bits of <b>tcp.src</b> to particular values. Second, they can be contradictory, e.g. <b>ip4</b> <b>&amp;&amp;</b> <b>ip6</b>.
+
+</pre><h4><b>OUTPUT</b></h4><pre>
+       <b>ovn-trace</b>  supports  the  three  different  forms  of output, each described in a separate section below.
+       Regardless of the selected output format, <b>ovn-trace</b>  starts  the  output  with  a  line  that  shows  the
+       microflow being traced in OpenFlow syntax.
+
+   <b>Detailed</b> <b>Output</b>
+       The  detailed form of output is also the default form. This form groups output into sections headed up by
+       the ingress or egress pipeline being traversed. Each pipeline lists  each  table  that  was  visited  (by
+       number  and  name), the <b>ovn-northd</b> source file and line number of the code that added the flow, the match
+       expression and priority of the logical flow that was matched, and the actions that were executed.
+
+       The execution of OVN logical actions naturally forms a ``control stack’’ that resembles that of a program
+       in conventional programming languages such as C or Java. Because the <b>next</b> action that calls into  another
+       logical  flow table for a lookup is a recursive construct, OVN ``programs’’ in practice tend to form deep
+       control stacks that, displayed in the obvious way using additional indentation for  each  level,  quickly
+       use  up  the  horizontal  space  on  all  but the widest displays. To make detailed output more readable,
+       without loss of generality, <b>ovn-trace</b> omits indentation for ``tail recursion,’’ that is, when <b>next</b> is the
+       last action in a logical flow, it does not indent details of the next table lookup  more  deeply.  Output
+       still uses indentation when it is needed for clarity.
+
+       OVN  ``programs’’  traces  also  tend  to encounter long strings of logical flows with match expression <b>1</b>
+       (which matches every packet) and the single action <b>next;</b>. These  are  uninteresting  and  merely  clutter
+       output, so <b>ovn-trace</b> omits them entirely even from detailed output.
+
+       The  following excerpt from detailed <b>ovn-trace</b> output shows a section for a packet traversing the ingress
+       pipeline of logical datapath <b>ls1</b> with ingress logical port <b>lp111</b>. The packet matches a  logical  flow  in
+       table  0  (aka  <b>ls_in_port_sec_l2</b>)  with  priority  50 and executes <b><a href="../man1/next.1.html">next</a>(1);</b> to pass to table 1. Tables 1
+       through 11 are trivial and omitted. In table 19 (aka <b>ls_in_l2_lkup</b>),  the  packet  matches  a  flow  with
+       priority  50  based  on  its Ethernet destination address and the flow’s actions output the packet to the
+       <b>lrp11-attachement</b> logical port.
+
+           ingress(dp="ls1", inport="lp111")
+           ---------------------------------
+           0. ls_in_port_sec_l2: inport == "lp111", priority 50
+           <a href="../man1/next.1.html">next</a>(1);
+           19. ls_in_l2_lkup: eth.dst == 00:00:00:00:ff:11, priority 50
+           outport = "lrp11-attachment";
+           output;
+
+   <b>Summary</b> <b>Output</b>
+       Summary output includes the logical pipelines visited by a packet and the logical actions executed on it.
+       Compared to the detailed output, however, it removes details of tables and logical flows traversed  by  a
+       packet.  It  uses  a  format  closer  to  that  of  a  programming language and does not attempt to avoid
+       indentation. The summary output equivalent to the above detailed output fragment is:
+
+           ingress(dp="ls1", inport="lp111") {
+           outport = "lrp11-attachment";
+           output;
+           ...
+           };
+
+   <b>Minimal</b> <b>Output</b>
+       Minimal output includes only actions that modify packet data (not including  OVN  registers  or  metadata
+       such  as  <b>outport</b>)  and  <b>output</b> actions that actually deliver a packet to a logical port (excluding patch
+       ports). The operands of actions that modify packet data are displayed reduced to constants, e.g.  <b>ip4.dst</b>
+       <b>=</b> <b>reg0;</b> might be show as <b>ip4.dst</b> <b>=</b> <b>192.168.0.1;</b> if that was the value actually loaded. This yields output
+       even  simpler than the summary format. (Users familiar with Open vSwitch may recognize this as similar in
+       spirit to the datapath actions listed at the bottom of <b>ofproto/trace</b> output.)
+
+       The minimal output format reflects the externally seen behavior of the logical networks more than it does
+       the implementation. This makes this output format the most suitable for use in regression tests,  because
+       it is least likely to change when logical flow tables are rearranged without semantic change.
+
+</pre><h4><b>STATEFUL</b> <b>ACTIONS</b></h4><pre>
+       Some  OVN logical actions use or update state that is not available in the southbound database. <b>ovn-trace</b>
+       handles these actions as described below:
+
+              <b>ct_next</b>
+                     By default <b>ovn-trace</b> treats flows as ``tracked’’ and ``established.’’ See  the  description
+                     of the <b>--ct</b> option for a way to override this behavior.
+
+              <b>ct_dnat</b> (without an argument)
+                     Forks  the pipeline. In one fork, advances to the next table as if <b>next;</b> were executed. The
+                     packet is not changed, on the assumption that no NAT state  was  available.  In  the  other
+                     fork, the pipeline continues without change after the <b>ct_dnat</b> action.
+
+              <b>ct_snat</b> (without an argument)
+                     This action distinguishes between gateway routers and distributed routers. A gateway router
+                     is  defined  as  a  logical  datapath  that  contains  an <b>l3gateway</b> port; any other logical
+                     datapath is a distributed router. On a gateway router, <b>ct_snat;</b> is treated as a no-op. On a
+                     distributed router, it is treated the same way as <b>ct_dnat;</b>.
+
+              <b>ct_dnat(</b><u>ip</u><b>)</b>
+              <b>ct_snat(</b><u>ip</u><b>)</b>
+                   Forks the pipeline. In one fork, sets <b>ip4.dst</b> (or <b>ip4.src</b>) to <u>ip</u> and <b>ct.dnat</b> (or <b>ct.snat</b>)  to
+                   1  and  advances to the next table as if <b>next;</b> were executed. In the other fork, the pipeline
+                   continues without change after the <b>ct_dnat</b> (or <b>ct_snat</b>) action.
+
+              <b>ct_lb;</b>
+              <b>ct_lb(</b><u>ip</u>[<b>:</b><u>port</u>]...<b>);</b>
+                   Forks the pipeline. In one fork, sets <b>ip4.dst</b>  (or  <b>ip6.dst</b>)  to  one  of  the  load-balancer
+                   addresses  and  the  destination  port to its associated port, if any, and sets <b>ct.dnat</b> to 1.
+                   With one or more arguments, gives preference to the address specified on  <b>--lb-dst</b>,  if  any;
+                   without  arguments,  uses  the address and port specified on <b>--lb-dst</b>. In the other fork, the
+                   pipeline continues without change after the <b>ct_lb</b> action.
+
+              <b>ct_commit</b>
+              <b>put_arp</b>
+              <b>put_nd</b>
+                   These actions are treated as no-ops.
+
+</pre><h4><b>DAEMON</b> <b>MODE</b></h4><pre>
+       If <b>ovn-trace</b> is invoked with the <b>--detach</b> option (see <b>Daemon</b> <b>Options</b>, below), it runs in  the  background
+       as a daemon and accepts commands from <b>ovs-appctl</b> (or another JSON-RPC client) indefinitely. The currently
+       supported commands are described below.
+
+              <b>trace</b> [<u>options</u>] [<u>datapath</u>] <u>microflow</u>
+                     Traces  <u>microflow</u>  through  <u>datapath</u> and replies with the results of the trace. Accepts the
+                     <u>options</u> described under <b>Trace</b> <b>Options</b> below.
+
+              <b>exit</b>   Causes <b>ovn-trace</b> to gracefully terminate.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+   <b>Trace</b> <b>Options</b>
+       <b>--detailed</b>
+       <b>--summary</b>
+       <b>--minimal</b>
+            These options control the form and level of detail in <b>ovn-trace</b> output. If more than  one  of  these
+            options  is  specified, all of the selected forms are output, in the order listed above, each headed
+            by a banner line. If none of these options is given, <b>--detailed</b> is the default. See  <b>Output</b>,  above,
+            for a description of each kind of output.
+
+       <b>--all</b>
+            Selects all three forms of output.
+
+       <b>--ovs</b>[<b>=</b><u>remote</u>]
+            Makes <b>ovn-trace</b> attempt to obtain and display the OpenFlow flows that correspond to each OVN logical
+            flow.  To  do  so,  <b>ovn-trace</b>  connects  to <u>remote</u> (by default, <b>unix:/br-int.mgmt</b>) over OpenFlow and
+            retrieves the flows. If <u>remote</u> is specified,  it  must  be  an  active  OpenFlow  connection  method
+            described in <b><a href="../man7/ovsdb.7.html">ovsdb</a></b>(7).
+
+            To  make  the best use of the output, it is important to understand the relationship between logical
+            flows and OpenFlow flows. <b><a href="../man7/ovn-architecture.7.html">ovn-architecture</a></b>(7), under <b>Architectural</b> <b>Physical</b> <b>Life</b> <b>Cycle</b> <b>of</b> <b>a</b>  <b>Packet</b>,
+            describes this relationship. Keep in mind the following points:
+
+            •      <b>ovn-trace</b>  currently  shows  all the OpenFlow flows to which a logical flow corresponds, even
+                   though an actual packet ordinarily matches only one of these.
+
+            •      Some logical flows  can  map  to  the  Open  vSwitch  ``conjunctive  match’’  extension  (see
+                   <b><a href="../man7/ovs-fields.7.html">ovs-fields</a></b>(7)).  Currently  <b>ovn-trace</b>  cannot display the flows with <b>conjunction</b> actions that
+                   effectively produce the <b>conj_id</b> match.
+
+            •      Some logical flows may not be represented in the OpenFlow tables on a  given  hypervisor,  if
+                   they could not be used on that hypervisor.
+
+            •      Some  OpenFlow  flows  do  not  correspond  to logical flows, such as OpenFlow flows that map
+                   between physical and logical ports. These flows will never show up in a trace.
+
+            •      When <b>ovn-trace</b> omits uninteresting logical flows  from  output,  it  does  not  look  up  the
+                   corresponding OpenFlow flows.
+
+       <b>--ct=</b><u>flags</u>
+            This  option  sets the <b>ct_state</b> flags that a <b>ct_next</b> logical action will report. The <u>flags</u> must be a
+            comma- or space-separated list of the following connection tracking flags:
+
+            •      <b>trk</b>: Include to indicate connection tracking has taken place. (This bit is set  automatically
+                   even if not listed in <u>flags</u>.
+
+            •      <b>new</b>: Include to indicate a new flow.
+
+            •      <b>est</b>: Include to indicate an established flow.
+
+            •      <b>rel</b>: Include to indicate a related flow.
+
+            •      <b>rpl</b>: Include to indicate a reply flow.
+
+            •      <b>inv</b>: Include to indicate a connection entry in a bad state.
+
+            •      <b>dnat</b>: Include to indicate a packet whose destination IP address has been changed.
+
+            •      <b>snat</b>: Include to indicate a packet whose source IP address has been changed.
+
+            The  <b>ct_next</b>  action  is  used  to  implement the OVN distributed firewall. For testing, useful flag
+            combinations include:
+
+            •      <b>trk,new</b>: A packet in a flow in either direction through a firewall  that  has  not  yet  been
+                   committed (with <b>ct_commit</b>).
+
+            •      <b>trk,est</b>: A packet in an established flow going out through a firewall.
+
+            •      <b>trk,rpl</b>: A packet coming in through a firewall in reply to an established flow.
+
+            •      <b>trk,inv</b>: An invalid packet in either direction.
+
+            A  packet  might  pass  through the connection tracker twice in one trip through OVN: once following
+            egress from a VM as it passes outward through a firewall, and once preceding ingress to a second  VM
+            as  it passes inward through a firewall. Use multiple <b>--ct</b> options to specify the flags for multiple
+            <b>ct_next</b> actions.
+
+            When <b>--ct</b> is unspecified, or when there are fewer <b>--ct</b>  options  than  <b>ct_next</b>  actions,  the  <u>flags</u>
+            default to <b>trk,est</b>.
+
+       <b>--lb-dst=</b><u>ip</u>[<b>:</b><u>port</u>]
+            Sets  the  IP from VIP pool to use as destination of the packet. <b>--lb-dst</b> is not available in daemon
+            mode.
+
+       <b>--select-id=</b><u>id</u>
+            Specify the <u>id</u> to be selected by the <b>select</b> action. <u>id</u> must be one  of  the  values  listed  in  the
+            <b>select</b>  action.  Otherwise,  a  random  id  is  selected  from  the list, as if <b>--select-id</b> were not
+            specified. <b>--select-id</b> is not available in daemon mode.
+
+       <b>--friendly-names</b>
+       <b>--no-friendly-names</b>
+            When cloud management systems such as OpenStack are layered on top of  OVN,  they  often  use  long,
+            human-unfriendly names for ports and datapaths, for example, ones that include entire UUIDs. They do
+            usually  include  friendlier  names,  but  the  long, hard-to-read names are the ones that appear in
+            matches and actions. By default, or with <b>--friendly-names</b>, <b>ovn-trace</b>  substitutes  these  friendlier
+            names  for  the  long  names  in  its output. Use <b>--no-friendly-names</b> to disable this behavior; this
+            option might be useful, for example, if a program is going to parse <b>ovn-trace</b> output.
+
+   <b>Daemon</b> <b>Options</b>
+       <b>--pidfile</b>[<b>=</b><u>pidfile</u>]
+              Causes a file (by default, <u>program</u><b>.pid</b>) to be created indicating the PID of the  running  process.
+              If the <u>pidfile</u> argument is not specified, or if it does not begin with <b>/</b>, then it is created in .
+
+              If <b>--pidfile</b> is not specified, no pidfile is created.
+
+       <b>--overwrite-pidfile</b>
+              By  default, when <b>--pidfile</b> is specified and the specified pidfile already exists and is locked by
+              a running process, the daemon refuses to start. Specify <b>--overwrite-pidfile</b> to cause it to instead
+              overwrite the pidfile.
+
+              When <b>--pidfile</b> is not specified, this option has no effect.
+
+       <b>--detach</b>
+              Runs this program as a background process. The process forks, and in the child  it  starts  a  new
+              session,  closes  the standard file descriptors (which has the side effect of disabling logging to
+              the console), and changes its current directory to the  root  (unless  <b>--no-chdir</b>  is  specified).
+              After the child completes its initialization, the parent exits.
+
+       <b>--monitor</b>
+              Creates an additional process to monitor this program. If it dies due to a signal that indicates a
+              programming  error  (<b>SIGABRT</b>,  <b>SIGALRM</b>,  <b>SIGBUS</b>,  <b>SIGFPE</b>,  <b>SIGILL</b>,  <b>SIGPIPE</b>,  <b>SIGSEGV</b>, <b>SIGXCPU</b>, or
+              <b>SIGXFSZ</b>) then the monitor process starts a new copy of it. If the daemon dies or exits for another
+              reason, the monitor process exits.
+
+              This option is normally used with <b>--detach</b>, but it also functions without it.
+
+       <b>--no-chdir</b>
+              By default, when <b>--detach</b> is specified, the daemon changes its current working  directory  to  the
+              root  directory  after  it  detaches.  Otherwise,  invoking  the  daemon  from a carelessly chosen
+              directory would prevent the  administrator  from  unmounting  the  file  system  that  holds  that
+              directory.
+
+              Specifying  <b>--no-chdir</b>  suppresses  this behavior, preventing the daemon from changing its current
+              working directory. This may be useful for collecting core files, since it is  common  behavior  to
+              write core dumps into the current working directory and the root directory is not a good directory
+              to use.
+
+              This option has no effect when <b>--detach</b> is not specified.
+
+       <b>--no-self-confinement</b>
+              By  default  this  daemon  will  try  to  self-confine  itself to work with files under well-known
+              directories determined at build time. It is better to stick with this default behavior and not  to
+              use this flag unless some other Access Control is used to confine daemon. Note that in contrast to
+              other  access  control  implementations that are typically enforced from kernel-space (e.g. DAC or
+              MAC), self-confinement is imposed from the user-space  daemon  itself  and  hence  should  not  be
+              considered  as a full confinement strategy, but instead should be viewed as an additional layer of
+              security.
+
+       <b>--user=</b><u>user</u><b>:</b><u>group</u>
+              Causes this program to run as a different user specified in <u>user</u><b>:</b><u>group</u>, thus dropping most of  the
+              root privileges. Short forms <u>user</u> and <b>:</b><u>group</u> are also allowed, with current user or group assumed,
+              respectively. Only daemons started by the root user accepts this argument.
+
+              On  Linux,  daemons  will  be  granted <b>CAP_IPC_LOCK</b> and <b>CAP_NET_BIND_SERVICES</b> before dropping root
+              privileges. Daemons that interact with a datapath, such as <b>ovs-vswitchd</b>,  will  be  granted  three
+              additional  capabilities,  namely <b>CAP_NET_ADMIN</b>, <b>CAP_NET_BROADCAST</b> and <b>CAP_NET_RAW</b>. The capability
+              change will apply even if the new user is root.
+
+              On Windows, this option is not currently supported. For security reasons, specifying  this  option
+              will cause the daemon process not to start.
+
+   <b>Logging</b> <b>Options</b>
+       <b>-v</b>[<u>spec</u>]
+       <b>--verbose=</b>[<u>spec</u>]
+            Sets  logging  levels. Without any <u>spec</u>, sets the log level for every module and destination to <b>dbg</b>.
+            Otherwise, <u>spec</u> is a list of words separated by spaces or commas or colons,  up  to  one  from  each
+            category below:
+
+            •      A  valid  module name, as displayed by the <b>vlog/list</b> command on <b><a href="../man8/ovs-appctl.8.html">ovs-appctl</a></b>(8), limits the log
+                   level change to the specified module.
+
+            •      <b>syslog</b>, <b>console</b>, or <b>file</b>, to limit the log level change to only to the  system  log,  to  the
+                   console,  or  to  a  file,  respectively.  (If  <b>--detach</b>  is specified, the daemon closes its
+                   standard file descriptors, so logging to the console will have no effect.)
+
+                   On Windows platform, <b>syslog</b> is accepted  as  a  word  and  is  only  useful  along  with  the
+                   <b>--syslog-target</b> option (the word has no effect otherwise).
+
+            •      <b>off</b>,  <b>emer</b>, <b>err</b>, <b>warn</b>, <b>info</b>, or <b>dbg</b>, to control the log level. Messages of the given severity
+                   or higher will be logged, and messages of lower severity will be filtered  out.  <b>off</b>  filters
+                   out all messages. See <b><a href="../man8/ovs-appctl.8.html">ovs-appctl</a></b>(8) for a definition of each log level.
+
+            Case is not significant within <u>spec</u>.
+
+            Regardless  of  the log levels set for <b>file</b>, logging to a file will not take place unless <b>--log-file</b>
+            is also specified (see below).
+
+            For compatibility with older versions of OVS, <b>any</b> is accepted as a word but has no effect.
+
+       <b>-v</b>
+       <b>--verbose</b>
+            Sets the maximum logging verbosity level, equivalent to <b>--verbose=dbg</b>.
+
+       <b>-vPATTERN:</b><u>destination</u><b>:</b><u>pattern</u>
+       <b>--verbose=PATTERN:</b><u>destination</u><b>:</b><u>pattern</u>
+            Sets the log pattern for <u>destination</u> to <u>pattern</u>. Refer to <b><a href="../man8/ovs-appctl.8.html">ovs-appctl</a></b>(8) for  a  description  of  the
+            valid syntax for <u>pattern</u>.
+
+       <b>-vFACILITY:</b><u>facility</u>
+       <b>--verbose=FACILITY:</b><u>facility</u>
+            Sets the RFC5424 facility of the log message. <u>facility</u> can be one of <b>kern</b>, <b>user</b>, <b>mail</b>, <b>daemon</b>, <b>auth</b>,
+            <b>syslog</b>,  <b>lpr</b>,  <b>news</b>,  <b>uucp</b>,  <b>clock</b>,  <b>ftp</b>, <b>ntp</b>, <b>audit</b>, <b>alert</b>, <b>clock2</b>, <b>local0</b>, <b>local1</b>, <b>local2</b>, <b>local3</b>,
+            <b>local4</b>, <b>local5</b>, <b>local6</b> or <b>local7</b>. If this option is not specified, <b>daemon</b> is used as the default for
+            the local system syslog and <b>local0</b> is used while sending a message to the target  provided  via  the
+            <b>--syslog-target</b> option.
+
+       <b>--log-file</b>[<b>=</b><u>file</u>]
+            Enables logging to a file. If <u>file</u> is specified, then it is used as the exact name for the log file.
+            The default log file name used if <u>file</u> is omitted is <b>/var/log/ovn/</b><u>program</u><b>.log</b>.
+
+       <b>--syslog-target=</b><u>host</u><b>:</b><u>port</u>
+            Send  syslog  messages  to  UDP  <u>port</u>  on <u>host</u>, in addition to the system syslog. The <u>host</u> must be a
+            numerical IP address, not a hostname.
+
+       <b>--syslog-method=</b><u>method</u>
+            Specify <u>method</u> as how syslog messages should be sent to  syslog  daemon.  The  following  forms  are
+            supported:
+
+            •      <b>libc</b>,  to  use  the  libc <b>syslog()</b> function. Downside of using this options is that libc adds
+                   fixed prefix to every message before it is actually sent to the syslog daemon  over  <b>/dev/log</b>
+                   UNIX domain socket.
+
+            •      <b>unix:</b><u>file</u>,  to use a UNIX domain socket directly. It is possible to specify arbitrary message
+                   format with this option. However, <b>rsyslogd</b> <b>8.9</b> and  older  versions  use  hard  coded  parser
+                   function  anyway  that  limits  UNIX  domain socket use. If you want to use arbitrary message
+                   format with older <b>rsyslogd</b> versions, then use UDP socket to localhost IP address instead.
+
+            •      <b>udp:</b><u>ip</u><b>:</b><u>port</u>, to use a UDP socket. With this method it is possible to  use  arbitrary  message
+                   format  also  with  older  <b>rsyslogd</b>.  When  sending  syslog  messages  over  UDP socket extra
+                   precaution needs to be taken into account, for example, syslog daemon needs to be  configured
+                   to  listen  on  the  specified  UDP port, accidental iptables rules could be interfering with
+                   local syslog traffic and there are some security considerations that apply  to  UDP  sockets,
+                   but do not apply to UNIX domain sockets.
+
+            •      <b>null</b>, to discard all messages logged to syslog.
+
+            The default is taken from the <b>OVS_SYSLOG_METHOD</b> environment variable; if it is unset, the default is
+            <b>libc</b>.
+
+   <b>PKI</b> <b>Options</b>
+       PKI configuration is required to use SSL/TLS for the connection to the database (and the switch, if <b>--ovs</b>
+       is specified).
+
+              <b>-p</b> <u>privkey.pem</u>
+              <b>--private-key=</b><u>privkey.pem</u>
+                   Specifies  a  PEM  file  containing  the  private  key  used as identity for outgoing SSL/TLS
+                   connections.
+
+              <b>-c</b> <u>cert.pem</u>
+              <b>--certificate=</b><u>cert.pem</u>
+                   Specifies a PEM file containing a certificate that certifies the private key specified on  <b>-p</b>
+                   or  <b>--private-key</b>  to  be  trustworthy.  The  certificate  must  be signed by the certificate
+                   authority (CA) that the peer in SSL/TLS connections will use to verify it.
+
+              <b>-C</b> <u>cacert.pem</u>
+              <b>--ca-cert=</b><u>cacert.pem</u>
+                   Specifies a PEM file containing the CA certificate for verifying  certificates  presented  to
+                   this  program  by  SSL/TLS peers. (This may be the same certificate that SSL/TLS peers use to
+                   verify the certificate specified on <b>-c</b> or <b>--certificate</b>,  or  it  may  be  a  different  one,
+                   depending on the PKI design in use.)
+
+              <b>-C</b> <b>none</b>
+              <b>--ca-cert=none</b>
+                   Disables  verification of certificates presented by SSL/TLS peers. This introduces a security
+                   risk, because it means that certificates cannot be verified to  be  those  of  known  trusted
+                   hosts.
+
+   <b>Other</b> <b>Options</b>
+       <b>--db</b> <u>database</u>
+              The  OVSDB  database remote to contact. If the <b>OVN_SB_DB</b> environment variable is set, its value is
+              used as the default. Otherwise, the default is <b>unix:/db.sock</b>, but this default is unlikely  to  be
+              useful outside of single-machine OVN test environments.
+
+              <b>-h</b>
+              <b>--help</b>
+                   Prints a brief help message to the console.
+
+              <b>-V</b>
+              <b>--version</b>
+                   Prints version information to the console.
+
+OVN 25.03.0                                         ovn-trace                                       <u><a href="../man8/ovn-trace.8.html">ovn-trace</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mongoc_cursors - Cursors</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libmongoc-doc">libmongoc-doc_1.21.0-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mongoc_cursors - Cursors
+
+</pre><h4><b>HANDLING</b> <b>CURSOR</b> <b>FAILURES</b></h4><pre>
+       Cursors  exist  on  a  MongoDB  server.  However, the <b>mongoc_cursor_t</b> structure gives the local process a
+       handle to the cursor. It is possible for errors to occur on the server while iterating a  cursor  on  the
+       client.  Even  a  network  partition may occur. This means that applications should be robust in handling
+       cursor failures.
+
+       While iterating cursors, you should check to see if an error has occurred. See the following example  for
+       how to robustly check for errors.
+
+          static void
+          print_all_documents (mongoc_collection_t *collection)
+          {
+             mongoc_cursor_t *cursor;
+             const bson_t *doc;
+             bson_error_t error;
+             bson_t query = BSON_INITIALIZER;
+             char *str;
+
+             cursor = mongoc_collection_find_with_opts (collection, query, NULL, NULL);
+
+             while (mongoc_cursor_next (cursor, &amp;doc)) {
+                str = bson_as_canonical_extended_json (doc, NULL);
+                printf ("%s\n", str);
+                bson_free (str);
+             }
+
+             if (mongoc_cursor_error (cursor, &amp;error)) {
+                fprintf (stderr, "Failed to iterate all documents: %s\n", error.message);
+             }
+
+             mongoc_cursor_destroy (cursor);
+          }
+
+</pre><h4><b>DESTROYING</b> <b>SERVER-SIDE</b> <b>CURSORS</b></h4><pre>
+       The  MongoDB  C  driver  will  automatically destroy a server-side cursor when <b>mongoc_cursor_destroy()</b> is
+       called. Failure to call this function when done with a cursor will leak memory client  side  as  well  as
+       consume  extra memory server side. If the cursor was configured to never timeout, it will become a memory
+       leak on the server.
+
+</pre><h4><b>TAILABLE</b> <b>CURSORS</b></h4><pre>
+       Tailable cursors are cursors that remain open even after they've returned a final result.  This  way,  if
+       more  documents  are  added  to a collection (i.e., to the cursor's result set), then you can continue to
+       call <b>mongoc_cursor_next()</b> to retrieve those additional results.
+
+       Here's a complete test case that demonstrates the use of tailable cursors.
+
+       <b>NOTE:</b>
+          Tailable cursors are for capped collections only.
+
+       An example to tail the oplog from a replica set.
+
+       mongoc-tail.c
+
+          #include &lt;bson/bson.h&gt;
+          #include &lt;mongoc/mongoc.h&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+          #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+          #ifdef _WIN32
+          #define sleep(_n) Sleep ((_n) *1000)
+          #endif
+
+          static void
+          print_bson (const bson_t *b)
+          {
+             char *str;
+
+             str = bson_as_canonical_extended_json (b, NULL);
+             fprintf (stdout, "%s\n", str);
+             bson_free (str);
+          }
+
+          static mongoc_cursor_t *
+          query_collection (mongoc_collection_t *collection, uint32_t last_time)
+          {
+             mongoc_cursor_t *cursor;
+             bson_t query;
+             bson_t gt;
+             bson_t opts;
+
+             BSON_ASSERT (collection);
+
+             bson_init (&amp;query);
+             BSON_APPEND_DOCUMENT_BEGIN (&amp;query, "ts", &amp;gt);
+             BSON_APPEND_TIMESTAMP (&amp;gt, "$gt", last_time, 0);
+             bson_append_document_end (&amp;query, &amp;gt);
+
+             bson_init (&amp;opts);
+             BSON_APPEND_BOOL (&amp;opts, "tailable", true);
+             BSON_APPEND_BOOL (&amp;opts, "awaitData", true);
+
+             cursor = mongoc_collection_find_with_opts (collection, &amp;query, &amp;opts, NULL);
+
+             bson_destroy (&amp;query);
+             bson_destroy (&amp;opts);
+
+             return cursor;
+          }
+
+          static void
+          tail_collection (mongoc_collection_t *collection)
+          {
+             mongoc_cursor_t *cursor;
+             uint32_t last_time;
+             const bson_t *doc;
+             bson_error_t error;
+             bson_iter_t iter;
+
+             BSON_ASSERT (collection);
+
+             last_time = (uint32_t) time (NULL);
+
+             while (true) {
+                cursor = query_collection (collection, last_time);
+                while (!mongoc_cursor_error (cursor, &amp;error) &amp;&amp;
+                       mongoc_cursor_more (cursor)) {
+                   if (mongoc_cursor_next (cursor, &amp;doc)) {
+                      if (bson_iter_init_find (&amp;iter, doc, "ts") &amp;&amp;
+                          BSON_ITER_HOLDS_TIMESTAMP (&amp;iter)) {
+                         bson_iter_timestamp (&amp;iter, &amp;last_time, NULL);
+                      }
+                      print_bson (doc);
+                   }
+                }
+                if (mongoc_cursor_error (cursor, &amp;error)) {
+                   if (error.domain == MONGOC_ERROR_SERVER) {
+                      fprintf (stderr, "%s\n", error.message);
+                      exit (1);
+                   }
+                }
+
+                mongoc_cursor_destroy (cursor);
+                sleep (1);
+             }
+          }
+
+          int
+          main (int argc, char *argv[])
+          {
+             mongoc_collection_t *collection;
+             mongoc_client_t *client;
+             mongoc_uri_t *uri;
+             bson_error_t error;
+
+             if (argc != 2) {
+                fprintf (stderr, "usage: %s MONGO_URI\n", argv[0]);
+                return EXIT_FAILURE;
+             }
+
+             mongoc_init ();
+
+             uri = mongoc_uri_new_with_error (argv[1], &amp;error);
+             if (!uri) {
+                fprintf (stderr,
+                         "failed to parse URI: %s\n"
+                         "error message:       %s\n",
+                         argv[1],
+                         error.message);
+                return EXIT_FAILURE;
+             }
+
+             client = mongoc_client_new_from_uri (uri);
+             if (!client) {
+                return EXIT_FAILURE;
+             }
+
+             mongoc_client_set_error_api (client, 2);
+
+             collection = mongoc_client_get_collection (client, "local", "oplog.rs");
+
+             tail_collection (collection);
+
+             mongoc_collection_destroy (collection);
+             mongoc_uri_destroy (uri);
+             mongoc_client_destroy (client);
+
+             return EXIT_SUCCESS;
+          }
+
+       Let's compile and run this example against a replica set to see updates as they are made.
+
+          $ gcc -Wall -o mongoc-tail mongoc-tail.c $(pkg-config --cflags --libs libmongoc-1.0)
+          $ ./mongoc-tail mongodb://example.com/?replicaSet=myReplSet
+          {
+              "h" : -8458503739429355503,
+              "ns" : "test.test",
+              "o" : {
+                  "_id" : {
+                      "$oid" : "5372ab0a25164be923d10d50"
+                  }
+              },
+              "op" : "i",
+              "ts" : {
+                  "$timestamp" : {
+                      "i" : 1,
+                      "t" : 1400023818
+                  }
+              },
+              "v" : 2
+          }
+
+       The line of output is a sample from performing <b>db.test.insert({})</b> from the mongo  shell  on  the  replica
+       set.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <b>mongoc_cursor_set_max_await_time_ms</b>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2017-present, MongoDB, Inc
+
+1.21.0                                            Feb 09, 2022                                 <u><a href="../man3/MONGOC_CURSORS.3.html">MONGOC_CURSORS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

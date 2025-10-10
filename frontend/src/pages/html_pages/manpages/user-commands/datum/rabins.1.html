@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rabins - process argus(8) data within specified bins.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/argus-client">argus-client_3.0.8.2-6.2ubuntu5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>rabins</b> - process <b><a href="../man8/argus.8.html">argus</a>(8)</b> data within specified bins.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>rabins</b> <b>[-B</b> <u>secs</u><b>]</b> <b>-M</b> <u>splitmode</u> <b>[</b><u>options</u><b>]]</b> <b>[raoptions]</b> <b>[--</b> <u>filter-expression</u><b>]</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Rabins</b> reads <b>argus</b> data from an <u>argus-data</u> source, and adjusts the data so that it is aligned to a set of
+       bins,  or  slots,  that  are  based on either time, input size, or count.  The resulting output is split,
+       modified, and optionally aggregated so that the data fits to  the  constraints  of  the  specified  bins.
+       <b>rabins</b>  is  designed  to  be a combination of <b>rasplit</b> and <b>racluster</b>, acting on multiple contexts of argus
+       data.
+
+       The principal function of <b>rabins</b> is to align input data to a series of bins, and then  process  the  data
+       within  the  context  of each bin.  This is the basis for real-time stream block processing.  Time series
+       stream block processing is cricital for flow data graphing, comparing, analyzing, and correlation.  Fixed
+       load stream block processing, based on the number of argus data records ('count'), or a fixed  volume  of
+       data  ('size')  allows for control of resources in processing.  While load based options are very useful,
+       they are rather esoteric.  See the online examples and rasplit.1 for examples of  using  these  modes  of
+       operation.
+
+</pre><h4><b>Time</b> <b>Series</b> <b>Bins</b></h4><pre>
+       Time  series  bin'ing  is  specified  using  the <b>-M</b> <u>time</u> option.  Time bins are specified by the size and
+       granularity of the time bin.  The granularity, 's'econds, 'm'inutes, 'h'ours, 'd'ays, 'w'eeks,  'M'onths,
+       and  'y'ears, dictates where the bin boundaries lie.  To ensure that 0.5d and 12h start on the same point
+       in time, second, minute, hour, and day based bins start at midnight, Jan 1st of the year  of  processing.
+       Week, month and year bins all start on natural time boundaries, for the period.
+
+       <b>rabins</b>  provides  a  separate processing context for each bin, so that aggregation and sorting occur only
+       within the context of each time period.  Records are placed into bins based on load or  time.   For  load
+       based  bins,  input  records  are processed in received order and are not modified. When using time based
+       bins, records are placed into bins based on the starting time of the record.  By  default,  records  that
+       span  a  time  boundary  are  split into as many records as needed to fit the record into appropriate bin
+       sizes, using the algorithms used  by  <b>rasplit.1</b>.   Metrics  are  distributed  uniformly  within  all  the
+       appropriate  bins. The result is a series of data and/or fragments that are time aligned, appropriate for
+       time seried analysis, and visualization.
+
+       When a record is split to conform to a time series bin, the resulting starting and ending timestamps  may
+       or  may not coincide with the timestamps of the bins themselves. For some applications, this treatment is
+       critical to the analytics that are working on the resulting data, such as transaction duration, and  flow
+       traffic  burst  behavior.   However,  for  other  analytics,  like  average  load,  and rate analysis and
+       reporting, the timestamps need to be modified so that they reflect the time range of the actual time  bin
+       boundaries.   Rabins  supports  the optional <b>hard</b> option to specify that timestamps should conform to bin
+       boundaries.  One of the results of this is that all durations in the reported records  will  be  the  bin
+       duration.  This is extremely important when processing certain time series metrics, like load.
+
+</pre><h4><b>Load</b> <b>Based</b> <b>Bins</b></h4><pre>
+       Load  based  bin'ing is specified using the <b>-M</b> <b>size</b> or <b>-M</b> <b>count</b> options.  Load bins are used to constrain
+       the resource used in bin processing.  So much load is input, aggregation is performed on the input  load,
+       and  when  a  threshold  is  reached, the entire aggregation cache is dumped, reinitiallized, and reused.
+       These can be used effectively to provide realtime data reduction, but within a fixed amount of memory.
+
+</pre><h4><b>Output</b> <b>Processing</b></h4><pre>
+       <b>rabins</b> has two basic modes of output,  the  default  holds  all  output  in  main  memory  until  EOF  is
+       encountered  on  input,  where each sorted bin is written out. The second output mode, has <b>rabins</b> writing
+       out the contents of individual sorted bins, periodically based on a holding time, specified using the  <u>-B</u>
+       <u>secs</u>  option.   The  <u>secs</u>  value  should  be  chosen  such that <b>rabins</b> will have seen all the appropriate
+       incoming data for that time period.  This is determined by the  ARGUS_FLOW_STATUS_INTERVAL  used  by  the
+       collection  of  argus  data  sources  in  the input data stream, as well as any time drift that may exist
+       amoung  argus   data   processin   elements.    When   there   is   good   time   sync,   and   with   an
+       ARGUS_FLOW_STATUS_INTERVAL of 5 seconds, appropriate <u>secs</u> values are between 5-15 seconds.
+
+       The  output  of  <b>rabins</b>  when  using  the  <u>-B</u> <u>secs</u> option, is appropriate to drive a number of processing
+       elements, such as near real-time visualizations and alarm and reporting.
+
+</pre><h4><b>Output</b> <b>Stream</b></h4><pre>
+       Like all <b>ra.1</b> client programs, the output of <b>rabins.1</b> is an argus data stream, that  can  be  written  as
+       binary  data  to  a file or standard output, or can be printed.  <b>rabins</b> supports all the output functions
+       provided by <b>rasplit.1</b>.
+
+       The output files name consists of a prefix, which is specified using the <u>-w</u> <u>ra</u> <u>option</u>, and for all  modes
+       except  <b>time</b>  mode,  a  suffix, which is created for each resulting file.  If no prefix is provided, then
+       <b>rabins</b> will use 'x' as the default prefix.  The suffix  that  is  used  is  determined  by  the  mode  of
+       operation.   When  <b>rabins</b>  is  using  the  default  count mode or the size mode, the suffix is a group of
+       letters 'aa', 'ab', and so on, such that concatenating the output files in  sorted  order  by  file  name
+       produces  the  original  input file.  If <b>rabins</b> will need to create more output files than are allowed by
+       the default suffix strategy, more letters will be added, in order to accomodate the needed files.
+
+       When <b>rabins</b> is spliting based on time, <b>rabins</b>  uses  a  default  extension  of  %Y.%m.%d.%h.%m.%s.   This
+       default can be overrided by adding a '%' extension to the name provided using the <u>-w</u> option.
+
+       When  standard out is specified, using <u>-w</u> <u>-</u>, <b>rabins</b> will output a single <b>argus-stream</b> with START and STOP
+       argus management records inserted appropriately to indicate where the output is split.  See <b><a href="../man8/argus.8.html">argus</a>(8)</b>  for
+       more information on output stream formats.
+
+       When  <b>rabins</b>  is  spliting on output record count (the default), the number of records is specified as an
+       ordinal counter, the default is 1000 records.  When <b>rabins</b> is spliting based on the maximum  output  file
+       size,  the size is specified as bytes.  The scale of the bytes can be specified by appending 'b', 'k' and
+       'm' to the number provided.
+
+       When <b>rabins</b> is spliting base on time, the time period is specified with the option, and can be any period
+       based in seconds (s), minutes (m), hours (h), days (d), weeks (w), months (M) or years (y).  <b>Rabins</b>  will
+       create and modify records as required to split on prescribed time boundaries.  If any record spans a time
+       boundary,  the  record  is  split  and  the  metrics  are  adjusted using a uniform distribution model to
+       distribute the statistics between the two records.
+
+       See <b>rasplit.1</b> for specifics.
+
+</pre><h4><b>RABINS</b> <b>SPECIFIC</b> <b>OPTIONS</b></h4><pre>
+       <b>rabins</b>, like all ra based clients, supports a number of <b>ra</b> <b>options</b> including remote data access,  reading
+       from multiple files and filtering of input argus records through a terminating filter expression.  Rabins
+       also  provides all the functions of <b>racluster.1</b> and <b>rasplit.1</b>, for processing and outputing data.  <b>rabins</b>
+       specific options are:
+
+       <b>-B</b> <u>secs</u>
+            Holding time in seconds before closing a bin and outputing its contents.
+
+       <b>-M</b> <u>splitmode</u>
+            Supported spliting modes are:
+
+              <b>time</b> <b>&lt;n[smhdwMy]&gt;</b>
+                   bin records into time slots of n size.  This is used for time  series  analytics,  especially
+                   graphing.  Records, by default are split, so that their timestamps do not span the time range
+                   specified.  Metrics are uniformly distributed among the resulting records.
+
+              <b>count</b> <b>&lt;n[kmb]&gt;</b>
+                   bin  records into chunks based on the number of records.  This is used for archive management
+                   and parallel processing analytics, to limit the size of data processing to fixed  numbers  of
+                   records.
+
+              <b>size</b> <b>&lt;n[kmb]&gt;</b>
+                   bin  records  into  chunks  based  on  the  number  of total bytes.  This is used for archive
+                   management and parallel processing analytics, to limit the size of data processing  to  fixed
+                   byte limitations.
+
+       <b>-M</b> <u>modes</u>
+            Supported processing modes are:
+              <b>hard</b> split  on  hard  time  boundaries.   Each  flow records start and stop times will be the time
+                   boundary times.  The default is to use the  original  start  and  stop  timestamps  from  the
+                   records that make up the resulting aggregation.
+              <b>nomodify</b>
+                   Do  not  split  the  record  when  including  it  into a time bin.  This allows a time bin to
+                   represent times outside of its defintion.  This option should not be  used  with  the  'hard'
+                   option, as you will modify metrics and semantics.
+       <b>-m</b> <u>aggregation</u> <u>object</u>
+            Supported aggregation objects are:
+              <b>none</b>           use a null flow key.
+              <b>srcid</b>          argus source identifier.
+              <b>smac</b>           source mac(ether) addr.
+              <b>dmac</b>           destination mac(ether) addr.
+              <b>soui</b>           oui portion of the source mac(ether) addr.
+              <b>doui</b>           oui portion of the destination mac(ether) addr.
+              <b>smpls</b>          source mpls label.
+              <b>dmpls</b>          destination label addr.
+              <b>svlan</b>          source vlan label.
+              <b>dvlan</b>          destination vlan addr.
+              <b>saddr/[l|m]</b>    source IP addr/[cidr len | m.a.s.k].
+              <b>daddr/[l|m]</b>    destination IP addr/[cidr len | m.a.s.k].
+              <b>matrix/l</b>       sorted src and dst IP addr/cidr len.
+              <b>proto</b>          transaction protocol.
+              <b>sport</b>          source port number. Implies use of 'proto'.
+              <b>dport</b>          destination port number. Implies use of 'proto'.
+              <b>stos</b>           source TOS byte value.
+              <b>dtos</b>           destination TOS byte value.
+              <b>sttl</b>           src -&gt; dst TTL value.
+              <b>dttl</b>           dst -&gt; src TTL value.
+              <b>stcpb</b>          src -&gt; dst TCP base sequence number.
+              <b>dtcpb</b>          dst -&gt; src TCP base sequence number.
+              <b>inode[/l|m]]</b>   intermediate node IP addr/[cidr len | m.a.s.k], source of ICMP mapped events.
+              <b>sco</b>            source ARIN country code, if present.
+              <b>dco</b>            destination ARIN country code, if present.
+              <b>sas</b>            source node origin AS number, if available.
+              <b>das</b>            destination node origin AS number, if available.
+              <b>ias</b>            intermediate node origin AS number, if available.
+
+       <b>-P</b> <u>sort</u> <u>field</u>
+            <b>Rabins</b>  can  sort its output based on a sort field specification.  Because the <b>-m</b> option is used for
+            aggregation fields, <b>-P</b> is used to specify the print priority order.  See <b><a href="../man1/rasort.1.html">rasort</a>(1)</b> for the  list  of
+            sortable fields.
+
+       <b>-w</b> <u>filename</u>
+            <b>Rabins</b> supports an extended <u>-w</u> option that allows for output record contents to be inserted into the
+            output  filename.   Specified  using  '$'  (dollar) notation, any printable field can be used.  Care
+            should be taken to honor any shell escape requirements when specifying on  the  command  line.   See
+            <b><a href="../man1/ra.1.html">ra</a>(1)</b> for the list of printable fields.
+
+            Another  extended  feature,  when  using  <b>time</b> mode, <b>rabins</b> will process the supplied filename using
+            <b><a href="../man3/strftime.3.html">strftime</a>(3)</b>, so that time fields can be inserted into the resulting output filename.
+
+</pre><h4><b>INVOCATION</b></h4><pre>
+       This invocation aggregates <b>inputfile</b> based on 10 minute time boundaries.  Input is split to fit within  a
+       10 minute time boundary, and within those boundaries, argus records are aggregated.  The resulting output
+       its streamed to a single file.
+
+          <b>rabins</b> -r * -M time 10m -w outputfile
+
+       This  next  invocation aggregates <b>inputfiles</b> based on 5 minute time boundaries, and the output is written
+       to 5 minute files.  Input is split such that all records conform to hard 10 minute time  boundaries,  and
+       within those boundaries, argus records are aggregated, in this case, based on IP address matrix.
+       The  resulting  output  its  streamed  to  files that are named relative to the records output content, a
+       prefix of <u>/matrix/%Y/%m/%d/argus.</u> and the suffixes <u>%H.%M.%S</u>.
+
+          <b>rabins</b> -r * -M hard time 5m -m matrix -w "/matrix/%Y/%m/%d/argus.%H.%M.%S"
+
+       This next invocation aggregates <b>input.stream</b> based on matrix/24 into 10 second time boundaries, holds the
+       data for an additional 5 seconds after the time boundary has passed, and then prints the complete  sorted
+       contents of each bin to standard output.  The output is printed at 10 second intervals, and the output is
+       the  content  of  the previous  10 sec time bin.  This example is meant to provide, every 10 seconds, the
+       summary of all Class C subnet activity seen.  It is intended to run indefinately printing out  aggregated
+       summary  records.   By  modifying  the  aggregation  model, using the "-f racluster.conf" option, you can
+       achieve a great deal of data reduction with a lot of semantic reporting.
+
+       % <b>rabins</b> -S localhost -m matrix/24 -B 5s -M hard time 10s -p0 -s +1trans - ipv4
+                  StartTime  Trans  Proto            SrcAddr   Dir            DstAddr  SrcPkts  DstPkts     SrcBytes     DstBytes State
+        2012/02/15.13:37:00      5     ip     192.168.0.0/24   &lt;-&gt;     192.168.0.0/24       41       40         2860        12122   CON
+        2012/02/15.13:37:00      2     ip     192.168.0.0/24    -&gt;       224.0.0.0/24        2        0          319            0   INT
+       [ 10 seconds pass]
+        2012/02/15.13:37:10     13     ip     192.168.0.0/24   &lt;-&gt;    208.59.201.0/24      269      351        97886       398700   CON
+        2012/02/15.13:37:10     14     ip     192.168.0.0/24   &lt;-&gt;     192.168.0.0/24       86       92         7814        46800   CON
+        2012/02/15.13:37:10      1     ip    17.172.224.0/24   &lt;-&gt;     192.168.0.0/24       52       37        68125         4372   CON
+        2012/02/15.13:37:10      1     ip     192.168.0.0/24   &lt;-&gt;      199.7.55.0/24        7        7          784         2566   CON
+        2012/02/15.13:37:10      1     ip     184.85.13.0/24   &lt;-&gt;     192.168.0.0/24        6        5         3952         2204   CON
+        2012/02/15.13:37:10      2     ip    66.235.132.0/24   &lt;-&gt;     192.168.0.0/24        5        6          915         3732   CON
+        2012/02/15.13:37:10      1     ip    74.125.226.0/24   &lt;-&gt;     192.168.0.0/24        3        4          709          888   CON
+        2012/02/15.13:37:10      3     ip       66.39.3.0/24   &lt;-&gt;     192.168.0.0/24        3        3          369          198   CON
+        2012/02/15.13:37:10      1     ip     192.168.0.0/24   &lt;-&gt;     205.188.1.0/24        1        1           54          356   CON
+       [ 10 seconds pass]
+        2012/02/15.13:37:20      6     ip     192.168.0.0/24   &lt;-&gt;    208.59.201.0/24      392      461        60531       623894   CON
+        2012/02/15.13:37:20      8     ip     192.168.0.0/24   &lt;-&gt;     192.168.0.0/24       95      111         6948        93536   CON
+        2012/02/15.13:37:20      3     ip     72.14.204.0/24   &lt;-&gt;     192.168.0.0/24       38       32        38568         4414   CON
+        2012/02/15.13:37:20      1     ip    17.112.156.0/24   &lt;-&gt;     192.168.0.0/24       26       13        21798         7116   CON
+        2012/02/15.13:37:20      2     ip    66.235.132.0/24   &lt;-&gt;     192.168.0.0/24        6        3         1232         4450   CON
+        2012/02/15.13:37:20      1     ip    66.235.133.0/24   &lt;-&gt;     192.168.0.0/24        1        2           82          132   CON
+       [ 10 seconds pass]
+        2012/02/15.13:37:30    117     ip     192.168.0.0/24   &lt;-&gt;    208.59.201.0/24      697      663       369769       134382   CON
+        2012/02/15.13:37:30     11     ip     192.168.0.0/24   &lt;-&gt;     192.168.0.0/24      147      187        11210       193253   CON
+        2012/02/15.13:37:30      1     ip     184.85.13.0/24   &lt;-&gt;     192.168.0.0/24       13        9        13408         9031   CON
+        2012/02/15.13:37:30      2     ip    66.235.132.0/24   &lt;-&gt;     192.168.0.0/24        8        7         1920        11563   CON
+        2012/02/15.13:37:30      1     ip     192.168.0.0/24   &lt;-&gt;    207.46.193.0/24        5        3          802          562   CON
+        2012/02/15.13:37:30      1     ip    17.112.156.0/24   &lt;-&gt;     192.168.0.0/24        5        2          646         3684   CON
+        2012/02/15.13:37:30      2     ip     192.168.0.0/24    -&gt;       224.0.0.0/24        2        0          382            0   REQ
+       [ 10 seconds pass]
+
+       <b>This</b> <b>next</b> <b>invocation</b> <b>reads</b> <b>IP</b> <b><a href="../man8/argus.8.html">argus</a>(8)</b> <b>data</b> <b>from</b> <b>inputfile</b> <b>and</b> <b>processes,</b> <b>the</b> <b><a href="../man8/argus.8.html">argus</a>(8)</b> <b>data</b> <b>stream</b>  <b>based</b>
+       <b>on</b>  <b>input</b>  <b>byte</b>  <b>size</b>  <b>of</b> <b>no</b> <b>greater</b> <b>than</b> <b>1</b> <b>Megabyte.</b>  <b>The</b> <b>resulting</b> <b>output</b> <b>stream</b> <b>is</b> <b>written</b> <b>to</b> <b>a</b> <b>single</b>
+       <u>argus.out</u> <b>data</b> <b>file.</b>
+
+          <b>rabins</b> <b>-r</b> <b>argusfile</b> <b>-M</b> <b>size</b> <b>1m</b> <b>-s</b> <b>+1dur</b> <b>-m</b> <b>proto</b> <b>-w</b> <b>argus.out</b> <b>-</b> <b>ip</b>
+
+       <b>This</b> <b>invocation</b> <b>reads</b> <b>IP</b> <b><a href="../man8/argus.8.html">argus</a>(8)</b> <b>data</b> <b>from</b> <b>inputfile</b> <b>and</b> <b>aggregates</b> <b>the</b> <b><a href="../man8/argus.8.html">argus</a>(8)</b> <b>data</b>  <b>stream</b>  <b>based</b>  <b>on</b>
+       <b>input</b>  <b>file</b>  <b>size</b>  <b>of</b>  <b>no</b> <b>greater</b> <b>than</b> <b>1K</b> <b>flows.</b>  <b>The</b> <b>resulting</b> <b>output</b> <b>stream</b> <b>is</b> <b>printed</b> <b>to</b> <b>the</b> <b>screen</b> <b>as</b>
+       <b>standard</b> <b>argus</b> <b>records.</b>
+
+          <b>rabins</b> <b>-r</b> <b>argusfile</b> <b>-M</b> <b>count</b> <b>1k</b> <b>-m</b> <b>proto</b> <b>-s</b> <b>stime</b> <b>dur</b> <b>proto</b> <b>spkts</b> <b>dpkts</b> <b>-</b> <b>ip</b>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2000-2016 QoSient. All rights reserved.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/ra.1.html">ra</a>(1),</b> <b><a href="../man1/racluster.1.html">racluster</a>(1),</b> <b><a href="../man1/rasplit.1.html">rasplit</a>(1),</b> <b><a href="../man5/rarc.5.html">rarc</a>(5),</b> <b><a href="../man8/argus.8.html">argus</a>(8),</b>
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Carter Bullard (<a href="mailto:carter@qosient.com">carter@qosient.com</a>).
+
+rabins 3.0.8                                     12 August 2003                                        <u><a href="../man1/RABINS.1.html">RABINS</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

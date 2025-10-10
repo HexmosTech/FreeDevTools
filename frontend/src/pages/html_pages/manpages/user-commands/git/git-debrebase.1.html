@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>git-debrebase - tool to maintain series of Debian changes to upstream source</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/git-debrebase">git-debrebase_12.11_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       git-debrebase - tool to maintain series of Debian changes to upstream source
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        git-debrebase [&lt;options...&gt;] [-- &lt;git-rebase options...&gt;]
+        git-debrebase [&lt;options...&gt;] &lt;operation&gt; [&lt;operation options...&gt;
+
+</pre><h4><b>QUICK</b> <b>REFERENCE</b></h4><pre>
+       These are most of the commands you will regularly need:
+
+        git debrebase -i                           # edit the patch queue
+        git debrebase conclude &amp;&amp; git push         # push to eg salsa
+        git debrebase conclude &amp;&amp; dgit push-source # source-only upload
+        git debrebase new-upstream 1.2.3-1 [-i]    # uses tag, eg "v1.2.3"
+        dpkg-buildpackage -uc -b                   # get test debs, at any time
+
+       To add patches, or edit the packaging, just make git commits.  Ignore anything that may appear in
+       debian/patches.  Avoid using "git pull" and "git merge" without "--ff-only".
+
+       When sharing branches, you should usually share a fast-forwarding branch (ie, use "git-debrebase
+       conclude" (or "prepush") before pushing.
+
+       git-debrebase has a special branch format, so see "CONVERTING AN EXISTING PACKAGE" in
+       <b><a href="../man7/dgit-maint-debrebase.7.html">dgit-maint-debrebase</a></b>(7).
+
+</pre><h4><b>GUIDE</b> <b>TO</b> <b>DOCUMENTATION</b></h4><pre>
+       This is the command line reference.  There is also a detailed workflow tutorial at
+       <b><a href="../man7/dgit-maint-debrebase.7.html">dgit-maint-debrebase</a></b>(7) (on which the above "QUICK REFERENCE" is based).  For background, theory of
+       operation, and definitions see <b><a href="../man5/git-debrebase.5.html">git-debrebase</a></b>(5).
+
+       You should read this manpage in conjunction with "TERMINOLOGY" in <b><a href="../man5/git-debrebase.5.html">git-debrebase</a></b>(5), which defines many
+       important terms used here.
+
+</pre><h4><b>PRINCIPAL</b> <b>OPERATIONS</b></h4><pre>
+       git-debrebase [-- &lt;git-rebase options...&gt;]
+       git-debrebase [-i &lt;further git-rebase options...&gt;]
+           Unstitches and launders the branch.  (See "UNSTITCHING AND LAUNDERING" below.)
+
+           Then,  if  any  git-rebase  options were supplied, edits the Debian delta queue, using git-rebase, by
+           running
+
+               git rebase &lt;git-rebase options&gt; &lt;breakwater-tip&gt;
+
+           Do not pass a base  branch  argument:  git-debrebase  will  supply  that.   Do  not  use  --onto,  or
+           --fork-point.  Useful git-rebase options include -i and --autosquash.
+
+           If  git-rebase stops for any reason, you may git-rebase --abort, --continue, or --skip, as usual.  If
+           you abort the git-rebase, the branch will still have been laundered, but  everything  in  the  rebase
+           will be undone.
+
+           The  options for git-rebase must either start with "-i", or be prececded by "--", to distinguish them
+           from options for git-debrebase.
+
+           It is hazardous to use plain git-rebase on a git-debrebase branch, because git-rebase has a  tendency
+           to  start  the  rebase  too  far  back  in  history,  and  then drop important commits.  See "ILLEGAL
+           OPERATIONS" in <b><a href="../man5/git-debrebase.5.html">git-debrebase</a></b>(5)
+
+       git-debrebase status
+           Analyses the current branch, both in terms of its contents, and the refs which are relevant  to  git-
+           debrebase, and prints a human-readable summary.
+
+           Please  do  not  attempt  to  parse  the  output; it may be reformatted or reorganised in the future.
+           Instead, use one of the "UNDERLYING AND SUPPLEMENTARY OPERATIONS" described below.
+
+       git-debrebase conclude
+           Finishes a git-debrebase session, tidying up the branch and making it fast forward again.
+
+           Specifically: if the branch is unstitched, launders and restitches  it,  making  a  new  pseudomerge.
+           Otherwise, it is an error, unless --noop-ok.
+
+       git-debrebase quick
+           Unconditionally  launders  and  restitches  the  branch,  consuming  any  ffq-prev  and  making a new
+           pseudomerge.
+
+           If the branch is already laundered and stitched, does nothing.
+
+       git-debrebase prepush [--prose=&lt;for commit message&gt;]
+           If the branch is unstitched, stitches it, consuming ffq-prev.
+
+           This is a good command to run before pushing to a git server.  You  should  consider  using  <b>conclude</b>
+           instead, because that launders the branch too.
+
+       git-debrebase stitch [--prose=&lt;for commit message&gt;]
+           Stitches the branch, consuming ffq-prev.
+
+           If there is no ffq-prev, it is an error, unless --noop-ok.
+
+           You should consider using <b>prepush</b> or <b>conclude</b> instead.
+
+       git-debrebase scrap
+           Throws  away  all the work since the branch was last stitched.  This is done by resetting you to ffq-
+           prev and discarding all working tree changes.
+
+           If you are in the middle of a git-rebase, will abort that too.
+
+       git-debrebase new-upstream &lt;new-version&gt; [&lt;upstream-details&gt;...] [--|-i &lt;git-rebase options...&gt;]
+           Rebases the delta queue onto a new upstream version.  In detail:
+
+           Firstly, checks that the proposed rebase seems to make sense: It is a snag unless the new upstream(s)
+           are fast forward from the previous upstream(s) as found in the current breakwater  anchor.   And,  in
+           the  case  of a multi-piece upstream (a multi-component upstream, in dpkg-source terminology), if the
+           pieces are not in the same order, with the same names.
+
+           If all seems well, unstitches and launders the branch.
+
+           Then, generates (in a private working area) a new anchor merge commit, on top of the breakwater  tip,
+           and on top of that a commit to update the version number in debian/changelog.
+
+           Finally, starts a git-rebase of the delta queue onto these new commits.
+
+           That git-rebase may complete successfully, or it may require your assistance, just like a normal git-
+           rebase.
+
+           If you git-rebase --abort, the whole new upstream operation is aborted, except for the laundering.
+
+           &lt;new-version&gt;  may  be  a whole new Debian version, including revision, or just the upstream part, in
+           which case -1 will be appended to make the new Debian version.
+
+           The &lt;upstream-details&gt; are, optionally, in order:
+
+           &lt;upstream-commit-ish&gt;
+               The new upstream branch (or commit-ish).  The default is to look for one of these tags,  in  this
+               order:  U  vU  upstream/U;  where  U is the new upstream version.  (This is the same algorithm as
+               <b><a href="../man1/git-deborig.1.html">git-deborig</a></b>(1).)
+
+               It is a snag if the upstream contains a debian/ directory; if forced  to  proceed,  git-debrebase
+               will disregard the upstream's debian/ and take (only) the packaging from the current breakwater.
+
+           &lt;piece-name&gt; &lt;piece-upstream-commit-ish&gt;
+               Specifies that this is a multi-piece upstream.  May be repeated.
+
+               When  such  a  pair  is  specified,  git-debrebase  will first combine the pieces of the upstream
+               together, and then use the result as the combined new upstream.
+
+               For each &lt;piece-name&gt;, the tree  of  the  &lt;piece-upstream-commit-ish&gt;  becomes  the  subdirectory
+               &lt;piece-name&gt;  in  the  combined new upstream (supplanting any subdirectory that might be there in
+               the main upstream branch).
+
+               &lt;piece-name&gt; has a restricted syntax: it may contain only ASCII alphanumerics and hyphens.
+
+               The combined upstream is itself recorded as a commit, with each of the upstream  pieces'  commits
+               as  parents.   The  combined  commit  contains  an annotation to allow a future git-debrebase new
+               upstream operation to make the coherency checks described above.
+
+           &lt;git-rebase options&gt;
+               These will be passed to git rebase.
+
+               If the upstream rebase is troublesome, -i may be helpful.  As with plain  git-debrebase,  do  not
+               specify a base, or --onto, or --fork-point.
+
+           If  you  are  planning  to  generate  a  .dsc,  you  will also need to have, or generate, actual orig
+           tarball(s), which must be identical to the rev-spec(s) passed to git-debrebase.   git-debrebase  does
+           not  concern  itself with source packages so neither helps with this, nor checks it.  <b><a href="../man1/git-deborig.1.html">git-deborig</a></b>(1),
+           <b><a href="../man1/git-archive.1.html">git-archive</a></b>(1), <b><a href="../man1/dgit.1.html">dgit</a></b>(1) and <b><a href="../man1/gbp-import-orig.1.html">gbp-import-orig</a></b>(1) may be able to help.
+
+       git-debrebase make-patches [--quiet-would-amend]
+           Generate patches in debian/patches/ representing the changes made to upstream files.
+
+           It is not normally necessary to run this command explicitly.  When uploading to Debian, dgit and git-
+           debrebase will cooperate to regenerate patches as necessary.  When working with pure git remotes, the
+           patches are not needed.
+
+           Normally git-debrebase make-patches will require a laundered branch.  (A laundered  branch  does  not
+           contain  any patches.)  But if there are already some patches made by git-debrebase make-patches, and
+           all that has happened is that more changes to upstream files have been committed,  running  it  again
+           can add the missing patches.
+
+           If  the  patches  implied  by  the  current  branch  are  not  a  simple superset of those already in
+           debian/patches, make-patches will fail with exit status 7, and an error message.  (The message can be
+           suppressed with --quiet-would-amend.)  If the problem is simply that the existing  patches  were  not
+           made by git-debrebase, using dgit quilt-fixup instead should succeed.
+
+       git-debrebase convert-from-unapplied [&lt;upstream-commit-ish&gt;]
+       git-debrebase convert-from-gbp [&lt;upstream-commit-ish&gt;]
+           Converts any of the following into a git-debrebase interchange branch:
+
+           •   a gbp patches-unapplied branch (but not a gbp pq patch-queue branch)
+
+           •   a patches-unapplied git packaging branch containing debian/patches, as used with quilt
+
+           •   a  git branch for a package which has no Debian delta - ie where upstream files are have not been
+               modified in Debian, so there are no patches
+
+           (These two commands operate identically and are simply aliases.)
+
+           The conversion is done by generating a new anchor merge, converting any  quilt  patches  as  a  delta
+           queue, and dropping the patches from the tree.
+
+           The  upstream  commit-ish  should correspond to the upstream branch or tag, if there is one.  It is a
+           snag if it is not an ancestor of HEAD, or if the history  between  the  upstream  and  HEAD  contains
+           commits  which make changes to upstream files.  If it is not specified, the same algorithm is used as
+           for git-debrebase new-upstream.
+
+           It is also a snag if the specified upstream has a debian/ subdirectory.  This check exists to  detect
+           certain likely user errors, but if this situation is true and expected, forcing it is fine.
+
+           git-debrebase  will try to look for the dgit archive view of the most recent release, and if it finds
+           it will make a pseduomerge so that your new git-debrebase view is appropriately fast forward.
+
+           The result is a well-formed git-debrebase interchange branch.  The result is also  fast-forward  from
+           the original branch.
+
+           It is a snag if the new branch looks like it will have diverged, just as for a laundering/unstitching
+           call to git-debrebase; See "Establish the current branch's ffq-prev", below.
+
+           Note  that  it is dangerous not to know whether you are dealing with a (gbp) patches-unapplied branch
+           containing quilt patches, or a git-debrebase interchange branch.  At worst, using the wrong tool  for
+           the branch format might result in a dropped patch queue!
+
+</pre><h4><b>UNDERLYING</b> <b>AND</b> <b>SUPPLEMENTARY</b> <b>OPERATIONS</b></h4><pre>
+       git-debrebase breakwater
+           Prints  the  breakwater  tip commitid.  If your HEAD branch is not fully laundered, prints the tip of
+           the so-far-laundered breakwater.
+
+       git-debrebase anchor
+           Prints the breakwater anchor commitid.
+
+       git-debrebase analyse
+           Walks the history of the current branch, most recent commit first, back until the most recent anchor,
+           printing the commit object id, and commit type and info (ie the semantics in the git-debrebase model)
+           for each commit.
+
+       git-debrebase record-ffq-prev
+           Establishes the current branch's ffq-prev, as discussed in "UNSTITCHING AND LAUNDERING", but does not
+           launder the branch or move HEAD.
+
+           It is an error if the ffq-prev could not be recorded.  It is also an error if an ffq-prev has already
+           been recorded, unless --noop-ok.
+
+       git-debrebase convert-to-gbp
+           Converts a laundered branch into a gbp patches-unapplied branch containing quilt patches.  The result
+           is not fast forward from the interchange branch, and any ffq-prev is deleted.
+
+           This is provided mostly for the test suite and for unusual situations.  It should only be  used  with
+           care and with a proper understanding of the underlying theory.
+
+           Be  sure  to  not  accidentally  treat the result as a git-debrebase branch, or you will drop all the
+           patches!
+
+       git-debrebase convert-from-dgit-view [&lt;convert-options&gt;] [upstream]
+           Converts any dgit-compatible git branch corresponding to a  (possibly  hypothetical)  3.0  quilt  dsc
+           source package into a git-debrebase-compatible branch.
+
+           This  operation  should  not  be  used if the branch is already in git-debrebase form.  Normally git-
+           debrebase will refuse to continue in this case (or silently do nothing if the global --noop-ok option
+           is used).
+
+           Some representation of the original upstream source code will be needed.  If  <u>upstream</u>  is  supplied,
+           that  must be a suitable upstream commit.  By default, git-debrebase will look first for git tags (as
+           for new-upstream), and then for orig tarballs which it will ask dgit to process.
+
+           The upstream source must be exactly right and all the patches in debian/patches must be up  to  date.
+           Applying the patches from debian/patches to the upstream source must result in exactly your HEAD.
+
+           The  output  is laundered and stitched.  The resulting history is not particularly pretty, especially
+           if orig tarball(s) were imported to produce a synthetic upstream commit.
+
+           The available convert-options are as follows.  (These must come after convert-from-dgit-view.)
+
+           --[no-]diagnose
+               Print additional error messages to  help  diagnose  failure  to  find  an  appropriate  upstream.
+               --no-diagnose is the default.
+
+           --build-products-dir
+               Directory   to   look   in   for   orig   tarballs.    The  default  is  the  git  config  option
+               dgit.default.build-products-dir or failing that, "..".   Passed  on  to  dgit,  if  git-debrebase
+               invokes dgit.
+
+           --[no-]origs
+               Whether to try to look for or use any orig tarballs.  --origs is the default.
+
+           --[no-]tags
+               Whether to try to look for or use any upstream git tags.  --tags is the default.
+
+           --always-convert-anyway
+               Perform the conversion operation, producing unpleasant extra history, even if the branch seems to
+               be in git-debrebase form already.  This should not be done unless necessary, and it should not be
+               necessary.
+
+       git-debrebase forget-was-ever-debrebase
+           Deletes the ffq-prev and debrebase-last refs associated with this branch, that git-debrebase and dgit
+           use  to determine whether this branch is managed by git-debrebase, and what previous head may need to
+           be stitched back in.
+
+           This can be useful if you were just playing with git-debrebase, and have used git-reset --hard to  go
+           back to a commit before your experiments.
+
+           Do not use this if you expect to run git-debrebase on the branch again.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       This  section  documents the general options to git-debrebase (ie, the ones which immediately follow git-
+       debrebase or git debrebase on the command line).  Individual operations may have their own options  which
+       are docuented under each operation.
+
+       -f&lt;snag-id&gt;
+           Turns snag(s) with id &lt;snag-id&gt; into warnings.
+
+           Some  troublesome  things  which  git-debrebase  encounters  are  <b>snag</b>s.  (The specific instances are
+           discussed in the text for the relevant operation.)
+
+           When a snag is detected, a message is  printed  to  stderr  containing  the  snag  id  (in  the  form
+           "-f&lt;snag-id&gt;"), along with some prose.
+
+           If snags are detected, git-debrebase does not continue, unless the relevant -f&lt;snag-id&gt; is specified,
+           or --force is specified.
+
+       --force
+           Turns all snags into warnings.  See the -f&lt;snag-id&gt; option.
+
+           Do  not  invoke  git-debrebase  --force  in  scripts  and  aliases;  instead,  specify the particular
+           -f&lt;snag-id&gt; for expected snags.
+
+       --noop-ok
+           Suppresses the error in some situations where git-debrebase does nothing, because there is nothing to
+           do.
+
+           The specific instances are discussed in the text for the relvant operation.
+
+       --anchor=&lt;commit-ish&gt;
+           Treats &lt;commit-ish&gt; as an anchor.  This overrides the  usual  logic  which  automatically  classifies
+           commits as anchors, pseudomerges, delta queue commits, etc.
+
+           It also disables some coherency checks which depend on metadata extracted from its commit message, so
+           it  is a snag ("-fanchor-treated") if &lt;commit-ish&gt; is the anchor for the previous upstream version in
+           git-debrebase new-upstream operations.  You have to check yourself that  the  new  upstream  is  fast
+           forward from the old one, and has the right components (as if applicable).
+
+       --dgit=&lt;program&gt;
+           Run  &lt;program&gt;,  instead  of  dgit from PATH, when invocation of dgit is necessary.  This is provided
+           mostly for the benefit of the test suite.
+
+       -D  Requests (more) debugging.  May be repeated.
+
+       --experimental-merge-resolution
+           No-op option still accepted for compatibilty.
+
+           In previous versions this enabled attempting to handle general merges, but that attempt is  now  made
+           unconditonally.
+
+</pre><h4><b>UNSTITCHING</b> <b>AND</b> <b>LAUNDERING</b></h4><pre>
+       Several operations unstitch and launder the branch first.  In detail this means:
+
+   <b>Establish</b> <b>the</b> <b>current</b> <b>branch's</b> <b>ffq-prev</b>
+       If ffq-prev is not yet recorded, git-debrebase checks that the current branch is ahead of relevant remote
+       tracking  branches.   The  relevant branches depend on the current branch (and its git configuration) and
+       are as follows:
+
+       •   The branch that git would merge from (remote.&lt;branch&gt;.merge, remote.&lt;branch&gt;.remote);
+
+       •   The branch git would push to, if different (remote.&lt;branch&gt;.pushRemote etc.);
+
+       •   For local dgit suite branches, the corresponding tracking remote;
+
+       •   If you are on "master", remotes/dgit/dgit/sid.
+
+       The apparently relevant ref names to check are filtered through branch.&lt;branch&gt;.ffq-ffrefs,  which  is  a
+       semicolon-separated list of glob patterns, each optionally preceded by !; first match wins.
+
+       In  each  case it is a snag if the local HEAD is behind the checked remote, or if local HEAD has diverged
+       from it.  All the checks are done locally using the remote tracking refs: git-debrebase  does  not  fetch
+       anything from anywhere.
+
+       If these checks pass, or are forced, git-debrebse then records the current tip as ffq-prev.
+
+   <b>Examine</b> <b>the</b> <b>branch</b>
+       git-debrebase  analyses  the  current  HEAD's  history to find the anchor in its breakwater, and the most
+       recent breakwater tip.
+
+   <b>Rewrite</b> <b>the</b> <b>commits</b> <b>into</b> <b>laundered</b> <b>form</b>
+       Mixed debian+upstream commits are split into two commits each.   Delta  queue  (upstream  files)  commits
+       bubble to the top.  Pseudomerges, and quilt patch additions, are dropped.
+
+       This rewrite will always succeed, by construction.  The result is the laundered branch.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/git-debrebase.1.html">git-debrebase</a></b>(1), <b><a href="../man7/dgit-maint-debrebase.7.html">dgit-maint-debrebase</a></b>(7), <b><a href="../man1/dgit.1.html">dgit</a></b>(1), <b><a href="../man7/gitglossary.7.html">gitglossary</a></b>(7)
+
+perl v5.40.1                                     Debian Project                                 <u><a href="../man1/git-debrebase.1.html">git-debrebase</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

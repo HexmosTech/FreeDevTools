@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Trap::Builder - Backend for building test traps</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-trap-perl">libtest-trap-perl_0.3.5-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Trap::Builder - Backend for building test traps
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.3.5
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::Test::Trap;
+
+         use Test::Trap::Builder;
+         my $B = Test::Trap::Builder-&gt;new;
+
+         $B-&gt;layer( $layer_name =&gt; \&amp;layer_implementation );
+         $B-&gt;accessor( simple =&gt; [ $layer_name ] );
+
+         $B-&gt;multi_layer( $multi_name =&gt; @names );
+
+         $B-&gt;test( $test_name =&gt; 'trap, predicate, name', \&amp;test_function );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test::Trap neither traps nor tests everything you may want to trap or test.  So, Test::Trap::Builder
+       provides methods to write your own trap layers, accessors, and test callbacks -- preferably for use with
+       your own modules (trappers).
+
+       Note that layers are methods with mangled names (names are prefixed with "layer:"), and so inherited like
+       any other method, while accessors are ordinary methods.  Meanwhile, test callbacks are not referenced in
+       the symbol table by themselves, but only in combinations with accessors, all methods of the form
+       <u>ACCESSOR</u>_<u>TEST</u>.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       Trappers should not inherit from Test::Trap::Builder, but may import a few convenience methods for use in
+       building the trap.  Do not use them as methods of Test::Trap::Builder -- they are intended to be methods
+       of trap objects.  (If you inherit from another trapper, you need not, and probably should not, import
+       these yourself -- you should inherit these methods like any other.)
+
+       Trappers may import any number of these methods, or all of them by way of the ":methods" tag.
+
+       Layers should be implemented as methods, and while they need not call any of these convenience methods in
+       turn, that likely makes for more readable code than any alternative.  Likewise, test callbacks may use
+       convenience methods for more readable code.
+
+       Of course, certain convenience methods may also be useful in more generic methods messing with trap or
+       builder objects.
+
+   <b>Prop</b> <b>[PACKAGE]</b>
+       A method returning a reference to a hash, holding the <u>PACKAGE</u>'s (by default the caller's) tag-on
+       properties for the (current) trap object.  Currently, Test::Trap::Builder defines the following
+       properties:
+
+       layers
+           While  the  trap  is  springing, the queue of layers remaining.  Usually set by the "trap" method and
+           consumed by the "Next" method.
+
+       teardown
+           While the trap is springing, the queue of teardown actions remaining.   Usually  accumulated  through
+           the "Teardown" method and invoked by the "trap" method.
+
+       code
+           The user code trapped.  Usually set by the "trap" method and invoked by the "Run" method.
+
+       exception
+           An internal exception.  Usually set through the "Exception" method and examined by the "trap" method.
+
+       on_test_failure
+           A callback invoked by the "TestFailure" method.  Layers in particular may want to set this.
+
+       test_accessor
+           The  name  and (optionally) the index of the accessor, the contents of which we're currently testing.
+           Best accessed through the "TestAccessor" method,  and  usually  set  by  the  "test"  and  "accessor"
+           methods,  but if you are writing your own tests or accessors directly, you just might need to set it.
+           Perhaps.
+
+       Be nice: Treat another module's tag-on properties as you would treat another module's  global  variables.
+       Don't use them except as documented.
+
+       Example:
+
+         # in a layer, setting the callback for TestFailure:
+         $self-&gt;Prop('Test::Trap::Builder')-&gt;{on_test_failure} = \&amp;mydiag;
+
+   <b>DESTROY</b>
+       This cleans up the tag-on properties when the trap object is destroyed.  Don't try to make a trapper that
+       doesn't call this; it will get confused.
+
+       If your trapper needs its own "DESTROY", make sure it calls this one as well:
+
+         sub DESTROY {
+           my $self = shift;
+           # do your thing
+           $self-&gt;Test::Trap::Builder::DESTROY;
+           # and more things
+         }
+
+   <b>Run</b>
+       A  terminating  layer  should  call this method to run the user code.  Should only be called in a dynamic
+       context in which layers are being applied.
+
+   <b>Next</b>
+       Every non-terminating layer should call this method (or an equivalent) to progress  to  the  next  layer.
+       Should only be called in a dynamic context in which layers are being applied.  Note that this method need
+       not return, so any tear-down actions should probably be registered with the Teardown method (see below).
+
+   <b>Teardown</b> <b>SUBS</b>
+       If  your  layer  wants  to clean up its setup, it may use this method to register any number of tear-down
+       actions, to be performed (in reverse registration order) once the user code has  been  executed.   Should
+       only be called in a dynamic context in which layers are being applied.
+
+   <b>TestAccessor</b>
+       Returns  a  string  of  the form "<u>NAME</u>(<u>INDEX</u>)", where <u>NAME</u> and <u>INDEX</u> are the name of the accessor and the
+       index (if any) being tested.  Should only be called in the dynamic context of test callbacks.
+
+       This is intended for diagnostics:
+
+         diag( sprintf 'Expected %s in %s; got %s',
+               $expected, $self-&gt;TestAccessor, dump($got),
+             );
+
+   <b>TestFailure</b>
+       Runs the "on_test_failure" tag-on property (if any) on the trap object.  If you are writing  unregistered
+       tests, you might want to include (some variation of) this call:
+
+         $ok or $self-&gt;TestFailure;
+
+   <b>Exception</b> <b>STRINGS</b>
+       Layer  implementations  may  run into exceptional situations, in which they want the entire trap to fail.
+       Unfortunately, another layer may be trapping ordinary exceptions, so you need some kind of magic in order
+       to throw an untrappable exception.  This is one convenient way.
+
+       Should only be called in a dynamic context in which layers are being applied.
+
+       Note: The Exception method won't work if called from outside of the regular control flow, like  inside  a
+       DESTROY  method or signal handler.  If anything like this happens, CORE::exit will be called with an exit
+       code of 8.
+
+       Note: Direct calls to the Exception method within closures may cause circular references and so  leakage.
+       To avoid this, fetch an "ExceptionFunction" and call it from the closure instead.
+
+   <b>ExceptionFunction</b>
+       This method returns a function that may be called with the same effect as calling the "Exception" method,
+       allowing closures to throw exceptions without causing circular references by closing over the trap object
+       itself.
+
+       To illustrate:
+
+         # this will create a circular reference chain:
+         # trap object has property collection has teardown closure has trap object
+         $self-&gt;Teardown($_) for sub {
+           do_stuff() or $self-&gt;Exception("Stuff didn't work.");
+         };
+
+         # this will break the circular reference chain:
+         # teardown closure no longer has trap object
+         $Exception = $self-&gt;ExceptionFunction;
+         $self-&gt;Teardown($_) for sub {
+           do_things() or $Exception-&gt;("Things didn't work.");
+         };
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Returns  a  singleton  object.  Don't expect this module to work with a different instance object of this
+       class.
+
+   <b>trap</b> <b>TRAPPER,</b> <b>GLOBREF,</b> <b>LAYERARRAYREF,</b> <b>CODE</b>
+       Implements a trap for the <u>TRAPPER</u> module, applying the layers of <u>LAYERARRAYREF</u>, trapping various outcomes
+       of the user <u>CODE</u>, and storing the trap object into the scalar slot of <u>GLOBREF</u>.
+
+       In most cases, the trapper should conveniently export a function calling this method.
+
+   <b>layer</b> <b>NAME,</b> <b>CODE</b>
+       Registers a layer by <u>NAME</u> to the calling trapper.  When the layer is applied, the <u>CODE</u> will be invoked on
+       the trap object being built, with no arguments, and should call either the  <b>Next()</b>  or  <b>Run()</b>  method  or
+       equivalent.
+
+   <b>output_layer</b> <b>NAME,</b> <b>GLOBREF</b>
+       Registers  (by  <u>NAME</u>  and  to  the calling trapper) a layer for trapping output on the file handle of the
+       <u>GLOBREF</u>, using <u>NAME</u> also as the attribute name.
+
+   <b>capture_strategy</b> <b>NAME,</b> <b>[CODE]</b>
+       When called with two arguments, registers (by <u>NAME</u> and globally) a strategy for output trap layers.  When
+       called with a single argument, looks up and returns the strategy registered by <u>NAME</u> (or undef).
+
+       When a layer using this strategy is applied, the <u>CODE</u> will be called on the trap object, with  the  layer
+       name and the output handle's fileno and globref as arguments.
+
+   <b>output_layer_backend</b> <b>SPEC</b>
+       Back-compat alias of the above.
+
+   <b>first_capture_strategy</b> <b>SPEC</b>
+       Where <u>SPEC</u> is empty, just returns.
+
+       Where <u>SPEC</u> is a string of comma-or-semicolon separated names, runs through the names, returning the first
+       strategy it finds.  Dies if no strategy is found by any of these names.
+
+   <b>first_output_layer_backend</b> <b>SPEC</b>
+       Back-compat alias of the above.
+
+   <b>multi_layer</b> <b>NAME,</b> <b>LAYERS</b>
+       Registers  (by <u>NAME</u>) a layer that just pushes a number of other <u>LAYERS</u> on the stack of layers.  If any of
+       the <u>LAYERS</u> is neither an anonymous method nor the name of a layer registered to the caller or  a  trapper
+       it inherits from, an exception is raised.
+
+   <b>layer_implementation</b> <b>TRAPPER,</b> <b>LAYERS</b>
+       Returns  the  subroutines  that  implement  the  requested  <u>LAYERS</u>.   If  any of the <u>LAYERS</u> is neither an
+       anonymous method nor the name of a layer registered to or inherited  by  the  <u>TRAPPER</u>,  an  exception  is
+       raised.
+
+   <b>accessor</b> <b>NAMED_ARGS</b>
+       Generates  and  registers  any  number  of  accessors according to the <u>NAMED_ARGS</u>, and also generates the
+       proper test methods for these accessors (see below).
+
+       The following named arguments are recognized:
+
+       is_leaveby
+           If true, the tests methods will generate better diagnostics if the trap was not  left  as  specified.
+           Also,  a  special did_<u>ACCESSOR</u> test method will be generated (unless already present), simply passing
+           as long as the trap was left as specified.
+
+       is_array
+           If true, the simple accessor(s) will be smart about context and arguments, returning an  arrayref  on
+           no  argument  (in  any context), an array slice in list context (on any number of arguments), and the
+           element indexed by the first argument otherwise.
+
+       simple
+           Should be a reference to an array of accessor names.  For each name, an accessor (assuming hash based
+           trap object with accessor names as keys), will be generated and registered.
+
+       flexible
+           Should be a reference to a hash.  For each pair,  a  name  and  an  implementation,  an  accessor  is
+           generated and registered.
+
+   <b>test</b> <b>NAME,</b> <b>ARGSPEC,</b> <b>CODE</b>
+       Registers a test callback by <u>NAME</u> and to the calling trapper.
+
+       Trappers  inherit  test  callbacks like methods (though they are not implemented as such; don't expect to
+       find them in the symbol table).
+
+       Test methods of the form <u>ACCESSOR</u>_<u>TEST</u> will be made available  (directly  or  by  inheritance)  to  every
+       trapper that registers or inherits both the accessor named <u>ACCESSOR</u> and the test named <u>TEST</u>.
+
+       (In  more  detail,  the method will be generated in every trapper that either (1) registers both the test
+       and the accessor, or (2) registers either and inherits the other.)
+
+       When the test method is called, any implicit leaveby condition will be tested first, and if it passes (or
+       there were none), the <u>CODE</u> is called with arguments according to the words found in the <u>ARGSPEC</u> string:
+
+       trap
+           The trap object.
+
+       entirety
+           The <u>ACCESSOR</u>'s return value when called without arguments.
+
+       element
+           The <u>ACCESSOR</u>'s return value when called with index, if applicable (i.e. for array accessors).   Index
+           is not applicable to scalar accessors, so such are still called without index.
+
+           The index, when applicable, will be taken from the test method's arguments.
+
+       predicate
+           What  the  <u>ACCESSOR</u>'s return value should be tested against (taken from the test method's arguments).
+           (There may be any fixed number of predicates.)
+
+       name
+           The test name (taken from the test method's arguments).
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       A complete example, implementing a <u>timeout</u> layer (depending  on  Time::HiRes::ualarm  being  present),  a
+       <u>simpletee</u>  layer  (printing  the  trapped  stdout/stderr  to the original file handles after the trap has
+       sprung), and a <u>cmp_ok</u> test method template:
+
+         package My::Test::Trap;
+         use base 'Test::Trap'; # for example
+         use Test::Trap::Builder;
+
+         my $B = Test::Trap::Builder-&gt;new;
+
+         # example (layer:timeout):
+         use Time::HiRes qw/ualarm/;
+         $B-&gt;layer( timeout =&gt; $_ ) for sub {
+           my $self = shift;
+           eval {
+             local $SIG{ALRM} = sub {
+               $self-&gt;{timeout} = 1; # simple truth
+               $SIG{ALRM} = sub {die};
+               die;
+             };
+             ualarm 1000, 1; # one second max, then die repeatedly!
+             $self-&gt;Next;
+           };
+           alarm 0;
+           if ($self-&gt;{timeout}) {
+             $self-&gt;{leaveby} = 'timeout';
+             delete $self-&gt;{$_} for qw/ die exit return /;
+           }
+         };
+         $B-&gt;accessor( is_leaveby =&gt; 1,
+                       simple =&gt; ['timeout'],
+                     );
+
+         # example (layer:simpletee):
+         $B-&gt;layer( simpletee =&gt; $_ ) for sub {
+           my $self = shift;
+           for (qw/ stdout stderr /) {
+             exists $self-&gt;{$_} or $self-&gt;Exception("Too late to tee $_");
+           }
+           $self-&gt;Teardown($_) for sub {
+             print STDOUT $self-&gt;{stdout} if exists $self-&gt;{stdout};
+             print STDERR $self-&gt;{stderr} if exists $self-&gt;{stderr};
+           };
+           $self-&gt;Next;
+         };
+         # no accessor for this layer
+
+         $B-&gt;multi_layer( flow =&gt; qw/ raw die exit timeout / );
+         $B-&gt;multi_layer( default =&gt; qw/ flow stdout stderr warn simpletee / );
+
+         $B-&gt;test_method( cmp_ok =&gt; 1, 2, \&amp;Test::More::cmp_ok );
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       The interface of this module is likely to remain somewhat in flux for a while yet.
+
+       The   different   strategies   for    output    trap    layers    have    their    own    caveats;    see
+       Test::Trap::Builder::Tempfile, Test::Trap::Builder::PerlIO, Test::Trap::Builder::SystemSafe.
+
+       Multiple inheritance is not (yet?) fully supported.  If one parent has registered a test callback "X" and
+       another has registered an accessor "Y", the test method "Y_X" will not be generated.
+
+       Threads?  No idea.  It might even work correctly.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests directly to the author.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Eirik Berg Hanssen, "&lt;<a href="mailto:ebhanssen@cpan.org">ebhanssen@cpan.org</a>&gt;"
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2006-2014 Eirik Berg Hanssen, All Rights Reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-08-01                           <u>Test::Trap::<a href="../man3pm/Builder.3pm.html">Builder</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

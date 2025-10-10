@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ares_parse_caa_reply - Parse a reply to a DNS query of type CAA</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libc-ares-dev">libc-ares-dev_1.34.5-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ares_parse_caa_reply - Parse a reply to a DNS query of type CAA
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include &lt;ares.h&gt;
+
+       int ares_parse_caa_reply(const unsigned char* <u>abuf</u>, int <u>alen</u>,
+                                struct ares_caa_reply **<u>caa_out</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>ares_parse_caa_reply</b>  function  parses  the  response to a query of type CAA into a linked list (one
+       element per sub-string) of <u>struct</u> <u>ares_caa_reply</u> The parameters <u>abuf</u> and <u>alen</u> give the  contents  of  the
+       response.   The result is stored in allocated memory and a pointer to it stored into the variable pointed
+       to by <u>caa_out</u>.  It is the caller's responsibility to free the resulting <u>caa_out</u> structure when it  is  no
+       longer needed using the function <b><a href="../man3/ares_free_data.3.html">ares_free_data</a>(3)</b>
+
+       The structure <u><a href="../man3/ares_caa_reply.3.html">ares_caa_reply</a>(3)</u> contains the following fields:
+
+           struct ares_caa_reply {
+             struct ares_caa_reply *next;
+             int                    critical;
+             unsigned char         *property;
+             size_t                 plength; /* plength excludes null */
+             unsigned char         *value;
+             size_t                 length;  /* length excludes null */
+           };
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       <b>ares_parse_caa_reply</b> can return any of the following values:
+
+       <b>ARES_SUCCESS</b>   The response was successfully parsed.
+
+       <b>ARES_EBADRESP</b>  The response was malformatted.
+
+       <b>ARES_ENODATA</b>   The response did not contain an answer to the query.
+
+       <b>ARES_ENOMEM</b>    Memory was exhausted.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       #include &lt;<a href="file:/usr/include/arpa/inet.h">arpa/inet.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/time.h">time.h</a>&gt;
+       #include &lt;sys/time.h&gt;
+       #include &lt;<a href="file:/usr/include/netdb.h">netdb.h</a>&gt;
+
+       #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+       #include "ares.h"
+
+       static void dns_callback(void *arg,
+                                int status,
+                                int timeouts,
+                                unsigned char *abuf,
+                                int alen)
+         {
+           struct ares_caa_reply *caa_out;
+           int err;
+
+           err = ares_parse_caa_reply (abuf, alen, &amp;caa_out);
+           if (err == ARES_SUCCESS)
+             {
+               struct ares_caa_reply *caa_curr;
+               for (caa_curr=caa_out; caa_curr; caa_curr=caa_curr-&gt;next)
+                 printf ("%s. CAA %i %s \"%s\"\n", arg,
+                                                   caa_curr-&gt;critical,
+                                                   caa_curr-&gt;property,
+                                                   caa_curr-&gt;value);
+             }
+           else
+             {
+               printf ("err=%i\n", err);
+             }
+           ares_free_data (caa_out);
+         }
+
+       static void main_loop(ares_channel_t **channel)
+         {
+           int nfds, count;
+           fd_set readers, writers;
+           struct timeval tv, *tvp;
+           while (1)
+             {
+               FD_ZERO (&amp;readers);
+               FD_ZERO (&amp;writers);
+               nfds = ares_fds (*channel, &amp;readers, &amp;writers);
+               if (nfds == 0)
+                 break;
+               tvp = ares_timeout (*channel, NULL, &amp;tv);
+               count = select (nfds, &amp;readers, &amp;writers, NULL, tvp);
+               ares_process (*channel, &amp;readers, &amp;writers);
+             }
+         }
+
+       int main(int argc, char **argv)
+         {
+           const char *sversion;
+           int iversion;
+           int err;
+
+           sversion = ares_version (&amp;iversion);
+           printf ("c-ares version %s\n", sversion);
+
+           char *domain = "wikipedia.org";
+           if (argc &gt; 1)
+             domain = argv[1];
+
+           ares_channel_t *channel;
+           if ((err = ares_init (&amp;channel)) != ARES_SUCCESS)
+             {
+               printf ("ares_init() failed (%i)\n", err);
+               exit (EXIT_FAILURE);
+             }
+
+           ares_query (channel, domain,
+                       1,   /* ns_c_in */
+                       257, /* T_CAA */
+                       dns_callback, domain);
+
+           main_loop (&amp;channel);
+
+           ares_destroy (channel);
+
+           exit (EXIT_SUCCESS);
+         }
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       This function was first introduced in c-ares version 1.17.0.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/ares_query.3.html">ares_query</a></b>(3) <b><a href="../man3/ares_free_data.3.html">ares_free_data</a></b>(3)
+
+                                                16 September 2020                        <u><a href="../man3/ARES_PARSE_CAA_REPLY.3.html">ARES_PARSE_CAA_REPLY</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>critcl_tcl9 - How To Adapt Critcl Packages for Tcl 9</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/critcl">critcl_3.3.1+dfsg-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       critcl_tcl9 - How To Adapt Critcl Packages for Tcl 9
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Be  welcome  to the <u>C</u> <u>Runtime</u> <u>In</u> <u>Tcl</u> (short: <u>CriTcl</u>), a system for embedding and using C code from within
+       <u>Tcl</u> [<a href="http://core.tcl-lang.org/tcl">http://core.tcl-lang.org/tcl</a>] scripts.
+
+       This guide contains notes and actions to take by writers of <u>CriTcl</u>-based  packages  to  make  their  code
+       workable for both Tcl 8.6 and 9.
+
+       [1]    Generally,  if  there  is  no interest in moving to Tcl 9, i.e. Tcl 8.[456] are the only supported
+              runtimes, then just keep using <u>CriTcl</u> <b>3.2</b>.
+
+              The remainder of this document can be ignored.
+
+       [2]    Use <u>CriTcl</u> version 3.3.1 <u>if,</u> <u>and</u> <u>only</u> <u>if</u> Tcl 9 support is wanted.
+
+              With some work this will then also provide backward compatibility with Tcl 8.6.
+
+       [3]    Header "<u>tcl.h</u>"
+
+              Replace any inclusion of Tcl's public "<u>tcl.h</u>" header  file  in  the  package's  C  code  with  the
+              inclusion of <u>CriTcl</u>'s new header file "<u>tclpre9compat.h</u>".
+
+              This  includes  "<u>tcl.h</u>"  and  further  provides  a  set  of  compatibility  definitions which make
+              supporting both Tcl 8.6 and Tcl 9 in a single code base easier.
+
+              The following notes assume that this compatibility layer is in place.
+
+       [4]    <b>critcl::tcl</b>
+
+              Before <u>CriTcl</u> 3.3.1 a single default (<b>8.4</b>) was used for the minimum Tcl version, to  be  overriden
+              by an explicit <b>critcl::tcl</b> in the package code.
+
+              Now the default is dynamic, based on the <u>runtime</u> version, i.e.  <b>package</b> <b>provide</b> <b>Tcl</b>, <u>CriTcl</u> is run
+              with/on.
+
+              When running on Tcl 9 the new default is version <b>9</b>, and <b>8.6</b> else.  <u>Note</u> how this other default was
+              bumped up from <b>8.4</b>.
+
+              As a consequence it is possible to
+
+              [1]    Support just Tcl 8.4+, 8.5+, by having an explicit <b>critcl::tcl</b> <b>8.x</b> in the package code.
+
+                     <u>Remember</u> <u>however</u>, it is better to simply stick with <u>CriTcl</u> <b>3.2</b> for this.
+
+              [2]    Support just Tcl 9 by having an explicit <b>critcl::tcl</b> <b>9</b> in the package code.
+
+              [3]    Support both Tcl 8.6 and Tcl 9 (but not 8.4/8.5) by leaving <b>critcl::tcl</b> out of the code and
+                     using the proper <b>tclsh</b> version to run <u>CriTcl</u> with.
+
+       [5]    Code checking
+
+              <u>CriTcl</u>  3.3.1  comes  with a very basic set of code checks pointing out places where compatibility
+              might or will be an issue.
+
+              The implementation  checks  all  inlined  C  code  declared  by  <b>critcl::ccode</b>,  <b>critcl::ccommand</b>,
+              <b>critcl::cproc</b>  (and  related/derived  commands),  as  well  as the C companion files declared with
+              <b>critcl::csources</b>.
+
+              It is very basic because it simply greps the code line by  line  for  a  number  of  patterns  and
+              reports  on their presence. The C code is not fully parsed.  The check can and will report pattern
+              found in C code comments, for example.
+
+              The main patterns deal with functions affected by the change to <b>Tcl_Size</b>, the removal of old-style
+              interpreter state handling, and command creation.
+
+              A warning message is printed for all detections.
+
+              This is disabled for the <b>Tcl_Size</b>-related pattern if the line also matches the pattern <b>*OK</b> <b>tcl9*</b>.
+
+              In this way all places in the code already handled can be marked and excluded from the warnings.
+
+              [1]    Interpreter State handling
+
+                     Tcl 9 removed  the  type  <b>Tcl_SavedResult</b>  and  its  associated  functions  <b>Tcl_SaveResult</b>,
+                     <b>Tcl_RestoreResult</b>, and <b>Tcl_DiscardResult</b>.
+
+                     When a package uses this type and the related functions a rewrite is necessary.
+
+                     With   Tcl   9   use   of  type  <b>Tcl_InterpState</b>  and  its  functions  <b>Tcl_SaveInterpState</b>,
+                     <b>Tcl_RestoreInterpState</b>, and <b>Tcl_DiscardInterpState</b> is now required.
+
+                     As these were introduced with Tcl 8.5 the rewrite gives us compatibility with Tcl  8.6  for
+                     free.
+
+              [2]    <b>Tcl_Size</b>
+
+                     One  of  the  main  changes introduced with Tcl 9 is the breaking of the 2G barrier for the
+                     number of bytes in a string, elements in a list, etc.  In  a  lot  of  interfaces  <b>int</b>  was
+                     replaced with <b>Tcl_Size</b>, which is effectively <b>ptrdiff_t</b> behind the scenes.
+
+                     The "<u>tclpre9compat.h</u>" header mentioned above provides a suitable definition of <b>Tcl_Size</b> for
+                     <b>8.6</b>,  i.e.  maps  it  to <b>int</b>.  This enables the package code to use <b>Tcl_Size</b> everywhere and
+                     still have it work for both Tcl 8.6 and 9.
+
+                     It is of course necessary to rewrite the package code to use <b>Tcl_Size</b>.
+
+                     The checker reports all lines in the C code using a function whose signature was changed to
+                     use <b>Tcl_Size</b> over <b>int</b>.
+
+                     Note that it is necessary to manually check the package code for places  where  a  <b>%d</b>  text
+                     formatting specification should be replaced with <b>TCL_SIZE_FMT</b>.
+
+                     I.e.  all  places  where  <b>Tcl_Size</b>  values  are  formatted  with  <b>printf</b>-style  functions a
+                     formatting string
+
+                     "... %d ..."
+
+              has
+
+                     "... " TCL_SIZE_FMT " ..."
+
+              The macro <b>TCL_SIZE_FMT</b> is defined  by  Critcl's  compatibility  layer,  as  an  extension  of  the
+              <b>TCL_SIZE_MODIFIER</b>  macro  which only contains the formatting modifier to insert into a plain <b>%d</b> to
+              handle <b>Tcl_Size</b> values.
+
+              <u>Note</u> how the original formatting string is split into multiple strings.  The C compiler will  fuse
+              these back together into a single string.
+
+              [3]    Command creation.
+
+                     This is technically a part of the <b>Tcl_Size</b> changes.
+
+                     All  places  using  <b>Tcl_CreateObjCommand</b>  have to be rewritten to use <b>Tcl_CreateObjCommand2</b>
+                     instead, and the registered command functions to use <b>Tcl_Size</b> for their <u>objc</u> argument.
+
+                     The "<u>tclpre9compat.h</u>" header maps this back to the old function when  compilation  is  done
+                     against Tcl 8.6.
+
+                     <u>CriTcl</u>  does  this itself for the commands created via <b>critcl::ccommand</b>, <b>critcl::cproc</b>, and
+                     derived places (<b>critcl::class</b>).
+
+              [4]    TIP 494. This TIP adds three semantic constants wrapping <b>-1</b> to Tcl 9 to make the meaning of
+                     code clearer. As part of this it also casts the constant to the proper type. They are:
+
+                     •      <b>TCL_IO_FAILURE</b>
+
+                     •      <b>TCL_AUTO_LENGTH</b>
+
+                     •      <b>TCL_INDEX_NONE</b>
+
+              Critcl's compatibility layer provides the same constants to Tcl 8.6.
+
+              Critcl's new checker highlights places where <b>TCL_AUTO_LENGTH</b> is suitable.
+
+              Doing this for the other two constants looks to require deeper and proper parsing of C code, which
+              the checker does not do.
+
+</pre><h4><b>ADDITIONAL</b> <b>REFERENCES</b></h4><pre>
+       [1]    <u>https://wiki.tcl-lang.org/page/Porting+extensions+to+Tcl+9</u>
+
+       [2]    <u>https://wiki.tcl-lang.org/page/Tcl+9+functions+using+Tcl%5FSize</u>
+
+       [3]    <u>https://core.tcl-lang.org/tcl/wiki?name=Migrating%20scripts%20to%20Tcl%209</u>
+
+       [4]    <u>https://core.tcl-lang.org/tcl/wiki?name=Migrating%20C%20extensions%20to%20Tcl%209</u>
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Jean Claude Wippler, Steve Landers, Andreas Kupries
+
+</pre><h4><b>BUGS,</b> <b>IDEAS,</b> <b>FEEDBACK</b></h4><pre>
+       This document, and the package it describes, will undoubtedly contain bugs and  other  problems.   Please
+       report them at <u>https://github.com/andreas-kupries/critcl/issues</u>.  Ideas for enhancements you may have for
+       either  package,  application,  and/or  the documentation are also very welcome and should be reported at
+       <u>https://github.com/andreas-kupries/critcl/issues</u> as well.
+
+</pre><h4><b>KEYWORDS</b></h4><pre>
+       C code, Embedded C Code, calling C code from Tcl, code generator, compile &amp; run, compiler,  dynamic  code
+       generation, dynamic compilation, generate package, linker, on demand compilation, on-the-fly compilation
+
+</pre><h4><b>CATEGORY</b></h4><pre>
+       Glueing/Embedded C code
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) Jean-Claude Wippler
+       Copyright (c) Steve Landers
+       Copyright (c) 2011-2024 Andreas Kupries
+
+doc                                                   3.3.1                                    <u><a href="../man3tcl/critcl_tcl9.3tcl.html">critcl_tcl9</a></u>(3tcl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Cookbook::Meta::GlobRef_InstanceMetaclass - Creating a glob reference meta-instance class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Cookbook::Meta::GlobRef_InstanceMetaclass - Creating a glob reference meta-instance class
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::Meta::Instance;
+
+         use Scalar::Util qw( weaken );
+         use Symbol qw( gensym );
+
+         use Moose::Role;
+
+         sub create_instance {
+             my $self = shift;
+             my $sym = gensym();
+             bless $sym, $self-&gt;_class_name;
+         }
+
+         sub clone_instance {
+             my ( $self, $instance ) = @_;
+
+             my $new_sym = gensym();
+             %{*$new_sym} = %{*$instance};
+
+             bless $new_sym, $self-&gt;_class_name;
+         }
+
+         sub get_slot_value {
+             my ( $self, $instance, $slot_name ) = @_;
+             return *$instance-&gt;{$slot_name};
+         }
+
+         sub set_slot_value {
+             my ( $self, $instance, $slot_name, $value ) = @_;
+             *$instance-&gt;{$slot_name} = $value;
+         }
+
+         sub deinitialize_slot {
+             my ( $self, $instance, $slot_name ) = @_;
+             delete *$instance-&gt;{$slot_name};
+         }
+
+         sub is_slot_initialized {
+             my ( $self, $instance, $slot_name ) = @_;
+             exists *$instance-&gt;{$slot_name};
+         }
+
+         sub weaken_slot_value {
+             my ( $self, $instance, $slot_name ) = @_;
+             weaken *$instance-&gt;{$slot_name};
+         }
+
+         sub inline_create_instance {
+             my ( $self, $class_variable ) = @_;
+             return 'do { my $sym = Symbol::gensym(); bless $sym, ' . $class_variable . ' }';
+         }
+
+         sub inline_slot_access {
+             my ( $self, $instance, $slot_name ) = @_;
+             return '*{' . $instance . '}-&gt;{' . $slot_name . '}';
+         }
+
+         package MyApp::User;
+
+         use Moose;
+         Moose::Util::MetaRole::apply_metaroles(
+             for =&gt; __PACKAGE__,
+             class_metaroles =&gt; {
+                 instance =&gt; ['My::Meta::Instance'],
+             },
+         );
+
+         has 'name' =&gt; (
+             is  =&gt; 'rw',
+             isa =&gt; 'Str',
+         );
+
+         has 'email' =&gt; (
+             is  =&gt; 'rw',
+             isa =&gt; 'Str',
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This recipe shows how to build your own meta-instance. The meta instance is the metaclass that creates
+       object instances and helps manages access to attribute slots.
+
+       In this example, we're creating a meta-instance that is based on a glob reference rather than a hash
+       reference. This example is largely based on the Piotr Roszatycki's MooseX::GlobRef module.
+
+       Our extension is a role which will be applied to Moose::Meta::Instance, which creates hash reference
+       based objects. We need to override all the methods which make assumptions about the object's data
+       structure.
+
+       The first method we override is "create_instance":
+
+         sub create_instance {
+             my $self = shift;
+             my $sym = gensym();
+             bless $sym, $self-&gt;_class_name;
+         }
+
+       This returns an glob reference which has been blessed into our meta-instance's associated class.
+
+       We also override "clone_instance" to create a new array reference:
+
+         sub clone_instance {
+             my ( $self, $instance ) = @_;
+
+             my $new_sym = gensym();
+             %{*$new_sym} = %{*$instance};
+
+             bless $new_sym, $self-&gt;_class_name;
+         }
+
+       After that, we have a series of methods which mediate access to the object's slots (attributes are stored
+       in "slots"). In the default instance class, these expect the object to be a hash reference, but we need
+       to change this to expect a glob reference instead.
+
+         sub get_slot_value {
+             my ( $self, $instance, $slot_name ) = @_;
+             *$instance-&gt;{$slot_name};
+         }
+
+       This level of indirection probably makes our instance class <u>slower</u> than the default. However, when
+       attribute access is inlined, this lookup will be cached:
+
+         sub inline_slot_access {
+             my ( $self, $instance, $slot_name ) = @_;
+             return '*{' . $instance . '}-&gt;{' . $slot_name . '}';
+         }
+
+       The code snippet that the "inline_slot_access" method returns will get "eval"'d once per attribute.
+
+       Finally, we use this meta-instance in our "MyApp::User" class:
+
+         Moose::Util::MetaRole::apply_metaroles(
+             for =&gt; __PACKAGE__,
+             class_metaroles =&gt; {
+                 instance =&gt; ['My::Meta::Instance'],
+             },
+         );
+
+       We actually don't recommend the use of Moose::Util::MetaRole directly in your class in most cases.
+       Typically, this would be provided by a Moose::Exporter-based module which handles applying the role for
+       you.
+
+</pre><h4><b>CONCLUSION</b></h4><pre>
+       This recipe shows how to create your own meta-instance class. It's unlikely that you'll need to do this
+       yourself, but it's interesting to take a peek at how Moose works under the hood.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       There are a few meta-instance class extensions on CPAN:
+
+       •   MooseX::Singleton
+
+           This  module  extends  the  instance  class  in  order  to ensure that the object is a singleton. The
+           instance it uses is still a blessed hash reference.
+
+       •   MooseX::GlobRef
+
+           This module makes the instance a blessed glob reference. This lets you use  a  handle  as  an  object
+           instance.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20             <u>Moose::<a href="../man3pm/Cookbook...stanceMetaclass.3pm.html">Cookbook...stanceMetaclass</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

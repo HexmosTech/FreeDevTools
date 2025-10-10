@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uio, uiomove, uiomove_frombuf, uiomove_nofault — device driver I/O routines</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       uio, uiomove, uiomove_frombuf, uiomove_nofault — device driver I/O routines
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/uio.h&gt;</b>
+
+       struct uio {
+               struct  iovec *uio_iov;         /* scatter/gather list */
+               int     uio_iovcnt;             /* length of scatter/gather list */
+               off_t   uio_offset;             /* offset in target object */
+               ssize_t uio_resid;              /* remaining bytes to copy */
+               enum    uio_seg uio_segflg;     /* address space */
+               enum    uio_rw uio_rw;          /* operation */
+               struct  thread *uio_td;         /* owner */
+       };
+
+       <u>int</u>
+       <b>uiomove</b>(<u>void</u> <u>*buf</u>, <u>int</u> <u>howmuch</u>, <u>struct</u> <u>uio</u> <u>*uiop</u>);
+
+       <u>int</u>
+       <b>uiomove_frombuf</b>(<u>void</u> <u>*buf</u>, <u>int</u> <u>howmuch</u>, <u>struct</u> <u>uio</u> <u>*uiop</u>);
+
+       <u>int</u>
+       <b>uiomove_nofault</b>(<u>void</u> <u>*buf</u>, <u>int</u> <u>howmuch</u>, <u>struct</u> <u>uio</u> <u>*uiop</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  functions  <b>uiomove</b>(),  <b>uiomove_frombuf</b>(),  and  <b>uiomove_nofault</b>()  are used to transfer data between
+       buffers and I/O vectors that might possibly cross the user/kernel space boundary.
+
+       As a result of any <u><a href="../man2/read.2.html">read</a></u>(2), <u><a href="../man2/write.2.html">write</a></u>(2), <u><a href="../man2/readv.2.html">readv</a></u>(2), or <u><a href="../man2/writev.2.html">writev</a></u>(2) system  call  that  is  being  passed  to  a
+       character-device  driver, the appropriate driver <u>d_read</u> or <u>d_write</u> entry will be called with a pointer to
+       a <u>struct</u> <u>uio</u> being passed.  The transfer request is encoded in this structure.  The driver itself  should
+       use <b>uiomove</b>() or <b>uiomove_nofault</b>() to get at the data in this structure.
+
+       The fields in the <u>uio</u> structure are:
+
+       <u>uio_iov</u>     The  array  of  I/O vectors to be processed.  In the case of scatter/gather I/O, this will be
+                   more than one vector.
+
+       <u>uio_iovcnt</u>  The number of I/O vectors present.
+
+       <u>uio_offset</u>  The offset into the device.
+
+       <u>uio_resid</u>   The remaining number of bytes to process, updated after transfer.
+
+       <u>uio_segflg</u>  One of the following flags:
+
+                   UIO_USERSPACE  The I/O vector points into a process's address space.
+
+                   UIO_SYSSPACE   The I/O vector points into the kernel address space.
+
+                   UIO_NOCOPY     Do not copy, already in object.
+
+       <u>uio_rw</u>      The direction of the desired transfer, either UIO_READ or UIO_WRITE.
+
+       <u>uio_td</u>      The pointer to a <u>struct</u> <u>thread</u> for the associated thread; used if <u>uio_segflg</u>  indicates  that
+                   the transfer is to be made from/to a process's address space.
+
+       The function <b>uiomove_nofault</b>() requires that the buffer and I/O vectors be accessible without incurring a
+       page  fault.   The  source and destination addresses must be physically mapped for read and write access,
+       respectively, and neither the source nor destination addresses  may  be  pageable.   Thus,  the  function
+       <b>uiomove_nofault</b>() can be called from contexts where acquiring virtual memory system locks or sleeping are
+       prohibited.
+
+       The  <b>uiomove_frombuf</b>()  function  is  a  convenience wrapper around <b>uiomove</b>() for drivers that serve data
+       which is wholly contained within an existing buffer in memory.  It validates the <u>uio_offset</u> and <u>uio_resid</u>
+       values against the size of the existing buffer, handling  short  transfers  when  the  request  partially
+       overlaps  the buffer.  When <u>uio_offset</u> is greater than or equal to the buffer size, the result is success
+       with no bytes transferred, effectively signaling EOF.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       On success <b>uiomove</b>(), <b>uiomove_frombuf</b>(), and <b>uiomove_nofault</b>() will return 0; on error they  will  return
+       an appropriate error code.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  idea is that the driver maintains a private buffer for its data, and processes the request in chunks
+       of maximal the size of this buffer.  Note that the buffer handling below is very simplified and will  not
+       work (the buffer pointer is not being advanced in case of a partial read), it is just here to demonstrate
+       the <b>uio</b> handling.
+
+       /* MIN() can be found there: */
+       #include &lt;sys/param.h&gt;
+
+       #define BUFSIZE 512
+       static char buffer[BUFSIZE];
+
+       static int data_available;      /* amount of data that can be read */
+
+       static int
+       fooread(struct cdev *dev, struct uio *uio, int flag)
+       {
+               int rv, amnt;
+
+               rv = 0;
+               while (uio-&gt;uio_resid &gt; 0) {
+                       if (data_available &gt; 0) {
+                               amnt = MIN(uio-&gt;uio_resid, data_available);
+                               rv = uiomove(buffer, amnt, uio);
+                               if (rv != 0)
+                                       break;
+                               data_available -= amnt;
+                       } else
+                               tsleep(...);    /* wait for a better time */
+               }
+               if (rv != 0) {
+                       /* do error cleanup here */
+               }
+               return (rv);
+       }
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       <b>uiomove</b>() and <b>uiomove_nofault</b>() will fail and return the following error code if:
+
+       [EFAULT]           The invoked <u><a href="../man9/copyin.9.html">copyin</a></u>(9) or <u><a href="../man9/copyout.9.html">copyout</a></u>(9) returned EFAULT
+
+       In addition, <b>uiomove_nofault</b>() will fail and return the following error code if:
+
+       [EFAULT]           A page fault occurs.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man2/read.2.html">read</a></u>(2), <u><a href="../man2/readv.2.html">readv</a></u>(2), <u><a href="../man2/write.2.html">write</a></u>(2), <u><a href="../man2/writev.2.html">writev</a></u>(2), <u><a href="../man9/copyin.9.html">copyin</a></u>(9), <u><a href="../man9/copyout.9.html">copyout</a></u>(9), <u><a href="../man9/sleep.9.html">sleep</a></u>(9)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>uio</b> mechanism appeared in some early version of Unix.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was written by Jörg Wunsch.
+
+Debian                                           March 11, 2017                                           <u><a href="../man9/UIO.9.html">UIO</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

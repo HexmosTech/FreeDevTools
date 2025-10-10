@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Server - Extensible, general Perl server engine</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-server-perl">libnet-server-perl_2.014-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Server - Extensible, general Perl server engine
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -w -T
+           package MyPackage;
+
+           use base qw(Net::Server);
+
+           sub process_request {
+               my $self = shift;
+               while (&lt;STDIN&gt;) {
+                   s/[\r\n]+$//;
+                   print "You said '$_'\015\012"; # basic echo
+                   last if /quit/i;
+               }
+           }
+
+           MyPackage-&gt;run(port =&gt; 160, ipv =&gt; '*');
+
+           # one liner to get going quickly
+           perl -e 'use base qw(Net::Server); main-&gt;run(port =&gt; 20208)'
+
+           NOTE: beginning in Net::Server 2.005, the default value for
+                 ipv is IPv* meaning that if no host is passed, or
+                 a hostname is past, any available IPv4 and IPv6 sockets will be
+                 bound.  You can force IPv4 only by adding an ipv =&gt; 4
+                 configuration in any of the half dozen ways we let you
+                 specify it.
+
+</pre><h4><b>FEATURES</b></h4><pre>
+           * Full IPv6 support
+           * Working SSL sockets and https (both with and without IO::Socket::SSL)
+           * Single Server Mode
+           * Inetd Server Mode
+           * Preforking Simple Mode (PreForkSimple)
+           * Preforking Managed Mode (PreFork)
+           * Forking Mode
+           * Multiplexing Mode using a single process
+           * Multi port accepts on Single, Preforking, and Forking modes
+           * Basic HTTP Daemon (supports IPv6, SSL, full apache style logs)
+           * Basic PSGI Daemon
+           * Simultaneous accept/recv on tcp/udp/unix, ssl/tcp, and IPv4/IPv6 sockets
+           * Safe signal handling in Fork/PreFork avoids perl signal trouble
+           * User customizable hooks
+           * Chroot ability after bind
+           * Change of user and group after bind
+           * Basic allow/deny access control
+           * Pluggable logging (Sys::Syslog, Log::Log4perl, log_file, STDERR, or your own)
+           * HUP able server (clean restarts via sig HUP)
+           * Graceful shutdowns (via sig QUIT)
+           * Hot deploy in Fork and PreFork modes (via sig TTIN and TTOU)
+           * Dequeue ability in all Fork and PreFork modes.
+           * Taint clean
+           * Written in Perl
+           * Protection against buffer overflow
+           * Clean process flow
+           * Extensibility
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Net::Server" is an extensible, generic Perl server engine.
+
+       "Net::Server" attempts to be a generic server as in "Net::Daemon" and "NetServer::Generic".  It includes
+       with it the ability to run as an inetd process ("Net::Server::INET"), a single connection server
+       ("Net::Server" or "Net::Server::Single"), a forking server ("Net::Server::Fork"), a preforking server
+       which maintains a constant number of preforked children ("Net::Server::PreForkSimple"), or as a managed
+       preforking server which maintains the number of children based on server load ("Net::Server::PreFork").
+       In all but the inetd type, the server provides the ability to connect to one or to multiple server ports.
+
+       The additional server types are made possible via "personalities" or sub classes of the "Net::Server".
+       By moving the multiple types of servers out of the main "Net::Server" class, the "Net::Server" concept is
+       easily extended to other types (in the near future, we would like to add a "Thread" personality).
+
+       "Net::Server" borrows several concepts from the Apache Webserver.  "Net::Server" uses "hooks" to allow
+       custom servers such as SMTP, HTTP, POP3, etc. to be layered over the base "Net::Server" class.  In
+       addition the "Net::Server::PreFork" class borrows concepts of min_start_servers, max_servers, and
+       min_waiting servers.  "Net::Server::PreFork" also uses the concept of an flock serialized accept when
+       accepting on multiple ports (PreFork can choose between flock, IPC::Semaphore, and pipe to control
+       serialization).
+
+</pre><h4><b>PERSONALITIES</b></h4><pre>
+       "Net::Server" is built around a common class (Net::Server) and is extended using sub classes, or
+       "personalities".  Each personality inherits, overrides, or enhances the base methods of the base class.
+
+       Included with the Net::Server package are several basic personalities, each of which has their own use.
+
+       Fork
+           Found  in  the  module  Net/Server/Fork.pm (see Net::Server::Fork).  This server binds to one or more
+           ports and then waits for a connection.  When a client request is received, the parent forks a  child,
+           which then handles the client and exits.  This is good for moderately hit services.
+
+       INET
+           Found  in  the module Net/Server/INET.pm (see Net::Server::INET).  This server is designed to be used
+           with inetd.  The "pre_bind", "bind", "accept", and "post_accept" are all overridden as these services
+           are taken care of by the INET daemon.
+
+       MultiType
+           Found in the module Net/Server/MultiType.pm (see Net::Server::MultiType).  This server has no  server
+           functionality  of  its  own.   It  is  designed  for servers which need a simple way to easily switch
+           between  different   personalities.    Multiple   "server_type"   parameters   may   be   given   and
+           Net::Server::MultiType will cycle through until it finds a class that it can use.
+
+       Multiplex
+           Found  in  the module Net/Server/Multiplex.pm (see Net::Server::Multiplex).  This server binds to one
+           or more ports.  It uses IO::Multiplex to multiplex between waiting for new  connections  and  waiting
+           for  input  on currently established connections.  This personality is designed to run as one process
+           without forking.  The "process_request" method is never used but the  "mux_input"  callback  is  used
+           instead  (see  also  IO::Multiplex).   See  examples/samplechat.pl  for  an example using most of the
+           features of Net::Server::Multiplex.
+
+       PreForkSimple
+           Found in the module Net/Server/PreFork.pm (see Net::Server::PreFork).  This server binds  to  one  or
+           more  ports  and then forks "max_servers" child process.  The server will make sure that at any given
+           time there are always "max_servers" available to receive a client request.  Each  of  these  children
+           will  process up to "max_requests" client connections.  This type is good for a heavily hit site that
+           can dedicate max_server  processes  no  matter  what  the  load.   It  should  scale  well  for  most
+           applications.   Multi  port  accept  is  accomplished  using either flock, IPC::Semaphore, or pipe to
+           serialize the children.  Serialization may also be switched on for single port in order to get around
+           an OS that does not allow multiple children to accept at the same time.  For a further discussion  of
+           serialization see Net::Server::PreFork.
+
+       PreFork
+           Found  in  the  module Net/Server/PreFork.pm (see Net::Server::PreFork).  This server binds to one or
+           more ports and then forks "min_servers" child process.  The server will make sure that at  any  given
+           time  there  are  at  least  "min_spare_servers"  but  not more than "max_spare_servers" available to
+           receive a client  request,  up  to  "max_servers".   Each  of  these  children  will  process  up  to
+           "max_requests"  client  connections.  This type is good for a heavily hit site, and should scale well
+           for most applications.  Multi port accept is accomplished using either flock, IPC::Semaphore, or pipe
+           to serialize the children.  Serialization may also be switched on for single port  in  order  to  get
+           around  an  OS  that  does  not  allow  multiple  children to accept at the same time.  For a further
+           discussion of serialization see Net::Server::PreFork.
+
+       Single
+           All methods fall back  to  Net::Server.   This  personality  is  provided  only  as  parallelism  for
+           Net::Server::MultiType.
+
+       HTTP
+           Not  a  distinct  personality.   Provides  a basic HTTP daemon.  This can be combined with the SSL or
+           SSLEAY proto to provide an HTTPS Daemon.  See Net::Server::HTTP.
+
+       "Net::Server" was partially written to make it easy to add new  personalities.   Using  separate  modules
+       built upon an open architecture allows for easy addition of new features, a separate development process,
+       and reduced code bloat in the core module.
+
+</pre><h4><b>SOCKET</b> <b>ACCESS</b></h4><pre>
+       Once  started,  the  Net::Server  will  take care of binding to port and waiting for connections.  Once a
+       connection is received, the Net::Server will accept on the socket and will store the result  (the  client
+       connection) in $self-&gt;{server}-&gt;{client}.  This property is a Socket blessed into the IO::Socket classes.
+       UDP servers are slightly different in that they will perform a <b>recv</b> instead of an <b>accept</b>.
+
+       To  make  programming  easier,  during  the  post_accept phase, STDIN and STDOUT are opened to the client
+       connection.  This allows for programs to be written using &lt;STDIN&gt; and  print  "out\n"  to  print  to  the
+       client connection.  UDP will require using a -&gt;send call.
+
+</pre><h4><b>SAMPLE</b> <b>CODE</b></h4><pre>
+       The  following is a very simple server.  The main functionality occurs in the process_request method call
+       as shown below.  Notice the use of timeouts to prevent Denial of Service while reading.  (Other  examples
+       of using "Net::Server" can, or will, be included with this distribution).
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -w -T
+
+           package MyPackage;
+
+           use strict;
+           use base qw(Net::Server::PreFork); # any personality will do
+
+           MyPackage-&gt;run;
+
+           # over-ride the default echo handler
+
+           sub process_request {
+               my $self = shift;
+               eval {
+
+                   local $SIG{'ALRM'} = sub { die "Timed Out!\n" };
+                   my $timeout = 30; # give the user 30 seconds to type some lines
+
+                   my $previous_alarm = alarm($timeout);
+                   while (&lt;STDIN&gt;) {
+                       s/\r?\n$//;
+                       print "You said '$_'\r\n";
+                       alarm($timeout);
+                   }
+                   alarm($previous_alarm);
+
+               };
+
+               if ($@ =~ /timed out/i) {
+                   print STDOUT "Timed Out.\r\n";
+                   return;
+               }
+
+           }
+
+           1;
+
+       Playing  this  file  from the command line will invoke a Net::Server using the PreFork personality.  When
+       building a server layer over the Net::Server, it is important to use features such as timeouts to prevent
+       Denial Of Service attacks.
+
+       Net::Server comes with a built in echo server by default.  You can test it  out  by  simply  running  the
+       following from the commandline:
+
+           net-server
+
+       If you wanted to try another flavor you could try
+
+           net-server PreFork
+
+       If you wanted to try out a basic HTTP server you could use
+
+           net-server HTTP
+
+       Or if you wanted to test out a CGI you are writing you could use
+
+           net-server HTTP --app ../../mycgi.cgi
+
+</pre><h4><b>ARGUMENTS</b></h4><pre>
+       There  are  at  least  five  possible ways to pass arguments to Net::Server.  They are <u>passing</u> <u>to</u> <u>the</u> <u>new</u>
+       <u>method</u>, <u>passing</u> <u>on</u> <u>command</u> <u>line</u>, <u>passing</u> <u>parameters</u> <u>to</u> <u>run</u>, <u>using</u> <u>a</u> <u>conf</u> <u>file</u>, <u>returning</u>  <u>values</u>  <u>in</u>  <u>the</u>
+       <u>default_values</u> <u>method</u>, or <u>configuring</u> <u>the</u> <u>values</u> <u>in</u> <u>post_configure_hook</u>.
+
+       The  "options"  method is used to determine which arguments the server will search for and can be used to
+       extend the parsed parameters.  Any arguments found from the command line, parameters passed to  run,  and
+       arguments  found  in  the  conf_file  will  be  matched  against  the  keys of the options template.  Any
+       commandline parameters that do not match will be left in place and can be further processed by the server
+       in the various hooks (by looking at @ARGV).  Arguments passed to new  will  automatically  win  over  any
+       other options (this can be used if you would like to disallow a user passing in other arguments).
+
+       Arguments  consist of key value pairs.  On the commandline these pairs follow the POSIX fashion of "--key
+       value" or "--key=value", and also "key=value".  In the conf file the parameter passing can best be  shown
+       by  the  following  regular expression: ($key,$val)=~/^(\w+)\s+(\S+?)\s+$<a href="file:/.">/.</a>  Passing arguments to the run
+       method is done as follows: "&lt;Net::Server-&gt;run(key1 =" 'val1')&gt;&gt;.  Passing arguments via a prebuilt object
+       can best be shown in the following code:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -w -T
+
+           package MyPackage;
+           use strict;
+           use base qw(Net::Server);
+
+           my $server = MyPackage-&gt;new({
+               key1 =&gt; 'val1',
+           });
+
+           $server-&gt;run;
+
+       All five methods for passing arguments may be used at the same time.  Once an argument has been  set,  it
+       is not over written if another method passes the same argument.  "Net::Server" will look for arguments in
+       the following order:
+
+           1) Arguments passed to the C&lt;new&gt; method.
+           2) Arguments passed on command line.
+           3) Arguments passed to the C&lt;run&gt; method.
+           4) Arguments passed via a conf file.
+           5) Arguments set in the C&lt;default_values&gt; method.
+
+       Additionally the following hooks are available:
+
+           1) Arguments set in the configure_hook (occurs after new
+              but before any of the other areas are checked).
+           2) Arguments set and validated in the post_configure_hook
+              (occurs after all of the other areas are checked).
+
+       Each  of  these  levels  will  override  parameters of the same name specified in subsequent levels.  For
+       example, specifying --setsid=0 on the command line will override a value of "setsid 1" in the conf file.
+
+       Note that the configure_hook method doesn't return values to set, but is there to allow  for  setting  up
+       configured values before the configure method is called.
+
+       Key/value  pairs used by the server are removed by the configuration process so that server layers on top
+       of "Net::Server" can pass and read their own parameters.
+
+</pre><h4><b>ADDING</b> <b>CUSTOM</b> <b>ARGUMENTS</b></h4><pre>
+       It is possible to add in your own custom parameters to those parsed by Net::Server.  The  following  code
+       shows how this is done:
+
+           sub options {
+               my $self     = shift;
+               my $prop     = $self-&gt;{'server'};
+               my $template = shift;
+
+               # setup options in the parent classes
+               $self-&gt;SUPER::options($template);
+
+               # add a single value option
+               $prop-&gt;{'my_option'} ||= undef;
+               $template-&gt;{'my_option'} = \ $prop-&gt;{'my_option'};
+
+               # add a multi value option
+               $prop-&gt;{'an_arrayref_item'} ||= [];
+               $template-&gt;{'an_arrayref_item'} = $prop-&gt;{'an_arrayref_item'};
+           }
+
+       Overriding  the  "options" method allows for adding your own custom fields.  A template hashref is passed
+       in, that should then be modified to contain an of your custom  fields.   Fields  which  are  intended  to
+       receive  a single scalar value should have a reference to the destination scalar given.  Fields which are
+       intended to receive multiple values should reference the corresponding destination arrayref.
+
+       You  are  responsible  for  validating  your  custom  options  once   they   have   been   parsed.    The
+       post_configure_hook is a good place to do your validation.
+
+       Some  emails  have  asked  why we use this "template" method.  The idea is that you are creating the data
+       structure to store the values in, and you are also creating a  way  to  get  the  values  into  the  data
+       structure.   The  template  is  the  way  to  get  the  values to the servers data structure.  One of the
+       possibilities (that probably isn't used that much) is that by letting you specify the mapping, you  could
+       build  a  nested  data  structure  - even though the passed in arguments are flat.  It also allows you to
+       setup aliases to your names.
+
+       For example, a basic structure might look like this:
+
+          $prop = $self-&gt;{'server'}
+
+          $prop-&gt;{'my_custom_option'} ||= undef;
+          $prop-&gt;{'my_custom_array'}  ||= [];
+
+          $template = {
+              my_custom_option =&gt; \ $prop-&gt;{'my_custom_option'},
+              mco              =&gt; \ $prop-&gt;{'my_custom_option'}, # alias
+              my_custom_array  =&gt; $prop-&gt;{'my_custom_array'},
+              mca              =&gt; $prop-&gt;{'my_custom_array'}, # an alias
+          };
+
+          $template-&gt;{'mco2'} = $template-&gt;{'mco'}; # another way to alias
+
+       But you could also have more complex data:
+
+          $prop = $self-&gt;{'server'};
+
+          $prop-&gt;{'one_layer'} = {
+              two_layer =&gt; [
+                  undef,
+                  undef,
+              ],
+          };
+
+          $template = {
+              param1 =&gt; \ $prop-&gt;{'one_layer'}-&gt;{'two_layer'}-&gt;[0],
+              param2 =&gt; \ $prop-&gt;{'one_layer'}-&gt;{'two_layer'}-&gt;[1],
+          };
+
+       This is of course a contrived example - but it does show that you can get the data from the  flat  passed
+       in arguments to whatever type of structure you need - with only a little bit of effort.
+
+</pre><h4><b>DEFAULT</b> <b>ARGUMENTS</b> <b>FOR</b> <b>Net::Server</b></h4><pre>
+       The  following  arguments  are  available  in the default "Net::Server" or "Net::Server::Single" modules.
+       (Other personalities may use additional parameters and may optionally not use parameters  from  the  base
+       class.)
+
+           Key               Value                    Default
+           conf_file         "filename"               undef
+
+           log_level         0-4                      2
+           log_file          (filename|Sys::Syslog
+                              |Log::Log4perl)         undef
+           log_function                               undef
+
+           port              \d+                      20203
+           host              "host"                   "*"
+           ipv               (4|6|*)                  *
+           proto             (tcp|udp|unix)           "tcp"
+           listen            \d+                      SOMAXCONN
+           ipv6_package      (IO::Socket::INET6       IO::Socket::IP
+                              |IO::Socket::IP)
+
+           ## syslog parameters (if log_file eq Sys::Syslog)
+           syslog_logsock    (native|unix|inet|udp
+                              |tcp|stream|console)    unix (on Sys::Syslog &lt; 0.15)
+           syslog_ident      "identity"               "net_server"
+           syslog_logopt     (cons|ndelay|nowait|pid) pid
+           syslog_facility   \w+                      daemon
+
+           reverse_lookups   (1|double|double-debug)  undef
+           double_reverse_lookups  (1|debug|autofail) undef
+           allow             /regex/                  none
+           deny              /regex/                  none
+           cidr_allow        CIDR                     none
+           cidr_deny         CIDR                     none
+
+           ## daemonization parameters
+           pid_file          "filename"               undef
+           chroot            "directory"              undef
+           user              (uid|username)           "nobody"
+           group             (gid|group)              "nobody"
+           background        1                        undef
+           setsid            1                        undef
+
+           no_close_by_child (1|undef)                undef
+
+           ## See Net::Server::Proto::(TCP|UDP|UNIX|SSL|SSLeay|etc)
+           ## for more sample parameters.
+
+       conf_file
+           Filename  from which to read additional key value pair arguments for starting the server.  Default is
+           undef.
+
+           There are two ways that you can specify a default location for a conf_file.  The first is to pass the
+           default value to the run method as in:
+
+               MyServer-&gt;run({
+                  conf_file =&gt; '/etc/my_server.conf',
+               });
+
+           If the end user passes in --conf_file=/etc/their_server.conf then the value will be overridden.
+
+           The second way to do this was added in the 0.96 version.  It uses the default_values method as in:
+
+               sub default_values {
+                   return {
+                       conf_file =&gt; '/etc/my_server.conf',
+                   }
+               }
+
+           This method has the advantage of also being able to be overridden in the run method.
+
+           If you do not want the user to be able to specify a conf_file at all, you can pass conf_file  to  the
+           new method when creating your object:
+
+               MyServer-&gt;new({
+                  conf_file =&gt; '/etc/my_server.conf',
+               })-&gt;run;
+
+           If passed this way, the value passed to new will "win" over any of the other passed in values.
+
+       log_level
+           Ranges  from  0  to  4 in level.  Specifies what level of error will be logged.  "O" means logging is
+           off.  "4" means very verbose.  These levels should be able to correlate to syslog levels.  Default is
+           2.  These levels correlate to syslog levels as defined by the following  key/value  pairs:  0=&gt;'err',
+           1=&gt;'warning', 2=&gt;'notice', 3=&gt;'info', 4=&gt;'debug'.
+
+       log_file
+           Name of log file or log subsystem to be written to.  If no name is given and the write_to_log_hook is
+           not overridden, log goes to STDERR.  Default is undef.
+
+           The  log_file may also be the name of a Net::Server pluggable logging class.  Net::Server is packaged
+           with Sys::Syslog and Log::Log4perl.  If  the  log_file  looks  like  a  module  name,  it  will  have
+           "Net::Server::Log::"  added to the front and it will then be required.  The package should provide an
+           "initialize" class method that returns a single function  which  will  be  used  for  logging.   This
+           returned function will be passed log_level, and message.
+
+           If   the   magic   name   "Sys::Syslog"   is   used,   all   logging   will   take   place   via  the
+           Net::Server::Log::Sys::Syslog  module.   If  syslog  is   used   the   parameters   "syslog_logsock",
+           "syslog_ident",    and    "syslog_logopt",and   "syslog_facility"   may   also   be   defined.    See
+           Net::Server::Log::Sys::Syslog.
+
+           If the magic name "Log::Log4perl" is used, all logging will be directed to the Log4perl  system.   If
+           used,   the   "log4perl_conf",   "log4perl_poll",   "log4perl_logger"   may   also  be  defined.  See
+           Net::Server::Log::Log::Log4per.
+
+           If a "log_file" is given or if "setsid" is set, STDIN and STDOUT  will  automatically  be  opened  to
+           /dev/null  and  STDERR  will be opened to STDOUT.  This will prevent any output from ending up at the
+           terminal.
+
+       log_function
+           Can take a coderef or method name to call when a log event occurs.  Will be passed the level  of  the
+           log message and the log message.
+
+           Note  that  functions  depending  upon  stdout will not function during process_request in situations
+           where the tie_stdout is set (such as during Net::Server::HTTP).
+
+       pid_file
+           Filename to store pid of parent process.  Generally applies only to forking servers.  Default is none
+           (undef).
+
+       port
+           See Net::Server::Proto for further examples of configuration.
+
+           Local port/socket on which to bind.  If it is a low  port,  the  process  must  start  as  root.   If
+           multiple ports are given, all will be bound at server startup.  May be of the form "host:port/proto",
+           "host:port/proto/ipv",  "host:port",  "port/proto",  or  "port",  where  <u>host</u>  represents  a hostname
+           residing on the local box, where <u>port</u> represents either the number of the  port  (eg.  "80")  or  the
+           service designation (eg. "http"), where <u>ipv</u> represents the IP protocol version (IPv4 or IPv6 or IPv*)
+           and  where  <u>proto</u> represents the protocol to be used. See Net::Server::Proto.  The following are some
+           valid port strings:
+
+               20203                            # port only
+               localhost:20203                  # host and port
+               localhost:http                   # localhost bound to port 80
+               localhost:20203/tcp              # host, port, protocol
+               localhost:20203/tcp/IPv*         # host, port, protocol and family
+               localhost, 20203, tcp, IPv*      # same
+               localhost | 20203 | tcp | IPv*   # same
+               localhost:20203/IPv*             # bind any configured interfaces for IPv4 or 6 (default)
+               localhost:20203/IPv4/IPv6        # bind localhost on IPv4 and 6 (fails if it cannot do both)
+
+               *:20203                          # bind all local interfaces
+
+           Additionally, when passed in the code (non-commandline, and non-config), the port may be passed as  a
+           hashref or array hashrefs of information:
+
+               port =&gt; {
+                   host  =&gt; 'localhost',
+                   port  =&gt; '20203',
+                   ipv   =&gt; 6,     # IPv6 only
+                   proto =&gt; 'udp', # UDP protocol
+               }
+
+               port =&gt; [{
+                   host  =&gt; '*',
+                   port  =&gt; '20203',
+                   ipv   =&gt; 4,     # IPv4 only
+                   proto =&gt; 'tcp', # (default)
+               }, {
+                   host  =&gt; 'localhost',
+                   port  =&gt; '20204',
+                   ipv   =&gt; '*',      # default - all IPv4 and IPv6 interfaces tied to localhost
+                   proto =&gt; 'ssleay', # or ssl - Using SSL
+               }],
+
+           An explicit <u>host</u> given in a port specification overrides a default binding address (a "host" setting,
+           see  below).   The  <u>host</u>  part  may  be  enclosed in square brackets, but when it is a numerical IPv6
+           address it <b>should</b> be enclosed in square brackets to avoid ambiguity in parsing a port  number,  e.g.:
+           "[::1]:80".   However  you could also use pipes, white space, or commas to separate these.  Note that
+           host and port number must come first.
+
+           If the protocol is not specified, <u>proto</u> will default to the "proto" specified in the  arguments.   If
+           "proto" is not specified there it will default to "tcp".  If <u>host</u> is not specified, <u>host</u> will default
+           to  "host"  specified  in  the  arguments.   If "host" is not specified there it will default to "*".
+           Default port is 20203.  Configuration passed to new or run may be either a scalar containing a single
+           port number or an arrayref of ports.  If "ipv" is not specified it will default to "*" (Any  resolved
+           addresses under IPv4 or IPv6).
+
+           If   you   are   working   with   unix   sockets,   you   may   also  specify  "socket_file|unix"  or
+           "socket_file|type|unix" where type is SOCK_DGRAM or SOCK_STREAM.
+
+           On systems that support it, a port value of 0 may be used to ask the OS to auto-assign a  port.   The
+           value of the auto-assigned port will be stored in the NS_port property of the Net::Server::Proto::TCP
+           object  and  is  also available in the sockport method.  When the server is processing a request, the
+           $self-&gt;{server}-&gt;{sockport} property contains the port that was connected through.
+
+       host
+           Local host or addr upon which to bind port.  If a value of '*' is given, the server  will  bind  that
+           port  on  all  available  addresses  on  the  box.  The "host" argument provides a default local host
+           address if the "port" argument omits a host specification.  See Net::Server::Proto.  See  IO::Socket.
+           Configuration  passed to new or run may be either a scalar containing a single host or an arrayref of
+           hosts - if the hosts array is shorter than the ports array, the last  host  entry  will  be  used  to
+           augment the hosts array to the size of the ports array.
+
+           If  an IPv4 address is passed, an IPv4 socket will be created.  If an IPv6 address is passed, an IPv6
+           socket will be created.  If a hostname is given, Net::Server will look at the value of  ipv  (default
+           IPv4) to determine which type of socket to create.  Optionally the ipv specification can be passed as
+           part of the hostname.
+
+               host =&gt; "127.0.0.1",  # an IPv4 address
+
+               host =&gt; "::1",        # an IPv6 address
+
+               host =&gt; 'localhost',  # addresses matched by localhost (default any IPv4 and/or IPv6)
+
+               host =&gt; 'localhost/IPv*',  # same
+
+               ipv  =&gt; 6,
+               host =&gt; 'localhost',  # addresses matched by localhost (IPv6)
+
+               ipv  =&gt; 4,
+               host =&gt; 'localhost',  # addresses matched by localhost (IPv4)
+
+               ipv  =&gt; 'IPv4 IPv6',
+               host =&gt; 'localhost',  # addresses matched by localhost (requires IPv6 and IPv4)
+
+               host =&gt; '*',          # any local interfaces (any IPv6 or IPv4)
+
+               host =&gt; '*/IPv*',     # same (any IPv6 or IPv4)
+
+               ipv  =&gt; 4,
+               host =&gt; '*',          # any local IPv4 interfaces
+
+       proto
+           See  Net::Server::Proto.   Protocol  to  use when binding ports.  See IO::Socket.  As of release 2.0,
+           Net::Server supports tcp, udp, and unix, unixdgram, ssl, and ssleay.  Other types  will  need  to  be
+           added  later  (or  custom modules extending the Net::Server::Proto class may be used).  Configuration
+           passed to new or run may be either a scalar containing a single proto or an arrayref of protos  -  if
+           the  protos  array  is shorter than the ports array, the last proto entry will be used to augment the
+           protos array to the size of the ports array.
+
+           Additionally the proto may also contain the ipv specification.
+
+       ipv (IPv4 and IPv6)
+           See Net::Server::Proto.
+
+           IPv6 is now available under Net::Server.  It will be used automatically if an IPv6 address is passed,
+           or if the ipv is set explicitly to IPv6, or if ipv is left as the default value of IPv*.  This  is  a
+           significant  change  from  version  2.004 and earlier where the default value was IPv4.  However, the
+           previous behavior led to confusion on IPv6 only hosts, and on hosts that only had IPv6 entries for  a
+           local  hostname.   Trying  to  pass  an  IPv4 address when ipv is set to 6 (only 6 - not * or 4) will
+           result in an error.
+
+               localhost:20203 # will use IPv6 if there is a corresponding entry for localhost
+                               # it will also use IPv4 if there is a corresponding v4 entry for localhost
+
+               localhost:20203:IPv*  # same (default)
+
+               localhost:20203:IPv6  # will use IPv6
+
+               [::1]:20203           # will use IPv6 (IPv6 style address)
+
+               localhost:20203:IPv4  # will use IPv4
+
+               127.0.0.1:20203       # will use IPv4 (IPv4 style address
+
+               localhost:20203:IPv4:IPv6 # will bind to both v4 and v6 - fails otherwise
+
+               # or as a hashref as
+               port =&gt; {
+                   host =&gt; "localhost",
+                   ipv  =&gt; 6, # only binds IPv6
+               }
+
+               port =&gt; {
+                   host =&gt; "localhost",
+                   ipv  =&gt; 4, # only binds IPv4
+               }
+
+               port =&gt; {
+                   host =&gt; "::1",
+                   ipv  =&gt; "IPv6", # same as passing "6"
+               }
+
+               port =&gt; {
+                   host =&gt; "localhost/IPv*",       # any IPv4 or IPv6
+               }
+
+               port =&gt; {
+                   host =&gt; "localhost IPv4 IPv6",  # must create both
+               }
+
+           In many proposed Net::Server solutions, IPv* was enabled by  default.   For  versions  2.000  through
+           2.004,  the  previous default of IPv4 was used.  We have attempted to make it easy to set IPv4, IPv6,
+           or IPv*.  If you do not want or need IPv6, simply  set  ipv  to  4,  pass  IPv4  along  in  the  port
+           specification,  set  $ENV{'IPV'}=4;  before  running  the  server,  set $ENV{'NO_IPV6'}, or uninstall
+           IO::Socket::IP and/or IO::Socket::INET6.
+
+           On my local box the following command results in the following output:
+
+               perl -e 'use base qw(Net::Server); main-&gt;run(host =&gt; "localhost")'
+
+               Resolved [localhost]:20203 to [::1]:20203, IPv6
+               Resolved [localhost]:20203 to [127.0.0.1]:20203, IPv4
+               Binding to TCP port 20203 on host ::1 with IPv6
+               Binding to TCP port 20203 on host 127.0.0.1 with IPv4
+
+           My local box has IPv6 enabled and there  are  entries  for  localhost  on  both  IPv6  ::1  and  IPv4
+           127.0.0.1.   I  could  also  choose to explicitly bind ports rather than depending upon ipv =&gt; "*" to
+           resolve them for me as in the following:
+
+               perl -e 'use base qw(Net::Server); main-&gt;run(port =&gt; [20203,20203], host =&gt; "localhost", ipv =&gt; [4,6])'
+
+               Binding to TCP port 20203 on host localhost with IPv4
+               Binding to TCP port 20203 on host localhost with IPv6
+
+           There  is  a  special   case   of   using   host   =&gt;   "*"   as   well   as   ipv   =&gt;   "*".    The
+           Net::Server::Proto::_bindv6only   method  is  used  to  check  the  system  setting  for  "sysctl  -n
+           net.ipv6.bindv6only" (or net.inet6.ip6.v6only).  If this setting is false, then an IPv6  socket  will
+           listen  for  the  corresponding  IPv4  address.   For  example  the  address [::] (IPv6 equivalent of
+           INADDR_ANY) will also listen for 0.0.0.0.  The address ::FFFF:127.0.0.1 (IPv6) would also  listen  to
+           127.0.0.1  (IPv4).   In  this case, only one socket will be created because it will handle both cases
+           (an error is returned if an attempt is made to listen to both addresses when bindv6only is false).
+
+           However, if net.ipv6.bindv6only (or equivalent) is true, then a hostname (such  as  *)  resolving  to
+           both a IPv4 entry as well as an IPv6 will result in both an IPv4 socket as well as an IPv6 socket.
+
+           On my linux box which defaults to net.ipv6.bindv6only=0, the following is output.
+
+               perl -e 'use base qw(Net::Server); main-&gt;run(host =&gt; "*")'
+
+               Resolved [*]:8080 to [::]:8080, IPv6
+               Not including resolved host [0.0.0.0] IPv4 because it will be handled by [::] IPv6
+               Binding to TCP port 8080 on host :: with IPv6
+
+           If I issue a "sudo <a href="file:/sbin/sysctl">/sbin/sysctl</a> -w net.ipv6.bindv6only=1", the following is output.
+
+               perl -e 'use base qw(Net::Server); main-&gt;run(host =&gt; "*")'
+
+               Resolved [*]:8080 to [0.0.0.0]:8080, IPv4
+               Resolved [*]:8080 to [::]:8080, IPv6
+               Binding to TCP port 8080 on host 0.0.0.0 with IPv4
+               Binding to TCP port 8080 on host :: with IPv6
+
+           BSD  differs from linux and generally defaults to net.inet6.ip6.v6only=0.  If it cannot be determined
+           on your OS, it will default to false and the log message will change from "it will be handled" to "it
+           should be handled" (if you have a non-resource intensive way to check on your platform, feel free  to
+           email  me).   Be sure to check the logs as you test your server to make sure you have bound the ports
+           you desire.  You can always pass in individual explicit IPv4 and  IPv6  port  specifications  if  you
+           need.   For  example, if your system has both IPv4 and IPv6 interfaces but you'd only like to bind to
+           IPv6 entries, then you should use a hostname of [::] instead of [*].
+
+           If bindv6only (or equivalent) is false, and you receive an IPv4 connection on a bound IPv6 port,  the
+           textual  representation of the peer's IPv4 address will typically be in a form of an IPv4-mapped IPv6
+           addresses, e.g. "::FFFF:127.0.0.1" .
+
+           The ipv parameter was chosen because it does not conflict with any other existing usage, it  is  very
+           similar  to  ipv4  or  ipv6,  it  allows  for  user code to not need to know about Socket::AF_INET or
+           Socket6::AF_INET6 or Socket::AF_UNSPEC, and it is short.
+
+       listen
+           See IO::Socket.  Not used with udp protocol (or UNIX SOCK_DGRAM).
+
+       ipv6_package
+           Net::Server::Proto will try to determine the appropriate socket class  to  use  if  a  v6  socket  is
+           needed.  It will default to trying IO::Socket::IP first, and then IO::Socket::INET6.  Specifying this
+           package  allows  for a specific package to be used (note that IO::Socket::SSL used by Proto::SSL does
+           its own ipv6 socket package determination).
+
+       reverse_lookups
+           Specify whether to lookup the hostname of the connected IP.  Information is cached in  server  object
+           under "peerhost" property.  Default is to not use reverse_lookups (undef).
+
+           Can  be  set  to  the  values  "double", "double-detail", "double-autofail", or "double-debug" to set
+           double_reverse_lookups.
+
+       double_reverse_lookups
+           If set, also sets reverse_lookups.
+
+           Same as setting reverse_lookups to "double".  Looks up the IPs that the hostname resolves to to  make
+           sure the connection ip is one of those ips.
+
+           Sets peerhost_rev as a hashref of ip addresses the name resolved to during get_client_info.
+
+           If  double_reverse_lookups  is  set, the double_reverse_lookup method is called during the allow_deny
+           method.  The double_reverse_lookup method is passed:
+
+               addr  - the IPv4 or IPv6 address
+               host  - the hostname the addr resolved to
+               addrs - the hashref of ip addresses the host resolved to
+               orig  - the original unfiltered addr
+
+           Makes allow_deny return false if there is no hostname, no reverse ips, or if one of the ip addrs does
+           not match the connection ip addr.  Sends a log level 3 message.
+
+           Can set double_reverse_lookups to one of the following to adjust logging:
+
+               detail   - add addrs to the failure messages
+               autofail - fail on every connection and log
+               debug    - log address information (but not fail) for successful connections
+
+           The following one liners can help with debugging:
+
+               net-server HTTP --reverse_lookups=double-debug --log_level=3
+               # curl localhost:8080 in other window
+
+               2022/11/30-22:16:45 CONNECT TCP Peer: "[::ffff:127.0.0.1]:44766" (localhost)  Local: "[::ffff:127.0.0.1]:8080"
+               2022/11/30-22:16:45 Double reverse debug:  addr: 127.0.0.1,  host: localhost,  addrs: (127.0.0.1),  orig_addr: ::ffff:127.0.0.1
+
+           The double_reverse_lookup is called before running any allow/deny rules.
+
+       allow/deny
+           May be specified multiple times.  Contains regex to compare to  incoming  peeraddr  or  peerhost  (if
+           reverse_lookups  has  been  enabled).   If  allow or deny options are given, the incoming client must
+           match an allow and not match a deny or the client connection will be closed.  Defaults to empty array
+           refs.
+
+       cidr_allow/cidr_deny
+           May be specified multiple times.  Contains  a  CIDR  block  to  compare  to  incoming  peeraddr.   If
+           cidr_allow  or cidr_deny options are given, the incoming client must match a cidr_allow and not match
+           a cidr_deny or the client connection will be closed.  Defaults to empty array refs.
+
+       chroot
+           Directory to chroot to after bind process has taken place and the server is still  running  as  root.
+           Defaults to undef.
+
+       user
+           Userid  or  username  to  become  after the bind process has occurred.  Defaults to "nobody."  If you
+           would like the server to run as root, you will have to specify "user" equal to "root".
+
+       group
+           Groupid or groupname to become after the bind process has occurred.  Defaults to  "nobody."   If  you
+           would like the server to run as root, you will have to specify "group" equal to "root".
+
+       background
+           Specifies  whether  or  not  the  server should fork after the bind method to release itself from the
+           command line.  Defaults to undef.  Process will also background if "setsid" is set.
+
+       setsid
+           Specifies whether or not the server should fork after the bind method  to  release  itself  from  the
+           command line and then run the "POSIX::setsid()" command to truly daemonize.  Defaults to undef.  If a
+           "log_file" is given or if "setsid" is set, STDIN and STDOUT will automatically be opened to /dev/null
+           and STDERR will be opened to STDOUT.  This will prevent any output from ending up at the terminal.
+
+       no_close_by_child
+           Boolean.   Specifies  whether  or  not  a  forked child process has permission or not to shutdown the
+           entire server process.  If set to 1, the child may NOT signal the parent to  shutdown  all  children.
+           Default is undef (not set).
+
+       no_client_stdout
+           Boolean.   Default  undef  (not  set).   Specifies  that STDIN and STDOUT should not be opened on the
+           client handle once a connection has been accepted.  By default the Net::Server will  open  STDIN  and
+           STDOUT  on  the  client  socket  making it easier for many types of scripts to read directly from and
+           write directly to the socket using normal print and  read  methods.   Disabling  this  is  useful  on
+           clients that may be opening their own connections to STDIN and STDOUT.
+
+           This  option  has no affect on STDIN and STDOUT which has a magic client property that is tied to the
+           already open STDIN and STDOUT.
+
+       leave_children_open_on_hup
+           Boolean.  Default undef (not set).  If set, the parent will not attempt to close child  processes  if
+           the  parent  receives a SIG HUP.  The parent will rebind the open port and begin tracking a fresh set
+           of children.
+
+           Children of a Fork server will exit after their current request.  Children of a Prefork  type  server
+           will finish the current request and then exit.
+
+           Note  -  the  newly  restarted  parent will start up a fresh set of servers on fork servers.  The new
+           parent will attempt to keep track of the children from the former  parent  but  custom  communication
+           channels  (open  pipes from the child to the old parent) will no longer be available to the old child
+           processes.  New child processes will still connect properly to the new parent.
+
+       sig_passthrough
+           Default none.  Allow for passing requested signals through to children.  Takes a single signal  name,
+           a  comma  separated list of names, or an arrayref of signal names.  It first sends the signals to the
+           children before calling any currently registered signal by that name.
+
+       tie_client_stdout
+           Default undef.  If set will use Net::Server::TiedHandle tied interface for STDIN  and  STDOUT.   This
+           interface  allows  SSL  and  SSLEAY  to work.  It also allows for intercepting read and write via the
+           tied_stdin_callback and tied_stdout_callback.
+
+       tied_stdin_callback
+           Default undef.  Called during a read of STDIN data if tie_client_stdout  has  been  set,  or  if  the
+           client  handle's tie_stdout method returns true.  It is passed the client connection, the name of the
+           method that would be called, and  the  arguments  that  are  being  passed.   The  callback  is  then
+           responsible for calling that method on the handle or for performing some other input operation.
+
+       tied_stdout_callback
+           Default  undef.  Called during a write of data to STDOUT if tie_client_stdout has been set, or if the
+           client handle's tie_stdout method returns true.  It is passed the client connection, the name of  the
+           method  that  would  be  called,  and  the  arguments  that  are  being passed.  The callback is then
+           responsible for calling that method on the handle or for performing some other output operation.
+
+</pre><h4><b>PROPERTIES</b></h4><pre>
+       All of the "ARGUMENTS" listed above become properties of the server object under the  same  name.   These
+       properties, as well as other internal properties, are available during hooks and other method calls.
+
+       The structure of a Net::Server object is shown below:
+
+           $self = bless({
+               server =&gt; {
+                   key1 =&gt; 'val1',
+                   # more key/vals
+               },
+           }, 'Net::Server');
+
+       This  structure  was  chosen  so that all server related properties are grouped under a single key of the
+       object hashref.  This is so that other objects could layer on top of the  Net::Server  object  class  and
+       still have a fairly clean namespace in the hashref.
+
+       You may get and set properties in two ways.  The suggested way is to access properties directly via
+
+           my $val = $self-&gt;{server}-&gt;{key1};
+
+       Accessing  the  properties  directly  will  speed the server process - though some would deem this as bad
+       style.  A second way has been provided for object oriented types who believe in methods.  The second  way
+       consists of the following methods:
+
+           my $val = $self-&gt;get_property( 'key1' );
+           my $self-&gt;set_property( key1 =&gt; 'val1' );
+
+       Properties  are  allowed to be changed at any time with caution (please do not undef the sock property or
+       you will close the client connection).
+
+</pre><h4><b>CONFIGURATION</b> <b>FILE</b></h4><pre>
+       "Net::Server" allows for the use of a configuration file to read in server  parameters.   The  format  of
+       this conf file is simple key value pairs.  Comments and blank lines are ignored.
+
+           #-------------- file test.conf --------------
+
+           ### user and group to become
+           user        somebody
+           group       everybody
+
+           # logging ?
+           log_file    /var/log/server.log
+           log_level   3
+           pid_file    /tmp/server.pid
+
+           # optional syslog directive
+           # used in place of log_file above
+           #log_file       Sys::Syslog
+           #syslog_logsock unix
+           #syslog_ident   myserver
+           #syslog_logopt  pid|cons
+
+           # access control
+           allow       .+\.(net|com)
+           allow       domain\.com
+           deny        a.+
+           cidr_allow  127.0.0.0/8
+           cidr_allow  192.0.2.0/24
+           cidr_deny   192.0.2.4/30
+
+           # background the process?
+           background  1
+
+           # ports to bind (this should bind
+           # 127.0.0.1:20205 on IPv6 and
+           # localhost:20204 on IPv4)
+           # See Net::Server::Proto
+           host        127.0.0.1
+           ipv         IPv6
+           port        localhost:20204/IPv4
+           port        20205
+
+           # reverse lookups ?
+           # reverse_lookups on
+
+         #-------------- file test.conf --------------
+
+</pre><h4><b>PROCESS</b> <b>FLOW</b></h4><pre>
+       The process flow is written in an open, easy to override, easy to hook, fashion.  The basic flow is shown
+       below.  This is the flow of the "$self-&gt;run" method.
+
+           $self-&gt;configure_hook;
+
+           $self-&gt;configure(@_);
+
+           $self-&gt;post_configure;
+
+           $self-&gt;post_configure_hook;
+
+           $self-&gt;pre_bind;
+
+           $self-&gt;bind;
+
+           $self-&gt;post_bind_hook;
+
+           $self-&gt;post_bind;
+
+           $self-&gt;pre_loop_hook;
+
+           $self-&gt;loop;
+
+           ### routines inside a standard $self-&gt;loop
+           # $self-&gt;accept;
+           # $self-&gt;run_client_connection;
+           # $self-&gt;done;
+
+           $self-&gt;pre_server_close_hook;
+
+           $self-&gt;server_close;
+
+       The server then exits.
+
+       During the client processing phase ("$self-&gt;run_client_connection"), the following represents the program
+       flow:
+
+           $self-&gt;post_accept;
+
+           $self-&gt;get_client_info;
+
+           $self-&gt;post_accept_hook;
+
+           if ($self-&gt;allow_deny
+               &amp;&amp; $self-&gt;allow_deny_hook) {
+
+               $self-&gt;process_request;
+
+           } else {
+
+               $self-&gt;request_denied_hook;
+
+           }
+
+           $self-&gt;post_process_request_hook;
+
+           $self-&gt;post_process_request;
+
+           $self-&gt;post_client_connection_hook;
+
+       The allow_deny method calls $self-&gt;double_reverse_lookup if double_reverse_lookups are enabled.
+
+       The  process  then  loops and waits for the next connection.  For a more in depth discussion, please read
+       the code.
+
+       During the server shutdown phase ("$self-&gt;server_close"), the following represents the program flow:
+
+           $self-&gt;close_children;  # if any
+
+           $self-&gt;post_child_cleanup_hook;
+
+           if (Restarting server) {
+               $self-&gt;restart_close_hook();
+               $self-&gt;hup_server;
+           }
+
+           $self-&gt;shutdown_sockets;
+
+           $self-&gt;server_exit;
+
+</pre><h4><b>MAIN</b> <b>SERVER</b> <b>METHODS</b></h4><pre>
+       "$self-&gt;run"
+           This method incorporates the main process flow.  This flow is listed above.
+
+           The method run may be called in any of the following ways.
+
+                MyPackage-&gt;run(port =&gt; 20201);
+
+                MyPackage-&gt;new({port =&gt; 20201})-&gt;run;
+
+                my $obj = bless {server=&gt;{port =&gt; 20201}}, 'MyPackage';
+                $obj-&gt;run;
+
+           The -&gt;run method should typically be the last method called in a server start script (the server will
+           exit at the end of the -&gt;run method).
+
+       "$self-&gt;configure"
+           This method attempts to read configurations from the commandline, from the run method call, or from a
+           specified  conf_file  (the  conf_file  may  be  specified  by  passed  in  parameters,  or   in   the
+           default_values).   All of the configured parameters are then stored in the {"server"} property of the
+           Server object.
+
+       "$self-&gt;post_configure"
+           The post_configure hook begins the  startup  of  the  server.   During  this  method  running  server
+           instances  are  checked for, pid_files are created, log_files are created, Sys::Syslog is initialized
+           (as needed), process backgrounding occurs and the server closes STDIN and STDOUT (as needed).
+
+       "$self-&gt;pre_bind"
+           This method is used to initialize all of the socket objects used by the server.
+
+       "$self-&gt;bind"
+           This method actually binds to the initialized sockets (or rebinds if the server has been HUPed).
+
+       "$self-&gt;post_bind"
+           During this method privileges are  dropped.   The  INT,  TERM,  and  QUIT  signals  are  set  to  run
+           server_close.   Sig  PIPE is set to IGNORE.  Sig CHLD is set to sig_chld.  And sig HUP is set to call
+           sig_hup.
+
+           Under the Fork, PreFork, and  PreFork  simple  personalities,  these  signals  are  registered  using
+           Net::Server::SIG to allow for safe signal handling.
+
+       "$self-&gt;loop"
+           During this phase, the server accepts incoming connections.  The behavior of how the accepting occurs
+           and  if  a child process handles the connection is controlled by what type of Net::Server personality
+           the server is using.
+
+           Net::Server and Net::Server single accept only one connection at a time.
+
+           Net::Server::INET runs one connection and then exits (for use by inetd or xinetd daemons).
+
+           Net::Server::MultiPlex allows for one process to  simultaneously  handle  multiple  connections  (but
+           requires rewriting the process_request code to operate in a more "packet-like" manner).
+
+           Net::Server::Fork forks off a new child process for each incoming connection.
+
+           Net::Server::PreForkSimple  starts  up  a  fixed  number  of  processes  that  all accept on incoming
+           connections.
+
+           Net::Server::PreFork starts up a base  number  of  child  processes  which  all  accept  on  incoming
+           connections.   The  server  throttles  the  number  of processes running depending upon the number of
+           requests coming in (similar to concept to how Apache  controls  its  child  processes  in  a  PreFork
+           server).
+
+           Read the documentation for each of the types for more information.
+
+       "$self-&gt;server_close"
+           This method is called once the server has been signaled to end, or signaled for the server to restart
+           (via HUP), or the loop method has been exited.
+
+           This  method  takes  care  of cleaning up any remaining child processes, setting appropriate flags on
+           sockets (for HUPing), closing up logging, and then closing open sockets.
+
+           Can optionally be passed an exit value that will be passed to the server_exit call.
+
+       "$self-&gt;server_exit"
+           This method is called at the end of server_close.  It calls exit, but may be overridden to  do  other
+           items.  At this point all services should be shut down.
+
+           Can optionally be passed an exit value that will be passed to the exit call.
+
+</pre><h4><b>MAIN</b> <b>CLIENT</b> <b>CONNECTION</b> <b>METHODS</b></h4><pre>
+       "$self-&gt;run_client_connection"
+           This  method is run after the server has accepted and received a client connection.  The full process
+           flow is listed above under PROCESS FLOWS.  This method takes care of handling each client connection.
+
+       "$self-&gt;post_accept"
+           This method opens STDIN and STDOUT to the client socket.  This allows any of the methods  during  the
+           run_client_connection phase to print directly to and read directly from the client socket.
+
+       "$self-&gt;get_client_info"
+           This  method  looks  up  information about the client connection such as ip address, socket type, and
+           hostname (as needed).
+
+           Sets the following in $self-&gt;{'server'} (note that these names do not necessarily correspond  to  the
+           names of the IO::Socket:: libraries):
+
+               sockaddr     - Human IP address that was connected to
+               sockport     - Local port that was connected to
+               peeraddr     - Human IP address of the remote source (either IPv6 or IPv4)
+               peerport     - Source port of the connection
+               peerhost     - IP Address resolved to hostname (if possible)
+               peerhost_rev - Hashref of ips of the reverse lookup of the peerhost - only set if double_reverse_lookups
+
+       "$self-&gt;allow_deny"
+           This method uses the rules defined in the allow and deny configuration parameters to determine if the
+           ip address should be accepted.
+
+       "$self-&gt;double_reverse_lookup"
+           Called  if  the  double_reverse_lookups  value  is  set  or reverse_lookups is set to "double".  Uses
+           peerhost_rev hashref ips to verify that the connection  ip  is  valid  for  the  hostname.   See  the
+           double_reverse_lookups configuration.
+
+       "$self-&gt;process_request"
+           This  method  is  intended to handle all of the client communication.  At this point STDIN and STDOUT
+           are opened to the client, the ip address has been verified.  The server can then  interact  with  the
+           client  connection  according  to whatever API or protocol the server is implementing.  Note that the
+           stub implementation uses STDIN and STDOUT and will not work if the no_client_stdout flag is set.
+
+           This is the main method to override.
+
+           The default method implements a simple echo server that will repeat whatever is sent.  It  will  quit
+           the child if "quit" is sent, and will exit the server if "exit" is sent.
+
+           As of version 2.000, the client handle is passed as an argument.
+
+       "$self-&gt;post_process_request"
+           This  method  is used to clean up the client connection and to handle any parent/child accounting for
+           the forking servers.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       "Net::Server" provides a number of "hooks" allowing for  servers  layered  on  top  of  "Net::Server"  to
+       respond  at different levels of execution without having to "SUPER" class the main built-in methods.  The
+       placement of the hooks can be seen in the PROCESS FLOW section.
+
+       Almost all of the default hook methods do nothing.  To use a hook you simply need to override the  method
+       in  your  subclass.   For  example  to  add  your own post_configure_hook you could do something like the
+       following:
+
+           package MyServer;
+
+           sub post_configure_hook {
+               my $self = shift;
+               my $prop = $self-&gt;{'server'};
+
+               # do some validation here
+           }
+
+       The following describes the hooks available in the plain Net::Server class (other flavors such as Fork or
+       PreFork have additional hooks).
+
+       "$self-&gt;configure_hook()"
+           This hook takes place immediately after the "-&gt;run()" method is called.  This hook allows for setting
+           up the object before any built in configuration takes place.  This allows for custom configurability.
+
+       "$self-&gt;post_configure_hook()"
+           This hook occurs just after the reading of configuration parameters and  initiation  of  logging  and
+           pid_file creation.  It also occurs before the "-&gt;pre_bind()" and "-&gt;bind()" methods are called.  This
+           hook allows for verifying configuration parameters.
+
+       "$self-&gt;post_bind_hook()"
+           This hook occurs just after the bind process and just before any chrooting, change of user, or change
+           of group occurs.  At this point the process will still be running as the user who started the server.
+
+       "$self-&gt;pre_loop_hook()"
+           This  hook  occurs  after  chroot,  change  of user, and change of group has occurred.  It allows for
+           preparation before looping begins.
+
+       "$self-&gt;can_read_hook()"
+           This hook occurs after a socket becomes readable on an accept_multi_port  request  (accept_multi_port
+           is  used  if  there  are  multiple  bound  ports  to  accept on, or if the "multi_port" configuration
+           parameter is set to true).  This hook is intended to allow for processing of arbitrary handles  added
+           to  the  IO::Select  used  for  the  accept_multi_port.   These  handles  could  be  added during the
+           post_bind_hook.  No internal support is added for processing these handles  or  adding  them  to  the
+           IO::Socket.   Care  must  be used in how much occurs during the can_read_hook as a long response time
+           will result in the server being susceptible to DOS attacks.  A return value of  true  indicates  that
+           the Server should not pass the readable handle on to the post_accept and process_request phases.
+
+           It  is generally suggested that other avenues be pursued for sending messages via sockets not created
+           by the Net::Server.
+
+       "$self-&gt;post_accept_hook()"
+           This hook occurs after a client has connected to the server.  At this  point  STDIN  and  STDOUT  are
+           mapped to the client socket.  This hook occurs before the processing of the request.
+
+       "$self-&gt;allow_deny_hook()"
+           This  hook  allows  for  the  checking  of  ip  and host information beyond the "$self-&gt;allow_deny()"
+           routine.  If this hook returns 1, the client request will be processed, otherwise, the  request  will
+           be denied processing.
+
+           As of version 2.000, the client connection is passed as an argument.
+
+       "$self-&gt;request_denied_hook()"
+           This hook occurs if either the "$self-&gt;allow_deny()" or "$self-&gt;allow_deny_hook()" have taken place.
+
+       "$self-&gt;post_process_request_hook()"
+           This  hook  occurs  after  the  processing  of the request, but before the client connection has been
+           closed.
+
+       "$self-&gt;post_client_connection_hook"
+           This is one final hook that occurs at the very end of  the  run_client_connection  method.   At  this
+           point  all  other  methods and hooks that will run during the run_client_connection have finished and
+           the client connection has already been closed.
+
+           item "$self-&gt;other_child_died_hook($pid)"
+
+           Net::Server takes control of signal handling and child process cleanup; this makes  it  difficult  to
+           tell when a child process terminates if that child process was not started by Net::Server itself.  If
+           Net::Server  notices  another  child process dying that it did not start, it will fire this hook with
+           the PID of the terminated process.
+
+       "$self-&gt;pre_server_close_hook()"
+           This hook occurs before the server begins shutting down.
+
+       "$self-&gt;write_to_log_hook"
+           This hook handles writing to log files.  The default hook is to write to STDERR, or to  the  filename
+           contained  in the parameter "log_file".  The arguments passed are a log level of 0 to 4 (4 being very
+           verbose), and a log line.  If log_file is equal to "Sys::Syslog", then logging will go to Sys::Syslog
+           and will bypass the write_to_log_hook.
+
+       "$self-&gt;fatal_hook"
+           This hook occurs when the server has encountered an unrecoverable error.  Arguments  passed  are  the
+           error  message,  the  package,  file,  and  line  number.   The  hook may close the server, but it is
+           suggested that it simply return and use the built in shut down features.
+
+       "$self-&gt;post_child_cleanup_hook"
+           This hook occurs in the parent server process after all children have been shut down and just  before
+           the  server either restarts or exits.  It is intended for additional cleanup of information.  At this
+           point pid_files and lockfiles still exist.
+
+       "$self-&gt;restart_open_hook"
+           This hook occurs if a server has been HUPed (restarted via the HUP signal.   It  occurs  just  before
+           reopening to the filenos of the sockets that were already opened.
+
+       "$self-&gt;restart_close_hook"
+           This  hook  occurs  if  a server has been HUPed (restarted via the HUP signal.  It occurs just before
+           restarting the server via exec.
+
+       "$self-&gt;child_init_hook()"
+           This hook is called during the forking servers.  It is also called during run_dequeue.  It runs  just
+           after  the  fork  and  after  signals  have  been cleaned up.  If it is a dequeue process, the string
+           'dequeue' will be passed as an argument.
+
+           If your child processes will be needing random numbers, this hook is a good  location  to  initialize
+           srand (forked processes maintain the same random seed unless changed).
+
+               sub child_init_hook {
+                   # from perldoc -f srand
+                   srand(time ^ $$ ^ unpack "%L*", `ps axww | gzip -f`);
+               }
+
+       "$self-&gt;pre_fork_hook()"
+           Similar to the child_init_hook, but occurs just before the fork.
+
+       "$self-&gt;register_child($pid, $type)"
+           Called  by  parent process when a child has been forked.  Type will be one of dequeue, fork, prefork,
+           or preforksimple depending on where the child was created.
+
+       "$self-&gt;child_finish_hook()"
+           Similar to the child_init_hook, but ran when the forked process is about to finish up.
+
+</pre><h4><b>OTHER</b> <b>METHODS</b></h4><pre>
+       "$self-&gt;default_values"
+           Allow for returning configuration values that will be used if no other value could be found.
+
+           Should return a hashref.
+
+               sub default_values {
+                   return {
+                       port =&gt; 20201,
+                   };
+               }
+
+       "$self-&gt;handle_syslog_error"
+           Called when log_file is set to 'Sys::Syslog' and an error occurs while writing to the syslog.  It  is
+           passed  two  arguments, the value of $@, and an arrayref containing the arguments that were passed to
+           the log method when the error occurred.
+
+       "$self-&gt;log"
+           Parameters are a log_level and a message.
+
+           If log_level is set to 'Sys::Syslog', the parameters may alternately be a log_level, a format string,
+           and format string parameters.  (The second parameter is assumed to be a format string  if  additional
+           arguments  are  passed along).  Passing arbitrary format strings to Sys::Syslog will allow the server
+           to be vulnerable to exploit.  The server maintainer should make sure that any  string  treated  as  a
+           format string is controlled.
+
+               # assuming log_file = 'Sys::Syslog'
+
+               $self-&gt;log(1, "My Message with %s in it");
+               # sends "%s", "My Message with %s in it" to syslog
+
+               $self-&gt;log(1, "My Message with %s in it", "Foo");
+               # sends "My Message with %s in it", "Foo" to syslog
+
+           If  log_file  is set to a file (other than Sys::Syslog), the message will be appended to the log file
+           by calling the write_to_log_hook.
+
+           If the log_file is Sys::Syslog and an error occurs during write, the handle_syslog_error method  will
+           be  called and passed the error exception.  The default option of handle_syslog_error is to die - but
+           could easily be told to do nothing by using the following code in your subclassed server:
+
+               sub handle_syslog_error {}
+
+           It the log had been closed, you could attempt to reopen it in the error handler  with  the  following
+           code:
+
+               sub handle_syslog_error {
+                   my $self = shift;
+                   $self-&gt;open_syslog;
+               }
+
+       "$self-&gt;new"
+           As  of  Net::Server  0.91  there  is  finally  a "new" method.  This method takes a class name and an
+           argument hashref as parameters.  The argument hashref becomes the "server" property of the object.
+
+               package MyPackage;
+               use base qw(Net::Server);
+
+               my $obj = MyPackage-&gt;new({port =&gt; 20201});
+
+               # same as
+
+               my $obj = bless {server =&gt; {port =&gt; 20201}}, 'MyPackage';
+
+       "$self-&gt;open_syslog"
+           Called during post_configure when the log_file option is set to 'Sys::Syslog'.  By default it use the
+           parsed configuration options listed in this document.  If more custom behavior is desired, the method
+           could be overridden and Sys::Syslog::openlog should be called with the custom parameters.
+
+       "$self-&gt;shutdown_sockets"
+           This method will close any remaining open sockets.  This is called at the  end  of  the  server_close
+           method.
+
+</pre><h4><b>RESTARTING</b></h4><pre>
+       Each  of the server personalities (except for INET), support restarting via a HUP signal (see "kill -l").
+       When a HUP is received, the server will close children (if any), make sure that sockets  are  left  open,
+       and  re-exec  using  the  same commandline parameters that initially started the server.  (Note: for this
+       reason it is important that @ARGV is not modified until "-&gt;run" is called).
+
+       The Net::Server will attempt to find out the commandline used for starting the program.  The  attempt  is
+       made  before  any  configuration  files or other arguments are processed.  The outcome of this attempt is
+       stored using the method "-&gt;commandline".  The stored commandline may also be  retrieved  using  the  same
+       method  name.   The  stored contents will undoubtedly contain Tainted items that will cause the server to
+       die during a restart when using the -T flag (Taint mode).  As it is impossible to arbitrarily decide what
+       is taint safe and what is not, the individual program must clean up the  tainted  items  before  doing  a
+       restart.
+
+           sub configure_hook{
+               my $self = shift;
+
+               ### see the contents
+               my $ref  = $self-&gt;commandline;
+               use Data::Dumper;
+               print Dumper $ref;
+
+               ### arbitrary untainting - VERY dangerous
+               my @untainted = map {/(.+)/;$1} @$ref;
+
+               $self-&gt;commandline(\@untainted)
+           }
+
+</pre><h4><b>SHUTDOWN</b></h4><pre>
+       Each  of  the Fork and PreFork personalities support graceful shutdowns via the QUIT signal.  When a QUIT
+       is received, the parent will signal the children and then wait for them to exit.
+
+       All server personalities support the normal TERM and INT signal shutdowns.
+
+</pre><h4><b>HOT</b> <b>DEPLOY</b></h4><pre>
+       Since version 2.000, the Fork and PreFork personalities have accepted the TTIN and TTOU signals.  When  a
+       TTIN  is  received,  the  max_servers is increased by 1.  If a TTOU signal is received the max_servers is
+       decreased by 1.  This allows for adjusting the number of handling processes without having to restart the
+       server.
+
+       If the log_level is set to at 3, then the new value is displayed in the logs.
+
+</pre><h4><b>FILES</b></h4><pre>
+       The following files are installed as part of this distribution.
+
+           Net/Server.pm
+           Net/Server/Fork.pm
+           Net/Server/INET.pm
+           Net/Server/MultiType.pm
+           Net/Server/PreForkSimple.pm
+           Net/Server/PreFork.pm
+           Net/Server/Single.pm
+           Net/Server/Daemonize.pm
+           Net/Server/SIG.pm
+           Net/Server/Proto.pm
+           Net/Server/Proto/*.pm
+
+</pre><h4><b>INSTALL</b></h4><pre>
+       Download and extract tarball before running these commands in its base directory:
+
+           perl Makefile.PL
+           make
+           make test
+           make install
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Seamons &lt;paul at seamons.com&gt;
+
+</pre><h4><b>THANKS</b></h4><pre>
+       As we move to a github flow, please be sure to add yourself to the credits as patches  are  passed  along
+       (if you'd like to be mentioned).
+
+       Thanks  to  Rob  Brown  (bbb  at cpan.org) for help with miscellaneous concepts such as tracking down the
+       serialized select via flock ala Apache and the reference to IO::Select making multiport servers possible.
+       And for researching into allowing sockets to remain open upon exec (making HUP possible).
+
+       Thanks to Jonathan J. Miner &lt;miner at doit.wisc.edu&gt; for  patching  a  blatant  problem  in  the  reverse
+       lookups.
+
+       Thanks  to  Bennett  Todd  &lt;bet  at rahul.net&gt; for pointing out a problem in Solaris 2.5.1 which does not
+       allow multiple children to accept on the same port at the same time.  Also for showing some  sample  code
+       from  Viktor  Duchovni which now represents the semaphore option of the serialize argument in the PreFork
+       server.
+
+       Thanks to <u>traveler</u> and <u>merlyn</u> from <a href="http://perlmonks.org">http://perlmonks.org</a> for  pointing  me  in  the  right  direction  for
+       determining the protocol used on a socket connection.
+
+       Thanks   to  Jeremy  Howard  &lt;j+daemonize  at  howard.fm&gt;  for  numerous  suggestions  and  for  work  on
+       Net::Server::Daemonize.
+
+       Thanks to  Vadim  &lt;vadim  at  hardison.net&gt;  for  patches  to  implement  parent/child  communication  on
+       PreFork.pm.
+
+       Thanks to Carl Lewis for suggesting "-" in user names.
+
+       Thanks to Slaven Rezic for suggesting Reuse =&gt; 1 in Proto::UDP.
+
+       Thanks to Tim Watt for adding udp_broadcast to Proto::UDP.
+
+       Thanks  to  Christopher  A  Bongaarts  for  pointing out problems with the Proto::SSL implementation that
+       currently locks around the socket accept and the SSL negotiation. See Net::Server::Proto::SSL.
+
+       Thanks to Alessandro Zummo for pointing out various bugs including  some  in  configuration,  commandline
+       args, and cidr_allow.
+
+       Thanks  to various other people for bug fixes over the years.  These and future thank-you's are available
+       in the Changes file as well as CVS comments.
+
+       Thanks to Ben Cohen and tye (on Permonks) for finding and diagnosing more correct  behavior  for  dealing
+       with re-opening STDIN and STDOUT on the client handles.
+
+       Thanks  to  Mark Martinec for trouble shooting other problems with STDIN and STDOUT (he proposed having a
+       flag that is now the no_client_stdout flag).
+
+       Thanks to David (DSCHWEI) on cpan for asking for the nofatal option with syslog.
+
+       Thanks to Andreas Kippnick and Peter Beckman for suggesting leaving open child connections open during  a
+       HUP (this is now available via the leave_children_open_on_hup flag).
+
+       Thanks to LUPE on cpan for helping patch HUP with taint on.
+
+       Thanks to Michael Virnstein for fixing a bug in the check_for_dead section of PreFork server.
+
+       Thanks  to  Rob  Mueller for patching PreForkSimple to only open lock_file once during parent call.  This
+       patch should be portable on systems supporting flock.  Rob also suggested not  closing  STDIN/STDOUT  but
+       instead  reopening  them  to  /dev/null  to  prevent  spurious warnings.  Also suggested short circuit in
+       post_accept if in UDP.  Also for cleaning up some of the child management code of PreFork.
+
+       Thanks to Mark Martinec for suggesting additional log messages for failure during accept.
+
+       Thanks to Bill Nesbitt and Carlos Velasco for pointing out double decrement bug in PreFork.pm (rt #21271)
+
+       Thanks to John W. Krahn for pointing out glaring precedence with non-parened open and ||.
+
+       Thanks to Ricardo Signes for pointing out setuid bug for perl 5.6.1 (rt #21262).
+
+       Thanks to Carlos Velasco for updating the Syslog options (rt #21265).  And for additional fixes later.
+
+       Thanks to Steven Lembark for pointing out that no_client_stdout wasn't working with the Multiplex server.
+
+       Thanks to Peter Beckman for suggesting allowing Sys::SysLog keywords be passed through the  -&gt;log  method
+       and  for suggesting we allow more types of characters through in syslog_ident.  Also to Peter Beckman for
+       pointing out that a poorly setup localhost will cause tests to hang.
+
+       Thanks to Curtis Wilbar for pointing out that the Fork server called post_accept_hook twice.  Changed  to
+       only let the child process call this, but added the pre_fork_hook method.
+
+       And just a general Thanks You to everybody who is using Net::Server or who has contributed fixes over the
+       years.
+
+       Thanks to Paul Miller for some -&gt;autoflush, FileHandle fixes.
+
+       Thanks to Patrik Wallstrom for suggesting handling syslog errors better.
+
+       Thanks again to Rob Mueller for more logic cleanup for child accounting in PreFork server.
+
+       Thanks  to  David  Schweikert  for  suggesting  handling  setlogsock a little better on newer versions of
+       Sys::Syslog (&gt;= 0.15).
+
+       Thanks to Mihail Nasedkin for suggesting adding a hook that is now called post_client_connection_hook.
+
+       Thanks to Graham Barr for adding the ability to set the check_for_spawn and min_child_ttl settings of the
+       PreFork server.
+
+       Thanks to Daniel Kahn Gillmor for adding the other_child_died_hook.
+
+       Thanks to Dominic Humphries for helping not kill pid files on HUP.
+
+       Thanks to Kristoffer Møllerhøj for fixing UDP on Multiplex.
+
+       Thanks to mishikal for patches for helping identify un-cleaned up children.
+
+       Thanks to rpkelly and tim@retout for pointing out error in header regex of HTTP.
+
+       Thanks to dmcbride for some basic HTTP parsing fixes, as well as for some broken tied handle fixes.
+
+       Thanks to Gareth for pointing out glaring bug issues with broken pipe and semaphore serialization.
+
+       Thanks to CATONE for sending the idea for arbitrary signal passing to children.  (See the sig_passthrough
+       option)
+
+       Thanks to intrigeri@boum for pointing out and giving code ideas for NS_port not functioning after a HUP.
+
+       Thanks to Sergey Zasenko for adding sysread/syswrite support to SSLEAY as well as the base test.
+
+       Thanks to mbarbon@users. for adding tally dequeue to prefork server.
+
+       Thanks to stefanos@cpan for fixes to PreFork under Win32
+
+       Thanks to Mark Martinec for much of the initial work towards getting IPv6 going.
+
+       Thanks to the munin developers and Nicolai Langfeldt for hosting the development version  of  Net::Server
+       for so long and for fixes to the allow_deny checking for IPv6 addresses.
+
+       Thanks  to  Tatsuhiko  Miyagawa for feedback, and for suggesting adding graceful shutdowns and hot deploy
+       (max_servers adjustment).
+
+       Thanks to TONVOON@cpan for submitting a patch adding Log4perl functionality.
+
+       Thanks to Miko O'Sullivan for fixes to HTTP to correct tainting issues and passing initial log fixes, and
+       for patches to fix CLOSE on tied stdout and various other HTTP issues.
+
+       Thanks to Emanuele &lt;targeta&gt; for a small patch releasing semaphores.
+
+       Thanks to Rob &lt;hookbot&gt; for daemonization fixes with zero pid file.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Please see also Net::Server::Fork, Net::Server::INET,  Net::Server::PreForkSimple,  Net::Server::PreFork,
+       Net::Server::MultiType, Net::Server::Single Net::Server::HTTP
+
+</pre><h4><b>TODO</b></h4><pre>
+       Improve  test  suite to fully cover code (using Devel::Cover).  Anybody that wanted to send me patches to
+       the t/*.t tests that improved coverage would earn a big thank you.
+
+</pre><h4><b>CODE</b> <b>REPOSITORY</b></h4><pre>
+       https://github.com/rhandom/perl-net-server
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           Paul Seamons &lt;paul at seamons.com&gt;
+           <a href="http://seamons.com/">http://seamons.com/</a>
+
+           Rob Brown &lt;bbb at cpan.org&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This package may be distributed under the terms of either the
+
+         GNU General Public License
+           or the
+         Perl Artistic License
+
+       All rights reserved.
+
+perl v5.36.0                                       2023-06-11                                   <u>Net::<a href="../man3pm/Server.3pm.html">Server</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

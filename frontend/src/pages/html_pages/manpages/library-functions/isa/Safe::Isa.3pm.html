@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe::Isa - Call isa, can, does and DOES safely on things that may not be objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsafe-isa-perl">libsafe-isa-perl_1.000010-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Safe::Isa - Call isa, can, does and DOES safely on things that may not be objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use strict;
+         use warnings;
+
+         { package Foo; sub new { bless({}, $_[0]) } }
+         { package Bar; our @ISA = qw(Foo); sub bar { 1 } }
+
+         my $foo = Foo-&gt;new;
+         my $bar = Bar-&gt;new;
+         my $blam = [ 42 ];
+
+         # basic isa usage -
+
+         $foo-&gt;isa('Foo');  # true
+         $bar-&gt;isa('Foo');  # true
+         $blam-&gt;isa('Foo'); # BOOM
+
+         $foo-&gt;can('bar');  # false
+         $bar-&gt;can('bar');  # true
+         $blam-&gt;can('bar'); # BOOM
+
+         # Safe::Isa usage -
+
+         use Safe::Isa;
+
+         $foo-&gt;$_isa('Foo');  # true
+         $bar-&gt;$_isa('Foo');  # true
+         $blam-&gt;$_isa('Foo'); # false, no boom today
+
+         $foo-&gt;$_can('bar');  # false
+         $bar-&gt;$_can('bar');  # true
+         $blam-&gt;$_can('bar'); # false, no boom today
+
+       Similarly:
+
+         $maybe_an_object-&gt;$_does('RoleName'); # true or false, no boom today
+         $maybe_an_object-&gt;$_DOES('RoleName'); # true or false, no boom today
+
+       And just in case we missed a method or two:
+
+         $maybe_an_object-&gt;$_call_if_object(name =&gt; @args);
+         $maybe_an_object-&gt;$_call_if_can(name =&gt; @args);
+
+       Or to re-use a previous example for purposes of explication:
+
+         $foo-&gt;$_call_if_object(isa =&gt; 'Foo');  # true
+         $bar-&gt;$_call_if_object(isa =&gt; 'Foo');  # true
+         $blam-&gt;$_call_if_object(isa =&gt; 'Foo'); # false, no boom today
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       How many times have you found yourself writing:
+
+         if ($obj-&gt;isa('Something')) {
+
+       and then shortly afterwards cursing and changing it to:
+
+         if (Scalar::Util::blessed($obj) and $obj-&gt;isa('Something')) {
+
+       Right. That's why this module exists.
+
+       Since perl allows us to provide a subroutine reference or a method name to the -&gt; operator when used as a
+       method call, and a subroutine doesn't require the invocant to actually be an object, we can create safe
+       versions of isa, can and friends by using a subroutine reference that only tries to call the method if
+       it's used on an object. So:
+
+         my $isa_Foo = $maybe_an_object-&gt;$_call_if_object(isa =&gt; 'Foo');
+
+       is equivalent to
+
+         my $isa_Foo = do {
+           if (Scalar::Util::blessed($maybe_an_object)) {
+             $maybe_an_object-&gt;isa('Foo');
+           } else {
+             undef;
+           }
+         };
+
+       Note that we don't handle trying class names, because many things are valid class names that you might
+       not want to treat as one (like say "Matt") - the "is_module_name" function from Module::Runtime is a good
+       way to check for something you might be able to call methods on if you want to do that.
+
+       We are careful to make sure that scalar/list context is preserved for the method that is eventually
+       called.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+   <b>$_isa</b>
+         $maybe_an_object-&gt;$_isa('Foo');
+
+       If called on an object, calls "isa" on it and returns the result, otherwise returns nothing.
+
+   <b>$_can</b>
+         $maybe_an_object-&gt;$_can('Foo');
+
+       If called on an object, calls "can" on it and returns the result, otherwise returns nothing.
+
+   <b>$_does</b>
+         $maybe_an_object-&gt;$_does('Foo');
+
+       If called on an object, calls "does" on it and returns the result, otherwise returns nothing. If the
+       "does" method does not exist, returns nothing rather than failing.
+
+   <b>$_DOES</b>
+         $maybe_an_object-&gt;$_DOES('Foo');
+
+       If called on an object, calls "DOES" on it and returns the result, otherwise returns nothing. On perl
+       versions prior to 5.10.0, the built in core "DOES" method doesn't exist. If the method doesn't exist,
+       this will fall back to calling "isa" just like the core "DOES" method.
+
+   <b>$_call_if_object</b>
+         $maybe_an_object-&gt;$_call_if_object(method_name =&gt; @args);
+
+       If called on an object, calls "method_name" on it and returns the result, otherwise returns nothing.
+
+   <b>$_call_if_can</b>
+         $maybe_an_object-&gt;$_call_if_can(name =&gt; @args);
+
+       If called on an object, calls "can" on it; if that returns true, then calls "method_name" on it and
+       returns the result; if any condition is false returns nothing.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       I gave a lightning talk on this module (and curry and Import::Into) at YAPC::NA 2013
+       &lt;https://www.youtube.com/watch?v=wFXWV2yY7gE&amp;t=46m05s&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       mst - Matt S. Trout (cpan:MSTROUT) &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       None yet. Well volunteered? :)
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2012 the Safe::Isa "AUTHOR" and "CONTRIBUTORS" as listed above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software and may be distributed under the same terms as perl itself.
+
+perl v5.26.2                                       2018-05-06                                     <u>Safe::<a href="../man3pm/Isa.3pm.html">Isa</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>
