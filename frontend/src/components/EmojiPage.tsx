@@ -431,6 +431,21 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
           </div>
         </div>
       )}
+
+      {/* Link to Apple Vendor */}
+      <div className="pt-6 pb-6 mb-6 flex justify-center md:justify-start">
+        <a
+          href={`/freedevtools/emojis/apple-emojis/${emoji.slug}/`}
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-blue-700 dark:text-blue-300 
+                    bg-blue-100 dark:bg-blue-900/30 rounded-xl shadow-sm 
+                    hover:bg-blue-200 dark:hover:bg-blue-900/50 
+                    hover:shadow-md transition-all duration-200"
+        >
+          <span>🍏 See the Apple Version of this Emoji</span>
+          <span className="text-base">→</span>
+        </a>
+      </div>
+
     </div>
   );
 }

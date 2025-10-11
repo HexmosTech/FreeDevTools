@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { getAllAppleEmojis, getAppleEmojiBySlug } from './appleEmojis';
 
 export interface EmojiData {
   alsoKnownAs?: string[];
@@ -232,12 +233,53 @@ export function getEmojiImages(slug: string): EmojiImageVariants {
   return images;
 }
 
-export function getEmojisByCategory(categoryName: string): EmojiData[] {
-  const allEmojis = getAllEmojis();
+export function getEmojisByCategory1(categoryName: string, vendor?: 'apple'): EmojiData[] {
+  const allEmojis = getAllEmojis(); // Base metadata only
   const normalized = categoryName.toLowerCase();
   const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const targetSlug = slugify(categoryName);
-  return allEmojis.filter((emoji) => {
+
+  return allEmojis
+    .filter((emoji) => {
+      const group = (
+        emoji.fluentui_metadata?.group ||
+        emoji.emoji_net_data?.category ||
+        (emoji as any).given_category ||
+        'Other'
+      ).toLowerCase();
+      return group === normalized || slugify(group) === targetSlug;
+    })
+    .map((emoji) => {
+      if (vendor === 'apple') {
+        // Load the latestAppleImage from Apple evolution data
+        const appleEmoji = getAppleEmojiBySlug(emoji.slug);
+        return {
+          ...emoji,
+          latestAppleImage: appleEmoji?.latestAppleImage || null
+        };
+      }
+      return emoji;
+    });
+}
+
+export function getEmojisByCategory(categoryName: string, vendor?: 'apple'): EmojiData[] {
+  const allEmojis = getAllEmojis(); // Assume cached or loaded once globally
+  const normalized = categoryName.toLowerCase();
+  const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const targetSlug = slugify(categoryName);
+
+  // If apple vendor is enabled, bulk-load Apple emoji info once and index by slug
+  let appleEmojiMap: Record<string, { latestAppleImage?: string }> = {};
+  if (vendor === 'apple') {
+    const allAppleEmojis = getAllAppleEmojis(); // Implement bulk fetch once
+    appleEmojiMap = allAppleEmojis.reduce((map, emoji) => {
+      map[emoji.slug] = emoji;
+      return map;
+    }, {} as Record<string, { latestAppleImage?: string }>);
+  }
+
+  // Filter once by category
+  const filtered = allEmojis.filter((emoji) => {
     const group = (
       emoji.fluentui_metadata?.group ||
       emoji.emoji_net_data?.category ||
@@ -246,7 +288,21 @@ export function getEmojisByCategory(categoryName: string): EmojiData[] {
     ).toLowerCase();
     return group === normalized || slugify(group) === targetSlug;
   });
+
+  // Map with enriched Apple image if applicable
+  if (vendor === 'apple') {
+    return filtered.map((emoji) => {
+      const appleEmoji = appleEmojiMap[emoji.slug];
+      return {
+        ...emoji,
+        latestAppleImage: appleEmoji?.latestAppleImage || null,
+      };
+    });
+  }
+
+  return filtered;
 }
+
 
 export function getEmojiCategories(): string[] {
   const allEmojis = getAllEmojis();
