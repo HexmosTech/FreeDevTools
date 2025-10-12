@@ -106,6 +106,9 @@ class PageSpeedAnalyzer:
             url_parts = url_parts.split("/", 1)[1] if "/" in url_parts else url_parts
             filename = url_parts.replace("/", "_").replace("?", "_").replace("&", "_")
 
+            # Remove trailing underscore if present
+            filename = filename.rstrip("_")
+
             # Add strategy and timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"{filename}_{strategy}_{timestamp}.json"
@@ -148,8 +151,8 @@ def main():
     # Initialize analyzer (without service account for now)
     analyzer = PageSpeedAnalyzer("")
 
-    # Run analysis for desktop strategy
-    strategy = "desktop"
+    # Run analysis for mobile strategy
+    strategy = "mobile"
 
     print(f"🚀 Starting PageSpeed analysis for {len(urls)} URLs")
     print(f"📱 Strategy: {strategy.upper()}")

@@ -12,10 +12,12 @@ export const GET: APIRoute = async () => {
       .map((file) => ({
         filename: file,
         url: file
-          .replace(/_desktop_\d{8}_\d{6}\.json$/, '')
+          .replace(/__(desktop|mobile)_\d{8}_\d{6}\.json$/, '')
           .replace(/_/g, '/')
           .replace('freedevtools', 'https://hexmos.com/freedevtools'),
-        timestamp: file.match(/_(\d{8}_\d{6})\.json$/)?.[1] || 'unknown',
+        timestamp:
+          file.match(/__(desktop|mobile)_(\d{8}_\d{6})\.json$/)?.[2] ||
+          'unknown',
       }))
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 
