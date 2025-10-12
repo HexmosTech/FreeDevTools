@@ -105,4 +105,26 @@ const mcpCategoryData = defineCollection({
   }),
 });
 
-export const collections = { tldr, mcpMetadata, mcpCategoryData };
+// Define the PageSpeed analytics collection
+const pageSpeedAnalytics = defineCollection({
+  loader: glob({
+    pattern: '**/*.json',
+    base: './public/analytics/output',
+  }),
+  schema: z.object({
+    captchaResult: z.string().optional(),
+    kind: z.string().optional(),
+    id: z.string().optional(),
+    loadingExperience: z.any().optional(),
+    originLoadingExperience: z.any().optional(),
+    lighthouseResult: z.any().optional(),
+    version: z.any().optional(),
+  }),
+});
+
+export const collections = {
+  tldr,
+  mcpMetadata,
+  mcpCategoryData,
+  pageSpeedAnalytics,
+};
