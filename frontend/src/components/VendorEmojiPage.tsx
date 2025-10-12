@@ -64,13 +64,13 @@ const MainEmojiBox: React.FC<{ emoji: any }> = ({ emoji }) => {
 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 md:p-6 mb-8 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
   <img
     src={emoji.latestAppleImage}
-    alt={`${emoji.title || emoji.fluentui_metadata?.cldr || emoji.slug} Apple Emoji`}
+    alt={`${emoji.title  || emoji.slug || emoji.fluentui_metadata?.cldr} Apple Emoji`}
     className="w-24 h-24 md:w-28 md:h-28 cursor-pointer"
     onClick={() => copyRasterImage(emoji.latestAppleImage)}
   />
   <div className="flex-1 text-center md:text-left">
     <h1 className="text-2xl md:text-3xl font-semibold mb-2 flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start gap-2"   style={{ textTransform: 'capitalize' }}>
-      {emoji.title || emoji.fluentui_metadata?.cldr || emoji.slug} (Apple)
+      {emoji.title  || emoji.slug || emoji.fluentui_metadata?.cldr} (Apple)
       <button
         className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 mt-1 md:mt-0"
         onClick={() => navigator.clipboard.writeText(emoji.latestAppleImage)}
