@@ -14,14 +14,21 @@ func ToOfflineUrl(url string) string {
 }
 
 
-func fetchText(url string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", url, nil)
+func fetchText(url string, headOnly bool) (*http.Response, error) {
+	var req *http.Request
+	var err error
+	if headOnly {
+		req, err = http.NewRequest("HEAD", url, nil)
+	} else {
+		req, err = http.NewRequest("GET", url, nil)
+	}
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("User-Agent", "GoSitemapChecker/1.0")
 	return client.Do(req)
 }
+
 
 func validateCanonical(url string) bool {
 	req, _ := http.NewRequest("HEAD", url, nil)
