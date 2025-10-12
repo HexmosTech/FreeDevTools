@@ -5,32 +5,103 @@ import { useMemo, useState } from 'react';
 function formatFilename(filename: string): string {
   // Remove "freedevtools_" from the beginning
   let cropped = filename.replace(/^freedevtools_/, '');
-  
+
   // Remove last 21 characters (timestamp and extension)
   if (cropped.length > 21) {
     cropped = cropped.slice(0, -21);
   }
-  
+
   return cropped;
 }
 
-// Get metric value with tooltip
+// Metric definitions with descriptions and thresholds
+const METRIC_DEFINITIONS = {
+  'Speed Index': {
+    description: 'Loading: How quickly the contents of a page are visibly populated.',
+    thresholds: { good: '≤3400', needsImprovement: '3400−5800', poor: '>5800' }
+  },
+  'First Contentful Paint': {
+    description: 'Perceived Load: Time until the first visual element (text, image, etc.) is rendered on the screen.',
+    thresholds: { good: '≤1800', needsImprovement: '1800−3000', poor: '>3000' }
+  },
+  'Largest Contentful Paint': {
+    description: 'Loading: The time it takes for the largest visual element (e.g., hero image, main text block) to load.',
+    thresholds: { good: '≤2500', needsImprovement: '2500−4000', poor: '>4000' }
+  },
+  'Total Blocking Time': {
+    description: 'Responsiveness (Lab Data): The total time the main thread was blocked, preventing responsiveness to user input.',
+    thresholds: { good: '≤200', needsImprovement: '200−600', poor: '>600' }
+  },
+  'Cumulative Layout Shift': {
+    description: 'Visual Stability: Measures the unexpected shifting of content on the page as it loads.',
+    thresholds: { good: '≤0.1', needsImprovement: '0.1−0.25', poor: '>0.25' }
+  }
+};
+
+// Get performance color based on metric value and thresholds
+function getPerformanceColor(numericValue: number, thresholds: any): string {
+  const goodThreshold = parseFloat(thresholds.good.replace(/[^\d.]/g, ''));
+  const needsImprovementMax = parseFloat(thresholds.needsImprovement.split('−')[1].replace(/[^\d.]/g, ''));
+
+  if (numericValue <= goodThreshold) {
+    return 'text-green-600 dark:text-green-400';
+  } else if (numericValue <= needsImprovementMax) {
+    return 'text-yellow-600 dark:text-yellow-400';
+  } else {
+    return 'text-red-600 dark:text-red-400';
+  }
+}
+
+// Get metric value with enhanced tooltip
 function MetricCell({ metric, title, isLastColumn = false }: { metric: any; title: string; isLastColumn?: boolean }) {
   if (!metric) {
     return <span className="text-gray-400">-</span>;
   }
 
   const displayValue = metric.displayValue || metric.numericValue || '-';
-  const tooltipContent = metric ? JSON.stringify(metric, null, 2) : 'No data';
+  const numericValue = metric.numericValue;
+  const definition = METRIC_DEFINITIONS[title as keyof typeof METRIC_DEFINITIONS];
+
+  let performanceColor = 'text-gray-900 dark:text-gray-100';
+  if (definition && numericValue !== undefined) {
+    performanceColor = getPerformanceColor(numericValue, definition.thresholds);
+  }
 
   return (
     <div className="group relative">
-      <span className="cursor-help text-sm font-medium">{displayValue}</span>
-      <div className={`absolute bottom-full mb-2 w-96 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none ${isLastColumn ? 'right-0' : 'left-0'
+      <span className={`cursor-help text-sm font-medium ${performanceColor}`}>{displayValue}</span>
+      <div className={`absolute top-full mt-2 w-96 p-4 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none ${isLastColumn ? 'right-0' : 'left-0'
         }`}>
-        <div className="font-semibold mb-1">{title}</div>
-        <pre className="whitespace-pre-wrap break-words">{tooltipContent}</pre>
-        <div className={`absolute top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 ${isLastColumn ? 'right-4' : 'left-4'
+        <div className="font-semibold mb-2 text-base">{title}</div>
+
+        {definition && (
+          <div className="mb-3">
+            <div className="text-gray-300 mb-2">{definition.description}</div>
+            <div className="space-y-1">
+              <div className="flex justify-between">
+                <span className="text-green-400">Good:</span>
+                <span className="text-green-400">{definition.thresholds.good}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-400">Needs Improvement:</span>
+                <span className="text-yellow-400">{definition.thresholds.needsImprovement}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-red-400">Poor:</span>
+                <span className="text-red-400">{definition.thresholds.poor}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="border-t border-gray-700 pt-2">
+          <div className="text-gray-400 text-xs mb-1">Raw Data:</div>
+          <pre className="whitespace-pre-wrap break-words text-xs bg-gray-800 p-2 rounded">
+            {JSON.stringify(metric, null, 2)}
+          </pre>
+        </div>
+
+        <div className={`absolute bottom-full w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 ${isLastColumn ? 'right-4' : 'left-4'
           }`}></div>
       </div>
     </div>
@@ -131,8 +202,8 @@ export default function PageSpeedAnalytics({ jsonFiles }: PageSpeedAnalyticsProp
   };
   return (
     <div className="">
-      <div className="overflow-x-auto">
-        <table className="mt-44 min-w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg">
+      <div className="">
+        <table className="mt-44 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
