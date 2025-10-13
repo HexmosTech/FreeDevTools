@@ -44,13 +44,16 @@ func main() {
     runtime.GOMAXPROCS(runtime.NumCPU())
 
     var sitemapUrl, inputJSON string
+    var outputFormat string
+    var useHead bool
+
     flag.StringVar(&sitemapUrl, "sitemap", "", "Sitemap URL")
     flag.StringVar(&inputJSON, "input", "", "Input JSON file of URLs")
     flag.IntVar(&concurrency, "concurrency", 200, "Number of concurrent workers")
     flag.StringVar(&mode, "mode", "prod", "Mode: prod or local")
     flag.IntVar(&maxPages, "maxPages", 0, "Limit pages for testing")
-    var useHead bool
     flag.BoolVar(&useHead, "head", false, "Use HEAD requests only (check 404/200 without reading full body)")
+    flag.StringVar(&outputFormat, "output", "pdf", "Output format: pdf, json, or both")
 
     flag.Parse()
 
@@ -71,7 +74,7 @@ func main() {
     } else if inputJSON != "" {
         urls = loadUrlsFromJSON(inputJSON)
     } else {
-        fmt.Println("Usage: go run main.go --sitemap=<url> OR --input=<file.json> [--concurrency=200] [--mode=prod|local] [--maxPages=10]")
+        fmt.Println("Usage: go run main.go --sitemap=<url> OR --input=<file.json> [--concurrency=200] [--mode=prod|local] [--maxPages=10] [--output=pdf|json|both]")
         os.Exit(1)
     }
 
@@ -92,7 +95,7 @@ func main() {
         go func(workerID int) {
             defer wg.Done()
             for url := range jobs {
-                res := checkUrl(url,useHead)
+                res := checkUrl(url, useHead)
                 results <- res
                 atomic.AddInt32(&completed, 1)
             }
@@ -124,7 +127,19 @@ func main() {
         all = append(all, r)
     }
 
-    generatePDF(all, "sitemap_report.pdf")
+    // Timestamp for report filenames
+    timestamp := time.Now().Format("2006-01-02_15-04")
+
+    if outputFormat == "pdf" || outputFormat == "both" {
+        pdfName := fmt.Sprintf("sitemap_report_%s.pdf", timestamp)
+        generatePDF(all, pdfName)
+        fmt.Println("✅ PDF saved as", pdfName)
+    }
+
+    if outputFormat == "json" || outputFormat == "both" {
+        jsonName := fmt.Sprintf("sitemap_report_%s.json", timestamp)
+        saveJSON(all, jsonName)
+    }
 }
 
 // -------------------------
@@ -182,4 +197,21 @@ func loadUrlsFromJSON(file string) []string {
         os.Exit(1)
     }
     return urls
+}
+
+// -------------------------
+// Save JSON Report
+// -------------------------
+
+func saveJSON(results []UrlResult, filename string) {
+    data, err := json.MarshalIndent(results, "", "  ")
+    if err != nil {
+        fmt.Println("Failed to marshal JSON:", err)
+        return
+    }
+    if err := os.WriteFile(filename, data, 0644); err != nil {
+        fmt.Println("Failed to write JSON file:", err)
+        return
+    }
+    fmt.Println("✅ JSON saved as", filename)
 }
