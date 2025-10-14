@@ -174,11 +174,15 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
             </div>
             
             {/* Unicode Info */}
-            {emoji.codepointsHex && emoji.codepointsHex.length > 0 && (
+            {(
+              (emoji.codepointsHex && emoji.codepointsHex.length > 0) ||
+              ((emoji as any).Unicode && (emoji as any).Unicode.length > 0)
+            ) && (
               <div className="text-sm text-slate-500 dark:text-slate-400">
-                Unicode: {emoji.codepointsHex.join(', ')}
+                Unicode: {(emoji.codepointsHex?.length ? emoji.codepointsHex : (emoji as any).Unicode).join(', ')}
               </div>
             )}
+
           </div>
         </div>
       </div>
@@ -313,13 +317,19 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
         )}
 
         {/* Keywords */}
-        {emoji.fluentui_metadata?.keywords && emoji.fluentui_metadata.keywords.length > 0 && (
+        {(
+          (emoji.fluentui_metadata?.keywords?.length ?? 0) > 0 ||
+          ((emoji as any).keywords?.length ?? 0) > 0
+        ) && (
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
               Keywords
             </h3>
             <div className="flex flex-wrap gap-2">
-              {emoji.fluentui_metadata.keywords.map((keyword) => (
+              {(emoji.fluentui_metadata?.keywords?.length
+                ? emoji.fluentui_metadata.keywords
+                : (emoji as any).keywords
+              ).map((keyword: string) => (
                 <span
                   key={keyword}
                   className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full dark:bg-blue-900/20 dark:text-blue-400"
@@ -330,6 +340,7 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
             </div>
           </div>
         )}
+
       </div>
 
       {/* Shortcodes Table */}

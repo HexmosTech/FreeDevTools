@@ -50,7 +50,7 @@ func main() {
     flag.StringVar(&sitemapUrl, "sitemap", "", "Sitemap URL")
     flag.StringVar(&inputJSON, "input", "", "Input JSON file of URLs")
     flag.IntVar(&concurrency, "concurrency", 200, "Number of concurrent workers")
-    flag.StringVar(&mode, "mode", "prod", "Mode: prod or local")
+    flag.StringVar(&mode, "mode", "local", "Mode: prod or local")
     flag.IntVar(&maxPages, "maxPages", 0, "Limit pages for testing")
     flag.BoolVar(&useHead, "head", false, "Use HEAD requests only (check 404/200 without reading full body)")
     flag.StringVar(&outputFormat, "output", "pdf", "Output format: pdf, json, or both")
@@ -196,8 +196,15 @@ func loadUrlsFromJSON(file string) []string {
         fmt.Println("Invalid JSON file format:", err)
         os.Exit(1)
     }
+
+    // ✅ Apply ToOfflineUrl to each
+    for i, u := range urls {
+        urls[i] = ToOfflineUrl(u)
+    }
+
     return urls
 }
+
 
 // -------------------------
 // Save JSON Report
