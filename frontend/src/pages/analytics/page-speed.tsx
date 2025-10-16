@@ -206,6 +206,9 @@ export default function PageSpeedAnalytics({ jsonFiles }: PageSpeedAnalyticsProp
         <table className="mt-44 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                #
+              </th>
               <th
                 className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 select-none"
                 onClick={() => handleSort('name')}
@@ -278,6 +281,9 @@ export default function PageSpeedAnalytics({ jsonFiles }: PageSpeedAnalyticsProp
 
               return (
                 <tr key={file.filename} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {index + 1}
+                  </td>
                   <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">
                     {formatFilename(file.filename)}
                   </td>
