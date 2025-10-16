@@ -1,6 +1,5 @@
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
@@ -10,7 +9,7 @@ const McpSkeleton: React.FC = () => {
     <ToolContainer>
       {/* Overview Stats */}
       <div className="text-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <div className="grid grid-cols-2 gap-6 mt-8">
           <div className="text-center">
             <Skeleton className="h-8 w-16 mx-auto mb-2" />
             <Skeleton className="h-4 w-20 mx-auto" />
@@ -90,7 +89,7 @@ const McpSkeleton: React.FC = () => {
           <Skeleton className="h-10 w-48" />
         </div>
       </div>
-    </ToolContainer>
+    </ToolContainer >
   );
 };
 

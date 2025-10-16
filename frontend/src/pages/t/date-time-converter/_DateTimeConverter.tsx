@@ -30,6 +30,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import _DateTimeConverterWiki from "./_DateTimeConverterWiki";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const DateTimeConverter = () => {
   const [input, setInput] = useState("");
@@ -169,6 +170,9 @@ const DateTimeConverter = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Date Time Converter"
         description="Instantly convert any date or time between UTC, ISO, Unix, and other popular formats. Enter a date, pick from the calendar, or paste a timestamp to see all formats at once."

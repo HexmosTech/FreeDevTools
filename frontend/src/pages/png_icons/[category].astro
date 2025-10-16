@@ -1,20 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import AdBanner from '../../components/banner/AdBanner';
+import AdBanner from '../../components/banner/AdBanner.astro';
 import CreditsButton from '../../components/buttons/CreditsButton';
+import ToolContainer from '../../components/tool/ToolContainer';
+import ToolHead from '../../components/tool/ToolHead';
 import { getCollection } from 'astro:content';
 import { Tooltips } from 'astro-tooltips';
 
-
 export async function getStaticPaths() {
-  // Load the cluster_png.json file to get all categories
-  const fs = await import('fs/promises');
-  const path = await import('path');
-  
-  const clustorPath = path.join('./src/pages/png_icons', 'cluster_png.json');
-  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
-  
-  const categories = Object.values(clustorData.clusters).map((cluster: any) => cluster.name);
+  const pngIconsEntries = await getCollection('pngIconsMetadata');
+  const iconsData = pngIconsEntries[0]?.data;
+
+  if (!iconsData) {
+    throw new Error('PNG icons metadata not found');
+  }
+
+  const categories = Object.values(iconsData.clusters).map((cluster: any) => cluster.name);
   
   return categories.map(category => ({
     params: { category },
@@ -23,36 +24,36 @@ export async function getStaticPaths() {
 }
 
 const { category } = Astro.params;
-const { category: categoryProp } = Astro.props;
 
 async function getCategoryIcons() {
-  // Load the cluster_png.json file for metadata (fast)
-  const fs = await import('fs/promises');
-  const path = await import('path');
-  
-  const clustorPath = path.join('./src/pages/png_icons', 'cluster_png.json');
-  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
-  
+  const pngIconsEntries = await getCollection('pngIconsMetadata');
+  const iconsData = pngIconsEntries[0]?.data;
+
+  if (!iconsData) {
+    return [];
+  }
+
   // Find the cluster by name
-  const cluster = Object.values(clustorData.clusters).find((c: any) => c.name === category) as any;
+  const cluster = Object.values(iconsData.clusters).find((c: any) => c.name === category) as any;
   if (!cluster) {
     return [];
   }
   
   const icons = [];
 
-  // Process each file object in the cluster - NO png loading at build time
+  // Process each file object in the cluster - NO PNG loading at build time
   for (const fileObj of cluster.fileNames) {
-    const iconName = fileObj.fileName.replace(".svg", "");
+    const iconName = typeof fileObj === 'string' 
+      ? fileObj.replace('.svg', '') 
+      : fileObj.fileName?.replace('.svg', '') || '';
 
     icons.push({
       name: iconName,
-      description: fileObj.description || `Free ${iconName} icon`,
+      description: typeof fileObj === 'object' ? fileObj.description || `Free ${iconName} icon` : `Free ${iconName} icon`,
       category: category,
-      svgContent: '', // Will be loaded client-side
-      tags: fileObj.tags || cluster.keywords || [],
-      author: fileObj.author || 'Free DevTools',
-      license: fileObj.license || 'MIT',
+      tags: typeof fileObj === 'object' ? fileObj.tags || cluster.keywords || [] : cluster.keywords || [],
+      author: typeof fileObj === 'object' ? fileObj.author || 'Free DevTools' : 'Free DevTools',
+      license: typeof fileObj === 'object' ? fileObj.license || 'MIT' : 'MIT',
       url: `/freedevtools/png_icons/${category}/${iconName}/`
     });
   }
@@ -74,6 +75,13 @@ const categoryIconMap = {
 };
 
 const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] || categoryIconMap.general;
+
+// Breadcrumb data
+const breadcrumbItems = [
+  { label: 'Free DevTools', href: '/freedevtools/' },
+  { label: 'PNG Icons', href: '/freedevtools/png_icons/' },
+  { label: category }
+];
 ---
 
 <BaseLayout 
@@ -94,41 +102,18 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
 
   <Tooltips delay={[500, 100]} />
   
-  <div class="max-w-6xl mx-auto px-2 md:px-6">
-      <div class="mb-16 mt-[74px]">
-        <AdBanner />
-      </div>
+  <ToolContainer>
+    <div class="mb-16 mt-[74px]">
+      <AdBanner />
+    </div>
+    <ToolHead
+      name={`${category} PNG Graphics Collection`}
+      description={`Browse ${totalIcons} ready-to-use ${category} images, instantly downloadable without restrictions`}
+      breadcrumbItems={breadcrumbItems}
+    />
     
-    <div class="mb-8">
-      <nav class="text-sm mb-4 flex items-center">
-        <a href="/freedevtools/png_icons/credits/" class="text-blue-600 dark:text-blue-400 hover:font-semibold w-28">Credits</a>
-        <span class="mx-2 mr-4">/</span>
-        <a href="/freedevtools/png_icons/" class="text-blue-600 dark:text-blue-400 hover:font-semibold w-20">PNG Icons</a>
-        <span class="mx-2 mr-4">/</span>
-        <span class="capitalize">{category}</span>
-      </nav>
-      
-      <div class="flex items-center mb-4">
-        <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center mr-4 border border-slate-200 dark:border-slate-700">
-          <img 
-            src={categoryIcon}
-            alt={`${category} logo`}
-            class="w-8 h-8 object-contain"
-            onerror="this.src='https://via.placeholder.com/40x40/3b82f6/ffffff?text=' + this.alt.split(' ')[0].charAt(0).toUpperCase()"
-          />
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100 capitalize">
-            {category} PNG Graphics Collection
-          </h1>
-          <p class="text-lg text-slate-600 dark:text-slate-400">
-            Browse {totalIcons} ready-to-use {category} images, instantly downloadable without restrictions
-          </p>
-        </div>
-      </div>
-      
-      <!-- Search Bar -->
-      <div class="max-w-md mb-6 mt-6">
+    <!-- Search Bar -->
+    <div class="max-w-md mb-6 mt-6">
         <div class="relative">
           <input 
             type="text" 
@@ -162,7 +147,7 @@ const categoryIcon = categoryIconMap[category as keyof typeof categoryIconMap] |
         <CreditsButton href="/freedevtools/png_icons/credits/" />
       </div>
     </div>
-  </div>
+  </ToolContainer>
 </BaseLayout>
 
 <style>

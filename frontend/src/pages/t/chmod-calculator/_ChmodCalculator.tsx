@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Terminal, Shield, User, Users, Globe, RefreshCw } from "lucide-react";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Types for chmod calculator
 type Scope = "read" | "write" | "execute";
@@ -221,28 +222,31 @@ const ChmodCalculator: React.FC = () => {
     icon: React.ReactNode;
     description: string;
   }[] = [
-    {
-      group: "owner",
-      title: "Owner (u)",
-      icon: <User className="h-4 w-4" />,
-      description: "File owner",
-    },
-    {
-      group: "group",
-      title: "Group (g)",
-      icon: <Users className="h-4 w-4" />,
-      description: "File group",
-    },
-    {
-      group: "public",
-      title: "Others (o)",
-      icon: <Globe className="h-4 w-4" />,
-      description: "Everyone else",
-    },
-  ];
+      {
+        group: "owner",
+        title: "Owner (u)",
+        icon: <User className="h-4 w-4" />,
+        description: "File owner",
+      },
+      {
+        group: "group",
+        title: "Group (g)",
+        icon: <Users className="h-4 w-4" />,
+        description: "File group",
+      },
+      {
+        group: "public",
+        title: "Others (o)",
+        icon: <Globe className="h-4 w-4" />,
+        description: "Everyone else",
+      },
+    ];
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Chmod Calculator"
         description="Calculate Unix file permissions instantly with our free online chmod calculator. Convert between octal, symbolic, and human-readable formats with real-time permission preview and command generation."
@@ -599,8 +603,8 @@ const ChmodCalculator: React.FC = () => {
                         Batch Operations
                       </h5>
                       <div className="bg-slate-100 dark:bg-slate-800 rounded p-3 font-mono text-sm">
-                        <div>find /path -type f -exec chmod 644 {} \;</div>
-                        <div>find /path -type d -exec chmod 755 {} \;</div>
+                        <div>find /path -type f -exec chmod 644 { } \;</div>
+                        <div>find /path -type d -exec chmod 755 { } \;</div>
                       </div>
                       <p className="text-xs text-slate-600 dark:text-slate-400">
                         Set permissions recursively for files and directories

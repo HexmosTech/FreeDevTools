@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // HAR file types and interfaces
 interface HarEntry {
@@ -232,6 +233,9 @@ const HarFileViewer: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="HAR File Viewer"
         description="Analyze HTTP Archive (HAR) files instantly with our free online HAR viewer. Debug network traffic, analyze web performance, and examine HTTP requests with detailed waterfall charts and table views."

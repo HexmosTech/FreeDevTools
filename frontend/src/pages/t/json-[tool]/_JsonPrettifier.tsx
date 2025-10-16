@@ -20,6 +20,7 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-textmate";
 import "ace-builds/src-noconflict/theme-vibrant_ink";
 import workerJsonUrl from "ace-builds/src-noconflict/worker-json?url";
+import AdBanner from "../../../components/banner/AdBanner";
 ace.config.setModuleUrl("ace/mode/json_worker", workerJsonUrl);
 
 const LIGHT_THEME = "ace/theme/textmate";
@@ -291,6 +292,9 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name={toolConfig.name}
         description={toolConfig.description}

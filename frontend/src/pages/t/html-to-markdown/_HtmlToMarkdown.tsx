@@ -13,6 +13,7 @@ import { Textarea } from 'src/components/ui/textarea';
 import { Label } from 'src/components/ui/label';
 import ToolVideo from 'src/components/tool/ToolVideo';
 import showdown from 'showdown';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const converter = new showdown.Converter();
 
@@ -75,6 +76,9 @@ const HtmlToMarkdown: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="HTML to Markdown Converter"
         description="Convert HTML to Markdown instantly with this free online tool. See the converted Markdown in real-time as you type."
@@ -120,9 +124,9 @@ const HtmlToMarkdown: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                    <Button onClick={handleClear} variant="outline" size="sm">
-                        Clear
-                    </Button>
+                  <Button onClick={handleClear} variant="outline" size="sm">
+                    Clear
+                  </Button>
                 </div>
               </CardContent>
             </Card>

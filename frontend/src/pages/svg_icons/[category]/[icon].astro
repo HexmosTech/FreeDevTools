@@ -1,57 +1,59 @@
 ---
-import AdBanner from '../../../components/banner/AdBanner';
+import AdBanner from '../../../components/banner/AdBanner.astro';
 import CopyPngButton from '../../../components/buttons/CopyPngButton.tsx';
 import CopySvgButton from '../../../components/buttons/CopySvgButton.tsx';
+import CreditsButton from '../../../components/buttons/CreditsButton';
 import DownloadPngButton from '../../../components/buttons/DownloadPngButton.tsx';
 import DownloadSvgButton from '../../../components/buttons/DownloadSvgButton.tsx';
-import CreditsButton from '../../../components/buttons/CreditsButton';
 import ToastProvider from '../../../components/ToastProvider';
+import ToolContainer from '../../../components/tool/ToolContainer';
+import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 // SVG processing moved to client-side for better performance
 
 
 export async function getStaticPaths() {
-  // Load the cluster_svg.json file to get all icons
-  const fs = await import('fs/promises');
-  const path = await import('path');
+  const { getCollection } = await import('astro:content');
   
-  const clustorPath = path.join('./src/pages/svg_icons', 'cluster_svg.json');
-  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
-  
+  const svgIconsEntries = await getCollection('svgIconsMetadata');
+  const iconsData = svgIconsEntries[0]?.data;
+
+  if (!iconsData) {
+    throw new Error('SVG icons metadata not found');
+  }
+
   const paths = [];
   
   // Process each cluster (category) - NO SVG loading at build time
-  for (const [clusterKey, clusterData] of Object.entries(clustorData.clusters)) {
+  for (const [clusterKey, clusterData] of Object.entries(iconsData.clusters)) {
     const cluster = clusterData as any;
     const categoryName = cluster.name; // Use the name from the cluster data
     
     // Process each file object in the cluster - NO SVG loading at build time
     for (const fileObj of cluster.fileNames) {
-      const iconName = fileObj.fileName.replace(".svg", "");
+      const iconName = typeof fileObj === 'string' 
+        ? fileObj.replace('.svg', '') 
+        : fileObj.fileName?.replace('.svg', '') || '';
+      
       paths.push({
         params: { category: categoryName, icon: iconName },
         props: {
           iconData: {
             name: iconName,
-            description: fileObj.description || `Free ${iconName} icon`,
+            description: typeof fileObj === 'object' ? fileObj.description || `Free ${iconName} icon` : `Free ${iconName} icon`,
             category: categoryName,
-            svgContent: '', // Will be loaded client-side
-            originalSvgContent: '', // Will be loaded client-side
-            tags: fileObj.tags || cluster.keywords || [],
-            author: fileObj.author || 'Free DevTools by Hexmos',
-            license: fileObj.license || 'MIT',
-            usecases: fileObj.usecases || '',
-            synonyms: fileObj.synonyms || [],
-            industry: fileObj.industry || '',
-            emotional_cues: fileObj.emotional_cues || ''
+            tags: typeof fileObj === 'object' ? fileObj.tags || cluster.keywords || [] : cluster.keywords || [],
+            author: typeof fileObj === 'object' ? fileObj.author || 'Free DevTools by Hexmos' : 'Free DevTools by Hexmos',
+            license: typeof fileObj === 'object' ? fileObj.license || 'MIT' : 'MIT',
+            usecases: typeof fileObj === 'object' ? fileObj.usecases || '' : '',
+            synonyms: typeof fileObj === 'object' ? fileObj.synonyms || [] : [],
+            industry: typeof fileObj === 'object' ? fileObj.industry || '' : '',
+            emotional_cues: typeof fileObj === 'object' ? fileObj.emotional_cues || '' : ''
           }
         }
       });
     }
   }
-  
-  console.log('🔍 DEBUG: getStaticPaths generated', paths.length, 'paths');
-  console.log('🔍 DEBUG: First few paths:', paths.slice(0, 3).map(p => p.params.icon));
   
   return paths;
 }
@@ -75,6 +77,14 @@ const { iconData } = Astro.props as {
   };
 };
 
+// Breadcrumb data
+const breadcrumbItems = [
+  { label: 'Free DevTools', href: '/freedevtools/' },
+  { label: 'SVG Icons', href: '/freedevtools/svg_icons/' },
+  { label: category, href: `/freedevtools/svg_icons/${category}/` },
+  { label: iconData.name }
+];
+
 
 // Generate SEO-friendly title and description
 const seoTitle = `Free ${iconData.name} SVG Icon Download | Online Free DevTools by Hexmos`;
@@ -88,46 +98,8 @@ const altText = `${iconData.name} ${iconData.category} icon - Free SVG download`
 const canonical = `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}/`;
 
 
-// Extract SVG dimensions for structured data (will be updated client-side)
+// Static SVG dimensions for structured data
 const svgDimensions = { width: 128, height: 128, viewBox: "0 0 128 128", aspectRatio: 1 };
-
-
-// Calculate optimal display size (scale to fit ~280px while maintaining aspect ratio)
-const maxDisplaySize = 280;
-
-
-// Extract viewBox dimensions from the original SVG
-const viewBoxMatch = iconData.originalSvgContent.match(/viewBox="([^"]*)"/);
-let originalWidth, originalHeight;
-
-
-if (viewBoxMatch) {
-  const viewBox = viewBoxMatch[1].split(/\s+/);
-  originalWidth = parseFloat(viewBox[2]) || 48;
-  originalHeight = parseFloat(viewBox[3]) || 48;
-} else {
-  // Fallback to extracted dimensions
-  originalWidth = svgDimensions.width || 48;
-  originalHeight = svgDimensions.height || 48;
-}
-
-
-const aspectRatio = originalWidth / originalHeight;
-
-
-// Simple scaling: scale the larger dimension to maxDisplaySize
-let displayWidth, displayHeight;
-
-
-if (originalWidth >= originalHeight) {
-  // Landscape or square: scale by width
-  displayWidth = maxDisplaySize;
-  displayHeight = maxDisplaySize / aspectRatio;
-} else {
-  // Portrait: scale by height
-  displayHeight = maxDisplaySize;
-  displayWidth = maxDisplaySize * aspectRatio;
-}
 
 
 // Generate thumbnail URL (points to the actual SVG image in public folder)
@@ -171,33 +143,18 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
   license={iconData.license}
 >
 <ToastProvider client:load>
-  <div class="max-w-6xl mx-auto px-4 md:px-6 py-6">
-
-    {/* Ad Banner */}
-    <div class="mb-12 mt-8 md:mt-16">
+  <ToolContainer>
+    <div class="mb-16 mt-[74px]">
       <AdBanner />
     </div>
-
-    {/* Breadcrumb Navigation */}
-    <nav class="text-sm mb-6 flex flex-wrap items-center gap-2">
-      <a href="/freedevtools/svg_icons/credits/" class="text-blue-600 dark:text-blue-400 hover:font-semibold">Credits</a>
-      <span>/</span>
-      <a href="/freedevtools/svg_icons/" class="text-blue-600 dark:text-blue-400 hover:font-semibold">SVG Icons</a>
-      <span>/</span>
-      <a href={`/freedevtools/svg_icons/${category}/`} class="text-blue-600 dark:text-blue-400 hover:font-semibold">{category}</a>
-      <span>/</span>
-      <span class="text-slate-600 dark:text-slate-400">{iconData.name}</span>
-    </nav>
-
-    {/* Title & Description */}
-    <header class="mb-10">
-      <h1 class="text-3xl md:text-4xl font-semibold mb-3 text-black dark:text-slate-200">
-        {iconData.name} Vector SVG Icon
-      </h1>
+    <ToolHead
+      name={`${iconData.name} Vector SVG Icon`}
+      description={seoDescription}
+      breadcrumbItems={breadcrumbItems}
+    />
       <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
         {iconData.description}
       </p>
-    </header>
 
     {/* Main Section: Icon + Buttons (left) + Metadata (right) */}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -208,14 +165,14 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
       {/* Icon Canvas (Wider + Taller) */}
       <div class="flex items-center justify-center bg-gray-100 rounded-xl p-4 shadow-md w-full max-w-md h-[400px]">
         <picture>
-          <source type="image/svg+xml" srcSet={`/freedevtools/svg_icons/${category}/${icon}.svg`} />
+          <source type="image/svg+xml" srcset={`/freedevtools/svg_icons/${category}/${icon}.svg`} />
           <img
             src={`/freedevtools/svg_icons/${category}/${icon}.svg`}
             alt={altText}
+            width="280"
+            height="280"
             style={{
-              width: "280px",       // width adjusts automatically
-              height: "280px",      // fill container height
-              maxWidth: "100%",    // don't overflow container width
+              maxWidth: "100%",
               objectFit: "contain",
               display: "block"
             }}
@@ -251,7 +208,7 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
             content: iconData.synonyms.length ? (
               <div class="flex flex-wrap gap-2">
                 {iconData.synonyms.map((synonym) => (
-                  <span key={synonym} class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
+                  <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
                     {synonym}
                   </span>
                 ))}
@@ -261,7 +218,7 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
           { title: "Business Domains", content: iconData.industry },
           { title: "Psychological Impact", content: iconData.emotional_cues }
         ].map((section) => (
-          <div key={section.title}>
+          <div>
             <h2 class="text-lg font-semibold mb-2 text-black dark:text-slate-300">{section.title}</h2>
             <div class="text-slate-700 dark:text-slate-400 leading-relaxed">{section.content}</div>
           </div>
@@ -273,7 +230,7 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
           {iconData.tags.length > 0 ? (
             <div class="flex flex-wrap gap-2">
               {iconData.tags.map((tag) => (
-                <span key={tag} class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-medium select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
+                <span class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-medium select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
                   {tag}
                 </span>
               ))}
@@ -295,7 +252,7 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
       </a>
       <CreditsButton href="/freedevtools/svg_icons/credits/" />
     </div>
-  </div>
+  </ToolContainer>
 </ToastProvider>
 
 
@@ -303,50 +260,6 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
 
 </BaseLayout>
 
-<script define:vars={{ iconData, category, icon }}>
-  // Load SVG content client-side for better performance
-  async function loadSVGContent() {
-    try {
-      const response = await fetch(`/freedevtools/svg_icons/${category}/${icon}.svg`);
-      const svgContent = await response.text();
-      
-      // Update the image source to use the loaded SVG
-      const img = document.querySelector('img[alt*="icon"]');
-      if (img) {
-        // Create a blob URL for the SVG
-        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(blob);
-        img.src = url;
-        
-        // Extract dimensions from SVG content
-        const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
-        const svgElement = svgDoc.querySelector('svg');
-        
-        if (svgElement) {
-          const width = svgElement.getAttribute('width') || '128';
-          const height = svgElement.getAttribute('height') || '128';
-          const viewBox = svgElement.getAttribute('viewBox') || `0 0 ${width} ${height}`;
-          
-          // Update image dimensions
-          img.width = parseInt(width);
-          img.height = parseInt(height);
-          
-          console.log('🔍 DEBUG: Loaded SVG with dimensions:', width, 'x', height);
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to load SVG content:', error);
-    }
-  }
-  
-  // Load SVG content after page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadSVGContent);
-  } else {
-    loadSVGContent();
-  }
-</script>
 
 <style>
   /* Simple SVG styling */

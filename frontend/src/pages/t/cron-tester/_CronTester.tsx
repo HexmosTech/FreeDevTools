@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import { toast } from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CronTesterSkeleton from "./_CronTesterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { RefreshCwIcon, CalendarIcon, XIcon } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Label } from "@/components/ui/label";
+import { CalendarIcon, RefreshCwIcon, XIcon } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import CronTesterSkeleton from "./_CronTesterSkeleton";
 
 // Using reliable npm libraries for cron parsing
 interface CronResult {
@@ -421,6 +422,9 @@ const CronTester: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Cron Expression Tester"
         description="Test and validate cron expressions instantly with our free online cron tester. Parse cron jobs, validate syntax, see next execution times, and understand cron patterns with real-time feedback."

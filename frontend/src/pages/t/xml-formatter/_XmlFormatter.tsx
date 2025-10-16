@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertTriangle, CheckIcon, XIcon, MinusIcon } from "lucide-react";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // XML formatting logic based on reference implementation
 interface XMLFormatterOptions {
@@ -292,6 +293,9 @@ const XmlFormatter: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="XML Formatter"
         description="Format and beautify XML documents instantly with our free online XML formatter. Validate XML syntax, customize indentation, and fix malformed XML with real-time formatting and error detection."

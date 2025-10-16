@@ -17,6 +17,7 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const XmlToJson: React.FC = () => {
   const [input, setInput] = useState("");
@@ -274,6 +275,9 @@ const XmlToJson: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="XML to JSON Converter"
         description="Convert XML to JSON format instantly with real-time validation. Perfect for API development, data migration, and configuration file conversion."
@@ -312,11 +316,10 @@ const XmlToJson: React.FC = () => {
                         />
                         {validationStatus !== "idle" && (
                           <div
-                            className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${
-                              validationStatus === "valid"
+                            className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${validationStatus === "valid"
                                 ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
                                 : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                            }`}
+                              }`}
                           >
                             {validationStatus === "valid"
                               ? "Valid XML"

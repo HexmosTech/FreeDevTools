@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 // UUID Versions and their characteristics
 const UUID_VERSIONS = {
   v4: {
@@ -205,6 +206,9 @@ const UuidGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="UUID Generator"
         description="Generate secure UUIDs instantly with our free online UUID generator. Create random v4 UUIDs, timestamp-based v1 UUIDs, or special nil/max UUIDs. Bulk generation and analysis tools included."

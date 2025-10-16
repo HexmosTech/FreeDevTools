@@ -24,6 +24,7 @@ import {
   Server,
 } from "lucide-react";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // User Agent parsing logic based on reference implementation
 interface UAParserResult {
@@ -338,6 +339,9 @@ const UserAgentParser: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="User Agent Parser"
         description="Parse and analyze user agent strings instantly with our free online user agent parser. Extract browser, operating system, device, engine, and CPU architecture information with detailed breakdown and real-time analysis."

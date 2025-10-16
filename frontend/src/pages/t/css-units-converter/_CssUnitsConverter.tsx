@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // CSS Unit conversion utilities
 const pxToRem = (px: number, baseFontSize: number = 16): number => {
@@ -290,6 +291,9 @@ const CssUnitsConverter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="CSS Units Converter"
         description="Convert CSS units instantly with our free online converter. Transform pixels to rem, viewport units (vw, vh, vmin, vmax), and more with real-time conversion and responsive design calculations."

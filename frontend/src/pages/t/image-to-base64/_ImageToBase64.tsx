@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Upload, Image as ImageIcon, X } from "lucide-react";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 // Image Upload Component
 interface ImageUploadProps {
   onFileSelect: (file: File) => void;
@@ -192,6 +193,9 @@ const ImageToBase64: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Image to Base64 Converter"
         description="Convert images to Base64 format instantly. Upload your image and get Base64 string, HTML img tag, and CSS background-image code. Free, fast, and secure - everything runs in your browser."

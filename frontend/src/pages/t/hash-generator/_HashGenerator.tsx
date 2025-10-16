@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Hash generation utilities using Web Crypto API
 type Algorithm =
@@ -207,6 +208,9 @@ const HashGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Hash Generator"
         description="Generate secure hashes instantly with our free online hash generator. Create SHA-256, SHA-512, MD5, PBKDF2, and HMAC hashes with customizable options for security and development needs."

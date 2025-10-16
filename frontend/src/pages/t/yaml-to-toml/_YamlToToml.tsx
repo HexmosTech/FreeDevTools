@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ToastProvider";
 import { parse as parseYaml } from "yaml";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Browser-compatible TOML stringifier
 const stringifyToml = (obj: any, depth = 0): string => {
@@ -205,6 +206,9 @@ const YamlToToml: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="YAML to TOML Converter"
         description="Convert YAML to TOML format instantly. Paste your YAML and get valid TOML output for configuration files, development, and deployment."

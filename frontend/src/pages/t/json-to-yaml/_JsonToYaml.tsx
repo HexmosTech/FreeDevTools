@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // JSON to YAML conversion utility using js-yaml
 const convertJsonToYaml = async (jsonString: string): Promise<string> => {
@@ -94,6 +95,9 @@ const JsonToYaml: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="JSON to YAML Converter"
         description="Convert JSON to YAML format instantly with our free online converter. Transform JSON configuration files to YAML with real-time validation and formatting. Secure browser-based processing."

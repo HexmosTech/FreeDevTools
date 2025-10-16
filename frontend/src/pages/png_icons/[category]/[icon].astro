@@ -1,61 +1,60 @@
 ---
-import AdBanner from '../../../components/banner/AdBanner';
 import CopyPngButton from '../../../components/buttons/CopyPngButton.tsx';
 import CopySvgButton from '../../../components/buttons/CopySvgButton.tsx';
 import DownloadPngButton from '../../../components/buttons/DownloadPngButton.tsx';
 import DownloadSvgButton from '../../../components/buttons/DownloadSvgButton.tsx';
 import CreditsButton from '../../../components/buttons/CreditsButton';
 import ToastProvider from '../../../components/ToastProvider';
+import ToolContainer from '../../../components/tool/ToolContainer';
+import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-// SVG processing moved to client-side for better performance
-
+import AdBanner from '../../../components/banner/AdBanner.astro';
 
 export async function getStaticPaths() {
-  // Load the cluster_png.json file to get all icons
-  const fs = await import('fs/promises');
-  const path = await import('path');
+  const { getCollection } = await import('astro:content');
   
-  const clustorPath = path.join('./src/pages/png_icons', 'cluster_png.json');
-  const clustorData = JSON.parse(await fs.readFile(clustorPath, 'utf-8'));
-  
+  const pngIconsEntries = await getCollection('pngIconsMetadata');
+  const iconsData = pngIconsEntries[0]?.data;
+
+  if (!iconsData) {
+    throw new Error('PNG icons metadata not found');
+  }
+
   const paths = [];
   
   // Process each cluster (category) - NO PNG loading at build time
-  for (const [clusterKey, clusterData] of Object.entries(clustorData.clusters)) {
+  for (const [clusterKey, clusterData] of Object.entries(iconsData.clusters)) {
     const cluster = clusterData as any;
     const categoryName = cluster.name; // Use the name from the cluster data
     
     // Process each file object in the cluster - NO PNG loading at build time
     for (const fileObj of cluster.fileNames) {
-      const iconName = fileObj.fileName.replace(".svg", "");
+      const iconName = typeof fileObj === 'string' 
+        ? fileObj.replace('.svg', '') 
+        : fileObj.fileName?.replace('.svg', '') || '';
+      
       paths.push({
         params: { category: categoryName, icon: iconName },
         props: {
           iconData: {
             name: iconName,
-            description: fileObj.description || `Free ${iconName} icon`,
+            description: typeof fileObj === 'object' ? fileObj.description || `Free ${iconName} icon` : `Free ${iconName} icon`,
             category: categoryName,
-            svgContent: '', // Will be loaded client-side
-            originalSvgContent: '', // Will be loaded client-side
-            tags: fileObj.tags || cluster.keywords || [],
-            author: fileObj.author || 'Free DevTools by Hexmos',
-            license: fileObj.license || 'MIT',
-            usecases: fileObj.usecases || '',
-            synonyms: fileObj.synonyms || [],
-            industry: fileObj.industry || '',
-            emotional_cues: fileObj.emotional_cues || ''
+            tags: typeof fileObj === 'object' ? fileObj.tags || cluster.keywords || [] : cluster.keywords || [],
+            author: typeof fileObj === 'object' ? fileObj.author || 'Free DevTools by Hexmos' : 'Free DevTools by Hexmos',
+            license: typeof fileObj === 'object' ? fileObj.license || 'MIT' : 'MIT',
+            usecases: typeof fileObj === 'object' ? fileObj.usecases || '' : '',
+            synonyms: typeof fileObj === 'object' ? fileObj.synonyms || [] : [],
+            industry: typeof fileObj === 'object' ? fileObj.industry || '' : '',
+            emotional_cues: typeof fileObj === 'object' ? fileObj.emotional_cues || '' : ''
           }
         }
       });
     }
   }
   
-  console.log('🔍 DEBUG: getStaticPaths generated', paths.length, 'paths');
-  console.log('🔍 DEBUG: First few paths:', paths.slice(0, 3).map(p => p.params.icon));
-  
   return paths;
 }
-
 
 const { category, icon } = Astro.params;
 const { iconData } = Astro.props as {
@@ -75,31 +74,32 @@ const { iconData } = Astro.props as {
   };
 };
 
+// Breadcrumb data
+const breadcrumbItems = [
+  { label: 'Free DevTools', href: '/freedevtools/' },
+  { label: 'PNG Icons', href: '/freedevtools/png_icons/' },
+  { label: category, href: `/freedevtools/png_icons/${category}/` },
+  { label: iconData.name }
+];
 
 // Generate SEO-friendly title and description
 const seoTitle = `Free ${iconData.name} PNG Icon Download | Online Free DevTools by Hexmos`;
-const seoDescription = `${iconData.name} PNG graphic from the ${iconData.category} collection. Crisp image asset, download freely with no sign-ups or limits.`;
-
+const seoDescription = `Download ${iconData.name} PNG icon for free. High-quality vector icon in ${iconData.category} category. No registration required. Unlimited Downloads.`;
 
 // Generate better alt text for the icon
 const altText = `${iconData.name} ${iconData.category} icon - Free PNG download`;
 
-
 const canonical = `https://hexmos.com/freedevtools/png_icons/${category}/${icon}/`;
 
-
-// Extract png dimensions for structured data (will be updated client-side)
-const svgDimensions = { width: 128, height: 128, viewBox: "0 0 128 128", aspectRatio: 1 };
-
+// Static PNG dimensions for structured data
+const pngDimensions = { width: 128, height: 128, viewBox: "0 0 128 128", aspectRatio: 1 };
 
 // Calculate optimal display size (scale to fit ~280px while maintaining aspect ratio)
 const maxDisplaySize = 280;
 
-
-// Extract viewBox dimensions from the original png
-const viewBoxMatch = iconData.originalSvgContent.match(/viewBox="([^"]*)"/);
+// Extract viewBox dimensions from the original PNG
+const viewBoxMatch = iconData.originalSvgContent?.match(/viewBox="([^"]*)"/);
 let originalWidth, originalHeight;
-
 
 if (viewBoxMatch) {
   const viewBox = viewBoxMatch[1].split(/\s+/);
@@ -107,17 +107,14 @@ if (viewBoxMatch) {
   originalHeight = parseFloat(viewBox[3]) || 48;
 } else {
   // Fallback to extracted dimensions
-  originalWidth = svgDimensions.width || 48;
-  originalHeight = svgDimensions.height || 48;
+  originalWidth = pngDimensions.width || 48;
+  originalHeight = pngDimensions.height || 48;
 }
-
 
 const aspectRatio = originalWidth / originalHeight;
 
-
 // Simple scaling: scale the larger dimension to maxDisplaySize
 let displayWidth, displayHeight;
-
 
 if (originalWidth >= originalHeight) {
   // Landscape or square: scale by width
@@ -129,13 +126,11 @@ if (originalWidth >= originalHeight) {
   displayWidth = maxDisplaySize * aspectRatio;
 }
 
-
-// Generate thumbnail URL (points to the actual png image in public folder)
+// Generate thumbnail URL (points to the actual PNG image in public folder)
 // For brand-oauth icon, use PNG thumbnail for better Google search preview
 const thumbnailUrl = icon === 'brand-oauth' && category === 'factory' 
   ? `https://hexmos.com/freedevtools/emoji_data/abacus/abacus_3d.png`
   : `https://hexmos.com/freedevtools/svg_icons/${category}/${icon}.svg`;
-
 
 // Set encoding format based on the same condition
 const encodingFormat = icon === 'brand-oauth' && category === 'factory' 
@@ -151,8 +146,8 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
   description={seoDescription}
   canonical={canonical}
   themeColor="#1e40af"
-  imgWidth={svgDimensions.width}
-  imgHeight={svgDimensions.height}
+  imgWidth={pngDimensions.width}
+  imgHeight={pngDimensions.height}
   thumbnailUrl={thumbnailUrl}
   ogImage={thumbnailUrl}
   twitterImage={thumbnailUrl}
@@ -171,35 +166,20 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
   license={iconData.license}
 >
 <ToastProvider client:load>
-  <div class="max-w-6xl mx-auto px-4 md:px-6 py-6">
-
-    {/* Ad Banner */}
-    <div class="mb-12 mt-8 md:mt-16">
+  <ToolContainer>
+    <div class="mb-16 mt-[74px]">
       <AdBanner />
     </div>
-
-    {/* Breadcrumb Navigation */}
-    <nav class="text-sm mb-6 flex flex-wrap items-center gap-2">
-      <a href="/freedevtools/png_icons/credits/" class="text-blue-600 dark:text-blue-400 hover:font-semibold">Credits</a>
-      <span>/</span>
-      <a href="/freedevtools/png_icons/" class="text-blue-600 dark:text-blue-400 hover:font-semibold">png Icons</a>
-      <span>/</span>
-      <a href={`/freedevtools/png_icons/${category}/`} class="text-blue-600 dark:text-blue-400 hover:font-semibold">{category}</a>
-      <span>/</span>
-      <span class="text-slate-600 dark:text-slate-400">{iconData.name}</span>
-    </nav>
-
-    {/* Title & Description */}
-    <header class="mb-10">
-      <h1 class="text-3xl md:text-4xl font-semibold mb-3 text-black dark:text-slate-200">
-        {iconData.name} PNG Icon
-      </h1>
+    <ToolHead
+      name={`${iconData.name} PNG Icon`}
+      description={seoDescription}
+      breadcrumbItems={breadcrumbItems}
+    />
       <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
         {iconData.description
           .replace(/SVG/g, "PNG")
           .replace(/\bAn PNG\b/g, "A PNG")}
       </p>
-    </header>
 
     {/* Main Section: Icon + Buttons (left) + Metadata (right) */}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -210,7 +190,7 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
       {/* Icon Canvas (Wider + Taller) */}
       <div class="flex items-center justify-center bg-gray-100 rounded-xl p-4 shadow-md w-full max-w-md h-[400px]">
         <picture>
-          <source type="image/svg+xml" srcSet={`/freedevtools/svg_icons/${category}/${icon}.svg`} />
+          <source type="image/svg+xml" srcset={`/freedevtools/svg_icons/${category}/${icon}.svg`} />
           <img
             src={`/freedevtools/svg_icons/${category}/${icon}.svg`}
             alt={altText}
@@ -227,7 +207,6 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
           />
         </picture>
       </div>
-
 
         {/* Copy & Download Buttons */}
         <div class="grid grid-cols-2 gap-2 w-full max-w-md">
@@ -247,23 +226,23 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
 
         {/* Sections */}
         {[
-          { title: "Where It’s Used", content: iconData.usecases },
+          { title: "Where It's Used", content: iconData.usecases },
           { 
             title: "Similar Phrases", 
             content: iconData.synonyms.length ? (
               <div class="flex flex-wrap gap-2">
-                {iconData.synonyms.map((synonym) => (
-                  <span key={synonym} class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
-                    {synonym}
-                  </span>
-                ))}
+              {iconData.synonyms.map((synonym) => (
+                <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
+                  {synonym}
+                </span>
+              ))}
               </div>
             ) : "No synonyms available." 
           },
           { title: "Relevant Sectors", content: iconData.industry },
           { title: "Emotional Tone", content: iconData.emotional_cues }
         ].map((section) => (
-          <div key={section.title}>
+          <div>
             <h2 class="text-lg font-semibold mb-2 text-black dark:text-slate-300">{section.title}</h2>
             <div class="text-slate-700 dark:text-slate-400 leading-relaxed">{section.content}</div>
           </div>
@@ -275,7 +254,7 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
           {iconData.tags.length > 0 ? (
             <div class="flex flex-wrap gap-2">
               {iconData.tags.map((tag) => (
-                <span key={tag} class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-medium select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
+                <span class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-medium select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
                   {tag}
                 </span>
               ))}
@@ -297,11 +276,8 @@ const encodingFormat = icon === 'brand-oauth' && category === 'factory'
       </a>
       <CreditsButton href="/freedevtools/png_icons/credits/" />
     </div>
-  </div>
+  </ToolContainer>
 </ToastProvider>
-
-
-
 
 </BaseLayout>
 

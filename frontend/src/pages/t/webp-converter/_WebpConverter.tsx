@@ -14,6 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FileImageIcon, DownloadIcon, TrashIcon, Upload } from "lucide-react";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // WebP conversion utilities
 const MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB per file
@@ -334,6 +335,9 @@ const WebpConverter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="WebP Converter"
         description="Convert images to WebP format instantly with our free online converter. Upload JPG, PNG, GIF images and convert to WebP with adjustable quality settings. Batch processing and download support included."
@@ -592,7 +596,7 @@ const WebpConverter: React.FC = () => {
                         <div className="text-green-600 font-medium">
                           {formatFileSize(
                             conversionStats.totalOriginal -
-                              conversionStats.totalWebP
+                            conversionStats.totalWebP
                           )}{" "}
                           saved
                         </div>

@@ -1,7 +1,7 @@
 // @ts-check
 import react from "@astrojs/react";
-import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
+import compressor from "astro-compressor";
 import { defineConfig } from "astro/config";
 import path from "path";
 
@@ -14,16 +14,18 @@ export default defineConfig({
   integrations: [
     react(),
     tailwind(),
-    sitemap({
-      filter: (page) => !page.includes('404') && !page.includes('_astro'),
-      changefreq: 'daily',
-      priority: 0.7,
-      lastmod: new Date()
-    })
+    compressor({ gzip: { level: 9 }, brotli: true })
+    // sitemap({
+    //   filter: (page) => !page.includes('404') && !page.includes('_astro'),
+    //   changefreq: 'daily',
+    //   priority: 0.7,
+    //   lastmod: new Date()
+    // })
   ],
   cacheDir: ".astro/cache",
   build: {
-    concurrency: 64
+    concurrency: 64,
+    inlineStylesheets: 'never'
   },
   vite: {
     resolve: {

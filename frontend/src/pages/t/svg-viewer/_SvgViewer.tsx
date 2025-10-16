@@ -22,6 +22,7 @@ import {
   Minimize2,
 } from "lucide-react";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 // SVG Upload Component
 interface SvgUploadProps {
   onSvgSelect: (content: string) => void;
@@ -92,11 +93,10 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
   return (
     <div className="space-y-4">
       <div
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-          dragActive
+        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragActive
             ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
             : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
-        }`}
+          }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -302,6 +302,9 @@ const SvgViewer: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="SVG Viewer"
         description="View and analyze SVG files instantly with our free online SVG viewer. Upload SVG files or paste SVG code to visualize, edit, and download. Real-time preview with dimension analysis."
@@ -466,11 +469,10 @@ Example:
 
                       {/* SVG Display */}
                       <div
-                        className={`border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-white dark:bg-slate-900 overflow-auto ${
-                          isFullscreen
+                        className={`border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-white dark:bg-slate-900 overflow-auto ${isFullscreen
                             ? "fixed inset-4 z-50 bg-white dark:bg-slate-900"
                             : "max-h-96"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-center min-h-[200px]">
                           <img

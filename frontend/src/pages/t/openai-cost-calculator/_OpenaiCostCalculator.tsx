@@ -15,6 +15,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Tiktoken } from "js-tiktoken";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const OPENAI_MODELS = [
 	{ name: "gpt-5", input: 1.25, cachedInput: 0.125, output: 10.0 },
@@ -132,6 +133,9 @@ const OpenaiCostCalculator: React.FC = () => {
 
 	return (
 		<ToolContainer>
+			<div className="mb-16 mt-[74px]">
+				<AdBanner />
+			</div>
 			<ToolHead
 				name="OpenAI Cost Calculator"
 				description="Estimate API costs for all OpenAI models. Enter code or document details to see dynamic pricing for GPT-4, GPT-4o, GPT-5, o1, o3, and more."

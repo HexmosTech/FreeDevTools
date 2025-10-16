@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Real-time MAC address vendor lookup using public APIs
 interface LookupResult {
@@ -266,6 +267,9 @@ const MacAddressLookup: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="MAC Address Lookup"
         description="Lookup MAC address vendor information instantly with our free online MAC address lookup tool. Identify device manufacturer, organization, and network details from MAC addresses."

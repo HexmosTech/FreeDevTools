@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Diff algorithm options
 const DIFF_MODES = {
@@ -270,6 +271,9 @@ const user = {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Diff Checker"
         description="Compare text and code differences instantly with our free online diff checker. Visualize changes character by character, word by word, or line by line with advanced comparison options and unified diff export."

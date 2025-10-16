@@ -13,6 +13,7 @@ import { Textarea } from "src/components/ui/textarea";
 import { Label } from "src/components/ui/label";
 import ToolVideo from "src/components/tool/ToolVideo";
 import showdown from "showdown";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const converter = new showdown.Converter();
 
@@ -60,6 +61,9 @@ const MarkdownToHtmlConverter: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Markdown to HTML Converter"
         description="Convert Markdown to HTML instantly. See the rendered HTML in real-time as you type."

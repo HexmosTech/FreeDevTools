@@ -10,6 +10,7 @@ import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const LLAMA_MODELS = {
   "llama-4": {
@@ -133,6 +134,9 @@ const LlamaTokenCounter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Llama Token Counter"
         description="Count tokens instantly for Meta Llama models. Get accurate token counts for Llama 3 and Llama 2 models. Estimate API costs, manage context limits, and optimize your prompts for Meta AI. Free, fast, and secure browser-based tool."

@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import * as zstd from "@oneidentity/zstd-js";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ZstdCompressSkeleton from "./_ZstdCompressSkeleton";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ToastProvider";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolGridContainer from "@/components/tool/ToolGridContainer";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo"; // Assuming this component exists
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import * as zstd from "@oneidentity/zstd-js";
 import { Download, UploadCloud, X } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import AdBanner from "../../../components/banner/AdBanner";
+import ZstdCompressSkeleton from "./_ZstdCompressSkeleton";
 
 const { ZstdInit } = zstd;
 
@@ -167,25 +168,28 @@ const ZstdCompress: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
- const handleTabChange = (value: string) => {
-   const newMode = value as Mode;
-   setMode(newMode);
-   handleClear();
-   if (newMode === "decompress") {
-     setToolName("Zstd Decompressor");
-     setToolDescription(
-       "Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required."
-     );
-   } else {
-     setToolName("Zstd Compressor");
-     setToolDescription(
-       "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
-     );
-   }
- };
+  const handleTabChange = (value: string) => {
+    const newMode = value as Mode;
+    setMode(newMode);
+    handleClear();
+    if (newMode === "decompress") {
+      setToolName("Zstd Decompressor");
+      setToolDescription(
+        "Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required."
+      );
+    } else {
+      setToolName("Zstd Compressor");
+      setToolDescription(
+        "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
+      );
+    }
+  };
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead name={toolName} description={toolDescription} />
 
       {!loaded ? (

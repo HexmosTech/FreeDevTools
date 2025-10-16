@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // JWT Parser Utility Functions
 interface JWTDecoded {
@@ -147,6 +148,9 @@ const JwtParser: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="JWT Parser"
         description="Parse and decode JWT tokens instantly. Decode header, payload, and signature from JSON Web Tokens with real-time validation. Free, secure, and browser-based processing."

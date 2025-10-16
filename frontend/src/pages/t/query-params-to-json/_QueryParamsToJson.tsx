@@ -18,6 +18,7 @@ import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import QueryParamsToJsonSkeleton from "./_QueryParamsToJsonSkeleton";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 interface QueryParam {
   key: string;
@@ -131,6 +132,9 @@ export default function QueryParamsToJson() {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Query Params To JSON"
         description="Convert URL query parameters to JSON format instantly with our free online converter. Parse query strings from URLs, form data, and API endpoints into structured JSON objects with real-time validation."

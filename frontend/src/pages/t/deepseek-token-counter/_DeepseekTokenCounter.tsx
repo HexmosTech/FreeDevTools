@@ -10,6 +10,7 @@ import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Deepseek Models Configuration
 const DEEPSEEK_MODELS = {
@@ -117,6 +118,9 @@ const DeepseekTokenCounter: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Deepseek Token Counter"
         description="Count tokens instantly for Deepseek models. Get accurate token counts for Deepseek V2, Coder, and LLM models."

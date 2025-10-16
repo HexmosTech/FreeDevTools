@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
 import { toast } from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import {
   Card,
   CardContent,
@@ -18,9 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import React, { useEffect, useRef, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
 import AnthropicTokenCounterSkeleton from "./_AnthropicTokenCounterSkeleton";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolVideo from "@/components/tool/ToolVideo";
 
 // Anthropic Models Configuration
 const ANTHROPIC_MODELS = {
@@ -185,6 +186,9 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Anthropic Token Counter"
         description="Count tokens accurately for Anthropic Claude models. Get exact token counts for all Claude models from Opus to Haiku variants."

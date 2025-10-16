@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import AdBanner from "../../../components/banner/AdBanner";
 const DEFAULT_WIDTH = 600;
 const DEFAULT_HEIGHT = 350;
 const DEFAULT_FONT_SIZE = 26;
@@ -107,6 +108,9 @@ const SvgPlaceholderGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="SVG Placeholder Generator"
         description="Generate custom SVG placeholder images instantly. Set width, height, background, text color, font size, and custom text for rapid prototyping and responsive design."
@@ -372,55 +376,55 @@ const SvgPlaceholderGenerator: React.FC = () => {
             </div>
           </ToolCardWrapper>
           <ToolContentCardWrapper>
-                <ToolVideo
-                  videoUrl="https://www.youtube.com/embed/emFMHH2Bfvo"
-                  title="SVG Explained in 100 Seconds"
-                  description="Learn about SVGs and their benefits for web design and development."
-                />
-             
-              {/* SVG Placeholder Info Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                    What is an SVG Placeholder?
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-slate-800 dark:text-slate-400 space-y-4">
-                    <p>
-                      SVG placeholders are scalable, lightweight images used to fill space in layouts, mockups, and prototypes. They are ideal for responsive design, as SVGs scale perfectly on any device and can be customized for color, size, and text.
-                    </p>
-                    <p>
-                      <strong>Benefits:</strong> SVG placeholders load instantly, require no external assets, and can be styled to match your brand or design system. They are perfect for wireframes, skeleton screens, and preview images in web and app development.
-                    </p>
-                    <ul className="list-disc pl-5 text-sm">
-                      <li>Scalable to any resolution without loss of quality</li>
-                      <li>Customizable colors, text, and dimensions</li>
-                      <li>Great for rapid prototyping and design handoff</li>
-                      <li>Improves perceived performance with instant visuals</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-              {/* About Card (existing) */}
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-                  About SVG Placeholder Generator
-                </h3>
-                <div className="text-slate-800 dark:text-slate-400 space-y-2">
+            <ToolVideo
+              videoUrl="https://www.youtube.com/embed/emFMHH2Bfvo"
+              title="SVG Explained in 100 Seconds"
+              description="Learn about SVGs and their benefits for web design and development."
+            />
+
+            {/* SVG Placeholder Info Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                  What is an SVG Placeholder?
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-800 dark:text-slate-400 space-y-4">
                   <p>
-                    Instantly generate custom SVG placeholder images for rapid
-                    prototyping, design mockups, and responsive layouts. Set width,
-                    height, background, text color, font size, and custom text. Copy
-                    SVG code, Base64 string, or download the image for use in your
-                    projects.
+                    SVG placeholders are scalable, lightweight images used to fill space in layouts, mockups, and prototypes. They are ideal for responsive design, as SVGs scale perfectly on any device and can be customized for color, size, and text.
                   </p>
                   <p>
-                    <strong>Common uses:</strong> Web development, UI/UX design,
-                    image mockups, responsive layout testing, and placeholder
-                    graphics for apps and websites.
+                    <strong>Benefits:</strong> SVG placeholders load instantly, require no external assets, and can be styled to match your brand or design system. They are perfect for wireframes, skeleton screens, and preview images in web and app development.
                   </p>
-             
+                  <ul className="list-disc pl-5 text-sm">
+                    <li>Scalable to any resolution without loss of quality</li>
+                    <li>Customizable colors, text, and dimensions</li>
+                    <li>Great for rapid prototyping and design handoff</li>
+                    <li>Improves perceived performance with instant visuals</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+            {/* About Card (existing) */}
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                About SVG Placeholder Generator
+              </h3>
+              <div className="text-slate-800 dark:text-slate-400 space-y-2">
+                <p>
+                  Instantly generate custom SVG placeholder images for rapid
+                  prototyping, design mockups, and responsive layouts. Set width,
+                  height, background, text color, font size, and custom text. Copy
+                  SVG code, Base64 string, or download the image for use in your
+                  projects.
+                </p>
+                <p>
+                  <strong>Common uses:</strong> Web development, UI/UX design,
+                  image mockups, responsive layout testing, and placeholder
+                  graphics for apps and websites.
+                </p>
+
               </div>
             </div>
           </ToolContentCardWrapper>

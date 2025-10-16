@@ -9,6 +9,7 @@ import ToolVideo from "@/components/tool/ToolVideo";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/ui/copy-button";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const simpleSlugify = (str: string) =>
   str
@@ -30,6 +31,9 @@ const SlugifyString: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Slugify String"
         description="Convert any string to a clean, URL-friendly slug instantly. Enter your text and get a slugified output for SEO, file names, and web development."

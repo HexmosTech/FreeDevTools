@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const CASE_OPTIONS = [
   { label: "Uppercase", value: "upper" },
@@ -89,6 +90,9 @@ const MacAddressGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="MAC Address Generator"
         description="Generate random MAC addresses with custom prefix, separator, and case. Bulk generate up to 100 MAC addresses for testing and development."

@@ -11,9 +11,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        "eb-garamond": ["EB Garamond", "serif"],
+        // "eb-garamond": ["EB Garamond", "serif"],
         "dm-serif": ["DM Serif Text", "serif"],
-        lora: ["Lora", "serif"],
         "cal-sans": ["Cal Sans", "sans-serif"],
       },
       colors: {

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { getToolByKey, type Tool } from "@/config/tools";
 import QRCode from "qrcode";
+import AdBanner from "../../../components/banner/AdBanner";
 
 type ErrorCorrectionLevel = "low" | "medium" | "quartile" | "high";
 
@@ -140,6 +141,9 @@ const QrcodeGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead name={toolConfig.name} description={toolConfig.description} />
 
       {!loaded ? (

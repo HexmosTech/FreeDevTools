@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // cURL to JavaScript Fetch conversion utilities
 const convertCurlToFetch = (
@@ -297,6 +298,9 @@ const CurlToJsFetch: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="cURL to JavaScript Fetch Converter"
         description="Convert cURL commands to JavaScript fetch API code instantly with our free online converter. Transform command-line HTTP requests into modern JavaScript fetch calls with real-time conversion."

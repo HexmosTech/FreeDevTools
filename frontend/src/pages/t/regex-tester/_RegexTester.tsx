@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Regex testing utility functions
 interface RegexMatch {
@@ -254,6 +255,9 @@ Invalid emails: notanemail@, @domain.com, user@.com`;
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Regex Tester"
         description="Test and validate regular expressions instantly with our free online regex tester. Match patterns, highlight results, and debug regex with real-time feedback and comprehensive pattern matching."

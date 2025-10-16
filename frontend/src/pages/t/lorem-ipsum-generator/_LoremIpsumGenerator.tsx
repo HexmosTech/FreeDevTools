@@ -23,6 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // Lorem Ipsum word bank
 const words = [
@@ -277,6 +278,9 @@ const LoremIpsumGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Lorem Ipsum Generator"
         description="Generate placeholder Lorem Ipsum text instantly for your design projects. Create words, sentences, or paragraphs with customizable options including HTML format and classic Lorem Ipsum opening."

@@ -26,6 +26,7 @@ import { Slider } from "@/components/ui/slider";
 import React, { useEffect, useState } from "react";
 import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 interface PasswordOptions {
   length: number;
@@ -369,6 +370,9 @@ const PasswordGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Password Generator"
         description="Generate secure, customizable random passwords instantly. Create strong passwords with custom length, character types, and word-based memorable options."

@@ -13,6 +13,7 @@ import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import ToolVideo from "@/components/tool/ToolVideo";
 import JsonToXmlSkeleton from "./_JsonToXmlSkeleton";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const JsonToXml: React.FC = () => {
   const [input, setInput] = useState("");
@@ -71,6 +72,9 @@ const JsonToXml: React.FC = () => {
         <JsonToXmlSkeleton />
       ) : (
         <ToolGridContainer>
+          <div className="mb-16 mt-[74px]">
+            <AdBanner />
+          </div>
           <ToolHead
             name="JSON to XML Converter"
             description="Convert JSON data to XML format instantly. Fast, secure, and accurate conversion for developers and data analysts. No installation required."

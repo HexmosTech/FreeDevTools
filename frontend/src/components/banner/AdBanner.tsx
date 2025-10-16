@@ -172,10 +172,10 @@ const AdBanner: React.FC = () => {
       >
         <div className="px-4 py-2 h-full flex flex-col justify-center md:px-2 md:py-2 xl:px-6 xl:py-0 xl:w-full xl:min-w-96">
           <div className="text-left mb-4 xl:mb-0">
-            <p className="text-red-700 mb-2 leading-tight font-eb-garamond tracking-wide font-bold text-2xl md:text-4xl md:mb-3 md:leading-tight xl:text-6xl xl:mb-4 xl:leading-tight">
+            <p className="text-red-700 mb-2 leading-tight tracking-wide font-semibold text-3xl md:text-5xl md:mb-3">
               {currentAd.title}
             </p>
-            <p className="text-gray-800 font-eb-garamond leading-relaxed font-medium text-xl md:text-2xl xl:hidden">
+            <p className="text-gray-800 leading-relaxed font-medium text-lg md:text-2xl xl:hidden">
               {currentAd.description}
             </p>
           </div>
@@ -189,7 +189,7 @@ const AdBanner: React.FC = () => {
           {/* Desktop layout - description and buttons in a row */}
           <div className="hidden xl:flex xl:flex-row xl:justify-between xl:items-center xl:gap-24 xl:mt-0">
             <div className="flex flex-row justify-between items-center gap-12">
-              <p className="text-gray-800 font-eb-garamond leading-relaxed text-3xl font-medium">
+              <p className="text-gray-800 leading-relaxed text-3xl font-medium">
                 {currentAd.description}
               </p>
               <LearnMoreButton size="md" />

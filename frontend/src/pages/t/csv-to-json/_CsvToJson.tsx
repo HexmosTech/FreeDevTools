@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import ToolVideo from "@/components/tool/ToolVideo";
+import AdBanner from "../../../components/banner/AdBanner";
 
 // CSV to JSON conversion utility
 const convertCsvToJson = (
@@ -218,6 +219,9 @@ David Wilson,32,Australia,david@example.com`;
 
   return (
     <ToolContainer>
+            <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="CSV to JSON Converter"
         description="Convert CSV files to JSON format instantly with our free online converter. Upload CSV files or paste CSV data to transform into structured JSON objects with customizable formatting options."
