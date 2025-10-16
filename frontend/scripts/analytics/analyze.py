@@ -151,30 +151,42 @@ def main():
     # Initialize analyzer (without service account for now)
     analyzer = PageSpeedAnalyzer("")
 
-    # Run analysis for mobile strategy
-    strategy = "mobile"
+    # Run analysis for both mobile and desktop strategies
+    strategies = ["mobile", "desktop"]
 
     print(f"🚀 Starting PageSpeed analysis for {len(urls)} URLs")
-    print(f"📱 Strategy: {strategy.upper()}")
+    print(f"📱📊 Strategies: {', '.join([s.upper() for s in strategies])}")
     print("=" * 80)
+
+    total_analyses = len(urls) * len(strategies)
+    current_analysis = 0
 
     for i, url in enumerate(urls, 1):
         print(f"\n[{i}/{len(urls)}] Analyzing: {url}")
         print("-" * 60)
 
-        result = analyzer.run_pagespeed_analysis(url, strategy)
+        for strategy in strategies:
+            current_analysis += 1
+            print(
+                f"\n[{current_analysis}/{total_analyses}] {strategy.upper()} analysis for: {url}"
+            )
+            print("-" * 40)
 
-        if not result:
-            print(f"❌ Failed to analyze: {url}")
+            result = analyzer.run_pagespeed_analysis(url, strategy)
 
-        # Add a small delay between requests to be respectful to the API
-        if i < len(urls):
-            print("⏳ Waiting 2 seconds before next request...")
-            import time
+            if not result:
+                print(f"❌ Failed to analyze: {url} ({strategy})")
 
-            time.sleep(2)
+            # Add a small delay between requests to be respectful to the API
+            if current_analysis < total_analyses:
+                print("⏳ Waiting 2 seconds before next request...")
+                import time
 
-    print(f"\n✅ Completed analysis of {len(urls)} URLs")
+                time.sleep(2)
+
+    print(
+        f"\n✅ Completed analysis of {len(urls)} URLs with {len(strategies)} strategies each"
+    )
 
 
 if __name__ == "__main__":
