@@ -188,6 +188,15 @@ const ThemeSwitcher: React.FC = () => {
               }`}
             onClick={() => handleThemeChange(config.type)}
             title={config.label}
+            aria-label={config.label}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleThemeChange(config.type);
+              }
+            }}
           >
             {config.icon}
           </div>

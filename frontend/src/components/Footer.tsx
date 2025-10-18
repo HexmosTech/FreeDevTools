@@ -146,7 +146,7 @@ const RightColumn: React.FC = () => {
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 py-8 mt-auto">
+    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 py-8 mt-auto" role="contentinfo">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-row justify-between items-start gap-6">
 

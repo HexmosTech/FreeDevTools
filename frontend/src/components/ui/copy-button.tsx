@@ -46,6 +46,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       size={size}
       disabled={disabled}
       title={title}
+      aria-label={title}
       className={`bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 ${className}`}
     >
       {size === "icon" ? (

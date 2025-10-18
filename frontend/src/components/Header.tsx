@@ -25,12 +25,13 @@ const Header: React.FC = () => {
   return (
     <div id="common-header" className="fixed top-0 left-0 right-0 z-50">
       <div className="max-w-6xl mx-auto px-2 md:px-6 sm:pt-6">
-        <header className="bg-neon/1 shadow-sm backdrop-blur-lg rounded-b-lg">
+        <header className="bg-neon/1 shadow-sm backdrop-blur-lg rounded-b-lg" role="banner">
           <div className="py-3 px-0 flex items-center justify-between gap-4">
             {/* Logo */}
             <a
               href="/freedevtools/"
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200 flex-shrink-0"
+              aria-label="Free DevTools - Go to homepage"
             >
               <img
                 src="/freedevtools/t/freedevtool-logo_32.webp"

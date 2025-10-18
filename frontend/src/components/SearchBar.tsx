@@ -185,6 +185,7 @@ const SearchBar: React.FC = () => {
           <Input
             ref={searchInputRef}
             type="text"
+            id="search"
             className={cn(
               "w-full  pr-10 h-9 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm placeholder:text-gray-500 dark:placeholder:text-gray-400",
               "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
@@ -198,6 +199,9 @@ const SearchBar: React.FC = () => {
             onFocus={handleSearchFocus}
             onBlur={handleSearchBlur}
             onKeyDown={handleKeyDown}
+            aria-label="Search for developer tools and resources"
+            role="searchbox"
+            aria-describedby="search-help"
           />
 
           {/* Clear button (only shown when there's text) */}
@@ -212,7 +216,7 @@ const SearchBar: React.FC = () => {
           )} */}
 
           {/* Keyboard shortcut hint (hidden on mobile) */}
-          <kbd className="pointer-events-none absolute right-2 border-none top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+          <kbd className="pointer-events-none absolute right-2 border-none top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex" id="search-help">
             <span className="text-xs mt-0.5">⌘ K</span>
           </kbd>
         </div>

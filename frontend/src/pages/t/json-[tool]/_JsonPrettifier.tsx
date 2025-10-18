@@ -280,15 +280,42 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
     }
   };
 
-  // Update editor themes when theme changes
+  // Keyboard navigation handler
   useEffect(() => {
-    if (inputEditorInstanceRef.current?.aceEditor) {
-      inputEditorInstanceRef.current.aceEditor.setTheme(getCurrentTheme());
-    }
-    if (outputEditorInstanceRef.current?.aceEditor) {
-      outputEditorInstanceRef.current.aceEditor.setTheme(getCurrentTheme());
-    }
-  }, [currentTheme]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + Enter to format JSON
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (inputEditorInstanceRef.current && isValid) {
+          try {
+            const currentJson = inputEditorInstanceRef.current.get();
+            const formatted = JSON.stringify(currentJson, null, indentSize);
+            if (outputEditorInstanceRef.current) {
+              outputEditorInstanceRef.current.setText(formatted);
+            }
+            toast.success("JSON formatted");
+          } catch (err) {
+            toast.error("Failed to format JSON");
+          }
+        }
+      }
+
+      // Tab navigation between editors
+      if (e.key === 'Tab' && !e.shiftKey) {
+        // Focus management for accessibility
+        const activeElement = document.activeElement;
+        if (activeElement === inputEditorRef.current) {
+          e.preventDefault();
+          // Focus first control button
+          const firstButton = document.querySelector('[aria-label="Clear JSON input"]') as HTMLElement;
+          firstButton?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isValid, indentSize]);
 
   return (
     <ToolContainer>
@@ -330,9 +357,13 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                           maxHeight: "80vh",
                           outline: "none",
                         }}
+                        role="textbox"
+                        aria-label="JSON input editor"
+                        aria-describedby="input-validation-status"
+                        tabIndex={0}
                       />
                       {isValid !== null && (
-                        <div className="mt-2">
+                        <div className="mt-2" id="input-validation-status" role="status" aria-live="polite">
                           {isValid ? (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                               <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
@@ -356,7 +387,13 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         <div className="flex flex-col gap-3 text-center">
                           {/* Row 1: Clear + Copy */}
                           <div className="flex items-center justify-center gap-2">
-                            <Button onClick={handleClear} className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700" variant="outline" size="sm">
+                            <Button 
+                              onClick={handleClear} 
+                              className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700" 
+                              variant="outline" 
+                              size="sm"
+                              aria-label="Clear JSON input"
+                            >
                               Clear
                             </Button>
                             <CopyButton
@@ -374,6 +411,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                                 }
                               })()}
                               disabled={!isValid}
+                              aria-label="Copy formatted JSON to clipboard"
                             />
                           </div>
 
@@ -385,6 +423,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                               variant="outline"
                               size="icon"
                               className="font-bold"
+                              aria-label="Decrease indentation"
                             >
                               -
                             </Button>
@@ -397,6 +436,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                               variant="outline"
                               size="icon"
                               className="font-bold"
+                              aria-label="Increase indentation"
                             >
                               +
                             </Button>
@@ -410,6 +450,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                               variant="outline"
                               disabled={isValid !== false}
                               className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                              aria-label="Repair invalid JSON syntax"
                             >
                               Repair JSON
                             </Button>
@@ -429,7 +470,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         Formatted Output
                       </Label>
                       {error && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" role="status" aria-live="assertive">
                           <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
                           Error detected
                         </span>
@@ -445,11 +486,15 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                           minHeight: "600px",
                           maxHeight: "80vh",
                         }}
+                        role="textbox"
+                        aria-label="JSON formatted output"
+                        aria-readonly="true"
+                        tabIndex={0}
                       />
                     </div>
 
                     {error && (
-                      <Card className="mt-3 border-red-200 dark:border-red-800">
+                      <Card className="mt-3 border-red-200 dark:border-red-800" role="alert">
                         <CardContent className="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
                           <div className="font-medium mb-1">JSON Error:</div>
                           <div>{error}</div>
