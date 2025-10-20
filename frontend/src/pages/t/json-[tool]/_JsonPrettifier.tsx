@@ -1,4 +1,3 @@
-import { useTheme } from "@/components/theme/ThemeContext";
 import { toast } from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
@@ -39,13 +38,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
   const [isClient, setIsClient] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
 
-  // Try to get theme from context, but handle hydration timing
-  let themeContext: any = null;
-  try {
-    themeContext = useTheme();
-  } catch (error) {
-    // Theme context not available yet (during SSR/hydration)
-  }
+  // Theme detection without context
 
   const inputEditorRef = useRef<HTMLDivElement>(null);
   const outputEditorRef = useRef<HTMLDivElement>(null);
@@ -61,16 +54,13 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
     setIsClient(true);
   }, []);
 
-  // Update theme when context becomes available or when it changes
+  // Update theme based on document class
   useEffect(() => {
-    if (themeContext?.theme) {
-      setCurrentTheme(themeContext.theme);
-    } else if (typeof document !== "undefined") {
-      // Fallback: check document class
+    if (typeof document !== "undefined") {
       const isDark = document.documentElement.classList.contains("dark");
       setCurrentTheme(isDark ? "dark" : "light");
     }
-  }, [themeContext?.theme]);
+  }, []);
 
   // Listen for theme changes via document class changes
   useEffect(() => {
@@ -319,7 +309,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -387,10 +377,10 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         <div className="flex flex-col gap-3 text-center">
                           {/* Row 1: Clear + Copy */}
                           <div className="flex items-center justify-center gap-2">
-                            <Button 
-                              onClick={handleClear} 
-                              className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700" 
-                              variant="outline" 
+                            <Button
+                              onClick={handleClear}
+                              className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                              variant="outline"
                               size="sm"
                               aria-label="Clear JSON input"
                             >
