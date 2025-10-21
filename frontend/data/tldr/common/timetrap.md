@@ -1,29 +1,29 @@
 ---
-title: "Time Tracker - Track Time with Timetrap | Online Free DevTools by Hexmos"
+title: 'Time Tracker - Track Time with Timetrap | Online Free DevTools by Hexmos'
 name: timetrap
-path: "/freedevtools/tldr/common/timetrap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/timetrap/"
-description: "Track time efficiently with Timetrap, a command-line time tracker. Manage timesheets, create entries, and edit logs with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/timetrap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/timetrap/'
+description: 'Track time efficiently with Timetrap, a command-line time tracker. Manage timesheets, create entries, and edit logs with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- command line time tracker
-- ruby time tracking
-- terminal time management
-- timetrap timesheet
-- timetrap entry
-- command line time logging
-- github time tracker
-- macos time tracker
-- linux time tracker
-- timetrap command
+  - command line time tracker
+  - ruby time tracking
+  - terminal time management
+  - timetrap timesheet
+  - timetrap entry
+  - command line time logging
+  - github time tracker
+  - macos time tracker
+  - linux time tracker
+  - timetrap command
 features:
-- Create and manage timesheets easily
-- Record time entries with notes
-- Display current timesheet information
-- Edit existing time entry details
-- Track time spent on various tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage timesheets easily
+  - Record time entries with notes
+  - Display current timesheet information
+  - Edit existing time entry details
+  - Track time spent on various tasks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # timetrap

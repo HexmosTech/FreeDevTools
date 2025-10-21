@@ -1,29 +1,29 @@
 ---
-title: "macOS Version - Print System Information | Online Free DevTools by Hexmos"
+title: 'macOS Version - Print System Information | Online Free DevTools by Hexmos'
 name: sw_vers
-path: "/freedevtools/tldr/osx/sw_vers/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/sw_vers/"
-description: "Print macOS system information with sw_vers. Easily retrieve OS name, version number, and build identifier with this free online tool, no registration required."
+path: '/freedevtools/tldr/osx/sw_vers/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/sw_vers/'
+description: 'Print macOS system information with sw_vers. Easily retrieve OS name, version number, and build identifier with this free online tool, no registration required.'
 category: osx
 keywords:
-- macos version check
-- osx system info
-- macos build number
-- sw_vers command macos
-- macos operating system version
-- macos version number
-- command line macos version
-- macos system information utility
-- get macos version terminal
-- macos version details
+  - macos version check
+  - osx system info
+  - macos build number
+  - sw_vers command macos
+  - macos operating system version
+  - macos version number
+  - command line macos version
+  - macos system information utility
+  - get macos version terminal
+  - macos version details
 features:
-- Print the complete macOS operating system name and version.
-- Display the macOS build version identifier.
-- Retrieve the product version of macOS.
-- Access system version information from the command line.
-- Quickly identify the macOS version for compatibility testing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print the complete macOS operating system name and version.
+  - Display the macOS build version identifier.
+  - Retrieve the product version of macOS.
+  - Access system version information from the command line.
+  - Quickly identify the macOS version for compatibility testing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sw_vers

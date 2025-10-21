@@ -1,29 +1,29 @@
 ---
-title: "Control Lando Apps - Local Development Environment | Online Free DevTools by Hexmos"
+title: 'Control Lando Apps - Local Development Environment | Online Free DevTools by Hexmos'
 name: lando
-path: "/freedevtools/tldr/common/lando/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lando/"
-description: "Control local development environments with Lando. Manage, start, stop, and rebuild your apps easily using Docker-based development workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lando/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lando/'
+description: 'Control local development environments with Lando. Manage, start, stop, and rebuild your apps easily using Docker-based development workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- lando development environment
-- docker development workflow
-- local app development
-- cross-platform development
-- devops automation tool
-- containerized development
-- lando app management
-- lando command line interface
-- application development automation
-- docker development environment
+  - lando development environment
+  - docker development workflow
+  - local app development
+  - cross-platform development
+  - devops automation tool
+  - containerized development
+  - lando app management
+  - lando command line interface
+  - application development automation
+  - docker development environment
 features:
-- Initialize projects for Lando environments.
-- Manage the lifecycle of Lando-managed applications.
-- View application logs for debugging and monitoring.
-- Quickly rebuild Lando apps while preserving data.
-- Start, stop, and restart applications managed by Lando.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize projects for Lando environments.
+  - Manage the lifecycle of Lando-managed applications.
+  - View application logs for debugging and monitoring.
+  - Quickly rebuild Lando apps while preserving data.
+  - Start, stop, and restart applications managed by Lando.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lando

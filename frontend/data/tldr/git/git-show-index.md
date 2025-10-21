@@ -1,29 +1,29 @@
 ---
-title: "Show Git Index - Inspect Packfile Archives | Online Free DevTools by Hexmos"
+title: 'Show Git Index - Inspect Packfile Archives | Online Free DevTools by Hexmos'
 name: git-show-index
-path: "/freedevtools/tldr/git/git-show-index/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-index/"
-description: "Inspect Git archive indexes with Git Show-Index. Display packfile contents and verify integrity. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-show-index/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-show-index/'
+description: 'Inspect Git archive indexes with Git Show-Index. Display packfile contents and verify integrity. Free online tool, no registration required.'
 category: common
 keywords:
-- git index viewer
-- git packfile analyzer
-- git archive inspector
-- git idx reader
-- git object format checker
-- git repository debugger
-- command line git tool
-- git repository index
-- sha1 hash algorithm
-- sha256 hash algorithm
+  - git index viewer
+  - git packfile analyzer
+  - git archive inspector
+  - git idx reader
+  - git object format checker
+  - git repository debugger
+  - command line git tool
+  - git repository index
+  - sha1 hash algorithm
+  - sha256 hash algorithm
 features:
-- Read and display content of Git index files
-- Verify the integrity of Git packfiles
-- Specify the hash algorithm for index validation
-- Dump index file contents to standard output
-- Analyze Git repository structure
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Read and display content of Git index files
+  - Verify the integrity of Git packfiles
+  - Specify the hash algorithm for index validation
+  - Dump index file contents to standard output
+  - Analyze Git repository structure
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git show-index

@@ -1,29 +1,29 @@
 ---
-title: "Skaffold - Develop Kubernetes Applications | Online Free DevTools by Hexmos"
+title: 'Skaffold - Develop Kubernetes Applications | Online Free DevTools by Hexmos'
 name: skaffold
-path: "/freedevtools/tldr/common/skaffold/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/skaffold/"
-description: "Develop Kubernetes applications easily with Skaffold. Build, deploy, and manage Kubernetes apps continuously with automatic code updates. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/skaffold/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/skaffold/'
+description: 'Develop Kubernetes applications easily with Skaffold. Build, deploy, and manage Kubernetes apps continuously with automatic code updates. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes development
-- skaffold kubernetes
-- continuous deployment kubernetes
-- kubernetes application development
-- container deployment
-- kubernetes pipeline
-- cloud native development
-- devops kubernetes
-- docker kubernetes
-- kubernetes CI/CD
+  - kubernetes development
+  - skaffold kubernetes
+  - continuous deployment kubernetes
+  - kubernetes application development
+  - container deployment
+  - kubernetes pipeline
+  - cloud native development
+  - devops kubernetes
+  - docker kubernetes
+  - kubernetes CI/CD
 features:
-- Build container images from source code
-- Deploy applications to Kubernetes clusters
-- Automatically detect and deploy code changes
-- Manage the entire Kubernetes development lifecycle
-- Diagnose Skaffold setup and configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build container images from source code
+  - Deploy applications to Kubernetes clusters
+  - Automatically detect and deploy code changes
+  - Manage the entire Kubernetes development lifecycle
+  - Diagnose Skaffold setup and configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # skaffold

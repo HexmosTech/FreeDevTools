@@ -1,29 +1,29 @@
 ---
-title: "Generate Network Traffic - iperf3 Bandwidth Test | Online Free DevTools by Hexmos"
+title: 'Generate Network Traffic - iperf3 Bandwidth Test | Online Free DevTools by Hexmos'
 name: iperf3
-path: "/freedevtools/tldr/common/iperf3/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/iperf3/"
-description: "Generate network traffic with iperf3. Run bandwidth tests and analyze network performance metrics using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/iperf3/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/iperf3/'
+description: 'Generate network traffic with iperf3. Run bandwidth tests and analyze network performance metrics using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- network bandwidth test
-- iperf3 bandwidth
-- network performance analysis
-- traffic generation
-- iperf3 server
-- iperf3 client
-- network troubleshooting
-- linux network tools
-- macos network tools
-- windows network performance
+  - network bandwidth test
+  - iperf3 bandwidth
+  - network performance analysis
+  - traffic generation
+  - iperf3 server
+  - iperf3 client
+  - network troubleshooting
+  - linux network tools
+  - macos network tools
+  - windows network performance
 features:
-- Measure network bandwidth between two hosts
-- Run tests in both client and server modes
-- Simulate multiple parallel data streams
-- Reverse the direction of data transfer
-- Specify custom ports for network testing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure network bandwidth between two hosts
+  - Run tests in both client and server modes
+  - Simulate multiple parallel data streams
+  - Reverse the direction of data transfer
+  - Specify custom ports for network testing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iperf3

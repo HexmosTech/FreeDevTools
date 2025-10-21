@@ -1,29 +1,29 @@
 ---
-title: "IFS Control - Manage Shell Delimiters | Online Free DevTools by Hexmos"
+title: 'IFS Control - Manage Shell Delimiters | Online Free DevTools by Hexmos'
 name: ifs
-path: "/freedevtools/tldr/common/ifs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ifs/"
-description: "Control shell delimiters with IFS (Internal Field Separator). Customize word splitting in shell scripts for precise data manipulation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ifs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ifs/'
+description: 'Control shell delimiters with IFS (Internal Field Separator). Customize word splitting in shell scripts for precise data manipulation. Free online tool, no registration required.'
 category: common
 keywords:
-- shell delimiter control
-- IFS variable management
-- word splitting configuration
-- bash IFS modification
-- unix shell scripting
-- linux IFS settings
-- macos IFS control
-- environment variable editing
-- command-line delimiter tool
-- IFS default reset
+  - shell delimiter control
+  - IFS variable management
+  - word splitting configuration
+  - bash IFS modification
+  - unix shell scripting
+  - linux IFS settings
+  - macos IFS control
+  - environment variable editing
+  - command-line delimiter tool
+  - IFS default reset
 features:
-- View the current IFS value
-- Change the IFS value
-- Reset IFS to default settings
-- Modify IFS in a subshell
-- Customize word splitting behavior
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View the current IFS value
+  - Change the IFS value
+  - Reset IFS to default settings
+  - Modify IFS in a subshell
+  - Customize word splitting behavior
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # IFS

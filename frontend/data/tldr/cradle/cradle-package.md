@@ -1,29 +1,29 @@
 ---
-title: "Cradle Package Manager - Control Packages | Online Free DevTools by Hexmos"
+title: 'Cradle Package Manager - Control Packages | Online Free DevTools by Hexmos'
 name: cradle-package
-path: "/freedevtools/tldr/cradle/cradle-package/"
-canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-package/"
-description: "Control packages with Cradle Package Manager. Easily install, update, and remove packages for your Cradle instance. Free online tool, no registration required."
+path: '/freedevtools/tldr/cradle/cradle-package/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cradle/cradle-package/'
+description: 'Control packages with Cradle Package Manager. Easily install, update, and remove packages for your Cradle instance. Free online tool, no registration required.'
 category: common
 keywords:
-- cradle package manager
-- php package manager
-- cradle package install
-- cradle package update
-- packagist package manager
-- cradle dependency management
-- php dependency manager
-- cradle package search
-- cradle package remove
-- cradle php development
+  - cradle package manager
+  - php package manager
+  - cradle package install
+  - cradle package update
+  - packagist package manager
+  - cradle dependency management
+  - php dependency manager
+  - cradle package search
+  - cradle package remove
+  - cradle php development
 features:
-- List available Cradle packages.
-- Search for specific Cradle packages.
-- Install packages from Packagist.
-- Update existing Cradle packages.
-- Remove unwanted Cradle packages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available Cradle packages.
+  - Search for specific Cradle packages.
+  - Install packages from Packagist.
+  - Update existing Cradle packages.
+  - Remove unwanted Cradle packages.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cradle package

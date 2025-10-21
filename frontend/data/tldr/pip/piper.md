@@ -1,29 +1,29 @@
 ---
-title: "Generate Speech - Piper TTS | Online Free DevTools by Hexmos"
+title: 'Generate Speech - Piper TTS | Online Free DevTools by Hexmos'
 name: piper
-path: "/freedevtools/tldr/pip/piper/"
-canonical: "https://hexmos.com/freedevtools/tldr/pip/piper/"
-description: "Generate speech with Piper TTS, a fast local neural text-to-speech system. Create audio files from text effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/pip/piper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pip/piper/'
+description: 'Generate speech with Piper TTS, a fast local neural text-to-speech system. Create audio files from text effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- text to speech
-- speech synthesis
-- neural tts
-- piper tts
-- linux speech
-- macos speech
-- wav generator
-- audio generation
-- local tts
-- command line tts
+  - text to speech
+  - speech synthesis
+  - neural tts
+  - piper tts
+  - linux speech
+  - macos speech
+  - wav generator
+  - audio generation
+  - local tts
+  - command line tts
 features:
-- Generate WAV files from text input
-- Select specific speakers in multi-speaker voices
-- Stream audio output to media players
-- Adjust speech speed and sentence silence
-- Utilize model configuration files for customization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate WAV files from text input
+  - Select specific speakers in multi-speaker voices
+  - Stream audio output to media players
+  - Adjust speech speed and sentence silence
+  - Utilize model configuration files for customization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # piper

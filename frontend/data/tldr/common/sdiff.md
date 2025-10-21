@@ -1,29 +1,29 @@
 ---
-title: "Compare Files - Find Differences with sdiff | Online Free DevTools by Hexmos"
+title: 'Compare Files - Find Differences with sdiff | Online Free DevTools by Hexmos'
 name: sdiff
-path: "/freedevtools/tldr/common/sdiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sdiff/"
-description: "Compare files instantly with sdiff. Identify differences between two files, merge changes, and generate output files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sdiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sdiff/'
+description: 'Compare files instantly with sdiff. Identify differences between two files, merge changes, and generate output files. Free online tool, no registration required.'
 category: common
 keywords:
-- file comparison
-- sdiff command
-- file difference analysis
-- linux file comparison
-- unix file comparison
-- text file comparison
-- file merge tool
-- command line file diff
-- ignore whitespace comparison
-- case insensitive file diff
+  - file comparison
+  - sdiff command
+  - file difference analysis
+  - linux file comparison
+  - unix file comparison
+  - text file comparison
+  - file merge tool
+  - command line file diff
+  - ignore whitespace comparison
+  - case insensitive file diff
 features:
-- Compare two files for differences
-- Ignore whitespace during comparison
-- Perform case-insensitive comparisons
-- Merge two files into a new output file
-- Display differences side-by-side
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare two files for differences
+  - Ignore whitespace during comparison
+  - Perform case-insensitive comparisons
+  - Merge two files into a new output file
+  - Display differences side-by-side
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sdiff

@@ -1,9 +1,9 @@
 ---
-title: "Format Line Endings - dos2unix Converter | Online Free DevTools by Hexmos"
+title: 'Format Line Endings - dos2unix Converter | Online Free DevTools by Hexmos'
 name: dos2unix
-path: "/freedevtools/tldr/linux/dos2unix/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dos2unix/"
-description: "Format line endings with dos2unix, converting DOS to Unix style.  Easily manage CRLF and LF characters in your files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dos2unix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dos2unix/'
+description: 'Format line endings with dos2unix, converting DOS to Unix style.  Easily manage CRLF and LF characters in your files. Free online tool, no registration required.'
 category: linux
 keywords:
   - dos to unix converter
@@ -22,8 +22,8 @@ features:
   - Provides informative output about file line endings.
   - Allows manipulation of Byte Order Marks (BOM).
   - Supports batch processing of multiple files (not explicitly stated, but implied).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dos2unix

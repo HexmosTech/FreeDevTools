@@ -1,29 +1,29 @@
 ---
-title: "Fix PHP Code - Correct Coding Standards with phpcbf | Online Free DevTools by Hexmos"
+title: 'Fix PHP Code - Correct Coding Standards with phpcbf | Online Free DevTools by Hexmos'
 name: phpcbf
-path: "/freedevtools/tldr/php/phpcbf/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpcbf/"
-description: "Fix PHP code style and standards with phpcbf. Automatically correct coding violations and enforce consistency using various coding standards. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpcbf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpcbf/'
+description: 'Fix PHP code style and standards with phpcbf. Automatically correct coding violations and enforce consistency using various coding standards. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP code fixer
-- PHP coding standards
-- PHP code beautifier
-- PHP code style
-- phpcbf command line
-- PHP CS Fixer
-- PHP linting tool
-- PHP code formatter
-- PHP coding style checker
-- PSR coding standards
+  - PHP code fixer
+  - PHP coding standards
+  - PHP code beautifier
+  - PHP code style
+  - phpcbf command line
+  - PHP CS Fixer
+  - PHP linting tool
+  - PHP code formatter
+  - PHP coding style checker
+  - PSR coding standards
 features:
-- Automatically fix PHP coding standard violations.
-- Enforce coding style consistency across projects.
-- Support for various coding standards (PEAR, PSR1, PSR2, etc.).
-- Integrate with CI/CD pipelines for automated code formatting.
-- Automatically correct coding violations using the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically fix PHP coding standard violations.
+  - Enforce coding style consistency across projects.
+  - Support for various coding standards (PEAR, PSR1, PSR2, etc.).
+  - Integrate with CI/CD pipelines for automated code formatting.
+  - Automatically correct coding violations using the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpcbf

@@ -1,29 +1,29 @@
 ---
-title: "TeX Live Search - Find Packages with Regex | Online Free DevTools by Hexmos"
+title: 'TeX Live Search - Find Packages with Regex | Online Free DevTools by Hexmos'
 name: tlmgr-search
-path: "/freedevtools/tldr/tlmgr/tlmgr-search/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-search/"
-description: "Find TeX Live packages instantly with TeX Live Search. Discover packages by name, description, or file with regular expressions. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-search/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-search/'
+description: 'Find TeX Live packages instantly with TeX Live Search. Discover packages by name, description, or file with regular expressions. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX Live package search
-- TeX package manager search
-- tlmgr search regex
-- TeX Live database search
-- TeX package names search
-- TeX package descriptions search
-- tlmgr package finder
-- TeX Live package discovery
-- TeX regex search
-- tlmgr search command
+  - TeX Live package search
+  - TeX package manager search
+  - tlmgr search regex
+  - TeX Live database search
+  - TeX package names search
+  - TeX package descriptions search
+  - tlmgr package finder
+  - TeX Live package discovery
+  - TeX regex search
+  - tlmgr search command
 features:
-- Search TeX Live packages by name or description using regular expressions.
-- Search TeX Live package files using regular expressions.
-- Search local or global TeX Live databases.
-- Restrict search to whole words in package names and descriptions.
-- Find specific TeX Live packages for installation or management.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search TeX Live packages by name or description using regular expressions.
+  - Search TeX Live package files using regular expressions.
+  - Search local or global TeX Live databases.
+  - Restrict search to whole words in package names and descriptions.
+  - Find specific TeX Live packages for installation or management.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr search

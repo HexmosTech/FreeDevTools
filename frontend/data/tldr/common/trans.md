@@ -1,29 +1,29 @@
 ---
-title: "Translate Shell - Translate Text via CLI | Online Free DevTools by Hexmos"
+title: 'Translate Shell - Translate Text via CLI | Online Free DevTools by Hexmos'
 name: trans
-path: "/freedevtools/tldr/common/trans/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/trans/"
-description: "Translate text instantly with Translate Shell. Translate words and phrases between multiple languages using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/trans/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/trans/'
+description: 'Translate text instantly with Translate Shell. Translate words and phrases between multiple languages using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- command line translator
-- text translation CLI
-- translate shell command
-- linux translation tool
-- terminal translation
-- text translator
-- language translation
-- dictionary lookup command
-- translation tool
-- translation command
+  - command line translator
+  - text translation CLI
+  - translate shell command
+  - linux translation tool
+  - terminal translation
+  - text translator
+  - language translation
+  - dictionary lookup command
+  - translation tool
+  - translation command
 features:
-- Translate words or phrases from one language to another.
-- Detect the source language automatically.
-- Translate to a specific language.
-- Perform dictionary lookups for word meanings.
-- Translate from one language to another specific language.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Translate words or phrases from one language to another.
+  - Detect the source language automatically.
+  - Translate to a specific language.
+  - Perform dictionary lookups for word meanings.
+  - Translate from one language to another specific language.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trans

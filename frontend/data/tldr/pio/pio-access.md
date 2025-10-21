@@ -1,29 +1,29 @@
 ---
-title: "PIO Access - Control Resource Permissions | Online Free DevTools by Hexmos"
+title: 'PIO Access - Control Resource Permissions | Online Free DevTools by Hexmos'
 name: pio-access
-path: "/freedevtools/tldr/pio/pio-access/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-access/"
-description: "Control PlatformIO resource access levels with PIO Access. Manage user permissions and restrict access to packages with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-access/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-access/'
+description: 'Control PlatformIO resource access levels with PIO Access. Manage user permissions and restrict access to packages with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- pio access control
-- platformio access management
-- package permission manager
-- pio registry permissions
-- resource access level
-- pio access grant
-- pio access revoke
-- pio access private
-- pio access public
-- platformio cli access
+  - pio access control
+  - platformio access management
+  - package permission manager
+  - pio registry permissions
+  - resource access level
+  - pio access grant
+  - pio access revoke
+  - pio access private
+  - pio access public
+  - platformio cli access
 features:
-- Grant user access to specific resources
-- Revoke user access to specific resources
-- List resources accessible to a user
-- Restrict resource access to specific users
-- Allow public access to a resource
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Grant user access to specific resources
+  - Revoke user access to specific resources
+  - List resources accessible to a user
+  - Restrict resource access to specific users
+  - Allow public access to a resource
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio access

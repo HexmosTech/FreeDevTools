@@ -1,29 +1,29 @@
 ---
-title: "Kopia Backup - Create Secure Snapshots | Online Free DevTools by Hexmos"
+title: 'Kopia Backup - Create Secure Snapshots | Online Free DevTools by Hexmos'
 name: kopia
-path: "/freedevtools/tldr/common/kopia/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kopia/"
-description: "Create backups with Kopia, a fast and secure snapshot tool. Supports encryption, deduplication, and compression for efficient storage. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kopia/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kopia/'
+description: 'Create backups with Kopia, a fast and secure snapshot tool. Supports encryption, deduplication, and compression for efficient storage. Free online tool, no registration required.'
 category: common
 keywords:
-- kopia backup
-- data backup tool
-- snapshot tool
-- encryption backup
-- deduplication backup
-- incremental backup
-- command line backup
-- linux backup
-- macos backup
-- windows backup
+  - kopia backup
+  - data backup tool
+  - snapshot tool
+  - encryption backup
+  - deduplication backup
+  - incremental backup
+  - command line backup
+  - linux backup
+  - macos backup
+  - windows backup
 features:
-- Create secure encrypted backups
-- Deduplicate data for efficient storage
-- Take incremental snapshots of directories
-- Restore snapshots to specific locations
-- Manage backup policies for retention
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create secure encrypted backups
+  - Deduplicate data for efficient storage
+  - Take incremental snapshots of directories
+  - Restore snapshots to specific locations
+  - Manage backup policies for retention
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kopia

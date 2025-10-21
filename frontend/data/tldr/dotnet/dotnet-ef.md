@@ -1,29 +1,29 @@
 ---
-title: "Generate EF Core Migrations - dotnet-ef | Online Free DevTools by Hexmos"
+title: 'Generate EF Core Migrations - dotnet-ef | Online Free DevTools by Hexmos'
 name: dotnet-ef
-path: "/freedevtools/tldr/dotnet/dotnet-ef/"
-canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-ef/"
-description: "Generate Entity Framework Core migrations with dotnet-ef. Scaffold database contexts and update databases using the command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/dotnet/dotnet-ef/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dotnet/dotnet-ef/'
+description: 'Generate Entity Framework Core migrations with dotnet-ef. Scaffold database contexts and update databases using the command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- ef core migration generator
-- dotnet ef core database update
-- dotnet ef dbcontext scaffold
-- entity framework core command line
-- dotnet ef migrations add
-- dotnet ef migrations remove
-- dotnet ef migrations list
-- dotnet ef migrations script
-- ef core code generation
-- dotnet ef database drop
+  - ef core migration generator
+  - dotnet ef core database update
+  - dotnet ef dbcontext scaffold
+  - entity framework core command line
+  - dotnet ef migrations add
+  - dotnet ef migrations remove
+  - dotnet ef migrations list
+  - dotnet ef migrations script
+  - ef core code generation
+  - dotnet ef database drop
 features:
-- Update databases to a specific migration point.
-- Drop existing databases with a single command.
-- Scaffold DbContext and entity types from existing databases.
-- Add, remove and list available EF Core migrations.
-- Generate SQL scripts from migration ranges.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update databases to a specific migration point.
+  - Drop existing databases with a single command.
+  - Scaffold DbContext and entity types from existing databases.
+  - Add, remove and list available EF Core migrations.
+  - Generate SQL scripts from migration ranges.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotnet ef

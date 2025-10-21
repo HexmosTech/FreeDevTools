@@ -1,29 +1,29 @@
 ---
-title: "SVGR - Generate React Components from SVG | Online Free DevTools by Hexmos"
+title: 'SVGR - Generate React Components from SVG | Online Free DevTools by Hexmos'
 name: svgr
-path: "/freedevtools/tldr/common/svgr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/svgr/"
-description: "Generate React components effortlessly with SVGR. Convert SVG files to React code, customize output, and optimize integration. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/svgr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/svgr/'
+description: 'Generate React components effortlessly with SVGR. Convert SVG files to React code, customize output, and optimize integration. Free online tool, no registration required.'
 category: common
 keywords:
-- SVG to React component
-- SVG React converter
-- React SVG transformation
-- SVG component generator
-- React component from SVG online
-- SVG to JSX converter
-- React SVG TypeScript
-- Command line SVG converter
-- SVG code generator
-- SVG React automatic
+  - SVG to React component
+  - SVG React converter
+  - React SVG transformation
+  - SVG component generator
+  - React component from SVG online
+  - SVG to JSX converter
+  - React SVG TypeScript
+  - Command line SVG converter
+  - SVG code generator
+  - SVG React automatic
 features:
-- Convert SVG files into React components.
-- Generate TypeScript React components from SVG.
-- Customize filename case during conversion.
-- Output React components to a specified directory.
-- Skip existing files during batch conversion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert SVG files into React components.
+  - Generate TypeScript React components from SVG.
+  - Customize filename case during conversion.
+  - Output React components to a specified directory.
+  - Skip existing files during batch conversion.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # svgr

@@ -1,29 +1,29 @@
 ---
-title: "Godoc - View Go Package Documentation | Online Free DevTools by Hexmos"
+title: 'Godoc - View Go Package Documentation | Online Free DevTools by Hexmos'
 name: godoc
-path: "/freedevtools/tldr/common/godoc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/godoc/"
-description: "View Go package documentation with Godoc. Explore package details, function definitions, and serve documentation locally. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/godoc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/godoc/'
+description: 'View Go package documentation with Godoc. Explore package details, function definitions, and serve documentation locally. Free online tool, no registration required.'
 category: common
 keywords:
-- go documentation
-- go package documentation
-- godoc documentation
-- go package explorer
-- go api reference
-- go language documentation
-- golang documentation server
-- go package viewer
-- go api documentation
-- go documentation tool
+  - go documentation
+  - go package documentation
+  - godoc documentation
+  - go package explorer
+  - go api reference
+  - go language documentation
+  - golang documentation server
+  - go package viewer
+  - go api documentation
+  - go documentation tool
 features:
-- Display documentation for Go packages
-- Serve documentation as a local web server
-- Generate an index file for faster searching
-- Search documentation using an index file
-- Display documentation for specific functions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display documentation for Go packages
+  - Serve documentation as a local web server
+  - Generate an index file for faster searching
+  - Search documentation using an index file
+  - Display documentation for specific functions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # godoc

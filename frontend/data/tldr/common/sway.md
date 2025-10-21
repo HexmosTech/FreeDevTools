@@ -1,29 +1,29 @@
 ---
-title: "Control Sway - Tiling Window Manager | Online Free DevTools by Hexmos"
+title: 'Control Sway - Tiling Window Manager | Online Free DevTools by Hexmos'
 name: sway
-path: "/freedevtools/tldr/common/sway/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sway/"
-description: "Control your desktop with Sway, a tiling window manager for Wayland. Customize layouts, manage workspaces, and automate window placement. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sway/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sway/'
+description: 'Control your desktop with Sway, a tiling window manager for Wayland. Customize layouts, manage workspaces, and automate window placement. Free online tool, no registration required.'
 category: common
 keywords:
-- tiling window manager
-- wayland compositor
-- swaywm configuration
-- linux window manager
-- i3 configuration sway
-- sway keybindings
-- tiling layout manager
-- window management linux
-- desktop environment customization
-- wayland window management
+  - tiling window manager
+  - wayland compositor
+  - swaywm configuration
+  - linux window manager
+  - i3 configuration sway
+  - sway keybindings
+  - tiling layout manager
+  - window management linux
+  - desktop environment customization
+  - wayland window management
 features:
-- Start the Sway compositor
-- Manage window tiling
-- Configure Sway using i3-compatible syntax
-- Customize window layouts
-- Execute commands within the Sway environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the Sway compositor
+  - Manage window tiling
+  - Configure Sway using i3-compatible syntax
+  - Customize window layouts
+  - Execute commands within the Sway environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sway

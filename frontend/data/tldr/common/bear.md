@@ -1,9 +1,9 @@
 ---
-title: "Generate Compilation Database - Bear Tool | Online Free DevTools by Hexmos"
+title: 'Generate Compilation Database - Bear Tool | Online Free DevTools by Hexmos'
 name: bear
-path: "/freedevtools/tldr/common/bear/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bear/"
-description: "Generate compilation database files with Bear, a tool for clang tooling integration. Simplify development workflows with comprehensive build information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bear/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bear/'
+description: 'Generate compilation database files with Bear, a tool for clang tooling integration. Simplify development workflows with comprehensive build information. Free online tool, no registration required.'
 category: common
 keywords:
   - compilation database generator
@@ -22,8 +22,8 @@ features:
   - Control output file naming
   - Execute in verbose mode for detailed output
   - Force preload method for command interception
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bear

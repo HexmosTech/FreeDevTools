@@ -1,9 +1,9 @@
 ---
-title: "MATE Calculator - Calculate Expressions | Online Free DevTools by Hexmos"
+title: 'MATE Calculator - Calculate Expressions | Online Free DevTools by Hexmos'
 name: mate-calc-cmd
-path: "/freedevtools/tldr/linux/mate-calc-cmd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mate-calc-cmd/"
-description: "Calculate mathematic expressions easily with MATE Calculator.  Perform complex calculations directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mate-calc-cmd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mate-calc-cmd/'
+description: 'Calculate mathematic expressions easily with MATE Calculator.  Perform complex calculations directly from your terminal. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux calculator
@@ -22,8 +22,8 @@ features:
   - Supports advanced mathematical functions (e.g., sin, cos, tan).
   - Allows interactive calculation sessions.
   - Provides immediate results in the terminal.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mate-calc-cmd

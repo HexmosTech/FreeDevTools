@@ -1,9 +1,9 @@
 ---
-title: "lsipc - Inspect System V IPC | Online Free DevTools by Hexmos"
+title: 'lsipc - Inspect System V IPC | Online Free DevTools by Hexmos'
 name: lsipc
-path: "/freedevtools/tldr/linux/lsipc/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lsipc/"
-description: "Inspect System V Inter-Process Communication (IPC) with lsipc.  View shared memory, message queues, and semaphores. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lsipc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lsipc/'
+description: 'Inspect System V Inter-Process Communication (IPC) with lsipc.  View shared memory, message queues, and semaphores. Free online tool, no registration required.'
 category: linux
 keywords:
   - System V IPC viewer
@@ -22,8 +22,8 @@ features:
   - Allows filtering by specific resource types (shared memory, message queues, semaphores).
   - Provides detailed information on resources using specific IDs.
   - Offers various output formats (raw, JSON, list, export).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsipc

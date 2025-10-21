@@ -1,8 +1,8 @@
 ---
-title: "Wiggle - Patch Application Tool | Online Free DevTools by Hexmos"
+title: 'Wiggle - Patch Application Tool | Online Free DevTools by Hexmos'
 name: wiggle
-path: "/freedevtools/tldr/common/wiggle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wiggle/"
+path: '/freedevtools/tldr/common/wiggle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wiggle/'
 description: "Apply patches easily with Wiggle, resolving conflicts in patches that `patch` can't handle. Merge changes automatically and extract branches effortlessly. Free online tool, no registration required."
 category: common
 keywords:
@@ -22,8 +22,8 @@ features:
   - Merge changes from reject files
   - Extract specific branches from patches
   - Apply patches and save compared words
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wiggle

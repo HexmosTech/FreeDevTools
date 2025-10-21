@@ -1,29 +1,29 @@
 ---
-title: "Emacsclient - Open Files in Emacs | Online Free DevTools by Hexmos"
+title: 'Emacsclient - Open Files in Emacs | Online Free DevTools by Hexmos'
 name: emacsclient
-path: "/freedevtools/tldr/common/emacsclient/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/emacsclient/"
-description: "Open files with Emacsclient, the command-line interface to Emacs. Quickly edit files and evaluate commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/emacsclient/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/emacsclient/'
+description: 'Open files with Emacsclient, the command-line interface to Emacs. Quickly edit files and evaluate commands. Free online tool, no registration required.'
 category: common
 keywords:
-- Emacsclient file opener
-- Emacs command line client
-- Open files in Emacs server
-- Emacs GUI interface
-- Terminal Emacs editing
-- Emacs evaluate command
-- Alternate Emacs editor
-- Emacs server control
-- Emacs Lisp execution
-- Emacs server shutdown
+  - Emacsclient file opener
+  - Emacs command line client
+  - Open files in Emacs server
+  - Emacs GUI interface
+  - Terminal Emacs editing
+  - Emacs evaluate command
+  - Alternate Emacs editor
+  - Emacs server control
+  - Emacs Lisp execution
+  - Emacs server shutdown
 features:
-- Open files in an existing Emacs server.
-- Open files in console mode without GUI.
-- Open files in a new Emacs window.
-- Evaluate Emacs Lisp commands.
-- Specify an alternative editor to open files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open files in an existing Emacs server.
+  - Open files in console mode without GUI.
+  - Open files in a new Emacs window.
+  - Evaluate Emacs Lisp commands.
+  - Specify an alternative editor to open files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # emacsclient

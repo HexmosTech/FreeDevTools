@@ -1,29 +1,29 @@
 ---
-title: "Manage To-Do Lists - Control Tasks with topydo | Online Free DevTools by Hexmos"
+title: 'Manage To-Do Lists - Control Tasks with topydo | Online Free DevTools by Hexmos'
 name: topydo
-path: "/freedevtools/tldr/common/topydo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/topydo/"
-description: "Manage your to-do lists efficiently with topydo. Control tasks, set due dates, and organize projects using todo.txt format. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/topydo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/topydo/'
+description: 'Manage your to-do lists efficiently with topydo. Control tasks, set due dates, and organize projects using todo.txt format. Free online tool, no registration required.'
 category: common
 keywords:
-- todo.txt manager
-- to-do list command line
-- command line task manager
-- task management cli
-- topydo todo list
-- todo txt editor
-- command line todo
-- task scheduler
-- project task manager
-- due date reminder
+  - todo.txt manager
+  - to-do list command line
+  - command line task manager
+  - task management cli
+  - topydo todo list
+  - todo txt editor
+  - command line todo
+  - task scheduler
+  - project task manager
+  - due date reminder
 features:
-- Add new to-dos with project and context tags
-- Schedule tasks with specific due dates
-- Create repeating to-do items with flexible intervals
-- Revert the last executed topydo command
-- Organize tasks in the standard todo.txt format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add new to-dos with project and context tags
+  - Schedule tasks with specific due dates
+  - Create repeating to-do items with flexible intervals
+  - Revert the last executed topydo command
+  - Organize tasks in the standard todo.txt format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # topydo

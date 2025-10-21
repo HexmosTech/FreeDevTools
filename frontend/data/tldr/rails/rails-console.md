@@ -1,29 +1,29 @@
 ---
-title: "Rails Console - Interact with Rails Applications | Online Free DevTools by Hexmos"
+title: 'Rails Console - Interact with Rails Applications | Online Free DevTools by Hexmos'
 name: rails-console
-path: "/freedevtools/tldr/rails/rails-console/"
-canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-console/"
+path: '/freedevtools/tldr/rails/rails-console/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rails/rails-console/'
 description: "Interact with Rails applications using Rails Console. Debug, test, and manage your application's data directly. Free online tool, no registration required."
 category: common
 keywords:
-- rails console interaction
-- rails application debugging
-- rails data management
-- rails environment control
-- rails sandbox mode
-- ruby rails console
-- rails command line interface
-- rails application testing
-- rails development console
-- rails production console
+  - rails console interaction
+  - rails application debugging
+  - rails data management
+  - rails environment control
+  - rails sandbox mode
+  - ruby rails console
+  - rails command line interface
+  - rails application testing
+  - rails development console
+  - rails production console
 features:
-- Start a Rails console session.
-- Execute commands in a Rails application environment.
-- Roll back data modifications in sandbox mode.
-- Specify the Rails environment to use.
-- Access application models and data.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a Rails console session.
+  - Execute commands in a Rails application environment.
+  - Roll back data modifications in sandbox mode.
+  - Specify the Rails environment to use.
+  - Access application models and data.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rails console

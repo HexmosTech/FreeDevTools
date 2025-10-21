@@ -1,29 +1,29 @@
 ---
-title: "yt-dlp - Download YouTube Videos and Playlists | Online Free DevTools by Hexmos"
+title: 'yt-dlp - Download YouTube Videos and Playlists | Online Free DevTools by Hexmos'
 name: yt-dlp
-path: "/freedevtools/tldr/common/yt-dlp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/yt-dlp/"
-description: "Download YouTube videos and playlists easily with yt-dlp. Extract audio, specify formats, and download specific playlist items. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/yt-dlp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/yt-dlp/'
+description: 'Download YouTube videos and playlists easily with yt-dlp. Extract audio, specify formats, and download specific playlist items. Free online tool, no registration required.'
 category: common
 keywords:
-- YouTube downloader
-- video downloader
-- playlist downloader
-- yt-dlp download
-- YouTube audio extractor
-- video format converter
-- command line video downloader
-- yt-dlp playlist
-- yt-dlp audio
-- yt-dlp udemy
+  - YouTube downloader
+  - video downloader
+  - playlist downloader
+  - yt-dlp download
+  - YouTube audio extractor
+  - video format converter
+  - command line video downloader
+  - yt-dlp playlist
+  - yt-dlp audio
+  - yt-dlp udemy
 features:
-- Download videos from YouTube and other websites.
-- Extract audio from video files to various formats.
-- Download entire playlists or specific playlist items.
-- Specify preferred video and audio formats for download.
-- Download Udemy courses with chapter separation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download videos from YouTube and other websites.
+  - Extract audio from video files to various formats.
+  - Download entire playlists or specific playlist items.
+  - Specify preferred video and audio formats for download.
+  - Download Udemy courses with chapter separation.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yt-dlp

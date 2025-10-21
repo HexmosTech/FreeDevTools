@@ -1,29 +1,29 @@
 ---
-title: "Secure Copy - Transfer Files Securely with SCP | Online Free DevTools by Hexmos"
+title: 'Secure Copy - Transfer Files Securely with SCP | Online Free DevTools by Hexmos'
 name: scp
-path: "/freedevtools/tldr/common/scp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/scp/"
-description: "Securely copy files with SCP, a powerful command-line tool for transferring data between hosts using SSH. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/scp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/scp/'
+description: 'Securely copy files with SCP, a powerful command-line tool for transferring data between hosts using SSH. Free online tool, no registration required.'
 category: common
 keywords:
-- secure file transfer
-- scp command
-- ssh file copy
-- remote file transfer
-- command line file copy
-- linux scp
-- macos scp
-- scp over ssh
-- secure copy protocol
-- scp examples
+  - secure file transfer
+  - scp command
+  - ssh file copy
+  - remote file transfer
+  - command line file copy
+  - linux scp
+  - macos scp
+  - scp over ssh
+  - secure copy protocol
+  - scp examples
 features:
-- Securely copy files between local and remote hosts
-- Transfer files using a specific port over SSH
-- Recursively copy entire directories between hosts
-- Authenticate using SSH keys for secure connections
-- Transfer files between remote hosts via a local host
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely copy files between local and remote hosts
+  - Transfer files using a specific port over SSH
+  - Recursively copy entire directories between hosts
+  - Authenticate using SSH keys for secure connections
+  - Transfer files between remote hosts via a local host
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scp

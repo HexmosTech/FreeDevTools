@@ -1,29 +1,29 @@
 ---
-title: "Browse Web - Lynx Command-Line Browser | Online Free DevTools by Hexmos"
+title: 'Browse Web - Lynx Command-Line Browser | Online Free DevTools by Hexmos'
 name: lynx
-path: "/freedevtools/tldr/common/lynx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lynx/"
-description: "Browse the web with Lynx, a powerful command-line browser. Navigate websites and manage cookies directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lynx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lynx/'
+description: 'Browse the web with Lynx, a powerful command-line browser. Navigate websites and manage cookies directly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- command line web browser
-- text based browser
-- lynx web browser
-- terminal web browsing
-- linux web browser
-- macos web browser
-- cli web browser
-- anonymous web browsing
-- cookie management browser
-- web development command line
+  - command line web browser
+  - text based browser
+  - lynx web browser
+  - terminal web browsing
+  - linux web browser
+  - macos web browser
+  - cli web browser
+  - anonymous web browsing
+  - cookie management browser
+  - web development command line
 features:
-- Browse websites from the command line.
-- Apply restrictions for anonymous browsing.
-- Enable mouse support for navigation.
-- Force color mode for enhanced display.
-- Manage cookies using a custom file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Browse websites from the command line.
+  - Apply restrictions for anonymous browsing.
+  - Enable mouse support for navigation.
+  - Force color mode for enhanced display.
+  - Manage cookies using a custom file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lynx

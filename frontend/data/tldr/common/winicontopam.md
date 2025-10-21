@@ -1,29 +1,29 @@
 ---
-title: "ICO to PAM Converter - Convert Images | Online Free DevTools by Hexmos"
+title: 'ICO to PAM Converter - Convert Images | Online Free DevTools by Hexmos'
 name: winicontopam
-path: "/freedevtools/tldr/common/winicontopam/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/winicontopam/"
-description: "Convert ICO files to PAM images with ICO to PAM Converter. Extract specific images, handle transparency, and streamline image processing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/winicontopam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/winicontopam/'
+description: 'Convert ICO files to PAM images with ICO to PAM Converter. Extract specific images, handle transparency, and streamline image processing. Free online tool, no registration required.'
 category: common
 keywords:
-- ico to pam conversion
-- windows icon to pam
-- image format conversion
-- ico file converter
-- pam image generator
-- convert ico image
-- netpbm image tools
-- windows ico tool
-- icon extraction tool
-- transparency handling tool
+  - ico to pam conversion
+  - windows icon to pam
+  - image format conversion
+  - ico file converter
+  - pam image generator
+  - convert ico image
+  - netpbm image tools
+  - windows ico tool
+  - icon extraction tool
+  - transparency handling tool
 features:
-- Convert Windows ICO files to PAM format
-- Extract specific images from ICO files
-- Handle graded transparency data with AND masks
-- Convert all images within an ICO file
-- Write AND masks to PAM file's fifth channel
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Windows ICO files to PAM format
+  - Extract specific images from ICO files
+  - Handle graded transparency data with AND masks
+  - Convert all images within an ICO file
+  - Write AND masks to PAM file's fifth channel
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # winicontopam

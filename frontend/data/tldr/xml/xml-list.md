@@ -1,29 +1,29 @@
 ---
-title: "XML List - Generate XML Directory Listings | Online Free DevTools by Hexmos"
+title: 'XML List - Generate XML Directory Listings | Online Free DevTools by Hexmos'
 name: xml-list
-path: "/freedevtools/tldr/xml/xml-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-list/"
-description: "Generate XML listings instantly with XML List. Convert directory content to XML format, and display directory structure. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xml-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xml-list/'
+description: 'Generate XML listings instantly with XML List. Convert directory content to XML format, and display directory structure. Free online tool, no registration required.'
 category: common
 keywords:
-- XML directory listing
-- XML file listing
-- Directory to XML conversion
-- XML file explorer
-- Linux XML listing
-- macOS XML listing
-- Command line XML tool
-- XML file generation
-- XML output from directory
-- XML ls command
+  - XML directory listing
+  - XML file listing
+  - Directory to XML conversion
+  - XML file explorer
+  - Linux XML listing
+  - macOS XML listing
+  - Command line XML tool
+  - XML file generation
+  - XML output from directory
+  - XML ls command
 features:
-- Convert directory contents to XML format
-- Generate XML documents from directory structures
-- List files and directories in XML format
-- Output XML listings to a file
-- Display help information for XML listing command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert directory contents to XML format
+  - Generate XML documents from directory structures
+  - List files and directories in XML format
+  - Output XML listings to a file
+  - Display help information for XML listing command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml list

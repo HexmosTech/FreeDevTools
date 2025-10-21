@@ -1,29 +1,29 @@
 ---
-title: "Immich Upload Tool - Upload Photos to Immich | Online Free DevTools by Hexmos"
+title: 'Immich Upload Tool - Upload Photos to Immich | Online Free DevTools by Hexmos'
 name: immich-go
-path: "/freedevtools/tldr/common/immich-go/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/immich-go/"
-description: "Upload photos easily with Immich-Go. Streamline your self-hosted Immich server by efficiently uploading large photo collections. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/immich-go/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/immich-go/'
+description: 'Upload photos easily with Immich-Go. Streamline your self-hosted Immich server by efficiently uploading large photo collections. Free online tool, no registration required.'
 category: common
 keywords:
-- Immich photo upload
-- Immich bulk upload
-- Immich Google Photos takeout
-- Google Photos Immich import
-- Immich album creation
-- Immich duplicate removal
-- Immich command line tool
-- Immich photo management
-- Immich server utility
-- Immich album deletion
+  - Immich photo upload
+  - Immich bulk upload
+  - Immich Google Photos takeout
+  - Google Photos Immich import
+  - Immich album creation
+  - Immich duplicate removal
+  - Immich command line tool
+  - Immich photo management
+  - Immich server utility
+  - Immich album deletion
 features:
-- Upload Google Photos takeout archives to Immich server.
-- Automatically generate albums based on date during upload.
-- Read server and key configuration from a local file.
-- Remove duplicate images based on server content.
-- Delete albums matching a specified pattern.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload Google Photos takeout archives to Immich server.
+  - Automatically generate albums based on date during upload.
+  - Read server and key configuration from a local file.
+  - Remove duplicate images based on server content.
+  - Delete albums matching a specified pattern.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # immich-go

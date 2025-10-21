@@ -1,29 +1,29 @@
 ---
-title: "AA-Unconfined - List Unconfined Linux Processes | Online Free DevTools by Hexmos"
+title: 'AA-Unconfined - List Unconfined Linux Processes | Online Free DevTools by Hexmos'
 name: aa-unconfined
-path: "/freedevtools/tldr/linux/aa-unconfined/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-unconfined/"
-description: "List unconfined Linux processes instantly with AA-Unconfined. Identify processes lacking AppArmor profiles and enhance system security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aa-unconfined/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aa-unconfined/'
+description: 'List unconfined Linux processes instantly with AA-Unconfined. Identify processes lacking AppArmor profiles and enhance system security. Free online tool, no registration required.'
 category: linux
 keywords:
-- aa-unconfined processes
-- list unconfined processes
-- linux process security
-- apparmor status
-- unconfined socket detection
-- tcp udp ports
-- security profiling linux
-- audit unconfined processes
-- detect apparmor bypass
-- linux security hardening
+  - aa-unconfined processes
+  - list unconfined processes
+  - linux process security
+  - apparmor status
+  - unconfined socket detection
+  - tcp udp ports
+  - security profiling linux
+  - audit unconfined processes
+  - detect apparmor bypass
+  - linux security hardening
 features:
-- List processes without AppArmor profiles.
-- Detect open TCP/UDP ports of unconfined processes.
-- Utilize `ss` or `netstat` for network socket detection.
-- Offer a paranoid mode for comprehensive process inspection.
-- Display help information for command options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List processes without AppArmor profiles.
+  - Detect open TCP/UDP ports of unconfined processes.
+  - Utilize `ss` or `netstat` for network socket detection.
+  - Offer a paranoid mode for comprehensive process inspection.
+  - Display help information for command options.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aa-unconfined

@@ -1,29 +1,29 @@
 ---
-title: "Customize VM Images - virt-sysprep | Online Free DevTools by Hexmos"
+title: 'Customize VM Images - virt-sysprep | Online Free DevTools by Hexmos'
 name: virt-sysprep
-path: "/freedevtools/tldr/virt/virt-sysprep/"
-canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-sysprep/"
-description: "Customize VM images with virt-sysprep. Easily reset virtual machines, unconfigure systems, and apply changes. Free online tool, no registration required."
+path: '/freedevtools/tldr/virt/virt-sysprep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virt/virt-sysprep/'
+description: 'Customize VM images with virt-sysprep. Easily reset virtual machines, unconfigure systems, and apply changes. Free online tool, no registration required.'
 category: common
 keywords:
-- VM image customization
-- Virtual machine reset
-- virt-sysprep image prep
-- Linux image configuration
-- KVM image modification
-- QCOW2 image preparation
-- Virtual machine provisioning
-- System image sanitization
-- Guest OS configuration
-- Image cleanup utility
+  - VM image customization
+  - Virtual machine reset
+  - virt-sysprep image prep
+  - Linux image configuration
+  - KVM image modification
+  - QCOW2 image preparation
+  - Virtual machine provisioning
+  - System image sanitization
+  - Guest OS configuration
+  - Image cleanup utility
 features:
-- Remove sensitive data from VM images
-- List supported virt-sysprep operations
-- Dry-run virtual machine changes
-- Customize hostnames within VM images
-- Execute specific virt-sysprep operations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove sensitive data from VM images
+  - List supported virt-sysprep operations
+  - Dry-run virtual machine changes
+  - Customize hostnames within VM images
+  - Execute specific virt-sysprep operations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virt-sysprep

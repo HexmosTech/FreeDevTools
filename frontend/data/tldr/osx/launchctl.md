@@ -1,29 +1,29 @@
 ---
-title: "Launchctl - Control Launch Daemons & Agents | Online Free DevTools by Hexmos"
+title: 'Launchctl - Control Launch Daemons & Agents | Online Free DevTools by Hexmos'
 name: launchctl
-path: "/freedevtools/tldr/osx/launchctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/launchctl/"
-description: "Control launch daemons and agents with Launchctl. Manage system-wide services and per-user programs on macOS using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/launchctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/launchctl/'
+description: 'Control launch daemons and agents with Launchctl. Manage system-wide services and per-user programs on macOS using command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- launchd manager
-- osx launchctl
-- macos launchctl commands
-- launch daemon control
-- launch agent control
-- plist loader macos
-- system service manager
-- launchctl load
-- launchctl unload
-- launchctl start stop
+  - launchd manager
+  - osx launchctl
+  - macos launchctl commands
+  - launch daemon control
+  - launch agent control
+  - plist loader macos
+  - system service manager
+  - launchctl load
+  - launchctl unload
+  - launchctl start stop
 features:
-- Load and activate launch agents and daemons from plist files
-- Unload currently loaded agents for modification or updates
-- Manually start or stop agents/daemons based on their label
-- List all loaded agents and daemons with their PID and exit code
-- Manage system-wide and user-specific background processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Load and activate launch agents and daemons from plist files
+  - Unload currently loaded agents for modification or updates
+  - Manually start or stop agents/daemons based on their label
+  - List all loaded agents and daemons with their PID and exit code
+  - Manage system-wide and user-specific background processes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # launchctl

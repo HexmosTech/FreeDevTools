@@ -1,29 +1,29 @@
 ---
-title: "PNM Crop - Crop PNM Images | Online Free DevTools by Hexmos"
+title: 'PNM Crop - Crop PNM Images | Online Free DevTools by Hexmos'
 name: pnmcrop
-path: "/freedevtools/tldr/pnm/pnmcrop/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcrop/"
-description: "Crop images instantly with PNM Crop. Easily remove borders, adjust margins, and customize background colors in PNM images. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmcrop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmcrop/'
+description: 'Crop images instantly with PNM Crop. Easily remove borders, adjust margins, and customize background colors in PNM images. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image cropping
-- PNM image editor
-- Image border removal
-- PNM margin adjustment
-- Command line image processing
-- Netpbm image manipulation
-- Image format conversion
-- PNM image background color
-- PNM image tool
-- Linux image processing
+  - PNM image cropping
+  - PNM image editor
+  - Image border removal
+  - PNM margin adjustment
+  - Command line image processing
+  - Netpbm image manipulation
+  - Image format conversion
+  - PNM image background color
+  - PNM image tool
+  - Linux image processing
 features:
-- Remove white or colored borders from PNM images.
-- Crop PNM images based on background color.
-- Automatically detect background color from image corners.
-- Add a margin around the cropped image.
-- Control behaviour for images entirely made of background.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove white or colored borders from PNM images.
+  - Crop PNM images based on background color.
+  - Automatically detect background color from image corners.
+  - Add a margin around the cropped image.
+  - Control behaviour for images entirely made of background.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmcrop

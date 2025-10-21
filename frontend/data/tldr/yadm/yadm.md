@@ -1,29 +1,29 @@
 ---
-title: "Manage Dotfiles - Control Configurations with yadm | Online Free DevTools by Hexmos"
+title: 'Manage Dotfiles - Control Configurations with yadm | Online Free DevTools by Hexmos'
 name: yadm
-path: "/freedevtools/tldr/yadm/yadm/"
-canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm/"
-description: "Control dotfiles with yadm, a git-backed configuration manager. Easily track, version, and deploy your system settings across multiple machines. Free online tool, no registration required."
+path: '/freedevtools/tldr/yadm/yadm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/yadm/yadm/'
+description: 'Control dotfiles with yadm, a git-backed configuration manager. Easily track, version, and deploy your system settings across multiple machines. Free online tool, no registration required.'
 category: common
 keywords:
-- dotfiles manager
-- configuration management
-- version control
-- git dotfiles
-- linux configuration
-- macos dotfiles
-- cross platform dotfiles
-- yadm configuration
-- dotfile backup
-- dotfile deployment
+  - dotfiles manager
+  - configuration management
+  - version control
+  - git dotfiles
+  - linux configuration
+  - macos dotfiles
+  - cross platform dotfiles
+  - yadm configuration
+  - dotfile backup
+  - dotfile deployment
 features:
-- Manage dotfiles using a git repository.
-- Override default yadm directory locations.
-- Automate dotfile deployment across multiple machines.
-- Track changes and revert to previous configurations.
-- Encrypt sensitive information within dotfiles.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage dotfiles using a git repository.
+  - Override default yadm directory locations.
+  - Automate dotfile deployment across multiple machines.
+  - Track changes and revert to previous configurations.
+  - Encrypt sensitive information within dotfiles.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yadm

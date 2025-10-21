@@ -1,29 +1,29 @@
 ---
-title: "Redshift - Adjust Screen Color Temperature | Online Free DevTools by Hexmos"
+title: 'Redshift - Adjust Screen Color Temperature | Online Free DevTools by Hexmos'
 name: redshift
-path: "/freedevtools/tldr/common/redshift/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/redshift/"
-description: "Adjust screen color temperature with Redshift. Optimize display for day and night viewing on Linux, macOS, and other platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/redshift/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/redshift/'
+description: 'Adjust screen color temperature with Redshift. Optimize display for day and night viewing on Linux, macOS, and other platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- color temperature adjustment
-- redshift color correction
-- display temperature control
-- screen color shift
-- linux color temperature
-- macos color temperature
-- redshift command line
-- gamma correction
-- display optimization
-- circadian rhythm
+  - color temperature adjustment
+  - redshift color correction
+  - display temperature control
+  - screen color shift
+  - linux color temperature
+  - macos color temperature
+  - redshift command line
+  - gamma correction
+  - display optimization
+  - circadian rhythm
 features:
-- Adjust screen color temperature based on time of day.
-- Manually specify custom location for color temperature adjustment.
-- Control screen brightness for day and night modes.
-- Set custom gamma levels for red, green, and blue channels.
-- Purge temperature changes and set constant color temperature.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Adjust screen color temperature based on time of day.
+  - Manually specify custom location for color temperature adjustment.
+  - Control screen brightness for day and night modes.
+  - Set custom gamma levels for red, green, and blue channels.
+  - Purge temperature changes and set constant color temperature.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # redshift

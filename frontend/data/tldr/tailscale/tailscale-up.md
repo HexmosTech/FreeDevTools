@@ -1,29 +1,29 @@
 ---
-title: "Tailscale Up - Connect to Tailscale Network | Online Free DevTools by Hexmos"
+title: 'Tailscale Up - Connect to Tailscale Network | Online Free DevTools by Hexmos'
 name: tailscale-up
-path: "/freedevtools/tldr/tailscale/tailscale-up/"
-canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-up/"
-description: "Connect to Tailscale network with Tailscale Up. Securely extend your private network using subnet router configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/tailscale/tailscale-up/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tailscale/tailscale-up/'
+description: 'Connect to Tailscale network with Tailscale Up. Securely extend your private network using subnet router configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- Tailscale connect
-- WireGuard VPN
-- network configuration
-- subnet router setup
-- exit node configuration
-- secure network access
-- CLI configuration tool
-- Tailscale Linux
-- Tailscale MacOS
-- Tailscale command
+  - Tailscale connect
+  - WireGuard VPN
+  - network configuration
+  - subnet router setup
+  - exit node configuration
+  - secure network access
+  - CLI configuration tool
+  - Tailscale Linux
+  - Tailscale MacOS
+  - Tailscale command
 features:
-- Connect to the Tailscale network.
-- Configure exit nodes for internet traffic.
-- Block incoming connections with shields-up.
-- Set up subnet routing for Tailscale.
-- Reset settings to default values.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to the Tailscale network.
+  - Configure exit nodes for internet traffic.
+  - Block incoming connections with shields-up.
+  - Set up subnet routing for Tailscale.
+  - Reset settings to default values.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tailscale up

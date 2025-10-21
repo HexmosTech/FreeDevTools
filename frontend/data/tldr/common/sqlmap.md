@@ -1,29 +1,29 @@
 ---
-title: "SQL Injection Exploit - Detect SQL Flaws | Online Free DevTools by Hexmos"
+title: 'SQL Injection Exploit - Detect SQL Flaws | Online Free DevTools by Hexmos'
 name: sqlmap
-path: "/freedevtools/tldr/common/sqlmap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sqlmap/"
-description: "Detect SQL injection flaws and vulnerabilities with SQLmap. Quickly exploit database vulnerabilities using this free online tool, no registration required."
+path: '/freedevtools/tldr/common/sqlmap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sqlmap/'
+description: 'Detect SQL injection flaws and vulnerabilities with SQLmap. Quickly exploit database vulnerabilities using this free online tool, no registration required.'
 category: common
 keywords:
-- SQL injection exploit
-- database vulnerability scanner
-- web application security
-- SQLmap injection tool
-- automated SQL injection
-- penetration testing SQL
-- command line SQL scanner
-- web security testing tool
-- common platform sqlmap
-- SQL database attack
+  - SQL injection exploit
+  - database vulnerability scanner
+  - web application security
+  - SQLmap injection tool
+  - automated SQL injection
+  - penetration testing SQL
+  - command line SQL scanner
+  - web security testing tool
+  - common platform sqlmap
+  - SQL database attack
 features:
-- Detect SQL injection vulnerabilities in web applications
-- Exploit SQL injection flaws automatically
-- Support multiple database management systems
-- Perform various injection techniques (e.g., boolean-based blind, time-based blind)
-- Support HTTP authentication methods
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect SQL injection vulnerabilities in web applications
+  - Exploit SQL injection flaws automatically
+  - Support multiple database management systems
+  - Perform various injection techniques (e.g., boolean-based blind, time-based blind)
+  - Support HTTP authentication methods
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sqlmap

@@ -1,29 +1,29 @@
 ---
-title: "Nohup - Execute Commands Persistently | Online Free DevTools by Hexmos"
+title: 'Nohup - Execute Commands Persistently | Online Free DevTools by Hexmos'
 name: nohup
-path: "/freedevtools/tldr/common/nohup/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nohup/"
-description: "Execute commands persistently with Nohup. Prevent command termination after terminal closure and ensure background process continuation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nohup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nohup/'
+description: 'Execute commands persistently with Nohup. Prevent command termination after terminal closure and ensure background process continuation. Free online tool, no registration required.'
 category: common
 keywords:
-- background process execution
-- terminal disconnection command
-- persistent process launcher
-- nohup command execution
-- linux background process
-- unix process persistence
-- detached process execution
-- nohup shell script
-- background job management
-- command line nohup
+  - background process execution
+  - terminal disconnection command
+  - persistent process launcher
+  - nohup command execution
+  - linux background process
+  - unix process persistence
+  - detached process execution
+  - nohup shell script
+  - background job management
+  - command line nohup
 features:
-- Run commands that persist after terminal closure
-- Launch processes in the background using nohup
-- Execute shell scripts without terminal dependency
-- Redirect command output to a specified file
-- Prevent process termination due to terminal signals
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run commands that persist after terminal closure
+  - Launch processes in the background using nohup
+  - Execute shell scripts without terminal dependency
+  - Redirect command output to a specified file
+  - Prevent process termination due to terminal signals
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nohup

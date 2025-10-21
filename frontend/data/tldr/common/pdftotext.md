@@ -1,29 +1,29 @@
 ---
-title: "Convert PDF to Text - Extract Text | Online Free DevTools by Hexmos"
+title: 'Convert PDF to Text - Extract Text | Online Free DevTools by Hexmos'
 name: pdftotext
-path: "/freedevtools/tldr/common/pdftotext/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pdftotext/"
-description: "Convert PDF to text with pdftotext. Extract readable text content and preserve layout. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pdftotext/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pdftotext/'
+description: 'Convert PDF to text with pdftotext. Extract readable text content and preserve layout. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF to text converter
-- Extract text from PDF
-- PDF text extraction
-- Command line PDF conversion
-- pdftotext linux
-- pdftotext windows
-- PDF to plain text
-- PDF text layout preservation
-- Batch PDF conversion
-- PDF text extraction CLI
+  - PDF to text converter
+  - Extract text from PDF
+  - PDF text extraction
+  - Command line PDF conversion
+  - pdftotext linux
+  - pdftotext windows
+  - PDF to plain text
+  - PDF text layout preservation
+  - Batch PDF conversion
+  - PDF text extraction CLI
 features:
-- Convert PDF files to plain text format
-- Preserve document layout during conversion
-- Extract specific pages from PDF
-- Output text to stdout or a file
-- Support batch PDF processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PDF files to plain text format
+  - Preserve document layout during conversion
+  - Extract specific pages from PDF
+  - Output text to stdout or a file
+  - Support batch PDF processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdftotext

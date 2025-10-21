@@ -1,9 +1,9 @@
 ---
-title: "PHP Extension Disabler - Disable PHP Extensions on Debian | Online Free DevTools by Hexmos"
+title: 'PHP Extension Disabler - Disable PHP Extensions on Debian | Online Free DevTools by Hexmos'
 name: phpdismod
-path: "/freedevtools/tldr/linux/phpdismod/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/phpdismod/"
-description: "Disable PHP extensions easily with phpdismod. Manage PHP configurations on Debian-based systems with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/phpdismod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/phpdismod/'
+description: 'Disable PHP extensions easily with phpdismod. Manage PHP configurations on Debian-based systems with this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - php extension disabler
@@ -22,8 +22,8 @@ features:
   - Manage extensions for various SAPIs (Server Application Programming Interfaces).
   - Simplify Debian PHP configuration.
   - Streamline PHP extension management via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpdismod

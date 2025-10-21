@@ -1,29 +1,29 @@
 ---
-title: "Convert YUV to PPM - Image Format Conversion | Online Free DevTools by Hexmos"
+title: 'Convert YUV to PPM - Image Format Conversion | Online Free DevTools by Hexmos'
 name: yuvtoppm
-path: "/freedevtools/tldr/common/yuvtoppm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/yuvtoppm/"
-description: "Convert YUV image to PPM format with yuvtoppm. Supports Abekas YUV conversion to portable pixmap. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/yuvtoppm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/yuvtoppm/'
+description: 'Convert YUV image to PPM format with yuvtoppm. Supports Abekas YUV conversion to portable pixmap. Free online tool, no registration required.'
 category: common
 keywords:
-- yuv to ppm converter
-- ppm image conversion
-- abekas yuv conversion
-- image format converter
-- yuv image processing
-- ppm image generator
-- command line image converter
-- linux image tools
-- macos image converter
-- yuvtoppm command
+  - yuv to ppm converter
+  - ppm image conversion
+  - abekas yuv conversion
+  - image format converter
+  - yuv image processing
+  - ppm image generator
+  - command line image converter
+  - linux image tools
+  - macos image converter
+  - yuvtoppm command
 features:
-- Convert Abekas YUV image data to PPM format.
-- Process YUV image data from a specified input file.
-- Output the resulting PPM image to a specified output file.
-- Define image dimensions during the conversion process.
-- Enable command-line based image format conversion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Abekas YUV image data to PPM format.
+  - Process YUV image data from a specified input file.
+  - Output the resulting PPM image to a specified output file.
+  - Define image dimensions during the conversion process.
+  - Enable command-line based image format conversion.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yuvtoppm

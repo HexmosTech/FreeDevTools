@@ -1,29 +1,29 @@
 ---
-title: "Flutter Commands - Create Cross-Platform Apps | Online Free DevTools by Hexmos"
+title: 'Flutter Commands - Create Cross-Platform Apps | Online Free DevTools by Hexmos'
 name: flutter
-path: "/freedevtools/tldr/common/flutter/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flutter/"
-description: "Create cross-platform mobile apps with Flutter commands. Initialize projects, run tests, and build release APKs easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flutter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flutter/'
+description: 'Create cross-platform mobile apps with Flutter commands. Initialize projects, run tests, and build release APKs easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Flutter cross-platform development
-- Flutter app development
-- Flutter command-line interface
-- Flutter SDK commands
-- Flutter project creation
-- Flutter build APK
-- Flutter testing framework
-- Flutter doctor command
-- Flutter channel management
-- Flutter clean project
+  - Flutter cross-platform development
+  - Flutter app development
+  - Flutter command-line interface
+  - Flutter SDK commands
+  - Flutter project creation
+  - Flutter build APK
+  - Flutter testing framework
+  - Flutter doctor command
+  - Flutter channel management
+  - Flutter clean project
 features:
-- Initialize new Flutter projects
-- Check Flutter installation status with doctor
-- Manage Flutter channels (stable, beta, dev, master)
-- Build release APKs for Android
-- Clean Flutter project directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new Flutter projects
+  - Check Flutter installation status with doctor
+  - Manage Flutter channels (stable, beta, dev, master)
+  - Build release APKs for Android
+  - Clean Flutter project directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flutter

@@ -1,9 +1,9 @@
 ---
-title: "Package Manager - Manage OpenBSD Packages | Online Free DevTools by Hexmos"
+title: 'Package Manager - Manage OpenBSD Packages | Online Free DevTools by Hexmos'
 name: pkg
-path: "/freedevtools/tldr/openbsd/pkg/"
-canonical: "https://hexmos.com/freedevtools/tldr/openbsd/pkg/"
-description: "Manage OpenBSD packages easily with pkg. Install, update, and remove software packages on OpenBSD systems using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/openbsd/pkg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openbsd/pkg/'
+description: 'Manage OpenBSD packages easily with pkg. Install, update, and remove software packages on OpenBSD systems using the command line. Free online tool, no registration required.'
 category: openbsd
 keywords:
   - OpenBSD package management
@@ -22,8 +22,8 @@ features:
   - Remove software packages from OpenBSD
   - View package information and dependencies
   - Manage software repositories on OpenBSD
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkg

@@ -1,29 +1,29 @@
 ---
-title: "Test SSL/TLS - Check Server Security | Online Free DevTools by Hexmos"
+title: 'Test SSL/TLS - Check Server Security | Online Free DevTools by Hexmos'
 name: testssl
-path: "/freedevtools/tldr/common/testssl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/testssl/"
-description: "Check SSL/TLS protocols with Testssl, ensuring robust server security. Identify vulnerabilities and analyze HTTP headers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/testssl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/testssl/'
+description: 'Check SSL/TLS protocols with Testssl, ensuring robust server security. Identify vulnerabilities and analyze HTTP headers. Free online tool, no registration required.'
 category: common
 keywords:
-- SSL TLS checker
-- test SSL protocols
-- check TLS ciphers
-- server security scanner
-- vulnerability assessment
-- HTTP header analyzer
-- starttls testing
-- network security test
-- common linux command
-- command line ssl
+  - SSL TLS checker
+  - test SSL protocols
+  - check TLS ciphers
+  - server security scanner
+  - vulnerability assessment
+  - HTTP header analyzer
+  - starttls testing
+  - network security test
+  - common linux command
+  - command line ssl
 features:
-- Test SSL/TLS protocols on a server.
-- Check for server vulnerabilities.
-- Analyze HTTP security headers.
-- Test STARTTLS enabled protocols.
-- Scan specific ports for SSL/TLS support.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Test SSL/TLS protocols on a server.
+  - Check for server vulnerabilities.
+  - Analyze HTTP security headers.
+  - Test STARTTLS enabled protocols.
+  - Scan specific ports for SSL/TLS support.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # testssl

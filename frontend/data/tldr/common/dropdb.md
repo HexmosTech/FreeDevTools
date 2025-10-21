@@ -1,29 +1,29 @@
 ---
-title: "Drop PostgreSQL Database - Remove Databases | Online Free DevTools by Hexmos"
+title: 'Drop PostgreSQL Database - Remove Databases | Online Free DevTools by Hexmos'
 name: dropdb
-path: "/freedevtools/tldr/common/dropdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dropdb/"
-description: "Remove PostgreSQL databases easily with Drop PostgreSQL Database. Quickly delete databases and terminate connections using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dropdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dropdb/'
+description: 'Remove PostgreSQL databases easily with Drop PostgreSQL Database. Quickly delete databases and terminate connections using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PostgreSQL database removal
-- Drop database command
-- Remove PostgreSQL database
-- PostgreSQL database deletion
-- Command-line database tool
-- Database connection termination
-- PostgreSQL command line
-- PostgreSQL database management
-- Delete database PostgreSQL
-- Database administration tool
+  - PostgreSQL database removal
+  - Drop database command
+  - Remove PostgreSQL database
+  - PostgreSQL database deletion
+  - Command-line database tool
+  - Database connection termination
+  - PostgreSQL command line
+  - PostgreSQL database management
+  - Delete database PostgreSQL
+  - Database administration tool
 features:
-- Remove PostgreSQL databases
-- Terminate existing database connections
-- Prompt for verification before deletion
-- Specify a username for database connection
-- Specify server host and port
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove PostgreSQL databases
+  - Terminate existing database connections
+  - Prompt for verification before deletion
+  - Specify a username for database connection
+  - Specify server host and port
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dropdb

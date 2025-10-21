@@ -1,29 +1,29 @@
 ---
-title: "Extract Tables - Tabula PDF Extractor | Online Free DevTools by Hexmos"
+title: 'Extract Tables - Tabula PDF Extractor | Online Free DevTools by Hexmos'
 name: tabula
-path: "/freedevtools/tldr/common/tabula/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tabula/"
-description: "Extract tables from PDF files with Tabula PDF Extractor. Convert PDF tables to CSV, JSON, or other formats effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tabula/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tabula/'
+description: 'Extract tables from PDF files with Tabula PDF Extractor. Convert PDF tables to CSV, JSON, or other formats effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF table extraction
-- PDF to CSV
-- PDF to JSON
-- Tabula PDF converter
-- Extract PDF data
-- Command line PDF tool
-- PDF data extraction
-- PDF table to excel
-- PDF table parser
-- PDF data scraper
+  - PDF table extraction
+  - PDF to CSV
+  - PDF to JSON
+  - Tabula PDF converter
+  - Extract PDF data
+  - Command line PDF tool
+  - PDF data extraction
+  - PDF table to excel
+  - PDF table parser
+  - PDF data scraper
 features:
-- Extract tables from PDF files to CSV format
-- Convert PDF tables to JSON format
-- Extract tables from specific pages of a PDF
-- Detect table boundaries using ruling lines or blank space
-- Automatically guess table portion on a page
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract tables from PDF files to CSV format
+  - Convert PDF tables to JSON format
+  - Extract tables from specific pages of a PDF
+  - Detect table boundaries using ruling lines or blank space
+  - Automatically guess table portion on a page
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tabula

@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Config - Manage Stack Configuration | Online Free DevTools by Hexmos"
+title: 'Pulumi Config - Manage Stack Configuration | Online Free DevTools by Hexmos'
 name: pulumi-config
-path: "/freedevtools/tldr/pulumi/pulumi-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-config/"
-description: "Manage Pulumi stack configuration efficiently with Pulumi Config. Securely store secrets and customize settings for infrastructure as code. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-config/'
+description: 'Manage Pulumi stack configuration efficiently with Pulumi Config. Securely store secrets and customize settings for infrastructure as code. Free online tool, no registration required.'
 category: common
 keywords:
-- pulumi configuration
-- stack configuration management
-- pulumi stack secrets
-- infrastructure as code configuration
-- pulumi config get
-- pulumi config set
-- pulumi config rm
-- pulumi config stack
-- cloud configuration
-- infrastructure configuration
+  - pulumi configuration
+  - stack configuration management
+  - pulumi stack secrets
+  - infrastructure as code configuration
+  - pulumi config get
+  - pulumi config set
+  - pulumi config rm
+  - pulumi config stack
+  - cloud configuration
+  - infrastructure configuration
 features:
-- View Pulumi stack configuration in JSON format.
-- Get the value of a specific Pulumi configuration key.
-- Set configuration values, including secrets, for a Pulumi stack.
-- Remove specific configuration values from a Pulumi stack.
-- Manage configurations for multiple stacks using config files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View Pulumi stack configuration in JSON format.
+  - Get the value of a specific Pulumi configuration key.
+  - Set configuration values, including secrets, for a Pulumi stack.
+  - Remove specific configuration values from a Pulumi stack.
+  - Manage configurations for multiple stacks using config files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi config

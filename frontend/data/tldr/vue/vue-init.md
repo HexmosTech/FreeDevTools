@@ -1,29 +1,29 @@
 ---
-title: "Generate Vue Project - Initialize App Templates | Online Free DevTools by Hexmos"
+title: 'Generate Vue Project - Initialize App Templates | Online Free DevTools by Hexmos'
 name: vue-init
-path: "/freedevtools/tldr/vue/vue-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/vue/vue-init/"
-description: "Generate Vue project with vue-init. Quickly scaffold Vue.js applications using official templates. Streamline project setup with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/vue/vue-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vue/vue-init/'
+description: 'Generate Vue project with vue-init. Quickly scaffold Vue.js applications using official templates. Streamline project setup with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Vue project generator
-- Vue template initializer
-- Javascript project scaffolding
-- Vue CLI legacy tool
-- Vue application starter
-- NPM project creation
-- Webpack Vue project
-- Browserify Vue project
-- Single page application generator
-- Vue component creation
+  - Vue project generator
+  - Vue template initializer
+  - Javascript project scaffolding
+  - Vue CLI legacy tool
+  - Vue application starter
+  - NPM project creation
+  - Webpack Vue project
+  - Browserify Vue project
+  - Single page application generator
+  - Vue component creation
 features:
-- Initialize Vue.js projects from official templates.
-- Scaffold new applications using Webpack or Browserify.
-- Create projects from local template directories.
-- Generate projects from GitHub repositories.
-- Support legacy Vue CLI 2.x templates.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Vue.js projects from official templates.
+  - Scaffold new applications using Webpack or Browserify.
+  - Create projects from local template directories.
+  - Generate projects from GitHub repositories.
+  - Support legacy Vue CLI 2.x templates.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vue init

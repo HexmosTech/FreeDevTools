@@ -1,29 +1,29 @@
 ---
-title: "Node - Run JavaScript Server-Side | Online Free DevTools by Hexmos"
+title: 'Node - Run JavaScript Server-Side | Online Free DevTools by Hexmos'
 name: node
-path: "/freedevtools/tldr/common/node/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/node/"
-description: "Run JavaScript server-side with Node. Execute JavaScript files, start REPL shells, and evaluate code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/node/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/node/'
+description: 'Run JavaScript server-side with Node. Execute JavaScript files, start REPL shells, and evaluate code. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript runtime
-- node.js executor
-- server-side javascript
-- node repl
-- node debug
-- javascript interpreter
-- node watch
-- node cli
-- node versions
-- javascript eval
+  - javascript runtime
+  - node.js executor
+  - server-side javascript
+  - node repl
+  - node debug
+  - javascript interpreter
+  - node watch
+  - node cli
+  - node versions
+  - javascript eval
 features:
-- Execute JavaScript files from the command line
-- Start an interactive JavaScript REPL shell
-- Automatically restart processes when imported files change (using --watch)
-- Evaluate JavaScript code directly from the command line
-- Print Node.js dependencies versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute JavaScript files from the command line
+  - Start an interactive JavaScript REPL shell
+  - Automatically restart processes when imported files change (using --watch)
+  - Evaluate JavaScript code directly from the command line
+  - Print Node.js dependencies versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # node

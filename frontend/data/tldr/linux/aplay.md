@@ -1,9 +1,9 @@
 ---
-title: "aplay Sound Player - Play Audio Files | Online Free DevTools by Hexmos"
+title: 'aplay Sound Player - Play Audio Files | Online Free DevTools by Hexmos'
 name: aplay
-path: "/freedevtools/tldr/linux/aplay/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aplay/"
-description: "Play audio files with aplay, a versatile command-line sound player.  Control audio playback, specifying duration, sample rate, and format. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aplay/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aplay/'
+description: 'Play audio files with aplay, a versatile command-line sound player.  Control audio playback, specifying duration, sample rate, and format. Free online tool, no registration required.'
 category: linux
 keywords:
   - audio file player
@@ -22,8 +22,8 @@ features:
   - Enables control over sample rate and bit depth.
   - Supports raw audio file playback with format specification.
   - Lists available audio devices for playback.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aplay

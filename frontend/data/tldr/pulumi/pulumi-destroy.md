@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Destroy - Remove Cloud Resources with Pulumi | Online Free DevTools by Hexmos"
+title: 'Pulumi Destroy - Remove Cloud Resources with Pulumi | Online Free DevTools by Hexmos'
 name: pulumi-destroy
-path: "/freedevtools/tldr/pulumi/pulumi-destroy/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-destroy/"
-description: "Destroy cloud resources efficiently with Pulumi Destroy. Safely delete stacks, manage deployments, and clean up infrastructure as code. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-destroy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-destroy/'
+description: 'Destroy cloud resources efficiently with Pulumi Destroy. Safely delete stacks, manage deployments, and clean up infrastructure as code. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi destroy
-- infrastructure as code destroy
-- cloud resource removal
-- Pulumi stack deletion
-- IaC stack destroy
-- pulumi cli destroy
-- cloud infrastructure cleanup
-- pulumi deployment removal
-- pulumi resource management
-- cloud automation destroy
+  - Pulumi destroy
+  - infrastructure as code destroy
+  - cloud resource removal
+  - Pulumi stack deletion
+  - IaC stack destroy
+  - pulumi cli destroy
+  - cloud infrastructure cleanup
+  - pulumi deployment removal
+  - pulumi resource management
+  - cloud automation destroy
 features:
-- Destroy all resources in a Pulumi stack
-- Remove a Pulumi stack and its configuration
-- Automatically approve destruction after previewing
-- Exclude protected resources from destruction
-- Continue destruction even if errors occur
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Destroy all resources in a Pulumi stack
+  - Remove a Pulumi stack and its configuration
+  - Automatically approve destruction after previewing
+  - Exclude protected resources from destruction
+  - Continue destruction even if errors occur
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi destroy

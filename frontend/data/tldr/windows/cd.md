@@ -1,9 +1,9 @@
 ---
-title: "Control Directory - Navigate Filesystems with CD | Online Free DevTools by Hexmos"
+title: 'Control Directory - Navigate Filesystems with CD | Online Free DevTools by Hexmos'
 name: cd
-path: "/freedevtools/tldr/windows/cd/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/cd/"
-description: "Control file system navigation with CD command. Change directories, access parent folders, and manage paths efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/cd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/cd/'
+description: 'Control file system navigation with CD command. Change directories, access parent folders, and manage paths efficiently. Free online tool, no registration required.'
 category: windows
 keywords:
   - directory navigation command
@@ -22,8 +22,8 @@ features:
   - Access user profile or home directory
   - Change directory across different drives
   - Return to the root of the current drive
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cd

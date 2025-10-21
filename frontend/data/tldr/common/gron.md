@@ -1,29 +1,29 @@
 ---
-title: "Transform JSON - Manage JSON Assignments with gron | Online Free DevTools by Hexmos"
+title: 'Transform JSON - Manage JSON Assignments with gron | Online Free DevTools by Hexmos'
 name: gron
-path: "/freedevtools/tldr/common/gron/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gron/"
-description: "Transform JSON into manageable assignments with gron. Simplify JSON data handling and manipulation using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gron/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gron/'
+description: 'Transform JSON into manageable assignments with gron. Simplify JSON data handling and manipulation using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- JSON Transformer
-- JSON to assignments
-- Command line JSON
-- gron JSON manipulation
-- Linux JSON tools
-- macOS JSON processing
-- URL JSON processing
-- JSON Stream processor
-- JSON assignment creation
-- JSON data analysis
+  - JSON Transformer
+  - JSON to assignments
+  - Command line JSON
+  - gron JSON manipulation
+  - Linux JSON tools
+  - macOS JSON processing
+  - URL JSON processing
+  - JSON Stream processor
+  - JSON assignment creation
+  - JSON data analysis
 features:
-- Convert JSON data into individual assignments
-- Reverse assignments back into JSON format
-- Process JSON data from URLs or files
-- Filter and display values within JSON assignments
-- Handle streaming JSON data for continuous processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert JSON data into individual assignments
+  - Reverse assignments back into JSON format
+  - Process JSON data from URLs or files
+  - Filter and display values within JSON assignments
+  - Handle streaming JSON data for continuous processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gron

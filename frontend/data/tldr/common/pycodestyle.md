@@ -1,29 +1,29 @@
 ---
-title: "Validate Python Code - PEP 8 Style Checker | Online Free DevTools by Hexmos"
+title: 'Validate Python Code - PEP 8 Style Checker | Online Free DevTools by Hexmos'
 name: pycodestyle
-path: "/freedevtools/tldr/common/pycodestyle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pycodestyle/"
-description: "Validate Python code with Pycodestyle, ensuring compliance with PEP 8 style guidelines. Free online tool, no registration required, improve code readability."
+path: '/freedevtools/tldr/common/pycodestyle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pycodestyle/'
+description: 'Validate Python code with Pycodestyle, ensuring compliance with PEP 8 style guidelines. Free online tool, no registration required, improve code readability.'
 category: common
 keywords:
-- python code validation
-- pep8 style check
-- python linter
-- code style guide
-- python syntax checker
-- validate python syntax
-- python code formatter
-- linux python style
-- macos python style
-- windows python style
+  - python code validation
+  - pep8 style check
+  - python linter
+  - code style guide
+  - python syntax checker
+  - validate python syntax
+  - python code formatter
+  - linux python style
+  - macos python style
+  - windows python style
 features:
-- Check code against PEP 8 conventions
-- Identify style errors in Python code
-- Show source code for each error
-- Display the PEP 8 text for each error
-- Check multiple files at once
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check code against PEP 8 conventions
+  - Identify style errors in Python code
+  - Show source code for each error
+  - Display the PEP 8 text for each error
+  - Check multiple files at once
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pycodestyle

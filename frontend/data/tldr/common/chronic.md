@@ -1,29 +1,29 @@
 ---
-title: "Chronic - Suppress Command Output | Online Free DevTools by Hexmos"
+title: 'Chronic - Suppress Command Output | Online Free DevTools by Hexmos'
 name: chronic
-path: "/freedevtools/tldr/common/chronic/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chronic/"
-description: "Suppress command output with Chronic. Only display stdout and stderr if the command fails. Troubleshoot script errors effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chronic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chronic/'
+description: 'Suppress command output with Chronic. Only display stdout and stderr if the command fails. Troubleshoot script errors effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- command output suppressor
-- chronic command display
-- stderr output controller
-- stdout output controller
-- linux error display
-- macos error display
-- bash command suppressor
-- shell script debugger
-- script error reporter
-- terminal output filter
+  - command output suppressor
+  - chronic command display
+  - stderr output controller
+  - stdout output controller
+  - linux error display
+  - macos error display
+  - bash command suppressor
+  - shell script debugger
+  - script error reporter
+  - terminal output filter
 features:
-- Suppresses stdout and stderr on success
-- Displays output only on non-zero exit code
-- Provides verbose mode for debugging
-- Filters output based on stderr content
-- Integrates easily into shell scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Suppresses stdout and stderr on success
+  - Displays output only on non-zero exit code
+  - Provides verbose mode for debugging
+  - Filters output based on stderr content
+  - Integrates easily into shell scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chronic

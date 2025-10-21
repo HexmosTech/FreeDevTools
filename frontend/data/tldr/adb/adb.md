@@ -1,29 +1,29 @@
 ---
-title: "Android Debug Bridge - Control Devices with ADB | Online Free DevTools by Hexmos"
+title: 'Android Debug Bridge - Control Devices with ADB | Online Free DevTools by Hexmos'
 name: adb
-path: "/freedevtools/tldr/adb/adb/"
-canonical: "https://hexmos.com/freedevtools/tldr/adb/adb/"
-description: "Control Android devices with ADB Debug Bridge. Execute commands, transfer files, and debug apps. Free online tool, no registration required."
+path: '/freedevtools/tldr/adb/adb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/adb/adb/'
+description: 'Control Android devices with ADB Debug Bridge. Execute commands, transfer files, and debug apps. Free online tool, no registration required.'
 category: common
 keywords:
-- android debug bridge
-- adb command line
-- adb shell commands
-- android emulator control
-- adb file transfer
-- adb device management
-- android debug tool
-- adb linux commands
-- adb macos commands
-- android application installer
+  - android debug bridge
+  - adb command line
+  - adb shell commands
+  - android emulator control
+  - adb file transfer
+  - adb device management
+  - android debug tool
+  - adb linux commands
+  - adb macos commands
+  - android application installer
 features:
-- Start and kill the adb server
-- Execute shell commands on connected Android devices
-- Push and pull files between device and computer
-- List all connected Android devices
-- Install Android applications to devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and kill the adb server
+  - Execute shell commands on connected Android devices
+  - Push and pull files between device and computer
+  - List all connected Android devices
+  - Install Android applications to devices
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # adb

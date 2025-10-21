@@ -1,29 +1,29 @@
 ---
-title: "Dirsearch Scanner - Discover Web Paths | Online Free DevTools by Hexmos"
+title: 'Dirsearch Scanner - Discover Web Paths | Online Free DevTools by Hexmos'
 name: dirsearch
-path: "/freedevtools/tldr/common/dirsearch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dirsearch/"
-description: "Discover hidden web paths with Dirsearch Scanner.  Uncover vulnerabilities and sensitive files with this powerful web enumeration tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dirsearch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dirsearch/'
+description: 'Discover hidden web paths with Dirsearch Scanner.  Uncover vulnerabilities and sensitive files with this powerful web enumeration tool. Free online tool, no registration required.'
 category: common
 keywords:
-- web path scanner
-- website directory scanner
-- directory brute force
-- web application security
-- web server scanner
-- directory enumeration
-- forced browsing tool
-- web vulnerability scanner
-- directory listing scanner
-- web file finder
+  - web path scanner
+  - website directory scanner
+  - directory brute force
+  - web application security
+  - web server scanner
+  - directory enumeration
+  - forced browsing tool
+  - web vulnerability scanner
+  - directory listing scanner
+  - web file finder
 features:
-- Scan web servers for common paths and extensions.
-- Scan multiple web servers from a list of URLs.
-- Scan for user-defined paths using custom wordlists.
-- Authenticate scans using HTTP cookies.
-- Utilize the HEAD HTTP method for faster scanning.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan web servers for common paths and extensions.
+  - Scan multiple web servers from a list of URLs.
+  - Scan for user-defined paths using custom wordlists.
+  - Authenticate scans using HTTP cookies.
+  - Utilize the HEAD HTTP method for faster scanning.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dirsearch

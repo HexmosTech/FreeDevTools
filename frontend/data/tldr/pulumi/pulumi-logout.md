@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Logout - Secure Cloud Logouts | Online Free DevTools by Hexmos"
+title: 'Pulumi Logout - Secure Cloud Logouts | Online Free DevTools by Hexmos'
 name: pulumi-logout
-path: "/freedevtools/tldr/pulumi/pulumi-logout/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-logout/"
-description: "Secure cloud logouts with Pulumi Logout. Manage cloud sessions and control access to your Pulumi resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-logout/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-logout/'
+description: 'Secure cloud logouts with Pulumi Logout. Manage cloud sessions and control access to your Pulumi resources. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi cloud logout
-- Infrastructure as code logout
-- IaC cloud session management
-- Pulumi CLI logout
-- Multi-cloud logout
-- Pulumi backend logout
-- Cloud credential removal
-- Pulumi access control
-- IAC Security
-- Common CLI commands
+  - Pulumi cloud logout
+  - Infrastructure as code logout
+  - IaC cloud session management
+  - Pulumi CLI logout
+  - Multi-cloud logout
+  - Pulumi backend logout
+  - Cloud credential removal
+  - Pulumi access control
+  - IAC Security
+  - Common CLI commands
 features:
-- Log out of specific Pulumi cloud backends
-- Log out of all cloud backends simultaneously
-- Logout from local mode
-- Display help information about the logout command
-- Manage user sessions for Pulumi deployments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Log out of specific Pulumi cloud backends
+  - Log out of all cloud backends simultaneously
+  - Logout from local mode
+  - Display help information about the logout command
+  - Manage user sessions for Pulumi deployments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi logout

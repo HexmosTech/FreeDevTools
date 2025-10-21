@@ -1,29 +1,29 @@
 ---
-title: "DTrace - Trace System Events | Online Free DevTools by Hexmos"
+title: 'DTrace - Trace System Events | Online Free DevTools by Hexmos'
 name: dtrace
-path: "/freedevtools/tldr/osx/dtrace/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/dtrace/"
-description: "Trace system events with DTrace. Analyze kernel activity, debug applications, and monitor performance on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/dtrace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/dtrace/'
+description: 'Trace system events with DTrace. Analyze kernel activity, debug applications, and monitor performance on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- DTrace tracing
-- macOS tracing tools
-- System event tracing
-- Kernel activity analysis
-- Application debugging macOS
-- Performance monitoring DTrace
-- D language compiler
-- Dynamic tracing tool
-- DTrace command line
-- macOS performance analysis
+  - DTrace tracing
+  - macOS tracing tools
+  - System event tracing
+  - Kernel activity analysis
+  - Application debugging macOS
+  - Performance monitoring DTrace
+  - D language compiler
+  - Dynamic tracing tool
+  - DTrace command line
+  - macOS performance analysis
 features:
-- Trace function execution in processes
-- Compile and execute DTrace scripts
-- Analyze kernel activity in real-time
-- Set custom trace buffer sizes
-- Monitor specific system events
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trace function execution in processes
+  - Compile and execute DTrace scripts
+  - Analyze kernel activity in real-time
+  - Set custom trace buffer sizes
+  - Monitor specific system events
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dtrace

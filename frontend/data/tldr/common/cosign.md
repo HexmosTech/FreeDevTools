@@ -1,29 +1,29 @@
 ---
-title: "Cosign - Sign Container Images | Online Free DevTools by Hexmos"
+title: 'Cosign - Sign Container Images | Online Free DevTools by Hexmos'
 name: cosign
-path: "/freedevtools/tldr/common/cosign/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cosign/"
-description: "Sign container images with Cosign for secure deployments. Authenticate, verify, and manage image signatures easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cosign/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cosign/'
+description: 'Sign container images with Cosign for secure deployments. Authenticate, verify, and manage image signatures easily. Free online tool, no registration required.'
 category: common
 keywords:
-- container signing
-- container verification
-- oci registry
-- image signature
-- cosign signature
-- kubernetes cosign
-- docker cosign
-- container security
-- image validation
-- signature storage
+  - container signing
+  - container verification
+  - oci registry
+  - image signature
+  - cosign signature
+  - kubernetes cosign
+  - docker cosign
+  - container security
+  - image validation
+  - signature storage
 features:
-- Generate key pairs for signing containers.
-- Sign container images and store signatures in OCI registries.
-- Verify container signatures against public keys.
-- Sign blobs using local key pairs.
-- Copy container images and their associated signatures.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate key pairs for signing containers.
+  - Sign container images and store signatures in OCI registries.
+  - Verify container signatures against public keys.
+  - Sign blobs using local key pairs.
+  - Copy container images and their associated signatures.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cosign

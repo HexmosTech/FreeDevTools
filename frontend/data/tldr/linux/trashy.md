@@ -1,29 +1,29 @@
 ---
-title: "Trash Command - Delete Files Securely with Trashy | Online Free DevTools by Hexmos"
+title: 'Trash Command - Delete Files Securely with Trashy | Online Free DevTools by Hexmos'
 name: trashy
-path: "/freedevtools/tldr/linux/trashy/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/trashy/"
-description: "Delete files securely with Trashy, the Rust-based trash utility. Recover deleted files and manage your trash from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/trashy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/trashy/'
+description: 'Delete files securely with Trashy, the Rust-based trash utility. Recover deleted files and manage your trash from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux trash command
-- command line trash utility
-- rust trash tool
-- trashy file deletion
-- linux file recovery
-- command line file manager
-- trash cli alternative
-- secure file deletion linux
-- restore deleted files linux
-- trash management linux
+  - linux trash command
+  - command line trash utility
+  - rust trash tool
+  - trashy file deletion
+  - linux file recovery
+  - command line file manager
+  - trash cli alternative
+  - secure file deletion linux
+  - restore deleted files linux
+  - trash management linux
 features:
-- Move files to the trash securely from the command line.
-- List files currently residing in the trash.
-- Restore specific files from the trash.
-- Empty the trash, permanently deleting specified files.
-- Restore or empty all files in the trash.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Move files to the trash securely from the command line.
+  - List files currently residing in the trash.
+  - Restore specific files from the trash.
+  - Empty the trash, permanently deleting specified files.
+  - Restore or empty all files in the trash.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trashy

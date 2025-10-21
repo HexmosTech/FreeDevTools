@@ -1,29 +1,29 @@
 ---
-title: "Mosh Shell - Connect Securely to Remote Servers | Online Free DevTools by Hexmos"
+title: 'Mosh Shell - Connect Securely to Remote Servers | Online Free DevTools by Hexmos'
 name: mosh
-path: "/freedevtools/tldr/common/mosh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mosh/"
-description: "Connect securely with Mosh Shell, a robust SSH replacement. Persist connections, even while roaming. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mosh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mosh/'
+description: 'Connect securely with Mosh Shell, a robust SSH replacement. Persist connections, even while roaming. Free online tool, no registration required.'
 category: common
 keywords:
-- mosh shell
-- persistent connection shell
-- remote access tool
-- mobile shell
-- ssh alternative
-- network roaming connection
-- secure shell connection
-- linux remote access
-- macos remote access
-- command line connection
+  - mosh shell
+  - persistent connection shell
+  - remote access tool
+  - mobile shell
+  - ssh alternative
+  - network roaming connection
+  - secure shell connection
+  - linux remote access
+  - macos remote access
+  - command line connection
 features:
-- Establish persistent SSH-like connections across networks
-- Maintain connections during network changes and roaming
-- Connect to remote servers using username and host
-- Specify custom SSH configurations for connections
-- Execute commands remotely via a persistent connection
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Establish persistent SSH-like connections across networks
+  - Maintain connections during network changes and roaming
+  - Connect to remote servers using username and host
+  - Specify custom SSH configurations for connections
+  - Execute commands remotely via a persistent connection
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mosh

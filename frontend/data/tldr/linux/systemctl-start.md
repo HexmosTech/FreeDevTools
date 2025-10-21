@@ -1,9 +1,9 @@
 ---
-title: "Systemd Unit Control - Start Services with systemctl | Online Free DevTools by Hexmos"
+title: 'Systemd Unit Control - Start Services with systemctl | Online Free DevTools by Hexmos'
 name: systemctl-start
-path: "/freedevtools/tldr/linux/systemctl-start/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-start/"
-description: "Start and manage systemd units with the systemctl command. Control Linux services efficiently and effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemctl-start/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemctl-start/'
+description: 'Start and manage systemd units with the systemctl command. Control Linux services efficiently and effectively. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemctl start command
@@ -22,8 +22,8 @@ features:
   - Control the startup and shutdown of services.
   - Monitor the status of running services.
   - Provides a command-line interface for service management.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemctl start

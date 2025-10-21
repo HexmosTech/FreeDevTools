@@ -1,9 +1,9 @@
 ---
-title: "Capture JPEG Image - Control Raspberry Pi Camera | Online Free DevTools by Hexmos"
+title: 'Capture JPEG Image - Control Raspberry Pi Camera | Online Free DevTools by Hexmos'
 name: rpicam-jpeg
-path: "/freedevtools/tldr/linux/rpicam-jpeg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-jpeg/"
-description: "Capture JPEG images with rpicam-jpeg on Raspberry Pi. Control camera settings like resolution and exposure. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpicam-jpeg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpicam-jpeg/'
+description: 'Capture JPEG images with rpicam-jpeg on Raspberry Pi. Control camera settings like resolution and exposure. Free online tool, no registration required.'
 category: linux
 keywords:
   - raspberry pi camera jpeg
@@ -22,8 +22,8 @@ features:
   - Adjust exposure time using shutter settings.
   - Modify image gain levels for optimal brightness.
   - Save captured images to a specified file path.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpicam-jpeg

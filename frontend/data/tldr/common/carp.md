@@ -1,29 +1,29 @@
 ---
-title: "Carp REPL - Build Carp Projects | Online Free DevTools by Hexmos"
+title: 'Carp REPL - Build Carp Projects | Online Free DevTools by Hexmos'
 name: carp
-path: "/freedevtools/tldr/common/carp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/carp/"
-description: "Build your Carp projects effortlessly with Carp REPL. Compile, transpile, and execute Carp code with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/carp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/carp/'
+description: 'Build your Carp projects effortlessly with Carp REPL. Compile, transpile, and execute Carp code with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- carp repl
-- carp compiler
-- carp build tool
-- carp transpiler
-- functional programming language
-- compile to c
-- carp language
-- carp interactive shell
-- carp optimizations
-- repl environment
+  - carp repl
+  - carp compiler
+  - carp build tool
+  - carp transpiler
+  - functional programming language
+  - compile to c
+  - carp language
+  - carp interactive shell
+  - carp optimizations
+  - repl environment
 features:
-- Start an interactive Carp REPL.
-- Build Carp projects from the command line.
-- Transpile Carp code to C code.
-- Optimize Carp builds for performance.
-- Execute Carp files directly.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive Carp REPL.
+  - Build Carp projects from the command line.
+  - Transpile Carp code to C code.
+  - Optimize Carp builds for performance.
+  - Execute Carp files directly.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # carp

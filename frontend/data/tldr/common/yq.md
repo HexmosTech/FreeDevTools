@@ -1,29 +1,29 @@
 ---
-title: "YAML Processor - Format YAML Data with YQ | Online Free DevTools by Hexmos"
+title: 'YAML Processor - Format YAML Data with YQ | Online Free DevTools by Hexmos'
 name: yq
-path: "/freedevtools/tldr/common/yq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/yq/"
-description: "Format YAML data with YQ. Parse, update, and manipulate YAML files seamlessly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/yq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/yq/'
+description: 'Format YAML data with YQ. Parse, update, and manipulate YAML files seamlessly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- YAML Processor
-- YAML formatter
-- YAML parser
-- YAML editor
-- YAML command line
-- YAML merge
-- YAML update
-- YAML transform
-- YQ command
-- YQ tool
+  - YAML Processor
+  - YAML formatter
+  - YAML parser
+  - YAML editor
+  - YAML command line
+  - YAML merge
+  - YAML update
+  - YAML transform
+  - YQ command
+  - YQ tool
 features:
-- Format YAML files for readability
-- Merge multiple YAML files into one
-- Update specific keys and values in YAML
-- Parse and extract data from YAML files
-- Transform YAML data using expressions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format YAML files for readability
+  - Merge multiple YAML files into one
+  - Update specific keys and values in YAML
+  - Parse and extract data from YAML files
+  - Transform YAML data using expressions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yq

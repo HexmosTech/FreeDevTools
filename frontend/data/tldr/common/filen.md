@@ -1,29 +1,29 @@
 ---
-title: "Filen - Control Cloud Storage | Online Free DevTools by Hexmos"
+title: 'Filen - Control Cloud Storage | Online Free DevTools by Hexmos'
 name: filen
-path: "/freedevtools/tldr/common/filen/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/filen/"
-description: "Control cloud storage with Filen. Securely upload, download, and manage your files with end-to-end encryption. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/filen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/filen/'
+description: 'Control cloud storage with Filen. Securely upload, download, and manage your files with end-to-end encryption. Free online tool, no registration required.'
 category: common
 keywords:
-- filen cloud storage control
-- encrypted file manager
-- filen command line interface
-- cloud file synchronization
-- filen data management
-- remote file access
-- filen backup utility
-- filen file deletion
-- filen trash recovery
-- filen remote folder management
+  - filen cloud storage control
+  - encrypted file manager
+  - filen command line interface
+  - cloud file synchronization
+  - filen data management
+  - remote file access
+  - filen backup utility
+  - filen file deletion
+  - filen trash recovery
+  - filen remote folder management
 features:
-- Upload local files to remote folders
-- Download files and folders by ID
-- List contents of remote directories
-- Delete remote files and recover from trash
-- Synchronize local and remote folders
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload local files to remote folders
+  - Download files and folders by ID
+  - List contents of remote directories
+  - Delete remote files and recover from trash
+  - Synchronize local and remote folders
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # filen

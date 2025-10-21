@@ -1,29 +1,29 @@
 ---
-title: "ESP8266 Flash Tool - Control ESP Chip Programming | Online Free DevTools by Hexmos"
+title: 'ESP8266 Flash Tool - Control ESP Chip Programming | Online Free DevTools by Hexmos'
 name: esptool.py
-path: "/freedevtools/tldr/common/esptool-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/esptool-py/"
-description: "Control ESP chip programming with ESP8266 Flash Tool. Program firmware, erase flash and configure ESP devices using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/esptool-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/esptool-py/'
+description: 'Control ESP chip programming with ESP8266 Flash Tool. Program firmware, erase flash and configure ESP devices using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- esp8266 flash tool
-- esp32 flash utility
-- firmware programmer esp
-- esp chip burner
-- esp8266 programming tool
-- esp32 flashing command
-- esp erase flash command
-- bootloader utility esp
-- serial flasher esp8266
-- esp programming linux
+  - esp8266 flash tool
+  - esp32 flash utility
+  - firmware programmer esp
+  - esp chip burner
+  - esp8266 programming tool
+  - esp32 flashing command
+  - esp erase flash command
+  - bootloader utility esp
+  - serial flasher esp8266
+  - esp programming linux
 features:
-- Flash firmware to ESP chips
-- Erase the entire flash memory
-- Specify the serial port for communication
-- Set the baud rate for faster transfers
-- Program ESP8266 and ESP32 chips
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Flash firmware to ESP chips
+  - Erase the entire flash memory
+  - Specify the serial port for communication
+  - Set the baud rate for faster transfers
+  - Program ESP8266 and ESP32 chips
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # esptool.py

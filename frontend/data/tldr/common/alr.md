@@ -1,29 +1,29 @@
 ---
-title: "Create Ada Packages - Manage Projects with Alr | Online Free DevTools by Hexmos"
+title: 'Create Ada Packages - Manage Projects with Alr | Online Free DevTools by Hexmos'
 name: alr
-path: "/freedevtools/tldr/common/alr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/alr/"
-description: "Create Ada packages with Alr, the Ada package manager. Manage dependencies, build projects, and run binaries effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/alr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/alr/'
+description: 'Create Ada packages with Alr, the Ada package manager. Manage dependencies, build projects, and run binaries effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Ada package manager
-- Ada dependency management
-- Alire Ada toolchain
-- Ada build tool
-- Ada library manager
-- Ada project initialization
-- Ada crate management
-- Ada binary runner
-- Ada compiler
-- Ada development tools
+  - Ada package manager
+  - Ada dependency management
+  - Alire Ada toolchain
+  - Ada build tool
+  - Ada library manager
+  - Ada project initialization
+  - Ada crate management
+  - Ada binary runner
+  - Ada compiler
+  - Ada development tools
 features:
-- Initialize Ada binary or library projects
-- Add dependencies to Ada projects
-- Run compiled Ada binaries directly
-- Compile Ada projects in different modes (release, development, validation)
-- Manage Ada toolchains and libraries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Ada binary or library projects
+  - Add dependencies to Ada projects
+  - Run compiled Ada binaries directly
+  - Compile Ada projects in different modes (release, development, validation)
+  - Manage Ada toolchains and libraries
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # alr

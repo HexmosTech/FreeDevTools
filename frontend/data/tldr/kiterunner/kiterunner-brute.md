@@ -1,29 +1,29 @@
 ---
-title: "Brute Force APIs - Kiterunner Brute | Online Free DevTools by Hexmos"
+title: 'Brute Force APIs - Kiterunner Brute | Online Free DevTools by Hexmos'
 name: kiterunner-brute
-path: "/freedevtools/tldr/kiterunner/kiterunner-brute/"
-canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-brute/"
-description: "Brute force API endpoints with Kiterunner Brute, a contextual web scanner. Discover hidden paths and vulnerabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/kiterunner/kiterunner-brute/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-brute/'
+description: 'Brute force API endpoints with Kiterunner Brute, a contextual web scanner. Discover hidden paths and vulnerabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- API brute force
-- Kiterunner brute force
-- web endpoint scanner
-- directory brute force
-- web path discovery
-- vulnerability scanner
-- API security testing
-- web application security
-- kiterunner
-- web content discovery
+  - API brute force
+  - Kiterunner brute force
+  - web endpoint scanner
+  - directory brute force
+  - web path discovery
+  - vulnerability scanner
+  - API security testing
+  - web application security
+  - kiterunner
+  - web content discovery
 features:
-- Brute force targets with Assetnote wordlists
-- Perform directory brute forcing with custom wordlists
-- Utilize dirsearch-style wordlists with extension substitution
-- Filter fail status codes during brute forcing
-- Customize HTTP headers for brute force requests
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute force targets with Assetnote wordlists
+  - Perform directory brute forcing with custom wordlists
+  - Utilize dirsearch-style wordlists with extension substitution
+  - Filter fail status codes during brute forcing
+  - Customize HTTP headers for brute force requests
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kiterunner brute

@@ -1,29 +1,29 @@
 ---
-title: "Transmission Edit - Modify Torrent Announce URLs | Online Free DevTools by Hexmos"
+title: 'Transmission Edit - Modify Torrent Announce URLs | Online Free DevTools by Hexmos'
 name: transmission-edit
-path: "/freedevtools/tldr/transmission/transmission-edit/"
-canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-edit/"
-description: "Modify torrent announce URLs with Transmission Edit. Update tracker lists and passcodes with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/transmission/transmission-edit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/transmission/transmission-edit/'
+description: 'Modify torrent announce URLs with Transmission Edit. Update tracker lists and passcodes with this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- torrent announce url editor
-- transmission tracker list modifier
-- modify torrent trackers
-- transmission announce url update
-- torrent passcode changer
-- transmission tracker editor linux
-- torrent tracker manager
-- transmission command line tool
-- transmission torrent editor
-- transmission edit tool
+  - torrent announce url editor
+  - transmission tracker list modifier
+  - modify torrent trackers
+  - transmission announce url update
+  - torrent passcode changer
+  - transmission tracker editor linux
+  - torrent tracker manager
+  - transmission command line tool
+  - transmission torrent editor
+  - transmission edit tool
 features:
-- Add URLs to torrent announce lists
-- Remove URLs from torrent announce lists
-- Replace tracker passcodes in torrent files
-- Modify multiple torrent files at once
-- Update torrent tracker information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add URLs to torrent announce lists
+  - Remove URLs from torrent announce lists
+  - Replace tracker passcodes in torrent files
+  - Modify multiple torrent files at once
+  - Update torrent tracker information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transmission-edit

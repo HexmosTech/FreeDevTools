@@ -1,29 +1,29 @@
 ---
-title: "TGA to PPM - Convert Targa Files | Online Free DevTools by Hexmos"
+title: 'TGA to PPM - Convert Targa Files | Online Free DevTools by Hexmos'
 name: tgatoppm
-path: "/freedevtools/tldr/common/tgatoppm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tgatoppm/"
-description: "Convert Targa files to PPM format with tgatoppm. Easily transform .tga images for Netpbm compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tgatoppm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tgatoppm/'
+description: 'Convert Targa files to PPM format with tgatoppm. Easily transform .tga images for Netpbm compatibility. Free online tool, no registration required.'
 category: common
 keywords:
-- tga to ppm converter
-- targa to ppm conversion
-- ppm image generator
-- netpbm image converter
-- linux image tools
-- macos image conversion
-- command line image converter
-- image format conversion
-- tga header analyzer
-- transparency channel extraction
+  - tga to ppm converter
+  - targa to ppm conversion
+  - ppm image generator
+  - netpbm image converter
+  - linux image tools
+  - macos image conversion
+  - command line image converter
+  - image format conversion
+  - tga header analyzer
+  - transparency channel extraction
 features:
-- Convert Targa (.tga) image files to PPM format
-- Dump TGA header information to standard output
-- Extract transparency channel data to a PGM file
-- Support command-line image format conversion
-- Display the version of the tgatoppm utility
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Targa (.tga) image files to PPM format
+  - Dump TGA header information to standard output
+  - Extract transparency channel data to a PGM file
+  - Support command-line image format conversion
+  - Display the version of the tgatoppm utility
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tgatoppm

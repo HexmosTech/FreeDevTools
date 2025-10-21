@@ -1,29 +1,29 @@
 ---
-title: "Wapm Package Manager - Manage WebAssembly Packages | Online Free DevTools by Hexmos"
+title: 'Wapm Package Manager - Manage WebAssembly Packages | Online Free DevTools by Hexmos'
 name: wapm
-path: "/freedevtools/tldr/common/wapm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wapm/"
-description: "Manage WebAssembly packages efficiently with Wapm package manager. Install, uninstall, and list dependencies for streamlined development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wapm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wapm/'
+description: 'Manage WebAssembly packages efficiently with Wapm package manager. Install, uninstall, and list dependencies for streamlined development. Free online tool, no registration required.'
 category: common
 keywords:
-- WebAssembly package manager
-- wapm package management
-- wapm install packages
-- wapm uninstall packages
-- wapm dependency management
-- wapm WebAssembly modules
-- WebAssembly runtime
-- wapm toml
-- wapm global packages
-- wapm command line
+  - WebAssembly package manager
+  - wapm package management
+  - wapm install packages
+  - wapm uninstall packages
+  - wapm dependency management
+  - wapm WebAssembly modules
+  - WebAssembly runtime
+  - wapm toml
+  - wapm global packages
+  - wapm command line
 features:
-- Initialize a new wapm.toml file interactively
-- Install packages and manage dependencies
-- Install packages globally for system-wide access
-- Uninstall packages and remove dependencies
-- Execute package commands using the Wasmer runtime
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new wapm.toml file interactively
+  - Install packages and manage dependencies
+  - Install packages globally for system-wide access
+  - Uninstall packages and remove dependencies
+  - Execute package commands using the Wasmer runtime
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wapm

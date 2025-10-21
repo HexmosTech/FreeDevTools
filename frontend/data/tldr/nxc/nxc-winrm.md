@@ -1,29 +1,29 @@
 ---
-title: "Control WinRM - Pentest Windows Remote Management | Online Free DevTools by Hexmos"
+title: 'Control WinRM - Pentest Windows Remote Management | Online Free DevTools by Hexmos'
 name: nxc-winrm
-path: "/freedevtools/tldr/nxc/nxc-winrm/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-winrm/"
-description: "Control Windows Remote Management with nxc-winrm, a powerful penetration testing tool.  Exploit winrm vulnerabilities and manage remote systems securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-winrm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-winrm/'
+description: 'Control Windows Remote Management with nxc-winrm, a powerful penetration testing tool.  Exploit winrm vulnerabilities and manage remote systems securely. Free online tool, no registration required.'
 category: common
 keywords:
-- winrm exploitation
-- windows remote management attack
-- nxc winrm pentest
-- windows credential brute force
-- remote command execution
-- laps exploitation
-- active directory pentesting
-- windows privilege escalation
-- powershell command execution
-- windows network security
+  - winrm exploitation
+  - windows remote management attack
+  - nxc winrm pentest
+  - windows credential brute force
+  - remote command execution
+  - laps exploitation
+  - active directory pentesting
+  - windows privilege escalation
+  - powershell command execution
+  - windows network security
 features:
-- Brute-force WinRM credentials using username and password lists
-- Authenticate to a specific domain to bypass initial SMB connection
-- Execute arbitrary commands on a target Windows host
-- Execute PowerShell commands as administrator leveraging LAPS
-- Perform penetration tests against Windows Remote Management services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute-force WinRM credentials using username and password lists
+  - Authenticate to a specific domain to bypass initial SMB connection
+  - Execute arbitrary commands on a target Windows host
+  - Execute PowerShell commands as administrator leveraging LAPS
+  - Perform penetration tests against Windows Remote Management services
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc winrm

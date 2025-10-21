@@ -1,29 +1,29 @@
 ---
-title: "Convert PAM to PNG - Optimize Images | Online Free DevTools by Hexmos"
+title: 'Convert PAM to PNG - Optimize Images | Online Free DevTools by Hexmos'
 name: pamtopng
-path: "/freedevtools/tldr/common/pamtopng/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamtopng/"
-description: "Convert PAM to PNG format with pamtopng. Transform your Portable Arbitrary Map images to PNG online, customize transparency, and optimize for web use. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamtopng/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamtopng/'
+description: 'Convert PAM to PNG format with pamtopng. Transform your Portable Arbitrary Map images to PNG online, customize transparency, and optimize for web use. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM to PNG converter
-- PNG image generation
-- Netpbm image conversion
-- Image format conversion
-- Command line image tool
-- Linux image utility
-- MacOS image conversion
-- Transparent PNG creation
-- Image interlace tool
-- PAM image processing
+  - PAM to PNG converter
+  - PNG image generation
+  - Netpbm image conversion
+  - Image format conversion
+  - Command line image tool
+  - Linux image utility
+  - MacOS image conversion
+  - Transparent PNG creation
+  - Image interlace tool
+  - PAM image processing
 features:
-- Convert PAM images to PNG format
-- Define transparent colors in the output PNG
-- Embed text data into PNG images
-- Interlace PNG images for progressive loading
-- Process PAM images using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PAM images to PNG format
+  - Define transparent colors in the output PNG
+  - Embed text data into PNG images
+  - Interlace PNG images for progressive loading
+  - Process PAM images using command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamtopng

@@ -1,29 +1,29 @@
 ---
-title: "NPM Star - Mark Packages as Favorites | Online Free DevTools by Hexmos"
+title: 'NPM Star - Mark Packages as Favorites | Online Free DevTools by Hexmos'
 name: npm-star
-path: "/freedevtools/tldr/npm/npm-star/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-star/"
-description: "Mark packages as favorites with NPM Star. Effortlessly manage your preferred NPM packages and discover new ones within the NPM ecosystem. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-star/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-star/'
+description: 'Mark packages as favorites with NPM Star. Effortlessly manage your preferred NPM packages and discover new ones within the NPM ecosystem. Free online tool, no registration required.'
 category: common
 keywords:
-- npm star package
-- npm package favorite
-- npm star registry
-- npm star scope
-- npm star authentication
-- npm star otp
-- npm star list
-- node package manager star
-- npm cli star
-- javascript package star
+  - npm star package
+  - npm package favorite
+  - npm star registry
+  - npm star scope
+  - npm star authentication
+  - npm star otp
+  - npm star list
+  - node package manager star
+  - npm cli star
+  - javascript package star
 features:
-- Star packages from the default NPM registry
-- Star packages within a specific scope
-- Star packages from a specific registry URL
-- Authenticate and star private NPM packages
-- List all starred packages from a registry
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Star packages from the default NPM registry
+  - Star packages within a specific scope
+  - Star packages from a specific registry URL
+  - Authenticate and star private NPM packages
+  - List all starred packages from a registry
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm star

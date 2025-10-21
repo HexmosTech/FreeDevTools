@@ -1,29 +1,29 @@
 ---
-title: "Docker Swarm - Control Container Clusters | Online Free DevTools by Hexmos"
+title: 'Docker Swarm - Control Container Clusters | Online Free DevTools by Hexmos'
 name: docker-swarm
-path: "/freedevtools/tldr/docker/docker-swarm/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-swarm/"
-description: "Control Docker Swarm clusters effortlessly with this online tool. Manage nodes, tokens, and certificates with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-swarm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-swarm/'
+description: 'Control Docker Swarm clusters effortlessly with this online tool. Manage nodes, tokens, and certificates with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- docker swarm control
-- container orchestration
-- docker cluster management
-- swarm init
-- swarm join token
-- docker swarm leave
-- docker swarm ca
-- docker node management
-- docker swarm update
-- container deployment
+  - docker swarm control
+  - container orchestration
+  - docker cluster management
+  - swarm init
+  - swarm join token
+  - docker swarm leave
+  - docker swarm ca
+  - docker node management
+  - docker swarm update
+  - container deployment
 features:
-- Initialize a Docker Swarm cluster
-- Display join tokens for managers and workers
-- Join new nodes to an existing swarm
-- Remove a worker node from the swarm
-- Rotate the CA certificate for secure communication
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a Docker Swarm cluster
+  - Display join tokens for managers and workers
+  - Join new nodes to an existing swarm
+  - Remove a worker node from the swarm
+  - Rotate the CA certificate for secure communication
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker swarm

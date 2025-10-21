@@ -1,9 +1,9 @@
 ---
-title: "Enum4linux - Enumerate Windows & Samba | Online Free DevTools by Hexmos"
+title: 'Enum4linux - Enumerate Windows & Samba | Online Free DevTools by Hexmos'
 name: enum4linux
-path: "/freedevtools/tldr/linux/enum4linux/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/enum4linux/"
-description: "Enumerate Windows and Samba information with Enum4linux.  Discover usernames, shares, and OS information remotely. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/enum4linux/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/enum4linux/'
+description: 'Enumerate Windows and Samba information with Enum4linux.  Discover usernames, shares, and OS information remotely. Free online tool, no registration required.'
 category: linux
 keywords:
   - windows enumeration
@@ -22,8 +22,8 @@ features:
   - Discover available shares on a remote system.
   - Retrieve OS information from a remote host.
   - Perform enumeration using provided login credentials.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # enum4linux

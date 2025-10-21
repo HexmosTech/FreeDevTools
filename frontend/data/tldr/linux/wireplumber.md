@@ -1,9 +1,9 @@
 ---
-title: "WirePlumber - Manage PipeWire Sessions | Online Free DevTools by Hexmos"
+title: 'WirePlumber - Manage PipeWire Sessions | Online Free DevTools by Hexmos'
 name: wireplumber
-path: "/freedevtools/tldr/linux/wireplumber/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wireplumber/"
-description: "Manage PipeWire audio sessions efficiently with WirePlumber.  Control audio routing and policies using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wireplumber/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wireplumber/'
+description: 'Manage PipeWire audio sessions efficiently with WirePlumber.  Control audio routing and policies using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - PipeWire session manager
@@ -22,8 +22,8 @@ features:
   - Integrates seamlessly with systemd for user session management.
   - Offers command-line interface for easy configuration.
   - Enables customized audio routing and device control.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wireplumber

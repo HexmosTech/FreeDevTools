@@ -1,29 +1,29 @@
 ---
-title: "Control Git References - Git Symbolic-Ref | Online Free DevTools by Hexmos"
+title: 'Control Git References - Git Symbolic-Ref | Online Free DevTools by Hexmos'
 name: git-symbolic-ref
-path: "/freedevtools/tldr/git/git-symbolic-ref/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-symbolic-ref/"
-description: "Control Git references with Git Symbolic-Ref. Manage symbolic references, update branch pointers and streamline repository maintenance. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-symbolic-ref/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-symbolic-ref/'
+description: 'Control Git references with Git Symbolic-Ref. Manage symbolic references, update branch pointers and streamline repository maintenance. Free online tool, no registration required.'
 category: common
 keywords:
-- git symbolic reference manager
-- git reference manipulation
-- git branch pointer control
-- git ref update tool
-- git symbolic ref command line
-- git refs management
-- git symbolic-ref linux
-- git symbolic-ref macos
-- git symbolic-ref documentation
-- git repository maintenance
+  - git symbolic reference manager
+  - git reference manipulation
+  - git branch pointer control
+  - git ref update tool
+  - git symbolic ref command line
+  - git refs management
+  - git symbolic-ref linux
+  - git symbolic-ref macos
+  - git symbolic-ref documentation
+  - git repository maintenance
 features:
-- Store a git reference by name
-- Update a git reference with a commit message
-- Read the value of a git symbolic reference
-- Delete a git symbolic reference
-- Simplify git reference output for scripting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Store a git reference by name
+  - Update a git reference with a commit message
+  - Read the value of a git symbolic reference
+  - Delete a git symbolic reference
+  - Simplify git reference output for scripting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git symbolic-ref

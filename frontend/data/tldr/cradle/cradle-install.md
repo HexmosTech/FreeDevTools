@@ -1,29 +1,29 @@
 ---
-title: "Cradle Install - Install Framework Components | Online Free DevTools by Hexmos"
+title: 'Cradle Install - Install Framework Components | Online Free DevTools by Hexmos'
 name: cradle-install
-path: "/freedevtools/tldr/cradle/cradle-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-install/"
-description: "Install Cradle framework components with Cradle Install. Streamline project setup and component management effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/cradle/cradle-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cradle/cradle-install/'
+description: 'Install Cradle framework components with Cradle Install. Streamline project setup and component management effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- cradle install
-- php framework install
-- component installer
-- cradle components
-- php project setup
-- database configuration
-- cradle migrations
-- package updates
-- command line installer
-- framework automation
+  - cradle install
+  - php framework install
+  - component installer
+  - cradle components
+  - php project setup
+  - database configuration
+  - cradle migrations
+  - package updates
+  - command line installer
+  - framework automation
 features:
-- Install Cradle framework components interactively
-- Forcefully overwrite existing files during installation
-- Skip SQL migrations during install process
-- Skip package updates and versioning
-- Specify database connection details for installation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Cradle framework components interactively
+  - Forcefully overwrite existing files during installation
+  - Skip SQL migrations during install process
+  - Skip package updates and versioning
+  - Specify database connection details for installation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cradle install

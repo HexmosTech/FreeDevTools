@@ -1,34 +1,34 @@
 ---
-title: "Slurm REST API - Control Slurm via REST | Online Free DevTools by Hexmos"
+title: 'Slurm REST API - Control Slurm via REST | Online Free DevTools by Hexmos'
 name: slurmrestd
-path: "/freedevtools/tldr/linux/slurmrestd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmrestd/"
-description: "Control Slurm workload manager via REST API with Slurmrestd. Manage clusters, submit jobs, and monitor status. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/slurmrestd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/slurmrestd/'
+description: 'Control Slurm workload manager via REST API with Slurmrestd. Manage clusters, submit jobs, and monitor status. Free online tool, no registration required.'
 category: linux
 keywords:
-- slurm rest api
-- slurmrestd linux
-- slurm rest controller
-- slurm job management
-- rest api linux
-- slurm cluster management
-- linux rest interface
-- slurm automation
-- workload manager rest
-- slurm http interface
+  - slurm rest api
+  - slurmrestd linux
+  - slurm rest controller
+  - slurm job management
+  - rest api linux
+  - slurm cluster management
+  - linux rest interface
+  - slurm automation
+  - workload manager rest
+  - slurm http interface
 features:
-- Change group ID before processing requests
-- Load authentication plugins for secure access
-- Read Slurm configuration from a specified file
-- Change user ID before processing requests
-- Display Slurmrestd version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Change group ID before processing requests
+  - Load authentication plugins for secure access
+  - Read Slurm configuration from a specified file
+  - Change user ID before processing requests
+  - Display Slurmrestd version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # slurmrestd
 
-> Interface to Slurm via REST API. It can be used in two modes: *Inetd Mode* & *Listen Mode*.
+> Interface to Slurm via REST API. It can be used in two modes: _Inetd Mode_ & _Listen Mode_.
 > More information: <https://slurm.schedmd.com/slurmrestd.html>.
 
 - Change the group ID (and drop supplemental groups) before processing client requests:

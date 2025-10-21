@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Run - Create Pods in Kubernetes | Online Free DevTools by Hexmos"
+title: 'Kubectl Run - Create Pods in Kubernetes | Online Free DevTools by Hexmos'
 name: kubectl-run
-path: "/freedevtools/tldr/kubectl/kubectl-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-run/"
-description: "Create Kubernetes pods instantly with Kubectl Run. Deploy applications, manage containers, and test configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-run/'
+description: 'Create Kubernetes pods instantly with Kubectl Run. Deploy applications, manage containers, and test configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes pod creation
-- kubectl pod deployment
-- container management cli
-- k8s run command
-- kubernetes application deployment
-- kubectl run example
-- docker container orchestration
-- pod configuration yaml
-- kubernetes command line
-- kubectl deployment tool
+  - kubernetes pod creation
+  - kubectl pod deployment
+  - container management cli
+  - k8s run command
+  - kubernetes application deployment
+  - kubectl run example
+  - docker container orchestration
+  - pod configuration yaml
+  - kubernetes command line
+  - kubectl deployment tool
 features:
-- Deploy containers using the kubectl run command
-- Specify container images for pod creation
-- Set environment variables for container configuration
-- Execute custom commands within created pods
-- Manage pod lifecycle with restart policies and deletion options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy containers using the kubectl run command
+  - Specify container images for pod creation
+  - Set environment variables for container configuration
+  - Execute custom commands within created pods
+  - Manage pod lifecycle with restart policies and deletion options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl run

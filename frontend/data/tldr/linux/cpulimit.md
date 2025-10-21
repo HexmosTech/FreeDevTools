@@ -1,29 +1,29 @@
 ---
-title: "Control CPU Usage - Limit Process Consumption | Online Free DevTools by Hexmos"
+title: 'Control CPU Usage - Limit Process Consumption | Online Free DevTools by Hexmos'
 name: cpulimit
-path: "/freedevtools/tldr/linux/cpulimit/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cpulimit/"
-description: "Control CPU usage precisely with cpulimit. Throttle resource consumption & prevent process hogging with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cpulimit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cpulimit/'
+description: 'Control CPU usage precisely with cpulimit. Throttle resource consumption & prevent process hogging with this command line tool. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux cpu limit
-- process cpu control
-- throttle cpu usage
-- cpu resource management
-- cpulimit command
-- linux process limit
-- reduce cpu consumption
-- limit program cpu
-- linux resource control
-- cpu usage throttle
+  - linux cpu limit
+  - process cpu control
+  - throttle cpu usage
+  - cpu resource management
+  - cpulimit command
+  - linux process limit
+  - reduce cpu consumption
+  - limit program cpu
+  - linux resource control
+  - cpu usage throttle
 features:
-- Limit CPU usage of running processes.
-- Restrict CPU consumption by executable name.
-- Launch processes with CPU usage limits.
-- Run CPU-limited processes in the background.
-- Automatically kill processes exceeding CPU limits.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Limit CPU usage of running processes.
+  - Restrict CPU consumption by executable name.
+  - Launch processes with CPU usage limits.
+  - Run CPU-limited processes in the background.
+  - Automatically kill processes exceeding CPU limits.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cpulimit

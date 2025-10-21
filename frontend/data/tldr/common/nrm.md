@@ -1,29 +1,29 @@
 ---
-title: "Control npm Registry - Easily Switch Registries | Online Free DevTools by Hexmos"
+title: 'Control npm Registry - Easily Switch Registries | Online Free DevTools by Hexmos'
 name: nrm
-path: "/freedevtools/tldr/common/nrm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nrm/"
-description: "Control npm registries with NRM, the npm registry manager. Easily switch between npm package sources and manage custom registries. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nrm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nrm/'
+description: 'Control npm registries with NRM, the npm registry manager. Easily switch between npm package sources and manage custom registries. Free online tool, no registration required.'
 category: common
 keywords:
-- npm registry manager
-- npm registry switcher
-- node registry manager
-- node package manager
-- npm registry list
-- npm registry add
-- npm registry delete
-- npm mirror manager
-- npm registry test
-- npm registry configuration
+  - npm registry manager
+  - npm registry switcher
+  - node registry manager
+  - node package manager
+  - npm registry list
+  - npm registry add
+  - npm registry delete
+  - npm mirror manager
+  - npm registry test
+  - npm registry configuration
 features:
-- List available npm registries
-- Switch to a specific npm registry
-- Test the response time of npm registries
-- Add custom npm registries
-- Delete existing npm registries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available npm registries
+  - Switch to a specific npm registry
+  - Test the response time of npm registries
+  - Add custom npm registries
+  - Delete existing npm registries
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nrm

@@ -1,29 +1,29 @@
 ---
-title: "SecretHub - Manage Secrets Securely | Online Free DevTools by Hexmos"
+title: 'SecretHub - Manage Secrets Securely | Online Free DevTools by Hexmos'
 name: secrethub
-path: "/freedevtools/tldr/common/secrethub/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/secrethub/"
-description: "Manage secrets securely with SecretHub. Keep sensitive data out of configuration files and automate secret rotation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/secrethub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/secrethub/'
+description: 'Manage secrets securely with SecretHub. Keep sensitive data out of configuration files and automate secret rotation. Free online tool, no registration required.'
 category: common
 keywords:
-- secret management
-- password manager cli
-- secrets management command line
-- credential storage
-- secure variable injection
-- secrethub cli
-- secrets automation
-- secrets encryption
-- git secrets
-- secrets audit
+  - secret management
+  - password manager cli
+  - secrets management command line
+  - credential storage
+  - secure variable injection
+  - secrethub cli
+  - secrets automation
+  - secrets encryption
+  - git secrets
+  - secrets audit
 features:
-- Securely store and retrieve secrets
-- Generate random secrets
-- Write secrets from clipboard or stdin
-- Audit secret access and modifications
-- Automate secret rotation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely store and retrieve secrets
+  - Generate random secrets
+  - Write secrets from clipboard or stdin
+  - Audit secret access and modifications
+  - Automate secret rotation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # secrethub

@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to MITSU - Image Converter | Online Free DevTools by Hexmos"
+title: 'Convert PPM to MITSU - Image Converter | Online Free DevTools by Hexmos'
 name: ppmtomitsu
-path: "/freedevtools/tldr/ppm/ppmtomitsu/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtomitsu/"
-description: "Convert PPM images to MITSU files with ppmtomitsu, a powerful image converter. Resize images, adjust sharpness, and specify media types. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmtomitsu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtomitsu/'
+description: 'Convert PPM images to MITSU files with ppmtomitsu, a powerful image converter. Resize images, adjust sharpness, and specify media types. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to MITSU converter
-- Image format conversion
-- PPM image processing
-- MITSU file creation
-- Netpbm image tools
-- Command line image conversion
-- Linux image converter
-- macOS image converter
-- PPM to S340-10
-- Image resizing tool
+  - PPM to MITSU converter
+  - Image format conversion
+  - PPM image processing
+  - MITSU file creation
+  - Netpbm image tools
+  - Command line image conversion
+  - Linux image converter
+  - macOS image converter
+  - PPM to S340-10
+  - Image resizing tool
 features:
-- Convert PPM images to MITSU format
-- Enlarge images by a specified factor
-- Adjust image sharpness for optimal output
-- Specify the media type for printing
-- Create multiple copies of the converted image
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to MITSU format
+  - Enlarge images by a specified factor
+  - Adjust image sharpness for optimal output
+  - Specify the media type for printing
+  - Create multiple copies of the converted image
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtomitsu

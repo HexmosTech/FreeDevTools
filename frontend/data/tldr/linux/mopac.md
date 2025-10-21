@@ -1,9 +1,9 @@
 ---
-title: "MOPAC Quantum Chemistry - Perform Semiempirical Calculations | Online Free DevTools by Hexmos"
+title: 'MOPAC Quantum Chemistry - Perform Semiempirical Calculations | Online Free DevTools by Hexmos'
 name: mopac
-path: "/freedevtools/tldr/linux/mopac/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mopac/"
-description: "Perform semiempirical quantum chemistry calculations with MOPAC.  This free online tool utilizes the NDDO approximation for molecular orbital calculations. No registration required."
+path: '/freedevtools/tldr/linux/mopac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mopac/'
+description: 'Perform semiempirical quantum chemistry calculations with MOPAC.  This free online tool utilizes the NDDO approximation for molecular orbital calculations. No registration required.'
 category: linux
 keywords:
   - mopac calculations
@@ -22,8 +22,8 @@ features:
   - Calculates molecular orbitals and energies.
   - Supports various Hamiltonians (e.g., PM7).
   - Outputs results to specified files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mopac

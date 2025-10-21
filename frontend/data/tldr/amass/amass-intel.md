@@ -1,29 +1,29 @@
 ---
-title: "Gather Intel - Amass Intel | Online Free DevTools by Hexmos"
+title: 'Gather Intel - Amass Intel | Online Free DevTools by Hexmos'
 name: amass-intel
-path: "/freedevtools/tldr/amass/amass-intel/"
-canonical: "https://hexmos.com/freedevtools/tldr/amass/amass-intel/"
-description: "Gather open-source intel with Amass Intel. Discover root domains and ASNs related to organizations and IP addresses. Free online tool, no registration required."
+path: '/freedevtools/tldr/amass/amass-intel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/amass/amass-intel/'
+description: 'Gather open-source intel with Amass Intel. Discover root domains and ASNs related to organizations and IP addresses. Free online tool, no registration required.'
 category: common
 keywords:
-- domain reconnaissance
-- ASN discovery
-- root domain enumeration
-- IP address intel
-- organization intel
-- amass intel
-- cybersecurity intel
-- open source intelligence
-- network enumeration
-- attack surface mapping
+  - domain reconnaissance
+  - ASN discovery
+  - root domain enumeration
+  - IP address intel
+  - organization intel
+  - amass intel
+  - cybersecurity intel
+  - open source intelligence
+  - network enumeration
+  - attack surface mapping
 features:
-- Discover root domains by IP address range.
-- Enumerate ASNs for a specific organization.
-- Identify root domains related to a domain using WHOIS.
-- Save reconnaissance results to a text file.
-- List all available data sources.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Discover root domains by IP address range.
+  - Enumerate ASNs for a specific organization.
+  - Identify root domains related to a domain using WHOIS.
+  - Save reconnaissance results to a text file.
+  - List all available data sources.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # amass intel

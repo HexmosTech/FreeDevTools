@@ -1,29 +1,29 @@
 ---
-title: "Nft - Configure Linux Firewall Rules | Online Free DevTools by Hexmos"
+title: 'Nft - Configure Linux Firewall Rules | Online Free DevTools by Hexmos'
 name: nft
-path: "/freedevtools/tldr/linux/nft/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nft/"
-description: "Configure Linux firewall rules with Nft. Manage tables, chains, and rules, replacing iptables for efficient network traffic control. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nft/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nft/'
+description: 'Configure Linux firewall rules with Nft. Manage tables, chains, and rules, replacing iptables for efficient network traffic control. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux firewall configuration
-- nftables ruleset management
-- nft command syntax
-- nftables firewall rules
-- nft masquerade rule
-- nft add rule example
-- nft delete rule example
-- nft save configuration
-- linux network traffic filter
-- nftables tutorial
+  - linux firewall configuration
+  - nftables ruleset management
+  - nft command syntax
+  - nftables firewall rules
+  - nft masquerade rule
+  - nft add rule example
+  - nft delete rule example
+  - nft save configuration
+  - linux network traffic filter
+  - nftables tutorial
 features:
-- Add and manage nftables tables
-- Define custom chains for traffic filtering
-- Create rules based on various criteria like port and IP
-- Implement Network Address Translation (NAT) rules
-- Export and import nftables configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add and manage nftables tables
+  - Define custom chains for traffic filtering
+  - Create rules based on various criteria like port and IP
+  - Implement Network Address Translation (NAT) rules
+  - Export and import nftables configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nft

@@ -1,9 +1,9 @@
 ---
-title: "Compare Images - Calculate Image Differences | Online Free DevTools by Hexmos"
+title: 'Compare Images - Calculate Image Differences | Online Free DevTools by Hexmos'
 name: diffimg
-path: "/freedevtools/tldr/linux/diffimg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/diffimg/"
-description: "Compare images with diffimg and calculate the pixel differences between two images. Output a visual representation of these differences. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/diffimg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/diffimg/'
+description: 'Compare images with diffimg and calculate the pixel differences between two images. Output a visual representation of these differences. Free online tool, no registration required.'
 category: linux
 keywords:
   - image comparison tool
@@ -22,8 +22,8 @@ features:
   - Supports PNG, GIF, JPG, and PS image formats.
   - Provides a visual representation of image discrepancies.
   - Offers a command-line interface for easy integration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # diffimg

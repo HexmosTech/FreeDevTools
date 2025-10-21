@@ -1,29 +1,29 @@
 ---
-title: "Immich Upload - Manage Media Files | Online Free DevTools by Hexmos"
+title: 'Immich Upload - Manage Media Files | Online Free DevTools by Hexmos'
 name: immich
-path: "/freedevtools/tldr/common/immich/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/immich/"
-description: "Upload media files with Immich CLI. Manage photos and videos, organize albums, and skip unwanted assets using glob patterns. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/immich/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/immich/'
+description: 'Upload media files with Immich CLI. Manage photos and videos, organize albums, and skip unwanted assets using glob patterns. Free online tool, no registration required.'
 category: common
 keywords:
-- immich upload
-- immich cli
-- media management
-- photo upload
-- video upload
-- album creation
-- recursive upload
-- glob pattern ignore
-- command line interface
-- immich server
+  - immich upload
+  - immich cli
+  - media management
+  - photo upload
+  - video upload
+  - album creation
+  - recursive upload
+  - glob pattern ignore
+  - command line interface
+  - immich server
 features:
-- Authenticate to Immich server using URL and API key.
-- Upload single or multiple image files.
-- Recursively upload entire directories including subdirectories.
-- Create albums based on directory structure.
-- Skip assets using glob pattern matching.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate to Immich server using URL and API key.
+  - Upload single or multiple image files.
+  - Recursively upload entire directories including subdirectories.
+  - Create albums based on directory structure.
+  - Skip assets using glob pattern matching.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # immich

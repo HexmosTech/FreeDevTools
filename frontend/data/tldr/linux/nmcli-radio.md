@@ -1,29 +1,29 @@
 ---
-title: "nmcli Radio - Control Network Radios in Linux | Online Free DevTools by Hexmos"
+title: 'nmcli Radio - Control Network Radios in Linux | Online Free DevTools by Hexmos'
 name: nmcli-radio
-path: "/freedevtools/tldr/linux/nmcli-radio/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-radio/"
-description: "Control network radio devices with nmcli radio. Easily manage Wi-Fi and WWAN radio states in Linux using NetworkManager. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nmcli-radio/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nmcli-radio/'
+description: 'Control network radio devices with nmcli radio. Easily manage Wi-Fi and WWAN radio states in Linux using NetworkManager. Free online tool, no registration required.'
 category: linux
 keywords:
-- nmcli radio control
-- linux network manager
-- wifi radio status
-- wwan radio status
-- command line network management
-- linux network configuration
-- enable wifi linux
-- disable wifi linux
-- nmcli wifi wwan
-- radio switch management
+  - nmcli radio control
+  - linux network manager
+  - wifi radio status
+  - wwan radio status
+  - command line network management
+  - linux network configuration
+  - enable wifi linux
+  - disable wifi linux
+  - nmcli wifi wwan
+  - radio switch management
 features:
-- Show the current status of Wi-Fi radio.
-- Enable or disable Wi-Fi radio via command line.
-- Display the status of WWAN (cellular) radio.
-- Turn WWAN radio on or off using nmcli.
-- Manage all radio switches (Wi-Fi and WWAN) simultaneously.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show the current status of Wi-Fi radio.
+  - Enable or disable Wi-Fi radio via command line.
+  - Display the status of WWAN (cellular) radio.
+  - Turn WWAN radio on or off using nmcli.
+  - Manage all radio switches (Wi-Fi and WWAN) simultaneously.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nmcli radio

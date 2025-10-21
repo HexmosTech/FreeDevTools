@@ -1,29 +1,29 @@
 ---
-title: "Display X Properties - Inspect Windows & Fonts | Online Free DevTools by Hexmos"
+title: 'Display X Properties - Inspect Windows & Fonts | Online Free DevTools by Hexmos'
 name: xprop
-path: "/freedevtools/tldr/common/xprop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xprop/"
-description: "Display X properties with xprop. Inspect window and font attributes, debug X server applications, and troubleshoot display issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xprop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xprop/'
+description: 'Display X properties with xprop. Inspect window and font attributes, debug X server applications, and troubleshoot display issues. Free online tool, no registration required.'
 category: common
 keywords:
-- X window properties
-- X server inspector
-- font property viewer
-- display information tool
-- window manager hints
-- X11 debugging
-- Linux window info
-- X server analysis
-- X property dumper
-- xprop command line
+  - X window properties
+  - X server inspector
+  - font property viewer
+  - display information tool
+  - window manager hints
+  - X11 debugging
+  - Linux window info
+  - X server analysis
+  - X property dumper
+  - xprop command line
 features:
-- Display properties of X windows
-- Inspect font attributes and metrics
-- Show window manager hints
-- Output properties of the root window
-- Identify windows by ID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display properties of X windows
+  - Inspect font attributes and metrics
+  - Show window manager hints
+  - Output properties of the root window
+  - Identify windows by ID
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xprop

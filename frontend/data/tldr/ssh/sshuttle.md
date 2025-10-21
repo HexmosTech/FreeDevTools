@@ -1,29 +1,29 @@
 ---
-title: "Tunnel Traffic - Control SSH Tunnels with sshuttle | Online Free DevTools by Hexmos"
+title: 'Tunnel Traffic - Control SSH Tunnels with sshuttle | Online Free DevTools by Hexmos'
 name: sshuttle
-path: "/freedevtools/tldr/ssh/sshuttle/"
-canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshuttle/"
-description: "Control network traffic with sshuttle, creating secure SSH tunnels effortlessly. Forward TCP, DNS, and other protocols. Free online tool, no registration required."
+path: '/freedevtools/tldr/ssh/sshuttle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ssh/sshuttle/'
+description: 'Control network traffic with sshuttle, creating secure SSH tunnels effortlessly. Forward TCP, DNS, and other protocols. Free online tool, no registration required.'
 category: common
 keywords:
-- SSH tunnel traffic control
-- SSH proxy server
-- Network traffic tunneling
-- SSH connection forwarding
-- Rootless SSH tunneling
-- TCP traffic over SSH
-- DNS forwarding over SSH
-- Transparent proxy server
-- Linux SSH tunnel
-- MacOS SSH tunnel
+  - SSH tunnel traffic control
+  - SSH proxy server
+  - Network traffic tunneling
+  - SSH connection forwarding
+  - Rootless SSH tunneling
+  - TCP traffic over SSH
+  - DNS forwarding over SSH
+  - Transparent proxy server
+  - Linux SSH tunnel
+  - MacOS SSH tunnel
 features:
-- Forward all IPv4 TCP traffic via SSH.
-- Forward DNS traffic via remote SSH server.
-- Exclude specific subnets from SSH tunnel.
-- Use tproxy method for IPv4 and IPv6 tunneling.
-- Establish transparent proxy server connection.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Forward all IPv4 TCP traffic via SSH.
+  - Forward DNS traffic via remote SSH server.
+  - Exclude specific subnets from SSH tunnel.
+  - Use tproxy method for IPv4 and IPv6 tunneling.
+  - Establish transparent proxy server connection.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sshuttle

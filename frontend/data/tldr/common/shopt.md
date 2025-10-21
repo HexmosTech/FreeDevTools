@@ -1,29 +1,29 @@
 ---
-title: "Shopt - Manage Bash Shell Options | Online Free DevTools by Hexmos"
+title: 'Shopt - Manage Bash Shell Options | Online Free DevTools by Hexmos'
 name: shopt
-path: "/freedevtools/tldr/common/shopt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/shopt/"
-description: "Manage Bash shell options with Shopt. Configure shell behavior and customize your environment using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/shopt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/shopt/'
+description: 'Manage Bash shell options with Shopt. Configure shell behavior and customize your environment using simple commands. Free online tool, no registration required.'
 category: common
 keywords:
-- bash shell options
-- shell configuration
-- bash settings
-- bash variables
-- shopt command
-- linux shell
-- bash customize
-- shell environment
-- bash scripting
-- command-line interface
+  - bash shell options
+  - shell configuration
+  - bash settings
+  - bash variables
+  - shopt command
+  - linux shell
+  - bash customize
+  - shell environment
+  - bash scripting
+  - command-line interface
 features:
-- List all available shell options
-- Enable specific shell options
-- Disable specific shell options
-- Print options as executable commands
-- Display help documentation for shopt
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all available shell options
+  - Enable specific shell options
+  - Disable specific shell options
+  - Print options as executable commands
+  - Display help documentation for shopt
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shopt

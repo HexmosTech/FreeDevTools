@@ -1,29 +1,29 @@
 ---
-title: "NASM Assembler - Assemble Code | Online Free DevTools by Hexmos"
+title: 'NASM Assembler - Assemble Code | Online Free DevTools by Hexmos'
 name: nasm
-path: "/freedevtools/tldr/common/nasm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nasm/"
-description: "Assemble code with NASM Assembler. Convert assembly source code to machine code for x86 architectures. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nasm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nasm/'
+description: 'Assemble code with NASM Assembler. Convert assembly source code to machine code for x86 architectures. Free online tool, no registration required.'
 category: common
 keywords:
-- nasm assembler
-- x86 assembler
-- assembly code compiler
-- object file generator
-- assembly listing generator
-- linux assembler
-- windows assembler
-- masm compatible assembler
-- assembly syntax parser
-- 8086 assembler
+  - nasm assembler
+  - x86 assembler
+  - assembly code compiler
+  - object file generator
+  - assembly listing generator
+  - linux assembler
+  - windows assembler
+  - masm compatible assembler
+  - assembly syntax parser
+  - 8086 assembler
 features:
-- Assemble source code into binary files
-- Generate assembly listing files for debugging
-- Include custom directories in the search path
-- Supports multiple output formats (bin, obj, elf)
-- Parse and compile x86 assembly language
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Assemble source code into binary files
+  - Generate assembly listing files for debugging
+  - Include custom directories in the search path
+  - Supports multiple output formats (bin, obj, elf)
+  - Parse and compile x86 assembly language
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nasm

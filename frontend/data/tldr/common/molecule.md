@@ -1,29 +1,29 @@
 ---
-title: "Molecule - Test Ansible Roles | Online Free DevTools by Hexmos"
+title: 'Molecule - Test Ansible Roles | Online Free DevTools by Hexmos'
 name: molecule
-path: "/freedevtools/tldr/common/molecule/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/molecule/"
-description: "Test Ansible roles efficiently with Molecule. Ensure your Ansible infrastructure code is robust and reliable using automated testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/molecule/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/molecule/'
+description: 'Test Ansible roles efficiently with Molecule. Ensure your Ansible infrastructure code is robust and reliable using automated testing. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible role testing
-- molecule ansible
-- ansible automation testing
-- infrastructure as code testing
-- molecule create
-- molecule converge
-- molecule test
-- linux ansible testing
-- molecule login
-- ansible role validation
+  - ansible role testing
+  - molecule ansible
+  - ansible automation testing
+  - infrastructure as code testing
+  - molecule create
+  - molecule converge
+  - molecule test
+  - linux ansible testing
+  - molecule login
+  - ansible role validation
 features:
-- Initialize new Ansible roles with `molecule init`
-- Execute comprehensive tests on Ansible roles using `molecule test`
-- Provision instances for testing Ansible roles with `molecule create`
-- Configure and apply Ansible roles to instances using `molecule converge`
-- Access and interact with instances for debugging via `molecule login`
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new Ansible roles with `molecule init`
+  - Execute comprehensive tests on Ansible roles using `molecule test`
+  - Provision instances for testing Ansible roles with `molecule create`
+  - Configure and apply Ansible roles to instances using `molecule converge`
+  - Access and interact with instances for debugging via `molecule login`
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # molecule

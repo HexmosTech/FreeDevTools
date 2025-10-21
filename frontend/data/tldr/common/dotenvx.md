@@ -1,29 +1,29 @@
 ---
-title: "dotenvx - Manage Environment Variables | Online Free DevTools by Hexmos"
+title: 'dotenvx - Manage Environment Variables | Online Free DevTools by Hexmos'
 name: dotenvx
-path: "/freedevtools/tldr/common/dotenvx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dotenvx/"
-description: "Manage environment variables securely with dotenvx. Load .env files, encrypt secrets, and manage variables efficiently using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dotenvx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dotenvx/'
+description: 'Manage environment variables securely with dotenvx. Load .env files, encrypt secrets, and manage variables efficiently using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- dotenv management
-- .env file loader
-- environment variable encryption
-- secure variable storage
-- cross-platform environment variables
-- dotenvx command line tool
-- .env configuration
-- command line secrets
-- environment variable manager
-- application configuration
+  - dotenv management
+  - .env file loader
+  - environment variable encryption
+  - secure variable storage
+  - cross-platform environment variables
+  - dotenvx command line tool
+  - .env configuration
+  - command line secrets
+  - environment variable manager
+  - application configuration
 features:
-- Load environment variables from .env files.
-- Run commands with environment variables.
-- Set and encrypt environment variables.
-- Retrieve environment variable values.
-- Manage environment variables across multiple platforms.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Load environment variables from .env files.
+  - Run commands with environment variables.
+  - Set and encrypt environment variables.
+  - Retrieve environment variable values.
+  - Manage environment variables across multiple platforms.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotenvx

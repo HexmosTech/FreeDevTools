@@ -1,29 +1,29 @@
 ---
-title: "Simulate Matrix Effect - Unimatrix | Online Free DevTools by Hexmos"
+title: 'Simulate Matrix Effect - Unimatrix | Online Free DevTools by Hexmos'
 name: unimatrix
-path: "/freedevtools/tldr/common/unimatrix/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/unimatrix/"
-description: "Simulate the Matrix digital rain effect with Unimatrix. Customize colors, speed, and character sets. Command-line tool, free online tool, no registration required."
+path: '/freedevtools/tldr/common/unimatrix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/unimatrix/'
+description: 'Simulate the Matrix digital rain effect with Unimatrix. Customize colors, speed, and character sets. Command-line tool, free online tool, no registration required.'
 category: common
 keywords:
-- matrix effect simulator
-- unimatrix command line
-- unicode matrix rain
-- terminal matrix animation
-- linux matrix effect
-- macos matrix effect
-- character stream simulation
-- digital rain generator
-- ansi art generator
-- terminal customization
+  - matrix effect simulator
+  - unimatrix command line
+  - unicode matrix rain
+  - terminal matrix animation
+  - linux matrix effect
+  - macos matrix effect
+  - character stream simulation
+  - digital rain generator
+  - ansi art generator
+  - terminal customization
 features:
-- Customize character color
-- Control animation speed
-- Select character sets
-- Mimic cmatrix output
-- Disable bold characters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Customize character color
+  - Control animation speed
+  - Select character sets
+  - Mimic cmatrix output
+  - Disable bold characters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # unimatrix

@@ -1,29 +1,29 @@
 ---
-title: "Git Rebase - Reapply Commits | Online Free DevTools by Hexmos"
+title: 'Git Rebase - Reapply Commits | Online Free DevTools by Hexmos'
 name: git-rebase
-path: "/freedevtools/tldr/git/git-rebase/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-rebase/"
-description: "Reapply commits with Git Rebase. Move branches to a new base and resolve merge conflicts easily with Git Rebase commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-rebase/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-rebase/'
+description: 'Reapply commits with Git Rebase. Move branches to a new base and resolve merge conflicts easily with Git Rebase commands. Free online tool, no registration required.'
 category: common
 keywords:
-- git rebase command
-- git branch rebase
-- git rebase interactive
-- git rebase merge conflicts
-- git rebase skip
-- git rebase abort
-- git rebase onto
-- git rebase theirs
-- git commit history rebase
-- git rebase move branch
+  - git rebase command
+  - git branch rebase
+  - git rebase interactive
+  - git rebase merge conflicts
+  - git rebase skip
+  - git rebase abort
+  - git rebase onto
+  - git rebase theirs
+  - git commit history rebase
+  - git rebase move branch
 features:
-- Reapply commits from one branch onto another.
-- Initiate an interactive rebase to reorder commits.
-- Continue an interrupted rebase after resolving conflicts.
-- Skip a conflicted commit during a rebase.
-- Abort a rebase to revert changes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reapply commits from one branch onto another.
+  - Initiate an interactive rebase to reorder commits.
+  - Continue an interrupted rebase after resolving conflicts.
+  - Skip a conflicted commit during a rebase.
+  - Abort a rebase to revert changes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git rebase

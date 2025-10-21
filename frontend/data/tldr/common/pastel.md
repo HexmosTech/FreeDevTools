@@ -1,9 +1,9 @@
 ---
-title: "Generate Colors - Pastel Color Tool | Online Free DevTools by Hexmos"
+title: 'Generate Colors - Pastel Color Tool | Online Free DevTools by Hexmos'
 name: pastel
-path: "/freedevtools/tldr/common/pastel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pastel/"
-description: "Generate and analyze colors with Pastel Color Tool. Convert between formats like RGB and HSL, pick colors from screen. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pastel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pastel/'
+description: 'Generate and analyze colors with Pastel Color Tool. Convert between formats like RGB and HSL, pick colors from screen. Free online tool, no registration required.'
 category: common
 keywords:
   - color generator
@@ -22,8 +22,8 @@ features:
   - Pick colors directly from the screen
   - Generate sets of visually distinct colors
   - List available X11/CSS color names
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pastel

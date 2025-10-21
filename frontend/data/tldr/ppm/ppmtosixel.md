@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to SIXEL - Format Images | Online Free DevTools by Hexmos"
+title: 'Convert PPM to SIXEL - Format Images | Online Free DevTools by Hexmos'
 name: ppmtosixel
-path: "/freedevtools/tldr/ppm/ppmtosixel/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtosixel/"
-description: "Format images to SIXEL with ppmtosixel. Convert PPM image files to DEC sixel format for compatibility with various terminals. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmtosixel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtosixel/'
+description: 'Format images to SIXEL with ppmtosixel. Convert PPM image files to DEC sixel format for compatibility with various terminals. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to SIXEL conversion
-- Image format conversion
-- SIXEL encoder
-- PPM image processing
-- Terminal graphics format
-- Netpbm tools
-- Image to SIXEL
-- Command line image converter
-- Linux image tools
-- macOS image converter
+  - PPM to SIXEL conversion
+  - Image format conversion
+  - SIXEL encoder
+  - PPM image processing
+  - Terminal graphics format
+  - Netpbm tools
+  - Image to SIXEL
+  - Command line image converter
+  - Linux image tools
+  - macOS image converter
 features:
-- Convert PPM images to SIXEL format
-- Produce uncompressed SIXEL output
-- Adjust left margins in output
-- Encode control codes for portability
-- Process images using command line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to SIXEL format
+  - Produce uncompressed SIXEL output
+  - Adjust left margins in output
+  - Encode control codes for portability
+  - Process images using command line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtosixel

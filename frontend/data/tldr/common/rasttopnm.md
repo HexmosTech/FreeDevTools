@@ -1,29 +1,29 @@
 ---
-title: "Convert RAST to PNM - Transform Rasterfiles | Online Free DevTools by Hexmos"
+title: 'Convert RAST to PNM - Transform Rasterfiles | Online Free DevTools by Hexmos'
 name: rasttopnm
-path: "/freedevtools/tldr/common/rasttopnm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rasttopnm/"
-description: "Convert RAST images to PNM files with rasttopnm. Transform rasterfiles to portable network maps for wider compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rasttopnm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rasttopnm/'
+description: 'Convert RAST images to PNM files with rasttopnm. Transform rasterfiles to portable network maps for wider compatibility. Free online tool, no registration required.'
 category: common
 keywords:
-- RAST to PNM conversion
-- Rasterfile to PNM converter
-- Image format conversion
-- Sun rasterfile converter
-- PNM image generator
-- rasttopnm command
-- common command
-- image manipulation
-- raster graphics
-- graphics conversion
+  - RAST to PNM conversion
+  - Rasterfile to PNM converter
+  - Image format conversion
+  - Sun rasterfile converter
+  - PNM image generator
+  - rasttopnm command
+  - common command
+  - image manipulation
+  - raster graphics
+  - graphics conversion
 features:
-- Convert Sun rasterfiles to PNM format
-- Utilize colormap indices for color values
-- Transform raster graphics for portability
-- Generate portable network maps from raster images
-- Enable image manipulation using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Sun rasterfiles to PNM format
+  - Utilize colormap indices for color values
+  - Transform raster graphics for portability
+  - Generate portable network maps from raster images
+  - Enable image manipulation using command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rasttopnm

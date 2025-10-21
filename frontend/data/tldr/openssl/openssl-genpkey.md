@@ -1,29 +1,29 @@
 ---
-title: "Generate Keys - OpenSSL genpkey Command | Online Free DevTools by Hexmos"
+title: 'Generate Keys - OpenSSL genpkey Command | Online Free DevTools by Hexmos'
 name: openssl-genpkey
-path: "/freedevtools/tldr/openssl/openssl-genpkey/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-genpkey/"
-description: "Generate asymmetric keys with OpenSSL genpkey. Create RSA, EC, and ED25519 keys using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-genpkey/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-genpkey/'
+description: 'Generate asymmetric keys with OpenSSL genpkey. Create RSA, EC, and ED25519 keys using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- asymmetric key generation
-- openssl key generator
-- rsa key generation
-- ec key generation
-- ed25519 key generation
-- openssl genpkey command
-- private key generation
-- public key generation
-- cryptography key generation
-- command line key generation
+  - asymmetric key generation
+  - openssl key generator
+  - rsa key generation
+  - ec key generation
+  - ed25519 key generation
+  - openssl genpkey command
+  - private key generation
+  - public key generation
+  - cryptography key generation
+  - command line key generation
 features:
-- Generate RSA private keys with specified bit length.
-- Generate elliptic curve private keys using named curves.
-- Generate ED25519 elliptic curve private keys.
-- Save generated private keys to specific files.
-- Support for multiple key generation algorithms.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate RSA private keys with specified bit length.
+  - Generate elliptic curve private keys using named curves.
+  - Generate ED25519 elliptic curve private keys.
+  - Save generated private keys to specific files.
+  - Support for multiple key generation algorithms.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl genpkey

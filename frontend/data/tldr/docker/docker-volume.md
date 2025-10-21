@@ -1,29 +1,29 @@
 ---
-title: "Docker Volume - Manage Data Volumes | Online Free DevTools by Hexmos"
+title: 'Docker Volume - Manage Data Volumes | Online Free DevTools by Hexmos'
 name: docker-volume
-path: "/freedevtools/tldr/docker/docker-volume/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-volume/"
-description: "Manage Docker data volumes with Docker Volume. Create, list, remove, and inspect volumes efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-volume/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-volume/'
+description: 'Manage Docker data volumes with Docker Volume. Create, list, remove, and inspect volumes efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- docker volume management
-- docker data volume
-- docker volume create
-- docker volume list
-- docker volume remove
-- docker volume inspect
-- docker volume prune
-- docker volume tmpfs
-- docker volume label
-- docker container data
+  - docker volume management
+  - docker data volume
+  - docker volume create
+  - docker volume list
+  - docker volume remove
+  - docker volume inspect
+  - docker volume prune
+  - docker volume tmpfs
+  - docker volume label
+  - docker container data
 features:
-- Create Docker volumes with custom labels
-- Manage tmpfs volumes with specific size and UID
-- List all existing Docker volumes
-- Remove unused local Docker volumes
-- Inspect Docker volume details
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Docker volumes with custom labels
+  - Manage tmpfs volumes with specific size and UID
+  - List all existing Docker volumes
+  - Remove unused local Docker volumes
+  - Inspect Docker volume details
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker volume

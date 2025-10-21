@@ -1,9 +1,9 @@
 ---
-title: "Ark Archiver - Manage Archives Efficiently | Online Free DevTools by Hexmos"
+title: 'Ark Archiver - Manage Archives Efficiently | Online Free DevTools by Hexmos'
 name: ark
-path: "/freedevtools/tldr/linux/ark/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ark/"
-description: "Manage archives efficiently with Ark Archiver. Extract, create, and add files to archives using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ark/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ark/'
+description: 'Manage archives efficiently with Ark Archiver. Extract, create, and add files to archives using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - archive manager linux
@@ -22,8 +22,8 @@ features:
   - Create new archives with specific files.
   - Add files to existing archives.
   - Manage archive metadata (potentially, depending on archive format).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ark

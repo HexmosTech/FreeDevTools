@@ -1,29 +1,29 @@
 ---
-title: "Generate Digests - OpenSSL dgst Command | Online Free DevTools by Hexmos"
+title: 'Generate Digests - OpenSSL dgst Command | Online Free DevTools by Hexmos'
 name: openssl-dgst
-path: "/freedevtools/tldr/openssl/openssl-dgst/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-dgst/"
-description: "Generate cryptographic digests with OpenSSL dgst. Secure your data using hashing algorithms and signature operations. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-dgst/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-dgst/'
+description: 'Generate cryptographic digests with OpenSSL dgst. Secure your data using hashing algorithms and signature operations. Free online tool, no registration required.'
 category: common
 keywords:
-- openssl digest
-- openssl signature
-- sha256 digest
-- rsa signature
-- ecdsa signature
-- openssl command line
-- cryptography digest
-- file hashing
-- linux openssl
-- macos openssl
+  - openssl digest
+  - openssl signature
+  - sha256 digest
+  - rsa signature
+  - ecdsa signature
+  - openssl command line
+  - cryptography digest
+  - file hashing
+  - linux openssl
+  - macos openssl
 features:
-- Calculate SHA256 digests for files
-- Sign files using RSA private keys
-- Verify RSA signatures with public keys
-- Sign files using ECDSA private keys
-- Verify ECDSA signatures
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate SHA256 digests for files
+  - Sign files using RSA private keys
+  - Verify RSA signatures with public keys
+  - Sign files using ECDSA private keys
+  - Verify ECDSA signatures
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl dgst

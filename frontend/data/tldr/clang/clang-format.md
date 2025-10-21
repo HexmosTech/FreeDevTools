@@ -1,29 +1,29 @@
 ---
-title: "Format Code with Clang-Format - Auto Code Formatter | Online Free DevTools by Hexmos"
+title: 'Format Code with Clang-Format - Auto Code Formatter | Online Free DevTools by Hexmos'
 name: clang-format
-path: "/freedevtools/tldr/clang/clang-format/"
-canonical: "https://hexmos.com/freedevtools/tldr/clang/clang-format/"
-description: "Format code automatically with Clang-Format, ensuring consistent code style. Auto-format C/C++/Java/JavaScript code. Free online tool, no registration required."
+path: '/freedevtools/tldr/clang/clang-format/'
+canonical: 'https://hexmos.com/freedevtools/tldr/clang/clang-format/'
+description: 'Format code automatically with Clang-Format, ensuring consistent code style. Auto-format C/C++/Java/JavaScript code. Free online tool, no registration required.'
 category: common
 keywords:
-- C++ code formatter
-- C code formatter
-- Java code formatter
-- JavaScript code formatter
-- Objective-C code formatter
-- Protobuf code formatter
-- C# code formatter
-- Clang-format style guide
-- LLVM code formatting
-- GNU code formatting
+  - C++ code formatter
+  - C code formatter
+  - Java code formatter
+  - JavaScript code formatter
+  - Objective-C code formatter
+  - Protobuf code formatter
+  - C# code formatter
+  - Clang-format style guide
+  - LLVM code formatting
+  - GNU code formatting
 features:
-- Format code to stdout
-- Format code in-place
-- Apply predefined coding styles
-- Use .clang-format configuration files
-- Generate custom .clang-format files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format code to stdout
+  - Format code in-place
+  - Apply predefined coding styles
+  - Use .clang-format configuration files
+  - Generate custom .clang-format files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clang-format

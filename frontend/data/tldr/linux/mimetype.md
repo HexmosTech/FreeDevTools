@@ -1,9 +1,9 @@
 ---
-title: "Determine MIME Type - File Analyzer | Online Free DevTools by Hexmos"
+title: 'Determine MIME Type - File Analyzer | Online Free DevTools by Hexmos'
 name: mimetype
-path: "/freedevtools/tldr/linux/mimetype/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mimetype/"
-description: "Determine file MIME types instantly with the mimetype analyzer.  Identify file formats and get detailed descriptions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mimetype/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mimetype/'
+description: 'Determine file MIME types instantly with the mimetype analyzer.  Identify file formats and get detailed descriptions. Free online tool, no registration required.'
 category: linux
 keywords:
   - mime type detection
@@ -22,8 +22,8 @@ features:
   - Offers detailed descriptions of identified MIME types.
   - Supports MIME type determination from stdin input.
   - Displays debug information for advanced troubleshooting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mimetype

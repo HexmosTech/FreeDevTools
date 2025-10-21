@@ -1,29 +1,29 @@
 ---
-title: "Flask-Unsign - Control Flask Sessions | Online Free DevTools by Hexmos"
+title: 'Flask-Unsign - Control Flask Sessions | Online Free DevTools by Hexmos'
 name: flask-unsign
-path: "/freedevtools/tldr/common/flask-unsign/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flask-unsign/"
-description: "Control Flask sessions with Flask-Unsign. Decode, brute-force, and craft Flask session cookies. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flask-unsign/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flask-unsign/'
+description: 'Control Flask sessions with Flask-Unsign. Decode, brute-force, and craft Flask session cookies. Free online tool, no registration required.'
 category: common
 keywords:
-- Flask session control
-- Flask cookie manipulation
-- Python Flask security
-- Flask session decoding
-- Flask secret key recovery
-- Flask session brute force
-- Flask cookie signing
-- Flask application security
-- Web session management
-- Command-line cookie tool
+  - Flask session control
+  - Flask cookie manipulation
+  - Python Flask security
+  - Flask session decoding
+  - Flask secret key recovery
+  - Flask session brute force
+  - Flask cookie signing
+  - Flask application security
+  - Web session management
+  - Command-line cookie tool
 features:
-- Decode Flask session cookies
-- Brute-force Flask secret keys
-- Sign new Flask session cookies
-- Use custom wordlists for brute-forcing
-- Handle legacy Flask session timestamps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decode Flask session cookies
+  - Brute-force Flask secret keys
+  - Sign new Flask session cookies
+  - Use custom wordlists for brute-forcing
+  - Handle legacy Flask session timestamps
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flask-unsign

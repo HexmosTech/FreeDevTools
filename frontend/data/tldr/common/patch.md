@@ -1,29 +1,29 @@
 ---
-title: "Patch File - Apply Diff Patches | Online Free DevTools by Hexmos"
+title: 'Patch File - Apply Diff Patches | Online Free DevTools by Hexmos'
 name: patch
-path: "/freedevtools/tldr/common/patch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/patch/"
-description: "Apply file patches with patch command. Revert changes, create new files, and update code bases quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/patch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/patch/'
+description: 'Apply file patches with patch command. Revert changes, create new files, and update code bases quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- diff patch application
-- file patching utility
-- revert changes command
-- patch diff file
-- linux patch command
-- macos patch tool
-- code update command
-- diff file application
-- patch reverse application
-- patch file modification
+  - diff patch application
+  - file patching utility
+  - revert changes command
+  - patch diff file
+  - linux patch command
+  - macos patch tool
+  - code update command
+  - diff file application
+  - patch reverse application
+  - patch file modification
 features:
-- Apply patches to files from diff files.
-- Revert changes by applying the reverse of a patch.
-- Create new files by patching existing ones.
-- Output patched file to a new location.
-- Update entire directory structures with patch files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Apply patches to files from diff files.
+  - Revert changes by applying the reverse of a patch.
+  - Create new files by patching existing ones.
+  - Output patched file to a new location.
+  - Update entire directory structures with patch files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # patch

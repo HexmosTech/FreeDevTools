@@ -1,29 +1,29 @@
 ---
-title: "Ansible Inventory - Display Ansible Inventory | Online Free DevTools by Hexmos"
+title: 'Ansible Inventory - Display Ansible Inventory | Online Free DevTools by Hexmos'
 name: ansible-inventory
-path: "/freedevtools/tldr/ansible/ansible-inventory/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-inventory/"
-description: "Display Ansible inventories easily with Ansible Inventory. Inspect hosts, groups, and variables using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible-inventory/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible-inventory/'
+description: 'Display Ansible inventories easily with Ansible Inventory. Inspect hosts, groups, and variables using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible inventory
-- ansible inventory list
-- ansible host inventory
-- ansible yaml inventory
-- ansible inventory dump
-- ansible dynamic inventory
-- ansible inventory management
-- ansible command line
-- linux ansible
-- macos ansible
+  - ansible inventory
+  - ansible inventory list
+  - ansible host inventory
+  - ansible yaml inventory
+  - ansible inventory dump
+  - ansible dynamic inventory
+  - ansible inventory management
+  - ansible command line
+  - linux ansible
+  - macos ansible
 features:
-- Display the default Ansible inventory.
-- List inventory in YAML format.
-- Display a custom inventory file.
-- Dump the inventory to a specified file.
-- Inspect hosts and groups within an Ansible project.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the default Ansible inventory.
+  - List inventory in YAML format.
+  - Display a custom inventory file.
+  - Dump the inventory to a specified file.
+  - Inspect hosts and groups within an Ansible project.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible-inventory

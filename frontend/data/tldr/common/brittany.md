@@ -1,29 +1,29 @@
 ---
-title: "Format Haskell Code - Pretty-Print with Brittany | Online Free DevTools by Hexmos"
+title: 'Format Haskell Code - Pretty-Print with Brittany | Online Free DevTools by Hexmos'
 name: brittany
-path: "/freedevtools/tldr/common/brittany/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/brittany/"
-description: "Format Haskell code easily with Brittany. Enhance code readability and maintainability using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/brittany/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/brittany/'
+description: 'Format Haskell code easily with Brittany. Enhance code readability and maintainability using command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- haskell formatter
-- haskell code beautifier
-- code formatting haskell
-- haskell code style
-- brittany haskell
-- haskell linting
-- haskell language tool
-- hs code formatter
-- haskell code formatter online
-- haskell code formatter command line
+  - haskell formatter
+  - haskell code beautifier
+  - code formatting haskell
+  - haskell code style
+  - brittany haskell
+  - haskell linting
+  - haskell language tool
+  - hs code formatter
+  - haskell code formatter online
+  - haskell code formatter command line
 features:
-- Format Haskell source code to stdout
-- Format Haskell files in-place with write mode
-- Check Haskell code for formatting changes
-- Customize indentation and line length
-- Apply formatting based on a configuration file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format Haskell source code to stdout
+  - Format Haskell files in-place with write mode
+  - Check Haskell code for formatting changes
+  - Customize indentation and line length
+  - Apply formatting based on a configuration file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brittany

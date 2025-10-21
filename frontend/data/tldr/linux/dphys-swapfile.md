@@ -1,9 +1,9 @@
 ---
-title: "Manage Swap File - Control Debian Swap | Online Free DevTools by Hexmos"
+title: 'Manage Swap File - Control Debian Swap | Online Free DevTools by Hexmos'
 name: dphys-swapfile
-path: "/freedevtools/tldr/linux/dphys-swapfile/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dphys-swapfile/"
-description: "Manage swap file effortlessly with dphys-swapfile. Easily enable, disable, and create swap files on Debian-based systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dphys-swapfile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dphys-swapfile/'
+description: 'Manage swap file effortlessly with dphys-swapfile. Easily enable, disable, and create swap files on Debian-based systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux swap file manager
@@ -22,8 +22,8 @@ features:
   - Configures swap file size dynamically
   - Optimizes swap usage on Debian systems
   - Manages swap space from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dphys-swapfile

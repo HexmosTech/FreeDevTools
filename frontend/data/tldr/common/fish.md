@@ -1,29 +1,29 @@
 ---
-title: "Control Fish Shell - Execute Commands Interactively | Online Free DevTools by Hexmos"
+title: 'Control Fish Shell - Execute Commands Interactively | Online Free DevTools by Hexmos'
 name: fish
-path: "/freedevtools/tldr/common/fish/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fish/"
-description: "Control interactive shells with Fish Shell. Customize startup configs and execute scripts efficiently using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fish/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fish/'
+description: 'Control interactive shells with Fish Shell. Customize startup configs and execute scripts efficiently using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- fish shell command
-- interactive shell commands
-- fish shell script execution
-- shell command execution
-- fish shell configuration
-- fish shell private mode
-- shell environment variable
-- shell command syntax
-- shell script checker
-- command line interpreter
+  - fish shell command
+  - interactive shell commands
+  - fish shell script execution
+  - shell command execution
+  - fish shell configuration
+  - fish shell private mode
+  - shell environment variable
+  - shell command syntax
+  - shell script checker
+  - command line interpreter
 features:
-- Start interactive shell sessions
-- Execute shell commands and scripts
-- Check shell scripts for syntax errors
-- Manage shell environment variables
-- Operate shell in private mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start interactive shell sessions
+  - Execute shell commands and scripts
+  - Check shell scripts for syntax errors
+  - Manage shell environment variables
+  - Operate shell in private mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fish

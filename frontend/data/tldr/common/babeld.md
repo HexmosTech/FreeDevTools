@@ -1,29 +1,29 @@
 ---
-title: "Babeld Router - Control Network Routing | Online Free DevTools by Hexmos"
+title: 'Babeld Router - Control Network Routing | Online Free DevTools by Hexmos'
 name: babeld
-path: "/freedevtools/tldr/common/babeld/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/babeld/"
-description: "Control network routing with Babeld, a flexible routing daemon. Configure network interfaces, apply firewall-style filters, and optimize network traffic. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/babeld/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/babeld/'
+description: 'Control network routing with Babeld, a flexible routing daemon. Configure network interfaces, apply firewall-style filters, and optimize network traffic. Free online tool, no registration required.'
 category: common
 keywords:
-- babel routing daemon
-- network routing protocol
-- babeld configuration
-- babeld filters
-- routing table management
-- network interface configuration
-- babeld linux
-- babeld command line
-- babeld redistribute metric
-- babel network optimization
+  - babel routing daemon
+  - network routing protocol
+  - babeld configuration
+  - babeld filters
+  - routing table management
+  - network interface configuration
+  - babeld linux
+  - babeld command line
+  - babeld redistribute metric
+  - babel network optimization
 features:
-- Configure routing using configuration files.
-- Daemonize the process for background operation.
-- Specify configuration commands directly.
-- Operate on specific network interfaces.
-- Apply firewall-style filters to control routing behavior.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure routing using configuration files.
+  - Daemonize the process for background operation.
+  - Specify configuration commands directly.
+  - Operate on specific network interfaces.
+  - Apply firewall-style filters to control routing behavior.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # babeld

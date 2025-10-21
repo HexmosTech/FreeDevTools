@@ -1,9 +1,9 @@
 ---
-title: "Control Cloud-init - Manage Instance Initialization | Online Free DevTools by Hexmos"
+title: 'Control Cloud-init - Manage Instance Initialization | Online Free DevTools by Hexmos'
 name: cloud-init
-path: "/freedevtools/tldr/linux/cloud-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cloud-init/"
-description: "Control cloud instance initialization with Cloud-init. Automate cloud configuration, manage packages, and run scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cloud-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cloud-init/'
+description: 'Control cloud instance initialization with Cloud-init. Automate cloud configuration, manage packages, and run scripts. Free online tool, no registration required.'
 category: linux
 keywords:
   - cloud-init configuration
@@ -22,8 +22,8 @@ features:
   - Clean cloud-init logs and artifacts
   - Automate cloud instance setup
   - Wait for cloud-init completion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cloud-init

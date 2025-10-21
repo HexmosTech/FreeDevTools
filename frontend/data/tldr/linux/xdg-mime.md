@@ -1,9 +1,9 @@
 ---
-title: "Manage MIME Types - Control File Associations with xdg-mime | Online Free DevTools by Hexmos"
+title: 'Manage MIME Types - Control File Associations with xdg-mime | Online Free DevTools by Hexmos'
 name: xdg-mime
-path: "/freedevtools/tldr/linux/xdg-mime/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xdg-mime/"
-description: "Manage and query MIME types with xdg-mime.  Control file associations and default applications for various file types easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xdg-mime/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xdg-mime/'
+description: 'Manage and query MIME types with xdg-mime.  Control file associations and default applications for various file types easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - MIME type management
@@ -22,8 +22,8 @@ features:
   - Set the default application for a specific MIME type.
   - Set default applications for multiple MIME types simultaneously.
   - Manage file associations according to the XDG standard.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xdg-mime

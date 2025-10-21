@@ -1,29 +1,29 @@
 ---
-title: "Create Cloudflare Tunnel - Secure Connections | Online Free DevTools by Hexmos"
+title: 'Create Cloudflare Tunnel - Secure Connections | Online Free DevTools by Hexmos'
 name: cloudflared
-path: "/freedevtools/tldr/common/cloudflared/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cloudflared/"
-description: "Create secure connections with Cloudflare Tunnel. Establish persistent connections to the Cloudflare network using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cloudflared/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cloudflared/'
+description: 'Create secure connections with Cloudflare Tunnel. Establish persistent connections to the Cloudflare network using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- cloudflare tunnel
-- cloudflared tunnel
-- cloudflare argo tunnel
-- secure tunnel
-- persistent connection
-- cloudflare proxy
-- cloudflare origin
-- command-line tunneling
-- cloudflare access
-- cloudflare firewall
+  - cloudflare tunnel
+  - cloudflared tunnel
+  - cloudflare argo tunnel
+  - secure tunnel
+  - persistent connection
+  - cloudflare proxy
+  - cloudflare origin
+  - command-line tunneling
+  - cloudflare access
+  - cloudflare firewall
 features:
-- Establish persistent connections to Cloudflare's network.
-- Create named tunnels for organized management.
-- Route traffic from localhost to Cloudflare hosts.
-- Bypass TLS verification for local servers (with caution).
-- Log activity for debugging and auditing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Establish persistent connections to Cloudflare's network.
+  - Create named tunnels for organized management.
+  - Route traffic from localhost to Cloudflare hosts.
+  - Bypass TLS verification for local servers (with caution).
+  - Log activity for debugging and auditing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cloudflared

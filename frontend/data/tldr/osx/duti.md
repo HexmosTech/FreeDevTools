@@ -1,29 +1,29 @@
 ---
-title: "Control Default Apps - Duti macOS | Online Free DevTools by Hexmos"
+title: 'Control Default Apps - Duti macOS | Online Free DevTools by Hexmos'
 name: duti
-path: "/freedevtools/tldr/osx/duti/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/duti/"
-description: "Control default application associations with duti. Set handlers for document types and URL schemes on macOS using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/duti/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/duti/'
+description: 'Control default application associations with duti. Set handlers for document types and URL schemes on macOS using the command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS default app
-- UTI handler
-- URL scheme association
-- file type association
-- duti macOS
-- command line app association
-- macOS file association
-- default application setter
-- macOS app linker
-- macOS handler tool
+  - macOS default app
+  - UTI handler
+  - URL scheme association
+  - file type association
+  - duti macOS
+  - command line app association
+  - macOS file association
+  - default application setter
+  - macOS app linker
+  - macOS handler tool
 features:
-- Set default applications for specific file extensions
-- Associate applications with URL schemes (e.g., ftp, http)
-- Display information about default applications for given extensions
-- Query the default handler for a specific Uniform Type Identifier (UTI)
-- List all handlers registered for a given UTI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set default applications for specific file extensions
+  - Associate applications with URL schemes (e.g., ftp, http)
+  - Display information about default applications for given extensions
+  - Query the default handler for a specific Uniform Type Identifier (UTI)
+  - List all handlers registered for a given UTI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # duti

@@ -1,29 +1,29 @@
 ---
-title: "Calculate Git Blame - Analyze Code Ownership | Online Free DevTools by Hexmos"
+title: 'Calculate Git Blame - Analyze Code Ownership | Online Free DevTools by Hexmos'
 name: git-guilt
-path: "/freedevtools/tldr/git/git-guilt/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-guilt/"
-description: "Analyze code ownership with Git Guilt. Determine blame count and track changes between revisions easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-guilt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-guilt/'
+description: 'Analyze code ownership with Git Guilt. Determine blame count and track changes between revisions easily. Free online tool, no registration required.'
 category: common
 keywords:
-- git blame analysis
-- code ownership analysis
-- git responsibility tracking
-- git blame calculation
-- blame change detection
-- git blame revision comparison
-- blame author identification
-- git code contributor analysis
-- git blame whitespace ignore
-- git blame time range
+  - git blame analysis
+  - code ownership analysis
+  - git responsibility tracking
+  - git blame calculation
+  - blame change detection
+  - git blame revision comparison
+  - blame author identification
+  - git code contributor analysis
+  - git blame whitespace ignore
+  - git blame time range
 features:
-- Calculate total blame count for modified files
-- Compare blame between two specific Git revisions
-- Display author emails instead of author names
-- Ignore whitespace changes when calculating blame
-- Analyze blame delta over a specified time range
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate total blame count for modified files
+  - Compare blame between two specific Git revisions
+  - Display author emails instead of author names
+  - Ignore whitespace changes when calculating blame
+  - Analyze blame delta over a specified time range
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git guilt

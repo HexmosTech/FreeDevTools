@@ -1,29 +1,29 @@
 ---
-title: "Graph Acyclic - Generate Acyclic Graphs | Online Free DevTools by Hexmos"
+title: 'Graph Acyclic - Generate Acyclic Graphs | Online Free DevTools by Hexmos'
 name: acyclic
-path: "/freedevtools/tldr/common/acyclic/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/acyclic/"
-description: "Generate acyclic graphs with Graph Acyclic. Reverse edges in directed graphs for cycle removal using this graphviz filter. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/acyclic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/acyclic/'
+description: 'Generate acyclic graphs with Graph Acyclic. Reverse edges in directed graphs for cycle removal using this graphviz filter. Free online tool, no registration required.'
 category: common
 keywords:
-- graph acyclic
-- directed graph
-- cycle removal
-- graphviz filter
-- graph manipulation
-- acyclic graph generator
-- graph processing
-- graph edge reversal
-- graph visualization
-- graph analysis
+  - graph acyclic
+  - directed graph
+  - cycle removal
+  - graphviz filter
+  - graph manipulation
+  - acyclic graph generator
+  - graph processing
+  - graph edge reversal
+  - graph visualization
+  - graph analysis
 features:
-- Reverse edges to create acyclic graphs
-- Identify cycles within directed graphs
-- Analyze graph structure
-- Print graph acyclicity status
-- Process graphs using Graphviz
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reverse edges to create acyclic graphs
+  - Identify cycles within directed graphs
+  - Analyze graph structure
+  - Print graph acyclicity status
+  - Process graphs using Graphviz
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # acyclic

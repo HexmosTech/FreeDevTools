@@ -1,29 +1,29 @@
 ---
-title: "Show Environment - Display Systemd Env Blocks | Online Free DevTools by Hexmos"
+title: 'Show Environment - Display Systemd Env Blocks | Online Free DevTools by Hexmos'
 name: systemctl-show-environment
-path: "/freedevtools/tldr/linux/systemctl-show-environment/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-show-environment/"
-description: "Display environment variables with systemctl show-environment. Manage systemd environment blocks and troubleshoot configuration issues with this free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemctl-show-environment/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemctl-show-environment/'
+description: 'Display environment variables with systemctl show-environment. Manage systemd environment blocks and troubleshoot configuration issues with this free online tool, no registration required.'
 category: linux
 keywords:
-- systemd environment blocks
-- linux environment variables
-- systemctl show environment
-- systemd configuration
-- environment variable viewer
-- linux system administration
-- systemctl command line
-- systemd troubleshooting
-- user environment variables
-- linux system management
+  - systemd environment blocks
+  - linux environment variables
+  - systemctl show environment
+  - systemd configuration
+  - environment variable viewer
+  - linux system administration
+  - systemctl command line
+  - systemd troubleshooting
+  - user environment variables
+  - linux system management
 features:
-- Displays systemd environment blocks
-- Shows system environment variables
-- Shows user environment variables
-- Retrieves environment configuration
-- Troubleshoots systemd environment issues
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Displays systemd environment blocks
+  - Shows system environment variables
+  - Shows user environment variables
+  - Retrieves environment configuration
+  - Troubleshoots systemd environment issues
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemctl show-environment

@@ -1,29 +1,29 @@
 ---
-title: "APT Key Manager - Secure Package Updates | Online Free DevTools by Hexmos"
+title: 'APT Key Manager - Secure Package Updates | Online Free DevTools by Hexmos'
 name: apt-key
-path: "/freedevtools/tldr/linux/apt-key/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-key/"
-description: "Secure APT packages with APT Key Manager. Manage keys, add trusted sources, and maintain package integrity using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apt-key/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apt-key/'
+description: 'Secure APT packages with APT Key Manager. Manage keys, add trusted sources, and maintain package integrity using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- apt key manager
-- linux apt key management
-- debian apt-key command
-- ubuntu apt-key utility
-- apt package verification
-- add apt trusted key
-- delete apt key
-- apt-key security
-- apt gpg key
-- secure apt updates
+  - apt key manager
+  - linux apt key management
+  - debian apt-key command
+  - ubuntu apt-key utility
+  - apt package verification
+  - add apt trusted key
+  - delete apt key
+  - apt-key security
+  - apt gpg key
+  - secure apt updates
 features:
-- List trusted APT keys
-- Add a new APT key from a file
-- Delete an existing APT key
-- Add a remote key directly from a URL
-- Retrieve a key from a keyserver by ID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List trusted APT keys
+  - Add a new APT key from a file
+  - Delete an existing APT key
+  - Add a remote key directly from a URL
+  - Retrieve a key from a keyserver by ID
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apt-key

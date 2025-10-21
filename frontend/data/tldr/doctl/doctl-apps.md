@@ -1,29 +1,29 @@
 ---
-title: "Manage doctl Apps - Control DigitalOcean Apps | Online Free DevTools by Hexmos"
+title: 'Manage doctl Apps - Control DigitalOcean Apps | Online Free DevTools by Hexmos'
 name: doctl-apps
-path: "/freedevtools/tldr/doctl/doctl-apps/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-apps/"
-description: "Manage DigitalOcean apps with doctl. Control app deployments and logs instantly. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-apps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-apps/'
+description: 'Manage DigitalOcean apps with doctl. Control app deployments and logs instantly. Free online tool, no registration required.'
 category: common
 keywords:
-- DigitalOcean apps manager
-- doctl app deployment
-- doctl app logs
-- DigitalOcean CLI apps
-- doctl create app
-- doctl list apps
-- doctl update app
-- doctl delete app
-- DigitalOcean infrastructure management
-- doctl app configuration
+  - DigitalOcean apps manager
+  - doctl app deployment
+  - doctl app logs
+  - DigitalOcean CLI apps
+  - doctl create app
+  - doctl list apps
+  - doctl update app
+  - doctl delete app
+  - DigitalOcean infrastructure management
+  - doctl app configuration
 features:
-- Create new DigitalOcean applications.
-- Manage deployments for existing apps.
-- Delete DigitalOcean apps interactively.
-- Retrieve detailed information about apps.
-- List all available DigitalOcean apps.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new DigitalOcean applications.
+  - Manage deployments for existing apps.
+  - Delete DigitalOcean apps interactively.
+  - Retrieve detailed information about apps.
+  - List all available DigitalOcean apps.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl apps

@@ -1,29 +1,29 @@
 ---
-title: "Create Temporary Email - Manage Mail from Terminal | Online Free DevTools by Hexmos"
+title: 'Create Temporary Email - Manage Mail from Terminal | Online Free DevTools by Hexmos'
 name: tmpmail
-path: "/freedevtools/tldr/common/tmpmail/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tmpmail/"
-description: "Create Temporary Email with tmpmail. Manage email inboxes and view messages directly from your terminal using this simple command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tmpmail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tmpmail/'
+description: 'Create Temporary Email with tmpmail. Manage email inboxes and view messages directly from your terminal using this simple command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- temporary email generator
-- command line email
-- terminal email client
-- tmpmail linux
-- tmpmail bash
-- disposable email address
-- email inbox viewer
-- posix shell email
-- temporary mailbox
-- email message reader
+  - temporary email generator
+  - command line email
+  - terminal email client
+  - tmpmail linux
+  - tmpmail bash
+  - disposable email address
+  - email inbox viewer
+  - posix shell email
+  - temporary mailbox
+  - email message reader
 features:
-- Generate a temporary email inbox
-- List available messages in the inbox
-- Display the content of the most recent email
-- Open and view a specific email by ID
-- View email as raw text, removing HTML formatting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate a temporary email inbox
+  - List available messages in the inbox
+  - Display the content of the most recent email
+  - Open and view a specific email by ID
+  - View email as raw text, removing HTML formatting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tmpmail

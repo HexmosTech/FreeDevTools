@@ -1,29 +1,29 @@
 ---
-title: "Jujutsu Control - Version Control | Online Free DevTools by Hexmos"
+title: 'Jujutsu Control - Version Control | Online Free DevTools by Hexmos'
 name: jj
-path: "/freedevtools/tldr/common/jj/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jj/"
+path: '/freedevtools/tldr/common/jj/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jj/'
 description: "Control revisions with Jujutsu, a distributed version control system. Manage your project's history and collaborate effectively. Free online tool, no registration required."
 category: common
 keywords:
-- jujutsu version control
-- jj vcs
-- distributed version control
-- revision control system
-- code management
-- jj command line tool
-- source code control
-- version history tracking
-- commit management
-- branch management
+  - jujutsu version control
+  - jj vcs
+  - distributed version control
+  - revision control system
+  - code management
+  - jj command line tool
+  - source code control
+  - version history tracking
+  - commit management
+  - branch management
 features:
-- Update revision descriptions using revsets
-- Create new commits on top of specified revisions
-- Create new merge commits from multiple revisions
-- Update the working copy to a specific revision
-- Undo the previous command execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update revision descriptions using revsets
+  - Create new commits on top of specified revisions
+  - Create new merge commits from multiple revisions
+  - Update the working copy to a specific revision
+  - Undo the previous command execution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj

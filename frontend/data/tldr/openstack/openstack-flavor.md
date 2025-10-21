@@ -1,29 +1,29 @@
 ---
-title: "OpenStack Flavor - Manage Instance Flavors | Online Free DevTools by Hexmos"
+title: 'OpenStack Flavor - Manage Instance Flavors | Online Free DevTools by Hexmos'
 name: openstack-flavor
-path: "/freedevtools/tldr/openstack/openstack-flavor/"
-canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-flavor/"
-description: "Manage OpenStack instance flavors effortlessly with OpenStack Flavor. Create, list, and delete virtual hardware templates for your cloud instances. Free online tool, no registration required."
+path: '/freedevtools/tldr/openstack/openstack-flavor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openstack/openstack-flavor/'
+description: 'Manage OpenStack instance flavors effortlessly with OpenStack Flavor. Create, list, and delete virtual hardware templates for your cloud instances. Free online tool, no registration required.'
 category: common
 keywords:
-- openstack flavor manager
-- openstack instance flavor
-- virtual hardware template openstack
-- openstack flavor list
-- openstack flavor create
-- openstack flavor delete
-- cloud flavor management
-- openstack cli flavor
-- openstack flavor configuration
-- openstack flavor customization
+  - openstack flavor manager
+  - openstack instance flavor
+  - virtual hardware template openstack
+  - openstack flavor list
+  - openstack flavor create
+  - openstack flavor delete
+  - cloud flavor management
+  - openstack cli flavor
+  - openstack flavor configuration
+  - openstack flavor customization
 features:
-- List available OpenStack instance flavors.
-- Show detailed information about a specific flavor.
-- Create new OpenStack flavors with custom configurations.
-- Delete existing OpenStack instance flavors.
-- Define ephemeral disk and swap space for OpenStack flavors.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available OpenStack instance flavors.
+  - Show detailed information about a specific flavor.
+  - Create new OpenStack flavors with custom configurations.
+  - Delete existing OpenStack instance flavors.
+  - Define ephemeral disk and swap space for OpenStack flavors.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openstack flavor

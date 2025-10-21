@@ -1,29 +1,29 @@
 ---
-title: "Package Electron Apps - Build Cross-Platform Apps | Online Free DevTools by Hexmos"
+title: 'Package Electron Apps - Build Cross-Platform Apps | Online Free DevTools by Hexmos'
 name: electron-packager
-path: "/freedevtools/tldr/common/electron-packager/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/electron-packager/"
-description: "Package Electron apps easily with electron-packager. Build cross-platform executables for Windows, Linux, and macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/electron-packager/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/electron-packager/'
+description: 'Package Electron apps easily with electron-packager. Build cross-platform executables for Windows, Linux, and macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- Electron app packaging
-- Cross-platform app builder
-- Windows Electron executable
-- Linux Electron executable
-- macOS Electron executable
-- Electron packager command line
-- Electron app distribution
-- Electron build tool
-- Package.json electron app
-- Desktop app builder
+  - Electron app packaging
+  - Cross-platform app builder
+  - Windows Electron executable
+  - Linux Electron executable
+  - macOS Electron executable
+  - Electron packager command line
+  - Electron app distribution
+  - Electron build tool
+  - Package.json electron app
+  - Desktop app builder
 features:
-- Build Electron apps for Windows, Linux, and macOS
-- Package apps for multiple architectures simultaneously
-- Create executables from a package.json file
-- Supports building for specific platforms and architectures
-- Distribute desktop applications built with Electron
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Electron apps for Windows, Linux, and macOS
+  - Package apps for multiple architectures simultaneously
+  - Create executables from a package.json file
+  - Supports building for specific platforms and architectures
+  - Distribute desktop applications built with Electron
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # electron-packager

@@ -1,29 +1,29 @@
 ---
-title: "UV Export - Generate Lockfiles | Online Free DevTools by Hexmos"
+title: 'UV Export - Generate Lockfiles | Online Free DevTools by Hexmos'
 name: uv-export
-path: "/freedevtools/tldr/uv/uv-export/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-export/"
-description: "Generate project lockfiles with UV, converting dependencies to requirements.txt or pylock.toml. Exclude dev dependencies and manage groups. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-export/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-export/'
+description: 'Generate project lockfiles with UV, converting dependencies to requirements.txt or pylock.toml. Exclude dev dependencies and manage groups. Free online tool, no registration required.'
 category: common
 keywords:
-- lockfile generator
-- python dependency management
-- uv export lockfile
-- requirements.txt generator
-- pylock.toml generator
-- python package exporter
-- uv package manager
-- dependency resolver
-- python environment management
-- virtual environment tools
+  - lockfile generator
+  - python dependency management
+  - uv export lockfile
+  - requirements.txt generator
+  - pylock.toml generator
+  - python package exporter
+  - uv package manager
+  - dependency resolver
+  - python environment management
+  - virtual environment tools
 features:
-- Export project dependencies to various formats
-- Exclude development dependencies from the output
-- Include specific optional dependency groups
-- Generate lockfiles without hashes
-- Export dependencies for a specific package
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Export project dependencies to various formats
+  - Exclude development dependencies from the output
+  - Include specific optional dependency groups
+  - Generate lockfiles without hashes
+  - Export dependencies for a specific package
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv export

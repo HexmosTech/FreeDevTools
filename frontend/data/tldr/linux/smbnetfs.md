@@ -1,9 +1,9 @@
 ---
-title: "Mount SMB Shares - Interact with SMB Shares | Online Free DevTools by Hexmos"
+title: 'Mount SMB Shares - Interact with SMB Shares | Online Free DevTools by Hexmos'
 name: smbnetfs
-path: "/freedevtools/tldr/linux/smbnetfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/smbnetfs/"
-description: "Mount SMB shares interactively with smbnetfs, enabling easy access to network files and resources. Explore shared directories, copy files, and manage permissions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/smbnetfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/smbnetfs/'
+description: 'Mount SMB shares interactively with smbnetfs, enabling easy access to network files and resources. Explore shared directories, copy files, and manage permissions. Free online tool, no registration required.'
 category: linux
 keywords:
   - SMB share mounting
@@ -22,8 +22,8 @@ features:
   - Browse SMB network interactively.
   - Access remote files and directories.
   - Integrate SMB resources into the local filesystem.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smbnetfs

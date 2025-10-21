@@ -1,9 +1,9 @@
 ---
-title: "Monitor LXC Containers - Resource Usage with lxc-top | Online Free DevTools by Hexmos"
+title: 'Monitor LXC Containers - Resource Usage with lxc-top | Online Free DevTools by Hexmos'
 name: lxc-top
-path: "/freedevtools/tldr/linux/lxc-top/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-top/"
-description: "Monitor LXC container resource usage with lxc-top.  View CPU, memory, and I/O statistics for Linux containers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lxc-top/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lxc-top/'
+description: 'Monitor LXC container resource usage with lxc-top.  View CPU, memory, and I/O statistics for Linux containers. Free online tool, no registration required.'
 category: linux
 keywords:
   - lxc container monitor
@@ -22,8 +22,8 @@ features:
   - Provides customizable update intervals.
   - Offers a command-line interface for efficient monitoring.
   - Enables quick identification of resource-intensive containers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lxc-top

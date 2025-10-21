@@ -1,29 +1,29 @@
 ---
-title: "DNS Lookup - Analyze DNS Records | Online Free DevTools by Hexmos"
+title: 'DNS Lookup - Analyze DNS Records | Online Free DevTools by Hexmos'
 name: dig
-path: "/freedevtools/tldr/common/dig/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dig/"
-description: "Analyze DNS records quickly with dig. Perform DNS lookups, query specific record types, and troubleshoot network issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dig/'
+description: 'Analyze DNS records quickly with dig. Perform DNS lookups, query specific record types, and troubleshoot network issues. Free online tool, no registration required.'
 category: common
 keywords:
-- DNS lookup online
-- DNS record analyzer
-- DNS troubleshooting tool
-- dig command linux
-- dig command macos
-- dig command windows
-- DNS server query
-- reverse DNS lookup
-- authoritative name server
-- DNS trace route
+  - DNS lookup online
+  - DNS record analyzer
+  - DNS troubleshooting tool
+  - dig command linux
+  - dig command macos
+  - dig command windows
+  - DNS server query
+  - reverse DNS lookup
+  - authoritative name server
+  - DNS trace route
 features:
-- Perform DNS lookups for A records
-- Query specific DNS record types (A, MX, TXT, CNAME, NS)
-- Specify alternate DNS servers to query
-- Perform reverse DNS lookups on IP addresses
-- Trace the path to resolve a domain name
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform DNS lookups for A records
+  - Query specific DNS record types (A, MX, TXT, CNAME, NS)
+  - Specify alternate DNS servers to query
+  - Perform reverse DNS lookups on IP addresses
+  - Trace the path to resolve a domain name
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dig

@@ -1,9 +1,9 @@
 ---
-title: "Control Groups - Monitor System Resources with systemd-cgtop | Online Free DevTools by Hexmos"
+title: 'Control Groups - Monitor System Resources with systemd-cgtop | Online Free DevTools by Hexmos'
 name: systemd-cgtop
-path: "/freedevtools/tldr/linux/systemd-cgtop/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-cgtop/"
-description: "Monitor and control system resource usage with systemd-cgtop.  View CPU, memory, and I/O load for control groups. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-cgtop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-cgtop/'
+description: 'Monitor and control system resource usage with systemd-cgtop.  View CPU, memory, and I/O load for control groups. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux systemd monitor
@@ -22,8 +22,8 @@ features:
   - Allows for customizable update intervals.
   - Shows CPU usage as percentage or absolute time.
   - Filters to display only userspace processes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-cgtop

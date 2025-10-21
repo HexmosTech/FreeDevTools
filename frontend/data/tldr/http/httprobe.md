@@ -1,29 +1,29 @@
 ---
-title: "HTTP Probe - Check Server Status | Online Free DevTools by Hexmos"
+title: 'HTTP Probe - Check Server Status | Online Free DevTools by Hexmos'
 name: httprobe
-path: "/freedevtools/tldr/http/httprobe/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/httprobe/"
-description: "Probe HTTP and HTTPS server status with httprobe. Identify working web servers and troubleshoot connection issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/httprobe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/httprobe/'
+description: 'Probe HTTP and HTTPS server status with httprobe. Identify working web servers and troubleshoot connection issues. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP probe
-- HTTPS probe
-- Web server status check
-- Domain checker
-- URL probing
-- Connection testing
-- Port scanner
-- Network analysis
-- httprobe command line
-- server accessibility check
+  - HTTP probe
+  - HTTPS probe
+  - Web server status check
+  - Domain checker
+  - URL probing
+  - Connection testing
+  - Port scanner
+  - Network analysis
+  - httprobe command line
+  - server accessibility check
 features:
-- Detect working HTTP and HTTPS servers from a list of domains.
-- Prioritize HTTPS checks before HTTP checks.
-- Probe custom ports using specified protocols.
-- Verify server status using command line interface.
-- Determine server accessibility for network troubleshooting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect working HTTP and HTTPS servers from a list of domains.
+  - Prioritize HTTPS checks before HTTP checks.
+  - Probe custom ports using specified protocols.
+  - Verify server status using command line interface.
+  - Determine server accessibility for network troubleshooting.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # httprobe

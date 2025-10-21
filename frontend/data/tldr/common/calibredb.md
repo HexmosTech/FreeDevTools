@@ -1,29 +1,29 @@
 ---
-title: "Control E-book Database - Calibredb Command | Online Free DevTools by Hexmos"
+title: 'Control E-book Database - Calibredb Command | Online Free DevTools by Hexmos'
 name: calibredb
-path: "/freedevtools/tldr/common/calibredb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/calibredb/"
-description: "Control your e-book library database with Calibredb. Manage, search, and add books effortlessly with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/calibredb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/calibredb/'
+description: 'Control your e-book library database with Calibredb. Manage, search, and add books effortlessly with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- e-book database manager
-- calibre command line tool
-- ebook metadata editor
-- calibre library management
-- ebook database manipulation
-- calibredb add ebooks
-- calibredb remove ebooks
-- calibredb search ebooks
-- calibre ebook management linux
-- ebook command line utility
+  - e-book database manager
+  - calibre command line tool
+  - ebook metadata editor
+  - calibre library management
+  - ebook database manipulation
+  - calibredb add ebooks
+  - calibredb remove ebooks
+  - calibredb search ebooks
+  - calibre ebook management linux
+  - ebook command line utility
 features:
-- List e-books with detailed information
-- Search e-books using specific terms
-- Add e-books individually or recursively from directories
-- Remove e-books by their IDs
-- Manage and organize large e-book collections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List e-books with detailed information
+  - Search e-books using specific terms
+  - Add e-books individually or recursively from directories
+  - Remove e-books by their IDs
+  - Manage and organize large e-book collections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # calibredb

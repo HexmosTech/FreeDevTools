@@ -1,29 +1,29 @@
 ---
-title: "Process Monitor - Display Active Processes | Online Free DevTools by Hexmos"
+title: 'Process Monitor - Display Active Processes | Online Free DevTools by Hexmos'
 name: procs
-path: "/freedevtools/tldr/common/procs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/procs/"
-description: "Monitor active processes with procs. View CPU usage and manage system resources on Linux, macOS, and other Unix-like systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/procs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/procs/'
+description: 'Monitor active processes with procs. View CPU usage and manage system resources on Linux, macOS, and other Unix-like systems. Free online tool, no registration required.'
 category: common
 keywords:
-- process monitor
-- process explorer
-- system monitor
-- linux process
-- macos process
-- process management
-- cpu usage
-- memory usage
-- process tree
-- command line process
+  - process monitor
+  - process explorer
+  - system monitor
+  - linux process
+  - macos process
+  - process management
+  - cpu usage
+  - memory usage
+  - process tree
+  - command line process
 features:
-- List active processes with PID, user, CPU, and memory usage.
-- Display processes in a tree format for hierarchical viewing.
-- Filter processes based on command name, PID, or user.
-- Sort processes by CPU or memory usage in ascending or descending order.
-- Combine multiple filter criteria with AND/OR logic.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List active processes with PID, user, CPU, and memory usage.
+  - Display processes in a tree format for hierarchical viewing.
+  - Filter processes based on command name, PID, or user.
+  - Sort processes by CPU or memory usage in ascending or descending order.
+  - Combine multiple filter criteria with AND/OR logic.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # procs

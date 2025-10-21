@@ -1,29 +1,29 @@
 ---
-title: "Git Status - Track File Changes | Online Free DevTools by Hexmos"
+title: 'Git Status - Track File Changes | Online Free DevTools by Hexmos'
 name: git-status
-path: "/freedevtools/tldr/git/git-status/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-status/"
-description: "Track file changes with Git Status. Easily identify modified, added, and deleted files in your Git repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-status/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-status/'
+description: 'Track file changes with Git Status. Easily identify modified, added, and deleted files in your Git repository. Free online tool, no registration required.'
 category: common
 keywords:
-- git status changes
-- git track file changes
-- git modified files
-- git added files
-- git deleted files
-- git repository status
-- git staging area status
-- git working directory status
-- linux git status
-- macos git status
+  - git status changes
+  - git track file changes
+  - git modified files
+  - git added files
+  - git deleted files
+  - git repository status
+  - git staging area status
+  - git working directory status
+  - linux git status
+  - macos git status
 features:
-- List changes in the working directory
-- Compare staged files to the repository
-- Display the status of branches
-- Show the number of stashed entries
-- Hide untracked files in the output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List changes in the working directory
+  - Compare staged files to the repository
+  - Display the status of branches
+  - Show the number of stashed entries
+  - Hide untracked files in the output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git status

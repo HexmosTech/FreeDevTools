@@ -1,29 +1,29 @@
 ---
-title: "HandBrakeCLI - Convert Videos | Online Free DevTools by Hexmos"
+title: 'HandBrakeCLI - Convert Videos | Online Free DevTools by Hexmos'
 name: handbrakecli
-path: "/freedevtools/tldr/common/handbrakecli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/handbrakecli/"
-description: "Convert videos with HandBrakeCLI. Compress video files and rip DVDs using this powerful command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/handbrakecli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/handbrakecli/'
+description: 'Convert videos with HandBrakeCLI. Compress video files and rip DVDs using this powerful command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- video converter cli
-- handbrakecli command line
-- dvd ripping linux
-- video compression macos
-- mkv converter
-- mp4 converter
-- x264 encoder
-- video resizing tool
-- handbrake presets
-- batch video conversion
+  - video converter cli
+  - handbrakecli command line
+  - dvd ripping linux
+  - video compression macos
+  - mkv converter
+  - mp4 converter
+  - x264 encoder
+  - video resizing tool
+  - handbrake presets
+  - batch video conversion
 features:
-- Convert video files to various formats
-- Rip DVDs using command line
-- Resize video dimensions
-- Apply HandBrake presets for optimized conversion
-- Extract CSS keys from DVDs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert video files to various formats
+  - Rip DVDs using command line
+  - Resize video dimensions
+  - Apply HandBrake presets for optimized conversion
+  - Extract CSS keys from DVDs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # handbrakecli

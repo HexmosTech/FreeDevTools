@@ -1,29 +1,29 @@
 ---
-title: "XZGrep - Search Compressed Files with Regular Expressions | Online Free DevTools by Hexmos"
+title: 'XZGrep - Search Compressed Files with Regular Expressions | Online Free DevTools by Hexmos'
 name: xzgrep
-path: "/freedevtools/tldr/common/xzgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xzgrep/"
-description: "Search compressed files with XZGrep using regular expressions. Analyze xz, gzip, bzip2 and other compressed archives. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xzgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xzgrep/'
+description: 'Search compressed files with XZGrep using regular expressions. Analyze xz, gzip, bzip2 and other compressed archives. Free online tool, no registration required.'
 category: common
 keywords:
-- compressed file search
-- xzgrep regular expression
-- grep compressed archives
-- xz file analyzer
-- gzip file search
-- bzip2 file search
-- lzma file search
-- zstd file search
-- linux compressed search
-- command line grep
+  - compressed file search
+  - xzgrep regular expression
+  - grep compressed archives
+  - xz file analyzer
+  - gzip file search
+  - bzip2 file search
+  - lzma file search
+  - zstd file search
+  - linux compressed search
+  - command line grep
 features:
-- Search compressed files with regular expressions
-- Search for exact strings within compressed files
-- Display line numbers of matches in compressed files
-- Use extended regular expressions in case-insensitive mode
-- Print context lines around matching lines
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search compressed files with regular expressions
+  - Search for exact strings within compressed files
+  - Display line numbers of matches in compressed files
+  - Use extended regular expressions in case-insensitive mode
+  - Print context lines around matching lines
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xzgrep

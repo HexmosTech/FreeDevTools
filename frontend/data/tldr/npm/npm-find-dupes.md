@@ -1,29 +1,29 @@
 ---
-title: "Find Duplicates - Analyze npm Dependencies | Online Free DevTools by Hexmos"
+title: 'Find Duplicates - Analyze npm Dependencies | Online Free DevTools by Hexmos'
 name: npm-find-dupes
-path: "/freedevtools/tldr/npm/npm-find-dupes/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-find-dupes/"
-description: "Analyze npm dependencies with npm-find-dupes. Quickly identify duplicate packages in your node_modules folder and optimize your project. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-find-dupes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-find-dupes/'
+description: 'Analyze npm dependencies with npm-find-dupes. Quickly identify duplicate packages in your node_modules folder and optimize your project. Free online tool, no registration required.'
 category: common
 keywords:
-- npm dependency analyzer
-- duplicate package finder
-- node_modules cleaner
-- javascript dependency check
-- npm package manager
-- node dependency manager
-- npm duplicate dependencies
-- node package analysis
-- npm package analyzer
-- find duplicate npm packages
+  - npm dependency analyzer
+  - duplicate package finder
+  - node_modules cleaner
+  - javascript dependency check
+  - npm package manager
+  - node dependency manager
+  - npm duplicate dependencies
+  - node package analysis
+  - npm package analyzer
+  - find duplicate npm packages
 features:
-- Identifies duplicate packages in `node_modules`
-- Includes `devDependencies` in the analysis
-- Excludes optional dependencies from detection
-- Outputs duplicate information in JSON format
-- Limits or excludes searches to/from specific scopes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identifies duplicate packages in `node_modules`
+  - Includes `devDependencies` in the analysis
+  - Excludes optional dependencies from detection
+  - Outputs duplicate information in JSON format
+  - Limits or excludes searches to/from specific scopes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm find-dupes

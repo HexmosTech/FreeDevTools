@@ -1,29 +1,29 @@
 ---
-title: "SpeedCrunch - Scientific Calculator | Online Free DevTools by Hexmos"
+title: 'SpeedCrunch - Scientific Calculator | Online Free DevTools by Hexmos'
 name: speedcrunch
-path: "/freedevtools/tldr/common/speedcrunch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/speedcrunch/"
-description: "Calculate complex equations with SpeedCrunch, a high-precision scientific calculator. Perform advanced mathematical operations easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/speedcrunch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/speedcrunch/'
+description: 'Calculate complex equations with SpeedCrunch, a high-precision scientific calculator. Perform advanced mathematical operations easily. Free online tool, no registration required.'
 category: common
 keywords:
-- scientific calculator
-- high precision calculator
-- equation solver
-- formula calculator
-- calculator Linux
-- calculator macOS
-- speedcrunch commands
-- math calculator
-- calculator keyboard shortcuts
-- command line calculator
+  - scientific calculator
+  - high precision calculator
+  - equation solver
+  - formula calculator
+  - calculator Linux
+  - calculator macOS
+  - speedcrunch commands
+  - math calculator
+  - calculator keyboard shortcuts
+  - command line calculator
 features:
-- Perform high-precision calculations
-- Copy the last calculation result
-- Open the formula book for reference
-- Clear the calculator history
-- Wrap selected text in parentheses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform high-precision calculations
+  - Copy the last calculation result
+  - Open the formula book for reference
+  - Clear the calculator history
+  - Wrap selected text in parentheses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # speedcrunch

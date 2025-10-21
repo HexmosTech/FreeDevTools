@@ -1,9 +1,9 @@
 ---
-title: "Apt-File Search - Find Files in APT Packages | Online Free DevTools by Hexmos"
+title: 'Apt-File Search - Find Files in APT Packages | Online Free DevTools by Hexmos'
 name: apt-file
-path: "/freedevtools/tldr/linux/apt-file/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-file/"
-description: "Search for files within APT packages using apt-file.  Find specific files, list package contents, and use regular expressions for advanced searches. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apt-file/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apt-file/'
+description: 'Search for files within APT packages using apt-file.  Find specific files, list package contents, and use regular expressions for advanced searches. Free online tool, no registration required.'
 category: linux
 keywords:
   - apt package file search
@@ -22,8 +22,8 @@ features:
   - Utilize regular expressions for advanced file searches.
   - Update the APT package database for accurate results.
   - Efficiently locate files based on file name or path.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apt-file

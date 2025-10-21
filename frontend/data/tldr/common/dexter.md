@@ -1,29 +1,29 @@
 ---
-title: "Create Kubectl User - Authenticate with Dexter OIDC | Online Free DevTools by Hexmos"
+title: 'Create Kubectl User - Authenticate with Dexter OIDC | Online Free DevTools by Hexmos'
 name: dexter
-path: "/freedevtools/tldr/common/dexter/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dexter/"
-description: "Create Kubectl user with Dexter, authenticate with OpenID Connect. Manage your Kubernetes cluster easily with OIDC integration. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dexter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dexter/'
+description: 'Create Kubectl user with Dexter, authenticate with OpenID Connect. Manage your Kubernetes cluster easily with OIDC integration. Free online tool, no registration required.'
 category: common
 keywords:
-- kubectl user creation
-- OIDC authentication
-- kubernetes authentication
-- dexter oidc configuration
-- kubectl user management
-- google oidc authentication
-- kubectl authentication flow
-- command line authentication
-- kubernetes cluster security
-- oidc client configuration
+  - kubectl user creation
+  - OIDC authentication
+  - kubernetes authentication
+  - dexter oidc configuration
+  - kubectl user management
+  - google oidc authentication
+  - kubectl authentication flow
+  - command line authentication
+  - kubernetes cluster security
+  - oidc client configuration
 features:
-- Authenticate kubectl users using OpenID Connect
-- Support Google OIDC for kubectl authentication
-- Override default kube configuration file location
-- Simplify kubectl authentication process
-- Enable secure access to Kubernetes clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate kubectl users using OpenID Connect
+  - Support Google OIDC for kubectl authentication
+  - Override default kube configuration file location
+  - Simplify kubectl authentication process
+  - Enable secure access to Kubernetes clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dexter

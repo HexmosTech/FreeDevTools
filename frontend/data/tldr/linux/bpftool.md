@@ -1,9 +1,9 @@
 ---
-title: "BPF Program Manager - Control eBPF Programs | Online Free DevTools by Hexmos"
+title: 'BPF Program Manager - Control eBPF Programs | Online Free DevTools by Hexmos'
 name: bpftool
-path: "/freedevtools/tldr/linux/bpftool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bpftool/"
-description: "Control and inspect eBPF programs with bpftool. Manage maps, attachments, and features easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bpftool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bpftool/'
+description: 'Control and inspect eBPF programs with bpftool. Manage maps, attachments, and features easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - eBPF program manager
@@ -22,8 +22,8 @@ features:
   - Manage and examine eBPF maps
   - Probe network devices for eBPF features
   - Execute commands in batch mode from a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bpftool

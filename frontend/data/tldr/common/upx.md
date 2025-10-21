@@ -1,29 +1,29 @@
 ---
-title: "UPX Compressor - Compress Executables | Online Free DevTools by Hexmos"
+title: 'UPX Compressor - Compress Executables | Online Free DevTools by Hexmos'
 name: upx
-path: "/freedevtools/tldr/common/upx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/upx/"
-description: "Compress executables easily with UPX Compressor. Reduce file sizes and optimize applications for distribution. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/upx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/upx/'
+description: 'Compress executables easily with UPX Compressor. Reduce file sizes and optimize applications for distribution. Free online tool, no registration required.'
 category: common
 keywords:
-- executable compressor
-- file compression tool
-- upx command
-- upx linux
-- upx windows
-- upx macos
-- executable packer
-- application optimizer
-- file size reducer
-- binary compression
+  - executable compressor
+  - file compression tool
+  - upx command
+  - upx linux
+  - upx windows
+  - upx macos
+  - executable packer
+  - application optimizer
+  - file size reducer
+  - binary compression
 features:
-- Compress executable files to reduce size
-- Decompress executable files to restore original size
-- Support multiple executable formats
-- Display help information about UPX usage
-- Optimize applications for faster loading
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress executable files to reduce size
+  - Decompress executable files to restore original size
+  - Support multiple executable formats
+  - Display help information about UPX usage
+  - Optimize applications for faster loading
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # upx

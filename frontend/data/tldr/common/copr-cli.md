@@ -1,29 +1,29 @@
 ---
-title: "Build RPMs - Manage COPR Projects with copr-cli | Online Free DevTools by Hexmos"
+title: 'Build RPMs - Manage COPR Projects with copr-cli | Online Free DevTools by Hexmos'
 name: copr-cli
-path: "/freedevtools/tldr/common/copr-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/copr-cli/"
-description: "Build RPMs with copr-cli for Fedora projects. Manage COPR repositories and trigger builds from local spec files or Git repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/copr-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/copr-cli/'
+description: 'Build RPMs with copr-cli for Fedora projects. Manage COPR repositories and trigger builds from local spec files or Git repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- rpm builder
-- copr builder
-- fedora rpm
-- rpm build tool
-- copr-cli rpm
-- linux rpm builder
-- copr project manager
-- copr build trigger
-- copr repository build
-- fedora package build
+  - rpm builder
+  - copr builder
+  - fedora rpm
+  - rpm build tool
+  - copr-cli rpm
+  - linux rpm builder
+  - copr project manager
+  - copr build trigger
+  - copr repository build
+  - fedora package build
 features:
-- Build RPM packages from local spec files on COPR.
-- Manage and monitor the status of COPR builds.
-- Trigger builds from public Git repositories.
-- Authenticate and display the logged-in COPR user.
-- List existing builds within a specified COPR repository.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build RPM packages from local spec files on COPR.
+  - Manage and monitor the status of COPR builds.
+  - Trigger builds from public Git repositories.
+  - Authenticate and display the logged-in COPR user.
+  - List existing builds within a specified COPR repository.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # copr-cli

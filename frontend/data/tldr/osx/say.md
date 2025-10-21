@@ -1,29 +1,29 @@
 ---
-title: "Text to Speech - Create Audio from Text with Say | Online Free DevTools by Hexmos"
+title: 'Text to Speech - Create Audio from Text with Say | Online Free DevTools by Hexmos'
 name: say
-path: "/freedevtools/tldr/osx/say/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/say/"
-description: "Create text to speech audio with Say. Convert text into spoken audio files on macOS using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/say/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/say/'
+description: 'Create text to speech audio with Say. Convert text into spoken audio files on macOS using the command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- text to speech generator
-- speech synthesis macOS
-- command line text reader
-- text to audio converter
-- macOS speech command
-- terminal text to speech
-- say command example
-- text to voice osx
-- audio file generator
-- command line audio creator
+  - text to speech generator
+  - speech synthesis macOS
+  - command line text reader
+  - text to audio converter
+  - macOS speech command
+  - terminal text to speech
+  - say command example
+  - text to voice osx
+  - audio file generator
+  - command line audio creator
 features:
-- Convert text input to spoken audio
-- Generate audio files from command line input
-- Customize voice and speech rate
-- List available speech voices
-- Read text files aloud
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert text input to spoken audio
+  - Generate audio files from command line input
+  - Customize voice and speech rate
+  - List available speech voices
+  - Read text files aloud
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # say

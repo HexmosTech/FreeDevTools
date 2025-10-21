@@ -1,9 +1,9 @@
 ---
-title: "Search SlackBuilds - Install Packages with Sport | Online Free DevTools by Hexmos"
+title: 'Search SlackBuilds - Install Packages with Sport | Online Free DevTools by Hexmos'
 name: sport
-path: "/freedevtools/tldr/linux/sport/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sport/"
-description: "Search and install SlackBuilds with Sport. Quickly find, check, and install packages on your Slackware system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sport/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sport/'
+description: 'Search and install SlackBuilds with Sport. Quickly find, check, and install packages on your Slackware system. Free online tool, no registration required.'
 category: linux
 keywords:
   - slackbuild package manager
@@ -22,8 +22,8 @@ features:
   - Display README and .info files
   - Install packages with dependency resolution
   - Update package lists from remote repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sport

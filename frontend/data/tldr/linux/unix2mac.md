@@ -1,9 +1,9 @@
 ---
-title: "Convert Line Endings - Unix2Mac Tool | Online Free DevTools by Hexmos"
+title: 'Convert Line Endings - Unix2Mac Tool | Online Free DevTools by Hexmos'
 name: unix2mac
-path: "/freedevtools/tldr/linux/unix2mac/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/unix2mac/"
-description: "Convert line endings with Unix2Mac. Change Unix-style line feeds to macOS carriage returns for file compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/unix2mac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/unix2mac/'
+description: 'Convert line endings with Unix2Mac. Change Unix-style line feeds to macOS carriage returns for file compatibility. Free online tool, no registration required.'
 category: linux
 keywords:
   - macOS line ending conversion
@@ -22,8 +22,8 @@ features:
   - Display file information regarding line endings
   - Keep, add, or remove Byte Order Mark (BOM)
   - Modify line endings in place
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # unix2mac

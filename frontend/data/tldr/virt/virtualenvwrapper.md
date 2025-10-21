@@ -1,29 +1,29 @@
 ---
-title: "Create Virtual Environments - Control Python Environments | Online Free DevTools by Hexmos"
+title: 'Create Virtual Environments - Control Python Environments | Online Free DevTools by Hexmos'
 name: virtualenvwrapper
-path: "/freedevtools/tldr/virt/virtualenvwrapper/"
-canonical: "https://hexmos.com/freedevtools/tldr/virt/virtualenvwrapper/"
-description: "Create Python virtual environments with Virtualenvwrapper. Manage multiple Python versions and dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/virt/virtualenvwrapper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virt/virtualenvwrapper/'
+description: 'Create Python virtual environments with Virtualenvwrapper. Manage multiple Python versions and dependencies. Free online tool, no registration required.'
 category: common
 keywords:
-- python virtual environment
-- virtual environment manager
-- python dependency management
-- virtualenvwrapper commands
-- python virtualenv creation
-- python virtualenv activation
-- linux virtual environment
-- macos virtual environment
-- python environment isolation
-- virtual environment removal
+  - python virtual environment
+  - virtual environment manager
+  - python dependency management
+  - virtualenvwrapper commands
+  - python virtualenv creation
+  - python virtualenv activation
+  - linux virtual environment
+  - macos virtual environment
+  - python environment isolation
+  - virtual environment removal
 features:
-- Create new Python virtual environments
-- Activate and switch between virtual environments
-- Deactivate virtual environments
-- List available virtual environments
-- Remove existing virtual environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Python virtual environments
+  - Activate and switch between virtual environments
+  - Deactivate virtual environments
+  - List available virtual environments
+  - Remove existing virtual environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virtualenvwrapper

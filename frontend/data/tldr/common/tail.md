@@ -1,29 +1,29 @@
 ---
-title: "Tail File - Display Last Lines | Online Free DevTools by Hexmos"
+title: 'Tail File - Display Last Lines | Online Free DevTools by Hexmos'
 name: tail
-path: "/freedevtools/tldr/common/tail/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tail/"
-description: "Display last lines with Tail File. Monitor file changes in real-time and extract relevant data easily using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tail/'
+description: 'Display last lines with Tail File. Monitor file changes in real-time and extract relevant data easily using command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- tail file
-- tail log file
-- tail command
-- linux tail command
-- unix tail command
-- macos tail command
-- display last lines
-- monitor log file
-- real-time file monitoring
-- extract file data
+  - tail file
+  - tail log file
+  - tail command
+  - linux tail command
+  - unix tail command
+  - macos tail command
+  - display last lines
+  - monitor log file
+  - real-time file monitoring
+  - extract file data
 features:
-- Display the last 'n' lines of a file
-- Continuously monitor a file for new lines
-- Display a specific number of bytes from the end of a file
-- Begin display from a specific line number
-- Re-attempt file access when the file becomes inaccessible
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the last 'n' lines of a file
+  - Continuously monitor a file for new lines
+  - Display a specific number of bytes from the end of a file
+  - Begin display from a specific line number
+  - Re-attempt file access when the file becomes inaccessible
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tail

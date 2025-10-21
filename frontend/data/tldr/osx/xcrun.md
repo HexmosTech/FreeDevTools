@@ -1,29 +1,29 @@
 ---
-title: "XCrun - Locate and Run Dev Tools | Online Free DevTools by Hexmos"
+title: 'XCrun - Locate and Run Dev Tools | Online Free DevTools by Hexmos'
 name: xcrun
-path: "/freedevtools/tldr/osx/xcrun/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xcrun/"
-description: "Locate and run development tools with XCrun. Manage Xcode development tools and properties. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xcrun/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xcrun/'
+description: 'Locate and run development tools with XCrun. Manage Xcode development tools and properties. Free online tool, no registration required.'
 category: osx
 keywords:
-- xcrun macos
-- xcrun xcode
-- find developer tools macos
-- run developer tools macos
-- xcode command line tools
-- macos command line utilities
-- sdk lookup macos
-- toolchain manager macos
-- development tool launcher
-- command line dev tools
+  - xcrun macos
+  - xcrun xcode
+  - find developer tools macos
+  - run developer tools macos
+  - xcode command line tools
+  - macos command line utilities
+  - sdk lookup macos
+  - toolchain manager macos
+  - development tool launcher
+  - command line dev tools
 features:
-- Locate development tools for specific SDKs
-- Run tools from the active developer directory
-- Specify toolchains for tool execution
-- Display verbose output for debugging
-- Find Xcode command line tools
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Locate development tools for specific SDKs
+  - Run tools from the active developer directory
+  - Specify toolchains for tool execution
+  - Display verbose output for debugging
+  - Find Xcode command line tools
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xcrun

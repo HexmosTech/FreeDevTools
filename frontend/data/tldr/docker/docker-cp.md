@@ -1,29 +1,29 @@
 ---
-title: "Copy Files - Manage Docker Filesystems with Docker CP | Online Free DevTools by Hexmos"
+title: 'Copy Files - Manage Docker Filesystems with Docker CP | Online Free DevTools by Hexmos'
 name: docker-cp
-path: "/freedevtools/tldr/docker/docker-cp/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-cp/"
-description: "Manage Docker filesystems effortlessly with Docker CP. Transfer files between host and container, ensuring seamless data movement. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-cp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-cp/'
+description: 'Manage Docker filesystems effortlessly with Docker CP. Transfer files between host and container, ensuring seamless data movement. Free online tool, no registration required.'
 category: common
 keywords:
-- docker copy files
-- docker cp host to container
-- docker cp container to host
-- docker file transfer
-- docker filesystem management
-- linux docker cp
-- macos docker cp
-- windows docker cp
-- docker container copy
-- docker volume copy
+  - docker copy files
+  - docker cp host to container
+  - docker cp container to host
+  - docker file transfer
+  - docker filesystem management
+  - linux docker cp
+  - macos docker cp
+  - windows docker cp
+  - docker container copy
+  - docker volume copy
 features:
-- Copy files and directories from host to container
-- Copy files and directories from container to host
-- Follow symlinks when copying from host to container
-- Transfer data between host and Docker environments
-- Manage container filesystems via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy files and directories from host to container
+  - Copy files and directories from container to host
+  - Follow symlinks when copying from host to container
+  - Transfer data between host and Docker environments
+  - Manage container filesystems via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker cp

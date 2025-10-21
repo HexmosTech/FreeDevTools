@@ -1,29 +1,29 @@
 ---
-title: "SFDK Engine - Control Build Processes | Online Free DevTools by Hexmos"
+title: 'SFDK Engine - Control Build Processes | Online Free DevTools by Hexmos'
 name: sfdk-engine
-path: "/freedevtools/tldr/sfdk/sfdk-engine/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-engine/"
-description: "Control build processes with SFDK Engine. Manage engine properties, execute commands, and monitor build status for Sailfish OS. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-engine/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-engine/'
+description: 'Control build processes with SFDK Engine. Manage engine properties, execute commands, and monitor build status for Sailfish OS. Free online tool, no registration required.'
 category: common
 keywords:
-- SFDK build engine
-- Sailfish OS build
-- build process control
-- engine property management
-- Sailfish SDK command
-- SFDK command line
-- QTCreator build tool
-- build environment management
-- application development
-- Sailfish IDE engine
+  - SFDK build engine
+  - Sailfish OS build
+  - build process control
+  - engine property management
+  - Sailfish SDK command
+  - SFDK command line
+  - QTCreator build tool
+  - build environment management
+  - application development
+  - Sailfish IDE engine
 features:
-- Start and stop the SFDK build engine
-- Set and display engine properties
-- Execute commands directly on the build engine
-- Show current status of the build engine
-- Open an interactive shell on the build engine
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and stop the SFDK build engine
+  - Set and display engine properties
+  - Execute commands directly on the build engine
+  - Show current status of the build engine
+  - Open an interactive shell on the build engine
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk engine

@@ -1,9 +1,9 @@
 ---
-title: "Scan API Paths - kiterunner Tool | Online Free DevTools by Hexmos"
+title: 'Scan API Paths - kiterunner Tool | Online Free DevTools by Hexmos'
 name: kiterunner
-path: "/freedevtools/tldr/kiterunner/kiterunner/"
-canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner/"
-description: "Scan API paths with kiterunner, a powerful web scanner for API endpoint discovery. Use wordlists and kitebuilder schemas for comprehensive discovery. Free online tool, no registration required."
+path: '/freedevtools/tldr/kiterunner/kiterunner/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner/'
+description: 'Scan API paths with kiterunner, a powerful web scanner for API endpoint discovery. Use wordlists and kitebuilder schemas for comprehensive discovery. Free online tool, no registration required.'
 category: common
 keywords:
   - api path scanner
@@ -22,8 +22,8 @@ features:
   - Manipulate kitebuilder schemas efficiently
   - Manage cached and remote wordlists effectively
   - Discover API endpoints with contextual scanning
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kiterunner

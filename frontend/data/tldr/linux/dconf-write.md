@@ -1,9 +1,9 @@
 ---
-title: "Dconf Write - Control Key Values | Online Free DevTools by Hexmos"
+title: 'Dconf Write - Control Key Values | Online Free DevTools by Hexmos'
 name: dconf-write
-path: "/freedevtools/tldr/linux/dconf-write/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dconf-write/"
-description: "Control and modify key values in Dconf databases with dconf write.  Manage various data types including strings, integers, booleans, and arrays. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dconf-write/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dconf-write/'
+description: 'Control and modify key values in Dconf databases with dconf write.  Manage various data types including strings, integers, booleans, and arrays. Free online tool, no registration required.'
 category: linux
 keywords:
   - dconf key write
@@ -21,8 +21,8 @@ features:
   - Modify existing key values or create new ones.
   - Supports writing empty array key values.
   - Provides a command-line interface for precise configuration changes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dconf write

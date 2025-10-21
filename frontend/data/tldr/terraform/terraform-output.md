@@ -1,29 +1,29 @@
 ---
-title: "Terraform Output - Generate Data | Online Free DevTools by Hexmos"
+title: 'Terraform Output - Generate Data | Online Free DevTools by Hexmos'
 name: terraform-output
-path: "/freedevtools/tldr/terraform/terraform-output/"
-canonical: "https://hexmos.com/freedevtools/tldr/terraform/terraform-output/"
-description: "Generate Terraform output values with ease. Export structured data about your Terraform resources. Access values in JSON format and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/terraform/terraform-output/'
+canonical: 'https://hexmos.com/freedevtools/tldr/terraform/terraform-output/'
+description: 'Generate Terraform output values with ease. Export structured data about your Terraform resources. Access values in JSON format and more. Free online tool, no registration required.'
 category: common
 keywords:
-- terraform output
-- terraform data export
-- terraform resource data
-- infrastructure output
-- configuration management data
-- json output
-- raw string output
-- terraform cli
-- terraform automation
-- terraform resource values
+  - terraform output
+  - terraform data export
+  - terraform resource data
+  - infrastructure output
+  - configuration management data
+  - json output
+  - raw string output
+  - terraform cli
+  - terraform automation
+  - terraform resource values
 features:
-- Display all outputs for the root module
-- Output a value with a specific name
-- Convert the output value to a raw string
-- Format the outputs as a JSON object
-- Export structured data about Terraform resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all outputs for the root module
+  - Output a value with a specific name
+  - Convert the output value to a raw string
+  - Format the outputs as a JSON object
+  - Export structured data about Terraform resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # terraform output

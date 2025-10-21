@@ -1,9 +1,9 @@
 ---
-title: "Resolve IP - Resolve Hostnames to IPs | Online Free DevTools by Hexmos"
+title: 'Resolve IP - Resolve Hostnames to IPs | Online Free DevTools by Hexmos'
 name: resolveip
-path: "/freedevtools/tldr/linux/resolveip/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/resolveip/"
-description: "Resolve hostnames to IP addresses with Resolve IP. Quickly convert domain names to IPs and vice-versa. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/resolveip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/resolveip/'
+description: 'Resolve hostnames to IP addresses with Resolve IP. Quickly convert domain names to IPs and vice-versa. Free online tool, no registration required.'
 category: linux
 keywords:
   - hostname to IP resolver
@@ -22,8 +22,8 @@ features:
   - Perform silent IP resolution with less output
   - Support reverse DNS lookups
   - Provide quick hostname to IP conversions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # resolveip

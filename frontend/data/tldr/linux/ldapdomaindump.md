@@ -1,29 +1,29 @@
 ---
-title: "LDAP Dump - Extract Domain Info | Online Free DevTools by Hexmos"
+title: 'LDAP Dump - Extract Domain Info | Online Free DevTools by Hexmos'
 name: ldapdomaindump
-path: "/freedevtools/tldr/linux/ldapdomaindump/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ldapdomaindump/"
-description: "Extract LDAP domain information with ldapdomaindump. Gather users, computers, groups, and OS details for security audits and network analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ldapdomaindump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ldapdomaindump/'
+description: 'Extract LDAP domain information with ldapdomaindump. Gather users, computers, groups, and OS details for security audits and network analysis. Free online tool, no registration required.'
 category: linux
 keywords:
-- LDAP domain dump
-- Active Directory dump
-- Domain information extraction
-- LDAP enumeration
-- Windows domain audit
-- Linux LDAP tools
-- User account extraction
-- Group membership analysis
-- Computer details extraction
-- LDAP security assessment
+  - LDAP domain dump
+  - Active Directory dump
+  - Domain information extraction
+  - LDAP enumeration
+  - Windows domain audit
+  - Linux LDAP tools
+  - User account extraction
+  - Group membership analysis
+  - Computer details extraction
+  - LDAP security assessment
 features:
-- Dump user account details from LDAP.
-- Extract computer information from Active Directory.
-- Gather group membership information from LDAP.
-- Export data in HTML, JSON, and greppable formats.
-- Resolve computer hostnames using DNS.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Dump user account details from LDAP.
+  - Extract computer information from Active Directory.
+  - Gather group membership information from LDAP.
+  - Export data in HTML, JSON, and greppable formats.
+  - Resolve computer hostnames using DNS.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ldapdomaindump

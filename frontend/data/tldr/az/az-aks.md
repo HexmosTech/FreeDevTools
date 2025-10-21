@@ -1,29 +1,29 @@
 ---
-title: "Create AKS Clusters - Manage Kubernetes with Azure CLI | Online Free DevTools by Hexmos"
+title: 'Create AKS Clusters - Manage Kubernetes with Azure CLI | Online Free DevTools by Hexmos'
 name: az-aks
-path: "/freedevtools/tldr/az/az-aks/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-aks/"
-description: "Create AKS clusters with Azure CLI (az-aks). Manage Kubernetes resources and configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-aks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-aks/'
+description: 'Create AKS clusters with Azure CLI (az-aks). Manage Kubernetes resources and configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes cluster manager
-- azure aks cli
-- aks cluster creation
-- aks management
-- kubernetes command line
-- azure kubernetes service
-- aks deploy
-- azure cloud aks
-- aks get credentials
-- aks upgrade versions
+  - kubernetes cluster manager
+  - azure aks cli
+  - aks cluster creation
+  - aks management
+  - kubernetes command line
+  - azure kubernetes service
+  - aks deploy
+  - azure cloud aks
+  - aks get credentials
+  - aks upgrade versions
 features:
-- List available AKS clusters
-- Create new Kubernetes clusters on Azure
-- Delete existing AKS clusters
-- Get access credentials for cluster management
-- Retrieve available upgrade versions for clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available AKS clusters
+  - Create new Kubernetes clusters on Azure
+  - Delete existing AKS clusters
+  - Get access credentials for cluster management
+  - Retrieve available upgrade versions for clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az aks

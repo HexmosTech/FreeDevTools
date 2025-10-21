@@ -1,29 +1,29 @@
 ---
-title: "Sherlock - Find Usernames | Social Network Search | Online Free DevTools by Hexmos"
+title: 'Sherlock - Find Usernames | Social Network Search | Online Free DevTools by Hexmos'
 name: sherlock
-path: "/freedevtools/tldr/linux/sherlock/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sherlock/"
-description: "Find usernames across social networks with Sherlock. Discover online profiles, track social media presence, and investigate digital footprints. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sherlock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sherlock/'
+description: 'Find usernames across social networks with Sherlock. Discover online profiles, track social media presence, and investigate digital footprints. Free online tool, no registration required.'
 category: linux
 keywords:
-- username search
-- social media investigator
-- online profile finder
-- digital footprint analysis
-- sherlock linux
-- social network search linux
-- open source intelligence
-- osint tool
-- social media lookup
-- username availability checker
+  - username search
+  - social media investigator
+  - online profile finder
+  - digital footprint analysis
+  - sherlock linux
+  - social network search linux
+  - open source intelligence
+  - osint tool
+  - social media lookup
+  - username availability checker
 features:
-- Search for usernames across multiple social networks
-- Output search results to a file or directory
-- Utilize the Tor network for anonymous searches
-- Use proxies for searches
-- Open search results in a web browser
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for usernames across multiple social networks
+  - Output search results to a file or directory
+  - Utilize the Tor network for anonymous searches
+  - Use proxies for searches
+  - Open search results in a web browser
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sherlock

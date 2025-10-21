@@ -1,9 +1,9 @@
 ---
-title: "Choom - Control OOM Killer Score | Online Free DevTools by Hexmos"
+title: 'Choom - Control OOM Killer Score | Online Free DevTools by Hexmos'
 name: choom
-path: "/freedevtools/tldr/linux/choom/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/choom/"
-description: "Control process Out-Of-Memory (OOM) killer score with Choom. Adjust and display OOM scores easily on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/choom/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/choom/'
+description: 'Control process Out-Of-Memory (OOM) killer score with Choom. Adjust and display OOM scores easily on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - OOM killer control
@@ -22,8 +22,8 @@ features:
   - Run a command with a specified OOM killer score
   - Adjust the OOM score within the range of -1000 to +1000
   - Target processes by their Process ID (PID)
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # choom

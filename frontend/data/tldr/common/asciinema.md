@@ -1,29 +1,29 @@
 ---
-title: "Asciinema - Record Terminal Sessions | Online Free DevTools by Hexmos"
+title: 'Asciinema - Record Terminal Sessions | Online Free DevTools by Hexmos'
 name: asciinema
-path: "/freedevtools/tldr/common/asciinema/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/asciinema/"
-description: "Record terminal sessions with Asciinema. Create and share recordings of your command-line interactions for documentation or training. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/asciinema/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/asciinema/'
+description: 'Record terminal sessions with Asciinema. Create and share recordings of your command-line interactions for documentation or training. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal recording
-- asciicast recording
-- command-line recording
-- terminal session recorder
-- asciinema cast
-- terminal recorder linux
-- terminal recorder macos
-- asciinema upload
-- asciinema play
-- cli recording
+  - terminal recording
+  - asciicast recording
+  - command-line recording
+  - terminal session recorder
+  - asciinema cast
+  - terminal recorder linux
+  - terminal recorder macos
+  - asciinema upload
+  - asciinema play
+  - cli recording
 features:
-- Record terminal sessions to a local file
-- Play back terminal recordings from local or remote sources
-- Upload recordings to asciinema.org
-- Limit idle time during recordings
-- Print the full output of a recording to the console
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Record terminal sessions to a local file
+  - Play back terminal recordings from local or remote sources
+  - Upload recordings to asciinema.org
+  - Limit idle time during recordings
+  - Print the full output of a recording to the console
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # asciinema

@@ -1,9 +1,9 @@
 ---
-title: "Control Trayer - Lightweight Systray | Online Free DevTools by Hexmos"
+title: 'Control Trayer - Lightweight Systray | Online Free DevTools by Hexmos'
 name: trayer
-path: "/freedevtools/tldr/linux/trayer/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/trayer/"
-description: "Control systray appearance and behavior with Trayer, a lightweight GTK-2 based systray tool. Configure position, size, and icon spacing effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/trayer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/trayer/'
+description: 'Control systray appearance and behavior with Trayer, a lightweight GTK-2 based systray tool. Configure position, size, and icon spacing effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - GTK Systray Manager
@@ -22,8 +22,8 @@ features:
   - Configure systray width as pixel or percentage
   - Align systray elements to left, center, or right
   - Define icon spacing within the systray
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trayer

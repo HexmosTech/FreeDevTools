@@ -1,9 +1,9 @@
 ---
-title: "Queue View - Monitor SLURM Jobs | Online Free DevTools by Hexmos"
+title: 'Queue View - Monitor SLURM Jobs | Online Free DevTools by Hexmos'
 name: squeue
-path: "/freedevtools/tldr/linux/squeue/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/squeue/"
-description: "View queued SLURM jobs with squeue. Monitor job status and manage resources efficiently using the SLURM scheduler. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/squeue/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/squeue/'
+description: 'View queued SLURM jobs with squeue. Monitor job status and manage resources efficiently using the SLURM scheduler. Free online tool, no registration required.'
 category: linux
 keywords:
   - SLURM job queue
@@ -22,8 +22,8 @@ features:
   - Refresh the queue view at a specified interval.
   - Display expected start times for queued jobs.
   - Monitor resource utilization of queued jobs.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # squeue

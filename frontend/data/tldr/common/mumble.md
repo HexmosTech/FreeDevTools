@@ -1,29 +1,29 @@
 ---
-title: "Control Mumble - Low Latency Voice Chat | Online Free DevTools by Hexmos"
+title: 'Control Mumble - Low Latency Voice Chat | Online Free DevTools by Hexmos'
 name: mumble
-path: "/freedevtools/tldr/common/mumble/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mumble/"
-description: "Control voice chat with Mumble. Connect to servers, mute audio, and configure settings via the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mumble/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mumble/'
+description: 'Control voice chat with Mumble. Connect to servers, mute audio, and configure settings via the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- mumble command line
-- mumble voice chat control
-- low latency voice chat
-- voice server management
-- mumble linux
-- mumble macos
-- mumble windows
-- mumble server connect
-- mumble audio control
-- mumble rpc
+  - mumble command line
+  - mumble voice chat control
+  - low latency voice chat
+  - voice server management
+  - mumble linux
+  - mumble macos
+  - mumble windows
+  - mumble server connect
+  - mumble audio control
+  - mumble rpc
 features:
-- Connect to Mumble servers directly from the command line
-- Mute or unmute the microphone via command
-- Deaf or undeaf audio output via command
-- Execute remote procedure calls (RPC) within Mumble
-- Automate voice chat tasks through scripting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to Mumble servers directly from the command line
+  - Mute or unmute the microphone via command
+  - Deaf or undeaf audio output via command
+  - Execute remote procedure calls (RPC) within Mumble
+  - Automate voice chat tasks through scripting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mumble

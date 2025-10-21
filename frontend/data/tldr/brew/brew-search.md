@@ -1,29 +1,29 @@
 ---
-title: "Brew Search - Find Packages and Casks | Online Free DevTools by Hexmos"
+title: 'Brew Search - Find Packages and Casks | Online Free DevTools by Hexmos'
 name: brew-search
-path: "/freedevtools/tldr/brew/brew-search/"
-canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-search/"
-description: "Find packages and casks quickly with Brew Search. Discover Homebrew formulae, locate specific software, and manage dependencies easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/brew/brew-search/'
+canonical: 'https://hexmos.com/freedevtools/tldr/brew/brew-search/'
+description: 'Find packages and casks quickly with Brew Search. Discover Homebrew formulae, locate specific software, and manage dependencies easily. Free online tool, no registration required.'
 category: common
 keywords:
-- brew package search
-- homebrew cask search
-- macos package manager
-- formula search brew
-- homebrew install search
-- cask search macos
-- brew search regex
-- command line package search
-- macos command line tools
-- homebrew dependency search
+  - brew package search
+  - homebrew cask search
+  - macos package manager
+  - formula search brew
+  - homebrew install search
+  - cask search macos
+  - brew search regex
+  - command line package search
+  - macos command line tools
+  - homebrew dependency search
 features:
-- Search for packages using keywords
-- Search for casks using keywords
-- Filter results to only show formulae
-- Filter results to only show casks
-- Search package descriptions using regex
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for packages using keywords
+  - Search for casks using keywords
+  - Filter results to only show formulae
+  - Filter results to only show casks
+  - Search package descriptions using regex
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brew search

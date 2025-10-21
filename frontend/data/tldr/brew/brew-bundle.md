@@ -1,29 +1,29 @@
 ---
-title: "Brew Bundle - Manage Homebrew Packages | Online Free DevTools by Hexmos"
+title: 'Brew Bundle - Manage Homebrew Packages | Online Free DevTools by Hexmos'
 name: brew-bundle
-path: "/freedevtools/tldr/brew/brew-bundle/"
-canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-bundle/"
-description: "Manage Homebrew packages easily with Brew Bundle. Install, update, and cleanup your Homebrew environment using a Brewfile. Free online tool, no registration required."
+path: '/freedevtools/tldr/brew/brew-bundle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/brew/brew-bundle/'
+description: 'Manage Homebrew packages easily with Brew Bundle. Install, update, and cleanup your Homebrew environment using a Brewfile. Free online tool, no registration required.'
 category: common
 keywords:
-- brew bundle management
-- homebrew package manager
-- brewfile creation
-- homebrew dependency resolver
-- macos package installer
-- brew bundle cleanup
-- homebrew cask manager
-- mac app store bundle
-- brew bundle check
-- declarative package management
+  - brew bundle management
+  - homebrew package manager
+  - brewfile creation
+  - homebrew dependency resolver
+  - macos package installer
+  - brew bundle cleanup
+  - homebrew cask manager
+  - mac app store bundle
+  - brew bundle check
+  - declarative package management
 features:
-- Install packages from a Brewfile.
-- Create a Brewfile from existing packages.
-- Uninstall unused formulae.
-- Verify Brewfile dependencies.
-- List all entries in a Brewfile.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages from a Brewfile.
+  - Create a Brewfile from existing packages.
+  - Uninstall unused formulae.
+  - Verify Brewfile dependencies.
+  - List all entries in a Brewfile.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brew bundle

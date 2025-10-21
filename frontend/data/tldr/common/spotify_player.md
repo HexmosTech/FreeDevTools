@@ -1,29 +1,29 @@
 ---
-title: "Spotify Control - Manage Music with Spotify Player | Online Free DevTools by Hexmos"
+title: 'Spotify Control - Manage Music with Spotify Player | Online Free DevTools by Hexmos'
 name: spotify_player
-path: "/freedevtools/tldr/common/spotify_player/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/spotify_player/"
-description: "Control Spotify music playback with Spotify Player. Manage tracks, themes, and configurations using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/spotify_player/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/spotify_player/'
+description: 'Control Spotify music playback with Spotify Player. Manage tracks, themes, and configurations using command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- spotify command line
-- spotify player control
-- spotify tui client
-- linux spotify player
-- macos spotify player
-- spotify daemon control
-- spotify theme manager
-- spotify configuration manager
-- spotify music control
-- spotify track management
+  - spotify command line
+  - spotify player control
+  - spotify tui client
+  - linux spotify player
+  - macos spotify player
+  - spotify daemon control
+  - spotify theme manager
+  - spotify configuration manager
+  - spotify music control
+  - spotify track management
 features:
-- Start Spotify daemon for background playback
-- Launch the Spotify TUI to control music
-- Apply custom themes to the Spotify Player
-- Load configuration files from specified directories
-- Like the currently playing track on Spotify
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start Spotify daemon for background playback
+  - Launch the Spotify TUI to control music
+  - Apply custom themes to the Spotify Player
+  - Load configuration files from specified directories
+  - Like the currently playing track on Spotify
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # spotify_player

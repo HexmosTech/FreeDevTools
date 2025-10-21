@@ -1,29 +1,29 @@
 ---
-title: "Count TeX Words - Analyze LaTeX Documents | Online Free DevTools by Hexmos"
+title: 'Count TeX Words - Analyze LaTeX Documents | Online Free DevTools by Hexmos'
 name: texcount
-path: "/freedevtools/tldr/common/texcount/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/texcount/"
-description: "Analyze TeX documents and count words with Texcount. Quickly estimate LaTeX document length, including subfiles and chapters. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/texcount/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/texcount/'
+description: 'Analyze TeX documents and count words with Texcount. Quickly estimate LaTeX document length, including subfiles and chapters. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX word count
-- LaTeX word counter
-- document word count
-- TeX document analysis
-- LaTeX document statistics
-- command line word count
-- texcount command
-- word count by chapter
-- TeX subfile counting
-- LaTeX subfile counting
+  - TeX word count
+  - LaTeX word counter
+  - document word count
+  - TeX document analysis
+  - LaTeX document statistics
+  - command line word count
+  - texcount command
+  - word count by chapter
+  - TeX subfile counting
+  - LaTeX subfile counting
 features:
-- Count words in TeX documents, excluding macros.
-- Merge and count words in subdocuments using `\input` or `\include`.
-- List word counts for individual subfiles in a TeX project.
-- Produce word counts by chapter instead of subsection.
-- Provide verbose output for detailed word count analysis.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Count words in TeX documents, excluding macros.
+  - Merge and count words in subdocuments using `\input` or `\include`.
+  - List word counts for individual subfiles in a TeX project.
+  - Produce word counts by chapter instead of subsection.
+  - Provide verbose output for detailed word count analysis.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # texcount

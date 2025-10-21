@@ -1,29 +1,29 @@
 ---
-title: "LXC Start - Control Linux Containers | Online Free DevTools by Hexmos"
+title: 'LXC Start - Control Linux Containers | Online Free DevTools by Hexmos'
 name: lxc-start
-path: "/freedevtools/tldr/linux/lxc-start/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-start/"
-description: "Control Linux containers instantly with LXC Start. Manage container lifecycle, start in foreground, and stop running containers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lxc-start/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lxc-start/'
+description: 'Control Linux containers instantly with LXC Start. Manage container lifecycle, start in foreground, and stop running containers. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux container start
-- lxc container control
-- lxc start foreground
-- linux lxc service
-- container management linux
-- lxc command line
-- lxc container stop
-- lxc network configuration
-- linux systemctl lxc
-- virtual environment control
+  - linux container start
+  - lxc container control
+  - lxc start foreground
+  - linux lxc service
+  - container management linux
+  - lxc command line
+  - lxc container stop
+  - lxc network configuration
+  - linux systemctl lxc
+  - virtual environment control
 features:
-- Start Linux containers
-- Launch containers in foreground mode
-- Stop running containers gracefully
-- Manage lxc-net service
-- Display command line help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start Linux containers
+  - Launch containers in foreground mode
+  - Stop running containers gracefully
+  - Manage lxc-net service
+  - Display command line help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lxc-start

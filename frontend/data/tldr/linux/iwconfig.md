@@ -1,9 +1,9 @@
 ---
-title: "Configure Wireless Networks with iwconfig | Online Free DevTools by Hexmos"
+title: 'Configure Wireless Networks with iwconfig | Online Free DevTools by Hexmos'
 name: iwconfig
-path: "/freedevtools/tldr/linux/iwconfig/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/iwconfig/"
-description: "Configure and manage wireless network interfaces with iwconfig.  View network parameters and statistics, set ESSID, and control operating modes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/iwconfig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/iwconfig/'
+description: 'Configure and manage wireless network interfaces with iwconfig.  View network parameters and statistics, set ESSID, and control operating modes. Free online tool, no registration required.'
 category: linux
 keywords:
   - iwconfig network configuration
@@ -22,8 +22,8 @@ features:
   - Configure the operating mode (e.g., Managed, Ad-Hoc, Monitor).
   - Manage multiple wireless interfaces simultaneously.
   - Troubleshoot wireless network connectivity issues.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iwconfig

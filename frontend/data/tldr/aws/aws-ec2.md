@@ -1,29 +1,29 @@
 ---
-title: "AWS EC2 - Manage Instances & Volumes | Online Free DevTools by Hexmos"
+title: 'AWS EC2 - Manage Instances & Volumes | Online Free DevTools by Hexmos'
 name: aws-ec2
-path: "/freedevtools/tldr/aws/aws-ec2/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ec2/"
-description: "Manage AWS EC2 instances and volumes easily with AWS EC2 Command. Control EC2 resources, create snapshots, and list available AMIs. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-ec2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-ec2/'
+description: 'Manage AWS EC2 instances and volumes easily with AWS EC2 Command. Control EC2 resources, create snapshots, and list available AMIs. Free online tool, no registration required.'
 category: common
 keywords:
-- aws ec2 management
-- ec2 instance control
-- aws volume administration
-- aws ec2 command line
-- amazon ec2 interface
-- cloud computing ec2
-- aws ec2 snapshot creation
-- ec2 ami listing
-- aws ec2 resource management
-- amazon web services ec2
+  - aws ec2 management
+  - ec2 instance control
+  - aws volume administration
+  - aws ec2 command line
+  - amazon ec2 interface
+  - cloud computing ec2
+  - aws ec2 snapshot creation
+  - ec2 ami listing
+  - aws ec2 resource management
+  - amazon web services ec2
 features:
-- List available Amazon Machine Images (AMIs)
-- Describe details for specific EC2 instances
-- Delete unused EC2 volumes
-- Create snapshots from EC2 volumes for backups
-- Display comprehensive help information for EC2 subcommands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available Amazon Machine Images (AMIs)
+  - Describe details for specific EC2 instances
+  - Delete unused EC2 volumes
+  - Create snapshots from EC2 volumes for backups
+  - Display comprehensive help information for EC2 subcommands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws ec2

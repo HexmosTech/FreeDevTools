@@ -1,29 +1,29 @@
 ---
-title: "Find Files - Locate Files and Directories | Online Free DevTools by Hexmos"
+title: 'Find Files - Locate Files and Directories | Online Free DevTools by Hexmos'
 name: find
-path: "/freedevtools/tldr/common/find/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/find/"
-description: "Locate files quickly with Find Files. A powerful command line utility for searching files and directories recursively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/find/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/find/'
+description: 'Locate files quickly with Find Files. A powerful command line utility for searching files and directories recursively. Free online tool, no registration required.'
 category: common
 keywords:
-- find files command
-- find directory command
-- linux find files
-- macos find files
-- search files by extension
-- find files by name
-- recursive file search
-- find files by size
-- find files by date
-- command line file search
+  - find files command
+  - find directory command
+  - linux find files
+  - macos find files
+  - search files by extension
+  - find files by name
+  - recursive file search
+  - find files by size
+  - find files by date
+  - command line file search
 features:
-- Recursively locate files and directories.
-- Filter files by name, extension, and size.
-- Execute commands on found files.
-- Exclude specific paths from the search.
-- Find files modified within a specific time range.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively locate files and directories.
+  - Filter files by name, extension, and size.
+  - Execute commands on found files.
+  - Exclude specific paths from the search.
+  - Find files modified within a specific time range.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # find

@@ -1,29 +1,29 @@
 ---
-title: "Choose - Extract Text Columns | Online Free DevTools by Hexmos"
+title: 'Choose - Extract Text Columns | Online Free DevTools by Hexmos'
 name: choose
-path: "/freedevtools/tldr/common/choose/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/choose/"
-description: "Extract text columns efficiently with Choose, a human-friendly alternative to cut and awk. Quickly parse data from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/choose/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/choose/'
+description: 'Extract text columns efficiently with Choose, a human-friendly alternative to cut and awk. Quickly parse data from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- text column extraction
-- command line parser
-- data parsing linux
-- awk alternative
-- cut alternative
-- field separator tool
-- text processing tool
-- column selector
-- command line text editor
-- linux text manipulation
+  - text column extraction
+  - command line parser
+  - data parsing linux
+  - awk alternative
+  - cut alternative
+  - field separator tool
+  - text processing tool
+  - column selector
+  - command line text editor
+  - linux text manipulation
 features:
-- Extract specific columns from text input
-- Define custom field separators
-- Specify column ranges for extraction
-- Extract the first or last column
-- Exclude specific columns from output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific columns from text input
+  - Define custom field separators
+  - Specify column ranges for extraction
+  - Extract the first or last column
+  - Exclude specific columns from output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # choose

@@ -1,9 +1,9 @@
 ---
-title: "Manage Latte-Dock - Customize Plasma Dock | Online Free DevTools by Hexmos"
+title: 'Manage Latte-Dock - Customize Plasma Dock | Online Free DevTools by Hexmos'
 name: latte-dock
-path: "/freedevtools/tldr/linux/latte-dock/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/latte-dock/"
-description: "Customize your Plasma desktop dock with Latte-Dock.  Manage layouts, import custom configurations, and clear the cache for optimal performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/latte-dock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/latte-dock/'
+description: 'Customize your Plasma desktop dock with Latte-Dock.  Manage layouts, import custom configurations, and clear the cache for optimal performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - plasma dock manager
@@ -22,8 +22,8 @@ features:
   - Load a specific named layout on startup.
   - Import and load a custom layout from a file.
   - Manage and customize the appearance of the Plasma dock.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # latte-dock

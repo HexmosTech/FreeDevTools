@@ -1,29 +1,29 @@
 ---
-title: "Kotlin Compiler - Compile Kotlin Code | Online Free DevTools by Hexmos"
+title: 'Kotlin Compiler - Compile Kotlin Code | Online Free DevTools by Hexmos'
 name: kotlinc
-path: "/freedevtools/tldr/common/kotlinc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kotlinc/"
-description: "Compile Kotlin code with kotlinc. Create executable JAR files and run Kotlin scripts with this powerful compiler. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kotlinc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kotlinc/'
+description: 'Compile Kotlin code with kotlinc. Create executable JAR files and run Kotlin scripts with this powerful compiler. Free online tool, no registration required.'
 category: common
 keywords:
-- Kotlin compiler
-- Kotlin code compiler
-- Kotlin script compiler
-- Kotlin to jar
-- Kotlin command line
-- Kotlin REPL
-- Kotlin language tools
-- Kotlin development
-- JVM compiler
-- Kotlin runtime
+  - Kotlin compiler
+  - Kotlin code compiler
+  - Kotlin script compiler
+  - Kotlin to jar
+  - Kotlin command line
+  - Kotlin REPL
+  - Kotlin language tools
+  - Kotlin development
+  - JVM compiler
+  - Kotlin runtime
 features:
-- Compile Kotlin source files into executable code
-- Generate self-contained JAR files with included runtime
-- Execute Kotlin scripts directly from the command line
-- Start an interactive Kotlin REPL shell
-- Compile multiple Kotlin files simultaneously
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Kotlin source files into executable code
+  - Generate self-contained JAR files with included runtime
+  - Execute Kotlin scripts directly from the command line
+  - Start an interactive Kotlin REPL shell
+  - Compile multiple Kotlin files simultaneously
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kotlinc

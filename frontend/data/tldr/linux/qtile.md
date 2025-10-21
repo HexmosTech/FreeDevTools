@@ -1,9 +1,9 @@
 ---
-title: "qtile Window Manager - Control Windows with Python | Online Free DevTools by Hexmos"
+title: 'qtile Window Manager - Control Windows with Python | Online Free DevTools by Hexmos'
 name: qtile
-path: "/freedevtools/tldr/linux/qtile/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qtile/"
-description: "Control your window layout effortlessly with qtile, a powerful tiling window manager written in Python. Manage windows, groups, and layouts with simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qtile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qtile/'
+description: 'Control your window layout effortlessly with qtile, a powerful tiling window manager written in Python. Manage windows, groups, and layouts with simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - python window manager
@@ -22,8 +22,8 @@ features:
   - Monitor current system resource usage.
   - Run applications in specified groups and window states.
   - Highly customizable via Python scripting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qtile

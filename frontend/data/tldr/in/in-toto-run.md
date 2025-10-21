@@ -1,29 +1,29 @@
 ---
-title: "Generate in-toto Link Metadata | Online Free DevTools by Hexmos"
+title: 'Generate in-toto Link Metadata | Online Free DevTools by Hexmos'
 name: in-toto-run
-path: "/freedevtools/tldr/in/in-toto-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/in-toto-run/"
-description: "Generate in-toto link metadata with in-toto-run, securing your software supply chain. Digitally sign and verify steps, ensuring integrity. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/in-toto-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/in-toto-run/'
+description: 'Generate in-toto link metadata with in-toto-run, securing your software supply chain. Digitally sign and verify steps, ensuring integrity. Free online tool, no registration required.'
 category: common
 keywords:
-- in-toto link metadata generation
-- supply chain security
-- signed attestation creation
-- software artifact verification
-- Git repository tagging
-- tarball material management
-- Trivy image scanning integration
-- in-toto policy enforcement
-- cryptographic signature generation
-- in-toto attestation generation
+  - in-toto link metadata generation
+  - supply chain security
+  - signed attestation creation
+  - software artifact verification
+  - Git repository tagging
+  - tarball material management
+  - Trivy image scanning integration
+  - in-toto policy enforcement
+  - cryptographic signature generation
+  - in-toto attestation generation
 features:
-- Generate link metadata for supply chain steps.
-- Tag Git repositories and sign the resulting link files.
-- Create tarballs, storing files as materials.
-- Generate signed attestations for review processes.
-- Integrate with Trivy to scan images and create reports.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate link metadata for supply chain steps.
+  - Tag Git repositories and sign the resulting link files.
+  - Create tarballs, storing files as materials.
+  - Generate signed attestations for review processes.
+  - Integrate with Trivy to scan images and create reports.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # in-toto-run

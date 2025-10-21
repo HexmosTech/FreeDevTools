@@ -1,29 +1,29 @@
 ---
-title: "Download Media - Download Videos and Audios with you-get | Online Free DevTools by Hexmos"
+title: 'Download Media - Download Videos and Audios with you-get | Online Free DevTools by Hexmos'
 name: you-get
-path: "/freedevtools/tldr/common/you-get/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/you-get/"
-description: "Download media content instantly with you-get. Download videos, audios, and images from various websites. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/you-get/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/you-get/'
+description: 'Download media content instantly with you-get. Download videos, audios, and images from various websites. Free online tool, no registration required.'
 category: common
 keywords:
-- media downloader
-- video downloader
-- audio downloader
-- you-get download
-- youtube downloader
-- online video downloader
-- command line video downloader
-- linux video downloader
-- macos video downloader
-- you-get command
+  - media downloader
+  - video downloader
+  - audio downloader
+  - you-get download
+  - youtube downloader
+  - online video downloader
+  - command line video downloader
+  - linux video downloader
+  - macos video downloader
+  - you-get command
 features:
-- Download videos from URLs.
-- Download audio from URLs.
-- Search and download media from Google Videos.
-- Specify output directory and filename for downloads.
-- Download media using a proxy server.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download videos from URLs.
+  - Download audio from URLs.
+  - Search and download media from Google Videos.
+  - Specify output directory and filename for downloads.
+  - Download media using a proxy server.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # you-get

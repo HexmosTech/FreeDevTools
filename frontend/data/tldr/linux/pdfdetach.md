@@ -1,29 +1,29 @@
 ---
-title: "PDF Attachments - Extract PDF Files | Online Free DevTools by Hexmos"
+title: 'PDF Attachments - Extract PDF Files | Online Free DevTools by Hexmos'
 name: pdfdetach
-path: "/freedevtools/tldr/linux/pdfdetach/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfdetach/"
-description: "Extract PDF attachments easily with pdfdetach. Manage embedded files and list PDF contents using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pdfdetach/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pdfdetach/'
+description: 'Extract PDF attachments easily with pdfdetach. Manage embedded files and list PDF contents using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
-- PDF attachment extractor
-- PDF embedded file manager
-- Linux PDF detach
-- Extract files from PDF
-- Command line PDF tool
-- PDF attachment list
-- pdfdetach utility
-- PDF file parser
-- PDF file extraction tool
-- Linux command PDF
+  - PDF attachment extractor
+  - PDF embedded file manager
+  - Linux PDF detach
+  - Extract files from PDF
+  - Command line PDF tool
+  - PDF attachment list
+  - pdfdetach utility
+  - PDF file parser
+  - PDF file extraction tool
+  - Linux command PDF
 features:
-- List all attachments in a PDF file
-- Extract specific embedded files by number
-- Extract specific embedded files by name
-- Save embedded files with custom output names
-- Extract attachments from password-protected PDFs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all attachments in a PDF file
+  - Extract specific embedded files by number
+  - Extract specific embedded files by name
+  - Save embedded files with custom output names
+  - Extract attachments from password-protected PDFs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdfdetach

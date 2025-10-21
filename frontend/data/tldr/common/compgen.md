@@ -1,29 +1,29 @@
 ---
-title: "Generate Completion Matches - compgen | Online Free DevTools by Hexmos"
+title: 'Generate Completion Matches - compgen | Online Free DevTools by Hexmos'
 name: compgen
-path: "/freedevtools/tldr/common/compgen/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/compgen/"
-description: "Generate completion matches with compgen, a Bash built-in command. Simplify command line usage and automate complex tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/compgen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/compgen/'
+description: 'Generate completion matches with compgen, a Bash built-in command. Simplify command line usage and automate complex tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- bash completion generator
-- command line completion
-- shell completion script
-- bash autocomplete
-- compgen bash function
-- linux command completion
-- bash built-in command
-- shell script completion
-- custom bash completion
-- dynamic completion bash
+  - bash completion generator
+  - command line completion
+  - shell completion script
+  - bash autocomplete
+  - compgen bash function
+  - linux command completion
+  - bash built-in command
+  - shell script completion
+  - custom bash completion
+  - dynamic completion bash
 features:
-- Generate possible completion matches in Bash
-- List shell built-ins, aliases, functions and executables
-- Match against a wordlist for completions
-- Show shell reserved keywords
-- List users on the system for completion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate possible completion matches in Bash
+  - List shell built-ins, aliases, functions and executables
+  - Match against a wordlist for completions
+  - Show shell reserved keywords
+  - List users on the system for completion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # compgen

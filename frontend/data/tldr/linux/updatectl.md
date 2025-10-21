@@ -1,9 +1,9 @@
 ---
-title: "Updatectl - Control System Updates | Online Free DevTools by Hexmos"
+title: 'Updatectl - Control System Updates | Online Free DevTools by Hexmos'
 name: updatectl
-path: "/freedevtools/tldr/linux/updatectl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/updatectl/"
-description: "Control system updates with Updatectl. Manage updates, check for available versions, and clean up old versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/updatectl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/updatectl/'
+description: 'Control system updates with Updatectl. Manage updates, check for available versions, and clean up old versions. Free online tool, no registration required.'
 category: linux
 keywords:
   - system update manager
@@ -22,8 +22,8 @@ features:
   - Manage and list update targets
   - Clean up old versions of system packages
   - Apply updates and reboot the system
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # updatectl

@@ -1,29 +1,29 @@
 ---
-title: "Lsof - List Open Files | Online Free DevTools by Hexmos"
+title: 'Lsof - List Open Files | Online Free DevTools by Hexmos'
 name: lsof
-path: "/freedevtools/tldr/common/lsof/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lsof/"
-description: "List open files instantly with Lsof. Identify processes using files, ports, or users with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lsof/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lsof/'
+description: 'List open files instantly with Lsof. Identify processes using files, ports, or users with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- list open files
-- open files linux
-- open files macos
-- process file mapping
-- network port listener
-- file descriptor lookup
-- active process identifier
-- process identifier by file
-- user open files
-- file access monitor
+  - list open files
+  - open files linux
+  - open files macos
+  - process file mapping
+  - network port listener
+  - file descriptor lookup
+  - active process identifier
+  - process identifier by file
+  - user open files
+  - file access monitor
 features:
-- Identify processes using specific files.
-- Find processes listening on network ports.
-- List open files for a specific user.
-- Output process IDs (PIDs) associated with open files.
-- Monitor file access within a directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify processes using specific files.
+  - Find processes listening on network ports.
+  - List open files for a specific user.
+  - Output process IDs (PIDs) associated with open files.
+  - Monitor file access within a directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsof

@@ -1,29 +1,29 @@
 ---
-title: "Generate Man Pages - XML2Man Compiler | Online Free DevTools by Hexmos"
+title: 'Generate Man Pages - XML2Man Compiler | Online Free DevTools by Hexmos'
 name: xml2man
-path: "/freedevtools/tldr/osx/xml2man/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xml2man/"
-description: "Generate man pages with XML2Man. Compile MPGL files to mdoc format for documentation. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xml2man/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xml2man/'
+description: 'Generate man pages with XML2Man. Compile MPGL files to mdoc format for documentation. Free online tool, no registration required.'
 category: osx
 keywords:
-- XML man page generator
-- MPGL to mdoc compiler
-- OSX man page creation
-- Apple documentation tool
-- Command line man page
-- MXML to man converter
-- Developer tool macOS
-- Documentation compiler OSX
-- MPGL file processing
-- XML2Man tool
+  - XML man page generator
+  - MPGL to mdoc compiler
+  - OSX man page creation
+  - Apple documentation tool
+  - Command line man page
+  - MXML to man converter
+  - Developer tool macOS
+  - Documentation compiler OSX
+  - MPGL file processing
+  - XML2Man tool
 features:
-- Compile MPGL files to mdoc format
-- Generate viewable man pages from XML
-- Specify output file for compiled documentation
-- Overwrite existing man pages with new output
-- Process command, service, and function files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile MPGL files to mdoc format
+  - Generate viewable man pages from XML
+  - Specify output file for compiled documentation
+  - Overwrite existing man pages with new output
+  - Process command, service, and function files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml2man

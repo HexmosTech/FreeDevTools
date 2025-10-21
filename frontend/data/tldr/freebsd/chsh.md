@@ -1,9 +1,9 @@
 ---
-title: "chsh Command - Change Shell | Online Free DevTools by Hexmos"
+title: 'chsh Command - Change Shell | Online Free DevTools by Hexmos'
 name: chsh
-path: "/freedevtools/tldr/freebsd/chsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/freebsd/chsh/"
-description: "Change your login shell with the chsh command.  Manage user accounts and shell environments easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/freebsd/chsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/freebsd/chsh/'
+description: 'Change your login shell with the chsh command.  Manage user accounts and shell environments easily. Free online tool, no registration required.'
 category: freebsd
 keywords:
   - chsh command
@@ -22,8 +22,8 @@ features:
   - Update the /etc/passwd file with the new shell.
   - Allow users to switch between different shell environments.
   - Provide a simple and efficient way to manage shell settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chsh

@@ -1,29 +1,29 @@
 ---
-title: "Generate SHA384 Checksum - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Generate SHA384 Checksum - Verify File Integrity | Online Free DevTools by Hexmos'
 name: sha384sum
-path: "/freedevtools/tldr/common/sha384sum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sha384sum/"
-description: "Generate SHA384 checksums with sha384sum for file integrity verification. Securely check file hashes and validate data authenticity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sha384sum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sha384sum/'
+description: 'Generate SHA384 checksums with sha384sum for file integrity verification. Securely check file hashes and validate data authenticity. Free online tool, no registration required.'
 category: common
 keywords:
-- SHA384 checksum generator
-- File integrity checker
-- Hash verification tool
-- SHA384 hash calculator
-- Linux checksum utility
-- MacOS sha384sum
-- File authentication tool
-- Cryptographic checksum generator
-- Data integrity validation
-- Secure file verification
+  - SHA384 checksum generator
+  - File integrity checker
+  - Hash verification tool
+  - SHA384 hash calculator
+  - Linux checksum utility
+  - MacOS sha384sum
+  - File authentication tool
+  - Cryptographic checksum generator
+  - Data integrity validation
+  - Secure file verification
 features:
-- Calculate SHA384 checksums for files
-- Verify SHA384 checksums against a file
-- Generate checksums from standard input
-- Ignore missing files during verification
-- Check known SHA384 checksums of files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate SHA384 checksums for files
+  - Verify SHA384 checksums against a file
+  - Generate checksums from standard input
+  - Ignore missing files during verification
+  - Check known SHA384 checksums of files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sha384sum

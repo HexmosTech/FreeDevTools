@@ -1,29 +1,29 @@
 ---
-title: "F-Droid Builder - Build Android Apps | Online Free DevTools by Hexmos"
+title: 'F-Droid Builder - Build Android Apps | Online Free DevTools by Hexmos'
 name: fdroid
-path: "/freedevtools/tldr/common/fdroid/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fdroid/"
-description: "Build Android apps easily with F-Droid Builder. Create, publish, and install FOSS applications for the Android platform directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fdroid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fdroid/'
+description: 'Build Android apps easily with F-Droid Builder. Create, publish, and install FOSS applications for the Android platform directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- android app builder
-- fdroid build tool
-- android foss app
-- build android package
-- android apk builder
-- fdroid repository
-- android package manager
-- publish android app
-- install android app
-- fdroid metadata
+  - android app builder
+  - fdroid build tool
+  - android foss app
+  - build android package
+  - android apk builder
+  - fdroid repository
+  - android package manager
+  - publish android app
+  - install android app
+  - fdroid metadata
 features:
-- Build F-Droid compatible Android apps
-- Publish apps to a local repository
-- Install apps on connected Android devices
-- Lint F-Droid metadata for formatting errors
-- Rewrite metadata for automatic formatting fixes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build F-Droid compatible Android apps
+  - Publish apps to a local repository
+  - Install apps on connected Android devices
+  - Lint F-Droid metadata for formatting errors
+  - Rewrite metadata for automatic formatting fixes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fdroid

@@ -1,29 +1,29 @@
 ---
-title: "CHCPU - Control CPU States on Linux | Online Free DevTools by Hexmos"
+title: 'CHCPU - Control CPU States on Linux | Online Free DevTools by Hexmos'
 name: chcpu
-path: "/freedevtools/tldr/linux/chcpu/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chcpu/"
-description: "Control CPU states on Linux with CHCPU. Enable, disable, and manage CPU cores efficiently using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/chcpu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chcpu/'
+description: 'Control CPU states on Linux with CHCPU. Enable, disable, and manage CPU cores efficiently using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
-- Linux CPU control
-- CHCPU enable CPU
-- CHCPU disable CPU
-- Linux CPU management
-- CPU core state
-- Linux system administration
-- Command line CPU utility
-- CHCPU command example
-- CPU core activation
-- CPU core deactivation
+  - Linux CPU control
+  - CHCPU enable CPU
+  - CHCPU disable CPU
+  - Linux CPU management
+  - CPU core state
+  - Linux system administration
+  - Command line CPU utility
+  - CHCPU command example
+  - CPU core activation
+  - CPU core deactivation
 features:
-- Enable specific CPU cores
-- Disable specific CPU cores
-- Manage CPU core ranges
-- Control CPU activation states
-- Modify CPU states from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enable specific CPU cores
+  - Disable specific CPU cores
+  - Manage CPU core ranges
+  - Control CPU activation states
+  - Modify CPU states from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chcpu

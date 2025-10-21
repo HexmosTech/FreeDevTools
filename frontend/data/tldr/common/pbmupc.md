@@ -1,29 +1,29 @@
 ---
-title: "Generate UPC PBM Image - Create Barcodes | Online Free DevTools by Hexmos"
+title: 'Generate UPC PBM Image - Create Barcodes | Online Free DevTools by Hexmos'
 name: pbmupc
-path: "/freedevtools/tldr/common/pbmupc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmupc/"
-description: "Generate UPC barcode images with pbmupc. Create PBM format barcodes for products using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmupc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmupc/'
+description: 'Generate UPC barcode images with pbmupc. Create PBM format barcodes for products using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- UPC PBM Image Generator
-- PBM Barcode Creator
-- UPC Code Generator
-- Barcode Image Linux
-- PBM Image Maker
-- Command Line Barcode
-- Linux Barcode Generator
-- UPC Encoder PBM
-- PBM Image Utility
-- Common Barcode Tools
+  - UPC PBM Image Generator
+  - PBM Barcode Creator
+  - UPC Code Generator
+  - Barcode Image Linux
+  - PBM Image Maker
+  - Command Line Barcode
+  - Linux Barcode Generator
+  - UPC Encoder PBM
+  - PBM Image Utility
+  - Common Barcode Tools
 features:
-- Generate PBM images of UPC barcodes.
-- Support multiple UPC styles.
-- Customize the output PBM barcode image.
-- Control checksum display options.
-- Generate barcodes directly from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate PBM images of UPC barcodes.
+  - Support multiple UPC styles.
+  - Customize the output PBM barcode image.
+  - Control checksum display options.
+  - Generate barcodes directly from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmupc

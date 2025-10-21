@@ -1,29 +1,29 @@
 ---
-title: "Create Git Ignore - Manage Ignored Files | Online Free DevTools by Hexmos"
+title: 'Create Git Ignore - Manage Ignored Files | Online Free DevTools by Hexmos'
 name: git-ignore
-path: "/freedevtools/tldr/git/git-ignore/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-ignore/"
-description: "Create .gitignore files with Git Ignore. Easily manage ignored files and patterns locally or globally. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-ignore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-ignore/'
+description: 'Create .gitignore files with Git Ignore. Easily manage ignored files and patterns locally or globally. Free online tool, no registration required.'
 category: common
 keywords:
-- git ignore file
-- gitignore generator
-- git ignore patterns
-- git exclude rules
-- git global ignore
-- git local ignore
-- git info exclude
-- git version control
-- command line git
-- git repository management
+  - git ignore file
+  - gitignore generator
+  - git ignore patterns
+  - git exclude rules
+  - git global ignore
+  - git local ignore
+  - git info exclude
+  - git version control
+  - command line git
+  - git repository management
 features:
-- Display the content of global and local .gitignore files.
-- Privately ignore files by updating the .git/info/exclude file.
-- Locally ignore files by updating the local .gitignore file.
-- Globally ignore files by updating the global .gitignore file.
-- Manage version control exclusion patterns.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the content of global and local .gitignore files.
+  - Privately ignore files by updating the .git/info/exclude file.
+  - Locally ignore files by updating the local .gitignore file.
+  - Globally ignore files by updating the global .gitignore file.
+  - Manage version control exclusion patterns.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git ignore

@@ -1,29 +1,29 @@
 ---
-title: "Manage Ruby Environments - Control RVM | Online Free DevTools by Hexmos"
+title: 'Manage Ruby Environments - Control RVM | Online Free DevTools by Hexmos'
 name: rvm
-path: "/freedevtools/tldr/common/rvm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rvm/"
-description: "Manage multiple Ruby versions with RVM. Effortlessly install, switch, and uninstall Ruby environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rvm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rvm/'
+description: 'Manage multiple Ruby versions with RVM. Effortlessly install, switch, and uninstall Ruby environments. Free online tool, no registration required.'
 category: common
 keywords:
-- ruby version manager
-- rvm ruby
-- ruby environment manager
-- rvm install
-- rvm use
-- rvm uninstall
-- rvm requirements
-- rvm upgrade
-- ruby version control
-- rvm list
+  - ruby version manager
+  - rvm ruby
+  - ruby environment manager
+  - rvm install
+  - rvm use
+  - rvm uninstall
+  - rvm requirements
+  - rvm upgrade
+  - ruby version control
+  - rvm list
 features:
-- Install specific Ruby versions easily
-- List installed Ruby versions
-- Switch between different Ruby environments
-- Set a default Ruby version
-- Show required dependencies for different OS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Ruby versions easily
+  - List installed Ruby versions
+  - Switch between different Ruby environments
+  - Set a default Ruby version
+  - Show required dependencies for different OS
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rvm

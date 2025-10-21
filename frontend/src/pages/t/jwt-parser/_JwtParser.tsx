@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import JwtParserSkeleton from "./_JwtParserSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import JwtParserSkeleton from './_JwtParserSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // JWT Parser Utility Functions
 interface JWTDecoded {
@@ -23,12 +23,12 @@ interface JWTDecoded {
 
 const base64UrlDecode = (str: string): string => {
   // Replace URL-safe characters and add padding if needed
-  let base64 = str.replace(/-/g, "+").replace(/_/g, "/");
+  let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
 
   // Add padding if needed
   const padding = base64.length % 4;
   if (padding) {
-    base64 += "=".repeat(4 - padding);
+    base64 += '='.repeat(4 - padding);
   }
 
   try {
@@ -36,25 +36,25 @@ const base64UrlDecode = (str: string): string => {
     const decoded = atob(base64);
     return decodeURIComponent(
       decoded
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
     );
   } catch (error) {
-    throw new Error("Invalid base64 encoding");
+    throw new Error('Invalid base64 encoding');
   }
 };
 
 const decodeJWT = (token: string): JWTDecoded => {
-  if (!token || typeof token !== "string") {
-    throw new Error("Token must be a non-empty string");
+  if (!token || typeof token !== 'string') {
+    throw new Error('Token must be a non-empty string');
   }
 
-  const parts = token.split(".");
+  const parts = token.split('.');
 
   if (parts.length !== 3) {
     throw new Error(
-      "Invalid JWT format. Token must have 3 parts separated by dots"
+      'Invalid JWT format. Token must have 3 parts separated by dots'
     );
   }
 
@@ -78,16 +78,16 @@ const decodeJWT = (token: string): JWTDecoded => {
     if (error instanceof Error) {
       throw new Error(`Failed to decode JWT: ${error.message}`);
     }
-    throw new Error("Failed to decode JWT: Unknown error");
+    throw new Error('Failed to decode JWT: Unknown error');
   }
 };
 
 const JwtParser: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [header, setHeader] = useState("");
-  const [payload, setPayload] = useState("");
-  const [signature, setSignature] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [header, setHeader] = useState('');
+  const [payload, setPayload] = useState('');
+  const [signature, setSignature] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -102,12 +102,12 @@ const JwtParser: React.FC = () => {
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const value = e.target.value;
       setInput(value);
-      setError("");
+      setError('');
 
       if (!value.trim()) {
-        setHeader("");
-        setPayload("");
-        setSignature("");
+        setHeader('');
+        setPayload('');
+        setSignature('');
         return;
       }
 
@@ -115,31 +115,31 @@ const JwtParser: React.FC = () => {
         const decoded = decodeJWT(value.trim());
         setHeader(JSON.stringify(decoded.header, null, 2));
         setPayload(JSON.stringify(decoded.payload, null, 2));
-        setSignature(decoded.signature || "");
+        setSignature(decoded.signature || '');
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Invalid JWT token";
+          err instanceof Error ? err.message : 'Invalid JWT token';
         setError(errorMessage);
-        setHeader("");
-        setPayload("");
-        setSignature("");
+        setHeader('');
+        setPayload('');
+        setSignature('');
       }
     },
     []
   );
 
   const handleClear = () => {
-    setInput("");
-    setHeader("");
-    setPayload("");
-    setSignature("");
-    setError("");
-    toast.success("Cleared all fields");
+    setInput('');
+    setHeader('');
+    setPayload('');
+    setSignature('');
+    setError('');
+    toast.success('Cleared all fields');
   };
 
   const handleSampleJWT = () => {
     const sampleToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
     setInput(sampleToken);
     handleInputChange({
       target: { value: sampleToken },
@@ -148,7 +148,7 @@ const JwtParser: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -461,25 +461,25 @@ Example format: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw
                           <li>
                             <code className="text-blue-600 dark:text-blue-400">
                               iss
-                            </code>{" "}
+                            </code>{' '}
                             - Issuer
                           </li>
                           <li>
                             <code className="text-blue-600 dark:text-blue-400">
                               sub
-                            </code>{" "}
+                            </code>{' '}
                             - Subject
                           </li>
                           <li>
                             <code className="text-blue-600 dark:text-blue-400">
                               aud
-                            </code>{" "}
+                            </code>{' '}
                             - Audience
                           </li>
                           <li>
                             <code className="text-blue-600 dark:text-blue-400">
                               exp
-                            </code>{" "}
+                            </code>{' '}
                             - Expiration Time
                           </li>
                         </ul>
@@ -489,19 +489,19 @@ Example format: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw
                           <li>
                             <code className="text-blue-600 dark:text-blue-400">
                               nbf
-                            </code>{" "}
+                            </code>{' '}
                             - Not Before
                           </li>
                           <li>
                             <code className="text-blue-600 dark:text-blue-400">
                               iat
-                            </code>{" "}
+                            </code>{' '}
                             - Issued At
                           </li>
                           <li>
                             <code className="text-blue-600 dark:text-blue-400">
                               jti
-                            </code>{" "}
+                            </code>{' '}
                             - JWT ID
                           </li>
                         </ul>

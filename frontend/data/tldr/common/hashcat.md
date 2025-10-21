@@ -1,29 +1,29 @@
 ---
-title: "Hashcat - Recover Passwords Rapidly | Online Free DevTools by Hexmos"
+title: 'Hashcat - Recover Passwords Rapidly | Online Free DevTools by Hexmos'
 name: hashcat
-path: "/freedevtools/tldr/common/hashcat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hashcat/"
-description: "Recover passwords rapidly with Hashcat, the advanced password recovery tool. Perform brute-force, dictionary, and rule-based attacks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hashcat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hashcat/'
+description: 'Recover passwords rapidly with Hashcat, the advanced password recovery tool. Perform brute-force, dictionary, and rule-based attacks. Free online tool, no registration required.'
 category: common
 keywords:
-- password recovery
-- hash cracking
-- brute-force attack
-- dictionary attack
-- rule-based attack
-- password analysis
-- hashcat linux
-- hashcat command line
-- password decryption
-- password security
+  - password recovery
+  - hash cracking
+  - brute-force attack
+  - dictionary attack
+  - rule-based attack
+  - password analysis
+  - hashcat linux
+  - hashcat command line
+  - password decryption
+  - password security
 features:
-- Perform brute-force password attacks using customizable masks
-- Execute dictionary attacks using wordlists and rule-based mutations
-- Crack passwords from various hash types with specific algorithms
-- Combine words from multiple dictionaries for enhanced attacks
-- Display recovered passwords for cracked hashes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform brute-force password attacks using customizable masks
+  - Execute dictionary attacks using wordlists and rule-based mutations
+  - Crack passwords from various hash types with specific algorithms
+  - Combine words from multiple dictionaries for enhanced attacks
+  - Display recovered passwords for cracked hashes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hashcat

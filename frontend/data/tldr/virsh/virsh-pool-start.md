@@ -1,29 +1,29 @@
 ---
-title: "Virsh Pool Start - Create Storage Pools | Online Free DevTools by Hexmos"
+title: 'Virsh Pool Start - Create Storage Pools | Online Free DevTools by Hexmos'
 name: virsh-pool-start
-path: "/freedevtools/tldr/virsh/virsh-pool-start/"
-canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-start/"
-description: "Create virtual machine storage pools with Virsh Pool Start. Manage and build storage systems using the virsh command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/virsh/virsh-pool-start/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-start/'
+description: 'Create virtual machine storage pools with Virsh Pool Start. Manage and build storage systems using the virsh command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- virsh storage pool
-- virtual machine pool
-- qemu virsh
-- kvm virsh
-- linux virsh pool
-- virsh pool start command
-- virsh storage management
-- virsh pool creation
-- virsh define pool
-- virsh storage volume
+  - virsh storage pool
+  - virtual machine pool
+  - qemu virsh
+  - kvm virsh
+  - linux virsh pool
+  - virsh pool start command
+  - virsh storage management
+  - virsh pool creation
+  - virsh define pool
+  - virsh storage volume
 features:
-- Start inactive virsh storage pools
-- Build the underlying storage system
-- Manage virtual machine storage
-- Create storage pools by name or UUID
-- Integrate with qemu/kvm virtualization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start inactive virsh storage pools
+  - Build the underlying storage system
+  - Manage virtual machine storage
+  - Create storage pools by name or UUID
+  - Integrate with qemu/kvm virtualization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virsh pool-start

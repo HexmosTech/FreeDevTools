@@ -1,9 +1,9 @@
 ---
-title: "Control Debian Packages - Wajig System Admin | Online Free DevTools by Hexmos"
+title: 'Control Debian Packages - Wajig System Admin | Online Free DevTools by Hexmos'
 name: wajig
-path: "/freedevtools/tldr/linux/wajig/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wajig/"
-description: "Control Debian packages easily with Wajig. Manage, update, install, and remove packages on Debian-based systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wajig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wajig/'
+description: 'Control Debian packages easily with Wajig. Manage, update, install, and remove packages on Debian-based systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - debian package manager
@@ -22,8 +22,8 @@ features:
   - Remove packages and configuration files
   - Perform system updates and upgrades
   - Display installed package sizes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wajig

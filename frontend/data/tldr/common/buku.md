@@ -1,29 +1,29 @@
 ---
-title: "Manage Bookmarks - Control Browser Bookmarks with Buku | Online Free DevTools by Hexmos"
+title: 'Manage Bookmarks - Control Browser Bookmarks with Buku | Online Free DevTools by Hexmos'
 name: buku
-path: "/freedevtools/tldr/common/buku/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/buku/"
-description: "Manage browser bookmarks efficiently with Buku. Organize, tag, and search your bookmarks from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/buku/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/buku/'
+description: 'Manage browser bookmarks efficiently with Buku. Organize, tag, and search your bookmarks from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- bookmark manager
-- command line bookmarks
-- browser bookmark tool
-- buku bookmark
-- terminal bookmark manager
-- bookmark tagging
-- bookmark searching
-- linux bookmark manager
-- command line utilities
-- open source bookmark
+  - bookmark manager
+  - command line bookmarks
+  - browser bookmark tool
+  - buku bookmark
+  - terminal bookmark manager
+  - bookmark tagging
+  - bookmark searching
+  - linux bookmark manager
+  - command line utilities
+  - open source bookmark
 features:
-- Add bookmarks with custom tags
-- Delete bookmarks by ID
-- Update existing bookmarks
-- Search bookmarks with keywords and tags
-- Open bookmarks in an editor
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add bookmarks with custom tags
+  - Delete bookmarks by ID
+  - Update existing bookmarks
+  - Search bookmarks with keywords and tags
+  - Open bookmarks in an editor
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # buku

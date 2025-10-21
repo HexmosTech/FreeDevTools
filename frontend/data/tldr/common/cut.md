@@ -1,9 +1,9 @@
 ---
-title: "Cut Data - Extract Fields with cut | Online Free DevTools by Hexmos"
+title: 'Cut Data - Extract Fields with cut | Online Free DevTools by Hexmos'
 name: cut
-path: "/freedevtools/tldr/common/cut/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cut/"
-description: "Extract fields and characters with the cut command.  Process text files efficiently using various delimiters and options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cut/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cut/'
+description: 'Extract fields and characters with the cut command.  Process text files efficiently using various delimiters and options. Free online tool, no registration required.'
 category: common
 keywords:
   - text field extraction
@@ -22,8 +22,8 @@ features:
   - Process data from standard input or files.
   - Handle NUL-terminated lines for advanced scenarios.
   - Define custom field and character ranges for precise extraction.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cut

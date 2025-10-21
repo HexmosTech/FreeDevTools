@@ -1,29 +1,29 @@
 ---
-title: "Schedule Commands - Execute Tasks with At | Online Free DevTools by Hexmos"
+title: 'Schedule Commands - Execute Tasks with At | Online Free DevTools by Hexmos'
 name: at
-path: "/freedevtools/tldr/common/at/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/at/"
-description: "Schedule commands with At. Execute tasks and automate processes on Unix-like systems. Free online tool, no registration required, for simple time-based automation."
+path: '/freedevtools/tldr/common/at/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/at/'
+description: 'Schedule commands with At. Execute tasks and automate processes on Unix-like systems. Free online tool, no registration required, for simple time-based automation.'
 category: common
 keywords:
-- schedule commands
-- at command linux
-- at command unix
-- delayed command execution
-- time based automation
-- linux at scheduler
-- cron alternative
-- batch job scheduler
-- command line scheduler
-- at job management
+  - schedule commands
+  - at command linux
+  - at command unix
+  - delayed command execution
+  - time based automation
+  - linux at scheduler
+  - cron alternative
+  - batch job scheduler
+  - command line scheduler
+  - at job management
 features:
-- Schedule commands for execution at a later time.
-- Execute commands from a file at a specified time.
-- List and view queued jobs.
-- Specify time in various formats (absolute or relative).
-- Send command output to user's mail.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Schedule commands for execution at a later time.
+  - Execute commands from a file at a specified time.
+  - List and view queued jobs.
+  - Specify time in various formats (absolute or relative).
+  - Send command output to user's mail.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # at

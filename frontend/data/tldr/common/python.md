@@ -1,29 +1,29 @@
 ---
-title: "Execute Python Scripts - Interpret Code | Online Free DevTools by Hexmos"
+title: 'Execute Python Scripts - Interpret Code | Online Free DevTools by Hexmos'
 name: python
-path: "/freedevtools/tldr/common/python/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/python/"
-description: "Execute Python scripts quickly with Python interpreter. Run code, debug programs, and manage packages easily using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/python/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/python/'
+description: 'Execute Python scripts quickly with Python interpreter. Run code, debug programs, and manage packages easily using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- python script execution
-- python code interpreter
-- python command line
-- python package installation
-- python debugging tool
-- python repl shell
-- python module execution
-- execute python expression
-- python http server
-- cross-platform python
+  - python script execution
+  - python code interpreter
+  - python command line
+  - python package installation
+  - python debugging tool
+  - python repl shell
+  - python module execution
+  - execute python expression
+  - python http server
+  - cross-platform python
 features:
-- Execute Python scripts from the command line
-- Start an interactive Python REPL session
-- Install Python packages using pip
-- Debug Python scripts with the pdb module
-- Run Python modules as scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Python scripts from the command line
+  - Start an interactive Python REPL session
+  - Install Python packages using pip
+  - Debug Python scripts with the pdb module
+  - Run Python modules as scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # python

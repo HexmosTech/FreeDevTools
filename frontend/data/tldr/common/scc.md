@@ -1,29 +1,29 @@
 ---
-title: "Count Lines of Code - Analyze Source Code with scc | Online Free DevTools by Hexmos"
+title: 'Count Lines of Code - Analyze Source Code with scc | Online Free DevTools by Hexmos'
 name: scc
-path: "/freedevtools/tldr/common/scc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/scc/"
-description: "Analyze lines of code with scc, a fast and accurate code counter. Get detailed source code metrics for various languages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/scc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/scc/'
+description: 'Analyze lines of code with scc, a fast and accurate code counter. Get detailed source code metrics for various languages. Free online tool, no registration required.'
 category: common
 keywords:
-- Source code analysis
-- Code line counter
-- LoC counter
-- Go code analysis
-- Software metrics
-- Code statistics
-- Code complexity analysis
-- Directory code counter
-- File extension code counter
-- Command line code counter
+  - Source code analysis
+  - Code line counter
+  - LoC counter
+  - Go code analysis
+  - Software metrics
+  - Code statistics
+  - Code complexity analysis
+  - Directory code counter
+  - File extension code counter
+  - Command line code counter
 features:
-- Count lines of code in various programming languages
-- Analyze code complexity and generate metrics
-- Filter files by extension for targeted analysis
-- Exclude directories for refined code counting
-- Sort output by files, name, lines, or code metrics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Count lines of code in various programming languages
+  - Analyze code complexity and generate metrics
+  - Filter files by extension for targeted analysis
+  - Exclude directories for refined code counting
+  - Sort output by files, name, lines, or code metrics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scc

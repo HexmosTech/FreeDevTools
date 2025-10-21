@@ -1,9 +1,9 @@
 ---
-title: "CPU Information - Display CPU Details | Online Free DevTools by Hexmos"
+title: 'CPU Information - Display CPU Details | Online Free DevTools by Hexmos'
 name: cpuid
-path: "/freedevtools/tldr/linux/cpuid/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cpuid/"
-description: "Display detailed CPU information with cpuid command. Get comprehensive CPU architecture and feature insights using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cpuid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cpuid/'
+description: 'Display detailed CPU information with cpuid command. Get comprehensive CPU architecture and feature insights using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - cpu information command
@@ -22,8 +22,8 @@ features:
   - Provides raw hexadecimal output for advanced analysis.
   - Identifies CPU features and capabilities.
   - Supports various operating systems (Linux, macOS, etc).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cpuid

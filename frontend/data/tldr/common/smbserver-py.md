@@ -1,29 +1,29 @@
 ---
-title: "SMB Server - Create Shares | Online Free DevTools by Hexmos"
+title: 'SMB Server - Create Shares | Online Free DevTools by Hexmos'
 name: smbserver.py
-path: "/freedevtools/tldr/common/smbserver-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/smbserver-py/"
-description: "Create SMB shares easily with smbserver.py. Host files and folders on your network with advanced authentication options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/smbserver-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/smbserver-py/'
+description: 'Create SMB shares easily with smbserver.py. Host files and folders on your network with advanced authentication options. Free online tool, no registration required.'
 category: common
 keywords:
-- SMB Share Creation
-- Samba Server Tool
-- Python SMB Server
-- Windows File Sharing
-- Network Share Creator
-- smbserver.py Command
-- Linux SMB Server
-- SMB Authentication
-- SMB2 Support
-- File Sharing Utility
+  - SMB Share Creation
+  - Samba Server Tool
+  - Python SMB Server
+  - Windows File Sharing
+  - Network Share Creator
+  - smbserver.py Command
+  - Linux SMB Server
+  - SMB Authentication
+  - SMB2 Support
+  - File Sharing Utility
 features:
-- Host SMB shares with custom names
-- Configure shares with username/password authentication
-- Support NTLM hash authentication
-- Enable SMB2 support for modern clients
-- Log SMB commands to an output file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Host SMB shares with custom names
+  - Configure shares with username/password authentication
+  - Support NTLM hash authentication
+  - Enable SMB2 support for modern clients
+  - Log SMB commands to an output file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smbserver.py

@@ -1,29 +1,29 @@
 ---
-title: "Brctl - Control Ethernet Bridges | Online Free DevTools by Hexmos"
+title: 'Brctl - Control Ethernet Bridges | Online Free DevTools by Hexmos'
 name: brctl
-path: "/freedevtools/tldr/linux/brctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/brctl/"
-description: "Control network interfaces with Brctl, the Ethernet bridge administration tool. Easily manage bridge connections, add/remove interfaces. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/brctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/brctl/'
+description: 'Control network interfaces with Brctl, the Ethernet bridge administration tool. Easily manage bridge connections, add/remove interfaces. Free online tool, no registration required.'
 category: linux
 keywords:
-- Ethernet bridge control
-- Linux network bridge
-- Brctl command
-- Network interface management
-- Bridge interface creation
-- Bridge interface deletion
-- Interface to bridge assignment
-- Network interface removal
-- Linux bridging utilities
-- Network bridge administration
+  - Ethernet bridge control
+  - Linux network bridge
+  - Brctl command
+  - Network interface management
+  - Bridge interface creation
+  - Bridge interface deletion
+  - Interface to bridge assignment
+  - Network interface removal
+  - Linux bridging utilities
+  - Network bridge administration
 features:
-- Show existing Ethernet bridges
-- Create new Ethernet bridge interfaces
-- Delete existing Ethernet bridge interfaces
-- Add interfaces to existing bridges
-- Remove interfaces from existing bridges
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show existing Ethernet bridges
+  - Create new Ethernet bridge interfaces
+  - Delete existing Ethernet bridge interfaces
+  - Add interfaces to existing bridges
+  - Remove interfaces from existing bridges
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brctl

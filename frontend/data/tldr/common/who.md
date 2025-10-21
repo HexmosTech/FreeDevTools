@@ -1,29 +1,29 @@
 ---
-title: "Who - Display Logged-In Users | Online Free DevTools by Hexmos"
+title: 'Who - Display Logged-In Users | Online Free DevTools by Hexmos'
 name: who
-path: "/freedevtools/tldr/common/who/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/who/"
-description: "Display logged-in users with Who command. Identify active sessions and system boot time on Linux/macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/who/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/who/'
+description: 'Display logged-in users with Who command. Identify active sessions and system boot time on Linux/macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- logged in users
-- display users
-- user sessions
-- linux who
-- macos who
-- command line users
-- active users
-- system boot time
-- login information
-- who command
+  - logged in users
+  - display users
+  - user sessions
+  - linux who
+  - macos who
+  - command line users
+  - active users
+  - system boot time
+  - login information
+  - who command
 features:
-- Display currently logged-in users
-- Show user's username and terminal line
-- Report system boot time
-- Display all available user information
-- Include table headers for output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display currently logged-in users
+  - Show user's username and terminal line
+  - Report system boot time
+  - Display all available user information
+  - Include table headers for output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # who

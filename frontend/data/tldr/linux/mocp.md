@@ -1,9 +1,9 @@
 ---
-title: "mocp - Control Music Playback on Console | Online Free DevTools by Hexmos"
+title: 'mocp - Control Music Playback on Console | Online Free DevTools by Hexmos'
 name: mocp
-path: "/freedevtools/tldr/linux/mocp/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mocp/"
-description: "Control music playback effortlessly with mocp, the Music on Console player.  Manage playlists, add songs, and control playback from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mocp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mocp/'
+description: 'Control music playback effortlessly with mocp, the Music on Console player.  Manage playlists, add songs, and control playback from your terminal. Free online tool, no registration required.'
 category: linux
 keywords:
   - console music player
@@ -22,8 +22,8 @@ features:
   - Manage the playback queue (clear, add, append).
   - Start and stop the mocp server in the background.
   - Control playback (play, stop) of the queued music.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mocp

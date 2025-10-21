@@ -1,29 +1,29 @@
 ---
-title: "Kubectl API Resources - Generate Server Resources | Online Free DevTools by Hexmos"
+title: 'Kubectl API Resources - Generate Server Resources | Online Free DevTools by Hexmos'
 name: kubectl-api-resources
-path: "/freedevtools/tldr/kubectl/kubectl-api-resources/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-api-resources/"
-description: "Generate Kubernetes API resources with Kubectl API Resources. Quickly list supported resources, filter by namespace, and sort output. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-api-resources/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-api-resources/'
+description: 'Generate Kubernetes API resources with Kubectl API Resources. Quickly list supported resources, filter by namespace, and sort output. Free online tool, no registration required.'
 category: common
 keywords:
-- Kubernetes API resources
-- Kubectl resource generator
-- Kubernetes server discovery
-- Kubectl API endpoint information
-- Kubernetes API group listing
-- CLI resource management
-- Kubernetes namespaced resources
-- Kubectl command line tools
-- Kubernetes resource explorer
-- YAML resource definitions
+  - Kubernetes API resources
+  - Kubectl resource generator
+  - Kubernetes server discovery
+  - Kubectl API endpoint information
+  - Kubernetes API group listing
+  - CLI resource management
+  - Kubernetes namespaced resources
+  - Kubectl command line tools
+  - Kubernetes resource explorer
+  - YAML resource definitions
 features:
-- List supported Kubernetes API resources
-- Filter resources by namespace
-- Sort output by specific columns
-- Display resource information with API group
-- Identify namespaced and non-namespaced resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List supported Kubernetes API resources
+  - Filter resources by namespace
+  - Sort output by specific columns
+  - Display resource information with API group
+  - Identify namespaced and non-namespaced resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl api-resources

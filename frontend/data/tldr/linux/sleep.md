@@ -1,9 +1,9 @@
 ---
-title: "Sleep Command - Control Process Timing | Online Free DevTools by Hexmos"
+title: 'Sleep Command - Control Process Timing | Online Free DevTools by Hexmos'
 name: sleep
-path: "/freedevtools/tldr/linux/sleep/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sleep/"
-description: "Control process timing with the Sleep command.  Pause execution for specified durations using seconds, minutes, hours, or days. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sleep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sleep/'
+description: 'Control process timing with the Sleep command.  Pause execution for specified durations using seconds, minutes, hours, or days. Free online tool, no registration required.'
 category: linux
 keywords:
   - sleep command
@@ -22,8 +22,8 @@ features:
   - Chain commands to execute after a delay.
   - Control program flow with precise timing.
   - Implement time-based automation in scripts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sleep

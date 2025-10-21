@@ -1,29 +1,29 @@
 ---
-title: "Azure Lock - Manage Azure Locks | Online Free DevTools by Hexmos"
+title: 'Azure Lock - Manage Azure Locks | Online Free DevTools by Hexmos'
 name: az-lock
-path: "/freedevtools/tldr/az/az-lock/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-lock/"
-description: "Manage Azure locks with az-lock. Secure your Azure resources with read-only locks and prevent accidental deletion. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-lock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-lock/'
+description: 'Manage Azure locks with az-lock. Secure your Azure resources with read-only locks and prevent accidental deletion. Free online tool, no registration required.'
 category: common
 keywords:
-- azure lock manager
-- azure resource locking
-- azure subscription lock
-- azure resource group lock
-- az lock command
-- azure cli lock
-- azure resource protection
-- azure security
-- azure governance
-- cli lock
+  - azure lock manager
+  - azure resource locking
+  - azure subscription lock
+  - azure resource group lock
+  - az lock command
+  - azure cli lock
+  - azure resource protection
+  - azure security
+  - azure governance
+  - cli lock
 features:
-- Create read-only Azure locks at subscription or resource group level
-- Delete existing Azure locks
-- List all Azure locks in a subscription
-- Show details of a specific Azure lock
-- Prevent accidental resource deletion or modification
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create read-only Azure locks at subscription or resource group level
+  - Delete existing Azure locks
+  - List all Azure locks in a subscription
+  - Show details of a specific Azure lock
+  - Prevent accidental resource deletion or modification
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az lock

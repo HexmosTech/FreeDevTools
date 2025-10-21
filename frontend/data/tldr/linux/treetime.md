@@ -1,9 +1,9 @@
 ---
-title: "TreeTime - Analyze Molecular Clock Phylogenies | Online Free DevTools by Hexmos"
+title: 'TreeTime - Analyze Molecular Clock Phylogenies | Online Free DevTools by Hexmos'
 name: treetime
-path: "/freedevtools/tldr/linux/treetime/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/treetime/"
-description: "Analyze molecular clock phylogenies with TreeTime. Infer ancestral sequences and estimate evolutionary parameters. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/treetime/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/treetime/'
+description: 'Analyze molecular clock phylogenies with TreeTime. Infer ancestral sequences and estimate evolutionary parameters. Free online tool, no registration required.'
 category: linux
 keywords:
   - molecular clock phylogeny analysis
@@ -22,8 +22,8 @@ features:
   - Estimate molecular clock parameters and reroot the tree
   - Map discrete characters onto a phylogenetic tree
   - Reconstruct ancestral states for traits of interest
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # treetime

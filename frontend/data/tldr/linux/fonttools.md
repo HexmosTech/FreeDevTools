@@ -1,9 +1,9 @@
 ---
-title: "Font Tools - Manipulate Fonts | Online Free DevTools by Hexmos"
+title: 'Font Tools - Manipulate Fonts | Online Free DevTools by Hexmos'
 name: fonttools
-path: "/freedevtools/tldr/linux/fonttools/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fonttools/"
-description: "Manipulate font files with Fonttools. Subset, convert, and inspect font formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fonttools/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fonttools/'
+description: 'Manipulate font files with Fonttools. Subset, convert, and inspect font formats. Free online tool, no registration required.'
 category: linux
 keywords:
   - font manipulation
@@ -22,8 +22,8 @@ features:
   - Convert between different font formats
   - Optimize font files for web usage
   - Display font help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fonttools

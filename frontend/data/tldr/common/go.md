@@ -1,29 +1,29 @@
 ---
-title: "Go - Manage Go Source Code | Online Free DevTools by Hexmos"
+title: 'Go - Manage Go Source Code | Online Free DevTools by Hexmos'
 name: go
-path: "/freedevtools/tldr/common/go/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/go/"
-description: "Manage Go source code with Go. Compile, build, and execute Go programs efficiently with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/go/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/go/'
+description: 'Manage Go source code with Go. Compile, build, and execute Go programs efficiently with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- go source code manager
-- go build command
-- go run command
-- go install command
-- go module initializer
-- go test runner
-- go package installer
-- golang command line
-- linux go compiler
-- macos go builder
+  - go source code manager
+  - go build command
+  - go run command
+  - go install command
+  - go module initializer
+  - go test runner
+  - go package installer
+  - golang command line
+  - linux go compiler
+  - macos go builder
 features:
-- Download and install Go packages from import paths
-- Compile and execute Go source files with main package
-- Compile Go source into named executables
-- Execute test cases within Go packages
-- Initialize new Go modules with specified names
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download and install Go packages from import paths
+  - Compile and execute Go source files with main package
+  - Compile Go source into named executables
+  - Execute test cases within Go packages
+  - Initialize new Go modules with specified names
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go

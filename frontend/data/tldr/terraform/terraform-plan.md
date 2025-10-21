@@ -1,29 +1,29 @@
 ---
-title: "Generate Terraform Plan - Infrastructure as Code | Online Free DevTools by Hexmos"
+title: 'Generate Terraform Plan - Infrastructure as Code | Online Free DevTools by Hexmos'
 name: terraform-plan
-path: "/freedevtools/tldr/terraform/terraform-plan/"
-canonical: "https://hexmos.com/freedevtools/tldr/terraform/terraform-plan/"
-description: "Generate Terraform execution plans instantly with Terraform Plan. Visualize changes before applying them, ensuring safe and predictable infrastructure updates. Free online tool, no registration required."
+path: '/freedevtools/tldr/terraform/terraform-plan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/terraform/terraform-plan/'
+description: 'Generate Terraform execution plans instantly with Terraform Plan. Visualize changes before applying them, ensuring safe and predictable infrastructure updates. Free online tool, no registration required.'
 category: common
 keywords:
-- terraform plan
-- infrastructure as code plan
-- terraform execution plan
-- terraform cloud
-- terraform automation
-- terraform configuration
-- terraform deployment
-- terraform aws
-- terraform azure
-- terraform google cloud
+  - terraform plan
+  - infrastructure as code plan
+  - terraform execution plan
+  - terraform cloud
+  - terraform automation
+  - terraform configuration
+  - terraform deployment
+  - terraform aws
+  - terraform azure
+  - terraform google cloud
 features:
-- Generate detailed execution plans before applying changes.
-- Target specific resources for focused planning.
-- Output plans in JSON format for automation.
-- Destroy resources within a Terraform configuration.
-- Refresh state to reflect current infrastructure.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate detailed execution plans before applying changes.
+  - Target specific resources for focused planning.
+  - Output plans in JSON format for automation.
+  - Destroy resources within a Terraform configuration.
+  - Refresh state to reflect current infrastructure.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # terraform plan

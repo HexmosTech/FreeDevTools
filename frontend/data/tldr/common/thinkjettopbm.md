@@ -1,29 +1,29 @@
 ---
-title: "Convert ThinkJet - Create PBM from HP ThinkJet | Online Free DevTools by Hexmos"
+title: 'Convert ThinkJet - Create PBM from HP ThinkJet | Online Free DevTools by Hexmos'
 name: thinkjettopbm
-path: "/freedevtools/tldr/common/thinkjettopbm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/thinkjettopbm/"
-description: "Convert ThinkJet printer command files to PBM images with Thinkjettopbm. Ideal for legacy printer support. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/thinkjettopbm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/thinkjettopbm/'
+description: 'Convert ThinkJet printer command files to PBM images with Thinkjettopbm. Ideal for legacy printer support. Free online tool, no registration required.'
 category: common
 keywords:
-- HP ThinkJet to PBM converter
-- Printer command file converter
-- ThinkJet image conversion
-- PBM image generator
-- Legacy printer support
-- HP ThinkJet command interpreter
-- Command line PBM conversion
-- ThinkJet emulator
-- Printer data conversion
-- PBM creation tool
+  - HP ThinkJet to PBM converter
+  - Printer command file converter
+  - ThinkJet image conversion
+  - PBM image generator
+  - Legacy printer support
+  - HP ThinkJet command interpreter
+  - Command line PBM conversion
+  - ThinkJet emulator
+  - Printer data conversion
+  - PBM creation tool
 features:
-- Converts HP ThinkJet command files to PBM images
-- Supports debug mode for detailed conversion information
-- Enables command-line conversion of printer data
-- Facilitates legacy printer data visualization
-- Outputs PBM image files for various applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Converts HP ThinkJet command files to PBM images
+  - Supports debug mode for detailed conversion information
+  - Enables command-line conversion of printer data
+  - Facilitates legacy printer data visualization
+  - Outputs PBM image files for various applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # thinkjettopbm

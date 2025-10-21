@@ -1,29 +1,29 @@
 ---
-title: "Pstree - Control Process Trees in Linux | Online Free DevTools by Hexmos"
+title: 'Pstree - Control Process Trees in Linux | Online Free DevTools by Hexmos'
 name: pstree
-path: "/freedevtools/tldr/linux/pstree/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pstree/"
-description: "Control Linux process trees with pstree. Visualize process relationships and identify parent-child processes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pstree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pstree/'
+description: 'Control Linux process trees with pstree. Visualize process relationships and identify parent-child processes easily. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux process tree
-- process visualization
-- process relationship
-- linux process management
-- pstree command
-- parent child process
-- signal handling linux
-- process monitoring
-- system process explorer
-- linux system calls
+  - linux process tree
+  - process visualization
+  - process relationship
+  - linux process management
+  - pstree command
+  - parent child process
+  - signal handling linux
+  - process monitoring
+  - system process explorer
+  - linux system calls
 features:
-- Display the process tree rooted at init
-- Show process IDs for each process
-- Filter the process tree by user
-- Display command line arguments for processes
-- Visualize parent processes of a specific PID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the process tree rooted at init
+  - Show process IDs for each process
+  - Filter the process tree by user
+  - Display command line arguments for processes
+  - Visualize parent processes of a specific PID
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pstree

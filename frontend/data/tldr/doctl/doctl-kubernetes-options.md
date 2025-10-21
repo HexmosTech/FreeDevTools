@@ -1,29 +1,29 @@
 ---
-title: "Doctl Kubernetes Options - Manage Clusters | Online Free DevTools by Hexmos"
+title: 'Doctl Kubernetes Options - Manage Clusters | Online Free DevTools by Hexmos'
 name: doctl-kubernetes-options
-path: "/freedevtools/tldr/doctl/doctl-kubernetes-options/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-kubernetes-options/"
-description: "Manage DigitalOcean Kubernetes clusters with Doctly Kubernetes Options.  View supported regions, machine sizes, and versions to create and configure clusters. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-kubernetes-options/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-kubernetes-options/'
+description: 'Manage DigitalOcean Kubernetes clusters with Doctly Kubernetes Options.  View supported regions, machine sizes, and versions to create and configure clusters. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes cluster management
-- doctl kubernetes options
-- digitalocean kubernetes versions
-- kubernetes supported regions
-- kubernetes machine sizes
-- doctl cluster configuration
-- kubernetes command line tools
-- digitalocean cli kubernetes
-- k8s cluster options
-- digitalocean k8s management
+  - kubernetes cluster management
+  - doctl kubernetes options
+  - digitalocean kubernetes versions
+  - kubernetes supported regions
+  - kubernetes machine sizes
+  - doctl cluster configuration
+  - kubernetes command line tools
+  - digitalocean cli kubernetes
+  - k8s cluster options
+  - digitalocean k8s management
 features:
-- List supported Kubernetes regions on DigitalOcean
-- Retrieve available machine sizes for Kubernetes clusters
-- Show available Kubernetes versions for DigitalOcean
-- View cluster configuration options
-- Manage Kubernetes resources using the DigitalOcean CLI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List supported Kubernetes regions on DigitalOcean
+  - Retrieve available machine sizes for Kubernetes clusters
+  - Show available Kubernetes versions for DigitalOcean
+  - View cluster configuration options
+  - Manage Kubernetes resources using the DigitalOcean CLI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl kubernetes options

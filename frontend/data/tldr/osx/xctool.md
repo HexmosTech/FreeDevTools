@@ -1,29 +1,29 @@
 ---
-title: "Build Xcode Projects - Control Builds with xctool | Online Free DevTools by Hexmos"
+title: 'Build Xcode Projects - Control Builds with xctool | Online Free DevTools by Hexmos'
 name: xctool
-path: "/freedevtools/tldr/osx/xctool/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xctool/"
-description: "Control Xcode builds with xctool. Automate building, testing, and analyzing iOS and macOS projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xctool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xctool/'
+description: 'Control Xcode builds with xctool. Automate building, testing, and analyzing iOS and macOS projects. Free online tool, no registration required.'
 category: osx
 keywords:
-- Xcode build tool
-- iOS build automation
-- macOS build automation
-- xctool build project
-- xctool test automation
-- Xcode command line tool
-- Objective-C build
-- Swift build
-- OSX build scripts
-- Xcode continuous integration
+  - Xcode build tool
+  - iOS build automation
+  - macOS build automation
+  - xctool build project
+  - xctool test automation
+  - Xcode command line tool
+  - Objective-C build
+  - Swift build
+  - OSX build scripts
+  - Xcode continuous integration
 features:
-- Build Xcode projects and workspaces
-- Clean Xcode projects and workspaces
-- Execute tests on Xcode projects and workspaces
-- Automate Xcode build processes
-- Integrate with continuous integration systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Xcode projects and workspaces
+  - Clean Xcode projects and workspaces
+  - Execute tests on Xcode projects and workspaces
+  - Automate Xcode build processes
+  - Integrate with continuous integration systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xctool

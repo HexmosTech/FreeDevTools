@@ -1,9 +1,9 @@
 ---
-title: "Compare Files - Find File Differences with FC | Online Free DevTools by Hexmos"
+title: 'Compare Files - Find File Differences with FC | Online Free DevTools by Hexmos'
 name: fc
-path: "/freedevtools/tldr/windows/fc/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/fc/"
-description: "Find file differences instantly with FC. Compare file content and identify changes across various file types. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/fc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/fc/'
+description: 'Find file differences instantly with FC. Compare file content and identify changes across various file types. Free online tool, no registration required.'
 category: windows
 keywords:
   - file comparison tool
@@ -22,8 +22,8 @@ features:
   - Compare files as Unicode or ASCII text
   - Compare files in binary mode
   - Suppress tab expansion during comparison
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fc

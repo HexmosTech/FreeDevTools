@@ -1,29 +1,29 @@
 ---
-title: "Generate DVI with TeX - Compile TeX Files | Online Free DevTools by Hexmos"
+title: 'Generate DVI with TeX - Compile TeX Files | Online Free DevTools by Hexmos'
 name: tex
-path: "/freedevtools/tldr/common/tex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tex/"
-description: "Generate DVI files with TeX. Compile TeX source code into DVI documents with advanced options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tex/'
+description: 'Generate DVI files with TeX. Compile TeX source code into DVI documents with advanced options. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX DVI generator
-- TeX compiler
-- LaTeX DVI creation
-- DVI file compilation
-- TeX source to DVI
-- Command line TeX
-- Linux TeX compiler
-- MacOS TeX compiler
-- TeX error handling
-- DVI output directory
+  - TeX DVI generator
+  - TeX compiler
+  - LaTeX DVI creation
+  - DVI file compilation
+  - TeX source to DVI
+  - Command line TeX
+  - Linux TeX compiler
+  - MacOS TeX compiler
+  - TeX error handling
+  - DVI output directory
 features:
-- Compile TeX source files into DVI documents.
-- Specify the output directory for the generated DVI file.
-- Halt compilation on the first error encountered.
-- Process TeX files directly from the command line.
-- Generate DVI output compatible with various viewers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile TeX source files into DVI documents.
+  - Specify the output directory for the generated DVI file.
+  - Halt compilation on the first error encountered.
+  - Process TeX files directly from the command line.
+  - Generate DVI output compatible with various viewers.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tex

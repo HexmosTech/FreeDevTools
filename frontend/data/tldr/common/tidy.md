@@ -1,29 +1,29 @@
 ---
-title: "Tidy - Format HTML and XML Files | Online Free DevTools by Hexmos"
+title: 'Tidy - Format HTML and XML Files | Online Free DevTools by Hexmos'
 name: tidy
-path: "/freedevtools/tldr/common/tidy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tidy/"
-description: "Format HTML and XML files easily with Tidy. Clean up code, add indentation and improve readability using command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tidy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tidy/'
+description: 'Format HTML and XML files easily with Tidy. Clean up code, add indentation and improve readability using command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- HTML formatter
-- XML formatter
-- HTML pretty printer
-- XML pretty printer
-- HTML tidy
-- XML tidy
-- HTML beautifier
-- XML beautifier
-- HTML validator
-- XML validator
+  - HTML formatter
+  - XML formatter
+  - HTML pretty printer
+  - XML pretty printer
+  - HTML tidy
+  - XML tidy
+  - HTML beautifier
+  - XML beautifier
+  - HTML validator
+  - XML validator
 features:
-- Format HTML files for better readability
-- Format XML files for better readability
-- Indent and wrap HTML/XML code
-- Modify HTML files in-place
-- Clean up HTML and XML code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format HTML files for better readability
+  - Format XML files for better readability
+  - Indent and wrap HTML/XML code
+  - Modify HTML files in-place
+  - Clean up HTML and XML code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tidy

@@ -1,29 +1,29 @@
 ---
-title: "Docker PS - List Docker Containers | Online Free DevTools by Hexmos"
+title: 'Docker PS - List Docker Containers | Online Free DevTools by Hexmos'
 name: docker-ps
-path: "/freedevtools/tldr/docker/docker-ps/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-ps/"
-description: "List Docker containers quickly with Docker PS. Inspect container status, filter by name or image, and manage container lifecycles easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-ps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-ps/'
+description: 'List Docker containers quickly with Docker PS. Inspect container status, filter by name or image, and manage container lifecycles easily. Free online tool, no registration required.'
 category: common
 keywords:
-- docker container list
-- docker ps command
-- docker list containers
-- docker container status
-- docker container management
-- docker container filter
-- docker container image
-- docker container name
-- docker container exited code
-- docker container volume
+  - docker container list
+  - docker ps command
+  - docker list containers
+  - docker container status
+  - docker container management
+  - docker container filter
+  - docker container image
+  - docker container name
+  - docker container exited code
+  - docker container volume
 features:
-- List currently running Docker containers
-- List all Docker containers including stopped ones
-- Show the latest created container
-- Filter containers by name substring
-- Filter containers by ancestor image
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List currently running Docker containers
+  - List all Docker containers including stopped ones
+  - Show the latest created container
+  - Filter containers by name substring
+  - Filter containers by ancestor image
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker ps

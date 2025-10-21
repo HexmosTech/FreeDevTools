@@ -1,29 +1,29 @@
 ---
-title: "Nix Profile - Manage Packages | Online Free DevTools by Hexmos"
+title: 'Nix Profile - Manage Packages | Online Free DevTools by Hexmos'
 name: nix-profile
-path: "/freedevtools/tldr/nix/nix-profile/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-profile/"
-description: "Manage packages with Nix Profile. Install, update, and remove software packages using the Nix package manager. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-profile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-profile/'
+description: 'Manage packages with Nix Profile. Install, update, and remove software packages using the Nix package manager. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- nix package install
-- nix profile install
-- nix profile upgrade
-- nix profile remove
-- nix declarative package management
-- nixos package management
-- linux package management
-- reproducible builds
-- software deployment
+  - nix package manager
+  - nix package install
+  - nix profile install
+  - nix profile upgrade
+  - nix profile remove
+  - nix declarative package management
+  - nixos package management
+  - linux package management
+  - reproducible builds
+  - software deployment
 features:
-- Install packages from nixpkgs
-- Install packages from flakes
-- List installed packages
-- Remove specific packages
-- Upgrade packages to latest versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages from nixpkgs
+  - Install packages from flakes
+  - List installed packages
+  - Remove specific packages
+  - Upgrade packages to latest versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix profile

@@ -1,29 +1,29 @@
 ---
-title: "Unpublish NPM Package - Remove Packages from NPM Registry | Online Free DevTools by Hexmos"
+title: 'Unpublish NPM Package - Remove Packages from NPM Registry | Online Free DevTools by Hexmos'
 name: npm-unpublish
-path: "/freedevtools/tldr/npm/npm-unpublish/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-unpublish/"
-description: "Remove NPM packages easily with NPM Unpublish. Delete specific versions or entire packages from the NPM registry. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-unpublish/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-unpublish/'
+description: 'Remove NPM packages easily with NPM Unpublish. Delete specific versions or entire packages from the NPM registry. Free online tool, no registration required.'
 category: common
 keywords:
-- npm unpublish
-- unpublish npm package
-- npm remove package
-- npm delete package
-- npm registry management
-- npm command line tools
-- npm package removal
-- node package manager
-- npm uninstall package
-- npm package maintenance
+  - npm unpublish
+  - unpublish npm package
+  - npm remove package
+  - npm delete package
+  - npm registry management
+  - npm command line tools
+  - npm package removal
+  - node package manager
+  - npm uninstall package
+  - npm package maintenance
 features:
-- Remove specific versions of NPM packages.
-- Unpublish entire NPM packages from the registry.
-- Supports scoped NPM packages.
-- Specify a timeout period for unpublishing.
-- Dry run to preview unpublishing changes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove specific versions of NPM packages.
+  - Unpublish entire NPM packages from the registry.
+  - Supports scoped NPM packages.
+  - Specify a timeout period for unpublishing.
+  - Dry run to preview unpublishing changes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm unpublish

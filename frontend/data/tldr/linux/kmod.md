@@ -1,9 +1,9 @@
 ---
-title: "Manage Kernel Modules - Control Modules | Online Free DevTools by Hexmos"
+title: 'Manage Kernel Modules - Control Modules | Online Free DevTools by Hexmos'
 name: kmod
-path: "/freedevtools/tldr/linux/kmod/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kmod/"
-description: "Manage kernel modules with kmod. Load, unload, and inspect Linux kernel modules effortlessly. Free online tool, no registration required. Kernel configuration supported."
+path: '/freedevtools/tldr/linux/kmod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kmod/'
+description: 'Manage kernel modules with kmod. Load, unload, and inspect Linux kernel modules effortlessly. Free online tool, no registration required. Kernel configuration supported.'
 category: linux
 keywords:
   - linux kernel module management
@@ -22,8 +22,8 @@ features:
   - Load and unload kernel modules
   - Display module information
   - Manage kernel module dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kmod

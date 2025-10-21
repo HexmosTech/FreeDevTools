@@ -1,29 +1,29 @@
 ---
-title: "Generate SVG Makefiles - Inkmake | Online Free DevTools by Hexmos"
+title: 'Generate SVG Makefiles - Inkmake | Online Free DevTools by Hexmos'
 name: inkmake
-path: "/freedevtools/tldr/in/inkmake/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/inkmake/"
+path: '/freedevtools/tldr/in/inkmake/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/inkmake/'
 description: "Generate SVG makefiles with Inkmake. Automate SVG exporting and transformations using Inkscape's backend. Free online tool, no registration required."
 category: common
 keywords:
-- SVG Makefile generator
-- Inkscape automation
-- Vector graphics export
-- Command-line SVG tools
-- Makefile-based SVG workflow
-- Inkscape batch processing
-- SVG conversion tool
-- Graphics automation scripts
-- Linux SVG utilities
-- macOS SVG make
+  - SVG Makefile generator
+  - Inkscape automation
+  - Vector graphics export
+  - Command-line SVG tools
+  - Makefile-based SVG workflow
+  - Inkscape batch processing
+  - SVG conversion tool
+  - Graphics automation scripts
+  - Linux SVG utilities
+  - macOS SVG make
 features:
-- Export SVG files using Inkfile configurations
-- Automate SVG transformations through Makefiles
-- Integrate Inkscape into build processes
-- Use custom Inkscape binaries as the backend
-- Show detailed information during execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Export SVG files using Inkfile configurations
+  - Automate SVG transformations through Makefiles
+  - Integrate Inkscape into build processes
+  - Use custom Inkscape binaries as the backend
+  - Show detailed information during execution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # inkmake

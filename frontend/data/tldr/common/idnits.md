@@ -1,29 +1,29 @@
 ---
-title: "IDNits Validator - Check Internet-Drafts | Online Free DevTools by Hexmos"
+title: 'IDNits Validator - Check Internet-Drafts | Online Free DevTools by Hexmos'
 name: idnits
-path: "/freedevtools/tldr/common/idnits/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/idnits/"
-description: "Validate Internet-Drafts with IDNits Validator, ensuring compliance with IETF requirements. Check for submission errors and nits. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/idnits/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/idnits/'
+description: 'Validate Internet-Drafts with IDNits Validator, ensuring compliance with IETF requirements. Check for submission errors and nits. Free online tool, no registration required.'
 category: common
 keywords:
-- internet draft validator
-- idnits checker
-- rfc compliance tool
-- ietf draft validation
-- submission nits checker
-- internet draft validation
-- draft formatting tool
-- rfc validator
-- ietf compliance
-- idnits tool
+  - internet draft validator
+  - idnits checker
+  - rfc compliance tool
+  - ietf draft validation
+  - submission nits checker
+  - internet draft validation
+  - draft formatting tool
+  - rfc validator
+  - ietf compliance
+  - idnits tool
 features:
-- Checks internet-drafts for submission nits
-- Validates drafts against IETF requirements
-- Counts nits in internet-drafts
-- Provides verbose output with extra information
-- Allows specifying the expected year in boilerplate
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checks internet-drafts for submission nits
+  - Validates drafts against IETF requirements
+  - Counts nits in internet-drafts
+  - Provides verbose output with extra information
+  - Allows specifying the expected year in boilerplate
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # idnits

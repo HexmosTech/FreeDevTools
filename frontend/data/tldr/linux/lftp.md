@@ -1,29 +1,29 @@
 ---
-title: "LFTP File Transfer - Manage Remote Files | Online Free DevTools by Hexmos"
+title: 'LFTP File Transfer - Manage Remote Files | Online Free DevTools by Hexmos'
 name: lftp
-path: "/freedevtools/tldr/linux/lftp/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lftp/"
-description: "Manage remote files easily with LFTP File Transfer, a command-line file transfer program. Securely transfer files, update directories and rename files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lftp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lftp/'
+description: 'Manage remote files easily with LFTP File Transfer, a command-line file transfer program. Securely transfer files, update directories and rename files. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux file transfer
-- lftp command line
-- remote file management
-- ftp client linux
-- secure file transfer
-- lftp mirror directory
-- command line ftp
-- lftp multiple files
-- lftp scripting
-- lftp automation
+  - linux file transfer
+  - lftp command line
+  - remote file management
+  - ftp client linux
+  - secure file transfer
+  - lftp mirror directory
+  - command line ftp
+  - lftp multiple files
+  - lftp scripting
+  - lftp automation
 features:
-- Connect to FTP servers securely.
-- Download multiple files using glob expressions.
-- Upload multiple files using glob expressions.
-- Mirror and synchronize entire directories.
-- Rename files on remote servers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to FTP servers securely.
+  - Download multiple files using glob expressions.
+  - Upload multiple files using glob expressions.
+  - Mirror and synchronize entire directories.
+  - Rename files on remote servers.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lftp

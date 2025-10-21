@@ -1,29 +1,29 @@
 ---
-title: "Create MicroVMs - Control Virtual Machines with krunvm | Online Free DevTools by Hexmos"
+title: 'Create MicroVMs - Control Virtual Machines with krunvm | Online Free DevTools by Hexmos'
 name: krunvm
-path: "/freedevtools/tldr/common/krunvm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/krunvm/"
-description: "Create MicroVMs instantly with krunvm. Manage virtual machine images and control their resources efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/krunvm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/krunvm/'
+description: 'Create MicroVMs instantly with krunvm. Manage virtual machine images and control their resources efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- MicroVM creation
-- Virtual machine manager
-- OCI image MicroVM
-- Linux MicroVM
-- Command line MicroVM
-- Krun MicroVM
-- Container virtualization
-- VM image management
-- Lightweight virtualization
-- Virtual Machine control
+  - MicroVM creation
+  - Virtual machine manager
+  - OCI image MicroVM
+  - Linux MicroVM
+  - Command line MicroVM
+  - Krun MicroVM
+  - Container virtualization
+  - VM image management
+  - Lightweight virtualization
+  - Virtual Machine control
 features:
-- Create MicroVMs from OCI images
-- Start and manage virtual machine instances
-- List available virtual machine images
-- Modify virtual machine configurations
-- Delete virtual machine images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create MicroVMs from OCI images
+  - Start and manage virtual machine instances
+  - List available virtual machine images
+  - Modify virtual machine configurations
+  - Delete virtual machine images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # krunvm

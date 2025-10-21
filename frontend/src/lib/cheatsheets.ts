@@ -33,17 +33,17 @@ export type CheatsheetResult = {
 // Get all cheatsheets grouped by category
 export async function getAllCheatsheets(): Promise<CheatsheetsByCategory> {
   const files = import.meta.glob(
-    "/src/pages/html_pages/cheatsheets/**/*.html",
+    '/src/pages/html_pages/cheatsheets/**/*.html',
     { eager: true }
   );
 
   const sheetsByCategory: CheatsheetsByCategory = {};
 
   for (const [path, file] of Object.entries(files)) {
-    const pathParts = path.split("/");
+    const pathParts = path.split('/');
     const category = pathParts[pathParts.length - 2];
     const fileName = pathParts[pathParts.length - 1];
-    const name = fileName.replace(".html", "");
+    const name = fileName.replace('.html', '');
 
     if (!sheetsByCategory[category]) {
       sheetsByCategory[category] = [];
@@ -80,8 +80,8 @@ export async function getCheatsheet(
   try {
     // Preload all cheatsheet HTML files as raw strings at build-time
     const rawFiles = import.meta.glob(
-      "/src/pages/html_pages/cheatsheets/**/*.html",
-      { eager: true, query: "?raw", import: "default" }
+      '/src/pages/html_pages/cheatsheets/**/*.html',
+      { eager: true, query: '?raw', import: 'default' }
     ) as Record<string, string>;
 
     const filePath = `/src/pages/html_pages/cheatsheets/${category}/${name}.html`;
@@ -117,13 +117,13 @@ export async function getCheatsheet(
 
       if (name) {
         switch (name.toLowerCase()) {
-          case "description":
+          case 'description':
             metatags.description = content;
             break;
-          case "keywords":
+          case 'keywords':
             metatags.keywords = content;
             break;
-          case "robots":
+          case 'robots':
             metatags.robots = content;
             break;
         }
@@ -131,19 +131,19 @@ export async function getCheatsheet(
 
       if (property) {
         switch (property.toLowerCase()) {
-          case "og:title":
+          case 'og:title':
             metatags.ogTitle = content;
             break;
-          case "og:description":
+          case 'og:description':
             metatags.ogDescription = content;
             break;
-          case "og:image":
+          case 'og:image':
             metatags.ogImage = content;
             break;
-          case "og:url":
+          case 'og:url':
             metatags.ogUrl = content;
             break;
-          case "og:type":
+          case 'og:type':
             metatags.ogType = content;
             break;
         }
@@ -163,16 +163,16 @@ export async function getCheatsheet(
       const content = contentMatch[1];
 
       switch (name) {
-        case "title":
+        case 'title':
           metatags.twitterTitle = content;
           break;
-        case "description":
+        case 'description':
           metatags.twitterDescription = content;
           break;
-        case "image":
+        case 'image':
           metatags.twitterImage = content;
           break;
-        case "card":
+        case 'card':
           metatags.twitterCard = content;
           break;
       }
@@ -188,7 +188,7 @@ export async function getCheatsheet(
 
     // Extract content from the body tag, removing the outer HTML structure
     const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    let bodyContent = "";
+    let bodyContent = '';
     if (bodyMatch) {
       bodyContent = bodyMatch[1].trim();
     } else {

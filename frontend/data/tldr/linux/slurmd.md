@@ -1,9 +1,9 @@
 ---
-title: "Slurmd Control - Manage Slurm Compute Nodes | Online Free DevTools by Hexmos"
+title: 'Slurmd Control - Manage Slurm Compute Nodes | Online Free DevTools by Hexmos'
 name: slurmd
-path: "/freedevtools/tldr/linux/slurmd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmd/"
-description: "Control Slurm compute node tasks with Slurmd. Monitor, launch, and manage tasks on your Slurm cluster. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/slurmd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/slurmd/'
+description: 'Control Slurm compute node tasks with Slurmd. Monitor, launch, and manage tasks on your Slurm cluster. Free online tool, no registration required.'
 category: linux
 keywords:
   - slurm compute node management
@@ -22,8 +22,8 @@ features:
   - Terminate running tasks upon request
   - Report node reboots for testing purposes
   - Configure Slurmd using specified configuration files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # slurmd

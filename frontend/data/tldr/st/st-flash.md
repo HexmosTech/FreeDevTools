@@ -1,29 +1,29 @@
 ---
-title: "Flash STM32 - Program Microcontrollers | Online Free DevTools by Hexmos"
+title: 'Flash STM32 - Program Microcontrollers | Online Free DevTools by Hexmos'
 name: st-flash
-path: "/freedevtools/tldr/st/st-flash/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/st-flash/"
-description: "Flash STM32 microcontrollers with st-flash. Program firmware, erase memory, and read/write data to STM32 devices easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/st-flash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/st-flash/'
+description: 'Flash STM32 microcontrollers with st-flash. Program firmware, erase memory, and read/write data to STM32 devices easily. Free online tool, no registration required.'
 category: common
 keywords:
-- STM32 Flasher
-- ARM Cortex Programmer
-- Microcontroller Flashing
-- Embedded Firmware Upload
-- STM32 Binary Writer
-- ST-Link Utility
-- STM32 Debugging Tool
-- Firmware Programming Tool
-- Embedded Systems Development
-- ARM Cortex M Series
+  - STM32 Flasher
+  - ARM Cortex Programmer
+  - Microcontroller Flashing
+  - Embedded Firmware Upload
+  - STM32 Binary Writer
+  - ST-Link Utility
+  - STM32 Debugging Tool
+  - Firmware Programming Tool
+  - Embedded Systems Development
+  - ARM Cortex M Series
 features:
-- Flash binary files to STM32 microcontrollers
-- Read memory from STM32 devices
-- Write firmware to specific memory addresses
-- Erase firmware from STM32 memory
-- Program ARM Cortex microcontrollers via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Flash binary files to STM32 microcontrollers
+  - Read memory from STM32 devices
+  - Write firmware to specific memory addresses
+  - Erase firmware from STM32 memory
+  - Program ARM Cortex microcontrollers via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # st-flash

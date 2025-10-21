@@ -1,29 +1,29 @@
 ---
-title: "HTTP Server - Serve Static Files | Online Free DevTools by Hexmos"
+title: 'HTTP Server - Serve Static Files | Online Free DevTools by Hexmos'
 name: http-server
-path: "/freedevtools/tldr/http/http-server/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/http-server/"
-description: "Serve static files with HTTP Server. Quickly deploy and test web applications locally with this simple static server. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/http-server/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/http-server/'
+description: 'Serve static files with HTTP Server. Quickly deploy and test web applications locally with this simple static server. Free online tool, no registration required.'
 category: common
 keywords:
-- static file server
-- local web server
-- HTTP server CLI
-- simple file sharing
-- command line HTTP server
-- development server
-- HTTP server linux
-- HTTP server macos
-- HTTP server windows
-- serve directory HTTP
+  - static file server
+  - local web server
+  - HTTP server CLI
+  - simple file sharing
+  - command line HTTP server
+  - development server
+  - HTTP server linux
+  - HTTP server macos
+  - HTTP server windows
+  - serve directory HTTP
 features:
-- Serve files from any directory
-- Enable basic authentication
-- Disable directory listings
-- Enable HTTPS with custom certificates
-- Enable CORS support
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve files from any directory
+  - Enable basic authentication
+  - Disable directory listings
+  - Enable HTTPS with custom certificates
+  - Enable CORS support
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # http-server

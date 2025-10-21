@@ -1,9 +1,9 @@
 ---
-title: "Hardinfo - Generate Hardware Reports | Online Free DevTools by Hexmos"
+title: 'Hardinfo - Generate Hardware Reports | Online Free DevTools by Hexmos'
 name: hardinfo
-path: "/freedevtools/tldr/linux/hardinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hardinfo/"
-description: "Generate detailed hardware reports with Hardinfo.  View system information, including CPU, memory, and storage details, easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hardinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hardinfo/'
+description: 'Generate detailed hardware reports with Hardinfo.  View system information, including CPU, memory, and storage details, easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - hardware information linux
@@ -22,8 +22,8 @@ features:
   - Exports reports to HTML for easy sharing.
   - Provides a GUI interface for easy navigation.
   - Offers command-line options for flexible usage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hardinfo

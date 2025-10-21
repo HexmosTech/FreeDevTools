@@ -1,29 +1,29 @@
 ---
-title: "HTTP Client - Interact with APIs & HTTP Servers | Online Free DevTools by Hexmos"
+title: 'HTTP Client - Interact with APIs & HTTP Servers | Online Free DevTools by Hexmos'
 name: http
-path: "/freedevtools/tldr/http/http/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/http/"
-description: "Interact with APIs easily with HTTPie, the HTTP client. Test, debug and send HTTP requests with a simple command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/http/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/http/'
+description: 'Interact with APIs easily with HTTPie, the HTTP client. Test, debug and send HTTP requests with a simple command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- http client
-- api client
-- httpie
-- http request
-- command line http
-- rest api test
-- debug api
-- http server interaction
-- api debugging tool
-- httpie command
+  - http client
+  - api client
+  - httpie
+  - http request
+  - command line http
+  - rest api test
+  - debug api
+  - http server interaction
+  - api debugging tool
+  - httpie command
 features:
-- Send HTTP requests with various methods (GET, POST, PUT, DELETE, etc.)
-- Inspect HTTP request and response headers and bodies
-- Utilize sessions for persistent custom headers and authentication
-- Follow redirects and specify custom request headers
-- Upload files using form data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send HTTP requests with various methods (GET, POST, PUT, DELETE, etc.)
+  - Inspect HTTP request and response headers and bodies
+  - Utilize sessions for persistent custom headers and authentication
+  - Follow redirects and specify custom request headers
+  - Upload files using form data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # http

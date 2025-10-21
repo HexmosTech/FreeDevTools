@@ -1,29 +1,29 @@
 ---
-title: "Create Scala Builds - Manage Java Projects with sbt | Online Free DevTools by Hexmos"
+title: 'Create Scala Builds - Manage Java Projects with sbt | Online Free DevTools by Hexmos'
 name: sbt
-path: "/freedevtools/tldr/common/sbt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sbt/"
-description: "Create Scala builds effortlessly with sbt, the build tool for Scala and Java projects. Manage dependencies, compile code, and run tests efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sbt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sbt/'
+description: 'Create Scala builds effortlessly with sbt, the build tool for Scala and Java projects. Manage dependencies, compile code, and run tests efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- scala build tool
-- java project manager
-- sbt build system
-- scala dependency management
-- java build automation
-- sbt scala compiler
-- sbt java compiler
-- sbt giter8 template
-- sbt testing framework
-- sbt command line
+  - scala build tool
+  - java project manager
+  - sbt build system
+  - scala dependency management
+  - java build automation
+  - sbt scala compiler
+  - sbt java compiler
+  - sbt giter8 template
+  - sbt testing framework
+  - sbt command line
 features:
-- Start an interactive Scala REPL session.
-- Create new Scala projects from Giter8 templates.
-- Compile and run comprehensive project tests.
-- Delete generated build files from the target directory.
-- Compile main Scala and Java source code.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive Scala REPL session.
+  - Create new Scala projects from Giter8 templates.
+  - Compile and run comprehensive project tests.
+  - Delete generated build files from the target directory.
+  - Compile main Scala and Java source code.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sbt

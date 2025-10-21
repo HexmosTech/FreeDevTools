@@ -1,9 +1,9 @@
 ---
-title: "GhostScript PDF Control - Manage PDFs with gs | Online Free DevTools by Hexmos"
+title: 'GhostScript PDF Control - Manage PDFs with gs | Online Free DevTools by Hexmos'
 name: gs
-path: "/freedevtools/tldr/linux/gs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gs/"
-description: "Control and manipulate PDF files with GhostScript. Convert, merge, and extract pages from PDFs effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gs/'
+description: 'Control and manipulate PDF files with GhostScript. Convert, merge, and extract pages from PDFs effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - pdf manipulation gs
@@ -23,8 +23,8 @@ features:
   - Extract specific pages from a PDF file.
   - Merge multiple PDF files into a single document.
   - Convert PostScript files to PDF format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gs

@@ -1,9 +1,9 @@
 ---
-title: "Modem Control - Manage Modems with mmcli | Online Free DevTools by Hexmos"
+title: 'Modem Control - Manage Modems with mmcli | Online Free DevTools by Hexmos'
 name: mmcli
-path: "/freedevtools/tldr/linux/mmcli/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mmcli/"
-description: "Control modems effectively with mmcli. Manage connections, send SMS, and monitor network status using this command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mmcli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mmcli/'
+description: 'Control modems effectively with mmcli. Manage connections, send SMS, and monitor network status using this command line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - modem manager
@@ -22,8 +22,8 @@ features:
   - Enable or disable a modem
   - List SMS messages on a modem
   - Delete SMS messages from a modem
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mmcli

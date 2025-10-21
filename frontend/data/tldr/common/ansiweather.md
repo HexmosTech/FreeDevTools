@@ -1,29 +1,29 @@
 ---
-title: "Ansiweather - Display Weather in Terminal | Online Free DevTools by Hexmos"
+title: 'Ansiweather - Display Weather in Terminal | Online Free DevTools by Hexmos'
 name: ansiweather
-path: "/freedevtools/tldr/common/ansiweather/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ansiweather/"
-description: "Display weather information with Ansiweather, a command-line weather tool. Get forecasts and weather data in your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ansiweather/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ansiweather/'
+description: 'Display weather information with Ansiweather, a command-line weather tool. Get forecasts and weather data in your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- ansiweather terminal
-- command line weather
-- terminal weather forecast
-- linux weather display
-- macos weather display
-- weather cli
-- ansi weather
-- console weather
-- current weather conditions
-- command weather
+  - ansiweather terminal
+  - command line weather
+  - terminal weather forecast
+  - linux weather display
+  - macos weather display
+  - weather cli
+  - ansi weather
+  - console weather
+  - current weather conditions
+  - command weather
 features:
-- Display current weather conditions in the terminal
-- Show weather forecasts for specified locations
-- Display wind and humidity data
-- Customize output with symbols and daylight information
-- Use metric or imperial units for temperature
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current weather conditions in the terminal
+  - Show weather forecasts for specified locations
+  - Display wind and humidity data
+  - Customize output with symbols and daylight information
+  - Use metric or imperial units for temperature
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansiweather

@@ -1,29 +1,29 @@
 ---
-title: "Generate Greyscale Map - pgmramp | Online Free DevTools by Hexmos"
+title: 'Generate Greyscale Map - pgmramp | Online Free DevTools by Hexmos'
 name: pgmramp
-path: "/freedevtools/tldr/common/pgmramp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pgmramp/"
-description: "Generate a greyscale image map with pgmramp. Create various greyscale gradients and patterns using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pgmramp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pgmramp/'
+description: 'Generate a greyscale image map with pgmramp. Create various greyscale gradients and patterns using command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- pgm greyscale image
-- greyscale map generation
-- pgm ramp generator
-- netpbm image tools
-- command line image
-- greyscale gradient creation
-- image manipulation linux
-- image conversion tool
-- pgm image creation
-- greyscale pattern generator
+  - pgm greyscale image
+  - greyscale map generation
+  - pgm ramp generator
+  - netpbm image tools
+  - command line image
+  - greyscale gradient creation
+  - image manipulation linux
+  - image conversion tool
+  - pgm image creation
+  - greyscale pattern generator
 features:
-- Generate left-to-right greyscale maps
-- Generate top-to-bottom greyscale maps
-- Generate rectangular greyscale maps
-- Generate elliptical greyscale maps
-- Generate diagonal greyscale maps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate left-to-right greyscale maps
+  - Generate top-to-bottom greyscale maps
+  - Generate rectangular greyscale maps
+  - Generate elliptical greyscale maps
+  - Generate diagonal greyscale maps
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pgmramp

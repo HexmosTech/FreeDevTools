@@ -1,29 +1,29 @@
 ---
-title: "Scala Control - Interact with Scala Code | Online Free DevTools by Hexmos"
+title: 'Scala Control - Interact with Scala Code | Online Free DevTools by Hexmos'
 name: scala-cli
-path: "/freedevtools/tldr/common/scala-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/scala-cli/"
-description: "Control Scala code development with scala-cli. Compile, run, test, and format Scala scripts with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/scala-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/scala-cli/'
+description: 'Control Scala code development with scala-cli. Compile, run, test, and format Scala scripts with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- scala compiler
-- scala runner
-- scala tester
-- scala formatter
-- scala repl
-- scala jvm
-- scala ide support
-- scala build tool
-- scala script
-- command line scala
+  - scala compiler
+  - scala runner
+  - scala tester
+  - scala formatter
+  - scala repl
+  - scala jvm
+  - scala ide support
+  - scala build tool
+  - scala script
+  - command line scala
 features:
-- Compile and run Scala scripts.
-- Format Scala code in-place.
-- Generate project files for IDE integration (VSCode, IntelliJ).
-- Start an interactive Scala REPL session.
-- Test Scala scripts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile and run Scala scripts.
+  - Format Scala code in-place.
+  - Generate project files for IDE integration (VSCode, IntelliJ).
+  - Start an interactive Scala REPL session.
+  - Test Scala scripts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scala-cli

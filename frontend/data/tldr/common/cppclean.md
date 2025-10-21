@@ -1,29 +1,29 @@
 ---
-title: "CppClean - Find Unused C++ Code | Online Free DevTools by Hexmos"
+title: 'CppClean - Find Unused C++ Code | Online Free DevTools by Hexmos'
 name: cppclean
-path: "/freedevtools/tldr/common/cppclean/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cppclean/"
-description: "Find unused code with CppClean, a static analysis tool for C++ projects. Identify dead code, simplify your codebase, and improve maintainability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cppclean/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cppclean/'
+description: 'Find unused code with CppClean, a static analysis tool for C++ projects. Identify dead code, simplify your codebase, and improve maintainability. Free online tool, no registration required.'
 category: common
 keywords:
-- C++ code analysis
-- static code analysis
-- C++ unused code
-- C++ dead code detection
-- C++ code simplification
-- C++ project cleaner
-- Linux C++ tools
-- macOS C++ tools
-- cross-platform code analysis
-- C++ codebase maintenance
+  - C++ code analysis
+  - static code analysis
+  - C++ unused code
+  - C++ dead code detection
+  - C++ code simplification
+  - C++ project cleaner
+  - Linux C++ tools
+  - macOS C++ tools
+  - cross-platform code analysis
+  - C++ codebase maintenance
 features:
-- Detects unused functions and variables
-- Identifies redundant code blocks
-- Simplifies complex C++ codebases
-- Analyzes C++ project dependencies
-- Supports multiple include paths
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detects unused functions and variables
+  - Identifies redundant code blocks
+  - Simplifies complex C++ codebases
+  - Analyzes C++ project dependencies
+  - Supports multiple include paths
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cppclean

@@ -1,29 +1,29 @@
 ---
-title: "Crane Auth - Manage Container Registry Credentials | Online Free DevTools by Hexmos"
+title: 'Crane Auth - Manage Container Registry Credentials | Online Free DevTools by Hexmos'
 name: crane-auth
-path: "/freedevtools/tldr/crane/crane-auth/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-auth/"
-description: "Manage container registry credentials with Crane Auth. Log in, log out, and retrieve tokens for secure container management. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-auth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-auth/'
+description: 'Manage container registry credentials with Crane Auth. Log in, log out, and retrieve tokens for secure container management. Free online tool, no registration required.'
 category: common
 keywords:
-- container registry authentication
-- crane auth login
-- docker credential helper
-- registry token retrieval
-- crane auth logout
-- container image authentication
-- registry access control
-- crane cli authentication
-- container security credentials
-- google container registry
+  - container registry authentication
+  - crane auth login
+  - docker credential helper
+  - registry token retrieval
+  - crane auth logout
+  - container image authentication
+  - registry access control
+  - crane cli authentication
+  - container security credentials
+  - google container registry
 features:
-- Authenticate with container registries using login credentials.
-- Retrieve authentication tokens for secure container image access.
-- Implement credential helper for automated authentication.
-- Log out of container registries to revoke access.
-- Manage credentials for multiple container registries.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate with container registries using login credentials.
+  - Retrieve authentication tokens for secure container image access.
+  - Implement credential helper for automated authentication.
+  - Log out of container registries to revoke access.
+  - Manage credentials for multiple container registries.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane auth

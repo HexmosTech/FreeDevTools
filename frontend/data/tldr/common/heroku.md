@@ -1,29 +1,29 @@
 ---
-title: "Heroku Manager - Manage Heroku Apps | Online Free DevTools by Hexmos"
+title: 'Heroku Manager - Manage Heroku Apps | Online Free DevTools by Hexmos'
 name: heroku
-path: "/freedevtools/tldr/common/heroku/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/heroku/"
-description: "Manage Heroku apps effortlessly with Heroku Manager. Deploy, monitor, and scale your applications directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/heroku/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/heroku/'
+description: 'Manage Heroku apps effortlessly with Heroku Manager. Deploy, monitor, and scale your applications directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Heroku app manager
-- Heroku command line tool
-- Heroku cloud deployment
-- Heroku application scaling
-- Heroku dyno manager
-- Heroku logs analysis
-- Heroku process runner
-- Heroku CLI commands
-- Heroku application deployment
-- Heroku cloud platform
+  - Heroku app manager
+  - Heroku command line tool
+  - Heroku cloud deployment
+  - Heroku application scaling
+  - Heroku dyno manager
+  - Heroku logs analysis
+  - Heroku process runner
+  - Heroku CLI commands
+  - Heroku application deployment
+  - Heroku cloud platform
 features:
-- Deploy and manage Heroku applications
-- Monitor application logs and performance
-- Run one-off processes within Heroku dynos
-- List and manage Heroku dynos (virtual machines)
-- Destroy Heroku applications permanently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy and manage Heroku applications
+  - Monitor application logs and performance
+  - Run one-off processes within Heroku dynos
+  - List and manage Heroku dynos (virtual machines)
+  - Destroy Heroku applications permanently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # heroku

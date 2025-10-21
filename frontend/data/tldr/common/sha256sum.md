@@ -1,29 +1,29 @@
 ---
-title: "Generate SHA256 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Generate SHA256 Checksums - Verify File Integrity | Online Free DevTools by Hexmos'
 name: sha256sum
-path: "/freedevtools/tldr/common/sha256sum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sha256sum/"
-description: "Generate SHA256 hashes with sha256sum. Verify file integrity and ensure data authenticity using checksum comparison. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sha256sum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sha256sum/'
+description: 'Generate SHA256 hashes with sha256sum. Verify file integrity and ensure data authenticity using checksum comparison. Free online tool, no registration required.'
 category: common
 keywords:
-- SHA256 checksum generator
-- file integrity verification
-- cryptographic hash calculator
-- sha256sum command line
-- linux checksum utility
-- macos checksum tool
-- gnu coreutils sha256
-- file hash verification
-- data integrity check
-- checksum validation tool
+  - SHA256 checksum generator
+  - file integrity verification
+  - cryptographic hash calculator
+  - sha256sum command line
+  - linux checksum utility
+  - macos checksum tool
+  - gnu coreutils sha256
+  - file hash verification
+  - data integrity check
+  - checksum validation tool
 features:
-- Calculate SHA256 checksums for files
-- Verify file integrity against known checksums
-- Generate checksums from standard input (stdin)
-- Ignore missing files during checksum verification
-- Check a known SHA256 checksum against a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate SHA256 checksums for files
+  - Verify file integrity against known checksums
+  - Generate checksums from standard input (stdin)
+  - Ignore missing files during checksum verification
+  - Check a known SHA256 checksum against a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sha256sum

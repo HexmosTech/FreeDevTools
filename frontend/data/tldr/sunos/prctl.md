@@ -1,9 +1,9 @@
 ---
-title: "Prctl - Control Process Resources on SunOS | Online Free DevTools by Hexmos"
+title: 'Prctl - Control Process Resources on SunOS | Online Free DevTools by Hexmos'
 name: prctl
-path: "/freedevtools/tldr/sunos/prctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/sunos/prctl/"
-description: "Control process resources with Prctl. Manage resource limits, permissions, and project settings on SunOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/sunos/prctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sunos/prctl/'
+description: 'Control process resources with Prctl. Manage resource limits, permissions, and project settings on SunOS. Free online tool, no registration required.'
 category: sunos
 keywords:
   - sunos process resource control
@@ -22,8 +22,8 @@ features:
   - retrieve specific process limits
   - manage process resource controls
   - get machine-parsable process information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prctl

@@ -1,29 +1,29 @@
 ---
-title: "Nano Editor - Edit Text Files with Nano | Online Free DevTools by Hexmos"
+title: 'Nano Editor - Edit Text Files with Nano | Online Free DevTools by Hexmos'
 name: nano
-path: "/freedevtools/tldr/common/nano/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nano/"
-description: "Edit text files efficiently with Nano Editor, an enhanced pico clone. Customize configurations and manage files effortlessly using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nano/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nano/'
+description: 'Edit text files efficiently with Nano Editor, an enhanced pico clone. Customize configurations and manage files effortlessly using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- text editor nano
-- nano command line
-- linux text editor
-- macos text editor
-- nano editor tutorial
-- nano editor shortcuts
-- nano configuration files
-- edit text files nano
-- open text files nano
-- save text files nano
+  - text editor nano
+  - nano command line
+  - linux text editor
+  - macos text editor
+  - nano editor tutorial
+  - nano editor shortcuts
+  - nano configuration files
+  - edit text files nano
+  - open text files nano
+  - save text files nano
 features:
-- Open and edit multiple files simultaneously
-- Configure editor settings with custom configuration files
-- Position the cursor at a specific line and column in a file
-- Enable soft wrapping for better readability
-- Create backup files automatically on save
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit multiple files simultaneously
+  - Configure editor settings with custom configuration files
+  - Position the cursor at a specific line and column in a file
+  - Enable soft wrapping for better readability
+  - Create backup files automatically on save
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nano

@@ -1,29 +1,29 @@
 ---
-title: "HLint - Improve Haskell Code | Online Free DevTools by Hexmos"
+title: 'HLint - Improve Haskell Code | Online Free DevTools by Hexmos'
 name: hlint
-path: "/freedevtools/tldr/linux/hlint/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hlint/"
-description: "Improve Haskell code instantly with HLint. Suggest code improvements, refactor code, and generate settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hlint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hlint/'
+description: 'Improve Haskell code instantly with HLint. Suggest code improvements, refactor code, and generate settings. Free online tool, no registration required.'
 category: linux
 keywords:
-- Haskell code analysis
-- Haskell linter
-- Haskell code improvement
-- Haskell refactoring
-- HLint linux
-- HLint command
-- Haskell code quality
-- Haskell style checker
-- Code linting
-- Haskell project analysis
+  - Haskell code analysis
+  - Haskell linter
+  - Haskell code improvement
+  - Haskell refactoring
+  - HLint linux
+  - HLint command
+  - Haskell code quality
+  - Haskell style checker
+  - Code linting
+  - Haskell project analysis
 features:
-- Suggest improvements to Haskell code
-- Generate reports on Haskell code quality
-- Automatically apply suggested refactorings
-- Generate settings files for ignoring hints
-- Check all Haskell files in a directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Suggest improvements to Haskell code
+  - Generate reports on Haskell code quality
+  - Automatically apply suggested refactorings
+  - Generate settings files for ignoring hints
+  - Check all Haskell files in a directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hlint

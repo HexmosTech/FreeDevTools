@@ -1,29 +1,29 @@
 ---
-title: "Blackfire Profiler - Monitor PHP Apps | Online Free DevTools by Hexmos"
+title: 'Blackfire Profiler - Monitor PHP Apps | Online Free DevTools by Hexmos'
 name: blackfire
-path: "/freedevtools/tldr/common/blackfire/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/blackfire/"
-description: "Profile PHP applications effectively with Blackfire Profiler. Identify bottlenecks and optimize performance for faster web applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/blackfire/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/blackfire/'
+description: 'Profile PHP applications effectively with Blackfire Profiler. Identify bottlenecks and optimize performance for faster web applications. Free online tool, no registration required.'
 category: common
 keywords:
-- php profiler
-- blackfire profiler
-- php performance monitoring
-- web application profiling
-- blackfire agent
-- php application debugging
-- php performance analysis
-- profiling tools
-- php optimization
-- blackfire cli
+  - php profiler
+  - blackfire profiler
+  - php performance monitoring
+  - web application profiling
+  - blackfire agent
+  - php application debugging
+  - php performance analysis
+  - profiling tools
+  - php optimization
+  - blackfire cli
 features:
-- Profile and analyze PHP application performance
-- Monitor web request execution and identify bottlenecks
-- Collect performance samples for detailed analysis
-- Upload profiling data to the Blackfire web service
-- Configure and manage the Blackfire agent
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Profile and analyze PHP application performance
+  - Monitor web request execution and identify bottlenecks
+  - Collect performance samples for detailed analysis
+  - Upload profiling data to the Blackfire web service
+  - Configure and manage the Blackfire agent
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blackfire

@@ -1,9 +1,9 @@
 ---
-title: "Systemd systemctl - Stop Services | Online Free DevTools by Hexmos"
+title: 'Systemd systemctl - Stop Services | Online Free DevTools by Hexmos'
 name: systemctl-stop
-path: "/freedevtools/tldr/linux/systemctl-stop/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-stop/"
-description: "Stop systemd services efficiently with systemctl. Manage units, suppress warnings, and control user units with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemctl-stop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemctl-stop/'
+description: 'Stop systemd services efficiently with systemctl. Manage units, suppress warnings, and control user units with this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemctl stop command
@@ -22,8 +22,8 @@ features:
   - Suppress warning messages during service shutdown.
   - Control multiple units simultaneously using patterns.
   - Integrate seamlessly with the systemd init system.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemctl stop

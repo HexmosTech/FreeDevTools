@@ -1,29 +1,29 @@
 ---
-title: "GitHub PR - Manage Pull Requests | Online Free DevTools by Hexmos"
+title: 'GitHub PR - Manage Pull Requests | Online Free DevTools by Hexmos'
 name: gh-pr
-path: "/freedevtools/tldr/gh/gh-pr/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-pr/"
-description: "Manage GitHub pull requests with gh-pr. Create, review, merge and edit pull requests directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-pr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-pr/'
+description: 'Manage GitHub pull requests with gh-pr. Create, review, merge and edit pull requests directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- github pull request
-- gh pr command
-- command line pull request
-- git pull request manager
-- github cli
-- pr review tool
-- pr merge tool
-- pr create tool
-- pr edit tool
-- github pr status
+  - github pull request
+  - gh pr command
+  - command line pull request
+  - git pull request manager
+  - github cli
+  - pr review tool
+  - pr merge tool
+  - pr create tool
+  - pr edit tool
+  - github pr status
 features:
-- Create new GitHub pull requests from the command line
-- Check out pull requests locally by number
-- View the changes made in a pull request
-- Approve or review pull requests directly
-- Merge pull requests interactively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new GitHub pull requests from the command line
+  - Check out pull requests locally by number
+  - View the changes made in a pull request
+  - Approve or review pull requests directly
+  - Merge pull requests interactively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh pr

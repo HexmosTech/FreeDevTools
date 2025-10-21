@@ -1,29 +1,29 @@
 ---
-title: "Create EKS Clusters - Manage Kubernetes with eksctl | Online Free DevTools by Hexmos"
+title: 'Create EKS Clusters - Manage Kubernetes with eksctl | Online Free DevTools by Hexmos'
 name: eksctl
-path: "/freedevtools/tldr/common/eksctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/eksctl/"
-description: "Create and manage Amazon EKS clusters efficiently with eksctl. Streamline Kubernetes deployment and scaling with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/eksctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/eksctl/'
+description: 'Create and manage Amazon EKS clusters efficiently with eksctl. Streamline Kubernetes deployment and scaling with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- eksctl Kubernetes management
-- EKS cluster creation
-- AWS Kubernetes CLI
-- Kubernetes cluster management
-- Amazon EKS command-line tool
-- eksctl EKS deployment
-- Kubernetes cluster deployment
-- AWS EKS cluster control
-- EKS configuration management
-- Kubernetes cluster administration
+  - eksctl Kubernetes management
+  - EKS cluster creation
+  - AWS Kubernetes CLI
+  - Kubernetes cluster management
+  - Amazon EKS command-line tool
+  - eksctl EKS deployment
+  - Kubernetes cluster deployment
+  - AWS EKS cluster control
+  - EKS configuration management
+  - Kubernetes cluster administration
 features:
-- Deploy EKS clusters with single command
-- Manage EKS cluster configurations via files
-- Delete EKS clusters quickly
-- Customize kubeconfig file location
-- Automate Kubernetes credential management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy EKS clusters with single command
+  - Manage EKS cluster configurations via files
+  - Delete EKS clusters quickly
+  - Customize kubeconfig file location
+  - Automate Kubernetes credential management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eksctl

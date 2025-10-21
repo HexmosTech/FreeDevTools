@@ -1,29 +1,29 @@
 ---
-title: "Sips - Control Image Processing on macOS | Online Free DevTools by Hexmos"
+title: 'Sips - Control Image Processing on macOS | Online Free DevTools by Hexmos'
 name: sips
-path: "/freedevtools/tldr/osx/sips/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/sips/"
-description: "Control image processing with Sips on macOS. Convert image formats and manipulate ColorSync ICC profiles using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/sips/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/sips/'
+description: 'Control image processing with Sips on macOS. Convert image formats and manipulate ColorSync ICC profiles using the command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- image processing macos
-- sips image converter
-- macos image resizer
-- convert cmyk to rgb sips
-- remove icc profile sips
-- sips command line tool
-- osx image manipulation
-- image color profile editor
-- resample image macos
-- batch image processing sips
+  - image processing macos
+  - sips image converter
+  - macos image resizer
+  - convert cmyk to rgb sips
+  - remove icc profile sips
+  - sips command line tool
+  - osx image manipulation
+  - image color profile editor
+  - resample image macos
+  - batch image processing sips
 features:
-- Resample images by height and width
-- Convert image color spaces (CMYK to RGB)
-- Delete ColorSync ICC profiles from images
-- Resize images while maintaining aspect ratio
-- Batch process images in a directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Resample images by height and width
+  - Convert image color spaces (CMYK to RGB)
+  - Delete ColorSync ICC profiles from images
+  - Resize images while maintaining aspect ratio
+  - Batch process images in a directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sips

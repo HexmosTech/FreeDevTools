@@ -1,29 +1,29 @@
 ---
-title: "Control Jobs - Monitor Process Status | Online Free DevTools by Hexmos"
+title: 'Control Jobs - Monitor Process Status | Online Free DevTools by Hexmos'
 name: jobs
-path: "/freedevtools/tldr/common/jobs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jobs/"
+path: '/freedevtools/tldr/common/jobs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jobs/'
 description: "Control jobs running in your current session with the 'jobs' command. Monitor background processes and retrieve process IDs easily. Free online tool, no registration required."
 category: common
 keywords:
-- process management
-- background jobs
-- session management
-- jobs command
-- process status linux
-- process id linux
-- shell jobs
-- command line jobs
-- terminal jobs
-- jobs control
+  - process management
+  - background jobs
+  - session management
+  - jobs command
+  - process status linux
+  - process id linux
+  - shell jobs
+  - command line jobs
+  - terminal jobs
+  - jobs control
 features:
-- Display the status of all running jobs
-- Show status of a specific job by ID
-- List process IDs associated with jobs
-- View detailed job status information
-- Monitor processes in the current shell session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the status of all running jobs
+  - Show status of a specific job by ID
+  - List process IDs associated with jobs
+  - View detailed job status information
+  - Monitor processes in the current shell session
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jobs

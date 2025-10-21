@@ -1,29 +1,29 @@
 ---
-title: "LZOP Compress - Compress Files with LZO | Online Free DevTools by Hexmos"
+title: 'LZOP Compress - Compress Files with LZO | Online Free DevTools by Hexmos'
 name: lzop
-path: "/freedevtools/tldr/common/lzop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lzop/"
-description: "Compress files with LZOP, an efficient LZO data compressor. Reduce file sizes quickly with this compression tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lzop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lzop/'
+description: 'Compress files with LZOP, an efficient LZO data compressor. Reduce file sizes quickly with this compression tool. Free online tool, no registration required.'
 category: common
 keywords:
-- LZO compression
-- file compression
-- data compression
-- compress files
-- LZO file compressor
-- linux compression
-- command line compression
-- lzop linux
-- lzop compress
-- lzo file
+  - LZO compression
+  - file compression
+  - data compression
+  - compress files
+  - LZO file compressor
+  - linux compression
+  - command line compression
+  - lzop linux
+  - lzop compress
+  - lzo file
 features:
-- Compress files using LZO algorithm
-- Decompress LZO compressed files
-- Specify compression level for optimization
-- Achieve best or fastest compression
-- Compress files via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files using LZO algorithm
+  - Decompress LZO compressed files
+  - Specify compression level for optimization
+  - Achieve best or fastest compression
+  - Compress files via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lzop

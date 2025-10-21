@@ -1,29 +1,29 @@
 ---
-title: "Azure CLI - Manage Cloud Resources | Online Free DevTools by Hexmos"
+title: 'Azure CLI - Manage Cloud Resources | Online Free DevTools by Hexmos'
 name: az
-path: "/freedevtools/tldr/az/az/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az/"
-description: "Manage cloud resources with Azure CLI. Control Azure services, VMs, and network configurations through the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az/'
+description: 'Manage cloud resources with Azure CLI. Control Azure services, VMs, and network configurations through the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- azure cli
-- azure command line
-- cloud management
-- azure resources
-- azure vm
-- azure aks
-- azure network
-- azure subscription
-- azure login
-- azure disk
+  - azure cli
+  - azure command line
+  - cloud management
+  - azure resources
+  - azure vm
+  - azure aks
+  - azure network
+  - azure subscription
+  - azure login
+  - azure disk
 features:
-- Manage Azure virtual machines
-- Manage Azure Kubernetes Services
-- Manage Azure Network resources
-- Manage Azure Subscriptions
-- Start Azure CLI in interactive mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage Azure virtual machines
+  - Manage Azure Kubernetes Services
+  - Manage Azure Network resources
+  - Manage Azure Subscriptions
+  - Start Azure CLI in interactive mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az

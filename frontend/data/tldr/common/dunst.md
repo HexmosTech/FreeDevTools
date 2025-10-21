@@ -1,29 +1,29 @@
 ---
-title: "Control Dunst Notifications - Customize X11/Wayland | Online Free DevTools by Hexmos"
+title: 'Control Dunst Notifications - Customize X11/Wayland | Online Free DevTools by Hexmos'
 name: dunst
-path: "/freedevtools/tldr/common/dunst/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dunst/"
-description: "Control X11/Wayland notifications easily with Dunst. Configure notification appearance, behavior, and filtering. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dunst/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dunst/'
+description: 'Control X11/Wayland notifications easily with Dunst. Configure notification appearance, behavior, and filtering. Free online tool, no registration required.'
 category: common
 keywords:
-- notification manager
-- x11 notification daemon
-- wayland notification daemon
-- dunst configuration
-- linux notifications
-- desktop notifications
-- notification customization
-- notification filtering
-- dunstrc configuration
-- command-line notification
+  - notification manager
+  - x11 notification daemon
+  - wayland notification daemon
+  - dunst configuration
+  - linux notifications
+  - desktop notifications
+  - notification customization
+  - notification filtering
+  - dunstrc configuration
+  - command-line notification
 features:
-- Start the Dunst notification daemon
-- Display startup notifications using Dunst
-- Print notification output to stdout
-- Load a custom Dunst configuration file
-- Customize notification behavior and appearance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the Dunst notification daemon
+  - Display startup notifications using Dunst
+  - Print notification output to stdout
+  - Load a custom Dunst configuration file
+  - Customize notification behavior and appearance
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dunst

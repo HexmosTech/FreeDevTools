@@ -1,29 +1,29 @@
 ---
-title: "IBM Cloud - Manage IBM Cloud Apps and Services | Online Free DevTools by Hexmos"
+title: 'IBM Cloud - Manage IBM Cloud Apps and Services | Online Free DevTools by Hexmos'
 name: ibmcloud
-path: "/freedevtools/tldr/common/ibmcloud/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ibmcloud/"
-description: "Manage IBM Cloud apps and services with ibmcloud. Update, install modules, list regions, and get help. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ibmcloud/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ibmcloud/'
+description: 'Manage IBM Cloud apps and services with ibmcloud. Update, install modules, list regions, and get help. Free online tool, no registration required.'
 category: common
 keywords:
-- ibm cloud management
-- ibmcloud cli
-- cloud foundry ibm
-- ibm cloud regions
-- ibmcloud update
-- ibmcloud command line
-- ibm cloud services
-- ibm cloud sdk
-- common ibmcloud
-- ibmcloud help
+  - ibm cloud management
+  - ibmcloud cli
+  - cloud foundry ibm
+  - ibm cloud regions
+  - ibmcloud update
+  - ibmcloud command line
+  - ibm cloud services
+  - ibm cloud sdk
+  - common ibmcloud
+  - ibmcloud help
 features:
-- Update the ibmcloud CLI to the latest version
-- Install the Cloud Foundry module
-- List available IBM Cloud regions
-- Display help for commands and subcommands
-- Display the ibmcloud CLI version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update the ibmcloud CLI to the latest version
+  - Install the Cloud Foundry module
+  - List available IBM Cloud regions
+  - Display help for commands and subcommands
+  - Display the ibmcloud CLI version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ibmcloud

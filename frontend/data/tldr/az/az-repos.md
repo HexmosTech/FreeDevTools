@@ -1,29 +1,29 @@
 ---
-title: "Manage Azure Repos - Control Azure DevOps Repos | Online Free DevTools by Hexmos"
+title: 'Manage Azure Repos - Control Azure DevOps Repos | Online Free DevTools by Hexmos'
 name: az-repos
-path: "/freedevtools/tldr/az/az-repos/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-repos/"
-description: "Manage Azure DevOps repositories with az repos. Automate policy creation, build validation, and pull request management effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-repos/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-repos/'
+description: 'Manage Azure DevOps repositories with az repos. Automate policy creation, build validation, and pull request management effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure DevOps repos manager
-- Azure Repos CLI
-- Azure Repos policy automation
-- Azure Repos pull request tool
-- Azure build validation repos
-- Azure DevOps repository control
-- Azure repos merge strategy
-- DevOps repository management
-- Azure repos build pipeline
-- Azure command line repos
+  - Azure DevOps repos manager
+  - Azure Repos CLI
+  - Azure Repos policy automation
+  - Azure Repos pull request tool
+  - Azure build validation repos
+  - Azure DevOps repository control
+  - Azure repos merge strategy
+  - DevOps repository management
+  - Azure repos build pipeline
+  - Azure command line repos
 features:
-- List repositories within a specific Azure DevOps project
-- Enforce merge restrictions on repository branches
-- Implement automated build validation triggered by source updates
-- List active pull requests for a repository
-- Manage policies on Azure DevOps repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List repositories within a specific Azure DevOps project
+  - Enforce merge restrictions on repository branches
+  - Implement automated build validation triggered by source updates
+  - List active pull requests for a repository
+  - Manage policies on Azure DevOps repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az repos

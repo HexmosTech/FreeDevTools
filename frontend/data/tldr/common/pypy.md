@@ -1,29 +1,29 @@
 ---
-title: "Execute Python Scripts - Run pypy Commands | Online Free DevTools by Hexmos"
+title: 'Execute Python Scripts - Run pypy Commands | Online Free DevTools by Hexmos'
 name: pypy
-path: "/freedevtools/tldr/common/pypy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pypy/"
-description: "Execute Python scripts instantly with pypy command. Run REPL, debug scripts, and install packages effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pypy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pypy/'
+description: 'Execute Python scripts instantly with pypy command. Run REPL, debug scripts, and install packages effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- python script execution
-- pypy command line
-- python interactive shell
-- pypy package installer
-- pypy debugger command
-- execute python expression
-- pypy module runner
-- python development tool
-- linux pypy
-- macos pypy
+  - python script execution
+  - pypy command line
+  - python interactive shell
+  - pypy package installer
+  - pypy debugger command
+  - execute python expression
+  - pypy module runner
+  - python development tool
+  - linux pypy
+  - macos pypy
 features:
-- Execute Python scripts directly from the command line
-- Launch an interactive Python REPL environment
-- Install Python packages using the built-in pip module
-- Debug Python code using the integrated pdb debugger
-- Run specific Python library modules as scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Python scripts directly from the command line
+  - Launch an interactive Python REPL environment
+  - Install Python packages using the built-in pip module
+  - Debug Python code using the integrated pdb debugger
+  - Run specific Python library modules as scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pypy

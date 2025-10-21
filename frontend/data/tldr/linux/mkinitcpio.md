@@ -1,29 +1,29 @@
 ---
-title: "Mkinitcpio - Generate Linux Initramfs Images | Online Free DevTools by Hexmos"
+title: 'Mkinitcpio - Generate Linux Initramfs Images | Online Free DevTools by Hexmos'
 name: mkinitcpio
-path: "/freedevtools/tldr/linux/mkinitcpio/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mkinitcpio/"
-description: "Generate Linux initramfs images with mkinitcpio. Create custom initial ramdisk environments for booting the Linux kernel. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkinitcpio/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mkinitcpio/'
+description: 'Generate Linux initramfs images with mkinitcpio. Create custom initial ramdisk environments for booting the Linux kernel. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux initramfs generator
-- mkinitcpio linux
-- linux ramdisk image creation
-- generate initrd image
-- linux kernel boot image
-- mkinitcpio configuration
-- linux preset generator
-- linux boot sequence configuration
-- mkinitcpio hooks
-- linux kernel module loading
+  - linux initramfs generator
+  - mkinitcpio linux
+  - linux ramdisk image creation
+  - generate initrd image
+  - linux kernel boot image
+  - mkinitcpio configuration
+  - linux preset generator
+  - linux boot sequence configuration
+  - mkinitcpio hooks
+  - linux kernel module loading
 features:
-- Generate initramfs images from presets
-- Customize boot environments with hooks
-- Create initramfs for specific kernel versions
-- Generate initramfs using alternative configuration files
-- List available mkinitcpio hooks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate initramfs images from presets
+  - Customize boot environments with hooks
+  - Create initramfs for specific kernel versions
+  - Generate initramfs using alternative configuration files
+  - List available mkinitcpio hooks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkinitcpio

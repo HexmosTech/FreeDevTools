@@ -1,29 +1,29 @@
 ---
-title: "Hash Identifier - Identify Password Hashes | Online Free DevTools by Hexmos"
+title: 'Hash Identifier - Identify Password Hashes | Online Free DevTools by Hexmos'
 name: hashid
-path: "/freedevtools/tldr/common/hashid/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hashid/"
-description: "Identify password hashes instantly with Hash Identifier. Discover hash types and formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hashid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hashid/'
+description: 'Identify password hashes instantly with Hash Identifier. Discover hash types and formats. Free online tool, no registration required.'
 category: common
 keywords:
-- hash identifier
-- password hash identifier
-- data hash identification
-- identify hash type
-- crack hash
-- hashcat mode
-- john format
-- linux hash identifier
-- macos hash identifier
-- common hash identifier
+  - hash identifier
+  - password hash identifier
+  - data hash identification
+  - identify hash type
+  - crack hash
+  - hashcat mode
+  - john format
+  - linux hash identifier
+  - macos hash identifier
+  - common hash identifier
 features:
-- Identify hash types from stdin
-- Identify multiple hashes simultaneously
-- Analyze hashes from a file
-- Show hashcat's mode number
-- Save output to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify hash types from stdin
+  - Identify multiple hashes simultaneously
+  - Analyze hashes from a file
+  - Show hashcat's mode number
+  - Save output to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hashid

@@ -1,29 +1,29 @@
 ---
-title: "CopyQ Clipboard Manager - Control Clipboard History | Online Free DevTools by Hexmos"
+title: 'CopyQ Clipboard Manager - Control Clipboard History | Online Free DevTools by Hexmos'
 name: copyq
-path: "/freedevtools/tldr/common/copyq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/copyq/"
-description: "Control clipboard history with CopyQ Clipboard Manager. Efficiently manage text snippets, images, and other data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/copyq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/copyq/'
+description: 'Control clipboard history with CopyQ Clipboard Manager. Efficiently manage text snippets, images, and other data. Free online tool, no registration required.'
 category: common
 keywords:
-- clipboard manager
-- text manager
-- image clipboard
-- copy paste history
-- command line clipboard
-- cross platform clipboard
-- linux clipboard
-- macos clipboard
-- windows clipboard
-- clipboard data
+  - clipboard manager
+  - text manager
+  - image clipboard
+  - copy paste history
+  - command line clipboard
+  - cross platform clipboard
+  - linux clipboard
+  - macos clipboard
+  - windows clipboard
+  - clipboard data
 features:
-- Manage clipboard history effectively
-- Add text and images to the clipboard
-- Print clipboard content by index
-- Copy file contents to the clipboard
-- Insert text with escape sequences
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage clipboard history effectively
+  - Add text and images to the clipboard
+  - Print clipboard content by index
+  - Copy file contents to the clipboard
+  - Insert text with escape sequences
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # copyq

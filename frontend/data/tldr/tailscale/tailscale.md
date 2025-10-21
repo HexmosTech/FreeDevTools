@@ -1,29 +1,29 @@
 ---
-title: "Tailscale Control - Manage WireGuard Networks | Online Free DevTools by Hexmos"
+title: 'Tailscale Control - Manage WireGuard Networks | Online Free DevTools by Hexmos'
 name: tailscale
-path: "/freedevtools/tldr/tailscale/tailscale/"
-canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale/"
-description: "Control WireGuard network connections with Tailscale. Configure private networks, check network conditions, and diagnose issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/tailscale/tailscale/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tailscale/tailscale/'
+description: 'Control WireGuard network connections with Tailscale. Configure private networks, check network conditions, and diagnose issues. Free online tool, no registration required.'
 category: common
 keywords:
-- tailscale network control
-- wireguard network manager
-- private network configuration
-- secure network setup
-- tailscale cli tools
-- network diagnostic tool
-- linux tailscale
-- macos tailscale
-- windows tailscale
-- tailscale bug reporting
+  - tailscale network control
+  - wireguard network manager
+  - private network configuration
+  - secure network setup
+  - tailscale cli tools
+  - network diagnostic tool
+  - linux tailscale
+  - macos tailscale
+  - windows tailscale
+  - tailscale bug reporting
 features:
-- Connect to a Tailscale network
-- Disconnect from a Tailscale network
-- Check the status of connected devices
-- Ping a peer node for network testing
-- Analyze local network conditions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to a Tailscale network
+  - Disconnect from a Tailscale network
+  - Check the status of connected devices
+  - Ping a peer node for network testing
+  - Analyze local network conditions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tailscale

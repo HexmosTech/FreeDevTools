@@ -1,29 +1,29 @@
 ---
-title: "Micromamba - Manage Conda Packages | Online Free DevTools by Hexmos"
+title: 'Micromamba - Manage Conda Packages | Online Free DevTools by Hexmos'
 name: micromamba
-path: "/freedevtools/tldr/common/micromamba/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/micromamba/"
-description: "Manage Conda packages with Micromamba, a fast and lightweight package manager. Create environments, install packages, and query dependencies efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/micromamba/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/micromamba/'
+description: 'Manage Conda packages with Micromamba, a fast and lightweight package manager. Create environments, install packages, and query dependencies efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- conda package manager
-- micromamba environment
-- python package management
-- cross-platform package manager
-- linux package manager
-- macos package manager
-- windows package manager
-- dependency management
-- environment management
-- micromamba create environment
+  - conda package manager
+  - micromamba environment
+  - python package management
+  - cross-platform package manager
+  - linux package manager
+  - macos package manager
+  - windows package manager
+  - dependency management
+  - environment management
+  - micromamba create environment
 features:
-- Create isolated Conda environments
-- Install packages from various channels
-- List installed packages in an environment
-- Search for available Conda packages
-- Query package dependencies tree
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create isolated Conda environments
+  - Install packages from various channels
+  - List installed packages in an environment
+  - Search for available Conda packages
+  - Query package dependencies tree
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # micromamba

@@ -1,9 +1,9 @@
 ---
-title: "Apachectl - Control Apache Servers | Online Free DevTools by Hexmos"
+title: 'Apachectl - Control Apache Servers | Online Free DevTools by Hexmos'
 name: apachectl
-path: "/freedevtools/tldr/linux/apachectl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apachectl/"
-description: "Control Apache HTTP servers easily with Apachectl. Manage server processes, test configurations, and reload settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apachectl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apachectl/'
+description: 'Control Apache HTTP servers easily with Apachectl. Manage server processes, test configurations, and reload settings. Free online tool, no registration required.'
 category: linux
 keywords:
   - apache server control
@@ -22,8 +22,8 @@ features:
   - Stop the Apache HTTP server
   - Test Apache configuration validity
   - Reload Apache configuration without dropping connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apachectl

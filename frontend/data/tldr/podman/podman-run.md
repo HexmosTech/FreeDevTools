@@ -1,29 +1,29 @@
 ---
-title: "Podman Run - Create Containers Easily | Online Free DevTools by Hexmos"
+title: 'Podman Run - Create Containers Easily | Online Free DevTools by Hexmos'
 name: podman-run
-path: "/freedevtools/tldr/podman/podman-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-run/"
-description: "Create containers instantly with Podman Run. Manage images, execute commands, and isolate applications using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/podman/podman-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/podman/podman-run/'
+description: 'Create containers instantly with Podman Run. Manage images, execute commands, and isolate applications using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- podman container run
-- linux container execution
-- command-line containerization
-- docker alternative
-- oci container runtime
-- podman image management
-- container environment variables
-- container volume mounting
-- container port publishing
-- rootless containers
+  - podman container run
+  - linux container execution
+  - command-line containerization
+  - docker alternative
+  - oci container runtime
+  - podman image management
+  - container environment variables
+  - container volume mounting
+  - container port publishing
+  - rootless containers
 features:
-- Run commands in isolated containers
-- Mount volumes for persistent data
-- Publish ports to expose container services
-- Set environment variables for container configuration
-- Override the container entrypoint
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run commands in isolated containers
+  - Mount volumes for persistent data
+  - Publish ports to expose container services
+  - Set environment variables for container configuration
+  - Override the container entrypoint
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # podman run

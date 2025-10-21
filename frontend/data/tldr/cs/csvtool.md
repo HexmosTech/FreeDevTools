@@ -1,29 +1,29 @@
 ---
-title: "CSV Extract - Filter CSV Data | Online Free DevTools by Hexmos"
+title: 'CSV Extract - Filter CSV Data | Online Free DevTools by Hexmos'
 name: csvtool
-path: "/freedevtools/tldr/cs/csvtool/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csvtool/"
-description: "Extract data with csvtool. Filter and search CSV data using command line arguments, enhancing your data processing workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csvtool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csvtool/'
+description: 'Extract data with csvtool. Filter and search CSV data using command line arguments, enhancing your data processing workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- CSV extract
-- CSV filter
-- CSV search
-- CSV data extraction
-- CSV column selection
-- command-line CSV tool
-- CSV data manipulation
-- Linux CSV tools
-- macOS CSV tools
-- CSV parsing
+  - CSV extract
+  - CSV filter
+  - CSV search
+  - CSV data extraction
+  - CSV column selection
+  - command-line CSV tool
+  - CSV data manipulation
+  - Linux CSV tools
+  - macOS CSV tools
+  - CSV parsing
 features:
-- Extract specific columns from CSV files
-- Filter CSV rows based on matching content
-- Search for data within specific CSV columns
-- Combine multiple csvtool commands for complex filtering
-- Process CSV data directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific columns from CSV files
+  - Filter CSV rows based on matching content
+  - Search for data within specific CSV columns
+  - Combine multiple csvtool commands for complex filtering
+  - Process CSV data directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csvtool

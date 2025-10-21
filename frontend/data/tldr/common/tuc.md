@@ -1,29 +1,29 @@
 ---
-title: "Cut Text - Extract Fields with Tuc | Online Free DevTools by Hexmos"
+title: 'Cut Text - Extract Fields with Tuc | Online Free DevTools by Hexmos'
 name: tuc
-path: "/freedevtools/tldr/common/tuc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tuc/"
-description: "Extract text fields quickly with Tuc. A more powerful text cutter with flexible delimiters and field selection. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tuc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tuc/'
+description: 'Extract text fields quickly with Tuc. A more powerful text cutter with flexible delimiters and field selection. Free online tool, no registration required.'
 category: common
 keywords:
-- text cutter
-- field extractor
-- delimited text
-- cut text fields
-- linux tuc
-- macos tuc
-- command line text processing
-- regex text cut
-- tuc command
-- tuc text delimiter
+  - text cutter
+  - field extractor
+  - delimited text
+  - cut text fields
+  - linux tuc
+  - macos tuc
+  - command line text processing
+  - regex text cut
+  - tuc command
+  - tuc text delimiter
 features:
-- Extract specific fields based on delimiter
-- Rearrange extracted fields in custom order
-- Replace delimiters with alternative characters
-- Use regular expressions to define delimiters
-- Output extracted fields in JSON format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific fields based on delimiter
+  - Rearrange extracted fields in custom order
+  - Replace delimiters with alternative characters
+  - Use regular expressions to define delimiters
+  - Output extracted fields in JSON format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tuc

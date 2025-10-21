@@ -1,29 +1,29 @@
 ---
-title: "Azure Network - Manage Network Resources | Online Free DevTools by Hexmos"
+title: 'Azure Network - Manage Network Resources | Online Free DevTools by Hexmos'
 name: az-network
-path: "/freedevtools/tldr/az/az-network/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-network/"
-description: "Manage Azure Network resources with az-network. Create virtual networks, update NICs, and list usages efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-network/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-network/'
+description: 'Manage Azure Network resources with az-network. Create virtual networks, update NICs, and list usages efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure Network Manager
-- Azure Virtual Network
-- Azure NIC Configuration
-- Azure Resource Management
-- Azure CLI Network
-- Network Command Line
-- Cloud Network Management
-- az network commands
-- Azure subscription quota
-- az network vnet
+  - Azure Network Manager
+  - Azure Virtual Network
+  - Azure NIC Configuration
+  - Azure Resource Management
+  - Azure CLI Network
+  - Network Command Line
+  - Cloud Network Management
+  - az network commands
+  - Azure subscription quota
+  - az network vnet
 features:
-- List network resource usages within a region
-- Create virtual networks with custom address prefixes
-- Update network interface cards with accelerated networking enabled
-- List all virtual networks in a subscription
-- Manage Azure Network resources from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List network resource usages within a region
+  - Create virtual networks with custom address prefixes
+  - Update network interface cards with accelerated networking enabled
+  - List all virtual networks in a subscription
+  - Manage Azure Network resources from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az network

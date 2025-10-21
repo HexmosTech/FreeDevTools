@@ -1,9 +1,9 @@
 ---
-title: "EGL Info Display - View EGL Platform Details | Online Free DevTools by Hexmos"
+title: 'EGL Info Display - View EGL Platform Details | Online Free DevTools by Hexmos'
 name: eglinfo
-path: "/freedevtools/tldr/linux/eglinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eglinfo/"
-description: "View EGL platform details instantly with eglinfo.  Get comprehensive or brief information about your EGL setup. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eglinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eglinfo/'
+description: 'View EGL platform details instantly with eglinfo.  Get comprehensive or brief information about your EGL setup. Free online tool, no registration required.'
 category: linux
 keywords:
   - EGL information display
@@ -22,8 +22,8 @@ features:
   - Shows EGL vendor and version information.
   - Outputs configuration details of the EGL system.
   - Offers a simple command-line interface for easy access.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eglinfo

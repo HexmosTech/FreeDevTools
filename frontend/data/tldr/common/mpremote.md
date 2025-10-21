@@ -1,29 +1,29 @@
 ---
-title: "mpremote - Control MicroPython Devices | Online Free DevTools by Hexmos"
+title: 'mpremote - Control MicroPython Devices | Online Free DevTools by Hexmos'
 name: mpremote
-path: "/freedevtools/tldr/common/mpremote/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mpremote/"
-description: "Control MicroPython devices remotely with mpremote. Manage connected devices, run scripts, and install packages easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mpremote/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mpremote/'
+description: 'Control MicroPython devices remotely with mpremote. Manage connected devices, run scripts, and install packages easily. Free online tool, no registration required.'
 category: common
 keywords:
-- MicroPython device control
-- mpremote REPL session
-- MicroPython script execution
-- mpremote file mounting
-- MicroPython mip package install
-- MicroPython remote control
-- serial port communication
-- device firmware management
-- MicroPython development workflow
-- MicroPython command line tool
+  - MicroPython device control
+  - mpremote REPL session
+  - MicroPython script execution
+  - mpremote file mounting
+  - MicroPython mip package install
+  - MicroPython remote control
+  - serial port communication
+  - device firmware management
+  - MicroPython development workflow
+  - MicroPython command line tool
 features:
-- Connect to MicroPython devices remotely
-- Run scripts on MicroPython devices
-- Mount local directories to devices
-- Install mip packages on devices
-- Open an interactive REPL session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to MicroPython devices remotely
+  - Run scripts on MicroPython devices
+  - Mount local directories to devices
+  - Install mip packages on devices
+  - Open an interactive REPL session
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mpremote

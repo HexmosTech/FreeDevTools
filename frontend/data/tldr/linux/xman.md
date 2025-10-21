@@ -1,9 +1,9 @@
 ---
-title: "View Manual Pages - xman Command | Online Free DevTools by Hexmos"
+title: 'View Manual Pages - xman Command | Online Free DevTools by Hexmos'
 name: xman
-path: "/freedevtools/tldr/linux/xman/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xman/"
-description: "View manual pages effortlessly with the xman command.  Access and navigate manual page content efficiently in the X Window System. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xman/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xman/'
+description: 'View manual pages effortlessly with the xman command.  Access and navigate manual page content efficiently in the X Window System. Free online tool, no registration required.'
 category: linux
 keywords:
   - xman manual viewer
@@ -22,8 +22,8 @@ features:
   - Simultaneously shows both the manual page and directory listings using -bothshown.
   - Provides a user-friendly interface for navigating manual page content.
   - Supports standard manual page formatting and navigation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xman

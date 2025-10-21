@@ -1,29 +1,29 @@
 ---
-title: "Cargo Publish - Upload Rust Packages | Online Free DevTools by Hexmos"
+title: 'Cargo Publish - Upload Rust Packages | Online Free DevTools by Hexmos'
 name: cargo-publish
-path: "/freedevtools/tldr/cargo/cargo-publish/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-publish/"
-description: "Publish Rust packages with Cargo Publish. Upload your crate to a registry and share your code. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-publish/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-publish/'
+description: 'Publish Rust packages with Cargo Publish. Upload your crate to a registry and share your code. Free online tool, no registration required.'
 category: common
 keywords:
-- rust package manager
-- cargo publish command
-- rust crate publishing
-- rust package upload
-- rust package registry
-- cargo registry publish
-- rust package distribution
-- cargo package version
-- rust package dependencies
-- cargo dry run publish
+  - rust package manager
+  - cargo publish command
+  - rust crate publishing
+  - rust package upload
+  - rust package registry
+  - cargo registry publish
+  - rust package distribution
+  - cargo package version
+  - rust package dependencies
+  - cargo dry run publish
 features:
-- Upload a crate to a registry
-- Perform checks before publishing
-- Create a `.crate` file
-- Simulate publishing with a dry run
-- Specify a custom registry
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload a crate to a registry
+  - Perform checks before publishing
+  - Create a `.crate` file
+  - Simulate publishing with a dry run
+  - Specify a custom registry
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo publish

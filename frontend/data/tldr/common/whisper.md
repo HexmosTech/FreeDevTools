@@ -1,29 +1,29 @@
 ---
-title: "Convert Audio to Text - Whisper | Online Free DevTools by Hexmos"
+title: 'Convert Audio to Text - Whisper | Online Free DevTools by Hexmos'
 name: whisper
-path: "/freedevtools/tldr/common/whisper/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/whisper/"
-description: "Convert audio to text with Whisper. Transcribe audio files to various formats like txt, srt, and json using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/whisper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/whisper/'
+description: 'Convert audio to text with Whisper. Transcribe audio files to various formats like txt, srt, and json using this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- audio to text conversion
-- speech to text CLI
-- whisper transcription tool
-- audio file converter
-- srt file generation
-- vtt file generation
-- json audio transcript
-- command line audio processing
-- audio transcription software
-- openAI whisper
+  - audio to text conversion
+  - speech to text CLI
+  - whisper transcription tool
+  - audio file converter
+  - srt file generation
+  - vtt file generation
+  - json audio transcript
+  - command line audio processing
+  - audio transcription software
+  - openAI whisper
 features:
-- Transcribe audio to text from the command line
-- Convert audio files to multiple text formats
-- Specify a model for audio conversion
-- Specify audio language for improved accuracy
-- Save transcribed audio to a specific directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Transcribe audio to text from the command line
+  - Convert audio files to multiple text formats
+  - Specify a model for audio conversion
+  - Specify audio language for improved accuracy
+  - Save transcribed audio to a specific directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # whisper

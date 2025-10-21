@@ -1,9 +1,9 @@
 ---
-title: "AppArmor Policy - Control AppArmor with aa-complain | Online Free DevTools by Hexmos"
+title: 'AppArmor Policy - Control AppArmor with aa-complain | Online Free DevTools by Hexmos'
 name: aa-complain
-path: "/freedevtools/tldr/linux/aa-complain/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-complain/"
-description: "Control AppArmor policies with the aa-complain command.  Easily switch AppArmor profiles to complain mode for security auditing and debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aa-complain/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aa-complain/'
+description: 'Control AppArmor policies with the aa-complain command.  Easily switch AppArmor profiles to complain mode for security auditing and debugging. Free online tool, no registration required.'
 category: linux
 keywords:
   - apparmor policy control
@@ -22,8 +22,8 @@ features:
   - Provides detailed logging of policy violations.
   - Enables debugging of AppArmor policies without immediate enforcement.
   - Supports specifying multiple profiles or directories containing profiles.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aa-complain

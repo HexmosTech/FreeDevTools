@@ -1,29 +1,29 @@
 ---
-title: "GHCID Compiler - Control Haskell Compilation | Online Free DevTools by Hexmos"
+title: 'GHCID Compiler - Control Haskell Compilation | Online Free DevTools by Hexmos'
 name: ghcid
-path: "/freedevtools/tldr/common/ghcid/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ghcid/"
-description: "Control Haskell compilation with GHCID. Instantly recompile code on file changes and debug Haskell projects using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ghcid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ghcid/'
+description: 'Control Haskell compilation with GHCID. Instantly recompile code on file changes and debug Haskell projects using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Haskell compiler
-- GHCID haskell
-- Haskell development
-- Haskell IDE
-- Real-time compilation
-- Haskell reload
-- Haskell watcher
-- GHCID command line
-- Linux haskell
-- MacOS haskell
+  - Haskell compiler
+  - GHCID haskell
+  - Haskell development
+  - Haskell IDE
+  - Real-time compilation
+  - Haskell reload
+  - Haskell watcher
+  - GHCID command line
+  - Linux haskell
+  - MacOS haskell
 features:
-- Recompiles Haskell code on file changes
-- Displays compile errors and warnings
-- Executes custom actions on file save
-- Writes GHC compiler output to a file
-- Executes REPL commands on each file save
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recompiles Haskell code on file changes
+  - Displays compile errors and warnings
+  - Executes custom actions on file save
+  - Writes GHC compiler output to a file
+  - Executes REPL commands on each file save
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ghcid

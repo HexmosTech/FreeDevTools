@@ -1,29 +1,29 @@
 ---
-title: "GPRbuild - Build Ada Projects | Online Free DevTools by Hexmos"
+title: 'GPRbuild - Build Ada Projects | Online Free DevTools by Hexmos'
 name: gprbuild
-path: "/freedevtools/tldr/common/gprbuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gprbuild/"
-description: "Build Ada projects effortlessly with GPRbuild. Manage compilation, linking, and dependencies for your Ada, C/C++, and Fortran code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gprbuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gprbuild/'
+description: 'Build Ada projects effortlessly with GPRbuild. Manage compilation, linking, and dependencies for your Ada, C/C++, and Fortran code. Free online tool, no registration required.'
 category: common
 keywords:
-- Ada build tool
-- GPR project builder
-- Ada project compiler
-- Ada dependency manager
-- C/C++ build system
-- Fortran build system
-- Cross-platform build
-- Command-line build tool
-- Project configuration management
-- Build automation
+  - Ada build tool
+  - GPR project builder
+  - Ada project compiler
+  - Ada dependency manager
+  - C/C++ build system
+  - Fortran build system
+  - Cross-platform build
+  - Command-line build tool
+  - Project configuration management
+  - Build automation
 features:
-- Compile Ada, C/C++, and Fortran projects
-- Manage project dependencies
-- Clean the build workspace
-- Install compiled binaries to a specified directory
-- Build specific project files defined by a GPR file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Ada, C/C++, and Fortran projects
+  - Manage project dependencies
+  - Clean the build workspace
+  - Install compiled binaries to a specified directory
+  - Build specific project files defined by a GPR file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gprbuild

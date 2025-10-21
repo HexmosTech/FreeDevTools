@@ -1,29 +1,29 @@
 ---
-title: "SFDK Init - Create Sailfish OS Projects | Online Free DevTools by Hexmos"
+title: 'SFDK Init - Create Sailfish OS Projects | Online Free DevTools by Hexmos'
 name: sfdk-init
-path: "/freedevtools/tldr/sfdk/sfdk-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-init/"
-description: "Create Sailfish OS projects quickly with SFDK Init. Generate project templates and customize builders for your Sailfish OS development. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-init/'
+description: 'Create Sailfish OS projects quickly with SFDK Init. Generate project templates and customize builders for your Sailfish OS development. Free online tool, no registration required.'
 category: common
 keywords:
-- Sailfish OS project initialization
-- SFDK project creation
-- Sailfish SDK development
-- Qt project template
-- command line project initialization
-- Sailfish OS builder configuration
-- SFDK init command
-- Sailfish application development
-- command line interface
-- project scaffolding
+  - Sailfish OS project initialization
+  - SFDK project creation
+  - Sailfish SDK development
+  - Qt project template
+  - command line project initialization
+  - Sailfish OS builder configuration
+  - SFDK init command
+  - Sailfish application development
+  - command line interface
+  - project scaffolding
 features:
-- Initialize Sailfish OS projects with specified types
-- Customize projects with specific builders
-- Force initialization in non-empty directories
-- List available Sailfish OS project types
-- Generate new project templates quickly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Sailfish OS projects with specified types
+  - Customize projects with specific builders
+  - Force initialization in non-empty directories
+  - List available Sailfish OS project types
+  - Generate new project templates quickly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk init

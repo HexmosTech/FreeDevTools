@@ -1,29 +1,29 @@
 ---
-title: "Stripe CLI - Manage Stripe Accounts | Online Free DevTools by Hexmos"
+title: 'Stripe CLI - Manage Stripe Accounts | Online Free DevTools by Hexmos'
 name: stripe
-path: "/freedevtools/tldr/st/stripe/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/stripe/"
-description: "Manage Stripe accounts with Stripe CLI. Interact with Stripe API, listen for events, and trigger test webhooks. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/stripe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/stripe/'
+description: 'Manage Stripe accounts with Stripe CLI. Interact with Stripe API, listen for events, and trigger test webhooks. Free online tool, no registration required.'
 category: common
 keywords:
-- stripe command line interface
-- stripe api client
-- stripe webhook trigger
-- stripe event listener
-- stripe account management
-- stripe cli tool
-- stripe logs
-- stripe customers
-- payment gateway cli
-- stripe development
+  - stripe command line interface
+  - stripe api client
+  - stripe webhook trigger
+  - stripe event listener
+  - stripe account management
+  - stripe cli tool
+  - stripe logs
+  - stripe customers
+  - payment gateway cli
+  - stripe development
 features:
-- Tail activity logs for a Stripe account
-- Listen for and forward Stripe events to a local server
-- Trigger test webhook events
-- Create Stripe customers
-- Print Stripe event data in JSON format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Tail activity logs for a Stripe account
+  - Listen for and forward Stripe events to a local server
+  - Trigger test webhook events
+  - Create Stripe customers
+  - Print Stripe event data in JSON format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # stripe

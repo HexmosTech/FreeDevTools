@@ -1,9 +1,9 @@
 ---
-title: "VNC Server - Launch VNC Desktops | Online Free DevTools by Hexmos"
+title: 'VNC Server - Launch VNC Desktops | Online Free DevTools by Hexmos'
 name: vncserver
-path: "/freedevtools/tldr/linux/vncserver/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/vncserver/"
-description: "Launch VNC servers and manage multiple desktop sessions with vncserver.  Control remote desktops easily and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/vncserver/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/vncserver/'
+description: 'Launch VNC servers and manage multiple desktop sessions with vncserver.  Control remote desktops easily and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - vnc server launch
@@ -22,8 +22,8 @@ features:
   - Kill a running VNC server instance on a specific display.
   - Manage multiple VNC server sessions concurrently.
   - Access remote desktops securely via VNC.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vncserver

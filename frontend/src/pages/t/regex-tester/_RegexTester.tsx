@@ -1,21 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import RegexTesterSkeleton from "./_RegexTesterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import RegexTesterSkeleton from './_RegexTesterSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Regex testing utility functions
 interface RegexMatch {
@@ -32,14 +32,14 @@ interface RegexResult {
   flags: string;
 }
 
-const createRegex = (pattern: string, flags: string = ""): RegExp => {
+const createRegex = (pattern: string, flags: string = ''): RegExp => {
   try {
     // Remove leading/trailing slashes and extract flags if pattern includes them
     let cleanPattern = pattern;
     let extractedFlags = flags;
 
-    if (pattern.startsWith("/") && pattern.includes("/", 1)) {
-      const lastSlash = pattern.lastIndexOf("/");
+    if (pattern.startsWith('/') && pattern.includes('/', 1)) {
+      const lastSlash = pattern.lastIndexOf('/');
       cleanPattern = pattern.substring(1, lastSlash);
       extractedFlags = pattern.substring(lastSlash + 1) || flags;
     }
@@ -47,7 +47,7 @@ const createRegex = (pattern: string, flags: string = ""): RegExp => {
     return new RegExp(cleanPattern, extractedFlags);
   } catch (error) {
     throw new Error(
-      `Invalid regex pattern: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Invalid regex pattern: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 };
@@ -55,7 +55,7 @@ const createRegex = (pattern: string, flags: string = ""): RegExp => {
 const testRegex = (
   pattern: string,
   testString: string,
-  flags: string = ""
+  flags: string = ''
 ): RegexResult => {
   try {
     if (!pattern.trim()) {
@@ -63,15 +63,15 @@ const testRegex = (
         isValid: false,
         matches: [],
         matchCount: 0,
-        error: "Pattern cannot be empty",
-        flags: "",
+        error: 'Pattern cannot be empty',
+        flags: '',
       };
     }
 
     const regex = createRegex(pattern, flags);
     const matches: RegexMatch[] = [];
 
-    if (flags.includes("g") || regex.flags.includes("g")) {
+    if (flags.includes('g') || regex.flags.includes('g')) {
       // Global match
       let match;
       const globalRegex = new RegExp(regex.source, regex.flags);
@@ -83,7 +83,7 @@ const testRegex = (
         });
 
         // Prevent infinite loop for zero-width matches
-        if (match[0] === "") {
+        if (match[0] === '') {
           globalRegex.lastIndex++;
         }
       }
@@ -110,8 +110,8 @@ const testRegex = (
       isValid: false,
       matches: [],
       matchCount: 0,
-      error: error instanceof Error ? error.message : "Unknown error",
-      flags: "",
+      error: error instanceof Error ? error.message : 'Unknown error',
+      flags: '',
     };
   }
 };
@@ -178,20 +178,20 @@ const RegexHighlightText: React.FC<RegexHighlightTextProps> = ({
 };
 
 const RegexTester: React.FC = () => {
-  const [pattern, setPattern] = useState("");
-  const [testString, setTestString] = useState("");
-  const [flags, setFlags] = useState("");
+  const [pattern, setPattern] = useState('');
+  const [testString, setTestString] = useState('');
+  const [flags, setFlags] = useState('');
   const [result, setResult] = useState<RegexResult | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   // Flag options
   const flagOptions = [
-    { key: "g", label: "Global", description: "Find all matches" },
-    { key: "i", label: "Ignore case", description: "Case insensitive" },
-    { key: "m", label: "Multiline", description: "^ and $ match line breaks" },
-    { key: "s", label: "Dot all", description: ". matches newlines" },
-    { key: "u", label: "Unicode", description: "Unicode support" },
-    { key: "y", label: "Sticky", description: "Match from lastIndex" },
+    { key: 'g', label: 'Global', description: 'Find all matches' },
+    { key: 'i', label: 'Ignore case', description: 'Case insensitive' },
+    { key: 'm', label: 'Multiline', description: '^ and $ match line breaks' },
+    { key: 's', label: 'Dot all', description: '. matches newlines' },
+    { key: 'u', label: 'Unicode', description: 'Unicode support' },
+    { key: 'y', label: 'Sticky', description: 'Match from lastIndex' },
   ];
 
   useEffect(() => {
@@ -220,37 +220,37 @@ const RegexTester: React.FC = () => {
     if (checked) {
       setFlags((prev) => (prev.includes(flagKey) ? prev : prev + flagKey));
     } else {
-      setFlags((prev) => prev.replace(flagKey, ""));
+      setFlags((prev) => prev.replace(flagKey, ''));
     }
   };
 
   const handleClear = () => {
-    setPattern("");
-    setTestString("");
-    setFlags("");
+    setPattern('');
+    setTestString('');
+    setFlags('');
     setResult(null);
-    toast.success("Cleared all fields");
+    toast.success('Cleared all fields');
   };
 
   const handleSampleRegex = () => {
     const samplePattern =
-      "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
+      '\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b';
     const sampleText = `Contact us at support@example.com or sales@company.org
 For urgent matters, reach out to admin@test.net
 Invalid emails: notanemail@, @domain.com, user@.com`;
 
     setPattern(samplePattern);
     setTestString(sampleText);
-    setFlags("g");
-    toast.success("Sample email regex pattern loaded");
+    setFlags('g');
+    toast.success('Sample email regex pattern loaded');
   };
 
   const copyMatches = () => {
     if (!result || result.matches.length === 0) return;
 
-    const matchesText = result.matches.map((m) => m.match).join("\n");
+    const matchesText = result.matches.map((m) => m.match).join('\n');
     navigator.clipboard.writeText(matchesText);
-    toast.success("Matches copied to clipboard!");
+    toast.success('Matches copied to clipboard!');
   };
 
   return (
@@ -342,7 +342,7 @@ Invalid emails: notanemail@, @domain.com, user@.com`;
                     {result && result.isValid && (
                       <span>
                         {result.matchCount} match
-                        {result.matchCount !== 1 ? "es" : ""} found
+                        {result.matchCount !== 1 ? 'es' : ''} found
                       </span>
                     )}
                   </div>
@@ -367,10 +367,10 @@ Invalid emails: notanemail@, @domain.com, user@.com`;
                   <CardTitle className="text-lg">Results</CardTitle>
                   {result && result.isValid && (
                     <Badge
-                      variant={result.matchCount > 0 ? "default" : "secondary"}
+                      variant={result.matchCount > 0 ? 'default' : 'secondary'}
                     >
                       {result.matchCount} match
-                      {result.matchCount !== 1 ? "es" : ""}
+                      {result.matchCount !== 1 ? 'es' : ''}
                     </Badge>
                   )}
                 </div>
@@ -386,7 +386,7 @@ Invalid emails: notanemail@, @domain.com, user@.com`;
                     {/* Pattern Info */}
                     {result.flags && (
                       <div className="text-sm text-slate-600 dark:text-slate-400">
-                        <span className="font-medium">Active flags:</span>{" "}
+                        <span className="font-medium">Active flags:</span>{' '}
                         {result.flags}
                       </div>
                     )}
@@ -463,25 +463,25 @@ Invalid emails: notanemail@, @domain.com, user@.com`;
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           \d+
-                        </code>{" "}
+                        </code>{' '}
                         - One or more digits
                       </div>
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           \w+
-                        </code>{" "}
+                        </code>{' '}
                         - One or more word characters
                       </div>
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           [a-z]+
-                        </code>{" "}
+                        </code>{' '}
                         - One or more lowercase letters
                       </div>
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           ^start
-                        </code>{" "}
+                        </code>{' '}
                         - Line starts with "start"
                       </div>
                     </div>
@@ -494,25 +494,25 @@ Invalid emails: notanemail@, @domain.com, user@.com`;
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           .
-                        </code>{" "}
+                        </code>{' '}
                         - Any character
                       </div>
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           *
-                        </code>{" "}
+                        </code>{' '}
                         - Zero or more
                       </div>
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           +
-                        </code>{" "}
+                        </code>{' '}
                         - One or more
                       </div>
                       <div>
                         <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
                           ?
-                        </code>{" "}
+                        </code>{' '}
                         - Zero or one
                       </div>
                     </div>

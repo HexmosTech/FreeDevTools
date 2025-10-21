@@ -1,29 +1,29 @@
 ---
-title: "Git Push - Control Git Remote with jj | Online Free DevTools by Hexmos"
+title: 'Git Push - Control Git Remote with jj | Online Free DevTools by Hexmos'
 name: jj-git-push
-path: "/freedevtools/tldr/jj/jj-git-push/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-push/"
-description: "Control Git remotes effortlessly with jj Git Push. Manage bookmarks and revisions efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-git-push/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-git-push/'
+description: 'Control Git remotes effortlessly with jj Git Push. Manage bookmarks and revisions efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git push command
-- jj git push
-- git remote control
-- git bookmark management
-- git revision pushing
-- git push automation
-- git command line
-- jj command line
-- git bookmark push
-- git revision control
+  - git push command
+  - jj git push
+  - git remote control
+  - git bookmark management
+  - git revision pushing
+  - git push automation
+  - git command line
+  - jj command line
+  - git bookmark push
+  - git revision control
 features:
-- Push bookmarks to Git remotes
-- Create new bookmarks for changes
-- Push all tracked bookmarks
-- Push revisions by name
-- Control Git repositories from jj
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Push bookmarks to Git remotes
+  - Create new bookmarks for changes
+  - Push all tracked bookmarks
+  - Push revisions by name
+  - Control Git repositories from jj
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj git push

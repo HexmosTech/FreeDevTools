@@ -1,29 +1,29 @@
 ---
-title: "Rename Files - Bulk Rename Files with mmv | Online Free DevTools by Hexmos"
+title: 'Rename Files - Bulk Rename Files with mmv | Online Free DevTools by Hexmos'
 name: mmv
-path: "/freedevtools/tldr/common/mmv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mmv/"
-description: "Bulk rename files with mmv, quickly batch rename files using command-line patterns. Organize your files effortlessly! Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mmv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mmv/'
+description: 'Bulk rename files with mmv, quickly batch rename files using command-line patterns. Organize your files effortlessly! Free online tool, no registration required.'
 category: common
 keywords:
-- bulk file rename
-- batch rename files
-- mmv command
-- rename files linux
-- rename files macOS
-- command line rename
-- filename manipulation
-- regular expression rename
-- mass rename files
-- pattern based renaming
+  - bulk file rename
+  - batch rename files
+  - mmv command
+  - rename files linux
+  - rename files macOS
+  - command line rename
+  - filename manipulation
+  - regular expression rename
+  - mass rename files
+  - pattern based renaming
 features:
-- Rename multiple files simultaneously
-- Rename files using regular expressions
-- Copy and rename files
-- Append to existing files
-- Convert date formats in filenames
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rename multiple files simultaneously
+  - Rename files using regular expressions
+  - Copy and rename files
+  - Append to existing files
+  - Convert date formats in filenames
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mmv

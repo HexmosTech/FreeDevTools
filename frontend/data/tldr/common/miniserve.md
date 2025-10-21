@@ -1,29 +1,29 @@
 ---
-title: "Serve Files - Control HTTP File Server with miniserve | Online Free DevTools by Hexmos"
+title: 'Serve Files - Control HTTP File Server with miniserve | Online Free DevTools by Hexmos'
 name: miniserve
-path: "/freedevtools/tldr/common/miniserve/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/miniserve/"
-description: "Control HTTP file serving with miniserve. Easily serve files and directories over HTTP with authentication. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/miniserve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/miniserve/'
+description: 'Control HTTP file serving with miniserve. Easily serve files and directories over HTTP with authentication. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP file server
-- simple file server
-- command-line file server
-- local file server
-- directory sharing tool
-- static file hosting
-- authentication server
-- command line http server
-- linux file server
-- macos file server
+  - HTTP file server
+  - simple file server
+  - command-line file server
+  - local file server
+  - directory sharing tool
+  - static file hosting
+  - authentication server
+  - command line http server
+  - linux file server
+  - macos file server
 features:
-- Serve files and directories over HTTP
-- Serve files with basic authentication
-- Serve a single file
-- Specify the path to serve
-- Provide access to files via the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve files and directories over HTTP
+  - Serve files with basic authentication
+  - Serve a single file
+  - Specify the path to serve
+  - Provide access to files via the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # miniserve

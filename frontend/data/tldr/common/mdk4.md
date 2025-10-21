@@ -1,29 +1,29 @@
 ---
-title: "MDK4 WiFi Attack - Exploit WiFi Networks | Online Free DevTools by Hexmos"
+title: 'MDK4 WiFi Attack - Exploit WiFi Networks | Online Free DevTools by Hexmos'
 name: mdk4
-path: "/freedevtools/tldr/common/mdk4/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mdk4/"
-description: "Exploit WiFi networks with MDK4, a powerful wireless testing tool. Perform deauthentication attacks and create fake networks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mdk4/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mdk4/'
+description: 'Exploit WiFi networks with MDK4, a powerful wireless testing tool. Perform deauthentication attacks and create fake networks. Free online tool, no registration required.'
 category: common
 keywords:
-- WiFi attack tool
-- wireless network exploitation
-- MDK4 WiFi tool
-- IEEE 802.11 exploitation
-- WiFi deauthentication attack
-- fake access point generator
-- aircrack-ng suite
-- wireless security testing
-- Linux WiFi attack
-- network penetration testing
+  - WiFi attack tool
+  - wireless network exploitation
+  - MDK4 WiFi tool
+  - IEEE 802.11 exploitation
+  - WiFi deauthentication attack
+  - fake access point generator
+  - aircrack-ng suite
+  - wireless security testing
+  - Linux WiFi attack
+  - network penetration testing
 features:
-- Flood access points with beacon frames to create fake networks
-- Perform deauthentication attacks on all clients
-- Target specific BSSIDs for deauthentication attacks
-- Test WiFi network vulnerability
-- Disrupt WiFi connectivity for security assessments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Flood access points with beacon frames to create fake networks
+  - Perform deauthentication attacks on all clients
+  - Target specific BSSIDs for deauthentication attacks
+  - Test WiFi network vulnerability
+  - Disrupt WiFi connectivity for security assessments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mdk4

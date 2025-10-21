@@ -1,29 +1,29 @@
 ---
-title: "Avo CLI - Control Avo Analytics Workspaces | Online Free DevTools by Hexmos"
+title: 'Avo CLI - Control Avo Analytics Workspaces | Online Free DevTools by Hexmos'
 name: avo
-path: "/freedevtools/tldr/common/avo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/avo/"
-description: "Control your Avo analytics workspaces with the Avo CLI. Manage branches, pull wrappers, and resolve conflicts effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/avo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/avo/'
+description: 'Control your Avo analytics workspaces with the Avo CLI. Manage branches, pull wrappers, and resolve conflicts effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Avo CLI tool
-- Avo analytics command line
-- Avo workspace manager
-- Avo branch manager
-- Avo implementation status
-- Avo conflict resolver
-- Avo pull request manager
-- Avo init command
-- Avo login command
-- Avo edit command
+  - Avo CLI tool
+  - Avo analytics command line
+  - Avo workspace manager
+  - Avo branch manager
+  - Avo implementation status
+  - Avo conflict resolver
+  - Avo pull request manager
+  - Avo init command
+  - Avo login command
+  - Avo edit command
 features:
-- Initialize a new Avo workspace
-- Log in to the Avo platform
-- Switch between existing Avo branches
-- Pull analytics wrappers for your current path
-- Resolve Git conflicts in Avo files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new Avo workspace
+  - Log in to the Avo platform
+  - Switch between existing Avo branches
+  - Pull analytics wrappers for your current path
+  - Resolve Git conflicts in Avo files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # avo

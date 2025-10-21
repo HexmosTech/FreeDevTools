@@ -1,29 +1,29 @@
 ---
-title: "Fork GitHub Repo - Create GitHub Forks Easily | Online Free DevTools by Hexmos"
+title: 'Fork GitHub Repo - Create GitHub Forks Easily | Online Free DevTools by Hexmos'
 name: git-fork
-path: "/freedevtools/tldr/git/git-fork/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-fork/"
-description: "Create GitHub forks with git-fork. Easily fork repositories from the command line for collaboration and contribution. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-fork/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-fork/'
+description: 'Create GitHub forks with git-fork. Easily fork repositories from the command line for collaboration and contribution. Free online tool, no registration required.'
 category: common
 keywords:
-- github fork
-- git fork command
-- github repository fork
-- command line github
-- fork github cli
-- git extras fork
-- github fork shortcut
-- github repository clone
-- git repository clone
-- github collaboration
+  - github fork
+  - git fork command
+  - github repository fork
+  - command line github
+  - fork github cli
+  - git extras fork
+  - github fork shortcut
+  - github repository clone
+  - git repository clone
+  - github collaboration
 features:
-- Fork GitHub repositories directly from the command line
-- Clone forked repositories locally after forking
-- Support for forking by repository URL
-- Support for forking by repository slug (owner/repo)
-- Streamline the forking and cloning process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fork GitHub repositories directly from the command line
+  - Clone forked repositories locally after forking
+  - Support for forking by repository URL
+  - Support for forking by repository slug (owner/repo)
+  - Streamline the forking and cloning process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git fork

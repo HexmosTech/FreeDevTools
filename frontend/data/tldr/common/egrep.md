@@ -1,29 +1,29 @@
 ---
-title: "Egrep Search - Find Text Patterns with Regex | Online Free DevTools by Hexmos"
+title: 'Egrep Search - Find Text Patterns with Regex | Online Free DevTools by Hexmos'
 name: egrep
-path: "/freedevtools/tldr/common/egrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/egrep/"
-description: "Search text patterns quickly with Egrep. Use extended regular expressions to find strings in files and directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/egrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/egrep/'
+description: 'Search text patterns quickly with Egrep. Use extended regular expressions to find strings in files and directories. Free online tool, no registration required.'
 category: common
 keywords:
-- regex search linux
-- text pattern search egrep
-- file grep linux
-- recursive grep command
-- linux command line search
-- grep regex examples
-- egrep file search
-- command line text search
-- pattern matching tool
-- extended regex search
+  - regex search linux
+  - text pattern search egrep
+  - file grep linux
+  - recursive grep command
+  - linux command line search
+  - grep regex examples
+  - egrep file search
+  - command line text search
+  - pattern matching tool
+  - extended regex search
 features:
-- Search files for patterns using extended regular expressions
-- Recursively search directories for matching patterns
-- Invert search to find lines that do not match
-- Display filename and line number for each match
-- Search standard input (stdin) for patterns
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search files for patterns using extended regular expressions
+  - Recursively search directories for matching patterns
+  - Invert search to find lines that do not match
+  - Display filename and line number for each match
+  - Search standard input (stdin) for patterns
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # egrep

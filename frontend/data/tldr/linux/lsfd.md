@@ -1,9 +1,9 @@
 ---
-title: "List Open Files - Linux File Management | Online Free DevTools by Hexmos"
+title: 'List Open Files - Linux File Management | Online Free DevTools by Hexmos'
 name: lsfd
-path: "/freedevtools/tldr/linux/lsfd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lsfd/"
-description: "Manage Linux open files efficiently with lsfd.  List open file descriptors, identify processes using specific files, and filter by PID or filename. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lsfd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lsfd/'
+description: 'Manage Linux open files efficiently with lsfd.  List open file descriptors, identify processes using specific files, and filter by PID or filename. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux file descriptor list
@@ -22,8 +22,8 @@ features:
   - Filter open files by process ID (PID) or filename.
   - List open IPv4 or IPv6 sockets.
   - Provides detailed information about open files and their associated processes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsfd

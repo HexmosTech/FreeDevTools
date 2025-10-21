@@ -1,9 +1,9 @@
 ---
-title: "Manage rpm-ostree - Control OS Deployments | Online Free DevTools by Hexmos"
+title: 'Manage rpm-ostree - Control OS Deployments | Online Free DevTools by Hexmos'
 name: rpm-ostree
-path: "/freedevtools/tldr/linux/rpm-ostree/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpm-ostree/"
-description: "Manage rpm-ostree deployments instantly and update operating system images. Preview upgrades, rollback changes, and install packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpm-ostree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpm-ostree/'
+description: 'Manage rpm-ostree deployments instantly and update operating system images. Preview upgrades, rollback changes, and install packages. Free online tool, no registration required.'
 category: linux
 keywords:
   - ostree deployment management
@@ -22,8 +22,8 @@ features:
   - Upgrade and reboot into a new deployment
   - Rollback to a previous ostree deployment
   - Install packages and reboot into a new deployment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpm-ostree

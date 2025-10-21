@@ -1,29 +1,29 @@
 ---
-title: "AWS S3 Create Bucket - Manage Cloud Storage | Online Free DevTools by Hexmos"
+title: 'AWS S3 Create Bucket - Manage Cloud Storage | Online Free DevTools by Hexmos'
 name: aws-s3-mb
-path: "/freedevtools/tldr/aws/aws-s3-mb/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-mb/"
-description: "Create AWS S3 buckets with aws s3 mb. Manage cloud storage effortlessly and define specific regions for your buckets. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-s3-mb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-s3-mb/'
+description: 'Create AWS S3 buckets with aws s3 mb. Manage cloud storage effortlessly and define specific regions for your buckets. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS S3 bucket creation
-- S3 bucket management
-- Cloud storage creation
-- AWS CLI S3
-- S3 bucket command line
-- S3 bucket region configuration
-- AWS S3 management
-- s3cmd create bucket
-- aws s3 mb command
-- linux aws s3
+  - AWS S3 bucket creation
+  - S3 bucket management
+  - Cloud storage creation
+  - AWS CLI S3
+  - S3 bucket command line
+  - S3 bucket region configuration
+  - AWS S3 management
+  - s3cmd create bucket
+  - aws s3 mb command
+  - linux aws s3
 features:
-- Create S3 buckets via command line
-- Specify a region for the S3 bucket
-- Display help information for the `aws s3 mb` command
-- Manage cloud storage efficiently
-- Create S3 buckets in specific AWS regions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create S3 buckets via command line
+  - Specify a region for the S3 bucket
+  - Display help information for the `aws s3 mb` command
+  - Manage cloud storage efficiently
+  - Create S3 buckets in specific AWS regions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws s3 mb

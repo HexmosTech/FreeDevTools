@@ -1,29 +1,29 @@
 ---
-title: "Convert WebP - Decompress WebP Images | Online Free DevTools by Hexmos"
+title: 'Convert WebP - Decompress WebP Images | Online Free DevTools by Hexmos'
 name: dwebp
-path: "/freedevtools/tldr/common/dwebp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dwebp/"
-description: "Convert WebP images quickly with dwebp. Decompress WebP files to PNG, PAM, or PPM formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dwebp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dwebp/'
+description: 'Convert WebP images quickly with dwebp. Decompress WebP files to PNG, PAM, or PPM formats. Free online tool, no registration required.'
 category: common
 keywords:
-- WebP to PNG
-- WebP converter
-- decompress WebP
-- WebP decoder
-- image converter
-- command line WebP
-- dwebp Linux
-- dwebp macOS
-- WebP scaling
-- WebP cropping
+  - WebP to PNG
+  - WebP converter
+  - decompress WebP
+  - WebP decoder
+  - image converter
+  - command line WebP
+  - dwebp Linux
+  - dwebp macOS
+  - WebP scaling
+  - WebP cropping
 features:
-- Decompress WebP files to PNG format.
-- Convert WebP to PAM, PPM, PGM, BMP, TIFF, or YUV formats.
-- Utilize multi-threading for faster WebP decoding.
-- Crop and scale WebP images during conversion.
-- Flip WebP images horizontally during conversion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decompress WebP files to PNG format.
+  - Convert WebP to PAM, PPM, PGM, BMP, TIFF, or YUV formats.
+  - Utilize multi-threading for faster WebP decoding.
+  - Crop and scale WebP images during conversion.
+  - Flip WebP images horizontally during conversion.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dwebp

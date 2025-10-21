@@ -1,29 +1,29 @@
 ---
-title: "Debug Go Code - Delve Go Programs | Online Free DevTools by Hexmos"
+title: 'Debug Go Code - Delve Go Programs | Online Free DevTools by Hexmos'
 name: dlv
-path: "/freedevtools/tldr/common/dlv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dlv/"
-description: "Debug Go code with Delve, a powerful Go language debugger. Inspect variables, set breakpoints, and step through code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dlv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dlv/'
+description: 'Debug Go code with Delve, a powerful Go language debugger. Inspect variables, set breakpoints, and step through code. Free online tool, no registration required.'
 category: common
 keywords:
-- go debugger
-- delve debugger
-- go debug tool
-- debug go programs
-- go debugging tutorial
-- go delve tutorial
-- golang debugger
-- linux go debugger
-- macos go debugger
-- windows go debugger
+  - go debugger
+  - delve debugger
+  - go debug tool
+  - debug go programs
+  - go debugging tutorial
+  - go delve tutorial
+  - golang debugger
+  - linux go debugger
+  - macos go debugger
+  - windows go debugger
 features:
-- Debug Go programs locally
-- Connect to remote debugging servers
-- Attach to running Go processes
-- Trace Go program execution with regular expressions
-- Compile and debug Go test binaries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Debug Go programs locally
+  - Connect to remote debugging servers
+  - Attach to running Go processes
+  - Trace Go program execution with regular expressions
+  - Compile and debug Go test binaries
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dlv

@@ -1,29 +1,29 @@
 ---
-title: "Docker System - Control Data | Online Free DevTools by Hexmos"
+title: 'Docker System - Control Data | Online Free DevTools by Hexmos'
 name: docker-system
-path: "/freedevtools/tldr/docker/docker-system/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-system/"
-description: "Control Docker system data with Docker System. Monitor disk usage, prune unused resources, and manage Docker events efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-system/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-system/'
+description: 'Control Docker system data with Docker System. Monitor disk usage, prune unused resources, and manage Docker events efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- docker disk usage
-- docker prune unused data
-- docker system events
-- docker system info
-- docker system monitor
-- docker system cleanup
-- docker resource management
-- docker data management
-- linux docker system
-- command line docker
+  - docker disk usage
+  - docker prune unused data
+  - docker system events
+  - docker system info
+  - docker system monitor
+  - docker system cleanup
+  - docker resource management
+  - docker data management
+  - linux docker system
+  - command line docker
 features:
-- Display Docker disk usage details
-- Remove unused Docker data and volumes
-- Filter unused data by age
-- Monitor real-time Docker daemon events
-- Display system-wide Docker information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display Docker disk usage details
+  - Remove unused Docker data and volumes
+  - Filter unused data by age
+  - Monitor real-time Docker daemon events
+  - Display system-wide Docker information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker system

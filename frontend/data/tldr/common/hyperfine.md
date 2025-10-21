@@ -1,29 +1,29 @@
 ---
-title: "Benchmark Tool - Run Command Benchmarks | Online Free DevTools by Hexmos"
+title: 'Benchmark Tool - Run Command Benchmarks | Online Free DevTools by Hexmos'
 name: hyperfine
-path: "/freedevtools/tldr/common/hyperfine/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hyperfine/"
-description: "Run benchmarks with Hyperfine, a command-line benchmarking tool. Compare command execution times and optimize performance with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hyperfine/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hyperfine/'
+description: 'Run benchmarks with Hyperfine, a command-line benchmarking tool. Compare command execution times and optimize performance with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- command line benchmark
-- hyperfine benchmark tool
-- shell script benchmark
-- performance testing
-- execution time measurement
-- comparative benchmarking
-- code optimization tool
-- cli performance analysis
-- Linux benchmark
-- MacOS benchmark
+  - command line benchmark
+  - hyperfine benchmark tool
+  - shell script benchmark
+  - performance testing
+  - execution time measurement
+  - comparative benchmarking
+  - code optimization tool
+  - cli performance analysis
+  - Linux benchmark
+  - MacOS benchmark
 features:
-- Measure command execution time precisely
-- Compare performance of different commands
-- Specify minimum number of benchmark runs
-- Perform benchmark with warmup iterations
-- Prepare environment before each benchmark run
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure command execution time precisely
+  - Compare performance of different commands
+  - Specify minimum number of benchmark runs
+  - Perform benchmark with warmup iterations
+  - Prepare environment before each benchmark run
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hyperfine

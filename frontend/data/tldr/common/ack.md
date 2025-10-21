@@ -1,29 +1,29 @@
 ---
-title: "Search Text with Ack - Find Patterns | Online Free DevTools by Hexmos"
+title: 'Search Text with Ack - Find Patterns | Online Free DevTools by Hexmos'
 name: ack
-path: "/freedevtools/tldr/common/ack/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ack/"
-description: "Search text with Ack, a streamlined grep alternative for developers. Quickly find code patterns and text within files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ack/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ack/'
+description: 'Search text with Ack, a streamlined grep alternative for developers. Quickly find code patterns and text within files. Free online tool, no registration required.'
 category: common
 keywords:
-- ack search
-- text search tool
-- grep alternative
-- code search
-- pattern matching
-- regex search
-- file search linux
-- ack command line
-- ack search examples
-- ack documentation
+  - ack search
+  - text search tool
+  - grep alternative
+  - code search
+  - pattern matching
+  - regex search
+  - file search linux
+  - ack command line
+  - ack search examples
+  - ack documentation
 features:
-- Recursively search files for a pattern.
-- Perform case-insensitive text searches.
-- Output only the matched text.
-- Limit search to specific file types.
-- Count the total number of matches found.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search files for a pattern.
+  - Perform case-insensitive text searches.
+  - Output only the matched text.
+  - Limit search to specific file types.
+  - Count the total number of matches found.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ack

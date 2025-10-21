@@ -1,9 +1,9 @@
 ---
-title: "Android Screencap - Capture Screenshots with ADB | Online Free DevTools by Hexmos"
+title: 'Android Screencap - Capture Screenshots with ADB | Online Free DevTools by Hexmos'
 name: screencap
-path: "/freedevtools/tldr/android/screencap/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/screencap/"
-description: "Capture Android screenshots instantly with Android Screencap. Save screen images remotely with ADB shell command. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/screencap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/screencap/'
+description: 'Capture Android screenshots instantly with Android Screencap. Save screen images remotely with ADB shell command. Free online tool, no registration required.'
 category: android
 keywords:
   - android screenshot capture
@@ -22,8 +22,8 @@ features:
   - specify a file path for saving screenshots
   - automate screenshot capture through the shell
   - execute screen capture commands remotely
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # screencap

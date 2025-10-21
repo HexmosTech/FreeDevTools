@@ -1,29 +1,29 @@
 ---
-title: "Show Last Command - Track User Activity | Online Free DevTools by Hexmos"
+title: 'Show Last Command - Track User Activity | Online Free DevTools by Hexmos'
 name: lastcomm
-path: "/freedevtools/tldr/common/lastcomm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lastcomm/"
-description: "Track user activity with Last Command. Audit system activity, monitor command execution, and identify user behavior. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lastcomm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lastcomm/'
+description: 'Track user activity with Last Command. Audit system activity, monitor command execution, and identify user behavior. Free online tool, no registration required.'
 category: common
 keywords:
-- last command activity
-- command history audit
-- user activity tracking
-- shell command logging
-- system administration tools
-- linux command history
-- macos command history
-- bash history viewer
-- command execution monitoring
-- terminal activity log
+  - last command activity
+  - command history audit
+  - user activity tracking
+  - shell command logging
+  - system administration tools
+  - linux command history
+  - macos command history
+  - bash history viewer
+  - command execution monitoring
+  - terminal activity log
 features:
-- Display last commands executed on a system
-- Filter command history by user
-- View commands executed on specific terminals
-- Show information about specific commands
-- Analyze command execution timestamps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display last commands executed on a system
+  - Filter command history by user
+  - View commands executed on specific terminals
+  - Show information about specific commands
+  - Analyze command execution timestamps
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lastcomm

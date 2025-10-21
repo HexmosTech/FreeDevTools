@@ -1,29 +1,29 @@
 ---
-title: "Decrypt Wireless Capture - Aircrack-ng Decryption | Online Free DevTools by Hexmos"
+title: 'Decrypt Wireless Capture - Aircrack-ng Decryption | Online Free DevTools by Hexmos'
 name: airdecap-ng
-path: "/freedevtools/tldr/common/airdecap-ng/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/airdecap-ng/"
-description: "Decrypt wireless packets with Aircrack-ng airdecap-ng. Decrypt WEP, WPA, and WPA2 encrypted files, recover passwords. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/airdecap-ng/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/airdecap-ng/'
+description: 'Decrypt wireless packets with Aircrack-ng airdecap-ng. Decrypt WEP, WPA, and WPA2 encrypted files, recover passwords. Free online tool, no registration required.'
 category: common
 keywords:
-- wireless decryption
-- aircrack-ng decryption
-- pcap decryption
-- wep decryption
-- wpa decryption
-- wpa2 decryption
-- wireless password recovery
-- packet analysis
-- network security
-- capture file decryption
+  - wireless decryption
+  - aircrack-ng decryption
+  - pcap decryption
+  - wep decryption
+  - wpa decryption
+  - wpa2 decryption
+  - wireless password recovery
+  - packet analysis
+  - network security
+  - capture file decryption
 features:
-- Decrypts WEP encrypted capture files using a hexadecimal key.
-- Decrypts WPA/WPA2 encrypted capture files using ESSID and password.
-- Removes wireless headers from open network capture files.
-- Filters packets based on access point MAC address.
-- Preserves headers while decrypting WPA/WPA2 encrypted capture files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decrypts WEP encrypted capture files using a hexadecimal key.
+  - Decrypts WPA/WPA2 encrypted capture files using ESSID and password.
+  - Removes wireless headers from open network capture files.
+  - Filters packets based on access point MAC address.
+  - Preserves headers while decrypting WPA/WPA2 encrypted capture files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # airdecap-ng

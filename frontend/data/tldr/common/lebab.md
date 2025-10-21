@@ -1,29 +1,29 @@
 ---
-title: "Lebab Modernizer - Transpile JavaScript ES6/ES7 | Online Free DevTools by Hexmos"
+title: 'Lebab Modernizer - Transpile JavaScript ES6/ES7 | Online Free DevTools by Hexmos'
 name: lebab
-path: "/freedevtools/tldr/common/lebab/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lebab/"
-description: "Transpile JavaScript with Lebab Modernizer, converting legacy JavaScript code to modern ES6/ES7 syntax. Automate code upgrades. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lebab/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lebab/'
+description: 'Transpile JavaScript with Lebab Modernizer, converting legacy JavaScript code to modern ES6/ES7 syntax. Automate code upgrades. Free online tool, no registration required.'
 category: common
 keywords:
-- JavaScript modernizer
-- ES6 transpiler
-- ES7 transpiler
-- JavaScript code converter
-- JavaScript syntax upgrade
-- Lebab transformations
-- JavaScript refactoring
-- command line JavaScript tool
-- transpilation tool
-- JavaScript code migration
+  - JavaScript modernizer
+  - ES6 transpiler
+  - ES7 transpiler
+  - JavaScript code converter
+  - JavaScript syntax upgrade
+  - Lebab transformations
+  - JavaScript refactoring
+  - command line JavaScript tool
+  - transpilation tool
+  - JavaScript code migration
 features:
-- Transpile JavaScript code to ES6/ES7 syntax
-- Apply multiple transformations simultaneously
-- Transpile a single JavaScript file
-- Replace files in-place within a directory
-- Display help information about Lebab commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Transpile JavaScript code to ES6/ES7 syntax
+  - Apply multiple transformations simultaneously
+  - Transpile a single JavaScript file
+  - Replace files in-place within a directory
+  - Display help information about Lebab commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lebab

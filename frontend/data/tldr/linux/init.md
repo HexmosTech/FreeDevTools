@@ -1,9 +1,9 @@
 ---
-title: "Init - Control Linux Run Levels | Online Free DevTools by Hexmos"
+title: 'Init - Control Linux Run Levels | Online Free DevTools by Hexmos'
 name: init
-path: "/freedevtools/tldr/linux/init/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/init/"
-description: "Control Linux run levels easily with init. Manage system states, shutdown, reboot, and single-user mode effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/init/'
+description: 'Control Linux run levels easily with init. Manage system states, shutdown, reboot, and single-user mode effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux run level manager
@@ -22,8 +22,8 @@ features:
   - Switch to single-user mode
   - Transition to a graphical environment
   - Start the system in multiuser terminal mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # init

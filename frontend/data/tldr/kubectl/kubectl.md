@@ -1,29 +1,29 @@
 ---
-title: "Kubectl - Control Kubernetes Clusters | Online Free DevTools by Hexmos"
+title: 'Kubectl - Control Kubernetes Clusters | Online Free DevTools by Hexmos'
 name: kubectl
-path: "/freedevtools/tldr/kubectl/kubectl/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl/"
-description: "Control Kubernetes clusters with Kubectl. Deploy applications, inspect resources, and manage workloads easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl/'
+description: 'Control Kubernetes clusters with Kubectl. Deploy applications, inspect resources, and manage workloads easily. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes command line tool
-- kubectl deployment manager
-- kubernetes cluster controller
-- kubectl resource inspector
-- kubernetes pod manager
-- kubectl service discovery
-- kubernetes ingress controller
-- kubectl node manager
-- kubectl networking manager
-- linux kubectl command
+  - kubernetes command line tool
+  - kubectl deployment manager
+  - kubernetes cluster controller
+  - kubectl resource inspector
+  - kubernetes pod manager
+  - kubectl service discovery
+  - kubernetes ingress controller
+  - kubectl node manager
+  - kubectl networking manager
+  - linux kubectl command
 features:
-- Manage Kubernetes cluster resources
-- Deploy and update applications
-- Inspect pods and services
-- View resource usage of nodes
-- Execute commands within pods
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage Kubernetes cluster resources
+  - Deploy and update applications
+  - Inspect pods and services
+  - View resource usage of nodes
+  - Execute commands within pods
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl

@@ -1,29 +1,29 @@
 ---
-title: "Control MozillaVPN - Secure Your Connection | Online Free DevTools by Hexmos"
+title: 'Control MozillaVPN - Secure Your Connection | Online Free DevTools by Hexmos'
 name: mozillavpn
-path: "/freedevtools/tldr/common/mozillavpn/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mozillavpn/"
-description: "Secure your connection with MozillaVPN using command line. Manage your VPN, connect to servers, and protect your privacy. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mozillavpn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mozillavpn/'
+description: 'Secure your connection with MozillaVPN using command line. Manage your VPN, connect to servers, and protect your privacy. Free online tool, no registration required.'
 category: common
 keywords:
-- mozilla vpn control
-- vpn command line
-- secure connection linux
-- mozilla vpn macos
-- network security command
-- vpn server selection
-- privacy protection vpn
-- mozilla vpn configuration
-- network tunnel management
-- vpn server listing
+  - mozilla vpn control
+  - vpn command line
+  - secure connection linux
+  - mozilla vpn macos
+  - network security command
+  - vpn server selection
+  - privacy protection vpn
+  - mozilla vpn configuration
+  - network tunnel management
+  - vpn server listing
 features:
-- Activate a MozillaVPN connection from the command line.
-- Select a specific server for VPN connection.
-- Display current connection status of the VPN.
-- Deactivate the active VPN connection.
-- List available VPN servers for connection.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Activate a MozillaVPN connection from the command line.
+  - Select a specific server for VPN connection.
+  - Display current connection status of the VPN.
+  - Deactivate the active VPN connection.
+  - List available VPN servers for connection.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mozillavpn

@@ -1,29 +1,29 @@
 ---
-title: "Generate DVC DAG - Visualize Pipelines | Online Free DevTools by Hexmos"
+title: 'Generate DVC DAG - Visualize Pipelines | Online Free DevTools by Hexmos'
 name: dvc-dag
-path: "/freedevtools/tldr/dvc/dvc-dag/"
-canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-dag/"
-description: "Generate DVC DAG diagrams for your data pipelines with DVC Dag. Visualize dependencies and relationships in your DVC projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/dvc/dvc-dag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dvc/dvc-dag/'
+description: 'Generate DVC DAG diagrams for your data pipelines with DVC Dag. Visualize dependencies and relationships in your DVC projects. Free online tool, no registration required.'
 category: common
 keywords:
-- DVC pipeline graph
-- DVC dependency visualization
-- DAG generator
-- Data pipeline diagram
-- dvc.yaml visualization
-- DVC graph export
-- DVC pipeline analysis
-- DVC stage dependencies
-- Directed acyclic graph
-- DVC pipeline structure
+  - DVC pipeline graph
+  - DVC dependency visualization
+  - DAG generator
+  - Data pipeline diagram
+  - dvc.yaml visualization
+  - DVC graph export
+  - DVC pipeline analysis
+  - DVC stage dependencies
+  - Directed acyclic graph
+  - DVC pipeline structure
 features:
-- Visualize the entire DVC pipeline structure
-- Generate a DAG diagram from dvc.yaml files
-- Export pipeline diagrams in DOT format
-- Visualize pipeline stages up to a target stage
-- Understand data dependencies within DVC projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Visualize the entire DVC pipeline structure
+  - Generate a DAG diagram from dvc.yaml files
+  - Export pipeline diagrams in DOT format
+  - Visualize pipeline stages up to a target stage
+  - Understand data dependencies within DVC projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dvc dag

@@ -1,29 +1,29 @@
 ---
-title: "Format Rust Code - Instantly Improve Code Style | Online Free DevTools by Hexmos"
+title: 'Format Rust Code - Instantly Improve Code Style | Online Free DevTools by Hexmos'
 name: rustfmt
-path: "/freedevtools/tldr/common/rustfmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustfmt/"
-description: "Format Rust code quickly with Rustfmt, ensuring consistent style across projects. Improve readability and maintainability of Rust projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rustfmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rustfmt/'
+description: 'Format Rust code quickly with Rustfmt, ensuring consistent style across projects. Improve readability and maintainability of Rust projects. Free online tool, no registration required.'
 category: common
 keywords:
-- rust formatter
-- rustfmt command
-- rust code style
-- rust code formatting tool
-- rust style guide
-- rust language formatting
-- rust source code formatter
-- rust auto formatter
-- rust code beautifier
-- cargo fmt
+  - rust formatter
+  - rustfmt command
+  - rust code style
+  - rust code formatting tool
+  - rust style guide
+  - rust language formatting
+  - rust source code formatter
+  - rust auto formatter
+  - rust code beautifier
+  - cargo fmt
 features:
-- Format Rust source code in place
-- Check Rust code for formatting issues
-- Backup modified files before formatting
-- Format code with specific Rust style edition
-- Support for multiple Rust editions (2015, 2018, 2021, 2024)
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format Rust source code in place
+  - Check Rust code for formatting issues
+  - Backup modified files before formatting
+  - Format code with specific Rust style edition
+  - Support for multiple Rust editions (2015, 2018, 2021, 2024)
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustfmt

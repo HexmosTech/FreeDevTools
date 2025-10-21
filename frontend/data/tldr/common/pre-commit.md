@@ -1,29 +1,29 @@
 ---
-title: "Create Git Hooks - Manage Code Quality with pre-commit | Online Free DevTools by Hexmos"
+title: 'Create Git Hooks - Manage Code Quality with pre-commit | Online Free DevTools by Hexmos'
 name: pre-commit
-path: "/freedevtools/tldr/common/pre-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pre-commit/"
-description: "Create Git hooks with pre-commit to automate code quality checks. Enforce coding standards and prevent bad commits with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pre-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pre-commit/'
+description: 'Create Git hooks with pre-commit to automate code quality checks. Enforce coding standards and prevent bad commits with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Git hook manager
-- pre-commit hook automation
-- Code quality Git hooks
-- Python Git hook
-- Git workflow automation
-- pre-commit configuration
-- Git commit validation
-- pre-commit Git linter
-- Automated code review Git
-- Git pre-push hook
+  - Git hook manager
+  - pre-commit hook automation
+  - Code quality Git hooks
+  - Python Git hook
+  - Git workflow automation
+  - pre-commit configuration
+  - Git commit validation
+  - pre-commit Git linter
+  - Automated code review Git
+  - Git pre-push hook
 features:
-- Install pre-commit into Git hooks
-- Run hooks on staged files
-- Run hooks on all files
-- Clean pre-commit cache
-- Update pre-commit configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install pre-commit into Git hooks
+  - Run hooks on staged files
+  - Run hooks on all files
+  - Clean pre-commit cache
+  - Update pre-commit configuration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pre-commit

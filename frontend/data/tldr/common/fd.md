@@ -1,29 +1,29 @@
 ---
-title: "Find Files - Search Files Quickly with fd | Online Free DevTools by Hexmos"
+title: 'Find Files - Search Files Quickly with fd | Online Free DevTools by Hexmos'
 name: fd
-path: "/freedevtools/tldr/common/fd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fd/"
-description: "Search files quickly with fd. Find files by name, extension, or directory recursively. A faster and easier alternative to find. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fd/'
+description: 'Search files quickly with fd. Find files by name, extension, or directory recursively. A faster and easier alternative to find. Free online tool, no registration required.'
 category: common
 keywords:
-- file search
-- find files
-- fd command
-- command line file search
-- linux file search
-- macos file search
-- alternative to find
-- recursive file search
-- find files by extension
-- find files by name
+  - file search
+  - find files
+  - fd command
+  - command line file search
+  - linux file search
+  - macos file search
+  - alternative to find
+  - recursive file search
+  - find files by extension
+  - find files by name
 features:
-- Recursively searches for files and directories.
-- Filters files by name or regular expression.
-- Filters files by extension.
-- Includes hidden and ignored files in searches.
-- Executes commands on found files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively searches for files and directories.
+  - Filters files by name or regular expression.
+  - Filters files by extension.
+  - Includes hidden and ignored files in searches.
+  - Executes commands on found files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fd

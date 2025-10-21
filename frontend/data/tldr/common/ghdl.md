@@ -1,29 +1,29 @@
 ---
-title: "VHDL Simulator - Simulate VHDL Designs | Online Free DevTools by Hexmos"
+title: 'VHDL Simulator - Simulate VHDL Designs | Online Free DevTools by Hexmos'
 name: ghdl
-path: "/freedevtools/tldr/common/ghdl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ghdl/"
-description: "Simulate VHDL designs with GHDL. Analyze, elaborate, and run VHDL code easily using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ghdl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ghdl/'
+description: 'Simulate VHDL designs with GHDL. Analyze, elaborate, and run VHDL code easily using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- VHDL simulator
-- VHDL design simulation
-- GHDL VHDL compiler
-- VHDL code analysis
-- VHDL waveform generation
-- VHDL syntax checker
-- VHDL object file creation
-- open source VHDL tool
-- VHDL development tool
-- cross-platform VHDL
+  - VHDL simulator
+  - VHDL design simulation
+  - GHDL VHDL compiler
+  - VHDL code analysis
+  - VHDL waveform generation
+  - VHDL syntax checker
+  - VHDL object file creation
+  - open source VHDL tool
+  - VHDL development tool
+  - cross-platform VHDL
 features:
-- Simulate VHDL designs from the command line
-- Analyze VHDL code for syntax and semantic errors
-- Elaborate VHDL designs into executable models
-- Generate waveform files for debugging
-- Support multiple VHDL versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Simulate VHDL designs from the command line
+  - Analyze VHDL code for syntax and semantic errors
+  - Elaborate VHDL designs into executable models
+  - Generate waveform files for debugging
+  - Support multiple VHDL versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ghdl

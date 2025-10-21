@@ -1,29 +1,29 @@
 ---
-title: "Calendar - Display Events | Online Free DevTools by Hexmos"
+title: 'Calendar - Display Events | Online Free DevTools by Hexmos'
 name: calendar
-path: "/freedevtools/tldr/common/calendar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/calendar/"
-description: "Display events with calendar. Schedule, plan, and organize your time efficiently with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/calendar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/calendar/'
+description: 'Display events with calendar. Schedule, plan, and organize your time efficiently with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- calendar events
-- schedule events
-- command line calendar
-- linux calendar
-- macos calendar
-- display calendar
-- terminal calendar
-- event scheduling
-- calendar file
-- plan events
+  - calendar events
+  - schedule events
+  - command line calendar
+  - linux calendar
+  - macos calendar
+  - display calendar
+  - terminal calendar
+  - event scheduling
+  - calendar file
+  - plan events
 features:
-- Display upcoming events from a default or specified calendar file
-- Show events for a specific number of days in the future
-- Show events for a specific number of days in the past
-- Support custom calendar file paths
-- Display current date's events
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display upcoming events from a default or specified calendar file
+  - Show events for a specific number of days in the future
+  - Show events for a specific number of days in the past
+  - Support custom calendar file paths
+  - Display current date's events
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # calendar

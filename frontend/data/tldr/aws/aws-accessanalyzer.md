@@ -1,29 +1,29 @@
 ---
-title: "Access Analyzer - Analyze AWS Resource Policies | Online Free DevTools by Hexmos"
+title: 'Access Analyzer - Analyze AWS Resource Policies | Online Free DevTools by Hexmos'
 name: aws-accessanalyzer
-path: "/freedevtools/tldr/aws/aws-accessanalyzer/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-accessanalyzer/"
-description: "Analyze AWS resource policies with Access Analyzer. Identify potential security risks and enforce security best practices. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-accessanalyzer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-accessanalyzer/'
+description: 'Analyze AWS resource policies with Access Analyzer. Identify potential security risks and enforce security best practices. Free online tool, no registration required.'
 category: common
 keywords:
-- aws access analyzer
-- aws accessanalyzer command
-- aws resource policy analysis
-- aws security analyzer
-- aws iam analyzer
-- aws access control
-- aws security best practices
-- aws policy validation
-- aws access analyzer cli
-- aws accessanalyzer documentation
+  - aws access analyzer
+  - aws accessanalyzer command
+  - aws resource policy analysis
+  - aws security analyzer
+  - aws iam analyzer
+  - aws access control
+  - aws security best practices
+  - aws policy validation
+  - aws access analyzer cli
+  - aws accessanalyzer documentation
 features:
-- Create and manage Access Analyzers for AWS resources.
-- Identify potential security vulnerabilities in resource policies.
-- Generate and delete archive rules for Access Analyzer findings.
-- List and view details of existing Access Analyzers.
-- Update Access Analyzer settings and apply new tags.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage Access Analyzers for AWS resources.
+  - Identify potential security vulnerabilities in resource policies.
+  - Generate and delete archive rules for Access Analyzer findings.
+  - List and view details of existing Access Analyzers.
+  - Update Access Analyzer settings and apply new tags.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws accessanalyzer

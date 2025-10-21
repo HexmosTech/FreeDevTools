@@ -1,9 +1,9 @@
 ---
-title: "Control Network Interfaces - ifdown Command | Online Free DevTools by Hexmos"
+title: 'Control Network Interfaces - ifdown Command | Online Free DevTools by Hexmos'
 name: ifdown
-path: "/freedevtools/tldr/linux/ifdown/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ifdown/"
-description: "Control network interfaces with ifdown. Easily disable or enable interfaces on Unix-like systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ifdown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ifdown/'
+description: 'Control network interfaces with ifdown. Easily disable or enable interfaces on Unix-like systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - network interface control
@@ -22,8 +22,8 @@ features:
   - Manage network connections via command line
   - Control interface states quickly
   - Automate network configuration changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ifdown

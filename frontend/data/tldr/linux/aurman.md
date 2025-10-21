@@ -1,29 +1,29 @@
 ---
-title: "Control AUR Packages - Manage AUR with aurman | Online Free DevTools by Hexmos"
+title: 'Control AUR Packages - Manage AUR with aurman | Online Free DevTools by Hexmos'
 name: aurman
-path: "/freedevtools/tldr/linux/aurman/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aurman/"
-description: "Control AUR packages efficiently with aurman. Build, install, and manage packages from the Arch User Repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aurman/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aurman/'
+description: 'Control AUR packages efficiently with aurman. Build, install, and manage packages from the Arch User Repository. Free online tool, no registration required.'
 category: linux
 keywords:
-- aur package manager
-- arch user repository
-- linux package builder
-- aur package installer
-- pacman alternative
-- aur package synchronizer
-- arch linux utility
-- aur package updater
-- command line aur tool
-- linux aur package control
+  - aur package manager
+  - arch user repository
+  - linux package builder
+  - aur package installer
+  - pacman alternative
+  - aur package synchronizer
+  - arch linux utility
+  - aur package updater
+  - command line aur tool
+  - linux aur package control
 features:
-- Synchronize and update all packages.
-- Install packages from the AUR.
-- Search for packages in official repositories and AUR.
-- Remove packages and dependencies.
-- Clear the package cache.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize and update all packages.
+  - Install packages from the AUR.
+  - Search for packages in official repositories and AUR.
+  - Remove packages and dependencies.
+  - Clear the package cache.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aurman

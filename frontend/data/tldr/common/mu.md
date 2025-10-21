@@ -1,29 +1,29 @@
 ---
-title: "Index Email - Search Maildir with mu | Online Free DevTools by Hexmos"
+title: 'Index Email - Search Maildir with mu | Online Free DevTools by Hexmos'
 name: mu
-path: "/freedevtools/tldr/common/mu/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mu/"
-description: "Index and search email messages with mu, a powerful command-line tool for Maildir. Find emails by keywords, sender, date, and attachments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mu/'
+description: 'Index and search email messages with mu, a powerful command-line tool for Maildir. Find emails by keywords, sender, date, and attachments. Free online tool, no registration required.'
 category: common
 keywords:
-- email index
-- maildir search
-- command line email
-- mu email
-- email database
-- email query
-- email filter
-- email attachments
-- linux email
-- macos email
+  - email index
+  - maildir search
+  - command line email
+  - mu email
+  - email database
+  - email query
+  - email filter
+  - email attachments
+  - linux email
+  - macos email
 features:
-- Index emails from a local Maildir directory
-- Search emails by keywords and specific criteria
-- Filter emails by sender, subject, or date
-- Find emails with specific attachments
-- List contacts and their email addresses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Index emails from a local Maildir directory
+  - Search emails by keywords and specific criteria
+  - Filter emails by sender, subject, or date
+  - Find emails with specific attachments
+  - List contacts and their email addresses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mu

@@ -1,29 +1,29 @@
 ---
-title: "Transfer Data with Curl - Command-Line Tool | Online Free DevTools by Hexmos"
+title: 'Transfer Data with Curl - Command-Line Tool | Online Free DevTools by Hexmos'
 name: curl
-path: "/freedevtools/tldr/common/curl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/curl/"
-description: "Transfer data effortlessly with Curl, a versatile command-line tool for various protocols. Supports HTTP, HTTPS, FTP, SCP, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/curl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/curl/'
+description: 'Transfer data effortlessly with Curl, a versatile command-line tool for various protocols. Supports HTTP, HTTPS, FTP, SCP, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- curl data transfer
-- command line curl
-- curl http request
-- curl https request
-- curl ftp transfer
-- curl secure copy
-- curl command linux
-- curl command macos
-- curl command windows
-- curl protocol transfer
+  - curl data transfer
+  - command line curl
+  - curl http request
+  - curl https request
+  - curl ftp transfer
+  - curl secure copy
+  - curl command linux
+  - curl command macos
+  - curl command windows
+  - curl protocol transfer
 features:
-- Perform HTTP GET requests and output to stdout.
-- Download files directly from URLs.
-- Send form-encoded data via POST requests.
-- Customize requests with headers and proxies.
-- Resolve hostnames to custom IP addresses.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform HTTP GET requests and output to stdout.
+  - Download files directly from URLs.
+  - Send form-encoded data via POST requests.
+  - Customize requests with headers and proxies.
+  - Resolve hostnames to custom IP addresses.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # curl

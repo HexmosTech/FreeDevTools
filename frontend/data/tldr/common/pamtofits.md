@@ -1,29 +1,29 @@
 ---
-title: "Convert PAM to FITS - Image Format Conversion | Online Free DevTools by Hexmos"
+title: 'Convert PAM to FITS - Image Format Conversion | Online Free DevTools by Hexmos'
 name: pamtofits
-path: "/freedevtools/tldr/common/pamtofits/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamtofits/"
-description: "Convert PAM images to FITS format with pamtofits. Effortlessly transform Netpbm images into FITS files for astronomical data analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamtofits/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamtofits/'
+description: 'Convert PAM images to FITS format with pamtofits. Effortlessly transform Netpbm images into FITS files for astronomical data analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM to FITS conversion
-- Netpbm to FITS converter
-- Image format conversion
-- FITS file generation
-- Astronomical image processing
-- Linux image conversion
-- Unix image utilities
-- Command-line image tools
-- FITS image converter
-- PAM image editor
+  - PAM to FITS conversion
+  - Netpbm to FITS converter
+  - Image format conversion
+  - FITS file generation
+  - Astronomical image processing
+  - Linux image conversion
+  - Unix image utilities
+  - Command-line image tools
+  - FITS image converter
+  - PAM image editor
 features:
-- Convert PAM images to FITS format
-- Process Netpbm images for astronomy
-- Generate FITS files from command line
-- Facilitate astronomical data analysis
-- Support various PAM image types
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PAM images to FITS format
+  - Process Netpbm images for astronomy
+  - Generate FITS files from command line
+  - Facilitate astronomical data analysis
+  - Support various PAM image types
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamtofits

@@ -1,29 +1,29 @@
 ---
-title: "Create Menu - Bash Select Command | Online Free DevTools by Hexmos"
+title: 'Create Menu - Bash Select Command | Online Free DevTools by Hexmos'
 name: select
-path: "/freedevtools/tldr/common/select/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/select/"
-description: "Create bash menus with Bash Select. Generate interactive command line menus from lists and arrays. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/select/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/select/'
+description: 'Create bash menus with Bash Select. Generate interactive command line menus from lists and arrays. Free online tool, no registration required.'
 category: common
 keywords:
-- bash select menu
-- bash interactive menu
-- shell script menu
-- command line menu
-- linux menu generator
-- bash array menu
-- terminal menu
-- bash scripting tutorial
-- gnu bash select
-- create bash menu
+  - bash select menu
+  - bash interactive menu
+  - shell script menu
+  - command line menu
+  - linux menu generator
+  - bash array menu
+  - terminal menu
+  - bash scripting tutorial
+  - gnu bash select
+  - create bash menu
 features:
-- Generate menus from a list of words.
-- Create menus from command output.
-- Customize the prompt string for menu selection.
-- Build menus from Bash arrays.
-- Create interactive selection tools for shell scripts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate menus from a list of words.
+  - Create menus from command output.
+  - Customize the prompt string for menu selection.
+  - Build menus from Bash arrays.
+  - Create interactive selection tools for shell scripts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # select

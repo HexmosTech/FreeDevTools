@@ -1,9 +1,9 @@
 ---
-title: "Fix Files - Secure File Contexts | Online Free DevTools by Hexmos"
+title: 'Fix Files - Secure File Contexts | Online Free DevTools by Hexmos'
 name: fixfiles
-path: "/freedevtools/tldr/linux/fixfiles/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fixfiles/"
-description: "Secure file contexts with Fix Files. Restore correct SELinux contexts to protect your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fixfiles/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fixfiles/'
+description: 'Secure file contexts with Fix Files. Restore correct SELinux contexts to protect your system. Free online tool, no registration required.'
 category: linux
 keywords:
   - selinux file context
@@ -22,8 +22,8 @@ features:
   - Restore file contexts of files modified since a specific date
   - Mount filesystems before relabeling to fix context issues
   - Force reset of context for customizable files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fixfiles

@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Wait - Control Resource States | Online Free DevTools by Hexmos"
+title: 'Kubectl Wait - Control Resource States | Online Free DevTools by Hexmos'
 name: kubectl-wait
-path: "/freedevtools/tldr/kubectl/kubectl-wait/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-wait/"
-description: "Control Kubernetes resource states with Kubectl Wait. Monitor deployment readiness, pod availability, and job completion efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-wait/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-wait/'
+description: 'Control Kubernetes resource states with Kubectl Wait. Monitor deployment readiness, pod availability, and job completion efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes wait command
-- kubectl wait for deployment
-- kubectl wait for pod
-- kubectl wait for job
-- kubernetes resource monitor
-- kubectl state management
-- kubectl deployment readiness
-- kubectl pod availability
-- kubectl job completion
-- kubernetes command line tool
+  - kubernetes wait command
+  - kubectl wait for deployment
+  - kubectl wait for pod
+  - kubectl wait for job
+  - kubernetes resource monitor
+  - kubectl state management
+  - kubectl deployment readiness
+  - kubectl pod availability
+  - kubectl job completion
+  - kubernetes command line tool
 features:
-- Wait for deployments to become available
-- Wait for pods to reach a ready state
-- Wait for pods to be deleted
-- Wait for jobs to complete within a timeout
-- Monitor Kubernetes resource state changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Wait for deployments to become available
+  - Wait for pods to reach a ready state
+  - Wait for pods to be deleted
+  - Wait for jobs to complete within a timeout
+  - Monitor Kubernetes resource state changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl wait

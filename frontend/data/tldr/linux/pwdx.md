@@ -1,9 +1,9 @@
 ---
-title: "Pwdx - Print Process Directory | Online Free DevTools by Hexmos"
+title: 'Pwdx - Print Process Directory | Online Free DevTools by Hexmos'
 name: pwdx
-path: "/freedevtools/tldr/linux/pwdx/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pwdx/"
-description: "Print working directory with Pwdx. Find the current directory of any running process on your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pwdx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pwdx/'
+description: 'Print working directory with Pwdx. Find the current directory of any running process on your system. Free online tool, no registration required.'
 category: linux
 keywords:
   - process directory
@@ -22,8 +22,8 @@ features:
   - Determine the file system path of a process
   - Target processes by their process ID
   - Quickly find directory context for debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pwdx

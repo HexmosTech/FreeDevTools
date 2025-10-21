@@ -1,29 +1,29 @@
 ---
-title: "BIRD Control - Manage Routing with Birdc | Online Free DevTools by Hexmos"
+title: 'BIRD Control - Manage Routing with Birdc | Online Free DevTools by Hexmos'
 name: birdc
-path: "/freedevtools/tldr/common/birdc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/birdc/"
-description: "Control routing information with Birdc, the BIRD routing daemon remote control. Inspect routes, protocols, and configure BIRD settings easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/birdc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/birdc/'
+description: 'Control routing information with Birdc, the BIRD routing daemon remote control. Inspect routes, protocols, and configure BIRD settings easily. Free online tool, no registration required.'
 category: common
 keywords:
-- BIRD routing control
-- Routing daemon management
-- Birdc configuration tool
-- BIRD protocol inspection
-- Network routing analysis
-- BGP route debugging
-- Linux routing command
-- Network configuration tool
-- Bird routing daemon
-- Routing table viewer
+  - BIRD routing control
+  - Routing daemon management
+  - Birdc configuration tool
+  - BIRD protocol inspection
+  - Network routing analysis
+  - BGP route debugging
+  - Linux routing command
+  - Network configuration tool
+  - Bird routing daemon
+  - Routing table viewer
 features:
-- Open a remote control console for BIRD.
-- Reload BIRD configuration without restarting.
-- Display the current status of the BIRD daemon.
-- Show detailed information about configured routing protocols.
-- Filter and display routes based on AS number or prefix.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open a remote control console for BIRD.
+  - Reload BIRD configuration without restarting.
+  - Display the current status of the BIRD daemon.
+  - Show detailed information about configured routing protocols.
+  - Filter and display routes based on AS number or prefix.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # birdc

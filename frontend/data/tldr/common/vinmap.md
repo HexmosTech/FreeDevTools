@@ -1,29 +1,29 @@
 ---
-title: "Vinmap Scanner - Parallel Network Scanning | Online Free DevTools by Hexmos"
+title: 'Vinmap Scanner - Parallel Network Scanning | Online Free DevTools by Hexmos'
 name: vinmap
-path: "/freedevtools/tldr/common/vinmap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vinmap/"
-description: "Perform parallel network scanning with Vinmap, speeding up Nmap scans on large networks. Optimize network discovery with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/vinmap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vinmap/'
+description: 'Perform parallel network scanning with Vinmap, speeding up Nmap scans on large networks. Optimize network discovery with this free online tool, no registration required.'
 category: common
 keywords:
-- network scanner
-- vinmap network scan
-- parallel nmap
-- nmap multithreading
-- subnet scanner
-- ip range scanner
-- network discovery tool
-- linux network scan
-- macos network scan
-- command line network scanner
+  - network scanner
+  - vinmap network scan
+  - parallel nmap
+  - nmap multithreading
+  - subnet scanner
+  - ip range scanner
+  - network discovery tool
+  - linux network scan
+  - macos network scan
+  - command line network scanner
 features:
-- Perform multithreaded Nmap scans
-- Split IP ranges into smaller chunks
-- Scan subnets in parallel
-- Merge XML or JSON Nmap results
-- Customize the number of chunks and threads
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform multithreaded Nmap scans
+  - Split IP ranges into smaller chunks
+  - Scan subnets in parallel
+  - Merge XML or JSON Nmap results
+  - Customize the number of chunks and threads
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vinmap

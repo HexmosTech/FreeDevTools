@@ -1,29 +1,29 @@
 ---
-title: "Create YAA Archives - Compress Files | Online Free DevTools by Hexmos"
+title: 'Create YAA Archives - Compress Files | Online Free DevTools by Hexmos'
 name: yaa
-path: "/freedevtools/tldr/osx/yaa/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/yaa/"
-description: "Create YAA archives with YAA. Quickly compress and extract files for efficient storage and transfer. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/yaa/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/yaa/'
+description: 'Create YAA archives with YAA. Quickly compress and extract files for efficient storage and transfer. Free online tool, no registration required.'
 category: osx
 keywords:
-- YAA archive creation
-- OSX archive compression
-- Archive file extraction
-- YAA file packaging
-- Command line archiving
-- MacOS archive manager
-- YAA compression tool
-- Archive format conversion
-- File archiving on OSX
-- Create archive macOS
+  - YAA archive creation
+  - OSX archive compression
+  - Archive file extraction
+  - YAA file packaging
+  - Command line archiving
+  - MacOS archive manager
+  - YAA compression tool
+  - Archive format conversion
+  - File archiving on OSX
+  - Create archive macOS
 features:
-- Create YAA archives from directories
-- Extract contents of YAA archives
-- List files within a YAA archive
-- Specify compression algorithm for archiving
-- Define block size during archive creation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create YAA archives from directories
+  - Extract contents of YAA archives
+  - List files within a YAA archive
+  - Specify compression algorithm for archiving
+  - Define block size during archive creation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yaa

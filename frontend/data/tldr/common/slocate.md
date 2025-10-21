@@ -1,29 +1,29 @@
 ---
-title: "Locate Secure Files - Search Files Securely | Online Free DevTools by Hexmos"
+title: 'Locate Secure Files - Search Files Securely | Online Free DevTools by Hexmos'
 name: slocate
-path: "/freedevtools/tldr/common/slocate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/slocate/"
-description: "Search files securely with slocate, a secure alternative to GNU locate. Find files by name efficiently on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/slocate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/slocate/'
+description: 'Search files securely with slocate, a secure alternative to GNU locate. Find files by name efficiently on Linux systems. Free online tool, no registration required.'
 category: common
 keywords:
-- secure file locator
-- slocate command linux
-- find files securely
-- linux file search
-- updatedb alternative
-- secure locate alternative
-- slocate database update
-- slocate security level
-- locate files by regex
-- slocate configuration
+  - secure file locator
+  - slocate command linux
+  - find files securely
+  - linux file search
+  - updatedb alternative
+  - secure locate alternative
+  - slocate database update
+  - slocate security level
+  - locate files by regex
+  - slocate configuration
 features:
-- Enable quiet mode to suppress error messages
-- Limit the number of search results shown
-- Build or update the slocate database
-- Set the security level for searching
-- Search for files using regular expressions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enable quiet mode to suppress error messages
+  - Limit the number of search results shown
+  - Build or update the slocate database
+  - Set the security level for searching
+  - Search for files using regular expressions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # slocate

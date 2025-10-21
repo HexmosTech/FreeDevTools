@@ -1,29 +1,29 @@
 ---
-title: "Generate Random Permutations with Shuf | Online Free DevTools by Hexmos"
+title: 'Generate Random Permutations with Shuf | Online Free DevTools by Hexmos'
 name: shuf
-path: "/freedevtools/tldr/common/shuf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/shuf/"
-description: "Generate random permutations with Shuf. Randomize the order of lines or numbers. Command-line tool for shuffling data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/shuf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/shuf/'
+description: 'Generate random permutations with Shuf. Randomize the order of lines or numbers. Command-line tool for shuffling data. Free online tool, no registration required.'
 category: common
 keywords:
-- random permutations generator
-- data shuffling command
-- shuffle lines tool
-- random number generator linux
-- shuf command linux
-- shuf random order
-- bash shuffle data
-- command line randomizer
-- random sequence generator
-- linux data manipulation
+  - random permutations generator
+  - data shuffling command
+  - shuffle lines tool
+  - random number generator linux
+  - shuf command linux
+  - shuf random order
+  - bash shuffle data
+  - command line randomizer
+  - random sequence generator
+  - linux data manipulation
 features:
-- Randomize the order of lines in a file.
-- Output only a specific number of shuffled entries.
-- Write shuffled output to a file.
-- Generate random numbers within a defined range.
-- Repeat number generation for persistent randomness.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Randomize the order of lines in a file.
+  - Output only a specific number of shuffled entries.
+  - Write shuffled output to a file.
+  - Generate random numbers within a defined range.
+  - Repeat number generation for persistent randomness.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shuf

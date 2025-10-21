@@ -1,29 +1,29 @@
 ---
-title: "ASNmap Lookup - Map Network Ranges | Online Free DevTools by Hexmos"
+title: 'ASNmap Lookup - Map Network Ranges | Online Free DevTools by Hexmos'
 name: asnmap
-path: "/freedevtools/tldr/common/asnmap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/asnmap/"
-description: "Map network ranges with ASNmap, a powerful ASN lookup tool. Discover CIDR blocks and organization network information quickly and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/asnmap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/asnmap/'
+description: 'Map network ranges with ASNmap, a powerful ASN lookup tool. Discover CIDR blocks and organization network information quickly and easily. Free online tool, no registration required.'
 category: common
 keywords:
-- ASN lookup
-- network range mapper
-- CIDR lookup
-- autonomous system number
-- IP address range
-- domain ASN mapping
-- organization network mapping
-- ASN information retrieval
-- network reconnaissance tool
-- command line ASN tool
+  - ASN lookup
+  - network range mapper
+  - CIDR lookup
+  - autonomous system number
+  - IP address range
+  - domain ASN mapping
+  - organization network mapping
+  - ASN information retrieval
+  - network reconnaissance tool
+  - command line ASN tool
 features:
-- Lookup CIDR ranges by ASN
-- Map network ranges for IP addresses
-- Discover ASN information for domains
-- Identify network ownership by organization
-- Output results in JSON and CSV formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lookup CIDR ranges by ASN
+  - Map network ranges for IP addresses
+  - Discover ASN information for domains
+  - Identify network ownership by organization
+  - Output results in JSON and CSV formats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # asnmap

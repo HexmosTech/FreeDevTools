@@ -1,29 +1,29 @@
 ---
-title: "RSS to Email - Forward Feeds | Online Free DevTools by Hexmos"
+title: 'RSS to Email - Forward Feeds | Online Free DevTools by Hexmos'
 name: r2e
-path: "/freedevtools/tldr/common/r2e/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/r2e/"
-description: "Forward RSS feeds to email with r2e. Automate email delivery of news and updates from your favorite websites. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/r2e/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/r2e/'
+description: 'Forward RSS feeds to email with r2e. Automate email delivery of news and updates from your favorite websites. Free online tool, no registration required.'
 category: common
 keywords:
-- RSS feed email
-- Email RSS forwarder
-- Automate email delivery
-- RSS to email command line
-- Command line email alerts
-- News feed email alerts
-- RSS subscriber
-- r2e RSS
-- Linux RSS
-- MacOS RSS
+  - RSS feed email
+  - Email RSS forwarder
+  - Automate email delivery
+  - RSS to email command line
+  - Command line email alerts
+  - News feed email alerts
+  - RSS subscriber
+  - r2e RSS
+  - Linux RSS
+  - MacOS RSS
 features:
-- Subscribe to RSS feeds via command line
-- Automatically send new RSS stories to email
-- Manage RSS feed subscriptions
-- Delete RSS feeds by index
-- Create new RSS feed databases
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Subscribe to RSS feeds via command line
+  - Automatically send new RSS stories to email
+  - Manage RSS feed subscriptions
+  - Delete RSS feeds by index
+  - Create new RSS feed databases
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # r2e

@@ -1,29 +1,29 @@
 ---
-title: "Redis Control - Manage Redis Server Connections | Online Free DevTools by Hexmos"
+title: 'Redis Control - Manage Redis Server Connections | Online Free DevTools by Hexmos'
 name: redis-cli
-path: "/freedevtools/tldr/redis/redis-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-cli/"
-description: "Control Redis server connections using redis-cli. Manage local and remote connections, execute commands, and handle authentication. Free online tool, no registration required."
+path: '/freedevtools/tldr/redis/redis-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/redis/redis-cli/'
+description: 'Control Redis server connections using redis-cli. Manage local and remote connections, execute commands, and handle authentication. Free online tool, no registration required.'
 category: common
 keywords:
-- Redis command line interface
-- Redis server connection
-- Redis client manager
-- Redis remote access
-- Redis authentication control
-- Redis command executor
-- Redis cluster control
-- Redis connection string
-- Redis connection manager
-- Redis command-line tool
+  - Redis command line interface
+  - Redis server connection
+  - Redis client manager
+  - Redis remote access
+  - Redis authentication control
+  - Redis command executor
+  - Redis cluster control
+  - Redis connection string
+  - Redis connection manager
+  - Redis command-line tool
 features:
-- Connect to local and remote Redis servers.
-- Execute arbitrary Redis commands.
-- Authenticate with Redis servers using passwords.
-- Connect to Redis clusters.
-- Specify connection parameters like host, port, and URI.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to local and remote Redis servers.
+  - Execute arbitrary Redis commands.
+  - Authenticate with Redis servers using passwords.
+  - Connect to Redis clusters.
+  - Specify connection parameters like host, port, and URI.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # redis-cli

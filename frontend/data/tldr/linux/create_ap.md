@@ -1,29 +1,29 @@
 ---
-title: "Create AP - Generate Access Point | Online Free DevTools by Hexmos"
+title: 'Create AP - Generate Access Point | Online Free DevTools by Hexmos'
 name: create_ap
-path: "/freedevtools/tldr/linux/create_ap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/create_ap/"
-description: "Generate access points with Create AP, a powerful command-line tool for Linux. Set up Wi-Fi hotspots, manage network sharing, and customize adapter drivers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/create_ap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/create_ap/'
+description: 'Generate access points with Create AP, a powerful command-line tool for Linux. Set up Wi-Fi hotspots, manage network sharing, and customize adapter drivers. Free online tool, no registration required.'
 category: linux
 keywords:
-- access point generator
-- wifi hotspot creator
-- linux access point
-- create_ap command
-- wireless network setup
-- internet sharing linux
-- access point configuration
-- wifi adapter driver
-- command line access point
-- network bridge creation
+  - access point generator
+  - wifi hotspot creator
+  - linux access point
+  - create_ap command
+  - wireless network setup
+  - internet sharing linux
+  - access point configuration
+  - wifi adapter driver
+  - command line access point
+  - network bridge creation
 features:
-- Create open or WPA/WPA2 encrypted access points.
-- Enable internet sharing via Ethernet or Wi-Fi.
-- Bridge network connections for seamless access.
-- Customize Wi-Fi adapter drivers for compatibility.
-- Configure access points without internet sharing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create open or WPA/WPA2 encrypted access points.
+  - Enable internet sharing via Ethernet or Wi-Fi.
+  - Bridge network connections for seamless access.
+  - Customize Wi-Fi adapter drivers for compatibility.
+  - Configure access points without internet sharing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # create_ap

@@ -1,29 +1,29 @@
 ---
-title: "Generate Random Number - mcookie | Online Free DevTools by Hexmos"
+title: 'Generate Random Number - mcookie | Online Free DevTools by Hexmos'
 name: mcookie
-path: "/freedevtools/tldr/linux/mcookie/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mcookie/"
-description: "Generate random hexadecimal numbers with mcookie, a command-line tool for Linux. Securely create unique identifiers and seeds. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mcookie/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mcookie/'
+description: 'Generate random hexadecimal numbers with mcookie, a command-line tool for Linux. Securely create unique identifiers and seeds. Free online tool, no registration required.'
 category: linux
 keywords:
-- random number generator
-- hexadecimal generator linux
-- 128-bit random number
-- mcookie linux command
-- secure random number
-- linux security tools
-- pseudo-random number generator
-- cryptographic seed generator
-- random number seed
-- linux command line random
+  - random number generator
+  - hexadecimal generator linux
+  - 128-bit random number
+  - mcookie linux command
+  - secure random number
+  - linux security tools
+  - pseudo-random number generator
+  - cryptographic seed generator
+  - random number seed
+  - linux command line random
 features:
-- Generate 128-bit hexadecimal numbers
-- Seed random numbers from a file
-- Limit the bytes used for seeding
-- Print details about the randomness origin and seed
-- Create unique identifiers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate 128-bit hexadecimal numbers
+  - Seed random numbers from a file
+  - Limit the bytes used for seeding
+  - Print details about the randomness origin and seed
+  - Create unique identifiers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mcookie

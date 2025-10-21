@@ -1,29 +1,29 @@
 ---
-title: "NPM Add User - Create Accounts | Online Free DevTools by Hexmos"
+title: 'NPM Add User - Create Accounts | Online Free DevTools by Hexmos'
 name: npm-adduser
-path: "/freedevtools/tldr/npm/npm-adduser/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-adduser/"
-description: "Create NPM user accounts with npm adduser. Manage registry credentials and scope access easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-adduser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-adduser/'
+description: 'Create NPM user accounts with npm adduser. Manage registry credentials and scope access easily. Free online tool, no registration required.'
 category: common
 keywords:
-- npm add user
-- npm registry login
-- npm account creation
-- npm scope management
-- node package manager user
-- npmrc authentication
-- npm credentials
-- javascript package registry
-- npm profile
-- npm user management
+  - npm add user
+  - npm registry login
+  - npm account creation
+  - npm scope management
+  - node package manager user
+  - npmrc authentication
+  - npm credentials
+  - javascript package registry
+  - npm profile
+  - npm user management
 features:
-- Create new npm user accounts
-- Manage credentials in .npmrc file
-- Log in to private npm registries with specific scopes
-- Log out from specific npm scopes
-- Initialize scoped npm packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new npm user accounts
+  - Manage credentials in .npmrc file
+  - Log in to private npm registries with specific scopes
+  - Log out from specific npm scopes
+  - Initialize scoped npm packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm adduser

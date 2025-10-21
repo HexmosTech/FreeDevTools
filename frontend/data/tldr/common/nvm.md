@@ -1,29 +1,29 @@
 ---
-title: "Control Node.js Versions - NVM Command | Online Free DevTools by Hexmos"
+title: 'Control Node.js Versions - NVM Command | Online Free DevTools by Hexmos'
 name: nvm
-path: "/freedevtools/tldr/common/nvm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nvm/"
-description: "Control Node.js versions with NVM. Install, switch, and manage multiple Node.js environments effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nvm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nvm/'
+description: 'Control Node.js versions with NVM. Install, switch, and manage multiple Node.js environments effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- node version manager
-- nvm install node
-- nvm use node
-- node version control
-- javascript version manager
-- node environment manager
-- nvm alias default
-- nvm list node versions
-- linux nvm
-- macos nvm
+  - node version manager
+  - nvm install node
+  - nvm use node
+  - node version control
+  - javascript version manager
+  - node environment manager
+  - nvm alias default
+  - nvm list node versions
+  - linux nvm
+  - macos nvm
 features:
-- Install specific Node.js versions
-- Switch between different Node.js versions
-- Set a default Node.js version for new shells
-- List available Node.js versions
-- Uninstall unused Node.js versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Node.js versions
+  - Switch between different Node.js versions
+  - Set a default Node.js version for new shells
+  - List available Node.js versions
+  - Uninstall unused Node.js versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nvm

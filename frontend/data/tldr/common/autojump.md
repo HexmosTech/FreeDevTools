@@ -1,29 +1,29 @@
 ---
-title: "Autojump Directory - Navigate Faster | Online Free DevTools by Hexmos"
+title: 'Autojump Directory - Navigate Faster | Online Free DevTools by Hexmos'
 name: autojump
-path: "/freedevtools/tldr/common/autojump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/autojump/"
-description: "Navigate directories faster with Autojump directory navigation. Quickly jump to frequently used folders and purge old entries. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/autojump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/autojump/'
+description: 'Navigate directories faster with Autojump directory navigation. Quickly jump to frequently used folders and purge old entries. Free online tool, no registration required.'
 category: common
 keywords:
-- autojump directory navigation
-- command line directory jump
-- terminal folder shortcut
-- bash directory alias
-- zsh directory alias
-- fish directory alias
-- linux directory navigation
-- macos directory jump
-- quickly jump directories
-- terminal directory management
+  - autojump directory navigation
+  - command line directory jump
+  - terminal folder shortcut
+  - bash directory alias
+  - zsh directory alias
+  - fish directory alias
+  - linux directory navigation
+  - macos directory jump
+  - quickly jump directories
+  - terminal directory management
 features:
-- Jump to directories by pattern matching
-- Jump to subdirectories by pattern matching
-- Open directories in the OS file manager
-- Purge non-existent directories from the database
-- Display entries in the Autojump database
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Jump to directories by pattern matching
+  - Jump to subdirectories by pattern matching
+  - Open directories in the OS file manager
+  - Purge non-existent directories from the database
+  - Display entries in the Autojump database
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # autojump

@@ -1,9 +1,9 @@
 ---
-title: "ip6tables-save - Manage IPv6 Firewall Rules | Online Free DevTools by Hexmos"
+title: 'ip6tables-save - Manage IPv6 Firewall Rules | Online Free DevTools by Hexmos'
 name: ip6tables-save
-path: "/freedevtools/tldr/linux/ip6tables-save/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ip6tables-save/"
-description: "Manage IPv6 firewall rules with ip6tables-save.  View and manipulate IPv6 firewall settings via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ip6tables-save/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ip6tables-save/'
+description: 'Manage IPv6 firewall rules with ip6tables-save.  View and manipulate IPv6 firewall settings via command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - ipv6 firewall rules manager
@@ -22,8 +22,8 @@ features:
   - View current IPv6 firewall rules.
   - Manage IPv6 network access control.
   - Configure IPv6 packet filtering.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ip6tables-save

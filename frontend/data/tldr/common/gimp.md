@@ -1,29 +1,29 @@
 ---
-title: "Edit Images - Edit Images with GIMP | Online Free DevTools by Hexmos"
+title: 'Edit Images - Edit Images with GIMP | Online Free DevTools by Hexmos'
 name: gimp
-path: "/freedevtools/tldr/common/gimp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gimp/"
-description: "Edit images with GIMP image editor. Open, manipulate and enhance your photos with powerful command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gimp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gimp/'
+description: 'Edit images with GIMP image editor. Open, manipulate and enhance your photos with powerful command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- GIMP image editor
-- image manipulation tool
-- photo editing command line
-- GIMP batch processing
-- image conversion GIMP
-- GIMP command line options
-- GIMP scripting
-- linux image editing
-- macos image editing
-- open source image editor
+  - GIMP image editor
+  - image manipulation tool
+  - photo editing command line
+  - GIMP batch processing
+  - image conversion GIMP
+  - GIMP command line options
+  - GIMP scripting
+  - linux image editing
+  - macos image editing
+  - open source image editor
 features:
-- Open and edit multiple images simultaneously via command line
-- Apply batch processing operations to images
-- Suppress the splash screen during startup
-- Print error and warning messages directly to the console
-- Enable debugging for signal handling
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit multiple images simultaneously via command line
+  - Apply batch processing operations to images
+  - Suppress the splash screen during startup
+  - Print error and warning messages directly to the console
+  - Enable debugging for signal handling
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gimp

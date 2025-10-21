@@ -1,29 +1,29 @@
 ---
-title: "Scan Ports - Analyze Network Ports with Rustscan | Online Free DevTools by Hexmos"
+title: 'Scan Ports - Analyze Network Ports with Rustscan | Online Free DevTools by Hexmos'
 name: rustscan
-path: "/freedevtools/tldr/common/rustscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustscan/"
-description: "Analyze network ports efficiently with Rustscan. Quickly identify open ports and potential vulnerabilities on your network. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rustscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rustscan/'
+description: 'Analyze network ports efficiently with Rustscan. Quickly identify open ports and potential vulnerabilities on your network. Free online tool, no registration required.'
 category: common
 keywords:
-- network port scanner
-- rust port scanner
-- fast port scanning
-- tcp port scanner
-- udp port scanner
-- rustscan tutorial
-- network security scanning
-- open port detection
-- network vulnerability assessment
-- rustscan nmap integration
+  - network port scanner
+  - rust port scanner
+  - fast port scanning
+  - tcp port scanner
+  - udp port scanner
+  - rustscan tutorial
+  - network security scanning
+  - open port detection
+  - network vulnerability assessment
+  - rustscan nmap integration
 features:
-- Scans all TCP ports of a specified address.
-- Detects services and versions running on open ports.
-- Scans a specific range of ports.
-- Integrates with Nmap for advanced analysis.
-- Supports custom batch size and timeout configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scans all TCP ports of a specified address.
+  - Detects services and versions running on open ports.
+  - Scans a specific range of ports.
+  - Integrates with Nmap for advanced analysis.
+  - Supports custom batch size and timeout configurations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustscan

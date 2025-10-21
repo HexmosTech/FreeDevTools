@@ -1,29 +1,29 @@
 ---
-title: "Benchmark System - Analyze Performance with Sysbench | Online Free DevTools by Hexmos"
+title: 'Benchmark System - Analyze Performance with Sysbench | Online Free DevTools by Hexmos'
 name: sysbench
-path: "/freedevtools/tldr/common/sysbench/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sysbench/"
-description: "Analyze system performance with Sysbench. Benchmark CPU, memory, and I/O. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sysbench/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sysbench/'
+description: 'Analyze system performance with Sysbench. Benchmark CPU, memory, and I/O. Free online tool, no registration required.'
 category: common
 keywords:
-- system performance benchmark
-- cpu benchmark
-- memory benchmark
-- disk I/O benchmark
-- server performance analysis
-- linux benchmark tool
-- sysbench tutorial
-- database benchmark
-- system stress test
-- performance monitoring tool
+  - system performance benchmark
+  - cpu benchmark
+  - memory benchmark
+  - disk I/O benchmark
+  - server performance analysis
+  - linux benchmark tool
+  - sysbench tutorial
+  - database benchmark
+  - system stress test
+  - performance monitoring tool
 features:
-- Benchmark CPU performance using single or multiple threads
-- Measure memory bandwidth and latency
-- Perform file system I/O read and write tests
-- Simulate database workloads for performance analysis
-- Analyze system resource utilization under stress
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Benchmark CPU performance using single or multiple threads
+  - Measure memory bandwidth and latency
+  - Perform file system I/O read and write tests
+  - Simulate database workloads for performance analysis
+  - Analyze system resource utilization under stress
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sysbench

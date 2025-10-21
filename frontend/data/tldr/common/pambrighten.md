@@ -1,29 +1,29 @@
 ---
-title: "Brighten PAM Images - Adjust Saturation and Value | Online Free DevTools by Hexmos"
+title: 'Brighten PAM Images - Adjust Saturation and Value | Online Free DevTools by Hexmos'
 name: pambrighten
-path: "/freedevtools/tldr/common/pambrighten/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pambrighten/"
-description: "Brighten PAM images with pambrighten! Adjust image saturation and value using command line options for precise control. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pambrighten/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pambrighten/'
+description: 'Brighten PAM images with pambrighten! Adjust image saturation and value using command line options for precise control. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM image brighten
-- PAM image saturation
-- PAM image value
-- Netpbm image editing
-- command line image tools
-- linux image manipulation
-- image enhancement tool
-- image color correction
-- PAM file processing
-- pambrighten command reference
+  - PAM image brighten
+  - PAM image saturation
+  - PAM image value
+  - Netpbm image editing
+  - command line image tools
+  - linux image manipulation
+  - image enhancement tool
+  - image color correction
+  - PAM file processing
+  - pambrighten command reference
 features:
-- Increase PAM image saturation
-- Increase PAM image value (HSV)
-- Brighten images using percentages
-- Process PAM images via command line
-- Adjust color of PAM image pixels
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Increase PAM image saturation
+  - Increase PAM image value (HSV)
+  - Brighten images using percentages
+  - Process PAM images via command line
+  - Adjust color of PAM image pixels
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pambrighten

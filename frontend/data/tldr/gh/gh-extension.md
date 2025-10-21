@@ -1,29 +1,29 @@
 ---
-title: "Manage GitHub Extensions - Enhance CLI Functionality | Online Free DevTools by Hexmos"
+title: 'Manage GitHub Extensions - Enhance CLI Functionality | Online Free DevTools by Hexmos'
 name: gh-extension
-path: "/freedevtools/tldr/gh/gh-extension/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-extension/"
-description: "Manage GitHub CLI extensions efficiently with gh-extension. Install, list, upgrade, and remove extensions to customize your GitHub workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-extension/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-extension/'
+description: 'Manage GitHub CLI extensions efficiently with gh-extension. Install, list, upgrade, and remove extensions to customize your GitHub workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub CLI extension manager
-- gh extension installer
-- GitHub CLI upgrade extension
-- gh extension list
-- gh extension remove
-- GitHub command-line extensions
-- GitHub CLI extension development
-- gh extension update all
-- GitHub CLI customization
-- gh extension project
+  - GitHub CLI extension manager
+  - gh extension installer
+  - GitHub CLI upgrade extension
+  - gh extension list
+  - gh extension remove
+  - GitHub command-line extensions
+  - GitHub CLI extension development
+  - gh extension update all
+  - GitHub CLI customization
+  - gh extension project
 features:
-- Install extensions from GitHub repositories
-- List all installed GitHub CLI extensions
-- Upgrade individual or all extensions
-- Remove unwanted extensions from GitHub CLI
-- Initialize new extension projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install extensions from GitHub repositories
+  - List all installed GitHub CLI extensions
+  - Upgrade individual or all extensions
+  - Remove unwanted extensions from GitHub CLI
+  - Initialize new extension projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh extension

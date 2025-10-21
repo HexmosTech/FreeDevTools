@@ -1,9 +1,9 @@
 ---
-title: "Dumpsys - Analyze Android Services | Online Free DevTools by Hexmos"
+title: 'Dumpsys - Analyze Android Services | Online Free DevTools by Hexmos'
 name: dumpsys
-path: "/freedevtools/tldr/android/dumpsys/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/dumpsys/"
-description: "Analyze Android system services instantly with Dumpsys. Inspect service states, diagnose issues, and gather diagnostic data. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/dumpsys/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/dumpsys/'
+description: 'Analyze Android system services instantly with Dumpsys. Inspect service states, diagnose issues, and gather diagnostic data. Free online tool, no registration required.'
 category: android
 keywords:
   - android dumpsys analysis
@@ -22,8 +22,8 @@ features:
   - filter diagnostic output by service name
   - exclude specific services from diagnostic output
   - specify a timeout for diagnostic output gathering
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dumpsys

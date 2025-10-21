@@ -1,29 +1,29 @@
 ---
-title: "Create 7Zip Archives - Compress Files with p7zip | Online Free DevTools by Hexmos"
+title: 'Create 7Zip Archives - Compress Files with p7zip | Online Free DevTools by Hexmos'
 name: p7zip
-path: "/freedevtools/tldr/common/p7zip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/p7zip/"
-description: "Create 7Zip archives with p7zip. Compress and decompress files using the command line archiver. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/p7zip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/p7zip/'
+description: 'Create 7Zip archives with p7zip. Compress and decompress files using the command line archiver. Free online tool, no registration required.'
 category: common
 keywords:
-- 7Zip Archiver
-- File Compression
-- 7z Archive
-- p7zip compression
-- p7zip decompression
-- command line archive
-- file archiver linux
-- file archiver macos
-- 7z file extractor
-- archive file management
+  - 7Zip Archiver
+  - File Compression
+  - 7z Archive
+  - p7zip compression
+  - p7zip decompression
+  - command line archive
+  - file archiver linux
+  - file archiver macos
+  - 7z file extractor
+  - archive file management
 features:
-- Compress files into 7z archives
-- Decompress 7z archives to original files
-- Preserve original files during archiving
-- Force compression or decompression
-- Utilize command-line interface for archiving
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files into 7z archives
+  - Decompress 7z archives to original files
+  - Preserve original files during archiving
+  - Force compression or decompression
+  - Utilize command-line interface for archiving
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # p7zip

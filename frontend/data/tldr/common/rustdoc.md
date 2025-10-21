@@ -1,29 +1,29 @@
 ---
-title: "Rustdoc Generator - Generate Rust Docs | Online Free DevTools by Hexmos"
+title: 'Rustdoc Generator - Generate Rust Docs | Online Free DevTools by Hexmos'
 name: rustdoc
-path: "/freedevtools/tldr/common/rustdoc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustdoc/"
-description: "Generate Rust documentation quickly with Rustdoc Generator. Convert Rust code into readable documentation with various options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rustdoc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rustdoc/'
+description: 'Generate Rust documentation quickly with Rustdoc Generator. Convert Rust code into readable documentation with various options. Free online tool, no registration required.'
 category: common
 keywords:
-- rust documentation generator
-- rust crate documentation
-- rust code documentation
-- rustdoc command line
-- rustdoc markdown documentation
-- rustdoc output directory
-- rustdoc project name
-- rustdoc library documentation
-- rust library documentation
-- rust documentation tool
+  - rust documentation generator
+  - rust crate documentation
+  - rust code documentation
+  - rustdoc command line
+  - rustdoc markdown documentation
+  - rustdoc output directory
+  - rustdoc project name
+  - rustdoc library documentation
+  - rust library documentation
+  - rust documentation tool
 features:
-- Generate documentation from Rust crate roots
-- Specify the project name for documentation
-- Create documentation from Markdown files
-- Designate a specific output directory
-- Customize documentation generation options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate documentation from Rust crate roots
+  - Specify the project name for documentation
+  - Create documentation from Markdown files
+  - Designate a specific output directory
+  - Customize documentation generation options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustdoc

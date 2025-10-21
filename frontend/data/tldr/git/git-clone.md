@@ -1,29 +1,29 @@
 ---
-title: "Git Clone - Download Repositories | Online Free DevTools by Hexmos"
+title: 'Git Clone - Download Repositories | Online Free DevTools by Hexmos'
 name: git-clone
-path: "/freedevtools/tldr/git/git-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-clone/"
-description: "Download repositories with Git Clone. Easily copy remote Git repositories to your local machine for offline access and modification. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-clone/'
+description: 'Download repositories with Git Clone. Easily copy remote Git repositories to your local machine for offline access and modification. Free online tool, no registration required.'
 category: common
 keywords:
-- git clone repository
-- git clone command
-- git clone remote
-- git clone local
-- git clone submodule
-- git clone branch
-- git clone depth
-- git repository download
-- git linux clone
-- git windows clone
+  - git clone repository
+  - git clone command
+  - git clone remote
+  - git clone local
+  - git clone submodule
+  - git clone branch
+  - git clone depth
+  - git repository download
+  - git linux clone
+  - git windows clone
 features:
-- Clone a repository from a remote server.
-- Clone a specific branch from a repository.
-- Clone a repository including its submodules recursively.
-- Clone a repository with limited commit history.
-- Clone a local repository.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone a repository from a remote server.
+  - Clone a specific branch from a repository.
+  - Clone a repository including its submodules recursively.
+  - Clone a repository with limited commit history.
+  - Clone a local repository.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git clone

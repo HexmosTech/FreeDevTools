@@ -1,9 +1,9 @@
 ---
-title: "Capture Raw Video - Using rpicam-raw | Online Free DevTools by Hexmos"
+title: 'Capture Raw Video - Using rpicam-raw | Online Free DevTools by Hexmos'
 name: rpicam-raw
-path: "/freedevtools/tldr/linux/rpicam-raw/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-raw/"
-description: "Capture raw video with rpicam-raw, control camera settings, and save to file. Record videos with custom dimensions and framerate. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpicam-raw/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpicam-raw/'
+description: 'Capture raw video with rpicam-raw, control camera settings, and save to file. Record videos with custom dimensions and framerate. Free online tool, no registration required.'
 category: linux
 keywords:
   - raw video capture
@@ -22,8 +22,8 @@ features:
   - Specify output file path for raw video.
   - Adjust video dimensions (width and height).
   - Configure video framerate.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpicam-raw

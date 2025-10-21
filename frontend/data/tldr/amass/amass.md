@@ -1,29 +1,29 @@
 ---
-title: "Amass Asset Discovery - Map Attack Surfaces | Online Free DevTools by Hexmos"
+title: 'Amass Asset Discovery - Map Attack Surfaces | Online Free DevTools by Hexmos'
 name: amass
-path: "/freedevtools/tldr/amass/amass/"
-canonical: "https://hexmos.com/freedevtools/tldr/amass/amass/"
-description: "Map attack surfaces with Amass Asset Discovery tool. Discover subdomains, enumerate targets, and identify vulnerabilities with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/amass/amass/'
+canonical: 'https://hexmos.com/freedevtools/tldr/amass/amass/'
+description: 'Map attack surfaces with Amass Asset Discovery tool. Discover subdomains, enumerate targets, and identify vulnerabilities with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- asset discovery
-- attack surface mapping
-- subdomain enumeration
-- amass scan
-- amass intel
-- amass enum
-- network reconnaissance
-- vulnerability discovery
-- information gathering
-- open source intelligence
+  - asset discovery
+  - attack surface mapping
+  - subdomain enumeration
+  - amass scan
+  - amass intel
+  - amass enum
+  - network reconnaissance
+  - vulnerability discovery
+  - information gathering
+  - open source intelligence
 features:
-- Enumerate subdomains of a target domain
-- Perform in-depth attack surface mapping
-- Gather open source intelligence on targets
-- Identify potential vulnerabilities and attack vectors
-- Discover assets associated with a specific organization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate subdomains of a target domain
+  - Perform in-depth attack surface mapping
+  - Gather open source intelligence on targets
+  - Identify potential vulnerabilities and attack vectors
+  - Discover assets associated with a specific organization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # amass

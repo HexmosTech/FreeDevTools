@@ -1,29 +1,29 @@
 ---
-title: "Convert PBM Image - Format Nokia Graphics | Online Free DevTools by Hexmos"
+title: 'Convert PBM Image - Format Nokia Graphics | Online Free DevTools by Hexmos'
 name: pbmtonokia
-path: "/freedevtools/tldr/common/pbmtonokia/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtonokia/"
-description: "Format PBM images for Nokia devices with pbmtonokia. Convert to Operator Logos, Group Graphics, and Picture Messages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmtonokia/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmtonokia/'
+description: 'Format PBM images for Nokia devices with pbmtonokia. Convert to Operator Logos, Group Graphics, and Picture Messages. Free online tool, no registration required.'
 category: common
 keywords:
-- PBM image format
-- Nokia graphic converter
-- PBM to NOL conversion
-- PBM to NGG conversion
-- PBM to NPM conversion
-- Nokia smart messaging
-- Operator logo generator
-- Group graphic generator
-- Picture message encoder
-- Image format conversion
+  - PBM image format
+  - Nokia graphic converter
+  - PBM to NOL conversion
+  - PBM to NGG conversion
+  - PBM to NPM conversion
+  - Nokia smart messaging
+  - Operator logo generator
+  - Group graphic generator
+  - Picture message encoder
+  - Image format conversion
 features:
-- Convert PBM images to Nokia Operator Logos.
-- Convert PBM images to Nokia Group Graphics.
-- Convert PBM images to Nokia Picture Messages.
-- Generate Nokia-compatible hex code from PBM images.
-- Create NOL, NGG, and NPM files from PBM images.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PBM images to Nokia Operator Logos.
+  - Convert PBM images to Nokia Group Graphics.
+  - Convert PBM images to Nokia Picture Messages.
+  - Generate Nokia-compatible hex code from PBM images.
+  - Create NOL, NGG, and NPM files from PBM images.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmtonokia

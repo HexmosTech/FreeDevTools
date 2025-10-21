@@ -1,29 +1,29 @@
 ---
-title: "Nodemon - Restart Node.js Apps | Online Free DevTools by Hexmos"
+title: 'Nodemon - Restart Node.js Apps | Online Free DevTools by Hexmos'
 name: nodemon
-path: "/freedevtools/tldr/common/nodemon/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nodemon/"
-description: "Restart Node.js apps automatically with Nodemon. Monitor file changes and execute custom scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nodemon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nodemon/'
+description: 'Restart Node.js apps automatically with Nodemon. Monitor file changes and execute custom scripts. Free online tool, no registration required.'
 category: common
 keywords:
-- node.js restart
-- nodemon watcher
-- file change monitor
-- node auto restart
-- javascript development
-- node.js development tool
-- nodemon command
-- process manager
-- node.js script runner
-- hot reload node.js
+  - node.js restart
+  - nodemon watcher
+  - file change monitor
+  - node auto restart
+  - javascript development
+  - node.js development tool
+  - nodemon command
+  - process manager
+  - node.js script runner
+  - hot reload node.js
 features:
-- Automatically restart node applications on file changes
-- Execute arbitrary non-node scripts
-- Ignore specific files or directories
-- Pass arguments to node applications
-- Manually restart nodemon
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically restart node applications on file changes
+  - Execute arbitrary non-node scripts
+  - Ignore specific files or directories
+  - Pass arguments to node applications
+  - Manually restart nodemon
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nodemon

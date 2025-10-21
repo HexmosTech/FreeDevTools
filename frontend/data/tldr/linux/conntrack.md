@@ -1,9 +1,9 @@
 ---
-title: "Control Connections - Conntrack Linux Tool | Online Free DevTools by Hexmos"
+title: 'Control Connections - Conntrack Linux Tool | Online Free DevTools by Hexmos'
 name: conntrack
-path: "/freedevtools/tldr/linux/conntrack/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/conntrack/"
-description: "Control Linux connections with Conntrack, a powerful network debugging utility for inspecting and managing network flows. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/conntrack/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/conntrack/'
+description: 'Control Linux connections with Conntrack, a powerful network debugging utility for inspecting and managing network flows. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux connection tracking
@@ -22,8 +22,8 @@ features:
   - Filter connection events by IP address
   - Delete connection flows by source IP
   - Monitor network traffic in real time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # conntrack

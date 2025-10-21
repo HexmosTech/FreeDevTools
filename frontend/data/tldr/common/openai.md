@@ -1,29 +1,29 @@
 ---
-title: "OpenAI CLI - Create AI Content | Online Free DevTools by Hexmos"
+title: 'OpenAI CLI - Create AI Content | Online Free DevTools by Hexmos'
 name: openai
-path: "/freedevtools/tldr/common/openai/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/openai/"
-description: "Create AI content with OpenAI CLI. Generate text completions, chat interactions, and DALL·E images easily from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/openai/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/openai/'
+description: 'Create AI content with OpenAI CLI. Generate text completions, chat interactions, and DALL·E images easily from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- openai cli
-- openai api
-- ai text generation
-- dall-e image generation
-- command line ai
-- python openai
-- text completion api
-- chat completion api
-- ai image creation
-- ai model list
+  - openai cli
+  - openai api
+  - ai text generation
+  - dall-e image generation
+  - command line ai
+  - python openai
+  - text completion api
+  - chat completion api
+  - ai image creation
+  - ai model list
 features:
-- Generate text completions with various AI models.
-- Create interactive chat completions with conversational AI.
-- Generate images via the DALL·E API using text prompts.
-- List available OpenAI API models for selection.
-- Interact with the OpenAI API from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate text completions with various AI models.
+  - Create interactive chat completions with conversational AI.
+  - Generate images via the DALL·E API using text prompts.
+  - List available OpenAI API models for selection.
+  - Interact with the OpenAI API from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openai

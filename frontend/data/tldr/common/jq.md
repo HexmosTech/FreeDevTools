@@ -1,29 +1,29 @@
 ---
-title: "JSON Processor - Format JSON Data with jq | Online Free DevTools by Hexmos"
+title: 'JSON Processor - Format JSON Data with jq | Online Free DevTools by Hexmos'
 name: jq
-path: "/freedevtools/tldr/common/jq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jq/"
-description: "Format JSON data effortlessly with jq, a powerful JSON processor. Transform, filter, and extract data with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jq/'
+description: 'Format JSON data effortlessly with jq, a powerful JSON processor. Transform, filter, and extract data with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- json processor
-- json formatter
-- json filter
-- json extractor
-- jq command line
-- jq tutorial
-- linux json
-- macos json
-- json transformation
-- dsl json
+  - json processor
+  - json formatter
+  - json filter
+  - json extractor
+  - jq command line
+  - jq tutorial
+  - linux json
+  - macos json
+  - json transformation
+  - dsl json
 features:
-- Format and colorize JSON output
-- Execute jq scripts from files
-- Pass arguments to jq scripts
-- Create new JSON objects from multiple files
-- Filter JSON data based on multiple conditions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format and colorize JSON output
+  - Execute jq scripts from files
+  - Pass arguments to jq scripts
+  - Create new JSON objects from multiple files
+  - Filter JSON data based on multiple conditions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jq

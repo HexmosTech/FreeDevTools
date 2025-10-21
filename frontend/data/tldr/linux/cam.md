@@ -1,29 +1,29 @@
 ---
-title: "Cam - Control Linux Camera Feed | Online Free DevTools by Hexmos"
+title: 'Cam - Control Linux Camera Feed | Online Free DevTools by Hexmos'
 name: cam
-path: "/freedevtools/tldr/linux/cam/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cam/"
-description: "Control Linux camera feed with Cam. Capture frames, list camera controls, and display real-time feeds in a window. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cam/'
+description: 'Control Linux camera feed with Cam. Capture frames, list camera controls, and display real-time feeds in a window. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux camera control
-- libcamera frontend
-- camera frame capture
-- linux camera list
-- camera feed display
-- command line camera
-- v4l2 camera tool
-- linux media device
-- camera capture utility
-- sdl camera window
+  - linux camera control
+  - libcamera frontend
+  - camera frame capture
+  - linux camera list
+  - camera feed display
+  - command line camera
+  - v4l2 camera tool
+  - linux media device
+  - camera capture utility
+  - sdl camera window
 features:
-- List available camera devices
-- Display camera controls and settings
-- Capture frames to specified folder
-- Display camera feed in SDL window
-- Control camera via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available camera devices
+  - Display camera controls and settings
+  - Capture frames to specified folder
+  - Display camera feed in SDL window
+  - Control camera via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cam

@@ -1,29 +1,29 @@
 ---
-title: "Control Kodi - Send Actions to Kodi | Online Free DevTools by Hexmos"
+title: 'Control Kodi - Send Actions to Kodi | Online Free DevTools by Hexmos'
 name: kodi-send
-path: "/freedevtools/tldr/common/kodi-send/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kodi-send/"
-description: "Control Kodi remotely with kodi-send. Execute commands, trigger actions, and manage your media center. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kodi-send/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kodi-send/'
+description: 'Control Kodi remotely with kodi-send. Execute commands, trigger actions, and manage your media center. Free online tool, no registration required.'
 category: common
 keywords:
-- kodi remote control
-- kodi command line
-- send actions kodi
-- kodi cli tool
-- linux kodi control
-- macos kodi control
-- kodi command execution
-- kodi automation
-- kodi script control
-- kodi remote access
+  - kodi remote control
+  - kodi command line
+  - send actions kodi
+  - kodi cli tool
+  - linux kodi control
+  - macos kodi control
+  - kodi command execution
+  - kodi automation
+  - kodi script control
+  - kodi remote access
 features:
-- Send commands to Kodi instance
-- Execute actions on a remote Kodi host
-- Reboot the system running Kodi
-- Trigger specific Kodi functions via command line
-- Quit the Kodi application remotely
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send commands to Kodi instance
+  - Execute actions on a remote Kodi host
+  - Reboot the system running Kodi
+  - Trigger specific Kodi functions via command line
+  - Quit the Kodi application remotely
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kodi-send

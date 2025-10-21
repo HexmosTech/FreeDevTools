@@ -1,29 +1,29 @@
 ---
-title: "Pants Build Tool - Automate Build Processes | Online Free DevTools by Hexmos"
+title: 'Pants Build Tool - Automate Build Processes | Online Free DevTools by Hexmos'
 name: pants
-path: "/freedevtools/tldr/common/pants/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pants/"
-description: "Automate builds with Pants, the fast and scalable build system. Streamline development workflows, manage dependencies, and generate distributable packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pants/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pants/'
+description: 'Automate builds with Pants, the fast and scalable build system. Streamline development workflows, manage dependencies, and generate distributable packages. Free online tool, no registration required.'
 category: common
 keywords:
-- Python build tool
-- Code formatting tool
-- Code linting tool
-- Package builder
-- Dependency manager
-- Scalable build system
-- Pants build system
-- Pants build tool
-- Build automation
-- Python project management
+  - Python build tool
+  - Code formatting tool
+  - Code linting tool
+  - Package builder
+  - Dependency manager
+  - Scalable build system
+  - Pants build system
+  - Pants build tool
+  - Build automation
+  - Python project management
 features:
-- List project targets for building and testing
-- Run all tests within a project effortlessly
-- Automatically fix, format, and lint uncommitted files
-- Typecheck uncommitted files and their dependencies
-- Generate distributable packages for specified targets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List project targets for building and testing
+  - Run all tests within a project effortlessly
+  - Automatically fix, format, and lint uncommitted files
+  - Typecheck uncommitted files and their dependencies
+  - Generate distributable packages for specified targets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pants

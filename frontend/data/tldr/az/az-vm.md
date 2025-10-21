@@ -1,29 +1,29 @@
 ---
-title: "Create Azure VMs - Manage Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Create Azure VMs - Manage Virtual Machines | Online Free DevTools by Hexmos'
 name: az-vm
-path: "/freedevtools/tldr/az/az-vm/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-vm/"
-description: "Create and manage Azure Virtual Machines with az vm. Deploy, start, stop, and deallocate VMs using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-vm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-vm/'
+description: 'Create and manage Azure Virtual Machines with az vm. Deploy, start, stop, and deallocate VMs using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure VM creation
-- Azure VM management
-- Azure virtual machine
-- az vm command
-- Azure CLI vm
-- cloud virtual machines
-- Azure instance
-- Linux VM Azure
-- Windows VM Azure
-- Azure resource management
+  - Azure VM creation
+  - Azure VM management
+  - Azure virtual machine
+  - az vm command
+  - Azure CLI vm
+  - cloud virtual machines
+  - Azure instance
+  - Linux VM Azure
+  - Windows VM Azure
+  - Azure resource management
 features:
-- Create Azure Virtual Machines with default Ubuntu image
-- Stop and start Azure Virtual Machines
-- Deallocate and restart Azure Virtual Machines
-- List available VM images in the Azure Marketplace
-- Manage VMs using resource groups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Azure Virtual Machines with default Ubuntu image
+  - Stop and start Azure Virtual Machines
+  - Deallocate and restart Azure Virtual Machines
+  - List available VM images in the Azure Marketplace
+  - Manage VMs using resource groups
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az vm

@@ -1,9 +1,9 @@
 ---
-title: "Create systemd-cryptsetup Mappings | Online Free DevTools by Hexmos"
+title: 'Create systemd-cryptsetup Mappings | Online Free DevTools by Hexmos'
 name: systemd-cryptsetup
-path: "/freedevtools/tldr/linux/systemd-cryptsetup/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-cryptsetup/"
-description: "Create systemd-cryptsetup mappings with this tool. Effortlessly open/close encrypted volumes for enhanced data security on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-cryptsetup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-cryptsetup/'
+description: 'Create systemd-cryptsetup mappings with this tool. Effortlessly open/close encrypted volumes for enhanced data security on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd cryptsetup mapping
@@ -22,8 +22,8 @@ features:
   - Open LUKS volumes with keyfiles
   - Configure volume decryption options
   - Integrate with systemd for boot unlocking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-cryptsetup

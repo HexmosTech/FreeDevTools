@@ -1,29 +1,29 @@
 ---
-title: "Tarsnap Backup - Control Encrypted Archives | Online Free DevTools by Hexmos"
+title: 'Tarsnap Backup - Control Encrypted Archives | Online Free DevTools by Hexmos'
 name: tarsnap
-path: "/freedevtools/tldr/common/tarsnap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tarsnap/"
-description: "Control Tarsnap encrypted backups with this online tool. Create, list, delete, and restore archives securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tarsnap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tarsnap/'
+description: 'Control Tarsnap encrypted backups with this online tool. Create, list, delete, and restore archives securely. Free online tool, no registration required.'
 category: common
 keywords:
-- tarsnap backup
-- encrypted backup
-- online backup tool
-- tarsnap archive
-- command line backup
-- secure data backup
-- tarsnap restore
-- tarsnap command
-- tarsnap keyfile
-- cloud backup tool
+  - tarsnap backup
+  - encrypted backup
+  - online backup tool
+  - tarsnap archive
+  - command line backup
+  - secure data backup
+  - tarsnap restore
+  - tarsnap command
+  - tarsnap keyfile
+  - cloud backup tool
 features:
-- Create encrypted backups of files and directories.
-- List the contents of existing archives.
-- Delete specific Tarsnap archives.
-- Restore files from Tarsnap backups.
-- Copy Tarsnap archives.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create encrypted backups of files and directories.
+  - List the contents of existing archives.
+  - Delete specific Tarsnap archives.
+  - Restore files from Tarsnap backups.
+  - Copy Tarsnap archives.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tarsnap

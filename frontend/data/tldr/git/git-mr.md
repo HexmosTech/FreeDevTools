@@ -1,29 +1,29 @@
 ---
-title: "Git Merge Request - Checkout Branches Locally | Online Free DevTools by Hexmos"
+title: 'Git Merge Request - Checkout Branches Locally | Online Free DevTools by Hexmos'
 name: git-mr
-path: "/freedevtools/tldr/git/git-mr/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-mr/"
-description: "Checkout Git merge requests locally with git-mr. Easily manage remote branches and clean up old requests from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-mr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-mr/'
+description: 'Checkout Git merge requests locally with git-mr. Easily manage remote branches and clean up old requests from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- git merge request checkout
-- git branch management
-- git remote branch
-- git command line
-- git workflow automation
-- gitlab merge request
-- git cleanup command
-- linux git tools
-- macos git tools
-- git-extras command
+  - git merge request checkout
+  - git branch management
+  - git remote branch
+  - git command line
+  - git workflow automation
+  - gitlab merge request
+  - git cleanup command
+  - linux git tools
+  - macos git tools
+  - git-extras command
 features:
-- Checkout specific GitLab merge requests locally.
-- Checkout merge requests from specified remotes.
-- Checkout merge requests directly from a URL.
-- Clean up old merge request branches automatically.
-- Integrate seamlessly with `git-extras`.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checkout specific GitLab merge requests locally.
+  - Checkout merge requests from specified remotes.
+  - Checkout merge requests directly from a URL.
+  - Clean up old merge request branches automatically.
+  - Integrate seamlessly with `git-extras`.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git mr

@@ -1,9 +1,9 @@
 ---
-title: "pmap Memory Map - Inspect Process Memory | Online Free DevTools by Hexmos"
+title: 'pmap Memory Map - Inspect Process Memory | Online Free DevTools by Hexmos'
 name: pmap
-path: "/freedevtools/tldr/linux/pmap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pmap/"
-description: "Inspect process memory maps with pmap.  View memory usage details for specific processes or ranges. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pmap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pmap/'
+description: 'Inspect process memory maps with pmap.  View memory usage details for specific processes or ranges. Free online tool, no registration required.'
 category: linux
 keywords:
   - process memory map
@@ -22,8 +22,8 @@ features:
   - Supports extended and device format outputs.
   - Allows specifying process IDs for targeted analysis.
   - Handles multiple process memory map requests simultaneously.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pmap

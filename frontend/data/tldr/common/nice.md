@@ -1,29 +1,29 @@
 ---
-title: "Nice Command - Control Process Priority | Online Free DevTools by Hexmos"
+title: 'Nice Command - Control Process Priority | Online Free DevTools by Hexmos'
 name: nice
-path: "/freedevtools/tldr/common/nice/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nice/"
-description: "Control process priority with the Nice command. Adjust niceness values to manage CPU resources effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nice/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nice/'
+description: 'Control process priority with the Nice command. Adjust niceness values to manage CPU resources effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- process priority control
-- adjust process niceness
-- linux nice command
-- macos nice command
-- unix nice command
-- command line priority scheduler
-- cpu scheduling tool
-- alter process priority
-- process management linux
-- process management macos
+  - process priority control
+  - adjust process niceness
+  - linux nice command
+  - macos nice command
+  - unix nice command
+  - command line priority scheduler
+  - cpu scheduling tool
+  - alter process priority
+  - process management linux
+  - process management macos
 features:
-- Set process priority using niceness values.
-- Launch programs with altered scheduling priority.
-- Adjust the CPU usage for a process.
-- Prioritize important tasks by increasing their priority.
-- Lower priority of background processes to free up resources.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set process priority using niceness values.
+  - Launch programs with altered scheduling priority.
+  - Adjust the CPU usage for a process.
+  - Prioritize important tasks by increasing their priority.
+  - Lower priority of background processes to free up resources.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nice

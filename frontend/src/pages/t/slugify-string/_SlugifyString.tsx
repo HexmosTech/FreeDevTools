@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import SlugifyStringSkeleton from "./_SlugifyStringSkeleton";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import CopyButton from "@/components/ui/copy-button";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import SlugifyStringSkeleton from './_SlugifyStringSkeleton';
+import ToolVideo from '@/components/tool/ToolVideo';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import CopyButton from '@/components/ui/copy-button';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const simpleSlugify = (str: string) =>
   str
@@ -19,7 +25,7 @@ const simpleSlugify = (str: string) =>
     .replace(/^-+|-+$/g, '');
 
 const SlugifyString: React.FC = () => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -31,7 +37,7 @@ const SlugifyString: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead

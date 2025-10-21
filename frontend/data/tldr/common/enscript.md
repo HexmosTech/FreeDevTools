@@ -1,29 +1,29 @@
 ---
-title: "Enscript - Convert Text to PostScript | Online Free DevTools by Hexmos"
+title: 'Enscript - Convert Text to PostScript | Online Free DevTools by Hexmos'
 name: enscript
-path: "/freedevtools/tldr/common/enscript/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/enscript/"
-description: "Convert text to various formats with Enscript. Easily generate PostScript, HTML, and RTF from text files using this versatile command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/enscript/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/enscript/'
+description: 'Convert text to various formats with Enscript. Easily generate PostScript, HTML, and RTF from text files using this versatile command. Free online tool, no registration required.'
 category: common
 keywords:
-- text to postscript converter
-- text to html converter
-- text to rtf converter
-- text formatting tool
-- postscript generator linux
-- html generator linux
-- rtf generator linux
-- ansi conversion
-- overstrike conversion
-- enscript command line
+  - text to postscript converter
+  - text to html converter
+  - text to rtf converter
+  - text formatting tool
+  - postscript generator linux
+  - html generator linux
+  - rtf generator linux
+  - ansi conversion
+  - overstrike conversion
+  - enscript command line
 features:
-- Convert text files to PostScript format.
-- Generate HTML and RTF documents from text.
-- Create ANSI and overstrike outputs.
-- Customize output with syntax highlighting.
-- Adjust page layout with column and landscape options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert text files to PostScript format.
+  - Generate HTML and RTF documents from text.
+  - Create ANSI and overstrike outputs.
+  - Customize output with syntax highlighting.
+  - Adjust page layout with column and landscape options.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # enscript

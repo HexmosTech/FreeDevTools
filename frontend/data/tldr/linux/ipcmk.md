@@ -1,9 +1,9 @@
 ---
-title: "Create IPC Resources - ipcmk Command | Online Free DevTools by Hexmos"
+title: 'Create IPC Resources - ipcmk Command | Online Free DevTools by Hexmos'
 name: ipcmk
-path: "/freedevtools/tldr/linux/ipcmk/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ipcmk/"
-description: "Create IPC resources with the ipcmk command. Manage shared memory, semaphores, and message queues easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ipcmk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ipcmk/'
+description: 'Create IPC resources with the ipcmk command. Manage shared memory, semaphores, and message queues easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - ipc resource creation
@@ -22,8 +22,8 @@ features:
   - Creates message queues for inter-process communication.
   - Allows setting custom permissions for shared memory segments.
   - Provides a simple command-line interface for IPC resource management.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipcmk

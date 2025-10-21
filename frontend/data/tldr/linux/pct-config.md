@@ -1,9 +1,9 @@
 ---
-title: "PCT Config - Display Container Configuration | Online Free DevTools by Hexmos"
+title: 'PCT Config - Display Container Configuration | Online Free DevTools by Hexmos'
 name: pct-config
-path: "/freedevtools/tldr/linux/pct-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-config/"
-description: "Display container configurations with PCT Config.  View saved and running configurations, and access specific snapshot details. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pct-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pct-config/'
+description: 'Display container configurations with PCT Config.  View saved and running configurations, and access specific snapshot details. Free online tool, no registration required.'
 category: linux
 keywords:
   - container configuration display
@@ -22,8 +22,8 @@ features:
   - Allows viewing configuration of specific snapshots.
   - Provides detailed information about container settings.
   - Uses a simple and intuitive command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pct config

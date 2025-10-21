@@ -1,9 +1,9 @@
 ---
-title: "Zstd Command Syntax & Examples | Online Free DevTools by Hexmos"
+title: 'Zstd Command Syntax & Examples | Online Free DevTools by Hexmos'
 name: zstd
-path: "/freedevtools/tldr/common/zstd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zstd/"
-description: "Learn zstd command syntax and usage examples. Complete reference for Zstandard compression commands with practical examples for Linux, macOS, and Windows."
+path: '/freedevtools/tldr/common/zstd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zstd/'
+description: 'Learn zstd command syntax and usage examples. Complete reference for Zstandard compression commands with practical examples for Linux, macOS, and Windows.'
 category: common
 keywords:
   - zstd command
@@ -22,15 +22,15 @@ features:
   - Compression and decompression commands
   - Command line reference
   - Cross-platform examples
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 relatedTools:
-  - name: "Zstd Compressor"
-    url: "https://hexmos.com/freedevtools/t/zstd-compress/"
+  - name: 'Zstd Compressor'
+    url: 'https://hexmos.com/freedevtools/t/zstd-compress/'
     banner: https://hexmos.com/freedevtools/tool-banners/zstd-compress-banner.png
-  - name: "Zstd Decompressor"
-    url: "https://hexmos.com/freedevtools/t/zstd-decompress/"
-    banner: "https://hexmos.com/freedevtools/tool-banners/zstd-decompress-banner.png"
+  - name: 'Zstd Decompressor'
+    url: 'https://hexmos.com/freedevtools/t/zstd-decompress/'
+    banner: 'https://hexmos.com/freedevtools/tool-banners/zstd-decompress-banner.png'
 ---
 
 # zstd

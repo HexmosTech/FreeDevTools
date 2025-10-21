@@ -1,8 +1,8 @@
 ---
-title: "Run Graphical Commands - Control Root Access | Online Free DevTools by Hexmos"
+title: 'Run Graphical Commands - Control Root Access | Online Free DevTools by Hexmos'
 name: gksu
-path: "/freedevtools/tldr/linux/gksu/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gksu/"
+path: '/freedevtools/tldr/linux/gksu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gksu/'
 description: "Run graphical commands with Gksu, a frontend for 'su'. Execute programs requiring root privileges without an X terminal. Free online tool, no registration required."
 category: linux
 keywords:
@@ -22,8 +22,8 @@ features:
   - Preserve existing environment variables during execution
   - Force command execution using either 'su' or 'sudo'
   - Output debugging information for command analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gksu

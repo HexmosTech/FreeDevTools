@@ -1,29 +1,29 @@
 ---
-title: "Add .NET Package - Manage Dependencies | Online Free DevTools by Hexmos"
+title: 'Add .NET Package - Manage Dependencies | Online Free DevTools by Hexmos'
 name: dotnet-add-package
-path: "/freedevtools/tldr/dotnet/dotnet-add-package/"
-canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-add-package/"
-description: "Add .NET package dependencies easily with dotnet-add-package. Manage NuGet packages, specify versions, and configure sources for efficient .NET development. Free online tool, no registration required."
+path: '/freedevtools/tldr/dotnet/dotnet-add-package/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dotnet/dotnet-add-package/'
+description: 'Add .NET package dependencies easily with dotnet-add-package. Manage NuGet packages, specify versions, and configure sources for efficient .NET development. Free online tool, no registration required.'
 category: common
 keywords:
-- .NET package manager
-- NuGet package adder
-- CSharp dependency installer
-- dotnet add package command
-- .NET Core package reference
-- Visual Studio package tool
-- .NET dependency manager
-- CLI package installer
-- package version specifier
-- NuGet source manager
+  - .NET package manager
+  - NuGet package adder
+  - CSharp dependency installer
+  - dotnet add package command
+  - .NET Core package reference
+  - Visual Studio package tool
+  - .NET dependency manager
+  - CLI package installer
+  - package version specifier
+  - NuGet source manager
 features:
-- Add NuGet packages to .NET projects.
-- Specify package versions during installation.
-- Configure custom NuGet package sources.
-- Target specific frameworks for package installation.
-- Define a custom directory for restored packages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add NuGet packages to .NET projects.
+  - Specify package versions during installation.
+  - Configure custom NuGet package sources.
+  - Target specific frameworks for package installation.
+  - Define a custom directory for restored packages.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotnet add package

@@ -1,29 +1,29 @@
 ---
-title: "Convolve PNM Image - Process Images | Online Free DevTools by Hexmos"
+title: 'Convolve PNM Image - Process Images | Online Free DevTools by Hexmos'
 name: pnmconvol
-path: "/freedevtools/tldr/pnm/pnmconvol/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmconvol/"
-description: "Process images with PNMConvol, a powerful image convolution tool. Enhance, blur, or sharpen images with custom matrices. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmconvol/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmconvol/'
+description: 'Process images with PNMConvol, a powerful image convolution tool. Enhance, blur, or sharpen images with custom matrices. Free online tool, no registration required.'
 category: common
 keywords:
-- pnm image convolution
-- image processing tool
-- image convolution matrix
-- pnm image editor
-- netpbm image utilities
-- image filtering command
-- command line image tools
-- image manipulation linux
-- image blurring tool
-- image sharpening tool
+  - pnm image convolution
+  - image processing tool
+  - image convolution matrix
+  - pnm image editor
+  - netpbm image utilities
+  - image filtering command
+  - command line image tools
+  - image manipulation linux
+  - image blurring tool
+  - image sharpening tool
 features:
-- Convolve PNM images using a specified matrix
-- Apply convolution from matrix files for each layer
-- Normalize convolution matrix weights for desired effects
-- Convolve images using matrix data from a PNM file
-- Perform image enhancement and blurring tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convolve PNM images using a specified matrix
+  - Apply convolution from matrix files for each layer
+  - Normalize convolution matrix weights for desired effects
+  - Convolve images using matrix data from a PNM file
+  - Perform image enhancement and blurring tasks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmconvol

@@ -1,9 +1,9 @@
 ---
-title: "User Database Control - Inspect Users and Groups | Online Free DevTools by Hexmos"
+title: 'User Database Control - Inspect Users and Groups | Online Free DevTools by Hexmos'
 name: userdbctl
-path: "/freedevtools/tldr/linux/userdbctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/userdbctl/"
-description: "Inspect users and groups with userdbctl. Analyze system user databases and manage memberships. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/userdbctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/userdbctl/'
+description: 'Inspect users and groups with userdbctl. Analyze system user databases and manage memberships. Free online tool, no registration required.'
 category: linux
 keywords:
   - user database control
@@ -22,8 +22,8 @@ features:
   - List all known group records
   - Show detailed group information
   - List systemd user database services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # userdbctl

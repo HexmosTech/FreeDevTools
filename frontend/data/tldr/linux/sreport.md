@@ -1,9 +1,9 @@
 ---
-title: "Generate sreport - Cluster Reports | Online Free DevTools by Hexmos"
+title: 'Generate sreport - Cluster Reports | Online Free DevTools by Hexmos'
 name: sreport
-path: "/freedevtools/tldr/linux/sreport/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sreport/"
-description: "Generate comprehensive cluster utilization reports with sreport.  Analyze job sizes and user activity quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sreport/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sreport/'
+description: 'Generate comprehensive cluster utilization reports with sreport.  Analyze job sizes and user activity quickly. Free online tool, no registration required.'
 category: linux
 keywords:
   - slurm report generation
@@ -22,8 +22,8 @@ features:
   - Identify users with highest CPU time consumption
   - Show pipe-delimited parsable cluster data
   - Provide detailed reports on jobs, users, and clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sreport

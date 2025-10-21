@@ -1,29 +1,29 @@
 ---
-title: "Generate SHA Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Generate SHA Checksums - Verify File Integrity | Online Free DevTools by Hexmos'
 name: shasum
-path: "/freedevtools/tldr/common/shasum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/shasum/"
-description: "Generate SHA checksums with Shasum. Quickly calculate and verify file integrity using various SHA algorithms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/shasum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/shasum/'
+description: 'Generate SHA checksums with Shasum. Quickly calculate and verify file integrity using various SHA algorithms. Free online tool, no registration required.'
 category: common
 keywords:
-- SHA checksum generator
-- File integrity checker
-- SHA1 checksum
-- SHA256 checksum
-- SHA512 checksum
-- Cryptographic hash calculator
-- Linux checksum tool
-- MacOS checksum utility
-- Command line checksum
-- Hash value verification
+  - SHA checksum generator
+  - File integrity checker
+  - SHA1 checksum
+  - SHA256 checksum
+  - SHA512 checksum
+  - Cryptographic hash calculator
+  - Linux checksum tool
+  - MacOS checksum utility
+  - Command line checksum
+  - Hash value verification
 features:
-- Calculate SHA checksums for files
-- Verify file integrity against known checksums
-- Support various SHA algorithms (SHA1, SHA224, SHA256, SHA384, SHA512)
-- Read checksums from stdin
-- Check checksums against a file of SHA checksums
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate SHA checksums for files
+  - Verify file integrity against known checksums
+  - Support various SHA algorithms (SHA1, SHA224, SHA256, SHA384, SHA512)
+  - Read checksums from stdin
+  - Check checksums against a file of SHA checksums
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shasum

@@ -1,29 +1,29 @@
 ---
-title: "GDM Restart - Safely Restart GNOME Display Manager | Online Free DevTools by Hexmos"
+title: 'GDM Restart - Safely Restart GNOME Display Manager | Online Free DevTools by Hexmos'
 name: gdm-safe-restart
-path: "/freedevtools/tldr/gdm/gdm-safe-restart/"
-canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdm-safe-restart/"
-description: "Safely restart GDM (GNOME Display Manager) when all users have logged out, preventing data loss or interruption. Free online tool, no registration required."
+path: '/freedevtools/tldr/gdm/gdm-safe-restart/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gdm/gdm-safe-restart/'
+description: 'Safely restart GDM (GNOME Display Manager) when all users have logged out, preventing data loss or interruption. Free online tool, no registration required.'
 category: common
 keywords:
-- GDM restart safe
-- GNOME Display Manager restart
-- Linux GDM safe restart
-- GDM service management
-- Restart display manager Linux
-- GDM logout restart
-- Linux display manager control
-- GDM session management
-- X server safe restart
-- Desktop environment restart
+  - GDM restart safe
+  - GNOME Display Manager restart
+  - Linux GDM safe restart
+  - GDM service management
+  - Restart display manager Linux
+  - GDM logout restart
+  - Linux display manager control
+  - GDM session management
+  - X server safe restart
+  - Desktop environment restart
 features:
-- Restarts GDM only after all users log out
-- Prevents interruption of active user sessions
-- Ensures a clean GDM restart process
-- Safely manages the GNOME display manager service
-- Provides a command-line interface for GDM restart control
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restarts GDM only after all users log out
+  - Prevents interruption of active user sessions
+  - Ensures a clean GDM restart process
+  - Safely manages the GNOME display manager service
+  - Provides a command-line interface for GDM restart control
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdm-safe-restart

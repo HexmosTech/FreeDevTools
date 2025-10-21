@@ -1,29 +1,29 @@
 ---
-title: "GDAL Translate - Convert Raster Data | Online Free DevTools by Hexmos"
+title: 'GDAL Translate - Convert Raster Data | Online Free DevTools by Hexmos'
 name: gdal_translate
-path: "/freedevtools/tldr/common/gdal_translate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdal_translate/"
-description: "Convert raster data with GDAL Translate. Change formats, reproject, and resize geospatial images. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gdal_translate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gdal_translate/'
+description: 'Convert raster data with GDAL Translate. Change formats, reproject, and resize geospatial images. Free online tool, no registration required.'
 category: common
 keywords:
-- raster data converter
-- GeoTIFF converter
-- GDAL translate raster
-- geospatial data conversion
-- COG converter
-- raster reprojection
-- image format conversion
-- gdal command line
-- spatial data processing
-- raster resizing
+  - raster data converter
+  - GeoTIFF converter
+  - GDAL translate raster
+  - geospatial data conversion
+  - COG converter
+  - raster reprojection
+  - image format conversion
+  - gdal command line
+  - spatial data processing
+  - raster resizing
 features:
-- Convert raster data between different formats.
-- Assign a projection to a raster dataset.
-- Reduce the size of raster datasets.
-- Convert GeoTIFF to Cloud Optimized GeoTIFF (COG).
-- Change image compression methods.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert raster data between different formats.
+  - Assign a projection to a raster dataset.
+  - Reduce the size of raster datasets.
+  - Convert GeoTIFF to Cloud Optimized GeoTIFF (COG).
+  - Change image compression methods.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdal_translate

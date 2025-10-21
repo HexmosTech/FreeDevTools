@@ -1,9 +1,9 @@
 ---
-title: "Mega Download - Download Mega Files with megatools-dl | Online Free DevTools by Hexmos"
+title: 'Mega Download - Download Mega Files with megatools-dl | Online Free DevTools by Hexmos'
 name: megatools-dl
-path: "/freedevtools/tldr/linux/megatools-dl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/megatools-dl/"
-description: "Download Mega files quickly and easily with megatools-dl.  Manage downloads, select specific files, and control download speed. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/megatools-dl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/megatools-dl/'
+description: 'Download Mega files quickly and easily with megatools-dl.  Manage downloads, select specific files, and control download speed. Free online tool, no registration required.'
 category: linux
 keywords:
   - mega download manager
@@ -22,8 +22,8 @@ features:
   - Interactively select files for download.
   - Limit download speed for bandwidth management.
   - Supports multiple file downloads simultaneously.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # megatools-dl

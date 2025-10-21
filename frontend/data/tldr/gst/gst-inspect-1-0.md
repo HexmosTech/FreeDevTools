@@ -1,29 +1,29 @@
 ---
-title: "Inspect GStreamer Plugins - Analyze Media Codecs | Online Free DevTools by Hexmos"
+title: 'Inspect GStreamer Plugins - Analyze Media Codecs | Online Free DevTools by Hexmos'
 name: gst-inspect-1.0
-path: "/freedevtools/tldr/gst/gst-inspect-1-0/"
-canonical: "https://hexmos-com/freedevtools/tldr/gst/gst-inspect-1-0/"
-description: "Analyze GStreamer plugins with gst-inspect-1.0. Discover available media codecs and hardware capabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/gst/gst-inspect-1-0/'
+canonical: 'https://hexmos-com/freedevtools/tldr/gst/gst-inspect-1-0/'
+description: 'Analyze GStreamer plugins with gst-inspect-1.0. Discover available media codecs and hardware capabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- GStreamer plugin analysis
-- Media codec inspection
-- Hardware transcoding discovery
-- GStreamer core elements listing
-- Container format identification
-- Audio codec availability
-- Video codec availability
-- Graphics API plugin detection
-- Linux media inspection
-- Command-line media analysis
+  - GStreamer plugin analysis
+  - Media codec inspection
+  - Hardware transcoding discovery
+  - GStreamer core elements listing
+  - Container format identification
+  - Audio codec availability
+  - Video codec availability
+  - Graphics API plugin detection
+  - Linux media inspection
+  - Command-line media analysis
 features:
-- Display detailed plugin information
-- List available audio and video codecs
-- Discover hardware transcoding capabilities
-- Identify GStreamer core elements
-- Enumerate plugins utilizing graphics APIs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display detailed plugin information
+  - List available audio and video codecs
+  - Discover hardware transcoding capabilities
+  - Identify GStreamer core elements
+  - Enumerate plugins utilizing graphics APIs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gst-inspect-1.0

@@ -1,9 +1,9 @@
 ---
-title: "Service Control - Manage Init Scripts | Online Free DevTools by Hexmos"
+title: 'Service Control - Manage Init Scripts | Online Free DevTools by Hexmos'
 name: service
-path: "/freedevtools/tldr/linux/service/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/service/"
-description: "Manage init scripts with Service Control. Start, stop, restart, and reload system services using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/service/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/service/'
+description: 'Manage init scripts with Service Control. Start, stop, restart, and reload system services using command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - init script manager
@@ -22,8 +22,8 @@ features:
   - Perform a full restart of a service
   - Display the current status of a service
   - Manage services by executing init scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # service

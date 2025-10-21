@@ -1,29 +1,29 @@
 ---
-title: "Wondershaper - Control Bandwidth | Online Free DevTools by Hexmos"
+title: 'Wondershaper - Control Bandwidth | Online Free DevTools by Hexmos'
 name: wondershaper
-path: "/freedevtools/tldr/common/wondershaper/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wondershaper/"
-description: "Control network bandwidth with Wondershaper. Limit upload and download speeds on network adapters. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wondershaper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wondershaper/'
+description: 'Control network bandwidth with Wondershaper. Limit upload and download speeds on network adapters. Free online tool, no registration required.'
 category: common
 keywords:
-- wondershaper bandwidth control
-- limit network speed
-- network shaper linux
-- traffic shaping tool
-- wondershaper adapter configuration
-- network bandwidth limiter
-- wondershaper download limit
-- wondershaper upload limit
-- linux network management
-- wondershaper status check
+  - wondershaper bandwidth control
+  - limit network speed
+  - network shaper linux
+  - traffic shaping tool
+  - wondershaper adapter configuration
+  - network bandwidth limiter
+  - wondershaper download limit
+  - wondershaper upload limit
+  - linux network management
+  - wondershaper status check
 features:
-- Limit download bandwidth on network adapters.
-- Limit upload bandwidth on network adapters.
-- Display network adapter status.
-- Clear bandwidth limits from adapters.
-- Configure bandwidth limits for specific network adapters.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Limit download bandwidth on network adapters.
+  - Limit upload bandwidth on network adapters.
+  - Display network adapter status.
+  - Clear bandwidth limits from adapters.
+  - Configure bandwidth limits for specific network adapters.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wondershaper

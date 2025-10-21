@@ -1,29 +1,29 @@
 ---
-title: "GLab Alias - Manage GitLab CLI Aliases | Online Free DevTools by Hexmos"
+title: 'GLab Alias - Manage GitLab CLI Aliases | Online Free DevTools by Hexmos'
 name: glab-alias
-path: "/freedevtools/tldr/glab/glab-alias/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-alias/"
-description: "Manage GitLab CLI aliases with Glab. Create shortcuts for common GitLab commands, simplify workflows, and increase efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-alias/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-alias/'
+description: 'Manage GitLab CLI aliases with Glab. Create shortcuts for common GitLab commands, simplify workflows, and increase efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- glab alias manager
-- gitlab cli alias
-- command alias tool
-- glab shortcut creator
-- gitlab cli helper
-- terminal alias tool
-- glab configuration
-- glab alias delete
-- glab alias set
-- gitlab alias list
+  - glab alias manager
+  - gitlab cli alias
+  - command alias tool
+  - glab shortcut creator
+  - gitlab cli helper
+  - terminal alias tool
+  - glab configuration
+  - glab alias delete
+  - glab alias set
+  - gitlab alias list
 features:
-- Create custom GitLab CLI aliases
-- List all configured Glab aliases
-- Set shell commands as Glab subcommands
-- Delete existing command shortcuts
-- Display subcommand help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create custom GitLab CLI aliases
+  - List all configured Glab aliases
+  - Set shell commands as Glab subcommands
+  - Delete existing command shortcuts
+  - Display subcommand help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab alias

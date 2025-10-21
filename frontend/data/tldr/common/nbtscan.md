@@ -1,29 +1,29 @@
 ---
-title: "NetBIOS Scan - Discover Network Names with nbtscan | Online Free DevTools by Hexmos"
+title: 'NetBIOS Scan - Discover Network Names with nbtscan | Online Free DevTools by Hexmos'
 name: nbtscan
-path: "/freedevtools/tldr/common/nbtscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nbtscan/"
-description: "Discover NetBIOS names with nbtscan. Easily scan your network for NetBIOS information and troubleshoot connectivity issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nbtscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nbtscan/'
+description: 'Discover NetBIOS names with nbtscan. Easily scan your network for NetBIOS information and troubleshoot connectivity issues. Free online tool, no registration required.'
 category: common
 keywords:
-- NetBIOS name scanner
-- network discovery tool
-- scan network names
-- NetBIOS information
-- Windows network scan
-- linux network scan
-- nbtscan network scan
-- IP address scan
-- network troubleshooting
-- NetBIOS enumeration
+  - NetBIOS name scanner
+  - network discovery tool
+  - scan network names
+  - NetBIOS information
+  - Windows network scan
+  - linux network scan
+  - nbtscan network scan
+  - IP address scan
+  - network troubleshooting
+  - NetBIOS enumeration
 features:
-- Scan entire networks for NetBIOS information
-- Scan single IP addresses for NetBIOS information
-- Display verbose output for detailed scanning
-- Output scan results in /etc/hosts format
-- Read IP addresses to scan from a text file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan entire networks for NetBIOS information
+  - Scan single IP addresses for NetBIOS information
+  - Display verbose output for detailed scanning
+  - Output scan results in /etc/hosts format
+  - Read IP addresses to scan from a text file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nbtscan

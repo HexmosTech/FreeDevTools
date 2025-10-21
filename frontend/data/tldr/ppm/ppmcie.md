@@ -1,29 +1,29 @@
 ---
-title: "Generate PPM Image - Create CIE Color Chart | Online Free DevTools by Hexmos"
+title: 'Generate PPM Image - Create CIE Color Chart | Online Free DevTools by Hexmos'
 name: ppmcie
-path: "/freedevtools/tldr/ppm/ppmcie/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmcie/"
-description: "Create PPM images from CIE color charts with ppmcie. Adjust color systems and illuminant locations. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmcie/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmcie/'
+description: 'Create PPM images from CIE color charts with ppmcie. Adjust color systems and illuminant locations. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM image generator
-- CIE color chart creator
-- Image color system conversion
-- PPM image REC709
-- Color space transformation
-- Command-line image tool
-- ppmcie color calibration
-- Maxwell triangle image
-- Linux image processing
-- Colorimetry tool
+  - PPM image generator
+  - CIE color chart creator
+  - Image color system conversion
+  - PPM image REC709
+  - Color space transformation
+  - Command-line image tool
+  - ppmcie color calibration
+  - Maxwell triangle image
+  - Linux image processing
+  - Colorimetry tool
 features:
-- Generate PPM images of CIE color charts
-- Specify different color systems for output
-- Define illuminant locations in the chart
-- Control dimming outside Maxwell triangle
-- Create colorimetric visualizations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate PPM images of CIE color charts
+  - Specify different color systems for output
+  - Define illuminant locations in the chart
+  - Control dimming outside Maxwell triangle
+  - Create colorimetric visualizations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmcie

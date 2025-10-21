@@ -1,29 +1,29 @@
 ---
-title: "Crawl URLs - Scan Endpoints with Cariddi | Online Free DevTools by Hexmos"
+title: 'Crawl URLs - Scan Endpoints with Cariddi | Online Free DevTools by Hexmos'
 name: cariddi
-path: "/freedevtools/tldr/common/cariddi/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cariddi/"
-description: "Crawl URLs with Cariddi and scan for endpoints, secrets, and API keys from a list of domains. Improve web security with thorough reconnaissance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cariddi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cariddi/'
+description: 'Crawl URLs with Cariddi and scan for endpoints, secrets, and API keys from a list of domains. Improve web security with thorough reconnaissance. Free online tool, no registration required.'
 category: common
 keywords:
-- URL crawler
-- endpoint scanner
-- web reconnaissance
-- security scanning
-- secret detection
-- API key finder
-- domain crawling
-- web vulnerability scanner
-- attack surface mapping
-- penetration testing tool
+  - URL crawler
+  - endpoint scanner
+  - web reconnaissance
+  - security scanning
+  - secret detection
+  - API key finder
+  - domain crawling
+  - web vulnerability scanner
+  - attack surface mapping
+  - penetration testing tool
 features:
-- Discovers endpoints from crawled URLs
-- Identifies secrets and API keys in web content
-- Supports custom regular expressions for secret detection
-- Provides various output formats including JSON and HTML
-- Offers proxy support and random user agent capabilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Discovers endpoints from crawled URLs
+  - Identifies secrets and API keys in web content
+  - Supports custom regular expressions for secret detection
+  - Provides various output formats including JSON and HTML
+  - Offers proxy support and random user agent capabilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cariddi

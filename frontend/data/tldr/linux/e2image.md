@@ -1,9 +1,9 @@
 ---
-title: "e2image - Save Ext Filesystem Metadata | Online Free DevTools by Hexmos"
+title: 'e2image - Save Ext Filesystem Metadata | Online Free DevTools by Hexmos'
 name: e2image
-path: "/freedevtools/tldr/linux/e2image/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/e2image/"
-description: "Save critical ext2/ext3/ext4 filesystem metadata with e2image.  Restore metadata, create raw sparse files, and generate QCOW2 images. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/e2image/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/e2image/'
+description: 'Save critical ext2/ext3/ext4 filesystem metadata with e2image.  Restore metadata, create raw sparse files, and generate QCOW2 images. Free online tool, no registration required.'
 category: linux
 keywords:
   - ext filesystem metadata saver
@@ -22,8 +22,8 @@ features:
   - Create a large raw sparse file with metadata at the correct offsets.
   - Generate a QCOW2 image file of the filesystem metadata.
   - Print filesystem metadata to standard output.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # e2image

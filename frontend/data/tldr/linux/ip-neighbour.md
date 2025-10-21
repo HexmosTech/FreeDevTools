@@ -1,9 +1,9 @@
 ---
-title: "Manage IP Neighbour - Control Network Neighbours | Online Free DevTools by Hexmos"
+title: 'Manage IP Neighbour - Control Network Neighbours | Online Free DevTools by Hexmos'
 name: ip-neighbour
-path: "/freedevtools/tldr/linux/ip-neighbour/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-neighbour/"
-description: "Control and manage network neighbour entries with the ip neighbour command.  View, add, delete, and modify ARP entries efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ip-neighbour/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ip-neighbour/'
+description: 'Control and manage network neighbour entries with the ip neighbour command.  View, add, delete, and modify ARP entries efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - ip neighbour commands
@@ -22,8 +22,8 @@ features:
   - Perform neighbour lookups.
   - Add or delete ARP entries.
   - Change or replace existing ARP entries.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ip neighbour

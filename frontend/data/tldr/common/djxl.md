@@ -1,29 +1,29 @@
 ---
-title: "Decompress JPEG XL - Convert JXL Images | Online Free DevTools by Hexmos"
+title: 'Decompress JPEG XL - Convert JXL Images | Online Free DevTools by Hexmos'
 name: djxl
-path: "/freedevtools/tldr/common/djxl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/djxl/"
-description: "Decompress JPEG XL files with djxl. Easily convert JXL images to PNG, JPEG, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/djxl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/djxl/'
+description: 'Decompress JPEG XL files with djxl. Easily convert JXL images to PNG, JPEG, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- JPEG XL decompress
-- JXL image converter
-- Decompress JXL to PNG
-- JXL to JPEG conversion
-- JXL image decoder
-- djxl command line
-- Image format conversion
-- PNG image creation
-- EXR image generation
-- JXL image processing
+  - JPEG XL decompress
+  - JXL image converter
+  - Decompress JXL to PNG
+  - JXL to JPEG conversion
+  - JXL image decoder
+  - djxl command line
+  - Image format conversion
+  - PNG image creation
+  - EXR image generation
+  - JXL image processing
 features:
-- Decompress JPEG XL images to various formats
-- Convert JXL to PNG, APNG, JPEG, EXR, PGM, PPM, PNM, PFM, and PAM
-- Display detailed help information with verbose output
-- Support EXIF, XMP, and JUMBF output
-- Process image files using command-line arguments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decompress JPEG XL images to various formats
+  - Convert JXL to PNG, APNG, JPEG, EXR, PGM, PPM, PNM, PFM, and PAM
+  - Display detailed help information with verbose output
+  - Support EXIF, XMP, and JUMBF output
+  - Process image files using command-line arguments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # djxl

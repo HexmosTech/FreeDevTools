@@ -1,29 +1,29 @@
 ---
-title: "Reduce PBM Image - Proportionally Shrink Images | Online Free DevTools by Hexmos"
+title: 'Reduce PBM Image - Proportionally Shrink Images | Online Free DevTools by Hexmos'
 name: pbmreduce
-path: "/freedevtools/tldr/common/pbmreduce/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmreduce/"
-description: "Reduce PBM images proportionally with pbmreduce. Optimize image sizes while maintaining aspect ratio with this simple command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmreduce/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmreduce/'
+description: 'Reduce PBM images proportionally with pbmreduce. Optimize image sizes while maintaining aspect ratio with this simple command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PBM image reduction
-- Image scaling
-- Proportional image resize
-- PBM file manipulation
-- Netpbm image tools
-- Image thresholding
-- Command-line image processing
-- Linux image tools
-- Image compression
-- PBM file optimization
+  - PBM image reduction
+  - Image scaling
+  - Proportional image resize
+  - PBM file manipulation
+  - Netpbm image tools
+  - Image thresholding
+  - Command-line image processing
+  - Linux image tools
+  - Image compression
+  - PBM file optimization
 features:
-- Reduce PBM image size by a specified factor
-- Apply simple thresholding during reduction
-- Specify a custom threshold value for quantization
-- Resize images using the command line
-- Optimize PBM files for smaller size
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reduce PBM image size by a specified factor
+  - Apply simple thresholding during reduction
+  - Specify a custom threshold value for quantization
+  - Resize images using the command line
+  - Optimize PBM files for smaller size
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmreduce

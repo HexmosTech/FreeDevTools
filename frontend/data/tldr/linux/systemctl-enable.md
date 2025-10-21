@@ -1,29 +1,29 @@
 ---
-title: "Systemctl Enable - Control Systemd Services | Online Free DevTools by Hexmos"
+title: 'Systemctl Enable - Control Systemd Services | Online Free DevTools by Hexmos'
 name: systemctl-enable
-path: "/freedevtools/tldr/linux/systemctl-enable/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-enable/"
-description: "Control systemd services easily with Systemctl Enable. Manage startup, user units, and service dependencies on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemctl-enable/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemctl-enable/'
+description: 'Control systemd services easily with Systemctl Enable. Manage startup, user units, and service dependencies on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- systemctl enable linux
-- systemd service manager
-- linux service control
-- systemctl boot enable
-- enable user service linux
-- linux systemd unit
-- autostart systemd service
-- systemctl service dependencies
-- linux service configuration
-- systemd enable command
+  - systemctl enable linux
+  - systemd service manager
+  - linux service control
+  - systemctl boot enable
+  - enable user service linux
+  - linux systemd unit
+  - autostart systemd service
+  - systemctl service dependencies
+  - linux service configuration
+  - systemd enable command
 features:
-- Enable systemd services to run on boot
-- Start services immediately upon enabling
-- Enable services for specific users
-- Manage service dependencies effectively
-- Configure service startup behavior on Linux
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enable systemd services to run on boot
+  - Start services immediately upon enabling
+  - Enable services for specific users
+  - Manage service dependencies effectively
+  - Configure service startup behavior on Linux
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemctl enable

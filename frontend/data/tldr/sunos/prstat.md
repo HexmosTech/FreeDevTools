@@ -1,9 +1,9 @@
 ---
-title: "Prstat - Report Process Statistics | Online Free DevTools by Hexmos"
+title: 'Prstat - Report Process Statistics | Online Free DevTools by Hexmos'
 name: prstat
-path: "/freedevtools/tldr/sunos/prstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/sunos/prstat/"
-description: "Report process statistics with Prstat. Monitor CPU usage, memory utilization, and user resource consumption on SunOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/sunos/prstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sunos/prstat/'
+description: 'Report process statistics with Prstat. Monitor CPU usage, memory utilization, and user resource consumption on SunOS. Free online tool, no registration required.'
 category: sunos
 keywords:
   - SunOS process monitoring
@@ -22,8 +22,8 @@ features:
   - Report usage summary per user
   - Provide microstate accounting information
   - Display top processes in real-time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prstat

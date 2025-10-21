@@ -1,29 +1,29 @@
 ---
-title: "Aircrack-ng Crack WEP/WPA Keys | Online Free DevTools by Hexmos"
+title: 'Aircrack-ng Crack WEP/WPA Keys | Online Free DevTools by Hexmos'
 name: aircrack-ng
-path: "/freedevtools/tldr/aircrack/aircrack-ng/"
-canonical: "https://hexmos.com/freedevtools/tldr/aircrack/aircrack-ng/"
-description: "Crack WEP and WPA keys with Aircrack-ng. Recover wireless passwords from captured network packets effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/aircrack/aircrack-ng/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aircrack/aircrack-ng/'
+description: 'Crack WEP and WPA keys with Aircrack-ng. Recover wireless passwords from captured network packets effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- WEP key cracker
-- WPA key cracker
-- Aircrack-ng password recovery
-- Wireless password cracking
-- Network security testing
-- Packet capture analysis
-- WiFi security audit
-- Linux password cracking
-- Command-line key cracking
-- Wireless network penetration testing
+  - WEP key cracker
+  - WPA key cracker
+  - Aircrack-ng password recovery
+  - Wireless password cracking
+  - Network security testing
+  - Packet capture analysis
+  - WiFi security audit
+  - Linux password cracking
+  - Command-line key cracking
+  - Wireless network penetration testing
 features:
-- Crack WEP keys from captured packets
-- Crack WPA/WPA2 keys from handshake data
-- Use wordlists for password cracking
-- Utilize multiple CPU threads for faster cracking
-- Specify ESSID and BSSID for targeted cracking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Crack WEP keys from captured packets
+  - Crack WPA/WPA2 keys from handshake data
+  - Use wordlists for password cracking
+  - Utilize multiple CPU threads for faster cracking
+  - Specify ESSID and BSSID for targeted cracking
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aircrack-ng

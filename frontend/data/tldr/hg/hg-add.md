@@ -1,29 +1,29 @@
 ---
-title: "Mercurial Add - Stage Changes for Commit | Online Free DevTools by Hexmos"
+title: 'Mercurial Add - Stage Changes for Commit | Online Free DevTools by Hexmos'
 name: hg-add
-path: "/freedevtools/tldr/hg/hg-add/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-add/"
-description: "Stage files for commit with Mercurial Add. Track changes, include/exclude patterns and manage sub-repositories using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-add/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-add/'
+description: 'Stage files for commit with Mercurial Add. Track changes, include/exclude patterns and manage sub-repositories using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- mercurial add
-- mercurial staging
-- hg add files
-- hg version control
-- mercurial commit
-- mercurial include exclude
-- mercurial subrepos
-- hg add dry run
-- version control add
-- mercurial command line
+  - mercurial add
+  - mercurial staging
+  - hg add files
+  - hg version control
+  - mercurial commit
+  - mercurial include exclude
+  - mercurial subrepos
+  - hg add dry run
+  - version control add
+  - mercurial command line
 features:
-- Add specific files or directories to the staging area
-- Add files based on include patterns
-- Exclude files from staging using exclude patterns
-- Recursively add sub-repositories
-- Perform a dry run to preview actions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add specific files or directories to the staging area
+  - Add files based on include patterns
+  - Exclude files from staging using exclude patterns
+  - Recursively add sub-repositories
+  - Perform a dry run to preview actions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg add

@@ -1,29 +1,29 @@
 ---
-title: "Network Interference Tests - Run ooniprobe | Online Free DevTools by Hexmos"
+title: 'Network Interference Tests - Run ooniprobe | Online Free DevTools by Hexmos'
 name: ooniprobe
-path: "/freedevtools/tldr/common/ooniprobe/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ooniprobe/"
-description: "Run network interference tests with ooniprobe to measure network performance and detect censorship. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ooniprobe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ooniprobe/'
+description: 'Run network interference tests with ooniprobe to measure network performance and detect censorship. Free online tool, no registration required.'
 category: common
 keywords:
-- network interference tests
-- censorship detection
-- network performance analysis
-- website blocking detection
-- app blocking detection
-- ooniprobe tests
-- internet censorship analysis
-- network diagnosis tool
-- network measurement tool
-- linux ooniprobe
+  - network interference tests
+  - censorship detection
+  - network performance analysis
+  - website blocking detection
+  - app blocking detection
+  - ooniprobe tests
+  - internet censorship analysis
+  - network diagnosis tool
+  - network measurement tool
+  - linux ooniprobe
 features:
-- Test website and app blocking
-- Measure network speed and performance
-- List available network tests
-- Show detailed test information in JSON format
-- Check website availability from a list
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Test website and app blocking
+  - Measure network speed and performance
+  - List available network tests
+  - Show detailed test information in JSON format
+  - Check website availability from a list
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ooniprobe

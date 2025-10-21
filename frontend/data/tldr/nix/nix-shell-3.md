@@ -1,29 +1,29 @@
 ---
-title: "Nix Shell - Create Isolated Environments | Online Free DevTools by Hexmos"
+title: 'Nix Shell - Create Isolated Environments | Online Free DevTools by Hexmos'
 name: nix-shell.3
-path: "/freedevtools/tldr/nix/nix-shell-3/"
-canonical: "https://hexmos-com/freedevtools/tldr/nix/nix-shell-3/"
-description: "Create isolated development environments with Nix Shell, instantly managing dependencies and package versions. Simplify project setup with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-shell-3/'
+canonical: 'https://hexmos-com/freedevtools/tldr/nix/nix-shell-3/'
+description: 'Create isolated development environments with Nix Shell, instantly managing dependencies and package versions. Simplify project setup with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- isolated environment
-- nix development shell
-- dependency management
-- nixos configuration
-- reproducible builds
-- declarative package management
-- linux shell environment
-- package dependencies
-- nix flakes
+  - nix package manager
+  - isolated environment
+  - nix development shell
+  - dependency management
+  - nixos configuration
+  - reproducible builds
+  - declarative package management
+  - linux shell environment
+  - package dependencies
+  - nix flakes
 features:
-- Create isolated shells with specific packages.
-- Use packages from different nixpkgs versions.
-- Load packages from flakes directly.
-- Execute commands within the isolated environment.
-- Manage project-specific dependencies effectively.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create isolated shells with specific packages.
+  - Use packages from different nixpkgs versions.
+  - Load packages from flakes directly.
+  - Execute commands within the isolated environment.
+  - Manage project-specific dependencies effectively.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix shell

@@ -1,29 +1,29 @@
 ---
-title: "Control Packages - Nix Package Manager with CLI | Online Free DevTools by Hexmos"
+title: 'Control Packages - Nix Package Manager with CLI | Online Free DevTools by Hexmos'
 name: nix-classic
-path: "/freedevtools/tldr/nix/nix-classic/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-classic/"
-description: "Control packages reliably with Nix Package Manager, a powerful command-line tool. Build, install, and manage software declaratively. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-classic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-classic/'
+description: 'Control packages reliably with Nix Package Manager, a powerful command-line tool. Build, install, and manage software declaratively. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- package manager control
-- nix build packages
-- nix shell environment
-- nix environment management
-- declarative package management
-- reproducible builds nix
-- nix store dependencies
-- nix channel update
-- linux package management
+  - nix package manager
+  - package manager control
+  - nix build packages
+  - nix shell environment
+  - nix environment management
+  - declarative package management
+  - reproducible builds nix
+  - nix store dependencies
+  - nix channel update
+  - linux package management
 features:
-- Search packages within nixpkgs repositories
-- Create isolated shell environments with specified packages
-- Install packages permanently within user environments
-- Display dependency trees for store paths
-- Update channel repositories for package listings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search packages within nixpkgs repositories
+  - Create isolated shell environments with specified packages
+  - Install packages permanently within user environments
+  - Display dependency trees for store paths
+  - Update channel repositories for package listings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix classic

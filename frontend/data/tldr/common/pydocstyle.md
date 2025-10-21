@@ -1,29 +1,29 @@
 ---
-title: "Validate Python Docstrings - Using pydocstyle | Online Free DevTools by Hexmos"
+title: 'Validate Python Docstrings - Using pydocstyle | Online Free DevTools by Hexmos'
 name: pydocstyle
-path: "/freedevtools/tldr/common/pydocstyle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pydocstyle/"
-description: "Validate Python docstring conventions with pydocstyle. Ensure code documentation quality and consistency with this static analysis tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pydocstyle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pydocstyle/'
+description: 'Validate Python docstring conventions with pydocstyle. Ensure code documentation quality and consistency with this static analysis tool. Free online tool, no registration required.'
 category: common
 keywords:
-- Python docstring validation
-- pydocstyle linter
-- Python code quality
-- Python style checker
-- PEP 257 validation
-- Python documentation standards
-- Static analysis tool
-- Command-line linter
-- Python error checking
-- Code convention compliance
+  - Python docstring validation
+  - pydocstyle linter
+  - Python code quality
+  - Python style checker
+  - PEP 257 validation
+  - Python documentation standards
+  - Static analysis tool
+  - Command-line linter
+  - Python error checking
+  - Code convention compliance
 features:
-- Analyze Python scripts for docstring errors
-- Explain error messages in detail
-- Display the total number of docstring errors
-- Ignore specific docstring errors
-- Check for errors from a specific convention (PEP257, numpy, google)
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze Python scripts for docstring errors
+  - Explain error messages in detail
+  - Display the total number of docstring errors
+  - Ignore specific docstring errors
+  - Check for errors from a specific convention (PEP257, numpy, google)
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pydocstyle

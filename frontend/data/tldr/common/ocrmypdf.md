@@ -1,29 +1,29 @@
 ---
-title: "Generate Searchable PDF - ocrmypdf | Online Free DevTools by Hexmos"
+title: 'Generate Searchable PDF - ocrmypdf | Online Free DevTools by Hexmos'
 name: ocrmypdf
-path: "/freedevtools/tldr/common/ocrmypdf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ocrmypdf/"
-description: "Generate searchable PDF documents with ocrmypdf. Optimize scanned PDFs, convert images to text, and add metadata easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ocrmypdf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ocrmypdf/'
+description: 'Generate searchable PDF documents with ocrmypdf. Optimize scanned PDFs, convert images to text, and add metadata easily. Free online tool, no registration required.'
 category: common
 keywords:
-- searchable PDF generator
-- OCR PDF creation
-- scanned PDF to text
-- PDF/A converter
-- PDF optimization
-- OCRmyPDF Linux
-- command line OCR
-- text recognition PDF
-- PDF metadata editor
-- deskew PDF scan
+  - searchable PDF generator
+  - OCR PDF creation
+  - scanned PDF to text
+  - PDF/A converter
+  - PDF optimization
+  - OCRmyPDF Linux
+  - command line OCR
+  - text recognition PDF
+  - PDF metadata editor
+  - deskew PDF scan
 features:
-- Create searchable PDFs from scanned documents
-- Optimize PDF files for size and quality
-- Add metadata to PDF documents
-- Clean and deskew scanned pages
-- Skip text on already-searchable pages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create searchable PDFs from scanned documents
+  - Optimize PDF files for size and quality
+  - Add metadata to PDF documents
+  - Clean and deskew scanned pages
+  - Skip text on already-searchable pages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ocrmypdf

@@ -1,29 +1,29 @@
 ---
-title: "Protect Branches - Control GitHub Branches | Online Free DevTools by Hexmos"
+title: 'Protect Branches - Control GitHub Branches | Online Free DevTools by Hexmos'
 name: protector
-path: "/freedevtools/tldr/common/protector/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/protector/"
-description: "Control GitHub branches protection with Protector. Protect or unprotect branches using regular expressions for comprehensive repository management. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/protector/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/protector/'
+description: 'Control GitHub branches protection with Protector. Protect or unprotect branches using regular expressions for comprehensive repository management. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub branch protection
-- repository protection rules
-- branch management CLI
-- regex branch control
-- GitHub automation tool
-- repository security configuration
-- protector command line
-- dry run branch protection
-- unprotect GitHub branches
-- GitHub repository tool
+  - GitHub branch protection
+  - repository protection rules
+  - branch management CLI
+  - regex branch control
+  - GitHub automation tool
+  - repository security configuration
+  - protector command line
+  - dry run branch protection
+  - unprotect GitHub branches
+  - GitHub repository tool
 features:
-- Protect multiple branches using regular expressions.
-- Enable dry run mode for previewing protection actions.
-- Unprotect branches by deleting protection rules.
-- Target specific GitHub repositories using organization/repository syntax.
-- Automate branch protection workflows via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Protect multiple branches using regular expressions.
+  - Enable dry run mode for previewing protection actions.
+  - Unprotect branches by deleting protection rules.
+  - Target specific GitHub repositories using organization/repository syntax.
+  - Automate branch protection workflows via command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # protector

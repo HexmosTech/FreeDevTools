@@ -1,29 +1,29 @@
 ---
-title: "Git Rev-List - List Commits in Reverse Order | Online Free DevTools by Hexmos"
+title: 'Git Rev-List - List Commits in Reverse Order | Online Free DevTools by Hexmos'
 name: git-rev-list
-path: "/freedevtools/tldr/git/git-rev-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-rev-list/"
-description: "List commits easily with Git Rev-List. Inspect commit history and track changes in your repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-rev-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-rev-list/'
+description: 'List commits easily with Git Rev-List. Inspect commit history and track changes in your repository. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit history
-- git revision list
-- git log reverse
-- git commit tracker
-- git commit viewer
-- git commit analyzer
-- linux git commands
-- macos git commands
-- windows git commands
-- git commit timeline
+  - git commit history
+  - git revision list
+  - git log reverse
+  - git commit tracker
+  - git commit viewer
+  - git commit analyzer
+  - linux git commands
+  - macos git commands
+  - windows git commands
+  - git commit timeline
 features:
-- List commits in reverse chronological order.
-- Filter commits by date, branch, or file.
-- Count the number of commits since a tag.
-- List merge commits.
-- Find the latest commit for a specific file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List commits in reverse chronological order.
+  - Filter commits by date, branch, or file.
+  - Count the number of commits since a tag.
+  - List merge commits.
+  - Find the latest commit for a specific file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git rev-list

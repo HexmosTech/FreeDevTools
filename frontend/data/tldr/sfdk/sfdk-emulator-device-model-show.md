@@ -1,29 +1,29 @@
 ---
-title: "Emulator Device Model - Show Device Properties | Online Free DevTools by Hexmos"
+title: 'Emulator Device Model - Show Device Properties | Online Free DevTools by Hexmos'
 name: sfdk-emulator-device-model-show
-path: "/freedevtools/tldr/sfdk/sfdk-emulator-device-model-show/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator-device-model-show/"
-description: "Show emulator device properties with SFDK emulator device-model-show. Inspect device configurations, and debug emulator settings easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-emulator-device-model-show/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator-device-model-show/'
+description: 'Show emulator device properties with SFDK emulator device-model-show. Inspect device configurations, and debug emulator settings easily. Free online tool, no registration required.'
 category: common
 keywords:
-- sfdk emulator device model
-- sailfishos device properties
-- emulator configuration
-- sfdk emulator command
-- device model properties
-- linux emulator
-- command-line device info
-- emulator debugging
-- qtcreator emulator
-- device model inspection
+  - sfdk emulator device model
+  - sailfishos device properties
+  - emulator configuration
+  - sfdk emulator command
+  - device model properties
+  - linux emulator
+  - command-line device info
+  - emulator debugging
+  - qtcreator emulator
+  - device model inspection
 features:
-- Display device model properties
-- List available device models
-- Inspect device configurations
-- Show emulator settings
-- Get device information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display device model properties
+  - List available device models
+  - Inspect device configurations
+  - Show emulator settings
+  - Get device information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk emulator device-model-show

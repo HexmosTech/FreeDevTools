@@ -1,9 +1,9 @@
 ---
-title: "If Command - Control Conditional Processing | Online Free DevTools by Hexmos"
+title: 'If Command - Control Conditional Processing | Online Free DevTools by Hexmos'
 name: if
-path: "/freedevtools/tldr/windows/if/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/if/"
-description: "Control conditional processing with the If command. Manage execution flow based on conditions, error levels, and string comparisons. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/if/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/if/'
+description: 'Control conditional processing with the If command. Manage execution flow based on conditions, error levels, and string comparisons. Free online tool, no registration required.'
 category: windows
 keywords:
   - batch if command
@@ -22,8 +22,8 @@ features:
   - Compare strings for equality or inequality
   - Verify the existence of a specified file path
   - Perform case-insensitive string comparisons
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # if

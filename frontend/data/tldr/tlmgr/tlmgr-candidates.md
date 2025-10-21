@@ -1,29 +1,29 @@
 ---
-title: "TeX Live Candidates - Get Package Repositories | Online Free DevTools by Hexmos"
+title: 'TeX Live Candidates - Get Package Repositories | Online Free DevTools by Hexmos'
 name: tlmgr-candidates
-path: "/freedevtools/tldr/tlmgr/tlmgr-candidates/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-candidates/"
-description: "Get TeX Live package repositories with tlmgr candidates. Discover available sources to install or update packages using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-candidates/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-candidates/'
+description: 'Get TeX Live package repositories with tlmgr candidates. Discover available sources to install or update packages using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- tex live candidates
-- tlmgr repositories
-- tex package manager
-- tex live package sources
-- latex package install
-- tex live update
-- tlmgr update
-- tex live command line
-- tlmgr candidates list
-- tex live package list
+  - tex live candidates
+  - tlmgr repositories
+  - tex package manager
+  - tex live package sources
+  - latex package install
+  - tex live update
+  - tlmgr update
+  - tex live command line
+  - tlmgr candidates list
+  - tex live package list
 features:
-- List available repositories for package installation
-- Identify update sources for TeX Live packages
-- Show candidate repositories for specified packages
-- Determine the best repository for installation
-- Assist in managing TeX Live package versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available repositories for package installation
+  - Identify update sources for TeX Live packages
+  - Show candidate repositories for specified packages
+  - Determine the best repository for installation
+  - Assist in managing TeX Live package versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr candidates

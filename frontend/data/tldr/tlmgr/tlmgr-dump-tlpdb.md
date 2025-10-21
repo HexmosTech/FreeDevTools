@@ -1,29 +1,29 @@
 ---
-title: "Dump TLPDB - Generate TeX Live Database | Online Free DevTools by Hexmos"
+title: 'Dump TLPDB - Generate TeX Live Database | Online Free DevTools by Hexmos'
 name: tlmgr-dump-tlpdb
-path: "/freedevtools/tldr/tlmgr/tlmgr-dump-tlpdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-dump-tlpdb/"
-description: "Generate TeX Live package database with TLPDB Dump. Extract package information, analyze dependencies, and manage TeX Live installations. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-dump-tlpdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-dump-tlpdb/'
+description: 'Generate TeX Live package database with TLPDB Dump. Extract package information, analyze dependencies, and manage TeX Live installations. Free online tool, no registration required.'
 category: common
 keywords:
-- TLPDB database dump
-- TeX Live package info
-- Package dependency extraction
-- Local TLPDB generation
-- Remote TLPDB generation
-- JSON TLPDB export
-- TeX Live database analysis
-- TeX package management
-- tlmgr command line tool
-- TLPDB schema extraction
+  - TLPDB database dump
+  - TeX Live package info
+  - Package dependency extraction
+  - Local TLPDB generation
+  - Remote TLPDB generation
+  - JSON TLPDB export
+  - TeX Live database analysis
+  - TeX package management
+  - tlmgr command line tool
+  - TLPDB schema extraction
 features:
-- Dump the local TeX Live package database.
-- Dump the remote TeX Live package database.
-- Generate TLPDB in JSON format.
-- Extract detailed package information.
-- Analyze package dependencies and relationships.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Dump the local TeX Live package database.
+  - Dump the remote TeX Live package database.
+  - Generate TLPDB in JSON format.
+  - Extract detailed package information.
+  - Analyze package dependencies and relationships.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr dump-tlpdb

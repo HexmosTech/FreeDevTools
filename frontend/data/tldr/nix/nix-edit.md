@@ -1,29 +1,29 @@
 ---
-title: "Nix Edit - Modify Nix Expressions | Online Free DevTools by Hexmos"
+title: 'Nix Edit - Modify Nix Expressions | Online Free DevTools by Hexmos'
 name: nix-edit
-path: "/freedevtools/tldr/nix/nix-edit/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-edit/"
-description: "Modify Nix expressions easily with Nix Edit. Directly open and edit Nix packages in your preferred editor. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-edit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-edit/'
+description: 'Modify Nix expressions easily with Nix Edit. Directly open and edit Nix packages in your preferred editor. Free online tool, no registration required.'
 category: common
 keywords:
-- nix expression editor
-- nix package modifier
-- nix configuration editor
-- nix package source code
-- nixpkgs expression
-- nixos configuration
-- linux package management
-- functional package editing
-- declarative configuration
-- nix expression debugging
+  - nix expression editor
+  - nix package modifier
+  - nix configuration editor
+  - nix package source code
+  - nixpkgs expression
+  - nixos configuration
+  - linux package management
+  - functional package editing
+  - declarative configuration
+  - nix expression debugging
 features:
-- Open and edit Nix expressions in your default editor
-- Modify Nix package source code directly
-- Inspect Nix package definitions
-- Quickly access Nix configuration files
-- Debug Nix expressions using $EDITOR
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit Nix expressions in your default editor
+  - Modify Nix package source code directly
+  - Inspect Nix package definitions
+  - Quickly access Nix configuration files
+  - Debug Nix expressions using $EDITOR
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix edit

@@ -1,29 +1,29 @@
 ---
-title: "AWS EKS - Manage Kubernetes Clusters | Online Free DevTools by Hexmos"
+title: 'AWS EKS - Manage Kubernetes Clusters | Online Free DevTools by Hexmos'
 name: aws-eks
-path: "/freedevtools/tldr/aws/aws-eks/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-eks/"
-description: "Manage Kubernetes clusters with AWS EKS. Deploy, update, and delete EKS clusters easily through the command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-eks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-eks/'
+description: 'Manage Kubernetes clusters with AWS EKS. Deploy, update, and delete EKS clusters easily through the command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- EKS cluster management
-- AWS Kubernetes service
-- EKS command line
-- Kubernetes cluster creation
-- EKS node group management
-- AWS EKS CLI
-- Kubernetes cluster deployment
-- EKS cluster deletion
-- Cloud Kubernetes management
-- AWS cloud EKS
+  - EKS cluster management
+  - AWS Kubernetes service
+  - EKS command line
+  - Kubernetes cluster creation
+  - EKS node group management
+  - AWS EKS CLI
+  - Kubernetes cluster deployment
+  - EKS cluster deletion
+  - Cloud Kubernetes management
+  - AWS cloud EKS
 features:
-- Create and manage EKS clusters
-- Update kubeconfig for EKS cluster access
-- List and describe EKS clusters
-- Delete EKS clusters
-- Manage node groups within EKS clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage EKS clusters
+  - Update kubeconfig for EKS cluster access
+  - List and describe EKS clusters
+  - Delete EKS clusters
+  - Manage node groups within EKS clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws eks

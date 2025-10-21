@@ -1,29 +1,29 @@
 ---
-title: "Install - Copy Files & Set Attributes | Online Free DevTools by Hexmos"
+title: 'Install - Copy Files & Set Attributes | Online Free DevTools by Hexmos'
 name: install
-path: "/freedevtools/tldr/install/install/"
-canonical: "https://hexmos.com/freedevtools/tldr/install/install/"
-description: "Copy files efficiently with Install command. Set file ownership, permissions, and timestamps. Free online tool, no registration required."
+path: '/freedevtools/tldr/install/install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/install/install/'
+description: 'Copy files efficiently with Install command. Set file ownership, permissions, and timestamps. Free online tool, no registration required.'
 category: common
 keywords:
-- file installer
-- copy file attributes
-- set file permissions
-- install file ownership
-- linux install command
-- macos install command
-- unix install utility
-- file copy tool
-- preserve file timestamps
-- create directories install
+  - file installer
+  - copy file attributes
+  - set file permissions
+  - install file ownership
+  - linux install command
+  - macos install command
+  - unix install utility
+  - file copy tool
+  - preserve file timestamps
+  - create directories install
 features:
-- Copy files to specified destinations
-- Set file ownership and group
-- Modify file permissions (mode)
-- Preserve source file timestamps
-- Create destination directories as needed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy files to specified destinations
+  - Set file ownership and group
+  - Modify file permissions (mode)
+  - Preserve source file timestamps
+  - Create destination directories as needed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # install

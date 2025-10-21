@@ -1,9 +1,9 @@
 ---
-title: "Format C/C++ Code - Indent Tool | Online Free DevTools by Hexmos"
+title: 'Format C/C++ Code - Indent Tool | Online Free DevTools by Hexmos'
 name: indent
-path: "/freedevtools/tldr/in/indent/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/indent/"
-description: "Format C/C++ code with Indent Tool. Easily adjust whitespace, adhere to style guides, and improve code readability. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/indent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/indent/'
+description: 'Format C/C++ code with Indent Tool. Easily adjust whitespace, adhere to style guides, and improve code readability. Free online tool, no registration required.'
 category: common
 keywords:
   - C/C++ code formatter
@@ -22,8 +22,8 @@ features:
   - Automatically backup original files
   - Save indented code to new files
   - Customize indentation level and line length
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # indent

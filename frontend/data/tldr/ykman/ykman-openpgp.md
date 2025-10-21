@@ -1,29 +1,29 @@
 ---
-title: "OpenPGP Manager - Control YubiKey OpenPGP Application | Online Free DevTools by Hexmos"
+title: 'OpenPGP Manager - Control YubiKey OpenPGP Application | Online Free DevTools by Hexmos'
 name: ykman-openpgp
-path: "/freedevtools/tldr/ykman/ykman-openpgp/"
-canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman-openpgp/"
-description: "Control YubiKey OpenPGP application with OpenPGP Manager. Secure your keys and manage access settings with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/ykman/ykman-openpgp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ykman/ykman-openpgp/'
+description: 'Control YubiKey OpenPGP application with OpenPGP Manager. Secure your keys and manage access settings with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- yubikey openpgp manager
-- openpgp yubikey application
-- ykman openpgp command
-- yubikey openpgp reset
-- openpgp access control
-- yubikey pin management
-- openpgp retry attempts
-- yubikey openpgp info
-- yubikey linux
-- yubikey macos
+  - yubikey openpgp manager
+  - openpgp yubikey application
+  - ykman openpgp command
+  - yubikey openpgp reset
+  - openpgp access control
+  - yubikey pin management
+  - openpgp retry attempts
+  - yubikey openpgp info
+  - yubikey linux
+  - yubikey macos
 features:
-- Display general OpenPGP application information.
-- Set retry attempts for PINs and reset code.
-- Change user PIN, reset code, or admin PIN.
-- Factory reset the OpenPGP application.
-- Manage OpenPGP access settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display general OpenPGP application information.
+  - Set retry attempts for PINs and reset code.
+  - Change user PIN, reset code, or admin PIN.
+  - Factory reset the OpenPGP application.
+  - Manage OpenPGP access settings.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ykman openpgp

@@ -1,9 +1,9 @@
 ---
-title: "UUID Parser - Parse UUIDs with uuidparse | Online Free DevTools by Hexmos"
+title: 'UUID Parser - Parse UUIDs with uuidparse | Online Free DevTools by Hexmos'
 name: uuidparse
-path: "/freedevtools/tldr/linux/uuidparse/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/uuidparse/"
-description: "Parse UUIDs efficiently with the uuidparse command-line tool.  Format, validate, and output UUID data in various formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/uuidparse/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/uuidparse/'
+description: 'Parse UUIDs efficiently with the uuidparse command-line tool.  Format, validate, and output UUID data in various formats. Free online tool, no registration required.'
 category: linux
 keywords:
   - uuid parser
@@ -22,8 +22,8 @@ features:
   - Allows for flexible column selection.
   - Accepts input from stdin for piped data.
   - Provides detailed help and usage instructions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uuidparse

@@ -1,29 +1,29 @@
 ---
-title: "Format Shell Script - shfmt Formatter | Online Free DevTools by Hexmos"
+title: 'Format Shell Script - shfmt Formatter | Online Free DevTools by Hexmos'
 name: shfmt
-path: "/freedevtools/tldr/common/shfmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/shfmt/"
-description: "Format shell scripts easily with shfmt. Enhance code readability and enforce consistent style using this powerful shell parser and formatter. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/shfmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/shfmt/'
+description: 'Format shell scripts easily with shfmt. Enhance code readability and enforce consistent style using this powerful shell parser and formatter. Free online tool, no registration required.'
 category: common
 keywords:
-- shell script formatter
-- shfmt formatter
-- shell parser
-- shell code beautifier
-- bash formatter
-- shell script linter
-- linux shell script
-- macos shell script
-- command line formatter
-- shell script style guide
+  - shell script formatter
+  - shfmt formatter
+  - shell parser
+  - shell code beautifier
+  - bash formatter
+  - shell script linter
+  - linux shell script
+  - macos shell script
+  - command line formatter
+  - shell script style guide
 features:
-- Format shell scripts to a consistent style
-- List unformatted shell scripts
-- Write formatted output directly to files
-- Simplify shell code by removing redundancies
-- Parse and interpret shell scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format shell scripts to a consistent style
+  - List unformatted shell scripts
+  - Write formatted output directly to files
+  - Simplify shell code by removing redundancies
+  - Parse and interpret shell scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shfmt

@@ -1,9 +1,9 @@
 ---
-title: "Change User Password - Modify User Account on FreeBSD | Online Free DevTools by Hexmos"
+title: 'Change User Password - Modify User Account on FreeBSD | Online Free DevTools by Hexmos'
 name: ypchsh
-path: "/freedevtools/tldr/freebsd/ypchsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/freebsd/ypchsh/"
-description: "Change user password easily with ypchsh, a command alias for chpass on FreeBSD.  Modify user account information securely and update credentials. Free online tool, no registration required."
+path: '/freedevtools/tldr/freebsd/ypchsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/freebsd/ypchsh/'
+description: 'Change user password easily with ypchsh, a command alias for chpass on FreeBSD.  Modify user account information securely and update credentials. Free online tool, no registration required.'
 category: freebsd
 keywords:
   - freebsd change user password
@@ -22,8 +22,8 @@ features:
   - Update user login information through command alias.
   - Authenticate user credentials via command-line tool.
   - Integrate with FreeBSD system security policies.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ypchsh

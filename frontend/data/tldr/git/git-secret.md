@@ -1,29 +1,29 @@
 ---
-title: "Git Secret - Securely Store Data in Git | Online Free DevTools by Hexmos"
+title: 'Git Secret - Securely Store Data in Git | Online Free DevTools by Hexmos'
 name: git-secret
-path: "/freedevtools/tldr/git/git-secret/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-secret/"
-description: "Secure data storage with Git Secret. Encrypt and manage sensitive information directly within your Git repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-secret/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-secret/'
+description: 'Secure data storage with Git Secret. Encrypt and manage sensitive information directly within your Git repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- git secret encryption
-- git secret management
-- git secret bash
-- git secret linux
-- git secret macos
-- git repository secret
-- secure git data
-- encrypt git files
-- git secret access control
-- git secret reveal
+  - git secret encryption
+  - git secret management
+  - git secret bash
+  - git secret linux
+  - git secret macos
+  - git repository secret
+  - secure git data
+  - encrypt git files
+  - git secret access control
+  - git secret reveal
 features:
-- Initialize Git Secret in a repository
-- Grant and revoke access to secrets via email
-- List users with access to encrypted data
-- Add and register secret files for encryption
-- Encrypt and decrypt sensitive files within Git
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Git Secret in a repository
+  - Grant and revoke access to secrets via email
+  - List users with access to encrypted data
+  - Add and register secret files for encryption
+  - Encrypt and decrypt sensitive files within Git
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git secret

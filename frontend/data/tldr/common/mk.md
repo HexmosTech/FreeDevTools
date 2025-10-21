@@ -1,29 +1,29 @@
 ---
-title: "Mk Task Runner - Control Compilation Tasks | Online Free DevTools by Hexmos"
+title: 'Mk Task Runner - Control Compilation Tasks | Online Free DevTools by Hexmos'
 name: mk
-path: "/freedevtools/tldr/common/mk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mk/"
-description: "Control compilation tasks with Mk task runner. Automate builds, manage dependencies, and execute custom commands for efficient development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mk/'
+description: 'Control compilation tasks with Mk task runner. Automate builds, manage dependencies, and execute custom commands for efficient development. Free online tool, no registration required.'
 category: common
 keywords:
-- mk task runner
-- plan 9 mk
-- compilation task runner
-- mkfile build automation
-- source code compilation
-- build system command line
-- parallel job execution
-- dependency management mk
-- mk target execution
-- mk build tool
+  - mk task runner
+  - plan 9 mk
+  - compilation task runner
+  - mkfile build automation
+  - source code compilation
+  - build system command line
+  - parallel job execution
+  - dependency management mk
+  - mk target execution
+  - mk build tool
 features:
-- Execute targets defined in Mkfile
-- Automate source code compilation
-- Manage build dependencies
-- Run jobs in parallel for faster execution
-- Force updates of targets and dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute targets defined in Mkfile
+  - Automate source code compilation
+  - Manage build dependencies
+  - Run jobs in parallel for faster execution
+  - Force updates of targets and dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mk

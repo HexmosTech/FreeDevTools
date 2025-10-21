@@ -1,9 +1,9 @@
 ---
-title: "Trace Network Path - Discover MTU with tracepath | Online Free DevTools by Hexmos"
+title: 'Trace Network Path - Discover MTU with tracepath | Online Free DevTools by Hexmos'
 name: tracepath
-path: "/freedevtools/tldr/linux/tracepath/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tracepath/"
-description: "Trace network paths efficiently with tracepath.  Discover MTU and troubleshoot network connectivity issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tracepath/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tracepath/'
+description: 'Trace network paths efficiently with tracepath.  Discover MTU and troubleshoot network connectivity issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - network path tracer
@@ -22,8 +22,8 @@ features:
   - Specify custom source port for firewall traversal.
   - Limit the maximum number of hops (TTL).
   - Control initial packet length for testing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tracepath

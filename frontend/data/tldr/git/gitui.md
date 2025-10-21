@@ -1,29 +1,29 @@
 ---
-title: "Control Git Repositories - Gitui Keyboard TUI | Online Free DevTools by Hexmos"
+title: 'Control Git Repositories - Gitui Keyboard TUI | Online Free DevTools by Hexmos'
 name: gitui
-path: "/freedevtools/tldr/git/gitui/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitui/"
-description: "Control Git repositories efficiently with Gitui, a lightweight TUI. Navigate branches, stage changes, and commit quickly using only your keyboard. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitui/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitui/'
+description: 'Control Git repositories efficiently with Gitui, a lightweight TUI. Navigate branches, stage changes, and commit quickly using only your keyboard. Free online tool, no registration required.'
 category: common
 keywords:
-- git repository manager
-- git keyboard interface
-- tui git client
-- git terminal ui
-- git command line tool
-- git linux
-- git macos
-- git windows
-- git interactive console
-- git repository viewer
+  - git repository manager
+  - git keyboard interface
+  - tui git client
+  - git terminal ui
+  - git command line tool
+  - git linux
+  - git macos
+  - git windows
+  - git interactive console
+  - git repository viewer
 features:
-- Navigate and manage Git branches
-- Stage and unstage changes interactively
-- Commit changes directly from the interface
-- View commit history with ease
-- Inspect file diffs and changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Navigate and manage Git branches
+  - Stage and unstage changes interactively
+  - Commit changes directly from the interface
+  - View commit history with ease
+  - Inspect file diffs and changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitui

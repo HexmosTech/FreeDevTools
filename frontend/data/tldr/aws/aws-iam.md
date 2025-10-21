@@ -1,29 +1,29 @@
 ---
-title: "AWS IAM - Control Access to AWS Resources | Online Free DevTools by Hexmos"
+title: 'AWS IAM - Control Access to AWS Resources | Online Free DevTools by Hexmos'
 name: aws-iam
-path: "/freedevtools/tldr/aws/aws-iam/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-iam/"
-description: "Control AWS resource access with AWS IAM. Manage users, policies, and groups securely using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-iam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-iam/'
+description: 'Control AWS resource access with AWS IAM. Manage users, policies, and groups securely using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- aws iam management
-- aws identity access management
-- aws iam command line
-- aws iam list users
-- aws iam list policies
-- aws iam get group
-- aws iam access keys
-- aws iam policy description
-- aws iam user management
-- aws cli iam
+  - aws iam management
+  - aws identity access management
+  - aws iam command line
+  - aws iam list users
+  - aws iam list policies
+  - aws iam get group
+  - aws iam access keys
+  - aws iam policy description
+  - aws iam user management
+  - aws cli iam
 features:
-- List and manage IAM users
-- List and manage IAM policies
-- List and manage IAM groups
-- Retrieve users within specific IAM groups
-- Describe IAM policies based on ARN
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List and manage IAM users
+  - List and manage IAM policies
+  - List and manage IAM groups
+  - Retrieve users within specific IAM groups
+  - Describe IAM policies based on ARN
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws iam

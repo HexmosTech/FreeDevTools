@@ -1,29 +1,29 @@
 ---
-title: "BZCAT - Decompress Files | Online Free DevTools by Hexmos"
+title: 'BZCAT - Decompress Files | Online Free DevTools by Hexmos'
 name: bzcat
-path: "/freedevtools/tldr/common/bzcat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bzcat/"
-description: "Decompress bzip2 files with BZCAT. Quickly extract compressed data from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bzcat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bzcat/'
+description: 'Decompress bzip2 files with BZCAT. Quickly extract compressed data from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- bzip2 decompress
-- bz2 decompress
-- compressed file extraction
-- linux bzcat
-- macos bzcat
-- unix bzcat
-- bzip2 archive
-- file decompression utility
-- command line decompress
-- bzip2 to stdout
+  - bzip2 decompress
+  - bz2 decompress
+  - compressed file extraction
+  - linux bzcat
+  - macos bzcat
+  - unix bzcat
+  - bzip2 archive
+  - file decompression utility
+  - command line decompress
+  - bzip2 to stdout
 features:
-- Decompress bzip2 archives
-- Output decompressed data to standard output
-- Stream decompress bzip2 files
-- Extract data from the command line
-- Utilize bzip2 decompression algorithm
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decompress bzip2 archives
+  - Output decompressed data to standard output
+  - Stream decompress bzip2 files
+  - Extract data from the command line
+  - Utilize bzip2 decompression algorithm
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bzcat

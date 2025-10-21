@@ -1,29 +1,29 @@
 ---
-title: "Yadm Upgrade - Update Yadm to Latest Version | Online Free DevTools by Hexmos"
+title: 'Yadm Upgrade - Update Yadm to Latest Version | Online Free DevTools by Hexmos'
 name: yadm-upgrade
-path: "/freedevtools/tldr/yadm/yadm-upgrade/"
-canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-upgrade/"
-description: "Upgrade Yadm to the latest version with Yadm Upgrade. De-initialize and re-initialize submodules for seamless updates. Free online tool, no registration required."
+path: '/freedevtools/tldr/yadm/yadm-upgrade/'
+canonical: 'https://hexmos.com/freedevtools/tldr/yadm/yadm-upgrade/'
+description: 'Upgrade Yadm to the latest version with Yadm Upgrade. De-initialize and re-initialize submodules for seamless updates. Free online tool, no registration required.'
 category: common
 keywords:
-- yadm upgrade
-- yadm update
-- yadm version upgrade
-- git submodule update
-- dotfile manager upgrade
-- yadm dotfiles
-- linux yadm
-- macos yadm
-- windows yadm
-- yadm configuration
+  - yadm upgrade
+  - yadm update
+  - yadm version upgrade
+  - git submodule update
+  - dotfile manager upgrade
+  - yadm dotfiles
+  - linux yadm
+  - macos yadm
+  - windows yadm
+  - yadm configuration
 features:
-- Updates yadm to the latest version
-- Re-initializes git submodules during upgrade
-- Forces upgrade despite local changes
-- Manages dotfile configurations
-- Simplifies yadm version management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Updates yadm to the latest version
+  - Re-initializes git submodules during upgrade
+  - Forces upgrade despite local changes
+  - Manages dotfile configurations
+  - Simplifies yadm version management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yadm upgrade

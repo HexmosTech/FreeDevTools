@@ -1,32 +1,32 @@
-import { toast } from "@/components/ToastProvider";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
-import { Button } from "@/components/ui/button";
+import { toast } from '@/components/ToastProvider';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolHead from '@/components/tool/ToolHead';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import CopyButton from "@/components/ui/copy-button";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import CopyButton from '@/components/ui/copy-button';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import React, { useEffect, useState } from "react";
-import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import React, { useEffect, useState } from 'react';
+import PasswordGeneratorSkeleton from './_PasswordGeneratorSkeleton';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 interface PasswordOptions {
   length: number;
@@ -42,7 +42,7 @@ interface PasswordOptions {
 }
 
 const PasswordGenerator: React.FC = () => {
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [options, setOptions] = useState<PasswordOptions>({
     length: 16,
@@ -54,7 +54,7 @@ const PasswordGenerator: React.FC = () => {
     easyToSay: false,
     useWords: false,
     wordCount: 3,
-    separator: "-",
+    separator: '-',
   });
 
   const [loaded, setLoaded] = useState(false);
@@ -69,124 +69,124 @@ const PasswordGenerator: React.FC = () => {
 
   // Character sets
   const characterSets = {
-    uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    lowercase: "abcdefghijklmnopqrstuvwxyz",
-    numbers: "0123456789",
-    symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
+    uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lowercase: 'abcdefghijklmnopqrstuvwxyz',
+    numbers: '0123456789',
+    symbols: '!@#$%^&*()_+-=[]{}|;:,.<>?',
     // Easy to read excludes similar looking characters
-    uppercaseEasy: "ABCDEFGHJKLMNPQRSTUVWXYZ",
-    lowercaseEasy: "abcdefghjkmnpqrstvwxyz",
-    numbersEasy: "23456789",
-    symbolsEasy: "!@#$%&*+-=?",
+    uppercaseEasy: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
+    lowercaseEasy: 'abcdefghjkmnpqrstvwxyz',
+    numbersEasy: '23456789',
+    symbolsEasy: '!@#$%&*+-=?',
     // Easy to say excludes hard to pronounce combinations
-    uppercaseSay: "BCDFGHJKLMNPQRSTVWXYZ",
-    lowercaseSay: "bcdfghjklmnpqrstvwxyz",
-    numbersSay: "23456789",
-    symbolsSay: "!@#$&*+-=",
+    uppercaseSay: 'BCDFGHJKLMNPQRSTVWXYZ',
+    lowercaseSay: 'bcdfghjklmnpqrstvwxyz',
+    numbersSay: '23456789',
+    symbolsSay: '!@#$&*+-=',
   };
 
   // Common words for memorable passwords
   const commonWords = [
-    "apple",
-    "brave",
-    "cloud",
-    "dance",
-    "earth",
-    "flame",
-    "green",
-    "happy",
-    "image",
-    "jewel",
-    "knife",
-    "light",
-    "magic",
-    "novel",
-    "ocean",
-    "peace",
-    "quick",
-    "river",
-    "stone",
-    "table",
-    "unity",
-    "voice",
-    "water",
-    "young",
-    "zebra",
-    "angel",
-    "beach",
-    "chair",
-    "dream",
-    "eagle",
-    "frost",
-    "giant",
-    "house",
-    "ivory",
-    "lunar",
-    "music",
-    "night",
-    "olive",
-    "plant",
-    "quest",
-    "royal",
-    "solar",
-    "tiger",
-    "ultra",
-    "video",
-    "world",
-    "youth",
-    "amber",
-    "bloom",
-    "coral",
-    "delta",
-    "ember",
-    "focus",
-    "grace",
-    "honor",
-    "index",
-    "juice",
-    "karma",
-    "laser",
-    "moral",
-    "ninja",
-    "opera",
-    "piano",
-    "quilt",
-    "radix",
-    "smile",
-    "trend",
-    "urban",
-    "vital",
-    "wheat",
-    "crystal",
-    "bridge",
-    "garden",
-    "forest",
-    "sunset",
-    "winter",
-    "summer",
-    "spring",
-    "copper",
-    "silver",
-    "golden",
-    "purple",
-    "orange",
-    "yellow",
-    "violet",
-    "fabric",
-    "castle",
-    "rocket",
-    "flower",
-    "butter",
-    "coffee",
-    "cookie",
-    "rainbow",
-    "wizard",
-    "dragon",
-    "unicorn",
-    "planet",
-    "galaxy",
-    "cosmic",
-    "meteor",
+    'apple',
+    'brave',
+    'cloud',
+    'dance',
+    'earth',
+    'flame',
+    'green',
+    'happy',
+    'image',
+    'jewel',
+    'knife',
+    'light',
+    'magic',
+    'novel',
+    'ocean',
+    'peace',
+    'quick',
+    'river',
+    'stone',
+    'table',
+    'unity',
+    'voice',
+    'water',
+    'young',
+    'zebra',
+    'angel',
+    'beach',
+    'chair',
+    'dream',
+    'eagle',
+    'frost',
+    'giant',
+    'house',
+    'ivory',
+    'lunar',
+    'music',
+    'night',
+    'olive',
+    'plant',
+    'quest',
+    'royal',
+    'solar',
+    'tiger',
+    'ultra',
+    'video',
+    'world',
+    'youth',
+    'amber',
+    'bloom',
+    'coral',
+    'delta',
+    'ember',
+    'focus',
+    'grace',
+    'honor',
+    'index',
+    'juice',
+    'karma',
+    'laser',
+    'moral',
+    'ninja',
+    'opera',
+    'piano',
+    'quilt',
+    'radix',
+    'smile',
+    'trend',
+    'urban',
+    'vital',
+    'wheat',
+    'crystal',
+    'bridge',
+    'garden',
+    'forest',
+    'sunset',
+    'winter',
+    'summer',
+    'spring',
+    'copper',
+    'silver',
+    'golden',
+    'purple',
+    'orange',
+    'yellow',
+    'violet',
+    'fabric',
+    'castle',
+    'rocket',
+    'flower',
+    'butter',
+    'coffee',
+    'cookie',
+    'rainbow',
+    'wizard',
+    'dragon',
+    'unicorn',
+    'planet',
+    'galaxy',
+    'cosmic',
+    'meteor',
   ];
 
   const generatePassword = () => {
@@ -223,12 +223,12 @@ const PasswordGenerator: React.FC = () => {
       // Add numbers if requested
       if (options.includeNumbers) {
         const numbers = Math.floor(Math.random() * 999) + 1;
-        wordPassword += (options.separator || "") + numbers;
+        wordPassword += (options.separator || '') + numbers;
       }
 
       // Add symbols if requested
       if (options.includeSymbols) {
-        const symbols = "!@#$%";
+        const symbols = '!@#$%';
         const randomSymbol =
           symbols[Math.floor(Math.random() * symbols.length)];
         wordPassword += randomSymbol;
@@ -239,7 +239,7 @@ const PasswordGenerator: React.FC = () => {
     }
 
     // Original character-based generation
-    let charset = "";
+    let charset = '';
     const usedSets = [];
 
     // Determine character set based on options
@@ -283,13 +283,13 @@ const PasswordGenerator: React.FC = () => {
       usedSets.push(set);
     }
 
-    if (charset === "") {
-      setPassword("Please select at least one character type");
-      toast.error("Please select at least one character type");
+    if (charset === '') {
+      setPassword('Please select at least one character type');
+      toast.error('Please select at least one character type');
       return;
     }
 
-    let newPassword = "";
+    let newPassword = '';
 
     // Ensure at least one character from each selected set
     usedSets.forEach((set) => {
@@ -303,9 +303,9 @@ const PasswordGenerator: React.FC = () => {
 
     // Shuffle the password to avoid predictable patterns
     newPassword = newPassword
-      .split("")
+      .split('')
       .sort(() => Math.random() - 0.5)
-      .join("");
+      .join('');
 
     setPassword(newPassword);
   };
@@ -314,7 +314,7 @@ const PasswordGenerator: React.FC = () => {
     password: string
   ): { strength: string; color: string; width: string } => {
     if (!password || password.length < 4)
-      return { strength: "Very Weak", color: "bg-red-500", width: "20%" };
+      return { strength: 'Very Weak', color: 'bg-red-500', width: '20%' };
 
     let score = 0;
     if (password.length >= 8) score += 1;
@@ -326,12 +326,12 @@ const PasswordGenerator: React.FC = () => {
     if (password.length >= 16) score += 1;
 
     if (score <= 2)
-      return { strength: "Weak", color: "bg-red-500", width: "40%" };
+      return { strength: 'Weak', color: 'bg-red-500', width: '40%' };
     if (score <= 4)
-      return { strength: "Medium", color: "bg-yellow-500", width: "60%" };
+      return { strength: 'Medium', color: 'bg-yellow-500', width: '60%' };
     if (score <= 5)
-      return { strength: "Strong", color: "bg-green-500", width: "80%" };
-    return { strength: "Very Strong", color: "bg-green-600", width: "100%" };
+      return { strength: 'Strong', color: 'bg-green-500', width: '80%' };
+    return { strength: 'Very Strong', color: 'bg-green-600', width: '100%' };
   };
 
   const updateOption = (
@@ -342,14 +342,14 @@ const PasswordGenerator: React.FC = () => {
       const newOptions = { ...prev, [key]: value };
 
       // Auto-select Memorable preset when switching to word-based
-      if (key === "useWords" && value === true) {
+      if (key === 'useWords' && value === true) {
         newOptions.wordCount = 3;
         newOptions.includeUppercase = true;
         newOptions.includeLowercase = true;
         newOptions.includeNumbers = true;
         newOptions.includeSymbols = false;
-        newOptions.separator = "-";
-        toast.info("Switched to word-based password generation");
+        newOptions.separator = '-';
+        toast.info('Switched to word-based password generation');
       }
 
       return newOptions;
@@ -358,7 +358,7 @@ const PasswordGenerator: React.FC = () => {
 
   const applyPreset = (preset: Partial<PasswordOptions>) => {
     setOptions((prev) => ({ ...prev, ...preset }));
-    toast.success("Password preset applied successfully");
+    toast.success('Password preset applied successfully');
   };
 
   // Generate password on component mount and when options change
@@ -370,7 +370,7 @@ const PasswordGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -393,7 +393,7 @@ const PasswordGenerator: React.FC = () => {
                   <Button
                     onClick={() => {
                       generatePassword();
-                      toast.info("New password generated!");
+                      toast.info('New password generated!');
                     }}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
@@ -405,7 +405,7 @@ const PasswordGenerator: React.FC = () => {
                 <div className="relative mb-4">
                   <div className="flex items-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
                     <code className="flex-1 font-mono text-slate-900 dark:text-slate-100 break-all select-all">
-                      {password || "Click generate to create a password"}
+                      {password || 'Click generate to create a password'}
                     </code>
                     <CopyButton
                       text={password}
@@ -468,8 +468,8 @@ const PasswordGenerator: React.FC = () => {
                       !options.easyToRead &&
                       !options.easyToSay &&
                       !options.useWords
-                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                        : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
                     }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
@@ -504,8 +504,8 @@ const PasswordGenerator: React.FC = () => {
                       options.easyToRead &&
                       !options.easyToSay &&
                       !options.useWords
-                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                        : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
                     }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
@@ -525,7 +525,7 @@ const PasswordGenerator: React.FC = () => {
                         includeNumbers: true,
                         includeSymbols: false,
                         useWords: true,
-                        separator: "-",
+                        separator: '-',
                       })
                     }
                     variant="outline"
@@ -537,9 +537,9 @@ const PasswordGenerator: React.FC = () => {
                       options.includeNumbers &&
                       !options.includeSymbols &&
                       options.useWords &&
-                      options.separator === "-"
-                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                      options.separator === '-'
+                        ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                        : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
                     }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
@@ -574,8 +574,8 @@ const PasswordGenerator: React.FC = () => {
                       !options.easyToRead &&
                       !options.easyToSay &&
                       !options.useWords
-                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                        : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                        : 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950'
                     }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
@@ -599,13 +599,13 @@ const PasswordGenerator: React.FC = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Button
-                    onClick={() => updateOption("useWords", false)}
+                    onClick={() => updateOption('useWords', false)}
                     variant="outline"
                     size="custom"
                     className={`p-4 text-left whitespace-normal ${
                       !options.useWords
-                        ? "bg-blue-50 dark:bg-blue-950"
-                        : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
+                        ? 'bg-blue-50 dark:bg-blue-950'
+                        : 'hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50'
                     }`}
                   >
                     <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
@@ -620,13 +620,13 @@ const PasswordGenerator: React.FC = () => {
                   </Button>
 
                   <Button
-                    onClick={() => updateOption("useWords", true)}
+                    onClick={() => updateOption('useWords', true)}
                     variant="outline"
                     size="custom"
                     className={`p-4 text-left whitespace-normal ${
                       options.useWords
-                        ? "bg-blue-50 dark:bg-blue-950"
-                        : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
+                        ? 'bg-blue-50 dark:bg-blue-950'
+                        : 'hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50'
                     }`}
                   >
                     <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
@@ -656,7 +656,7 @@ const PasswordGenerator: React.FC = () => {
                     size="sm"
                     className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                   >
-                    {showAdvanced ? "Hide Advanced" : "Show Advanced Options"}
+                    {showAdvanced ? 'Hide Advanced' : 'Show Advanced Options'}
                   </Button>
                 </div>
               </CardHeader>
@@ -673,7 +673,7 @@ const PasswordGenerator: React.FC = () => {
                           <Slider
                             value={[options.wordCount]}
                             onValueChange={(value) =>
-                              updateOption("wordCount", value[0])
+                              updateOption('wordCount', value[0])
                             }
                             min={2}
                             max={6}
@@ -693,14 +693,14 @@ const PasswordGenerator: React.FC = () => {
                           </Label>
                           <Select
                             value={
-                              options.separator === ""
-                                ? "none"
+                              options.separator === ''
+                                ? 'none'
                                 : options.separator
                             }
                             onValueChange={(value) =>
                               updateOption(
-                                "separator",
-                                value === "none" ? "" : value
+                                'separator',
+                                value === 'none' ? '' : value
                               )
                             }
                           >
@@ -727,7 +727,7 @@ const PasswordGenerator: React.FC = () => {
                         <Slider
                           value={[options.length]}
                           onValueChange={(value) =>
-                            updateOption("length", value[0])
+                            updateOption('length', value[0])
                           }
                           min={4}
                           max={128}
@@ -749,20 +749,20 @@ const PasswordGenerator: React.FC = () => {
                       <div className="space-y-2">
                         {[
                           {
-                            key: "includeUppercase" as keyof PasswordOptions,
-                            label: "Uppercase Letters (A-Z)",
+                            key: 'includeUppercase' as keyof PasswordOptions,
+                            label: 'Uppercase Letters (A-Z)',
                           },
                           {
-                            key: "includeLowercase" as keyof PasswordOptions,
-                            label: "Lowercase Letters (a-z)",
+                            key: 'includeLowercase' as keyof PasswordOptions,
+                            label: 'Lowercase Letters (a-z)',
                           },
                           {
-                            key: "includeNumbers" as keyof PasswordOptions,
-                            label: "Numbers (0-9)",
+                            key: 'includeNumbers' as keyof PasswordOptions,
+                            label: 'Numbers (0-9)',
                           },
                           {
-                            key: "includeSymbols" as keyof PasswordOptions,
-                            label: "Symbols (!@#$%)",
+                            key: 'includeSymbols' as keyof PasswordOptions,
+                            label: 'Symbols (!@#$%)',
                           },
                         ].map(({ key, label }) => (
                           <div
@@ -798,7 +798,7 @@ const PasswordGenerator: React.FC = () => {
                           <Checkbox
                             checked={options.easyToRead}
                             onCheckedChange={(checked) =>
-                              updateOption("easyToRead", checked as boolean)
+                              updateOption('easyToRead', checked as boolean)
                             }
                             id="easyToRead"
                           />
@@ -820,7 +820,7 @@ const PasswordGenerator: React.FC = () => {
                           <Checkbox
                             checked={options.easyToSay}
                             onCheckedChange={(checked) =>
-                              updateOption("easyToSay", checked as boolean)
+                              updateOption('easyToSay', checked as boolean)
                             }
                             id="easyToSay"
                           />
@@ -881,7 +881,7 @@ const PasswordGenerator: React.FC = () => {
                       >
                         Brute force attacks
                       </a>
-                    </strong>{" "}
+                    </strong>{' '}
                     work by systematically attempting every possible password
                     combination until the correct one is found. The time
                     required grows exponentially with password length and
@@ -1020,7 +1020,7 @@ const PasswordGenerator: React.FC = () => {
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-3">
                   <p>
-                    Our password generator uses cryptographically secure{" "}
+                    Our password generator uses cryptographically secure{' '}
                     <a
                       className="text-blue-600 hover:underline"
                       href="https://en.wikipedia.org/wiki/Pseudorandom_number_generator"
@@ -1028,8 +1028,8 @@ const PasswordGenerator: React.FC = () => {
                       rel="noopener noreferrer"
                     >
                       pseudo-random number generation (CSPRNG)
-                    </a>{" "}
-                    through the browser's{" "}
+                    </a>{' '}
+                    through the browser's{' '}
                     <a
                       className="text-blue-600 hover:underline"
                       href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API"

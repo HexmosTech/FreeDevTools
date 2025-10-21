@@ -1,29 +1,29 @@
 ---
-title: "Parse HTML - Format & Filter HTML with pup | Online Free DevTools by Hexmos"
+title: 'Parse HTML - Format & Filter HTML with pup | Online Free DevTools by Hexmos'
 name: pup
-path: "/freedevtools/tldr/common/pup/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pup/"
-description: "Format HTML with pup, a command-line HTML parser. Filter elements, extract text, and convert to JSON effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pup/'
+description: 'Format HTML with pup, a command-line HTML parser. Filter elements, extract text, and convert to JSON effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- HTML parser
-- HTML formatting
-- HTML filtering
-- HTML to JSON
-- pup command line
-- pup HTML
-- HTML element extraction
-- command line HTML tools
-- HTML text extraction
-- Linux HTML parser
+  - HTML parser
+  - HTML formatting
+  - HTML filtering
+  - HTML to JSON
+  - pup command line
+  - pup HTML
+  - HTML element extraction
+  - command line HTML tools
+  - HTML text extraction
+  - Linux HTML parser
 features:
-- Format HTML with indentation and color
-- Filter HTML elements by tag, ID, or attribute
-- Extract text content from filtered HTML
-- Convert HTML to JSON format
-- Process HTML directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format HTML with indentation and color
+  - Filter HTML elements by tag, ID, or attribute
+  - Extract text content from filtered HTML
+  - Convert HTML to JSON format
+  - Process HTML directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pup

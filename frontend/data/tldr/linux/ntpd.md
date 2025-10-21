@@ -1,29 +1,29 @@
 ---
-title: "NTP Control - Synchronize Time | Online Free DevTools by Hexmos"
+title: 'NTP Control - Synchronize Time | Online Free DevTools by Hexmos'
 name: ntpd
-path: "/freedevtools/tldr/linux/ntpd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ntpd/"
-description: "Synchronize system time with NTP Control using ntpd, the Network Time Protocol daemon. Keep your clock accurate with remote time servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ntpd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ntpd/'
+description: 'Synchronize system time with NTP Control using ntpd, the Network Time Protocol daemon. Keep your clock accurate with remote time servers. Free online tool, no registration required.'
 category: linux
 keywords:
-- ntp synchronization
-- network time protocol
-- ntpd linux
-- linux time server
-- system clock synchronization
-- time daemon
-- time server configuration
-- ntpd command
-- linux ntp client
-- remote time synchronization
+  - ntp synchronization
+  - network time protocol
+  - ntpd linux
+  - linux time server
+  - system clock synchronization
+  - time daemon
+  - time server configuration
+  - ntpd command
+  - linux ntp client
+  - remote time synchronization
 features:
-- Synchronize system time with remote NTP servers
-- Manually adjust system clock with large time adjustments
-- Run ntpd daemon in the background
-- Quit ntpd after a single synchronization
-- Configure network time protocol settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize system time with remote NTP servers
+  - Manually adjust system clock with large time adjustments
+  - Run ntpd daemon in the background
+  - Quit ntpd after a single synchronization
+  - Configure network time protocol settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ntpd

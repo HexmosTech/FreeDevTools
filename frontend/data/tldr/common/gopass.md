@@ -1,29 +1,29 @@
 ---
-title: "Gopass Password Manager - Securely Manage Passwords | Online Free DevTools by Hexmos"
+title: 'Gopass Password Manager - Securely Manage Passwords | Online Free DevTools by Hexmos'
 name: gopass
-path: "/freedevtools/tldr/common/gopass/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gopass/"
-description: "Securely manage passwords with Gopass Password Manager. Create, store, and sync passwords with this Unix password manager. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gopass/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gopass/'
+description: 'Securely manage passwords with Gopass Password Manager. Create, store, and sync passwords with this Unix password manager. Free online tool, no registration required.'
 category: common
 keywords:
-- password manager
-- gopass password manager
-- unix password manager
-- command line password manager
-- password storage
-- password sync
-- password generator
-- password management
-- gopass cli
-- gopass
+  - password manager
+  - gopass password manager
+  - unix password manager
+  - command line password manager
+  - password storage
+  - password sync
+  - password generator
+  - password management
+  - gopass cli
+  - gopass
 features:
-- Initialize configuration settings for gopass
-- Create new password entries easily
-- Mount shared Git password stores
-- Synchronize password stores across devices
-- Display password entries from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize configuration settings for gopass
+  - Create new password entries easily
+  - Mount shared Git password stores
+  - Synchronize password stores across devices
+  - Display password entries from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gopass

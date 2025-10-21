@@ -1,9 +1,9 @@
 ---
-title: "Manage Slurm Accounts - Control with sacctmgr | Online Free DevTools by Hexmos"
+title: 'Manage Slurm Accounts - Control with sacctmgr | Online Free DevTools by Hexmos'
 name: sacctmgr
-path: "/freedevtools/tldr/linux/sacctmgr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sacctmgr/"
-description: "Manage Slurm accounts efficiently with sacctmgr.  View, add, and modify cluster and account configurations using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sacctmgr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sacctmgr/'
+description: 'Manage Slurm accounts efficiently with sacctmgr.  View, add, and modify cluster and account configurations using command-line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - slurm account management
@@ -22,8 +22,8 @@ features:
   - Create and manage Slurm accounts.
   - Show detailed information about users, associations, clusters, and accounts.
   - Utilize flexible formatting options for output customization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sacctmgr

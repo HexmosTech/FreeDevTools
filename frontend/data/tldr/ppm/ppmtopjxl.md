@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to PJXL - Image Conversion | Online Free DevTools by Hexmos"
+title: 'Convert PPM to PJXL - Image Conversion | Online Free DevTools by Hexmos'
 name: ppmtopjxl
-path: "/freedevtools/tldr/ppm/ppmtopjxl/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtopjxl/"
-description: "Convert PPM to PJXL format with ppmtopjxl. Resize and shift images easily. Free online tool, no registration required. Optimize images quickly."
+path: '/freedevtools/tldr/ppm/ppmtopjxl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtopjxl/'
+description: 'Convert PPM to PJXL format with ppmtopjxl. Resize and shift images easily. Free online tool, no registration required. Optimize images quickly.'
 category: common
 keywords:
-- PPM to PJXL conversion
-- PJXL image generation
-- Image format converter
-- PPM image processing
-- Linux image tools
-- Netpbm image utilities
-- Image resizing tool
-- Command line image converter
-- HP PaintJet XL PCL
-- Image shift conversion
+  - PPM to PJXL conversion
+  - PJXL image generation
+  - Image format converter
+  - PPM image processing
+  - Linux image tools
+  - Netpbm image utilities
+  - Image resizing tool
+  - Command line image converter
+  - HP PaintJet XL PCL
+  - Image shift conversion
 features:
-- Convert PPM images to PJXL format
-- Resize input images with specified dimensions
-- Shift input images with defined offsets
-- Disable TIFF 4.0 compression during conversion
-- Generate PJXL files from PPM images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to PJXL format
+  - Resize input images with specified dimensions
+  - Shift input images with defined offsets
+  - Disable TIFF 4.0 compression during conversion
+  - Generate PJXL files from PPM images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtopjxl

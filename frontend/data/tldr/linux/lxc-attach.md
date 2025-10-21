@@ -1,29 +1,29 @@
 ---
-title: "Lxc-Attach - Attach to Linux Containers | Online Free DevTools by Hexmos"
+title: 'Lxc-Attach - Attach to Linux Containers | Online Free DevTools by Hexmos'
 name: lxc-attach
-path: "/freedevtools/tldr/linux/lxc-attach/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-attach/"
-description: "Attach instantly to Linux containers with Lxc-Attach. Manage processes and interact with container environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lxc-attach/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lxc-attach/'
+description: 'Attach instantly to Linux containers with Lxc-Attach. Manage processes and interact with container environments. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux container attach
-- lxc attach command
-- container process management
-- lxc container interaction
-- linux container shell access
-- lxc command line tools
-- container debugging linux
-- lxc-attach linux
-- linux container console
-- lxc process execution
+  - linux container attach
+  - lxc attach command
+  - container process management
+  - lxc container interaction
+  - linux container shell access
+  - lxc command line tools
+  - container debugging linux
+  - lxc-attach linux
+  - linux container console
+  - lxc process execution
 features:
-- Attach to running Linux containers
-- Execute commands inside containers
-- Access container console directly
-- Interact with container processes
-- Debug applications within containers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Attach to running Linux containers
+  - Execute commands inside containers
+  - Access container console directly
+  - Interact with container processes
+  - Debug applications within containers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lxc-attach

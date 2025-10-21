@@ -1,29 +1,29 @@
 ---
-title: "Capture HTTP Streams - Analyze Network Traffic | Online Free DevTools by Hexmos"
+title: 'Capture HTTP Streams - Analyze Network Traffic | Online Free DevTools by Hexmos'
 name: httpflow
-path: "/freedevtools/tldr/http/httpflow/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/httpflow/"
-description: "Capture network traffic with HTTPflow. Analyze HTTP streams and debug network communication using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/httpflow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/httpflow/'
+description: 'Capture network traffic with HTTPflow. Analyze HTTP streams and debug network communication using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP stream capture
-- Network traffic analysis
-- PCAP file analysis
-- HTTP session recording
-- Command-line packet capture
-- Network debugging tool
-- TCP stream inspection
-- HTTP request filtering
-- HTTP response inspection
-- Linux network monitoring
+  - HTTP stream capture
+  - Network traffic analysis
+  - PCAP file analysis
+  - HTTP session recording
+  - Command-line packet capture
+  - Network debugging tool
+  - TCP stream inspection
+  - HTTP request filtering
+  - HTTP response inspection
+  - Linux network monitoring
 features:
-- Capture HTTP traffic on all network interfaces
-- Filter network traffic using BPF-style filters
-- Filter HTTP requests based on URL regular expressions
-- Analyze HTTP streams from PCAP files
-- Save captured HTTP streams to a directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture HTTP traffic on all network interfaces
+  - Filter network traffic using BPF-style filters
+  - Filter HTTP requests based on URL regular expressions
+  - Analyze HTTP streams from PCAP files
+  - Save captured HTTP streams to a directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # httpflow

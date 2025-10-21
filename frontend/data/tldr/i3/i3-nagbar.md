@@ -1,29 +1,29 @@
 ---
-title: "Display Error Bars - Control i3-nagbar Messages | Online Free DevTools by Hexmos"
+title: 'Display Error Bars - Control i3-nagbar Messages | Online Free DevTools by Hexmos'
 name: i3-nagbar
-path: "/freedevtools/tldr/i3/i3-nagbar/"
-canonical: "https://hexmos.com/freedevtools/tldr/i3/i3-nagbar/"
-description: "Control error and warning messages with i3-nagbar, the bar display tool for i3 window manager. Customize message types and actions. Free online tool, no registration required."
+path: '/freedevtools/tldr/i3/i3-nagbar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/i3/i3-nagbar/'
+description: 'Control error and warning messages with i3-nagbar, the bar display tool for i3 window manager. Customize message types and actions. Free online tool, no registration required.'
 category: common
 keywords:
-- i3-nagbar message
-- i3-nagbar error display
-- i3 warning bar
-- Linux notification
-- Desktop alert
-- Window manager message
-- i3 configuration
-- Pango font specification
-- Custom button command
-- Shell command execution
+  - i3-nagbar message
+  - i3-nagbar error display
+  - i3 warning bar
+  - Linux notification
+  - Desktop alert
+  - Window manager message
+  - i3 configuration
+  - Pango font specification
+  - Custom button command
+  - Shell command execution
 features:
-- Display error messages on screen
-- Display warning messages on screen
-- Customize message fonts
-- Create interactive buttons with commands
-- Execute commands in a terminal upon button click
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display error messages on screen
+  - Display warning messages on screen
+  - Customize message fonts
+  - Create interactive buttons with commands
+  - Execute commands in a terminal upon button click
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # i3-nagbar

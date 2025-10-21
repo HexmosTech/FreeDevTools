@@ -1,29 +1,29 @@
 ---
-title: "AWS SNS - Manage Notifications & Topics | Online Free DevTools by Hexmos"
+title: 'AWS SNS - Manage Notifications & Topics | Online Free DevTools by Hexmos'
 name: aws-sns
-path: "/freedevtools/tldr/aws/aws-sns/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sns/"
-description: "Manage AWS SNS topics with AWS SNS Command. Create topics, publish messages, and manage subscriptions using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-sns/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-sns/'
+description: 'Manage AWS SNS topics with AWS SNS Command. Create topics, publish messages, and manage subscriptions using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS SNS commands
-- AWS SNS topic management
-- AWS SNS message publishing
-- AWS SNS subscription control
-- AWS SNS notification service
-- AWS SNS command line interface
-- AWS SNS access control
-- AWS SNS tag management
-- AWS SNS platform endpoint
-- AWS SNS messaging
+  - AWS SNS commands
+  - AWS SNS topic management
+  - AWS SNS message publishing
+  - AWS SNS subscription control
+  - AWS SNS notification service
+  - AWS SNS command line interface
+  - AWS SNS access control
+  - AWS SNS tag management
+  - AWS SNS platform endpoint
+  - AWS SNS messaging
 features:
-- Create and manage SNS topics.
-- Publish messages to SNS topics or phone numbers.
-- Subscribe email addresses to SNS topics.
-- Manage access control policies for SNS topics.
-- Tag and organize SNS resources.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage SNS topics.
+  - Publish messages to SNS topics or phone numbers.
+  - Subscribe email addresses to SNS topics.
+  - Manage access control policies for SNS topics.
+  - Tag and organize SNS resources.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws sns

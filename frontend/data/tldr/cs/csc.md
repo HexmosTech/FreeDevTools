@@ -1,29 +1,29 @@
 ---
-title: "C# Compiler - Generate Executables | Online Free DevTools by Hexmos"
+title: 'C# Compiler - Generate Executables | Online Free DevTools by Hexmos'
 name: csc
-path: "/freedevtools/tldr/cs/csc/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csc/"
-description: "Generate executables with C# Compiler (csc). Compile C# code, create .dll libraries, and manage dependencies easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csc/'
+description: 'Generate executables with C# Compiler (csc). Compile C# code, create .dll libraries, and manage dependencies easily. Free online tool, no registration required.'
 category: common
 keywords:
-- C# Compiler
-- C# executable generator
-- .NET compiler
-- C# library compiler
-- CIL executable
-- C# command line compiler
-- Windows C# compiler
-- .NET assembly
-- C# resource embedding
-- C# documentation generation
+  - C# Compiler
+  - C# executable generator
+  - .NET compiler
+  - C# library compiler
+  - CIL executable
+  - C# command line compiler
+  - Windows C# compiler
+  - .NET assembly
+  - C# resource embedding
+  - C# documentation generation
 features:
-- Compile C# source code into executable files.
-- Create dynamic-link library (.dll) files from C# code.
-- Include external assembly references during compilation.
-- Embed resource files directly into the compiled output.
-- Generate XML documentation from code comments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile C# source code into executable files.
+  - Create dynamic-link library (.dll) files from C# code.
+  - Include external assembly references during compilation.
+  - Embed resource files directly into the compiled output.
+  - Generate XML documentation from code comments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csc

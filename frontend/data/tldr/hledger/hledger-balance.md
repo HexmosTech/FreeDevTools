@@ -1,29 +1,29 @@
 ---
-title: "Hledger Balance - Analyze Ledger Data | Online Free DevTools by Hexmos"
+title: 'Hledger Balance - Analyze Ledger Data | Online Free DevTools by Hexmos'
 name: hledger-balance
-path: "/freedevtools/tldr/hledger/hledger-balance/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-balance/"
-description: "Analyze ledger data with Hledger Balance. Generate insightful reports for transactions, budgets, and financial performance using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-balance/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-balance/'
+description: 'Analyze ledger data with Hledger Balance. Generate insightful reports for transactions, budgets, and financial performance using this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- ledger balance analysis
-- financial report generator
-- hledger accounting
-- command-line accounting
-- balance sheet tool
-- transaction data analyzer
-- budget performance analysis
-- financial statement generation
-- hledger balance query
-- ledger data reporting
+  - ledger balance analysis
+  - financial report generator
+  - hledger accounting
+  - command-line accounting
+  - balance sheet tool
+  - transaction data analyzer
+  - budget performance analysis
+  - financial statement generation
+  - hledger balance query
+  - ledger data reporting
 features:
-- Generate balance reports for specific accounts or periods
-- Calculate budget performance against actual expenses
-- Display unrealized capital gains or losses based on market prices
-- Summarize account balances in a hierarchical tree structure
-- Sort and filter data based on amount, date, or account type
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate balance reports for specific accounts or periods
+  - Calculate budget performance against actual expenses
+  - Display unrealized capital gains or losses based on market prices
+  - Summarize account balances in a hierarchical tree structure
+  - Sort and filter data based on amount, date, or account type
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger balance

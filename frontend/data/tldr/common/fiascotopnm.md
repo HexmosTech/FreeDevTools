@@ -1,29 +1,29 @@
 ---
-title: "Convert FIASCO to PNM - Image Conversion | Online Free DevTools by Hexmos"
+title: 'Convert FIASCO to PNM - Image Conversion | Online Free DevTools by Hexmos'
 name: fiascotopnm
-path: "/freedevtools/tldr/common/fiascotopnm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fiascotopnm/"
-description: "Convert FIASCO images to PNM format with fiascotopnm. Transform and manipulate image files effortlessly using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fiascotopnm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fiascotopnm/'
+description: 'Convert FIASCO images to PNM format with fiascotopnm. Transform and manipulate image files effortlessly using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- FIASCO to PNM conversion
-- PNM image conversion
-- FIASCO image converter
-- Image format conversion
-- Video stream to PNM
-- FIASCO decompression
-- Linux image tools
-- Command line image converter
-- FIASCO file manipulation
-- PNM file creation
+  - FIASCO to PNM conversion
+  - PNM image conversion
+  - FIASCO image converter
+  - Image format conversion
+  - Video stream to PNM
+  - FIASCO decompression
+  - Linux image tools
+  - Command line image converter
+  - FIASCO file manipulation
+  - PNM file creation
 features:
-- Convert compressed FIASCO files to PNM images.
-- Decompress FIASCO files using fast decompression for lower quality.
-- Load configuration options from a specified configuration file.
-- Magnify decompressed images by a specified factor.
-- Smooth decompressed images by a specified amount.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert compressed FIASCO files to PNM images.
+  - Decompress FIASCO files using fast decompression for lower quality.
+  - Load configuration options from a specified configuration file.
+  - Magnify decompressed images by a specified factor.
+  - Smooth decompressed images by a specified amount.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fiascotopnm

@@ -1,29 +1,29 @@
 ---
-title: "Control MySQL Performance - mytop Monitor | Online Free DevTools by Hexmos"
+title: 'Control MySQL Performance - mytop Monitor | Online Free DevTools by Hexmos'
 name: mytop
-path: "/freedevtools/tldr/common/mytop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mytop/"
-description: "Control MySQL server performance with mytop, a top-like monitor for real-time diagnostics. Analyze database queries and resource usage. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mytop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mytop/'
+description: 'Control MySQL server performance with mytop, a top-like monitor for real-time diagnostics. Analyze database queries and resource usage. Free online tool, no registration required.'
 category: common
 keywords:
-- mysql performance monitor
-- mysql top alternative
-- database server monitoring
-- mysql resource usage
-- query performance analysis
-- linux mysql monitor
-- command line mysql tool
-- mysql server diagnostics
-- real time mysql monitor
-- mytop command
+  - mysql performance monitor
+  - mysql top alternative
+  - database server monitoring
+  - mysql resource usage
+  - query performance analysis
+  - linux mysql monitor
+  - command line mysql tool
+  - mysql server diagnostics
+  - real time mysql monitor
+  - mytop command
 features:
-- Display real-time MySQL server statistics.
-- Show active and sleeping threads.
-- Monitor query performance.
-- Connect to MySQL server with username and password.
-- Filter idle threads from the display.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display real-time MySQL server statistics.
+  - Show active and sleeping threads.
+  - Monitor query performance.
+  - Connect to MySQL server with username and password.
+  - Filter idle threads from the display.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mytop

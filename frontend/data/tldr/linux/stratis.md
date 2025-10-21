@@ -1,29 +1,29 @@
 ---
-title: "Stratis Manager - Manage Linux Storage Pools | Online Free DevTools by Hexmos"
+title: 'Stratis Manager - Manage Linux Storage Pools | Online Free DevTools by Hexmos'
 name: stratis
-path: "/freedevtools/tldr/linux/stratis/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/stratis/"
-description: "Manage Linux storage with Stratis Manager. Create pools, volumes, and filesystems effortlessly using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/stratis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/stratis/'
+description: 'Manage Linux storage with Stratis Manager. Create pools, volumes, and filesystems effortlessly using command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- stratis linux manager
-- linux stratis storage
-- stratis pool management
-- stratis volume control
-- linux xfs filesystem
-- stratis command line
-- stratis storage pool
-- stratis filesystem manager
-- linux stratis command
-- stratis storage administration
+  - stratis linux manager
+  - linux stratis storage
+  - stratis pool management
+  - stratis volume control
+  - linux xfs filesystem
+  - stratis command line
+  - stratis storage pool
+  - stratis filesystem manager
+  - linux stratis command
+  - stratis storage administration
 features:
-- Create and manage Stratis storage pools
-- Create and manage Stratis filesystems (volumes)
-- Extend existing Stratis pools with new devices
-- Mount Stratis volumes manually or automatically at boot
-- Delete Stratis volumes when no longer needed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage Stratis storage pools
+  - Create and manage Stratis filesystems (volumes)
+  - Extend existing Stratis pools with new devices
+  - Mount Stratis volumes manually or automatically at boot
+  - Delete Stratis volumes when no longer needed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # stratis

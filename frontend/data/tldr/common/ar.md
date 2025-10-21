@@ -1,29 +1,29 @@
 ---
-title: "Create Archive Files - Manage Unix Archives | Online Free DevTools by Hexmos"
+title: 'Create Archive Files - Manage Unix Archives | Online Free DevTools by Hexmos'
 name: ar
-path: "/freedevtools/tldr/common/ar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ar/"
-description: "Create archive files with ar, a powerful tool for managing Unix archives, static libraries, and Debian packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ar/'
+description: 'Create archive files with ar, a powerful tool for managing Unix archives, static libraries, and Debian packages. Free online tool, no registration required.'
 category: common
 keywords:
-- Unix archive manager
-- ar archive utility
-- Debian package creator
-- Static library tool
-- Archive file extractor
-- ar command line tool
-- .a archive management
-- .deb package manipulation
-- Linux archive tool
-- macOS archive tool
+  - Unix archive manager
+  - ar archive utility
+  - Debian package creator
+  - Static library tool
+  - Archive file extractor
+  - ar command line tool
+  - .a archive management
+  - .deb package manipulation
+  - Linux archive tool
+  - macOS archive tool
 features:
-- Extract members from archive files
-- List contents of archive files
-- Replace or add files to archives
-- Insert object file index
-- Create archives with object file index
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract members from archive files
+  - List contents of archive files
+  - Replace or add files to archives
+  - Insert object file index
+  - Create archives with object file index
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ar

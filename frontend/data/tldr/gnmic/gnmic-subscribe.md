@@ -1,29 +1,29 @@
 ---
-title: "GNMIC Subscribe - Control Network Device State Updates | Online Free DevTools by Hexmos"
+title: 'GNMIC Subscribe - Control Network Device State Updates | Online Free DevTools by Hexmos'
 name: gnmic-subscribe
-path: "/freedevtools/tldr/gnmic/gnmic-subscribe/"
-canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-subscribe/"
-description: "Control network device state updates with GNMIC Subscribe. Monitor real-time data streams and manage subscriptions using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/gnmic/gnmic-subscribe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gnmic/gnmic-subscribe/'
+description: 'Control network device state updates with GNMIC Subscribe. Monitor real-time data streams and manage subscriptions using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- gnmic subscribe
-- network device monitoring
-- state update control
-- telemetry data stream
-- gNMI protocol
-- command line interface
-- real-time data analysis
-- network automation
-- configuration management
-- data subscription management
+  - gnmic subscribe
+  - network device monitoring
+  - state update control
+  - telemetry data stream
+  - gNMI protocol
+  - command line interface
+  - real-time data analysis
+  - network automation
+  - configuration management
+  - data subscription management
 features:
-- Subscribe to specific data paths on network devices
-- Set custom sampling intervals for data updates
-- Filter updates to receive only on-change notifications
-- Specify data encoding formats for responses
-- Retrieve a single data update on demand
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Subscribe to specific data paths on network devices
+  - Set custom sampling intervals for data updates
+  - Filter updates to receive only on-change notifications
+  - Specify data encoding formats for responses
+  - Retrieve a single data update on demand
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnmic subscribe

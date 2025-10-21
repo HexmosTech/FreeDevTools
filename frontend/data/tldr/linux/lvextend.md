@@ -1,9 +1,9 @@
 ---
-title: "Lvextend - Increase Logical Volume Size | Online Free DevTools by Hexmos"
+title: 'Lvextend - Increase Logical Volume Size | Online Free DevTools by Hexmos'
 name: lvextend
-path: "/freedevtools/tldr/linux/lvextend/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lvextend/"
-description: "Increase volume size with Lvextend, a command-line tool for dynamic storage management. Resize logical volumes with ease using this free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lvextend/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lvextend/'
+description: 'Increase volume size with Lvextend, a command-line tool for dynamic storage management. Resize logical volumes with ease using this free online tool, no registration required.'
 category: linux
 keywords:
   - lvextend increase volume size
@@ -22,8 +22,8 @@ features:
   - Allocate free space from physical volumes
   - Dynamically increase volume capacity
   - Resize underlying filesystem after extension
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lvextend

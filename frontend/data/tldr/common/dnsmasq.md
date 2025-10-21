@@ -1,29 +1,29 @@
 ---
-title: "Control DNS Server - Manage DNS with dnsmasq | Online Free DevTools by Hexmos"
+title: 'Control DNS Server - Manage DNS with dnsmasq | Online Free DevTools by Hexmos'
 name: dnsmasq
-path: "/freedevtools/tldr/common/dnsmasq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dnsmasq/"
-description: "Control DNS server configurations with dnsmasq. Easily manage DHCP leases, DNS forwarding and TFTP services on your network. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dnsmasq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dnsmasq/'
+description: 'Control DNS server configurations with dnsmasq. Easily manage DHCP leases, DNS forwarding and TFTP services on your network. Free online tool, no registration required.'
 category: common
 keywords:
-- dns server management
-- dhcp server configuration
-- tftp server setup
-- dns forwarding linux
-- lightweight dns server
-- dnsmasq configuration file
-- local dns resolver
-- network boot configuration
-- dns caching server
-- dnsmasq command line
+  - dns server management
+  - dhcp server configuration
+  - tftp server setup
+  - dns forwarding linux
+  - lightweight dns server
+  - dnsmasq configuration file
+  - local dns resolver
+  - network boot configuration
+  - dns caching server
+  - dnsmasq command line
 features:
-- Start a lightweight DNS server
-- Configure DHCP address range
-- Enable verbose query logging
-- Specify a custom configuration file
-- Configure TFTP boot services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a lightweight DNS server
+  - Configure DHCP address range
+  - Enable verbose query logging
+  - Specify a custom configuration file
+  - Configure TFTP boot services
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnsmasq

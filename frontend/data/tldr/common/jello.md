@@ -1,29 +1,29 @@
 ---
-title: "Format JSON Data - Jello Processor using Python | Online Free DevTools by Hexmos"
+title: 'Format JSON Data - Jello Processor using Python | Online Free DevTools by Hexmos'
 name: jello
-path: "/freedevtools/tldr/common/jello/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jello/"
-description: "Format JSON data with Jello, a Python-powered JSON processor. Transform and manipulate JSON with ease using Python syntax. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jello/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jello/'
+description: 'Format JSON data with Jello, a Python-powered JSON processor. Transform and manipulate JSON with ease using Python syntax. Free online tool, no registration required.'
 category: common
 keywords:
-- JSON formatter
-- JSON processor
-- JSON Python syntax
-- JSON command line
-- JSON pretty print
-- JSON schema output
-- JSON data manipulation
-- JSON-Lines processing
-- Linux JSON tool
-- MacOS JSON formatter
+  - JSON formatter
+  - JSON processor
+  - JSON Python syntax
+  - JSON command line
+  - JSON pretty print
+  - JSON schema output
+  - JSON data manipulation
+  - JSON-Lines processing
+  - Linux JSON tool
+  - MacOS JSON formatter
 features:
-- Pretty-prints JSON and JSON-Lines data
-- Outputs JSON schema for data inspection
-- Extracts elements from arrays and objects
-- Supports JSON and JSON-Lines formats
-- Integrates Python syntax for transformations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pretty-prints JSON and JSON-Lines data
+  - Outputs JSON schema for data inspection
+  - Extracts elements from arrays and objects
+  - Supports JSON and JSON-Lines formats
+  - Integrates Python syntax for transformations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jello

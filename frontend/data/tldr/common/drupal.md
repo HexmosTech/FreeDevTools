@@ -1,29 +1,29 @@
 ---
-title: "Drupal - Generate Drupal Code | Online Free DevTools by Hexmos"
+title: 'Drupal - Generate Drupal Code | Online Free DevTools by Hexmos'
 name: drupal
-path: "/freedevtools/tldr/common/drupal/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/drupal/"
-description: "Generate Drupal code with Drupal Command. Build, interact, and debug Drupal projects effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/drupal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/drupal/'
+description: 'Generate Drupal code with Drupal Command. Build, interact, and debug Drupal projects effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- drupal command
-- drupal code generator
-- drupal boilerplate
-- drupal module manager
-- drupal cache manager
-- drupal site status
-- drupal development
-- php drupal
-- cli drupal
-- drupal console
+  - drupal command
+  - drupal code generator
+  - drupal boilerplate
+  - drupal module manager
+  - drupal cache manager
+  - drupal site status
+  - drupal development
+  - php drupal
+  - cli drupal
+  - drupal console
 features:
-- Generate boilerplate code for Drupal projects
-- Install and uninstall Drupal modules
-- Clear all Drupal caches
-- View current Drupal installation status
-- Interact with Drupal projects from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate boilerplate code for Drupal projects
+  - Install and uninstall Drupal modules
+  - Clear all Drupal caches
+  - View current Drupal installation status
+  - Interact with Drupal projects from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # drupal

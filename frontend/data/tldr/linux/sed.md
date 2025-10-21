@@ -1,9 +1,9 @@
 ---
-title: "Sed Stream Editor - Transform Text | Online Free DevTools by Hexmos"
+title: 'Sed Stream Editor - Transform Text | Online Free DevTools by Hexmos'
 name: sed
-path: "/freedevtools/tldr/linux/sed/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sed/"
-description: "Transform text efficiently with the Sed stream editor.  Perform powerful text manipulations using regular expressions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sed/'
+description: 'Transform text efficiently with the Sed stream editor.  Perform powerful text manipulations using regular expressions. Free online tool, no registration required.'
 category: linux
 keywords:
   - text stream editor
@@ -22,8 +22,8 @@ features:
   - Execute custom sed scripts.
   - Delete or insert lines in files.
   - Filter and transform text streams.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sed

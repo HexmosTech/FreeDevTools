@@ -1,29 +1,29 @@
 ---
-title: "Manage Keybase Identities - Control Key Directory | Online Free DevTools by Hexmos"
+title: 'Manage Keybase Identities - Control Key Directory | Online Free DevTools by Hexmos'
 name: keybase
-path: "/freedevtools/tldr/common/keybase/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/keybase/"
-description: "Manage Keybase identities and control your key directory with this free online tool. Securely map social media accounts to encryption keys, ensuring auditable proof. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/keybase/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/keybase/'
+description: 'Manage Keybase identities and control your key directory with this free online tool. Securely map social media accounts to encryption keys, ensuring auditable proof. Free online tool, no registration required.'
 category: common
 keywords:
-- Keybase identity manager
-- Social media key mapping
-- Encryption key directory
-- Publicly auditable keys
-- Keybase command line tool
-- Digital identity verification
-- Cryptographic key management
-- Keybase proof management
-- Secure communication tool
-- Open source key management
+  - Keybase identity manager
+  - Social media key mapping
+  - Encryption key directory
+  - Publicly auditable keys
+  - Keybase command line tool
+  - Digital identity verification
+  - Cryptographic key management
+  - Keybase proof management
+  - Secure communication tool
+  - Open source key management
 features:
-- Follow other Keybase users securely
-- Add and verify proofs for online identities
-- Sign files with cryptographic keys
-- Encrypt and decrypt files for secure sharing
-- Revoke devices and deprovision Keybase
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Follow other Keybase users securely
+  - Add and verify proofs for online identities
+  - Sign files with cryptographic keys
+  - Encrypt and decrypt files for secure sharing
+  - Revoke devices and deprovision Keybase
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # keybase

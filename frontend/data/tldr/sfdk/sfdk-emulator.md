@@ -1,29 +1,29 @@
 ---
-title: "SFDK Emulator - Control Sailfish OS Emulators | Online Free DevTools by Hexmos"
+title: 'SFDK Emulator - Control Sailfish OS Emulators | Online Free DevTools by Hexmos'
 name: sfdk-emulator
-path: "/freedevtools/tldr/sfdk/sfdk-emulator/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator/"
-description: "Control Sailfish OS emulators with SFDK Emulator. Manage emulator states, execute commands, and set properties for easy application testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-emulator/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-emulator/'
+description: 'Control Sailfish OS emulators with SFDK Emulator. Manage emulator states, execute commands, and set properties for easy application testing. Free online tool, no registration required.'
 category: common
 keywords:
-- Sailfish OS emulator
-- SFDK emulator control
-- Sailfish OS development
-- emulator management
-- Sailfish OS testing
-- Qt application development
-- Sailfish OS command line
-- application debugging
-- emulator property editor
-- Sailfish OS SDK
+  - Sailfish OS emulator
+  - SFDK emulator control
+  - Sailfish OS development
+  - emulator management
+  - Sailfish OS testing
+  - Qt application development
+  - Sailfish OS command line
+  - application debugging
+  - emulator property editor
+  - Sailfish OS SDK
 features:
-- List installed emulators
-- Start and stop emulators
-- Display emulator status
-- Execute commands within emulators
-- Set and show emulator properties
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List installed emulators
+  - Start and stop emulators
+  - Display emulator status
+  - Execute commands within emulators
+  - Set and show emulator properties
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk emulator

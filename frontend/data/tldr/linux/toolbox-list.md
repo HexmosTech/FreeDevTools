@@ -1,9 +1,9 @@
 ---
-title: "Toolbox List - Manage Containers & Images | Online Free DevTools by Hexmos"
+title: 'Toolbox List - Manage Containers & Images | Online Free DevTools by Hexmos'
 name: toolbox-list
-path: "/freedevtools/tldr/linux/toolbox-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-list/"
-description: "Manage toolbox containers and images efficiently with the toolbox list command.  View containers, images, or both simultaneously. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/toolbox-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/toolbox-list/'
+description: 'Manage toolbox containers and images efficiently with the toolbox list command.  View containers, images, or both simultaneously. Free online tool, no registration required.'
 category: linux
 keywords:
   - toolbox container management
@@ -22,8 +22,8 @@ features:
   - Display both containers and images simultaneously.
   - Filter the list to show only containers.
   - Filter the list to show only images.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # toolbox list

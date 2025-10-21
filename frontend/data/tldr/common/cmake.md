@@ -1,29 +1,29 @@
 ---
-title: "CMake - Generate Build Recipes | Online Free DevTools by Hexmos"
+title: 'CMake - Generate Build Recipes | Online Free DevTools by Hexmos'
 name: cmake
-path: "/freedevtools/tldr/common/cmake/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cmake/"
-description: "Generate build recipes with CMake, a cross-platform build automation system. Simplify software development, manage dependencies, and ensure consistent builds. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cmake/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cmake/'
+description: 'Generate build recipes with CMake, a cross-platform build automation system. Simplify software development, manage dependencies, and ensure consistent builds. Free online tool, no registration required.'
 category: common
 keywords:
-- CMake build automation
-- cross platform build system
-- CMakeLists.txt generator
-- CMake build recipe
-- C++ build automation
-- Linux build tool
-- macOS build tool
-- Windows build tool
-- software dependency manager
-- build artifact installation
+  - CMake build automation
+  - cross platform build system
+  - CMakeLists.txt generator
+  - CMake build recipe
+  - C++ build automation
+  - Linux build tool
+  - macOS build tool
+  - Windows build tool
+  - software dependency manager
+  - build artifact installation
 features:
-- Generate build recipes from CMakeLists.txt
-- Build software artifacts from generated recipes
-- Install build artifacts to a specified directory
-- Set build type using CMake variables
-- Run custom build targets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate build recipes from CMakeLists.txt
+  - Build software artifacts from generated recipes
+  - Install build artifacts to a specified directory
+  - Set build type using CMake variables
+  - Run custom build targets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cmake

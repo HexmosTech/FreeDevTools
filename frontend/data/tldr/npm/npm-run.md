@@ -1,29 +1,29 @@
 ---
-title: "NPM Run - Execute Scripts | Online Free DevTools by Hexmos"
+title: 'NPM Run - Execute Scripts | Online Free DevTools by Hexmos'
 name: npm-run
-path: "/freedevtools/tldr/npm/npm-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-run/"
-description: "Execute scripts effortlessly with NPM Run. Streamline your development workflow with custom commands and arguments. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-run/'
+description: 'Execute scripts effortlessly with NPM Run. Streamline your development workflow with custom commands and arguments. Free online tool, no registration required.'
 category: common
 keywords:
-- npm script runner
-- javascript command execution
-- node package manager scripts
-- npm run arguments
-- npm custom scripts
-- package.json scripts
-- npm start command
-- npm stop command
-- npm test command
-- cross-platform npm scripts
+  - npm script runner
+  - javascript command execution
+  - node package manager scripts
+  - npm run arguments
+  - npm custom scripts
+  - package.json scripts
+  - npm start command
+  - npm stop command
+  - npm test command
+  - cross-platform npm scripts
 features:
-- Execute custom scripts defined in package.json
-- Pass arguments and options to scripts
-- Run standard lifecycle scripts like start, stop, and test
-- Execute scripts using shorthand commands
-- Automate repetitive tasks within the development workflow
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute custom scripts defined in package.json
+  - Pass arguments and options to scripts
+  - Run standard lifecycle scripts like start, stop, and test
+  - Execute scripts using shorthand commands
+  - Automate repetitive tasks within the development workflow
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm run

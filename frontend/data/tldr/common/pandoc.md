@@ -1,29 +1,29 @@
 ---
-title: "Convert Documents - Pandoc File Converter | Online Free DevTools by Hexmos"
+title: 'Convert Documents - Pandoc File Converter | Online Free DevTools by Hexmos'
 name: pandoc
-path: "/freedevtools/tldr/common/pandoc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pandoc/"
-description: "Convert documents easily with Pandoc file converter. Effortlessly transform Markdown, HTML, LaTeX and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pandoc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pandoc/'
+description: 'Convert documents easily with Pandoc file converter. Effortlessly transform Markdown, HTML, LaTeX and more. Free online tool, no registration required.'
 category: common
 keywords:
-- markdown converter
-- document converter
-- file converter
-- pandoc converter
-- markdown to pdf
-- html to pdf
-- latex converter
-- ebook converter
-- document transformation
-- cross-platform document conversion
+  - markdown converter
+  - document converter
+  - file converter
+  - pandoc converter
+  - markdown to pdf
+  - html to pdf
+  - latex converter
+  - ebook converter
+  - document transformation
+  - cross-platform document conversion
 features:
-- Convert documents between various formats (Markdown, HTML, LaTeX, etc.)
-- Transform documents using Lua scripts
-- Convert Markdown to PDF using specified PDF engine
-- Specify input and output formats manually
-- Create standalone files with appropriate headers/footers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert documents between various formats (Markdown, HTML, LaTeX, etc.)
+  - Transform documents using Lua scripts
+  - Convert Markdown to PDF using specified PDF engine
+  - Specify input and output formats manually
+  - Create standalone files with appropriate headers/footers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pandoc

@@ -1,29 +1,29 @@
 ---
-title: "Search Command History - Smart Command Lookup | Online Free DevTools by Hexmos"
+title: 'Search Command History - Smart Command Lookup | Online Free DevTools by Hexmos'
 name: mcfly
-path: "/freedevtools/tldr/common/mcfly/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mcfly/"
-description: "Intelligently search command history with McFly, replacing Ctrl+R for smarter command lookup and recall across bash, zsh and fish shells. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mcfly/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mcfly/'
+description: 'Intelligently search command history with McFly, replacing Ctrl+R for smarter command lookup and recall across bash, zsh and fish shells. Free online tool, no registration required.'
 category: common
 keywords:
-- command history search
-- smart command lookup
-- shell history manager
-- bash command history
-- zsh command history
-- fish command history
-- command line history
-- terminal history
-- mcfly command line
-- intelligent command recall
+  - command history search
+  - smart command lookup
+  - shell history manager
+  - bash command history
+  - zsh command history
+  - fish command history
+  - command line history
+  - terminal history
+  - mcfly command line
+  - intelligent command recall
 features:
-- Intelligently search command history using relevance and context.
-- Replace default shell history search (Ctrl+R).
-- Integrate with bash, zsh, and fish shells.
-- Add and manage new commands to the history.
-- Transfer history between directories.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Intelligently search command history using relevance and context.
+  - Replace default shell history search (Ctrl+R).
+  - Integrate with bash, zsh, and fish shells.
+  - Add and manage new commands to the history.
+  - Transfer history between directories.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mcfly

@@ -1,29 +1,29 @@
 ---
-title: "Copy File - Copy Files and Directories | Online Free DevTools by Hexmos"
+title: 'Copy File - Copy Files and Directories | Online Free DevTools by Hexmos'
 name: cp
-path: "/freedevtools/tldr/common/cp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cp/"
-description: "Copy files easily with the cp command. Transfer directories recursively and manage file permissions efficiently with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/cp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cp/'
+description: 'Copy files easily with the cp command. Transfer directories recursively and manage file permissions efficiently with this free online tool, no registration required.'
 category: common
 keywords:
-- copy file
-- copy directory
-- linux cp command
-- macos cp command
-- gnu cp
-- recursive copy
-- cp verbose mode
-- copy with parents
-- copy symbolic links
-- file management command
+  - copy file
+  - copy directory
+  - linux cp command
+  - macos cp command
+  - gnu cp
+  - recursive copy
+  - cp verbose mode
+  - copy with parents
+  - copy symbolic links
+  - file management command
 features:
-- Copy files to new locations.
-- Recursively copy entire directories.
-- Preserve file attributes during copy.
-- Copy multiple files at once.
-- Follow symbolic links when copying.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy files to new locations.
+  - Recursively copy entire directories.
+  - Preserve file attributes during copy.
+  - Copy multiple files at once.
+  - Follow symbolic links when copying.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cp

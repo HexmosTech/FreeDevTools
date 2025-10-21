@@ -1,9 +1,9 @@
 ---
-title: "Disk Space Usage - Analyze Filesystem with df | Online Free DevTools by Hexmos"
+title: 'Disk Space Usage - Analyze Filesystem with df | Online Free DevTools by Hexmos'
 name: df
-path: "/freedevtools/tldr/freebsd/df/"
-canonical: "https://hexmos.com/freedevtools/tldr/freebsd/df/"
-description: "Analyze filesystem disk space usage with the df command.  View detailed information on free and used space, including filesystem types and inodes. Free online tool, no registration required."
+path: '/freedevtools/tldr/freebsd/df/'
+canonical: 'https://hexmos.com/freedevtools/tldr/freebsd/df/'
+description: 'Analyze filesystem disk space usage with the df command.  View detailed information on free and used space, including filesystem types and inodes. Free online tool, no registration required.'
 category: freebsd
 keywords:
   - disk space analyzer
@@ -22,8 +22,8 @@ features:
   - Filter disk usage information for a specific file or directory.
   - Provide detailed statistics on inodes (free and used).
   - Display filesystem types alongside usage information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # df

@@ -1,29 +1,29 @@
 ---
-title: "Run GitHub Screensavers - Animate Your Terminal | Online Free DevTools by Hexmos"
+title: 'Run GitHub Screensavers - Animate Your Terminal | Online Free DevTools by Hexmos'
 name: gh-screensaver
-path: "/freedevtools/tldr/gh/gh-screensaver/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-screensaver/"
-description: "Run GitHub screensavers with gh-screensaver. Animate your terminal with customizable screensavers like fireworks, marquee, and starfield. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-screensaver/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-screensaver/'
+description: 'Run GitHub screensavers with gh-screensaver. Animate your terminal with customizable screensavers like fireworks, marquee, and starfield. Free online tool, no registration required.'
 category: common
 keywords:
-- github screensaver
-- terminal screensaver
-- cli screensaver
-- github cli extension
-- gh extension
-- terminal animation
-- command line screensaver
-- screensaver customization
-- marquee text animation
-- starfield generator
+  - github screensaver
+  - terminal screensaver
+  - cli screensaver
+  - github cli extension
+  - gh extension
+  - terminal animation
+  - command line screensaver
+  - screensaver customization
+  - marquee text animation
+  - starfield generator
 features:
-- Display animated screensavers in the terminal
-- Customize screensaver type and parameters
-- List available screensavers
-- Configure marquee text and font
-- Adjust starfield density and speed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display animated screensavers in the terminal
+  - Customize screensaver type and parameters
+  - List available screensavers
+  - Configure marquee text and font
+  - Adjust starfield density and speed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh screensaver

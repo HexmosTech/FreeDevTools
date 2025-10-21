@@ -1,29 +1,29 @@
 ---
-title: "Create Encrypted Filesystems - with encfs | Online Free DevTools by Hexmos"
+title: 'Create Encrypted Filesystems - with encfs | Online Free DevTools by Hexmos'
 name: encfs
-path: "/freedevtools/tldr/common/encfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/encfs/"
-description: "Create encrypted filesystems with encfs. Secure your data with ease using this command line tool for creating and mounting virtual encrypted storage. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/encfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/encfs/'
+description: 'Create encrypted filesystems with encfs. Secure your data with ease using this command line tool for creating and mounting virtual encrypted storage. Free online tool, no registration required.'
 category: common
 keywords:
-- encrypted filesystem creator
-- secure data storage
-- virtual encrypted volume
-- encfs encryption
-- fuse filesystem mount
-- command line encryption tool
-- linux encryption
-- macos encryption
-- cross-platform encryption
-- data privacy tool
+  - encrypted filesystem creator
+  - secure data storage
+  - virtual encrypted volume
+  - encfs encryption
+  - fuse filesystem mount
+  - command line encryption tool
+  - linux encryption
+  - macos encryption
+  - cross-platform encryption
+  - data privacy tool
 features:
-- Mount encrypted virtual filesystems
-- Create new encrypted storage containers
-- Manage reverse-encrypted snapshots of directories
-- Operate in foreground for debugging
-- Utilize standard configuration options for encryption
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Mount encrypted virtual filesystems
+  - Create new encrypted storage containers
+  - Manage reverse-encrypted snapshots of directories
+  - Operate in foreground for debugging
+  - Utilize standard configuration options for encryption
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # encfs

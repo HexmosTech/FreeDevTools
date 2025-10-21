@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import SvgViewerSkeleton from "./_SvgViewerSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import SvgViewerSkeleton from './_SvgViewerSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Upload,
   FileText,
@@ -20,9 +20,9 @@ import {
   Download,
   Maximize2,
   Minimize2,
-} from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from 'lucide-react';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 // SVG Upload Component
 interface SvgUploadProps {
   onSvgSelect: (content: string) => void;
@@ -40,9 +40,9 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   }, []);
@@ -55,7 +55,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
 
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
-        if (file.type === "image/svg+xml" || file.name.endsWith(".svg")) {
+        if (file.type === 'image/svg+xml' || file.name.endsWith('.svg')) {
           const reader = new FileReader();
           reader.onload = (e) => {
             const content = e.target?.result as string;
@@ -63,7 +63,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
           };
           reader.readAsText(file);
         } else {
-          toast.error("Please select a valid SVG file");
+          toast.error('Please select a valid SVG file');
         }
       }
     },
@@ -75,7 +75,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
       e.preventDefault();
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
-        if (file.type === "image/svg+xml" || file.name.endsWith(".svg")) {
+        if (file.type === 'image/svg+xml' || file.name.endsWith('.svg')) {
           const reader = new FileReader();
           reader.onload = (e) => {
             const content = e.target?.result as string;
@@ -83,7 +83,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
           };
           reader.readAsText(file);
         } else {
-          toast.error("Please select a valid SVG file");
+          toast.error('Please select a valid SVG file');
         }
       }
     },
@@ -93,10 +93,11 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
   return (
     <div className="space-y-4">
       <div
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
-          }`}
+        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          dragActive
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+            : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500'
+        }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -141,7 +142,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                Drop your SVG file here, or{" "}
+                Drop your SVG file here, or{' '}
                 <span className="text-blue-600 dark:text-blue-400">browse</span>
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -156,9 +157,9 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
 };
 
 const SvgViewer: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [svgDataUrl, setSvgDataUrl] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [svgDataUrl, setSvgDataUrl] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [svgDimensions, setSvgDimensions] = useState<{
@@ -177,8 +178,8 @@ const SvgViewer: React.FC = () => {
 
   const processSvg = useCallback((svgContent: string) => {
     if (!svgContent.trim()) {
-      setSvgDataUrl("");
-      setError("");
+      setSvgDataUrl('');
+      setError('');
       setSvgDimensions({});
       return;
     }
@@ -186,11 +187,14 @@ const SvgViewer: React.FC = () => {
     try {
       // Check if content contains SVG
       // Normalize input: unescape common HTML entities that may be pasted
-      const normalized = svgContent.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+      const normalized = svgContent
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&');
 
-      if (!normalized.toLowerCase().includes("<svg")) {
-        setError("Input does not contain a valid SVG element");
-        setSvgDataUrl("");
+      if (!normalized.toLowerCase().includes('<svg')) {
+        setError('Input does not contain a valid SVG element');
+        setSvgDataUrl('');
         setSvgDimensions({});
         return;
       }
@@ -201,8 +205,8 @@ const SvgViewer: React.FC = () => {
         const widthMatch = svgTag.match(/width\s*=\s*["']([^"']+)["']/i);
         const heightMatch = svgTag.match(/height\s*=\s*["']([^"']+)["']/i);
         setSvgDimensions({
-          width: widthMatch ? widthMatch[1] : "auto",
-          height: heightMatch ? heightMatch[1] : "auto",
+          width: widthMatch ? widthMatch[1] : 'auto',
+          height: heightMatch ? heightMatch[1] : 'auto',
         });
       }
 
@@ -210,27 +214,30 @@ const SvgViewer: React.FC = () => {
       let finalSvg = normalized;
       const hasXmlns = /<svg[^>]*xmlns=["'][^"']+["']/i.test(finalSvg);
       if (!hasXmlns) {
-        finalSvg = finalSvg.replace(/<svg(\s|>)/i, '<svg xmlns="http://www.w3.org/2000/svg"$1');
+        finalSvg = finalSvg.replace(
+          /<svg(\s|>)/i,
+          '<svg xmlns="http://www.w3.org/2000/svg"$1'
+        );
       }
 
       // Create data URL
-      const blob = new Blob([finalSvg], { type: "image/svg+xml" });
+      const blob = new Blob([finalSvg], { type: 'image/svg+xml' });
       const reader = new FileReader();
 
       reader.onload = () => {
         setSvgDataUrl(reader.result as string);
-        setError("");
+        setError('');
       };
 
       reader.onerror = () => {
-        setError("Failed to process SVG content");
-        setSvgDataUrl("");
+        setError('Failed to process SVG content');
+        setSvgDataUrl('');
       };
 
       reader.readAsDataURL(blob);
     } catch (err) {
-      setError("Invalid SVG format");
-      setSvgDataUrl("");
+      setError('Invalid SVG format');
+      setSvgDataUrl('');
       setSvgDimensions({});
     }
   }, []);
@@ -253,12 +260,12 @@ const SvgViewer: React.FC = () => {
   );
 
   const handleClear = () => {
-    setInput("");
-    setSvgDataUrl("");
-    setError("");
+    setInput('');
+    setSvgDataUrl('');
+    setError('');
     setSelectedFile(null);
     setSvgDimensions({});
-    toast.success("Cleared all fields");
+    toast.success('Cleared all fields');
   };
 
   const handleSampleSvg = () => {
@@ -291,22 +298,22 @@ const SvgViewer: React.FC = () => {
 
     setInput(sampleSvg);
     processSvg(sampleSvg);
-    toast.success("Sample SVG loaded!");
+    toast.success('Sample SVG loaded!');
   };
 
   const downloadSvg = () => {
     if (!input) return;
 
-    const blob = new Blob([input], { type: "image/svg+xml" });
+    const blob = new Blob([input], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "image.svg";
+    a.download = 'image.svg';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success("SVG downloaded successfully!");
+    toast.success('SVG downloaded successfully!');
   };
 
   return (
@@ -432,7 +439,7 @@ Example:
                           ) : (
                             <Maximize2 className="w-4 h-4" />
                           )}
-                          {isFullscreen ? "Minimize" : "Fullscreen"}
+                          {isFullscreen ? 'Minimize' : 'Fullscreen'}
                         </Button>
                       </div>
                     )}
@@ -455,7 +462,7 @@ Example:
                             Width:
                           </span>
                           <span className="ml-2 text-slate-900 dark:text-slate-100">
-                            {svgDimensions.width || "Not specified"}
+                            {svgDimensions.width || 'Not specified'}
                           </span>
                         </div>
                         <div>
@@ -463,7 +470,7 @@ Example:
                             Height:
                           </span>
                           <span className="ml-2 text-slate-900 dark:text-slate-100">
-                            {svgDimensions.height || "Not specified"}
+                            {svgDimensions.height || 'Not specified'}
                           </span>
                         </div>
                         <div>
@@ -478,10 +485,11 @@ Example:
 
                       {/* SVG Display */}
                       <div
-                        className={`border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-white dark:bg-slate-900 overflow-auto ${isFullscreen
-                            ? "fixed inset-4 z-50 bg-white dark:bg-slate-900"
-                            : "max-h-96"
-                          }`}
+                        className={`border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-white dark:bg-slate-900 overflow-auto ${
+                          isFullscreen
+                            ? 'fixed inset-4 z-50 bg-white dark:bg-slate-900'
+                            : 'max-h-96'
+                        }`}
                       >
                         <div className="flex items-center justify-center min-h-[200px]">
                           <img
@@ -489,8 +497,8 @@ Example:
                             alt="SVG Preview"
                             className="max-w-full max-h-full object-contain"
                             onError={() => {
-                              setError("Failed to render SVG image");
-                              setSvgDataUrl("");
+                              setError('Failed to render SVG image');
+                              setSvgDataUrl('');
                             }}
                           />
                         </div>
@@ -599,11 +607,11 @@ Example:
                         &lt;svg
                       </span>
                       <span className="text-blue-600 dark:text-blue-400">
-                        {" "}
+                        {' '}
                         width="100" height="100"
                       </span>
                       <span className="text-green-600 dark:text-green-400">
-                        {" "}
+                        {' '}
                         xmlns="http://www.w3.org/2000/svg"
                       </span>
                       <span className="text-purple-600 dark:text-purple-400">
@@ -614,11 +622,11 @@ Example:
                         &lt;circle
                       </span>
                       <span className="text-blue-600 dark:text-blue-400">
-                        {" "}
+                        {' '}
                         cx="50" cy="50" r="40" fill="blue"
                       </span>
                       <span className="text-orange-600 dark:text-orange-400">
-                        {" "}
+                        {' '}
                         /&gt;
                       </span>
                       <br />
@@ -861,7 +869,7 @@ Example:
                           MDN SVG Documentation
                         </a>
                         {
-                          " - Comprehensive guide to SVG elements and attributes"
+                          ' - Comprehensive guide to SVG elements and attributes'
                         }
                       </div>
                       <div>
@@ -873,7 +881,7 @@ Example:
                         >
                           W3C SVG Specification
                         </a>
-                        {" - Official SVG 2.0 specification"}
+                        {' - Official SVG 2.0 specification'}
                       </div>
                       <div>
                         <a
@@ -884,7 +892,7 @@ Example:
                         >
                           SVG Optimizer Tools
                         </a>
-                        {" - Online tools for SVG optimization"}
+                        {' - Online tools for SVG optimization'}
                       </div>
                     </div>
                   </div>

@@ -1,29 +1,29 @@
 ---
-title: "Run Shadowsocks Client - SOCKS5 Proxy | Online Free DevTools by Hexmos"
+title: 'Run Shadowsocks Client - SOCKS5 Proxy | Online Free DevTools by Hexmos'
 name: ss-local
-path: "/freedevtools/tldr/common/ss-local/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ss-local/"
-description: "Run Shadowsocks client as a SOCKS5 proxy with ss-local. Secure your internet traffic and bypass censorship with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ss-local/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ss-local/'
+description: 'Run Shadowsocks client as a SOCKS5 proxy with ss-local. Secure your internet traffic and bypass censorship with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- shadowsocks client
-- socks5 proxy
-- proxy client
-- ss-local command
-- shadowsocks libev
-- secure internet traffic
-- censorship bypass
-- network proxy
-- shadowsocks configuration
-- proxy server
+  - shadowsocks client
+  - socks5 proxy
+  - proxy client
+  - ss-local command
+  - shadowsocks libev
+  - secure internet traffic
+  - censorship bypass
+  - network proxy
+  - shadowsocks configuration
+  - proxy server
 features:
-- Create a SOCKS5 proxy using Shadowsocks protocol.
-- Connect to a Shadowsocks server using specified parameters.
-- Utilize configuration files for easy setup.
-- Support plugin functionality for enhanced obfuscation.
-- Enable TCP fast open for improved performance.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create a SOCKS5 proxy using Shadowsocks protocol.
+  - Connect to a Shadowsocks server using specified parameters.
+  - Utilize configuration files for easy setup.
+  - Support plugin functionality for enhanced obfuscation.
+  - Enable TCP fast open for improved performance.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ss-local

@@ -1,29 +1,29 @@
 ---
-title: "Image Viewer - View Images in CLI | Online Free DevTools by Hexmos"
+title: 'Image Viewer - View Images in CLI | Online Free DevTools by Hexmos'
 name: imv
-path: "/freedevtools/tldr/linux/imv/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/imv/"
-description: "View images instantly with imv, a command-line image viewer for Linux. Supports multiple image formats and tiling window managers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/imv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/imv/'
+description: 'View images instantly with imv, a command-line image viewer for Linux. Supports multiple image formats and tiling window managers. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux image viewer
-- command line image viewer
-- terminal image viewer
-- tiling window manager image viewer
-- PSD image viewer linux
-- wayland image viewer
-- X11 image viewer
-- image slideshow linux
-- multiple image viewer linux
-- CLI image manipulation
+  - linux image viewer
+  - command line image viewer
+  - terminal image viewer
+  - tiling window manager image viewer
+  - PSD image viewer linux
+  - wayland image viewer
+  - X11 image viewer
+  - image slideshow linux
+  - multiple image viewer linux
+  - CLI image manipulation
 features:
-- View multiple images from the command line
-- Display images in fullscreen mode
-- Recursively view images from a directory
-- Create slideshows with configurable display time
-- View images directly from web URLs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View multiple images from the command line
+  - Display images in fullscreen mode
+  - Recursively view images from a directory
+  - Create slideshows with configurable display time
+  - View images directly from web URLs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # imv

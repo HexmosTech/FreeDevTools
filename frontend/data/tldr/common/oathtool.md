@@ -1,9 +1,9 @@
 ---
-title: "Generate TOTP Token - OATHTool | Online Free DevTools by Hexmos"
+title: 'Generate TOTP Token - OATHTool | Online Free DevTools by Hexmos'
 name: oathtool
-path: "/freedevtools/tldr/common/oathtool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/oathtool/"
-description: "Generate TOTP tokens instantly with OATHTool. Validate tokens and manage two-factor authentication secrets securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/oathtool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/oathtool/'
+description: 'Generate TOTP tokens instantly with OATHTool. Validate tokens and manage two-factor authentication secrets securely. Free online tool, no registration required.'
 category: common
 keywords:
   - TOTP token generation
@@ -22,8 +22,8 @@ features:
   - Generate tokens for specific times.
   - Support base32 encoded secrets.
   - Manage OATH one-time passwords.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # oathtool

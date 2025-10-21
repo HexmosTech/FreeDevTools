@@ -1,9 +1,9 @@
 ---
-title: "Tod - Create Todoist Tasks | Online Free DevTools by Hexmos"
+title: 'Tod - Create Todoist Tasks | Online Free DevTools by Hexmos'
 name: tod
-path: "/freedevtools/tldr/linux/tod/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tod/"
-description: "Create Todoist tasks quickly with Tod, a tiny Rust client. Manage projects, add due dates, and utilize natural language processing for efficient task management. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tod/'
+description: 'Create Todoist tasks quickly with Tod, a tiny Rust client. Manage projects, add due dates, and utilize natural language processing for efficient task management. Free online tool, no registration required.'
 category: linux
 keywords:
   - todoist task creator
@@ -22,8 +22,8 @@ features:
   - Add tasks to specific projects.
   - Retrieve next tasks from a project.
   - View scheduled tasks for a given project.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tod

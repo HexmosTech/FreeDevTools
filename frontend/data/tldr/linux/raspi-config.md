@@ -1,9 +1,9 @@
 ---
-title: "Configure Raspberry Pi - Control System Settings with raspi-config | Online Free DevTools by Hexmos"
+title: 'Configure Raspberry Pi - Control System Settings with raspi-config | Online Free DevTools by Hexmos'
 name: raspi-config
-path: "/freedevtools/tldr/linux/raspi-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/raspi-config/"
-description: "Configure Raspberry Pi settings easily with raspi-config.  Manage network interfaces, boot options, and more using this ncurses interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/raspi-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/raspi-config/'
+description: 'Configure Raspberry Pi settings easily with raspi-config.  Manage network interfaces, boot options, and more using this ncurses interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - raspberry pi configuration
@@ -22,8 +22,8 @@ features:
   - Set internationalization options (locale, keyboard layout)
   - Manage user accounts and passwords
   - Expand filesystem to fill SD card
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # raspi-config

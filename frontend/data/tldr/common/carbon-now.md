@@ -1,29 +1,29 @@
 ---
-title: "Create Code Images - Carbon-now CLI | Online Free DevTools by Hexmos"
+title: 'Create Code Images - Carbon-now CLI | Online Free DevTools by Hexmos'
 name: carbon-now
-path: "/freedevtools/tldr/common/carbon-now/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/carbon-now/"
-description: "Create beautiful code images instantly with carbon-now CLI. Generate shareable code snippets with syntax highlighting and customizable themes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/carbon-now/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/carbon-now/'
+description: 'Create beautiful code images instantly with carbon-now CLI. Generate shareable code snippets with syntax highlighting and customizable themes. Free online tool, no registration required.'
 category: common
 keywords:
-- code image generator
-- carbon-now cli
-- code snippet image
-- source code to image
-- code screenshot tool
-- code sharing tool
-- carbon now command line
-- cli image generator
-- code image from file
-- terminal image generator
+  - code image generator
+  - carbon-now cli
+  - code snippet image
+  - source code to image
+  - code screenshot tool
+  - code sharing tool
+  - carbon now command line
+  - cli image generator
+  - code image from file
+  - terminal image generator
 features:
-- Generate images from code files
-- Create images from clipboard content
-- Generate images from standard input
-- Customize images with interactive settings
-- Load image settings from saved presets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate images from code files
+  - Create images from clipboard content
+  - Generate images from standard input
+  - Customize images with interactive settings
+  - Load image settings from saved presets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # carbon-now

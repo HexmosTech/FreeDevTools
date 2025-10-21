@@ -1,9 +1,9 @@
 ---
-title: "List Logical Volumes - Scan LVM Disks | Online Free DevTools by Hexmos"
+title: 'List Logical Volumes - Scan LVM Disks | Online Free DevTools by Hexmos'
 name: lvscan
-path: "/freedevtools/tldr/linux/lvscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lvscan/"
-description: "List logical volumes quickly with lvscan. Efficiently manage LVM disks and storage space in Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lvscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lvscan/'
+description: 'List logical volumes quickly with lvscan. Efficiently manage LVM disks and storage space in Linux. Free online tool, no registration required.'
 category: linux
 keywords:
   - lvm logical volume scan
@@ -22,8 +22,8 @@ features:
   - Show only inactive logical volumes
   - Output logical volume data in JSON format
   - Provide a comprehensive overview of LVM disk configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lvscan

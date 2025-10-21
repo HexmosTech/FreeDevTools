@@ -1,29 +1,29 @@
 ---
-title: "Control Header - Keep File Header with Command | Online Free DevTools by Hexmos"
+title: 'Control Header - Keep File Header with Command | Online Free DevTools by Hexmos'
 name: keep-header
-path: "/freedevtools/tldr/common/keep-header/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/keep-header/"
-description: "Control header lines with keep-header. Preserve the first line of files while running commands. Simplify data processing with header preservation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/keep-header/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/keep-header/'
+description: 'Control header lines with keep-header. Preserve the first line of files while running commands. Simplify data processing with header preservation. Free online tool, no registration required.'
 category: common
 keywords:
-- file header preservation
-- command line header control
-- tsv header manipulation
-- csv header processing
-- sort header retention
-- grep header preservation
-- linux header utility
-- macos header utility
-- stdin header processing
-- file processing header
+  - file header preservation
+  - command line header control
+  - tsv header manipulation
+  - csv header processing
+  - sort header retention
+  - grep header preservation
+  - linux header utility
+  - macos header utility
+  - stdin header processing
+  - file processing header
 features:
-- Preserve the first line of a file during command execution
-- Pass the header line directly to stdout
-- Process data while retaining header context
-- Integrate with standard command-line utilities like sort and grep
-- Handle input from stdin while preserving header
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Preserve the first line of a file during command execution
+  - Pass the header line directly to stdout
+  - Process data while retaining header context
+  - Integrate with standard command-line utilities like sort and grep
+  - Handle input from stdin while preserving header
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # keep-header

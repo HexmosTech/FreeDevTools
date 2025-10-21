@@ -1,29 +1,29 @@
 ---
-title: "XFCE4 Terminal - Control Linux Terminal | Online Free DevTools by Hexmos"
+title: 'XFCE4 Terminal - Control Linux Terminal | Online Free DevTools by Hexmos'
 name: xfce4-terminal
-path: "/freedevtools/tldr/linux/xfce4-terminal/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xfce4-terminal/"
-description: "Control Linux terminal sessions with XFCE4 Terminal. Manage tabs, execute commands and customize titles with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xfce4-terminal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xfce4-terminal/'
+description: 'Control Linux terminal sessions with XFCE4 Terminal. Manage tabs, execute commands and customize titles with ease. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux terminal control
-- xfce4-terminal command
-- linux command execution
-- terminal tab manager
-- shell command launcher
-- linux session manager
-- xfce4 terminal emulator
-- terminal command hold
-- initial title terminal
-- linux command line
+  - linux terminal control
+  - xfce4-terminal command
+  - linux command execution
+  - terminal tab manager
+  - shell command launcher
+  - linux session manager
+  - xfce4 terminal emulator
+  - terminal command hold
+  - initial title terminal
+  - linux command line
 features:
-- Open new terminal windows
-- Set custom terminal titles
-- Execute commands in new tabs
-- Keep terminals open after command completion
-- Open multiple tabs with command execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open new terminal windows
+  - Set custom terminal titles
+  - Execute commands in new tabs
+  - Keep terminals open after command completion
+  - Open multiple tabs with command execution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xfce4-terminal

@@ -1,29 +1,29 @@
 ---
-title: "Inspect HTTP Requests - Control Wuzz Interactions | Online Free DevTools by Hexmos"
+title: 'Inspect HTTP Requests - Control Wuzz Interactions | Online Free DevTools by Hexmos'
 name: wuzz
-path: "/freedevtools/tldr/common/wuzz/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wuzz/"
-description: "Inspect HTTP requests with Wuzz. Interactively control HTTP requests and responses for debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wuzz/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wuzz/'
+description: 'Inspect HTTP requests with Wuzz. Interactively control HTTP requests and responses for debugging. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP request inspection
-- Wuzz HTTP debugging
-- Interactive HTTP client
-- CLI HTTP inspector
-- HTTP request analysis
-- HTTP response analyzer
-- Terminal HTTP tool
-- HTTP request command line
-- Linux HTTP inspector
-- MacOS HTTP inspector
+  - HTTP request inspection
+  - Wuzz HTTP debugging
+  - Interactive HTTP client
+  - CLI HTTP inspector
+  - HTTP request analysis
+  - HTTP response analyzer
+  - Terminal HTTP tool
+  - HTTP request command line
+  - Linux HTTP inspector
+  - MacOS HTTP inspector
 features:
-- Interactively inspect HTTP requests
-- Control HTTP responses in terminal
-- Navigate Wuzz views easily
-- Send HTTP requests from the interface
-- Display Wuzz help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Interactively inspect HTTP requests
+  - Control HTTP responses in terminal
+  - Navigate Wuzz views easily
+  - Send HTTP requests from the interface
+  - Display Wuzz help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wuzz

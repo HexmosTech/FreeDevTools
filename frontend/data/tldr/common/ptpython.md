@@ -1,29 +1,29 @@
 ---
-title: "Better Python REPL - Enhanced Shell | Online Free DevTools by Hexmos"
+title: 'Better Python REPL - Enhanced Shell | Online Free DevTools by Hexmos'
 name: ptpython
-path: "/freedevtools/tldr/common/ptpython/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ptpython/"
-description: "Enhance Python REPL experience with ptpython. Interactive shell featuring auto-completion and syntax highlighting. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ptpython/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ptpython/'
+description: 'Enhance Python REPL experience with ptpython. Interactive shell featuring auto-completion and syntax highlighting. Free online tool, no registration required.'
 category: common
 keywords:
-- python repl
-- interactive python shell
-- ptpython repl
-- enhanced python repl
-- python debugger
-- command line repl
-- python console
-- repl for linux
-- repl for macos
-- repl with syntax highlighting
+  - python repl
+  - interactive python shell
+  - ptpython repl
+  - enhanced python repl
+  - python debugger
+  - command line repl
+  - python console
+  - repl for linux
+  - repl for macos
+  - repl with syntax highlighting
 features:
-- Start an interactive Python REPL session
-- Execute a specified Python file within the REPL
-- Open menu for configuration and settings
-- Access command history for previous inputs
-- Toggle paste mode to handle multi-line code snippets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive Python REPL session
+  - Execute a specified Python file within the REPL
+  - Open menu for configuration and settings
+  - Access command history for previous inputs
+  - Toggle paste mode to handle multi-line code snippets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ptpython

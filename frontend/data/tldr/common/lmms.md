@@ -1,29 +1,29 @@
 ---
-title: "LMMS - Create Music Tracks with Open Source DAW | Online Free DevTools by Hexmos"
+title: 'LMMS - Create Music Tracks with Open Source DAW | Online Free DevTools by Hexmos'
 name: lmms
-path: "/freedevtools/tldr/common/lmms/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lmms/"
-description: "Create music tracks with LMMS, the free and open-source digital audio workstation. Edit, render, and compose music with this cross-platform tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lmms/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lmms/'
+description: 'Create music tracks with LMMS, the free and open-source digital audio workstation. Edit, render, and compose music with this cross-platform tool. Free online tool, no registration required.'
 category: common
 keywords:
-- MMPZ Project Editor
-- Digital Audio Workstation
-- Music Composition Software
-- Audio Rendering Tool
-- Open Source DAW
-- Cross-Platform Music Production
-- LMMS Audio Editor
-- LMMS Project Renderer
-- Music Arrangement Software
-- MIDI Import LMMS
+  - MMPZ Project Editor
+  - Digital Audio Workstation
+  - Music Composition Software
+  - Audio Rendering Tool
+  - Open Source DAW
+  - Cross-Platform Music Production
+  - LMMS Audio Editor
+  - LMMS Project Renderer
+  - Music Arrangement Software
+  - MIDI Import LMMS
 features:
-- Render LMMS project files to audio
-- Dump LMMS project files as XML
-- Import MIDI and Hydrogen files
-- Start the LMMS GUI with custom configurations
-- Render individual tracks from a project file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render LMMS project files to audio
+  - Dump LMMS project files as XML
+  - Import MIDI and Hydrogen files
+  - Start the LMMS GUI with custom configurations
+  - Render individual tracks from a project file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lmms

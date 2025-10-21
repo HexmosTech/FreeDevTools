@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface ToolGridContainerProps {
   children: React.ReactNode;
@@ -7,7 +7,7 @@ interface ToolGridContainerProps {
 
 const ToolGridContainer = ({
   children,
-  className = "",
+  className = '',
 }: ToolGridContainerProps) => {
   return (
     <div

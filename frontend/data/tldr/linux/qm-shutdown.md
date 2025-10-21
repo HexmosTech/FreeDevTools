@@ -1,29 +1,29 @@
 ---
-title: "QM Shutdown - Control Virtual Machines | Online Free DevTools by Hexmos"
+title: 'QM Shutdown - Control Virtual Machines | Online Free DevTools by Hexmos'
 name: qm-shutdown
-path: "/freedevtools/tldr/linux/qm-shutdown/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-shutdown/"
-description: "Control virtual machines with QM Shutdown. Power off, stop, and manage VMs on Linux using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-shutdown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-shutdown/'
+description: 'Control virtual machines with QM Shutdown. Power off, stop, and manage VMs on Linux using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- qm shutdown
-- qemu shutdown
-- kvm shutdown
-- virtual machine shutdown
-- linux vm shutdown
-- proxmox shutdown
-- vm power off
-- virtual machine manager
-- command line vm control
-- qm command linux
+  - qm shutdown
+  - qemu shutdown
+  - kvm shutdown
+  - virtual machine shutdown
+  - linux vm shutdown
+  - proxmox shutdown
+  - vm power off
+  - virtual machine manager
+  - command line vm control
+  - qm command linux
 features:
-- Shutdown virtual machines on QEMU/KVM
-- Wait for a specified timeout before shutting down
-- Skip storage volume deactivation during shutdown
-- Bypass lock checks for shutdown (root only)
-- Force stop and shutdown a virtual machine
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Shutdown virtual machines on QEMU/KVM
+  - Wait for a specified timeout before shutting down
+  - Skip storage volume deactivation during shutdown
+  - Bypass lock checks for shutdown (root only)
+  - Force stop and shutdown a virtual machine
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm shutdown

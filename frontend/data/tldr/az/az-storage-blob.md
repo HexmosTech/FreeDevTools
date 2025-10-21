@@ -1,29 +1,29 @@
 ---
-title: "Storage Blob - Manage Azure Blobs | Online Free DevTools by Hexmos"
+title: 'Storage Blob - Manage Azure Blobs | Online Free DevTools by Hexmos'
 name: az-storage-blob
-path: "/freedevtools/tldr/az/az-storage-blob/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-blob/"
-description: "Manage Azure storage blobs with az-storage-blob. Upload, download, delete, and generate SAS tokens for your blobs. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-storage-blob/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-storage-blob/'
+description: 'Manage Azure storage blobs with az-storage-blob. Upload, download, delete, and generate SAS tokens for your blobs. Free online tool, no registration required.'
 category: common
 keywords:
-- azure blob manager
-- azure storage blob download
-- azure storage blob upload
-- azure storage blob delete
-- azure blob sas generator
-- azure blob command line
-- az storage blob linux
-- az storage blob windows
-- az storage blob macos
-- azure blob storage management
+  - azure blob manager
+  - azure storage blob download
+  - azure storage blob upload
+  - azure storage blob delete
+  - azure blob sas generator
+  - azure blob command line
+  - az storage blob linux
+  - az storage blob windows
+  - az storage blob macos
+  - azure blob storage management
 features:
-- Download blobs from Azure Storage
-- Upload files to Azure Blob storage
-- Delete blob objects from containers
-- Generate shared access signatures (SAS) for blobs
-- Manage blobs using the Azure CLI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download blobs from Azure Storage
+  - Upload files to Azure Blob storage
+  - Delete blob objects from containers
+  - Generate shared access signatures (SAS) for blobs
+  - Manage blobs using the Azure CLI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az storage blob

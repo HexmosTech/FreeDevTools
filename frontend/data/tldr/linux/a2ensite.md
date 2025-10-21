@@ -1,9 +1,9 @@
 ---
-title: "a2ensite - Enable Apache Virtual Hosts | Online Free DevTools by Hexmos"
+title: 'a2ensite - Enable Apache Virtual Hosts | Online Free DevTools by Hexmos'
 name: a2ensite
-path: "/freedevtools/tldr/linux/a2ensite/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/a2ensite/"
-description: "Enable Apache virtual hosts easily with a2ensite.  Manage and control your website configurations on Debian-based systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/a2ensite/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/a2ensite/'
+description: 'Enable Apache virtual hosts easily with a2ensite.  Manage and control your website configurations on Debian-based systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - a2ensite command
@@ -22,8 +22,8 @@ features:
   - Integrates seamlessly with the Apache2 web server.
   - Allows for quick enabling and disabling of virtual hosts.
   - Provides a command-line interface for managing website configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # a2ensite

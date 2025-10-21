@@ -1,29 +1,29 @@
 ---
-title: "Generate hledger Register - Account Balances | Online Free DevTools by Hexmos"
+title: 'Generate hledger Register - Account Balances | Online Free DevTools by Hexmos'
 name: hledger-aregister
-path: "/freedevtools/tldr/hledger/hledger-aregister/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-aregister/"
-description: "Generate account registers with hledger-aregister, display transactions and balances per account. Control your ledger entries efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-aregister/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-aregister/'
+description: 'Generate account registers with hledger-aregister, display transactions and balances per account. Control your ledger entries efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- hledger account register
-- hledger aregister command
-- hledger accounting tool
-- hledger balance sheet
-- ledger transaction viewer
-- command line accounting
-- hledger finance management
-- hledger reporting
-- ledger CLI
-- plaintext accounting
+  - hledger account register
+  - hledger aregister command
+  - hledger accounting tool
+  - hledger balance sheet
+  - ledger transaction viewer
+  - command line accounting
+  - hledger finance management
+  - hledger reporting
+  - ledger CLI
+  - plaintext accounting
 features:
-- Display transactions for a specified account
-- Calculate and show running balances for each transaction
-- Filter transactions by clearance status
-- Customize output width for readability
-- Include transactions from forecast rules
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display transactions for a specified account
+  - Calculate and show running balances for each transaction
+  - Filter transactions by clearance status
+  - Customize output width for readability
+  - Include transactions from forecast rules
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger aregister

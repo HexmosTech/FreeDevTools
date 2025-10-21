@@ -1,29 +1,29 @@
 ---
-title: "Convert GV to GML - Format Graph Data | Online Free DevTools by Hexmos"
+title: 'Convert GV to GML - Format Graph Data | Online Free DevTools by Hexmos'
 name: gv2gml
-path: "/freedevtools/tldr/common/gv2gml/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gv2gml/"
-description: "Convert graph data from GV to GML with gv2gml. Transform graph files for visualization and analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gv2gml/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gv2gml/'
+description: 'Convert graph data from GV to GML with gv2gml. Transform graph files for visualization and analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- gv to gml converter
-- graphviz to gml
-- graph data conversion
-- gv file format
-- gml file format
-- graph format conversion
-- linux graph tools
-- command line graph converter
-- graphviz command line
-- gv2gml command
+  - gv to gml converter
+  - graphviz to gml
+  - graph data conversion
+  - gv file format
+  - gml file format
+  - graph format conversion
+  - linux graph tools
+  - command line graph converter
+  - graphviz command line
+  - gv2gml command
 features:
-- Converts GV graph files to GML format
-- Supports standard input and output for piping
-- Provides help documentation via command line
-- Transforms graph structures for various applications
-- Facilitates graph visualization and analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Converts GV graph files to GML format
+  - Supports standard input and output for piping
+  - Provides help documentation via command line
+  - Transforms graph structures for various applications
+  - Facilitates graph visualization and analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gv2gml

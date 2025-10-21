@@ -1,29 +1,29 @@
 ---
-title: "Kaggle CLI - Manage Datasets & Competitions | Online Free DevTools by Hexmos"
+title: 'Kaggle CLI - Manage Datasets & Competitions | Online Free DevTools by Hexmos'
 name: kaggle
-path: "/freedevtools/tldr/common/kaggle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kaggle/"
+path: '/freedevtools/tldr/common/kaggle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kaggle/'
 description: "Manage datasets and competitions with Kaggle CLI. Download data, submit predictions, and explore Kaggle's resources. Free online tool, no registration required."
 category: common
 keywords:
-- Kaggle CLI
-- Kaggle API
-- Kaggle datasets
-- Kaggle competitions
-- Kaggle command line
-- Python Kaggle
-- Data science CLI
-- Machine learning CLI
-- Kaggle download
-- Kaggle submit
+  - Kaggle CLI
+  - Kaggle API
+  - Kaggle datasets
+  - Kaggle competitions
+  - Kaggle command line
+  - Python Kaggle
+  - Data science CLI
+  - Machine learning CLI
+  - Kaggle download
+  - Kaggle submit
 features:
-- View current Kaggle configuration values
-- Download specific files from competitions
-- Submit predictions to Kaggle competitions
-- Explore Kaggle datasets via command line
-- Manage Kaggle API keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View current Kaggle configuration values
+  - Download specific files from competitions
+  - Submit predictions to Kaggle competitions
+  - Explore Kaggle datasets via command line
+  - Manage Kaggle API keys
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kaggle

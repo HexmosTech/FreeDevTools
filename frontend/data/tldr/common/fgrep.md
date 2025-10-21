@@ -1,29 +1,29 @@
 ---
-title: "fgrep - Search Fixed Strings | Online Free DevTools by Hexmos"
+title: 'fgrep - Search Fixed Strings | Online Free DevTools by Hexmos'
 name: fgrep
-path: "/freedevtools/tldr/common/fgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fgrep/"
-description: "Search fixed strings with fgrep. Quickly find exact text patterns in files using this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fgrep/'
+description: 'Search fixed strings with fgrep. Quickly find exact text patterns in files using this command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- fixed string search
-- exact match search
-- file pattern matching
-- fgrep command
-- grep fixed string
-- linux fgrep
-- macos fgrep
-- command line search
-- text search tool
-- file content extraction
+  - fixed string search
+  - exact match search
+  - file pattern matching
+  - fgrep command
+  - grep fixed string
+  - linux fgrep
+  - macos fgrep
+  - command line search
+  - text search tool
+  - file content extraction
 features:
-- Search for exact string matches in files.
-- Count the number of lines that match a string.
-- Display lines excluding the search string.
-- Show line numbers with matching lines.
-- Display filenames with matching content.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for exact string matches in files.
+  - Count the number of lines that match a string.
+  - Display lines excluding the search string.
+  - Show line numbers with matching lines.
+  - Display filenames with matching content.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fgrep

@@ -1,29 +1,29 @@
 ---
-title: "Proxify - Capture HTTP/HTTPS Traffic | Online Free DevTools by Hexmos"
+title: 'Proxify - Capture HTTP/HTTPS Traffic | Online Free DevTools by Hexmos'
 name: proxify
-path: "/freedevtools/tldr/common/proxify/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/proxify/"
-description: "Capture HTTP/HTTPS traffic with Proxify. Intercept, manipulate, and replay web traffic with this versatile proxy tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/proxify/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/proxify/'
+description: 'Capture HTTP/HTTPS traffic with Proxify. Intercept, manipulate, and replay web traffic with this versatile proxy tool. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP proxy capture
-- HTTPS proxy capture
-- Web traffic analysis
-- Proxy interception tool
-- MITM proxy alternative
-- Portable proxy server
-- Projectdiscovery proxify
-- Network traffic monitor
-- HTTP/HTTPS traffic replay
-- Command-line proxy tool
+  - HTTP proxy capture
+  - HTTPS proxy capture
+  - Web traffic analysis
+  - Proxy interception tool
+  - MITM proxy alternative
+  - Portable proxy server
+  - Projectdiscovery proxify
+  - Network traffic monitor
+  - HTTP/HTTPS traffic replay
+  - Command-line proxy tool
 features:
-- Capture and analyze HTTP/HTTPS traffic
-- Intercept and modify web requests
-- Replay captured HTTP/HTTPS sessions
-- Configure proxy server on custom ports
-- Output captured traffic in JSON or YAML format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture and analyze HTTP/HTTPS traffic
+  - Intercept and modify web requests
+  - Replay captured HTTP/HTTPS sessions
+  - Configure proxy server on custom ports
+  - Output captured traffic in JSON or YAML format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # proxify

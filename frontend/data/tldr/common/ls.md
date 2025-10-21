@@ -1,29 +1,29 @@
 ---
-title: "List Files - Control Directory Contents | Online Free DevTools by Hexmos"
+title: 'List Files - Control Directory Contents | Online Free DevTools by Hexmos'
 name: ls
-path: "/freedevtools/tldr/common/ls/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ls/"
-description: "Control directory contents with List Files command. Display, sort, and filter files on Linux and macOS systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ls/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ls/'
+description: 'Control directory contents with List Files command. Display, sort, and filter files on Linux and macOS systems. Free online tool, no registration required.'
 category: common
 keywords:
-- directory listing
-- file listing
-- ls command
-- linux ls
-- macOS ls
-- directory contents display
-- file display options
-- hidden files listing
-- long format listing
-- file sorting
+  - directory listing
+  - file listing
+  - ls command
+  - linux ls
+  - macOS ls
+  - directory contents display
+  - file display options
+  - hidden files listing
+  - long format listing
+  - file sorting
 features:
-- List files with detailed information (permissions, size, modification date)
-- Display hidden files and directories
-- Sort files by size, modification time, or name
-- Filter files based on type (directories, symbolic links)
-- Display file sizes in human-readable format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List files with detailed information (permissions, size, modification date)
+  - Display hidden files and directories
+  - Sort files by size, modification time, or name
+  - Filter files based on type (directories, symbolic links)
+  - Display file sizes in human-readable format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ls
@@ -39,7 +39,7 @@ twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 
 `ls {{[-a|--all]}}`
 
-- List files with a trailing symbol to indicate file type (directory/, symbolic_link@, executable*, ...):
+- List files with a trailing symbol to indicate file type (directory/, symbolic_link@, executable\*, ...):
 
 `ls {{[-F|--classify]}}`
 

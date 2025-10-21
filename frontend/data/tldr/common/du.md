@@ -1,29 +1,29 @@
 ---
-title: "Disk Usage - Estimate File Space with du | Online Free DevTools by Hexmos"
+title: 'Disk Usage - Estimate File Space with du | Online Free DevTools by Hexmos'
 name: du
-path: "/freedevtools/tldr/common/du/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/du/"
-description: "Estimate disk usage with du. Analyze file and directory space efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/du/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/du/'
+description: 'Estimate disk usage with du. Analyze file and directory space efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- disk usage analyzer
-- file space estimator
-- directory size calculator
-- linux disk usage
-- du command line
-- du linux
-- du macos
-- du estimate space
-- du summarize usage
-- du file size
+  - disk usage analyzer
+  - file space estimator
+  - directory size calculator
+  - linux disk usage
+  - du command line
+  - du linux
+  - du macos
+  - du estimate space
+  - du summarize usage
+  - du file size
 features:
-- Estimate disk space used by files and directories
-- Summarize disk usage for a specific directory
-- Display disk usage in human-readable format
-- Limit the depth of directory traversal
-- Calculate the total disk usage for a set of files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Estimate disk space used by files and directories
+  - Summarize disk usage for a specific directory
+  - Display disk usage in human-readable format
+  - Limit the depth of directory traversal
+  - Calculate the total disk usage for a set of files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # du

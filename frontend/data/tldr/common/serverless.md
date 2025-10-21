@@ -1,29 +1,29 @@
 ---
-title: "Create Serverless Projects - Deploy Cloud Architectures | Online Free DevTools by Hexmos"
+title: 'Create Serverless Projects - Deploy Cloud Architectures | Online Free DevTools by Hexmos'
 name: serverless
-path: "/freedevtools/tldr/common/serverless/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/serverless/"
-description: "Create Serverless projects with Serverless. Deploy serverless architectures to AWS, Azure, Google Cloud and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/serverless/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/serverless/'
+description: 'Create Serverless projects with Serverless. Deploy serverless architectures to AWS, Azure, Google Cloud and more. Free online tool, no registration required.'
 category: common
 keywords:
-- serverless architecture
-- serverless deployment
-- serverless framework
-- aws serverless
-- azure serverless
-- google cloud functions
-- openwhisk serverless
-- sls command
-- cloud deployment
-- serverless CLI
+  - serverless architecture
+  - serverless deployment
+  - serverless framework
+  - aws serverless
+  - azure serverless
+  - google cloud functions
+  - openwhisk serverless
+  - sls command
+  - cloud deployment
+  - serverless CLI
 features:
-- Create new serverless projects from scratch
-- Deploy serverless applications to various cloud providers
-- Invoke deployed serverless functions directly
-- Tail logs for serverless projects in real-time
-- Generate projects from pre-built templates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new serverless projects from scratch
+  - Deploy serverless applications to various cloud providers
+  - Invoke deployed serverless functions directly
+  - Tail logs for serverless projects in real-time
+  - Generate projects from pre-built templates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # serverless

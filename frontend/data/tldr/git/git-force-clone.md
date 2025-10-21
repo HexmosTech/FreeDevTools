@@ -1,29 +1,29 @@
 ---
-title: "Force Clone Git - Reset Git Repositories | Online Free DevTools by Hexmos"
+title: 'Force Clone Git - Reset Git Repositories | Online Free DevTools by Hexmos'
 name: git-force-clone
-path: "/freedevtools/tldr/git/git-force-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-force-clone/"
-description: "Force clone with Git, effortlessly resetting existing Git repositories. Simplify repository management with this Git command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-force-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-force-clone/'
+description: 'Force clone with Git, effortlessly resetting existing Git repositories. Simplify repository management with this Git command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- git force clone
-- git reset repository
-- git overwrite repository
-- git clone existing directory
-- git clone specific branch
-- git command line tool
-- git repository management
-- git extras
-- linux git clone
-- macos git clone
+  - git force clone
+  - git reset repository
+  - git overwrite repository
+  - git clone existing directory
+  - git clone specific branch
+  - git command line tool
+  - git repository management
+  - git extras
+  - linux git clone
+  - macos git clone
 features:
-- Force-reset a local Git repository to match a remote.
-- Clone a Git repository into an existing, non-empty directory.
-- Clone a specific branch from a remote repository.
-- Overwrite the local repository with the remote's content.
-- Simplify repository synchronization and updates.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Force-reset a local Git repository to match a remote.
+  - Clone a Git repository into an existing, non-empty directory.
+  - Clone a specific branch from a remote repository.
+  - Overwrite the local repository with the remote's content.
+  - Simplify repository synchronization and updates.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git force-clone

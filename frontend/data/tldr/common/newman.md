@@ -1,29 +1,29 @@
 ---
-title: "Run Postman Collections - Newman Runner | Online Free DevTools by Hexmos"
+title: 'Run Postman Collections - Newman Runner | Online Free DevTools by Hexmos'
 name: newman
-path: "/freedevtools/tldr/common/newman/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/newman/"
-description: "Run Postman collections easily with Newman. Execute and automate API tests from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/newman/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/newman/'
+description: 'Run Postman collections easily with Newman. Execute and automate API tests from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Postman collection runner
-- Newman collection execution
-- API test automation
-- command line collection runner
-- Postman CI/CD
-- collection execution
-- API testing command line
-- Postman command line
-- Newman CLI tool
-- collection automation
+  - Postman collection runner
+  - Newman collection execution
+  - API test automation
+  - command line collection runner
+  - Postman CI/CD
+  - collection execution
+  - API testing command line
+  - Postman command line
+  - Newman CLI tool
+  - collection automation
 features:
-- Run Postman collections from a file.
-- Run Postman collections from a URL.
-- Execute API tests in a CI/CD pipeline.
-- Automate API testing using the command line.
-- Integrate with Postman environments and global variables.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run Postman collections from a file.
+  - Run Postman collections from a URL.
+  - Execute API tests in a CI/CD pipeline.
+  - Automate API testing using the command line.
+  - Integrate with Postman environments and global variables.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # newman

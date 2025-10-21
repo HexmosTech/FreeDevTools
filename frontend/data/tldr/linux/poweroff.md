@@ -1,29 +1,29 @@
 ---
-title: "Poweroff System - Halt Linux Instantly | Online Free DevTools by Hexmos"
+title: 'Poweroff System - Halt Linux Instantly | Online Free DevTools by Hexmos'
 name: poweroff
-path: "/freedevtools/tldr/linux/poweroff/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/poweroff/"
-description: "Poweroff system with Poweroff. Halt, reboot, or force shutdown of Linux machines using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/poweroff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/poweroff/'
+description: 'Poweroff system with Poweroff. Halt, reboot, or force shutdown of Linux machines using command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- poweroff system linux
-- linux poweroff command
-- shutdown linux terminal
-- halt linux command
-- reboot linux terminal
-- linux system shutdown
-- linux power management
-- force poweroff linux
-- linux wtmp shutdown entry
-- linux terminal commands
+  - poweroff system linux
+  - linux poweroff command
+  - shutdown linux terminal
+  - halt linux command
+  - reboot linux terminal
+  - linux system shutdown
+  - linux power management
+  - force poweroff linux
+  - linux wtmp shutdown entry
+  - linux terminal commands
 features:
-- Power off the system instantly
-- Halt the system completely
-- Reboot the system directly
-- Force shutdown without system manager contact
-- Write wtmp shutdown entry
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Power off the system instantly
+  - Halt the system completely
+  - Reboot the system directly
+  - Force shutdown without system manager contact
+  - Write wtmp shutdown entry
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # poweroff

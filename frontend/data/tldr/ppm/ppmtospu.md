@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to SPU - Create Atari Images | Online Free DevTools by Hexmos"
+title: 'Convert PPM to SPU - Create Atari Images | Online Free DevTools by Hexmos'
 name: ppmtospu
-path: "/freedevtools/tldr/ppm/ppmtospu/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtospu/"
-description: "Convert PPM to SPU instantly with ppmtospu. Create Atari Spectrum 512 images from PPM files using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmtospu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtospu/'
+description: 'Convert PPM to SPU instantly with ppmtospu. Create Atari Spectrum 512 images from PPM files using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to SPU converter
-- Atari Spectrum 512 image
-- SPU image creator
-- Netpbm image conversion
-- PPM image manipulation
-- command line image tools
-- image format conversion
-- graphics file conversion
-- Linux image processing
-- macOS image utilities
+  - PPM to SPU converter
+  - Atari Spectrum 512 image
+  - SPU image creator
+  - Netpbm image conversion
+  - PPM image manipulation
+  - command line image tools
+  - image format conversion
+  - graphics file conversion
+  - Linux image processing
+  - macOS image utilities
 features:
-- Convert PPM images to Atari Spectrum 512 (SPU) format.
-- Generate Atari images from PPM files.
-- Control image dithering using matrix size.
-- Support for no dithering during conversion.
-- Convert images using command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to Atari Spectrum 512 (SPU) format.
+  - Generate Atari images from PPM files.
+  - Control image dithering using matrix size.
+  - Support for no dithering during conversion.
+  - Convert images using command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtospu

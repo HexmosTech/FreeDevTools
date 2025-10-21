@@ -1,29 +1,29 @@
 ---
-title: "Create Mosquitto Passwords - Manage Users | Online Free DevTools by Hexmos"
+title: 'Create Mosquitto Passwords - Manage Users | Online Free DevTools by Hexmos'
 name: mosquitto_passwd
-path: "/freedevtools/tldr/common/mosquitto_passwd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mosquitto_passwd/"
-description: "Create Mosquitto passwords securely with mosquitto_passwd. Manage MQTT user accounts, add, delete, and upgrade credentials. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mosquitto_passwd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mosquitto_passwd/'
+description: 'Create Mosquitto passwords securely with mosquitto_passwd. Manage MQTT user accounts, add, delete, and upgrade credentials. Free online tool, no registration required.'
 category: common
 keywords:
-- Mosquitto password management
-- MQTT user creation
-- Mosquitto authentication
-- Password file generator
-- Mosquitto password utility
-- Linux password manager
-- Command line password tool
-- MQTT security
-- Hash password file
-- Manage MQTT credentials
+  - Mosquitto password management
+  - MQTT user creation
+  - Mosquitto authentication
+  - Password file generator
+  - Mosquitto password utility
+  - Linux password manager
+  - Command line password tool
+  - MQTT security
+  - Hash password file
+  - Manage MQTT credentials
 features:
-- Add new users to Mosquitto password files
-- Create new password files for MQTT authentication
-- Delete specified users from Mosquitto password files
-- Upgrade plain-text password files to hashed format
-- Manage user credentials for Mosquitto MQTT server
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add new users to Mosquitto password files
+  - Create new password files for MQTT authentication
+  - Delete specified users from Mosquitto password files
+  - Upgrade plain-text password files to hashed format
+  - Manage user credentials for Mosquitto MQTT server
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mosquitto_passwd

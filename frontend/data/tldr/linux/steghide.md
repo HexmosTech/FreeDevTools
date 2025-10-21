@@ -1,9 +1,9 @@
 ---
-title: "Steganography Tool - Embed & Extract Data with steghide | Online Free DevTools by Hexmos"
+title: 'Steganography Tool - Embed & Extract Data with steghide | Online Free DevTools by Hexmos'
 name: steghide
-path: "/freedevtools/tldr/linux/steghide/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/steghide/"
-description: "Embed and extract data with steghide, a powerful steganography tool for various file formats.  Manage hidden files securely within images and audio. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/steghide/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/steghide/'
+description: 'Embed and extract data with steghide, a powerful steganography tool for various file formats.  Manage hidden files securely within images and audio. Free online tool, no registration required.'
 category: linux
 keywords:
   - data embedding steghide
@@ -22,8 +22,8 @@ features:
   - Encrypt data before embedding using various algorithms.
   - Utilize different encryption modes for enhanced security.
   - Display information about embedded files and file formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # steghide

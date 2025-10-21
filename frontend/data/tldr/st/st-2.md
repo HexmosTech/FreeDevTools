@@ -1,29 +1,29 @@
 ---
-title: "Statistics Tool - Generate Descriptive Stats | Online Free DevTools by Hexmos"
+title: 'Statistics Tool - Generate Descriptive Stats | Online Free DevTools by Hexmos'
 name: st.2
-path: "/freedevtools/tldr/st/st-2/"
-canonical: "https://hexmos-com/freedevtools/tldr/st/st-2/"
-description: "Generate descriptive statistics with Statistics Tool (st). Calculate mean, sum, standard deviation, and more from data. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/st-2/'
+canonical: 'https://hexmos-com/freedevtools/tldr/st/st-2/'
+description: 'Generate descriptive statistics with Statistics Tool (st). Calculate mean, sum, standard deviation, and more from data. Free online tool, no registration required.'
 category: common
 keywords:
-- descriptive statistics generator
-- number statistics calculator
-- command line statistics
-- data analysis tools
-- standard deviation calculator
-- mean value calculator
-- statistics from file
-- linux statistics tool
-- macos statistics tool
-- number summary statistics
+  - descriptive statistics generator
+  - number statistics calculator
+  - command line statistics
+  - data analysis tools
+  - standard deviation calculator
+  - mean value calculator
+  - statistics from file
+  - linux statistics tool
+  - macos statistics tool
+  - number summary statistics
 features:
-- Calculate sum of input numbers
-- Determine mean (average) value
-- Compute standard deviation
-- Identify minimum and maximum values
-- Transpose output for readability
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate sum of input numbers
+  - Determine mean (average) value
+  - Compute standard deviation
+  - Identify minimum and maximum values
+  - Transpose output for readability
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # st

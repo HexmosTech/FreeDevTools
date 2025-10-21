@@ -1,29 +1,29 @@
 ---
-title: "Clippy - Improve Rust Code with cargo clippy | Online Free DevTools by Hexmos"
+title: 'Clippy - Improve Rust Code with cargo clippy | Online Free DevTools by Hexmos'
 name: cargo-clippy
-path: "/freedevtools/tldr/cargo/cargo-clippy/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-clippy/"
-description: "Improve your Rust code with cargo clippy. Analyze code, catch mistakes and enhance code quality easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-clippy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-clippy/'
+description: 'Improve your Rust code with cargo clippy. Analyze code, catch mistakes and enhance code quality easily. Free online tool, no registration required.'
 category: common
 keywords:
-- rust code analysis
-- rust linting
-- cargo clippy
-- rust code improvement
-- rust style checker
-- rust static analysis
-- clippy lints
-- rust best practices
-- cargo clippy warnings
-- rust code diagnostics
+  - rust code analysis
+  - rust linting
+  - cargo clippy
+  - rust code improvement
+  - rust style checker
+  - rust static analysis
+  - clippy lints
+  - rust best practices
+  - cargo clippy warnings
+  - rust code diagnostics
 features:
-- Analyze Rust code for common mistakes
-- Enforce coding style guidelines
-- Suggest code improvements automatically
-- Check code for performance issues
-- Identify potential bugs and errors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze Rust code for common mistakes
+  - Enforce coding style guidelines
+  - Suggest code improvements automatically
+  - Check code for performance issues
+  - Identify potential bugs and errors
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo clippy

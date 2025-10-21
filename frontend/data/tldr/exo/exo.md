@@ -1,29 +1,29 @@
 ---
-title: "Exoscale Manage - Control Cloud Services | Online Free DevTools by Hexmos"
+title: 'Exoscale Manage - Control Cloud Services | Online Free DevTools by Hexmos'
 name: exo
-path: "/freedevtools/tldr/exo/exo/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo/"
-description: "Manage Exoscale cloud services with Exo CLI. Configure instances, manage storage, and generate autocompletion scripts with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo/'
+description: 'Manage Exoscale cloud services with Exo CLI. Configure instances, manage storage, and generate autocompletion scripts with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- exoscale cli manager
-- cloud service management
-- exo command-line tool
-- exoscale instance control
-- storage bucket management
-- autocompletion script generation
-- cloud infrastructure automation
-- exoscale zone listing
-- command-line interface
-- infrastructure-as-code
+  - exoscale cli manager
+  - cloud service management
+  - exo command-line tool
+  - exoscale instance control
+  - storage bucket management
+  - autocompletion script generation
+  - cloud infrastructure automation
+  - exoscale zone listing
+  - command-line interface
+  - infrastructure-as-code
 features:
-- Configure Exoscale command-line interface
-- Generate shell autocompletion scripts
-- List available zones in JSON format
-- Create Compute instances with quiet mode
-- List storage bucket names using output templates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure Exoscale command-line interface
+  - Generate shell autocompletion scripts
+  - List available zones in JSON format
+  - Create Compute instances with quiet mode
+  - List storage bucket names using output templates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo

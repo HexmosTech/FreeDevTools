@@ -1,29 +1,29 @@
 ---
-title: "Java Home - Control Java Versions on macOS | Online Free DevTools by Hexmos"
+title: 'Java Home - Control Java Versions on macOS | Online Free DevTools by Hexmos'
 name: java_home
-path: "/freedevtools/tldr/osx/java_home/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/java_home/"
-description: "Control Java versions on macOS with Java Home. List JVMs, specify architecture, and format output in XML. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/java_home/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/java_home/'
+description: 'Control Java versions on macOS with Java Home. List JVMs, specify architecture, and format output in XML. Free online tool, no registration required.'
 category: osx
 keywords:
-- java version manager osx
-- macos java_home command
-- java jvm selector
-- java architecture identifier
-- java command line tools
-- osx java environment
-- java development osx
-- list java versions mac
-- macos jvm management
-- java_home xml output
+  - java version manager osx
+  - macos java_home command
+  - java jvm selector
+  - java architecture identifier
+  - java command line tools
+  - osx java environment
+  - java development osx
+  - list java versions mac
+  - macos jvm management
+  - java_home xml output
 features:
-- List installed Java Virtual Machines (JVMs)
-- Specify JVM architecture (i386, x86_64)
-- Define the task to select JVMs (Applets, WebStart, CommandLine)
-- Output JVM information in XML format
-- Display help information for the java_home command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List installed Java Virtual Machines (JVMs)
+  - Specify JVM architecture (i386, x86_64)
+  - Define the task to select JVMs (Applets, WebStart, CommandLine)
+  - Output JVM information in XML format
+  - Display help information for the java_home command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # java_home

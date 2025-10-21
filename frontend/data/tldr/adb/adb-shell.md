@@ -1,29 +1,29 @@
 ---
-title: "ADB Shell - Control Android Devices via Command Line | Online Free DevTools by Hexmos"
+title: 'ADB Shell - Control Android Devices via Command Line | Online Free DevTools by Hexmos'
 name: adb-shell
-path: "/freedevtools/tldr/adb/adb-shell/"
-canonical: "https://hexmos.com/freedevtools/tldr/adb/adb-shell/"
-description: "Control Android devices and emulators easily with ADB Shell. Execute shell commands, manage permissions, and start activities. Free online tool, no registration required."
+path: '/freedevtools/tldr/adb/adb-shell/'
+canonical: 'https://hexmos.com/freedevtools/tldr/adb/adb-shell/'
+description: 'Control Android devices and emulators easily with ADB Shell. Execute shell commands, manage permissions, and start activities. Free online tool, no registration required.'
 category: common
 keywords:
-- adb shell commands
-- android shell execution
-- adb device control
-- android debug bridge
-- linux shell commands
-- macos shell commands
-- emulator command line
-- android activity manager
-- adb permission manager
-- mobile device debugging
+  - adb shell commands
+  - android shell execution
+  - adb device control
+  - android debug bridge
+  - linux shell commands
+  - macos shell commands
+  - emulator command line
+  - android activity manager
+  - adb permission manager
+  - mobile device debugging
 features:
-- Execute shell commands on Android devices
-- Manage application permissions via command line
-- Start activities on emulators and devices
-- Clear application data remotely
-- Trigger key events programmatically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute shell commands on Android devices
+  - Manage application permissions via command line
+  - Start activities on emulators and devices
+  - Clear application data remotely
+  - Trigger key events programmatically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # adb shell

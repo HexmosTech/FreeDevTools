@@ -1,9 +1,9 @@
 ---
-title: "SMB Client - Access SMB/CIFS Shares | Online Free DevTools by Hexmos"
+title: 'SMB Client - Access SMB/CIFS Shares | Online Free DevTools by Hexmos'
 name: smbclient
-path: "/freedevtools/tldr/linux/smbclient/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/smbclient/"
-description: "Access SMB/CIFS shares easily with smbclient.  Manage files, connect to servers, and control network resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/smbclient/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/smbclient/'
+description: 'Access SMB/CIFS shares easily with smbclient.  Manage files, connect to servers, and control network resources. Free online tool, no registration required.'
 category: linux
 keywords:
   - smbclient commands
@@ -22,8 +22,8 @@ features:
   - List available shares anonymously or with credentials.
   - Specify workgroup for connection to domain-joined servers.
   - Execute commands directly on the server via the smbclient interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smbclient

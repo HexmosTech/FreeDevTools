@@ -1,29 +1,29 @@
 ---
-title: "Ansible Playbook - Execute Playbooks over SSH | Online Free DevTools by Hexmos"
+title: 'Ansible Playbook - Execute Playbooks over SSH | Online Free DevTools by Hexmos'
 name: ansible-playbook
-path: "/freedevtools/tldr/ansible/ansible-playbook/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-playbook/"
-description: "Execute automation playbooks with Ansible Playbook. Orchestrate configurations, deployments, and tasks across remote systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible-playbook/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible-playbook/'
+description: 'Execute automation playbooks with Ansible Playbook. Orchestrate configurations, deployments, and tasks across remote systems. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible playbook execution
-- ansible automation tool
-- ansible ssh automation
-- ansible configuration management
-- playbook deployment tool
-- linux automation playbook
-- ansible remote execution
-- yaml playbook runner
-- ansible inventory management
-- ansible command line
+  - ansible playbook execution
+  - ansible automation tool
+  - ansible ssh automation
+  - ansible configuration management
+  - playbook deployment tool
+  - linux automation playbook
+  - ansible remote execution
+  - yaml playbook runner
+  - ansible inventory management
+  - ansible command line
 features:
-- Execute Ansible playbooks against remote hosts.
-- Specify custom host inventories for playbook execution.
-- Define extra variables via command-line or JSON files.
-- Target specific tasks within a playbook using tags or starting points.
-- Perform dry-run checks to preview changes before execution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Ansible playbooks against remote hosts.
+  - Specify custom host inventories for playbook execution.
+  - Define extra variables via command-line or JSON files.
+  - Target specific tasks within a playbook using tags or starting points.
+  - Perform dry-run checks to preview changes before execution.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible-playbook

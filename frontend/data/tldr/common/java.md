@@ -1,29 +1,29 @@
 ---
-title: "Java Launcher - Execute Java Programs | Online Free DevTools by Hexmos"
+title: 'Java Launcher - Execute Java Programs | Online Free DevTools by Hexmos'
 name: java
-path: "/freedevtools/tldr/common/java/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/java/"
-description: "Execute Java programs effortlessly with Java Launcher. Run .class and .jar files and manage classpath settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/java/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/java/'
+description: 'Execute Java programs effortlessly with Java Launcher. Run .class and .jar files and manage classpath settings. Free online tool, no registration required.'
 category: common
 keywords:
-- java program execution
-- java class launcher
-- java jar runner
-- java classpath management
-- java version display
-- command line java
-- cross-platform java
-- java debugging
-- oracle java
-- jdk command
+  - java program execution
+  - java class launcher
+  - java jar runner
+  - java classpath management
+  - java version display
+  - command line java
+  - cross-platform java
+  - java debugging
+  - oracle java
+  - jdk command
 features:
-- Execute Java .class files
-- Run .jar archives
-- Specify custom classpath
-- Enable remote debugging
-- Display java version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Java .class files
+  - Run .jar archives
+  - Specify custom classpath
+  - Enable remote debugging
+  - Display java version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # java

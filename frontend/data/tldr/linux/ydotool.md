@@ -1,9 +1,9 @@
 ---
-title: "Control Mouse & Keyboard - ydotool Commands | Online Free DevTools by Hexmos"
+title: 'Control Mouse & Keyboard - ydotool Commands | Online Free DevTools by Hexmos'
 name: ydotool
-path: "/freedevtools/tldr/linux/ydotool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ydotool/"
-description: "Control mouse and keyboard inputs with ydotool commands.  Simulate clicks, keystrokes, and more across different display servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ydotool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ydotool/'
+description: 'Control mouse and keyboard inputs with ydotool commands.  Simulate clicks, keystrokes, and more across different display servers. Free online tool, no registration required.'
 category: linux
 keywords:
   - keyboard control commands
@@ -22,8 +22,8 @@ features:
   - Send key sequences for complex actions
   - Works across different display servers (X11, Wayland)
   - Control input devices via command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ydotool

@@ -1,9 +1,9 @@
 ---
-title: "Tree - Generate Directory Structure | Online Free DevTools by Hexmos"
+title: 'Tree - Generate Directory Structure | Online Free DevTools by Hexmos'
 name: tree
-path: "/freedevtools/tldr/windows/tree/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/tree/"
-description: "Generate directory structure diagrams with the Tree command. Visualize file system organization and navigate folders efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/tree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/tree/'
+description: 'Generate directory structure diagrams with the Tree command. Visualize file system organization and navigate folders efficiently. Free online tool, no registration required.'
 category: windows
 keywords:
   - directory tree generator
@@ -22,8 +22,8 @@ features:
   - Output tree in ASCII format
   - Include files in the directory tree
   - Specify a target directory for tree generation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tree

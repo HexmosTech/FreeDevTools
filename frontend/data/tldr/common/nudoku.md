@@ -1,29 +1,29 @@
 ---
-title: "Play Sudoku - Solve Puzzles in Terminal | Online Free DevTools by Hexmos"
+title: 'Play Sudoku - Solve Puzzles in Terminal | Online Free DevTools by Hexmos'
 name: nudoku
-path: "/freedevtools/tldr/common/nudoku/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nudoku/"
-description: "Solve Sudoku puzzles in your terminal with nudoku. Enjoy easy, normal, or hard difficulty levels for a challenging and engaging experience. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nudoku/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nudoku/'
+description: 'Solve Sudoku puzzles in your terminal with nudoku. Enjoy easy, normal, or hard difficulty levels for a challenging and engaging experience. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal sudoku
-- command line sudoku
-- sudoku solver
-- sudoku game
-- nudoku game
-- terminal puzzle
-- console sudoku
-- cli sudoku
-- bash sudoku
-- unix sudoku
+  - terminal sudoku
+  - command line sudoku
+  - sudoku solver
+  - sudoku game
+  - nudoku game
+  - terminal puzzle
+  - console sudoku
+  - cli sudoku
+  - bash sudoku
+  - unix sudoku
 features:
-- Start a new Sudoku game
-- Choose the difficulty level
-- Navigate the Sudoku board
-- Get hints to solve the puzzle
-- See the complete Sudoku solution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a new Sudoku game
+  - Choose the difficulty level
+  - Navigate the Sudoku board
+  - Get hints to solve the puzzle
+  - See the complete Sudoku solution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nudoku

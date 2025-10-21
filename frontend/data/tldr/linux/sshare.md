@@ -1,29 +1,29 @@
 ---
-title: "Sshare - Control Slurm Shares | Online Free DevTools by Hexmos"
+title: 'Sshare - Control Slurm Shares | Online Free DevTools by Hexmos'
 name: sshare
-path: "/freedevtools/tldr/linux/sshare/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sshare/"
-description: "Control Slurm shares efficiently with Sshare. List shares, format output, and display specific user information. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sshare/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sshare/'
+description: 'Control Slurm shares efficiently with Sshare. List shares, format output, and display specific user information. Free online tool, no registration required.'
 category: linux
 keywords:
-- slurm share control
-- linux share manager
-- sshare slurm command
-- cluster share management
-- slurm accounting tool
-- share information list
-- linux sshare utility
-- slurm share display
-- user share information
-- cluster resource allocation
+  - slurm share control
+  - linux share manager
+  - sshare slurm command
+  - cluster share management
+  - slurm accounting tool
+  - share information list
+  - linux sshare utility
+  - slurm share display
+  - user share information
+  - cluster resource allocation
 features:
-- List Slurm share information for a cluster
-- Control the output format of share data
-- Filter share information by user ID
-- Display share information in parsable formats (JSON, YAML)
-- Customize the fields displayed in the output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List Slurm share information for a cluster
+  - Control the output format of share data
+  - Filter share information by user ID
+  - Display share information in parsable formats (JSON, YAML)
+  - Customize the fields displayed in the output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sshare

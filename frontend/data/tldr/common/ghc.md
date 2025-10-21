@@ -1,29 +1,29 @@
 ---
-title: "Haskell Compiler - Compile Haskell Code | Online Free DevTools by Hexmos"
+title: 'Haskell Compiler - Compile Haskell Code | Online Free DevTools by Hexmos'
 name: ghc
-path: "/freedevtools/tldr/common/ghc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ghc/"
-description: "Compile Haskell code efficiently with ghc, the Glasgow Haskell Compiler. Supports optimization, object file generation, and REPL interaction. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ghc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ghc/'
+description: 'Compile Haskell code efficiently with ghc, the Glasgow Haskell Compiler. Supports optimization, object file generation, and REPL interaction. Free online tool, no registration required.'
 category: common
 keywords:
-- Haskell compiler
-- Glasgow Haskell Compiler
-- Haskell code compilation
-- Haskell REPL
-- GHC optimization
-- Haskell object files
-- Haskell expression evaluation
-- Linux Haskell compiler
-- MacOS Haskell compiler
-- Command line Haskell
+  - Haskell compiler
+  - Glasgow Haskell Compiler
+  - Haskell code compilation
+  - Haskell REPL
+  - GHC optimization
+  - Haskell object files
+  - Haskell expression evaluation
+  - Linux Haskell compiler
+  - MacOS Haskell compiler
+  - Command line Haskell
 features:
-- Compile Haskell source files
-- Generate optimized executables
-- Produce object files for separate compilation
-- Start an interactive Haskell REPL
-- Evaluate single Haskell expressions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Haskell source files
+  - Generate optimized executables
+  - Produce object files for separate compilation
+  - Start an interactive Haskell REPL
+  - Evaluate single Haskell expressions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ghc

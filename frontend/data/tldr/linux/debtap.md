@@ -1,9 +1,9 @@
 ---
-title: "Convert Debian Packages - debtap Arch Linux Converter | Online Free DevTools by Hexmos"
+title: 'Convert Debian Packages - debtap Arch Linux Converter | Online Free DevTools by Hexmos'
 name: debtap
-path: "/freedevtools/tldr/linux/debtap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/debtap/"
-description: "Convert Debian packages to Arch Linux packages with debtap.  Easily manage and install Debian software on Arch systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/debtap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/debtap/'
+description: 'Convert Debian packages to Arch Linux packages with debtap.  Easily manage and install Debian software on Arch systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - debian package converter
@@ -22,8 +22,8 @@ features:
   - Offers a quiet mode to automate the conversion process.
   - Allows generating only the PKGBUILD file without full conversion.
   - Provides a simple command-line interface for easy use.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # debtap

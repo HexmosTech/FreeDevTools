@@ -1,9 +1,9 @@
 ---
-title: "Chkconfig - Manage Service Runlevels | Online Free DevTools by Hexmos"
+title: 'Chkconfig - Manage Service Runlevels | Online Free DevTools by Hexmos'
 name: chkconfig
-path: "/freedevtools/tldr/linux/chkconfig/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chkconfig/"
-description: "Manage service runlevels with chkconfig on CentOS 6.  Control service startup and shutdown behavior at different runlevels. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/chkconfig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chkconfig/'
+description: 'Manage service runlevels with chkconfig on CentOS 6.  Control service startup and shutdown behavior at different runlevels. Free online tool, no registration required.'
 category: linux
 keywords:
   - chkconfig command
@@ -22,8 +22,8 @@ features:
   - Disable services at boot time.
   - Control service startup for specific runlevels.
   - View the current runlevel status of a service.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chkconfig

@@ -1,29 +1,29 @@
 ---
-title: "Sox - Convert Audio Files | Online Free DevTools by Hexmos"
+title: 'Sox - Convert Audio Files | Online Free DevTools by Hexmos'
 name: sox
-path: "/freedevtools/tldr/common/sox/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sox/"
-description: "Convert audio files easily with Sox. Modify, normalize, and reverse audio using command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sox/'
+description: 'Convert audio files easily with Sox. Modify, normalize, and reverse audio using command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- audio converter
-- audio file conversion
-- sound exchange
-- sox command
-- audio manipulation
-- audio processing
-- audio normalization
-- command line audio
-- audio file trimming
-- audio file reversing
+  - audio converter
+  - audio file conversion
+  - sound exchange
+  - sox command
+  - audio manipulation
+  - audio processing
+  - audio normalization
+  - command line audio
+  - audio file trimming
+  - audio file reversing
 features:
-- Convert between different audio file formats
-- Trim audio files by specifying start and duration
-- Normalize audio volume to prevent clipping
-- Reverse the playback direction of audio files
-- Print statistical data about audio files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between different audio file formats
+  - Trim audio files by specifying start and duration
+  - Normalize audio volume to prevent clipping
+  - Reverse the playback direction of audio files
+  - Print statistical data about audio files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sox

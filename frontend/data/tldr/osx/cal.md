@@ -1,9 +1,9 @@
 ---
-title: "Calendar Command - Generate Calendars | Online Free DevTools by Hexmos"
+title: 'Calendar Command - Generate Calendars | Online Free DevTools by Hexmos'
 name: cal
-path: "/freedevtools/tldr/osx/cal/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/cal/"
-description: "Generate calendars with the cal command. Display specific months, years, and even Easter dates with this versatile command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/cal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/cal/'
+description: 'Generate calendars with the cal command. Display specific months, years, and even Easter dates with this versatile command-line utility. Free online tool, no registration required.'
 category: osx
 keywords:
   - calendar generator
@@ -22,8 +22,8 @@ features:
   - Display calendar for a specific month and year
   - Generate calendar for an entire year
   - Calculate and display Easter date for a given year
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cal

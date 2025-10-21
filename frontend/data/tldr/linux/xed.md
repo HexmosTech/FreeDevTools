@@ -1,9 +1,9 @@
 ---
-title: "Xed Editor - Edit Files on Linux | Online Free DevTools by Hexmos"
+title: 'Xed Editor - Edit Files on Linux | Online Free DevTools by Hexmos'
 name: xed
-path: "/freedevtools/tldr/linux/xed/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xed/"
-description: "Edit files quickly with the Xed text editor.  Open, edit, and save files with various encodings on your Linux system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xed/'
+description: 'Edit files quickly with the Xed text editor.  Open, edit, and save files with various encodings on your Linux system. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux text editor
@@ -22,8 +22,8 @@ features:
   - Allows opening multiple files simultaneously.
   - Enables direct navigation to specific lines within a file.
   - Provides a simple and efficient text editing experience.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xed

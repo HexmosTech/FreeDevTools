@@ -1,9 +1,9 @@
 ---
-title: "Analyze Backtrace - Generate Crash Reports | Online Free DevTools by Hexmos"
+title: 'Analyze Backtrace - Generate Crash Reports | Online Free DevTools by Hexmos'
 name: abrt-action-analyze-backtrace
-path: "/freedevtools/tldr/linux/abrt-action-analyze-backtrace/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/abrt-action-analyze-backtrace/"
-description: "Analyze C/C++ backtraces with abrt-action-analyze-backtrace. Generate crash reports and duplication hashes effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/abrt-action-analyze-backtrace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/abrt-action-analyze-backtrace/'
+description: 'Analyze C/C++ backtraces with abrt-action-analyze-backtrace. Generate crash reports and duplication hashes effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - C/C++ Backtrace Analyzer
@@ -22,8 +22,8 @@ features:
   - Rate backtraces based on severity
   - Identify the function causing the crash
   - Save analysis data to a problem directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # abrt-action-analyze-backtrace

@@ -1,29 +1,29 @@
 ---
-title: "NPM Package Manager - Manage Node.js Projects | Online Free DevTools by Hexmos"
+title: 'NPM Package Manager - Manage Node.js Projects | Online Free DevTools by Hexmos'
 name: npm
-path: "/freedevtools/tldr/npm/npm/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm/"
-description: "Manage Node.js packages efficiently with NPM Package Manager. Simplify dependency management, install, uninstall and list packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm/'
+description: 'Manage Node.js packages efficiently with NPM Package Manager. Simplify dependency management, install, uninstall and list packages. Free online tool, no registration required.'
 category: common
 keywords:
-- Node.js package manager
-- NPM package management
-- JavaScript dependency management
-- Node module installer
-- NPM install package
-- NPM uninstall package
-- Package.json manager
-- Node.js dependencies
-- NPM list packages
-- Global NPM package installer
+  - Node.js package manager
+  - NPM package management
+  - JavaScript dependency management
+  - Node module installer
+  - NPM install package
+  - NPM uninstall package
+  - Package.json manager
+  - Node.js dependencies
+  - NPM list packages
+  - Global NPM package installer
 features:
-- Initialize package.json files
-- Install and manage Node.js dependencies
-- Update specific package versions
-- Install packages globally
-- List installed NPM packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize package.json files
+  - Install and manage Node.js dependencies
+  - Update specific package versions
+  - Install packages globally
+  - List installed NPM packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm

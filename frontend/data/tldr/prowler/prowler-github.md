@@ -1,29 +1,29 @@
 ---
-title: "Assess GitHub Security - Prowler GitHub Security Audit | Online Free DevTools by Hexmos"
+title: 'Assess GitHub Security - Prowler GitHub Security Audit | Online Free DevTools by Hexmos'
 name: prowler-github
-path: "/freedevtools/tldr/prowler/prowler-github/"
-canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-github/"
-description: "Assess GitHub security with Prowler GitHub. Audit accounts, repositories, and organizations for best practices and vulnerabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/prowler/prowler-github/'
+canonical: 'https://hexmos.com/freedevtools/tldr/prowler/prowler-github/'
+description: 'Assess GitHub security with Prowler GitHub. Audit accounts, repositories, and organizations for best practices and vulnerabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub security assessment
-- GitHub security audit
-- GitHub security checklist
-- GitHub account security
-- GitHub repository security
-- GitHub organization security
-- Prowler GitHub security
-- GitHub security best practices
-- Cloud security assessment
-- Open source security tool
+  - GitHub security assessment
+  - GitHub security audit
+  - GitHub security checklist
+  - GitHub account security
+  - GitHub repository security
+  - GitHub organization security
+  - Prowler GitHub security
+  - GitHub security best practices
+  - Cloud security assessment
+  - Open source security tool
 features:
-- Audit GitHub account security posture
-- Evaluate GitHub repository configurations
-- Assess GitHub organization security settings
-- Identify potential security vulnerabilities
-- Automate GitHub security compliance checks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Audit GitHub account security posture
+  - Evaluate GitHub repository configurations
+  - Assess GitHub organization security settings
+  - Identify potential security vulnerabilities
+  - Automate GitHub security compliance checks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prowler github

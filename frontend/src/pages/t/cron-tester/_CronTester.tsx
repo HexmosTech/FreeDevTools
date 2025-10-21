@@ -1,20 +1,20 @@
-import { toast } from "@/components/ToastProvider";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CopyButton from "@/components/ui/copy-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { CalendarIcon, RefreshCwIcon, XIcon } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import AdBanner from "../../../components/banner/AdBanner";
-import CronTesterSkeleton from "./_CronTesterSkeleton";
+import { toast } from '@/components/ToastProvider';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolVideo from '@/components/tool/ToolVideo';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CopyButton from '@/components/ui/copy-button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { CalendarIcon, RefreshCwIcon, XIcon } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import AdBanner from '../../../components/banner/AdBanner';
+import CronTesterSkeleton from './_CronTesterSkeleton';
 
 // Using reliable npm libraries for cron parsing
 interface CronResult {
@@ -82,25 +82,25 @@ const matchesField = (
   max: number,
   sundayBoth?: boolean
 ): boolean => {
-  if (pattern === "*") return true;
+  if (pattern === '*') return true;
 
   // Handle Sunday special case (both 0 and 7 represent Sunday)
-  if (sundayBoth && pattern.includes("7")) {
-    pattern = pattern.replace(/7/g, "0");
+  if (sundayBoth && pattern.includes('7')) {
+    pattern = pattern.replace(/7/g, '0');
   }
-  if (sundayBoth && value === 0 && pattern.includes("7")) {
+  if (sundayBoth && value === 0 && pattern.includes('7')) {
     return true;
   }
 
   // Handle step values (e.g., */5, 0-23/2)
-  if (pattern.includes("/")) {
-    const [range, step] = pattern.split("/");
+  if (pattern.includes('/')) {
+    const [range, step] = pattern.split('/');
     const stepValue = parseInt(step);
 
-    if (range === "*") {
+    if (range === '*') {
       return value % stepValue === 0;
-    } else if (range.includes("-")) {
-      const [start, end] = range.split("-").map(Number);
+    } else if (range.includes('-')) {
+      const [start, end] = range.split('-').map(Number);
       return (
         value >= start && value <= end && (value - start) % stepValue === 0
       );
@@ -111,15 +111,15 @@ const matchesField = (
   }
 
   // Handle ranges (e.g., 1-5)
-  if (pattern.includes("-")) {
-    const [start, end] = pattern.split("-").map(Number);
+  if (pattern.includes('-')) {
+    const [start, end] = pattern.split('-').map(Number);
     return value >= start && value <= end;
   }
 
   // Handle lists (e.g., 1,3,5)
-  if (pattern.includes(",")) {
+  if (pattern.includes(',')) {
     return pattern
-      .split(",")
+      .split(',')
       .some((p) => matchesField(value, p.trim(), min, max, sundayBoth));
   }
 
@@ -133,9 +133,9 @@ const parseCronExpression = async (expression: string): Promise<CronResult> => {
     if (!expression.trim()) {
       return {
         isValid: false,
-        description: "",
+        description: '',
         nextExecutions: [],
-        error: "Please enter a cron expression",
+        error: 'Please enter a cron expression',
       };
     }
 
@@ -144,10 +144,10 @@ const parseCronExpression = async (expression: string): Promise<CronResult> => {
     if (parts.length !== 5) {
       return {
         isValid: false,
-        description: "",
+        description: '',
         nextExecutions: [],
         error:
-          "Cron expression must have exactly 5 fields: minute hour day month weekday",
+          'Cron expression must have exactly 5 fields: minute hour day month weekday',
       };
     }
 
@@ -163,16 +163,16 @@ const parseCronExpression = async (expression: string): Promise<CronResult> => {
     ) {
       return {
         isValid: false,
-        description: "",
+        description: '',
         nextExecutions: [],
-        error: "Invalid cron field values. Please check the ranges.",
+        error: 'Invalid cron field values. Please check the ranges.',
       };
     }
 
     // Generate human-readable description using cronstrue
-    let description = "";
+    let description = '';
     try {
-      const cronstrue = await import("cronstrue");
+      const cronstrue = await import('cronstrue');
       description = cronstrue.toString(expression, {
         throwExceptionOnParseError: false,
         verbose: true,
@@ -193,11 +193,11 @@ const parseCronExpression = async (expression: string): Promise<CronResult> => {
     };
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Invalid cron expression format";
+      error instanceof Error ? error.message : 'Invalid cron expression format';
 
     return {
       isValid: false,
-      description: "",
+      description: '',
       nextExecutions: [],
       error: errorMessage,
     };
@@ -205,19 +205,19 @@ const parseCronExpression = async (expression: string): Promise<CronResult> => {
 };
 
 const isValidCronField = (field: string, min: number, max: number): boolean => {
-  if (field === "*") return true;
+  if (field === '*') return true;
 
   // Handle step values
-  if (field.includes("/")) {
-    const [range, step] = field.split("/");
+  if (field.includes('/')) {
+    const [range, step] = field.split('/');
     const stepValue = parseInt(step);
     if (isNaN(stepValue) || stepValue <= 0) return false;
     return isValidCronField(range, min, max);
   }
 
   // Handle ranges
-  if (field.includes("-")) {
-    const [start, end] = field.split("-");
+  if (field.includes('-')) {
+    const [start, end] = field.split('-');
     const startNum = parseInt(start);
     const endNum = parseInt(end);
     return (
@@ -230,8 +230,8 @@ const isValidCronField = (field: string, min: number, max: number): boolean => {
   }
 
   // Handle lists
-  if (field.includes(",")) {
-    return field.split(",").every((f) => isValidCronField(f.trim(), min, max));
+  if (field.includes(',')) {
+    return field.split(',').every((f) => isValidCronField(f.trim(), min, max));
   }
 
   // Handle specific values
@@ -246,29 +246,29 @@ const generateBasicDescription = (
   month: string,
   weekday: string
 ): string => {
-  let desc = "At ";
+  let desc = 'At ';
 
   // Time description
-  if (minute === "*" && hour === "*") {
-    desc += "every minute";
-  } else if (minute === "0" && hour === "*") {
-    desc += "every hour";
-  } else if (hour === "*") {
+  if (minute === '*' && hour === '*') {
+    desc += 'every minute';
+  } else if (minute === '0' && hour === '*') {
+    desc += 'every hour';
+  } else if (hour === '*') {
     desc += `minute ${minute} of every hour`;
-  } else if (minute === "0") {
+  } else if (minute === '0') {
     desc += `${formatHour(hour)}`;
   } else {
-    desc += `${formatHour(hour)}:${minute.padStart(2, "0")}`;
+    desc += `${formatHour(hour)}:${minute.padStart(2, '0')}`;
   }
 
   // Frequency description
-  if (day === "*" && month === "*" && weekday === "*") {
-    desc += " every day";
-  } else if (weekday !== "*" && day === "*") {
+  if (day === '*' && month === '*' && weekday === '*') {
+    desc += ' every day';
+  } else if (weekday !== '*' && day === '*') {
     desc += ` on ${formatWeekday(weekday)}`;
-  } else if (day !== "*" && month === "*") {
+  } else if (day !== '*' && month === '*') {
     desc += ` on day ${day} of every month`;
-  } else if (month !== "*") {
+  } else if (month !== '*') {
     desc += ` in ${formatMonth(month)}`;
   }
 
@@ -276,45 +276,45 @@ const generateBasicDescription = (
 };
 
 const formatHour = (hour: string): string => {
-  if (hour === "*") return "every hour";
+  if (hour === '*') return 'every hour';
   const h = parseInt(hour);
-  if (h === 0) return "12:00 AM";
+  if (h === 0) return '12:00 AM';
   if (h < 12) return `${h}:00 AM`;
-  if (h === 12) return "12:00 PM";
+  if (h === 12) return '12:00 PM';
   return `${h - 12}:00 PM`;
 };
 
 const formatWeekday = (weekday: string): string => {
   const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
   ];
-  if (weekday === "*") return "every day";
+  if (weekday === '*') return 'every day';
   const day = parseInt(weekday);
   return days[day === 7 ? 0 : day] || weekday;
 };
 
 const formatMonth = (month: string): string => {
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
-  if (month === "*") return "every month";
+  if (month === '*') return 'every month';
   const m = parseInt(month);
   return months[m - 1] || month;
 };
@@ -341,34 +341,34 @@ const formatTimeDistance = (date: Date): string => {
   const now = new Date();
   const diff = date.getTime() - now.getTime();
 
-  if (diff < 0) return "Past execution";
+  if (diff < 0) return 'Past execution';
 
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  if (days > 0) return `in ${days} day${days > 1 ? "s" : ""}`;
-  if (hours > 0) return `in ${hours} hour${hours > 1 ? "s" : ""}`;
-  if (minutes > 0) return `in ${minutes} minute${minutes > 1 ? "s" : ""}`;
-  return `in ${seconds} second${seconds > 1 ? "s" : ""}`;
+  if (days > 0) return `in ${days} day${days > 1 ? 's' : ''}`;
+  if (hours > 0) return `in ${hours} hour${hours > 1 ? 's' : ''}`;
+  if (minutes > 0) return `in ${minutes} minute${minutes > 1 ? 's' : ''}`;
+  return `in ${seconds} second${seconds > 1 ? 's' : ''}`;
 };
 
 const formatDateTime = (date: Date): string => {
-  return date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
     hour12: true,
-    timeZone: "UTC",
+    timeZone: 'UTC',
   });
 };
 
 const CronTester: React.FC = () => {
-  const [cronExpression, setCronExpression] = useState("");
+  const [cronExpression, setCronExpression] = useState('');
   const [cronResult, setCronResult] = useState<CronResult | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -392,9 +392,9 @@ const CronTester: React.FC = () => {
         .catch((error) => {
           setCronResult({
             isValid: false,
-            description: "",
+            description: '',
             nextExecutions: [],
-            error: "Failed to parse cron expression",
+            error: 'Failed to parse cron expression',
           });
         })
         .finally(() => {
@@ -412,11 +412,11 @@ const CronTester: React.FC = () => {
   const generateRandom = useCallback(() => {
     const randomCron = generateRandomCron();
     setCronExpression(randomCron);
-    toast.success("Generated random cron expression!");
+    toast.success('Generated random cron expression!');
   }, []);
 
   const clearExpression = () => {
-    setCronExpression("");
+    setCronExpression('');
     setCronResult(null);
   };
 
@@ -538,7 +538,7 @@ const CronTester: React.FC = () => {
                                     </div>
                                   </div>
                                   <div className="text-xs text-muted-foreground">
-                                    {index === 0 ? "Next" : `+${index}`}
+                                    {index === 0 ? 'Next' : `+${index}`}
                                   </div>
                                 </div>
                               ))}
@@ -553,29 +553,29 @@ const CronTester: React.FC = () => {
                           <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
                             {[
                               {
-                                label: "Minute",
-                                value: cronExpression.split(" ")[0] || "*",
-                                desc: "0-59",
+                                label: 'Minute',
+                                value: cronExpression.split(' ')[0] || '*',
+                                desc: '0-59',
                               },
                               {
-                                label: "Hour",
-                                value: cronExpression.split(" ")[1] || "*",
-                                desc: "0-23",
+                                label: 'Hour',
+                                value: cronExpression.split(' ')[1] || '*',
+                                desc: '0-23',
                               },
                               {
-                                label: "Day",
-                                value: cronExpression.split(" ")[2] || "*",
-                                desc: "1-31",
+                                label: 'Day',
+                                value: cronExpression.split(' ')[2] || '*',
+                                desc: '1-31',
                               },
                               {
-                                label: "Month",
-                                value: cronExpression.split(" ")[3] || "*",
-                                desc: "1-12",
+                                label: 'Month',
+                                value: cronExpression.split(' ')[3] || '*',
+                                desc: '1-12',
                               },
                               {
-                                label: "Weekday",
-                                value: cronExpression.split(" ")[4] || "*",
-                                desc: "0-7",
+                                label: 'Weekday',
+                                value: cronExpression.split(' ')[4] || '*',
+                                desc: '0-7',
                               },
                             ].map((field, index) => (
                               <div

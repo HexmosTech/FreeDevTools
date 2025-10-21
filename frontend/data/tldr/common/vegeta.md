@@ -1,29 +1,29 @@
 ---
-title: "Vegeta Load Test - Generate HTTP Traffic | Online Free DevTools by Hexmos"
+title: 'Vegeta Load Test - Generate HTTP Traffic | Online Free DevTools by Hexmos'
 name: vegeta
-path: "/freedevtools/tldr/common/vegeta/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vegeta/"
-description: "Generate HTTP traffic with Vegeta, a versatile HTTP load testing tool. Analyze web server performance and identify bottlenecks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vegeta/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vegeta/'
+description: 'Generate HTTP traffic with Vegeta, a versatile HTTP load testing tool. Analyze web server performance and identify bottlenecks. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP load testing
-- Vegeta load test
-- Performance testing tool
-- Web server benchmarking
-- HTTP traffic generator
-- Command line load test
-- Vegeta attack command
-- Load test Linux
-- Load test macOS
-- Load test common
+  - HTTP load testing
+  - Vegeta load test
+  - Performance testing tool
+  - Web server benchmarking
+  - HTTP traffic generator
+  - Command line load test
+  - Vegeta attack command
+  - Load test Linux
+  - Load test macOS
+  - Load test common
 features:
-- Launch HTTP load tests with customizable duration and rate
-- Generate load against HTTPS servers with self-signed certificates
-- Create detailed reports and plots of load test results
-- Target multiple URLs from a file for load testing
-- Analyze server performance and identify bottlenecks under load
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch HTTP load tests with customizable duration and rate
+  - Generate load against HTTPS servers with self-signed certificates
+  - Create detailed reports and plots of load test results
+  - Target multiple URLs from a file for load testing
+  - Analyze server performance and identify bottlenecks under load
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vegeta

@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Create - Generate Kubernetes Resources | Online Free DevTools by Hexmos"
+title: 'Kubectl Create - Generate Kubernetes Resources | Online Free DevTools by Hexmos'
 name: kubectl-create
-path: "/freedevtools/tldr/kubectl/kubectl-create/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-create/"
-description: "Kubectl create and manage Kubernetes resources with ease. Automate deployment, services, and namespaces creation for efficient application management. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-create/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-create/'
+description: 'Kubectl create and manage Kubernetes resources with ease. Automate deployment, services, and namespaces creation for efficient application management. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes resource creation
-- kubectl deployment generator
-- kubernetes service creation
-- kubectl namespace creation
-- yaml resource creator
-- k8s deployment automation
-- kubectl create command
-- kubernetes resource manager
-- kubectl deployment examples
-- common kubectl commands
+  - kubernetes resource creation
+  - kubectl deployment generator
+  - kubernetes service creation
+  - kubectl namespace creation
+  - yaml resource creator
+  - k8s deployment automation
+  - kubectl create command
+  - kubernetes resource manager
+  - kubectl deployment examples
+  - common kubectl commands
 features:
-- Create Kubernetes resources from YAML files
-- Generate deployments, services, and namespaces
-- Manage resources directly from stdin
-- Define deployment replicas for scalability
-- Automate Kubernetes resource configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Kubernetes resources from YAML files
+  - Generate deployments, services, and namespaces
+  - Manage resources directly from stdin
+  - Define deployment replicas for scalability
+  - Automate Kubernetes resource configuration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl create

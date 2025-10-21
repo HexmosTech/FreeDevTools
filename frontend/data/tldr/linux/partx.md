@@ -1,29 +1,29 @@
 ---
-title: "Partition Table - Parse Partitions with partx | Online Free DevTools by Hexmos"
+title: 'Partition Table - Parse Partitions with partx | Online Free DevTools by Hexmos'
 name: partx
-path: "/freedevtools/tldr/linux/partx/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/partx/"
-description: "Parse partitions with partx on Linux. Easily list, add, and delete partition entries. Manage disk partitions efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/partx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/partx/'
+description: 'Parse partitions with partx on Linux. Easily list, add, and delete partition entries. Manage disk partitions efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux partition table
-- parse partition table
-- partx command
-- disk partition management
-- block device partitions
-- kernel partition updates
-- partition entry manipulation
-- linux disk utility
-- partition table reader
-- disk image partitions
+  - linux partition table
+  - parse partition table
+  - partx command
+  - disk partition management
+  - block device partitions
+  - kernel partition updates
+  - partition entry manipulation
+  - linux disk utility
+  - partition table reader
+  - disk image partitions
 features:
-- List partitions on a block device or disk image
-- Add partitions from a device to the kernel
-- Delete partitions from the kernel's partition table
-- Parse and recognize partition tables
-- Update kernel with partition information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List partitions on a block device or disk image
+  - Add partitions from a device to the kernel
+  - Delete partitions from the kernel's partition table
+  - Parse and recognize partition tables
+  - Update kernel with partition information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # partx

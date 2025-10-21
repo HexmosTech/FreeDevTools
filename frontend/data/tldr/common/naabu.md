@@ -1,29 +1,29 @@
 ---
-title: "Naabu Port Scanner - Fast Network Scanning | Online Free DevTools by Hexmos"
+title: 'Naabu Port Scanner - Fast Network Scanning | Online Free DevTools by Hexmos'
 name: naabu
-path: "/freedevtools/tldr/common/naabu/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/naabu/"
-description: "Perform fast network scanning with Naabu Port Scanner. Identify open ports and services quickly and efficiently using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/naabu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/naabu/'
+description: 'Perform fast network scanning with Naabu Port Scanner. Identify open ports and services quickly and efficiently using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- network port scanner
-- naabu network scan
-- command line port scanner
-- fast port scanner
-- tcp port scan
-- udp port scan
-- network discovery tool
-- vulnerability assessment
-- network security scanning
-- linux port scan
+  - network port scanner
+  - naabu network scan
+  - command line port scanner
+  - fast port scanner
+  - tcp port scan
+  - udp port scan
+  - network discovery tool
+  - vulnerability assessment
+  - network security scanning
+  - linux port scan
 features:
-- Scan default or custom port ranges on a target host.
-- Identify the CDN provider being used by a website.
-- Conduct SYN scans with root privileges.
-- Output scan results in a concise and readable format.
-- Integrate with Nmap for advanced network analysis.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan default or custom port ranges on a target host.
+  - Identify the CDN provider being used by a website.
+  - Conduct SYN scans with root privileges.
+  - Output scan results in a concise and readable format.
+  - Integrate with Nmap for advanced network analysis.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # naabu

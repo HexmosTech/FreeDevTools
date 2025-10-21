@@ -1,29 +1,29 @@
 ---
-title: "Generate Shaded Relief - PAM Elevation to Relief | Online Free DevTools by Hexmos"
+title: 'Generate Shaded Relief - PAM Elevation to Relief | Online Free DevTools by Hexmos'
 name: pamshadedrelief
-path: "/freedevtools/tldr/common/pamshadedrelief/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamshadedrelief/"
-description: "Generate shaded relief images with pamshadedrelief from elevation maps. Adjust gamma, control shadows, and create realistic terrain visualizations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamshadedrelief/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamshadedrelief/'
+description: 'Generate shaded relief images with pamshadedrelief from elevation maps. Adjust gamma, control shadows, and create realistic terrain visualizations. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM shaded relief
-- Elevation map to relief
-- PAM image processing
-- Terrain visualization tool
-- Shaded relief generator
-- Netpbm image tools
-- Image gamma correction
-- PAM elevation data
-- Shaded elevation map
-- Linux image utilities
+  - PAM shaded relief
+  - Elevation map to relief
+  - PAM image processing
+  - Terrain visualization tool
+  - Shaded relief generator
+  - Netpbm image tools
+  - Image gamma correction
+  - PAM elevation data
+  - Shaded elevation map
+  - Linux image utilities
 features:
-- Generate shaded relief images from PAM elevation maps
-- Adjust gamma for desired shading effects
-- Convert elevation data to visual terrain representation
-- Create realistic 3D-like effects from 2D images
-- Process PAM image files directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate shaded relief images from PAM elevation maps
+  - Adjust gamma for desired shading effects
+  - Convert elevation data to visual terrain representation
+  - Create realistic 3D-like effects from 2D images
+  - Process PAM image files directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamshadedrelief

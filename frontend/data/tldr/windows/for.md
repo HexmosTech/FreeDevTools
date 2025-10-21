@@ -1,8 +1,8 @@
 ---
-title: "For Command - Execute Commands Iteratively | Online Free DevTools by Hexmos"
+title: 'For Command - Execute Commands Iteratively | Online Free DevTools by Hexmos'
 name: for
-path: "/freedevtools/tldr/windows/for/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/for/"
+path: '/freedevtools/tldr/windows/for/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/for/'
 description: "Execute commands iteratively with the 'for' command in your terminal. Simplify repetitive tasks and automate workflows. Free online tool, no registration required."
 category: windows
 keywords:
@@ -22,8 +22,8 @@ features:
   - Process a list of files using a wildcard pattern.
   - Operate on a collection of directories.
   - Apply commands to every directory in the current path.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # for

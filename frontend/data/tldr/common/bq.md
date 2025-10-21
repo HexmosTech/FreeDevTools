@@ -1,29 +1,29 @@
 ---
-title: "BigQuery Query - Run SQL Queries | Online Free DevTools by Hexmos"
+title: 'BigQuery Query - Run SQL Queries | Online Free DevTools by Hexmos'
 name: bq
-path: "/freedevtools/tldr/common/bq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bq/"
+path: '/freedevtools/tldr/common/bq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bq/'
 description: "Run BigQuery queries efficiently with bq, Google Cloud's data warehouse tool. Analyze large datasets and manage tables easily. Free online tool, no registration required."
 category: common
 keywords:
-- BigQuery query tool
-- SQL query BigQuery
-- Google Cloud BigQuery CLI
-- BigQuery command line
-- BigQuery dataset management
-- BigQuery table manipulation
-- BigQuery data loading
-- BigQuery copy table
-- BigQuery command reference
-- BigQuery parameter query
+  - BigQuery query tool
+  - SQL query BigQuery
+  - Google Cloud BigQuery CLI
+  - BigQuery command line
+  - BigQuery dataset management
+  - BigQuery table manipulation
+  - BigQuery data loading
+  - BigQuery copy table
+  - BigQuery command reference
+  - BigQuery parameter query
 features:
-- Execute SQL queries against BigQuery datasets.
-- Create and manage BigQuery datasets and tables.
-- Load data into BigQuery tables from various file formats.
-- Copy BigQuery tables between datasets.
-- Parameterized query executions with BigQuery.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute SQL queries against BigQuery datasets.
+  - Create and manage BigQuery datasets and tables.
+  - Load data into BigQuery tables from various file formats.
+  - Copy BigQuery tables between datasets.
+  - Parameterized query executions with BigQuery.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bq

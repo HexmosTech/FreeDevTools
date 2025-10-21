@@ -1,29 +1,29 @@
 ---
-title: "IP Aggregation Manipulation - Control Aggregate Stats | Online Free DevTools by Hexmos"
+title: 'IP Aggregation Manipulation - Control Aggregate Stats | Online Free DevTools by Hexmos'
 name: ipaggmanip
-path: "/freedevtools/tldr/common/ipaggmanip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ipaggmanip/"
-description: "Control IP aggregation data with IP Aggregation Manipulation. Efficiently manipulate, filter, and analyze network data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ipaggmanip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ipaggmanip/'
+description: 'Control IP aggregation data with IP Aggregation Manipulation. Efficiently manipulate, filter, and analyze network data. Free online tool, no registration required.'
 category: common
 keywords:
-- IP aggregation manipulation
-- aggregate statistics tool
-- network data manipulation
-- IP address aggregation
-- data summarization Linux
-- packet analysis tool
-- traffic analysis tool
-- network statistics Linux
-- aggregate data filter
-- IP address grouping
+  - IP aggregation manipulation
+  - aggregate statistics tool
+  - network data manipulation
+  - IP address aggregation
+  - data summarization Linux
+  - packet analysis tool
+  - traffic analysis tool
+  - network statistics Linux
+  - aggregate data filter
+  - IP address grouping
 features:
-- Combine aggregate labels based on high-order bits
-- Remove labels below a specified byte count threshold
-- Output a random sample of filtered labels
-- Posterize counts to binary (0 or 1)
-- Filter network data efficiently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Combine aggregate labels based on high-order bits
+  - Remove labels below a specified byte count threshold
+  - Output a random sample of filtered labels
+  - Posterize counts to binary (0 or 1)
+  - Filter network data efficiently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipaggmanip

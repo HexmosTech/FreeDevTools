@@ -1,29 +1,29 @@
 ---
-title: "Git Tag - Create and Manage Tags | Online Free DevTools by Hexmos"
+title: 'Git Tag - Create and Manage Tags | Online Free DevTools by Hexmos'
 name: git-tag
-path: "/freedevtools/tldr/git/git-tag/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-tag/"
-description: "Create and manage Git tags with Git Tag. Annotate, delete, and push tags to remote repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-tag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-tag/'
+description: 'Create and manage Git tags with Git Tag. Annotate, delete, and push tags to remote repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- git tag
-- git create tag
-- git list tags
-- git delete tag
-- git push tag
-- git annotated tag
-- git tag management
-- git tagging
-- version control tag
-- git tag commit
+  - git tag
+  - git create tag
+  - git list tags
+  - git delete tag
+  - git push tag
+  - git annotated tag
+  - git tag management
+  - git tagging
+  - version control tag
+  - git tag commit
 features:
-- Create tags pointing to specific commits
-- List all tags in a repository
-- Delete existing tags
-- Push tags to remote repositories
-- Create annotated tags with custom messages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create tags pointing to specific commits
+  - List all tags in a repository
+  - Delete existing tags
+  - Push tags to remote repositories
+  - Create annotated tags with custom messages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git tag

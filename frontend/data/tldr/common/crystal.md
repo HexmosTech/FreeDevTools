@@ -1,29 +1,29 @@
 ---
-title: "Crystal Compiler - Manage Crystal Source Code | Online Free DevTools by Hexmos"
+title: 'Crystal Compiler - Manage Crystal Source Code | Online Free DevTools by Hexmos'
 name: crystal
-path: "/freedevtools/tldr/common/crystal/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/crystal/"
-description: "Compile Crystal code easily with Crystal Compiler. Build executables, generate documentation, and run specs using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/crystal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/crystal/'
+description: 'Compile Crystal code easily with Crystal Compiler. Build executables, generate documentation, and run specs using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- crystal compiler
-- crystal build
-- crystal documentation
-- crystal spec
-- crystal eval
-- crystal init
-- crystal lang
-- crystal programming
-- crystal executable
-- crystal source code
+  - crystal compiler
+  - crystal build
+  - crystal documentation
+  - crystal spec
+  - crystal eval
+  - crystal init
+  - crystal lang
+  - crystal programming
+  - crystal executable
+  - crystal source code
 features:
-- Compile Crystal files into standalone executables
-- Generate API documentation from Crystal source code
-- Run Crystal specification suites for testing
-- Execute Crystal code from the command line
-- Initialize new Crystal application projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Crystal files into standalone executables
+  - Generate API documentation from Crystal source code
+  - Run Crystal specification suites for testing
+  - Execute Crystal code from the command line
+  - Initialize new Crystal application projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crystal

@@ -1,9 +1,9 @@
 ---
-title: "GlobalProtect VPN Client - Connect to VPN with gpclient | Online Free DevTools by Hexmos"
+title: 'GlobalProtect VPN Client - Connect to VPN with gpclient | Online Free DevTools by Hexmos'
 name: gpclient
-path: "/freedevtools/tldr/linux/gpclient/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gpclient/"
-description: "Connect to GlobalProtect VPNs easily with the gpclient command-line tool. Manage your VPN connections, troubleshoot issues, and optimize your connection. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gpclient/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gpclient/'
+description: 'Connect to GlobalProtect VPNs easily with the gpclient command-line tool. Manage your VPN connections, troubleshoot issues, and optimize your connection. Free online tool, no registration required.'
 category: linux
 keywords:
   - globalprotect vpn client
@@ -22,8 +22,8 @@ features:
   - Launch a graphical user interface for managing VPN connections.
   - Bypass legacy OpenSSL renegotiation errors.
   - Ignore TLS errors for problematic connections.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gpclient

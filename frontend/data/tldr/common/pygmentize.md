@@ -1,29 +1,29 @@
 ---
-title: "Highlight Syntax - Format Code with Pygmentize | Online Free DevTools by Hexmos"
+title: 'Highlight Syntax - Format Code with Pygmentize | Online Free DevTools by Hexmos'
 name: pygmentize
-path: "/freedevtools/tldr/common/pygmentize/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pygmentize/"
-description: "Highlight syntax with Pygmentize. Format and colorize code snippets in various languages, directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pygmentize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pygmentize/'
+description: 'Highlight syntax with Pygmentize. Format and colorize code snippets in various languages, directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- syntax highlighting
-- code formatter
-- pygments highlighter
-- command line syntax
-- source code formatter
-- code colorizer
-- language lexer
-- HTML code output
-- linux syntax
-- macos syntax
+  - syntax highlighting
+  - code formatter
+  - pygments highlighter
+  - command line syntax
+  - source code formatter
+  - code colorizer
+  - language lexer
+  - HTML code output
+  - linux syntax
+  - macos syntax
 features:
-- Highlight code syntax based on file extension
-- Explicitly specify the language for highlighting
-- List available lexers for various languages
-- Output highlighted code in HTML format
-- Customize output format with additional options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Highlight code syntax based on file extension
+  - Explicitly specify the language for highlighting
+  - List available lexers for various languages
+  - Output highlighted code in HTML format
+  - Customize output format with additional options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pygmentize

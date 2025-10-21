@@ -1,29 +1,29 @@
 ---
-title: "Load CSV - Execute CSV Files in Python | Online Free DevTools by Hexmos"
+title: 'Load CSV - Execute CSV Files in Python | Online Free DevTools by Hexmos'
 name: csvpy
-path: "/freedevtools/tldr/cs/csvpy/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csvpy/"
-description: "Load CSV files with csvpy, executing them in a Python shell for analysis and manipulation. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csvpy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csvpy/'
+description: 'Load CSV files with csvpy, executing them in a Python shell for analysis and manipulation. Free online tool, no registration required.'
 category: common
 keywords:
-- CSV Python interpreter
-- CSV command line tool
-- CSV to Python shell
-- load CSV to Python
-- CSVKit reader
-- CSVKit dict reader
-- CSV data analysis
-- CSV data manipulation
-- CSV file execution
-- common shell tool
+  - CSV Python interpreter
+  - CSV command line tool
+  - CSV to Python shell
+  - load CSV to Python
+  - CSVKit reader
+  - CSVKit dict reader
+  - CSV data analysis
+  - CSV data manipulation
+  - CSV file execution
+  - common shell tool
 features:
-- Load CSV into a CSVKitReader object.
-- Load CSV into a CSVKitDictReader object.
-- Execute CSV files in a Python shell.
-- Analyze CSV data using Python.
-- Manipulate CSV data through Python commands.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Load CSV into a CSVKitReader object.
+  - Load CSV into a CSVKitDictReader object.
+  - Execute CSV files in a Python shell.
+  - Analyze CSV data using Python.
+  - Manipulate CSV data through Python commands.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csvpy

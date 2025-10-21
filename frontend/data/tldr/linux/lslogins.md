@@ -1,9 +1,9 @@
 ---
-title: "Lslogins - Show User Logins on Linux | Online Free DevTools by Hexmos"
+title: 'Lslogins - Show User Logins on Linux | Online Free DevTools by Hexmos'
 name: lslogins
-path: "/freedevtools/tldr/linux/lslogins/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lslogins/"
-description: "Display Linux user logins with lslogins. Quickly review user accounts, last logins, and group memberships on your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lslogins/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lslogins/'
+description: 'Display Linux user logins with lslogins. Quickly review user accounts, last logins, and group memberships on your system. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux user logins
@@ -22,8 +22,8 @@ features:
   - Show last login timestamps
   - List system accounts separately
   - Display supplementary groups for users
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lslogins

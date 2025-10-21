@@ -1,29 +1,29 @@
 ---
-title: "Run GUI Apps - x11docker Container Manager | Online Free DevTools by Hexmos"
+title: 'Run GUI Apps - x11docker Container Manager | Online Free DevTools by Hexmos'
 name: x11docker
-path: "/freedevtools/tldr/common/x11docker/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/x11docker/"
-description: "Run GUI applications securely with x11docker Container Manager. Isolate graphical applications and desktop environments in Docker. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/x11docker/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/x11docker/'
+description: 'Run GUI applications securely with x11docker Container Manager. Isolate graphical applications and desktop environments in Docker. Free online tool, no registration required.'
 category: common
 keywords:
-- docker gui
-- container gui application
-- x11 forwarding
-- x11docker container
-- linux desktop environment
-- secure application container
-- docker security
-- docker x11
-- gui virtualization
-- desktop containerization
+  - docker gui
+  - container gui application
+  - x11 forwarding
+  - x11docker container
+  - linux desktop environment
+  - secure application container
+  - docker security
+  - docker x11
+  - gui virtualization
+  - desktop containerization
 features:
-- Launch GUI applications in isolated containers
-- Securely run desktop environments in Docker
-- Share directories between host and container
-- Support Pulseaudio for audio integration
-- Enable GPU acceleration for graphical performance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch GUI applications in isolated containers
+  - Securely run desktop environments in Docker
+  - Share directories between host and container
+  - Support Pulseaudio for audio integration
+  - Enable GPU acceleration for graphical performance
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # x11docker

@@ -1,29 +1,29 @@
 ---
-title: "Gzip - Compress and Decompress Files | Online Free DevTools by Hexmos"
+title: 'Gzip - Compress and Decompress Files | Online Free DevTools by Hexmos'
 name: gzip
-path: "/freedevtools/tldr/common/gzip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gzip/"
-description: "Compress files with Gzip. Quickly archive, decompress, and manage files using the command line. Free online tool, no registration required. Secondary keyword: file compression."
+path: '/freedevtools/tldr/common/gzip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gzip/'
+description: 'Compress files with Gzip. Quickly archive, decompress, and manage files using the command line. Free online tool, no registration required. Secondary keyword: file compression.'
 category: common
 keywords:
-- gzip compression
-- file compression utility
-- compress files linux
-- decompress gzip archive
-- linux gzip command
-- macos gzip command
-- gzip archive management
-- compress large files
-- gzip command line
-- file archiving tool
+  - gzip compression
+  - file compression utility
+  - compress files linux
+  - decompress gzip archive
+  - linux gzip command
+  - macos gzip command
+  - gzip archive management
+  - compress large files
+  - gzip command line
+  - file archiving tool
 features:
-- Compress files into gzip archives
-- Decompress gzip archives back to original files
-- Specify compression level for customized archiving
-- Keep original files after compression with option
-- Display compression statistics for detailed analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files into gzip archives
+  - Decompress gzip archives back to original files
+  - Specify compression level for customized archiving
+  - Keep original files after compression with option
+  - Display compression statistics for detailed analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gzip

@@ -1,9 +1,9 @@
 ---
-title: "Look Command - Find Text Prefixes | Online Free DevTools by Hexmos"
+title: 'Look Command - Find Text Prefixes | Online Free DevTools by Hexmos'
 name: look
-path: "/freedevtools/tldr/freebsd/look/"
-canonical: "https://hexmos.com/freedevtools/tldr/freebsd/look/"
-description: "Find text prefixes quickly with Look Command. Display matching lines in sorted files effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/freebsd/look/'
+canonical: 'https://hexmos.com/freedevtools/tldr/freebsd/look/'
+description: 'Find text prefixes quickly with Look Command. Display matching lines in sorted files effortlessly. Free online tool, no registration required.'
 category: freebsd
 keywords:
   - text prefix search
@@ -22,8 +22,8 @@ features:
   - filter alphanumeric prefix matches
   - customize the termination character
   - search default dictionary
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # look

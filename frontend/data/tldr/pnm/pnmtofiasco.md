@@ -1,29 +1,29 @@
 ---
-title: "Convert PNM to FIASCO - Compress Images | Online Free DevTools by Hexmos"
+title: 'Convert PNM to FIASCO - Compress Images | Online Free DevTools by Hexmos'
 name: pnmtofiasco
-path: "/freedevtools/tldr/pnm/pnmtofiasco/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtofiasco/"
-description: "Convert PNM images to compressed FIASCO files with pnmtofiasco. Optimize image storage using quality compression. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmtofiasco/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmtofiasco/'
+description: 'Convert PNM images to compressed FIASCO files with pnmtofiasco. Optimize image storage using quality compression. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM to FIASCO converter
-- image compression tool
-- PNM image processing
-- FIASCO file format
-- command-line image conversion
-- netpbm utilities
-- lossless image compression
-- image format conversion
-- linux image tools
-- image file management
+  - PNM to FIASCO converter
+  - image compression tool
+  - PNM image processing
+  - FIASCO file format
+  - command-line image conversion
+  - netpbm utilities
+  - lossless image compression
+  - image format conversion
+  - linux image tools
+  - image file management
 features:
-- Convert PNM images to FIASCO format
-- Specify compression quality for FIASCO files
-- Load configuration options from a file
-- Use file patterns to specify multiple input images
-- Compress images for efficient storage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNM images to FIASCO format
+  - Specify compression quality for FIASCO files
+  - Load configuration options from a file
+  - Use file patterns to specify multiple input images
+  - Compress images for efficient storage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmtofiasco

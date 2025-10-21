@@ -1,9 +1,9 @@
 ---
-title: "Manage Manual Pages - Format Database with mandb | Online Free DevTools by Hexmos"
+title: 'Manage Manual Pages - Format Database with mandb | Online Free DevTools by Hexmos'
 name: mandb
-path: "/freedevtools/tldr/linux/mandb/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mandb/"
-description: "Format the manual page database with mandb. Update, create, and purge entries efficiently using command line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mandb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mandb/'
+description: 'Format the manual page database with mandb. Update, create, and purge entries efficiently using command line options. Free online tool, no registration required.'
 category: linux
 keywords:
   - manual page formatter
@@ -22,8 +22,8 @@ features:
   - Create entries from scratch
   - Check the validity of manual pages
   - Update single manual page entries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mandb

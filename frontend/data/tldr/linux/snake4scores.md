@@ -1,9 +1,9 @@
 ---
-title: "View Snake4 High Scores - Display Game Scores | Online Free DevTools by Hexmos"
+title: 'View Snake4 High Scores - Display Game Scores | Online Free DevTools by Hexmos'
 name: snake4scores
-path: "/freedevtools/tldr/linux/snake4scores/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/snake4scores/"
-description: "Display Snake4 game high scores effortlessly with snake4scores. Quickly access and review top scores. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/snake4scores/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/snake4scores/'
+description: 'Display Snake4 game high scores effortlessly with snake4scores. Quickly access and review top scores. Free online tool, no registration required.'
 category: linux
 keywords:
   - snake4 high scores
@@ -22,8 +22,8 @@ features:
   - Uses a simple command-line interface for convenient access.
   - Outputs scores directly to the terminal for immediate viewing.
   - Requires no additional setup or configuration to utilize.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # snake4scores

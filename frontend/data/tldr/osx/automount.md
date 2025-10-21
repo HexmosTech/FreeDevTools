@@ -1,29 +1,29 @@
 ---
-title: "Automount - Manage Mount Points on macOS | Online Free DevTools by Hexmos"
+title: 'Automount - Manage Mount Points on macOS | Online Free DevTools by Hexmos'
 name: automount
-path: "/freedevtools/tldr/osx/automount/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/automount/"
-description: "Manage mount points with Automount on macOS. Trigger on-demand directory mounting and control auto-unmount timeouts. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/automount/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/automount/'
+description: 'Manage mount points with Automount on macOS. Trigger on-demand directory mounting and control auto-unmount timeouts. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS automount
-- automount configuration
-- auto_master file
-- on-demand mounting
-- automount command
-- macOS network shares
-- network file system
-- autofs management
-- macOS automount utility
-- directory mounting
+  - macOS automount
+  - automount configuration
+  - auto_master file
+  - on-demand mounting
+  - automount command
+  - macOS network shares
+  - network file system
+  - autofs management
+  - macOS automount utility
+  - directory mounting
 features:
-- Mount directories on demand using `/etc/auto_master`
-- Flush the automount cache
-- Automatically unmount directories after a specified inactivity period
-- Unmount all directories previously mounted by automount
-- Trigger the system's automounting process manually
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Mount directories on demand using `/etc/auto_master`
+  - Flush the automount cache
+  - Automatically unmount directories after a specified inactivity period
+  - Unmount all directories previously mounted by automount
+  - Trigger the system's automounting process manually
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # automount

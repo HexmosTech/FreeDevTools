@@ -1,29 +1,29 @@
 ---
-title: "Create Image Comparison - Magick Compare | Online Free DevTools by Hexmos"
+title: 'Create Image Comparison - Magick Compare | Online Free DevTools by Hexmos'
 name: magick-compare
-path: "/freedevtools/tldr/magick/magick-compare/"
-canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-compare/"
-description: "Create image comparisons with Magick Compare. Identify visual differences between images and generate difference images. Free online tool, no registration required."
+path: '/freedevtools/tldr/magick/magick-compare/'
+canonical: 'https://hexmos.com/freedevtools/tldr/magick/magick-compare/'
+description: 'Create image comparisons with Magick Compare. Identify visual differences between images and generate difference images. Free online tool, no registration required.'
 category: common
 keywords:
-- image comparison
-- image difference analysis
-- magick compare image
-- imageMagick compare
-- visual diff tool
-- image analysis
-- image processing
-- png comparison
-- jpeg comparison
-- command-line image tools
+  - image comparison
+  - image difference analysis
+  - magick compare image
+  - imageMagick compare
+  - visual diff tool
+  - image analysis
+  - image processing
+  - png comparison
+  - jpeg comparison
+  - command-line image tools
 features:
-- Compare images using various metrics
-- Generate difference images highlighting disparities
-- Perform verbose comparisons for detailed analysis
-- Compare images with specified metrics like PSNR
-- Visually annotate image differences
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare images using various metrics
+  - Generate difference images highlighting disparities
+  - Perform verbose comparisons for detailed analysis
+  - Compare images with specified metrics like PSNR
+  - Visually annotate image differences
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # magick compare

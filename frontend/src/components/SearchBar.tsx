@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 // Add this type definition for the custom event
 interface SearchQueryChangedEvent extends CustomEvent {
@@ -11,7 +11,7 @@ interface SearchQueryChangedEvent extends CustomEvent {
 }
 
 const SearchBar: React.FC = () => {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -20,12 +20,12 @@ const SearchBar: React.FC = () => {
   // Load initial search value from global state if it exists
   useEffect(() => {
     // Check for hash on initial load
-    if (window.location.hash.startsWith("#search?q=")) {
+    if (window.location.hash.startsWith('#search?q=')) {
       try {
         const hashParams = new URLSearchParams(
           window.location.hash.substring(8)
         );
-        const searchParam = hashParams.get("q");
+        const searchParam = hashParams.get('q');
         if (searchParam) {
           setSearchValue(searchParam);
           if (window.searchState) {
@@ -35,7 +35,7 @@ const SearchBar: React.FC = () => {
           setIsSearchExpanded(true);
         }
       } catch (e) {
-        console.error("Error parsing hash params:", e);
+        console.error('Error parsing hash params:', e);
       }
     }
     // Otherwise use the global state
@@ -55,10 +55,10 @@ const SearchBar: React.FC = () => {
       setSearchValue(customEvent.detail.query);
     };
 
-    window.addEventListener("searchQueryChanged", handleSearchQueryChange);
+    window.addEventListener('searchQueryChanged', handleSearchQueryChange);
 
     return () => {
-      window.removeEventListener("searchQueryChanged", handleSearchQueryChange);
+      window.removeEventListener('searchQueryChanged', handleSearchQueryChange);
     };
   }, []);
 
@@ -75,9 +75,9 @@ const SearchBar: React.FC = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isSearchExpanded]);
 
@@ -94,9 +94,9 @@ const SearchBar: React.FC = () => {
     if (query.trim()) {
       window.location.hash = `search?q=${encodeURIComponent(query)}`;
     } else {
-      if (window.location.hash.startsWith("#search")) {
+      if (window.location.hash.startsWith('#search')) {
         history.pushState(
-          "",
+          '',
           document.title,
           window.location.pathname + window.location.search
         );
@@ -113,14 +113,14 @@ const SearchBar: React.FC = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && searchValue.trim()) {
+    if (e.key === 'Enter' && searchValue.trim()) {
       // Ensure the global state is updated
       if (window.searchState) {
         window.searchState.setQuery(searchValue);
       }
       // Update URL hash on Enter key
       window.location.hash = `search?q=${encodeURIComponent(searchValue)}`;
-    } else if (e.key === "Escape") {
+    } else if (e.key === 'Escape') {
       // On mobile, collapse the search if it's expanded
       if (window.innerWidth < 768) {
         setIsSearchExpanded(false);
@@ -143,13 +143,13 @@ const SearchBar: React.FC = () => {
   };
 
   const clearSearch = () => {
-    setSearchValue("");
+    setSearchValue('');
     if (window.searchState) {
-      window.searchState.setQuery("");
+      window.searchState.setQuery('');
     }
-    if (window.location.hash.startsWith("#search")) {
+    if (window.location.hash.startsWith('#search')) {
       history.pushState(
-        "",
+        '',
         document.title,
         window.location.pathname + window.location.search
       );
@@ -174,11 +174,11 @@ const SearchBar: React.FC = () => {
       <div
         ref={searchContainerRef}
         className={cn(
-          "relative md:flex-1 md:max-w-sm md:mx-4",
-          "transition-all duration-200 ease-in-out",
+          'relative md:flex-1 md:max-w-sm md:mx-4',
+          'transition-all duration-200 ease-in-out',
           isSearchExpanded
-            ? "fixed inset-x-0 top-16 z-50 px-4 pb-4 md:static md:p-0 md:z-auto bg-white dark:bg-background shadow-md md:shadow-none"
-            : "hidden md:block"
+            ? 'fixed inset-x-0 top-16 z-50 px-4 pb-4 md:static md:p-0 md:z-auto bg-white dark:bg-background shadow-md md:shadow-none'
+            : 'hidden md:block'
         )}
       >
         <div className="relative">
@@ -187,11 +187,11 @@ const SearchBar: React.FC = () => {
             type="text"
             id="search"
             className={cn(
-              "w-full  pr-10 h-9 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm placeholder:text-gray-500 dark:placeholder:text-gray-400",
-              "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
+              'w-full  pr-10 h-9 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm placeholder:text-gray-500 dark:placeholder:text-gray-400',
+              'focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
               isFocused
-                ? "border-blue-500 dark:border-blue-500 bg-background/50 backdrop-blur-sm"
-                : "border-gray-300 dark:border-gray-600 hover:bg-white/70 dark:hover:bg-gray-800/70"
+                ? 'border-blue-500 dark:border-blue-500 bg-background/50 backdrop-blur-sm'
+                : 'border-gray-300 dark:border-gray-600 hover:bg-white/70 dark:hover:bg-gray-800/70'
             )}
             placeholder="Search Dev Resources..."
             value={searchValue}
@@ -216,7 +216,10 @@ const SearchBar: React.FC = () => {
           )} */}
 
           {/* Keyboard shortcut hint (hidden on mobile) */}
-          <kbd className="pointer-events-none absolute right-2 border-none top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex" id="search-help">
+          <kbd
+            className="pointer-events-none absolute right-2 border-none top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex"
+            id="search-help"
+          >
             <span className="text-xs mt-0.5">⌘ K</span>
           </kbd>
         </div>

@@ -1,29 +1,29 @@
 ---
-title: "SQLite3 - Query Databases | Online Free DevTools by Hexmos"
+title: 'SQLite3 - Query Databases | Online Free DevTools by Hexmos'
 name: sqlite3
-path: "/freedevtools/tldr/common/sqlite3/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sqlite3/"
-description: "Query SQLite3 databases with this command-line interface. Execute SQL statements and manage database files efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sqlite3/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sqlite3/'
+description: 'Query SQLite3 databases with this command-line interface. Execute SQL statements and manage database files efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- sqlite3 database query
-- sqlite3 command line
-- sqlite3 sql execution
-- sqlite3 database manager
-- sqlite3 command interface
-- sqlite3 shell interaction
-- sqlite3 database manipulation
-- sqlite3 file based database
-- sqlite3 embedded database
-- sqlite3 linux database
+  - sqlite3 database query
+  - sqlite3 command line
+  - sqlite3 sql execution
+  - sqlite3 database manager
+  - sqlite3 command interface
+  - sqlite3 shell interaction
+  - sqlite3 database manipulation
+  - sqlite3 file based database
+  - sqlite3 embedded database
+  - sqlite3 linux database
 features:
-- Open interactive SQLite3 shells.
-- Execute SQL statements against databases.
-- Create and manage SQLite3 database files.
-- Operate on existing SQLite3 databases.
-- Read database schemas.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open interactive SQLite3 shells.
+  - Execute SQL statements against databases.
+  - Create and manage SQLite3 database files.
+  - Operate on existing SQLite3 databases.
+  - Read database schemas.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sqlite3

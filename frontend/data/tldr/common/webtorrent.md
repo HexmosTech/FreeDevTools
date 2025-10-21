@@ -1,29 +1,29 @@
 ---
-title: "WebTorrent - Download and Seed Torrents | Online Free DevTools by Hexmos"
+title: 'WebTorrent - Download and Seed Torrents | Online Free DevTools by Hexmos'
 name: webtorrent
-path: "/freedevtools/tldr/common/webtorrent/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/webtorrent/"
-description: "Download torrents quickly with WebTorrent. Stream torrents to VLC and DLNA devices, and seed files easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/webtorrent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/webtorrent/'
+description: 'Download torrents quickly with WebTorrent. Stream torrents to VLC and DLNA devices, and seed files easily. Free online tool, no registration required.'
 category: common
 keywords:
-- torrent downloader
-- webtorrent cli
-- magnet link downloader
-- torrent streaming
-- dlna torrent streaming
-- vlc torrent streaming
-- torrent seeder
-- torrent info
-- torrent file creator
-- command line torrent
+  - torrent downloader
+  - webtorrent cli
+  - magnet link downloader
+  - torrent streaming
+  - dlna torrent streaming
+  - vlc torrent streaming
+  - torrent seeder
+  - torrent info
+  - torrent file creator
+  - command line torrent
 features:
-- Download torrents from magnet links, URLs, info hashes, and .torrent files.
-- Stream torrents directly to VLC media player.
-- Stream torrents to DLNA-compatible devices.
-- Seed files and directories using the command line.
-- Create new .torrent files from existing files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download torrents from magnet links, URLs, info hashes, and .torrent files.
+  - Stream torrents directly to VLC media player.
+  - Stream torrents to DLNA-compatible devices.
+  - Seed files and directories using the command line.
+  - Create new .torrent files from existing files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # webtorrent

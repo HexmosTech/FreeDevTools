@@ -1,29 +1,29 @@
 ---
-title: "AWS RDS Control - Manage Relational Databases | Online Free DevTools by Hexmos"
+title: 'AWS RDS Control - Manage Relational Databases | Online Free DevTools by Hexmos'
 name: aws-rds
-path: "/freedevtools/tldr/aws/aws-rds/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-rds/"
-description: "Control AWS RDS databases with this command-line tool. Manage instances, modify configurations, and apply updates efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-rds/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-rds/'
+description: 'Control AWS RDS databases with this command-line tool. Manage instances, modify configurations, and apply updates efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS RDS control
-- Relational database management
-- AWS CLI RDS commands
-- RDS instance management
-- Database configuration AWS
-- AWS database administration
-- RDS command line
-- AWS RDS automation
-- Cloud database control
-- AWS database commands
+  - AWS RDS control
+  - Relational database management
+  - AWS CLI RDS commands
+  - RDS instance management
+  - Database configuration AWS
+  - AWS database administration
+  - RDS command line
+  - AWS RDS automation
+  - Cloud database control
+  - AWS database commands
 features:
-- Stop and start RDS database instances
-- Modify RDS instance configurations and settings
-- Apply pending maintenance actions to RDS databases
-- Change RDS instance identifiers
-- Reboot RDS instances securely
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Stop and start RDS database instances
+  - Modify RDS instance configurations and settings
+  - Apply pending maintenance actions to RDS databases
+  - Change RDS instance identifiers
+  - Reboot RDS instances securely
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws rds

@@ -1,29 +1,29 @@
 ---
-title: "Sort CSV Files - Control CSV Sorting with csvsort | Online Free DevTools by Hexmos"
+title: 'Sort CSV Files - Control CSV Sorting with csvsort | Online Free DevTools by Hexmos'
 name: csvsort
-path: "/freedevtools/tldr/cs/csvsort/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csvsort/"
-description: "Control CSV sorting with csvsort. Sort data, reorder columns, and refine CSV files. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csvsort/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csvsort/'
+description: 'Control CSV sorting with csvsort. Sort data, reorder columns, and refine CSV files. Free online tool, no registration required.'
 category: common
 keywords:
-- csv sort
-- csv sorting tool
-- sort csv data
-- sort csv columns
-- csvkit csvsort
-- command line csv sort
-- linux csv sort
-- macos csv sort
-- sort comma separated values
-- csv data manipulation
+  - csv sort
+  - csv sorting tool
+  - sort csv data
+  - sort csv columns
+  - csvkit csvsort
+  - command line csv sort
+  - linux csv sort
+  - macos csv sort
+  - sort comma separated values
+  - csv data manipulation
 features:
-- Sort CSV files by specified columns
-- Sort in ascending or descending order
-- Sort without inferring data types
-- Sort based on multiple columns
-- Reorder CSV columns using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Sort CSV files by specified columns
+  - Sort in ascending or descending order
+  - Sort without inferring data types
+  - Sort based on multiple columns
+  - Reorder CSV columns using command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csvsort

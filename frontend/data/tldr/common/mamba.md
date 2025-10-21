@@ -1,29 +1,29 @@
 ---
-title: "Manage Packages with Mamba - Fast Conda Replacement | Online Free DevTools by Hexmos"
+title: 'Manage Packages with Mamba - Fast Conda Replacement | Online Free DevTools by Hexmos'
 name: mamba
-path: "/freedevtools/tldr/common/mamba/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mamba/"
-description: "Manage packages efficiently with Mamba, a fast Conda alternative for environment management. Install, update, and search packages with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mamba/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mamba/'
+description: 'Manage packages efficiently with Mamba, a fast Conda alternative for environment management. Install, update, and search packages with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- package manager
-- conda replacement
-- mamba install
-- mamba update
-- mamba create environment
-- cross platform package manager
-- environment manager
-- dependency management
-- python package management
-- scientific computing
+  - package manager
+  - conda replacement
+  - mamba install
+  - mamba update
+  - mamba create environment
+  - cross platform package manager
+  - environment manager
+  - dependency management
+  - python package management
+  - scientific computing
 features:
-- Create isolated environments for different projects.
-- Install packages from various channels, including conda-forge.
-- Update all packages in an environment to the latest versions.
-- Search for specific packages in repositories.
-- Clean up unused packages and tarballs from the cache.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create isolated environments for different projects.
+  - Install packages from various channels, including conda-forge.
+  - Update all packages in an environment to the latest versions.
+  - Search for specific packages in repositories.
+  - Clean up unused packages and tarballs from the cache.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mamba

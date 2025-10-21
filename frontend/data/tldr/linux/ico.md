@@ -1,29 +1,29 @@
 ---
-title: "ICO - Display Polyhedron Animation | Online Free DevTools by Hexmos"
+title: 'ICO - Display Polyhedron Animation | Online Free DevTools by Hexmos'
 name: ico
-path: "/freedevtools/tldr/linux/ico/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ico/"
-description: "Display polyhedron animation with ICO. Visualize complex shapes and control animation parameters with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ico/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ico/'
+description: 'Display polyhedron animation with ICO. Visualize complex shapes and control animation parameters with this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
-- polyhedron animation
-- 3D model display
-- wireframe visualization
-- Linux graphics command
-- command-line animation
-- ico animation
-- geometric shape renderer
-- icosahedron display
-- command line graphics
-- Linux animation tool
+  - polyhedron animation
+  - 3D model display
+  - wireframe visualization
+  - Linux graphics command
+  - command-line animation
+  - ico animation
+  - geometric shape renderer
+  - icosahedron display
+  - command line graphics
+  - Linux animation tool
 features:
-- Animate polyhedron shapes from the command line
-- Customize colors and background for polyhedron display
-- Control animation speed and display parameters
-- Render wireframe or solid polyhedron models
-- Adjust line width and threading for optimal performance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Animate polyhedron shapes from the command line
+  - Customize colors and background for polyhedron display
+  - Control animation speed and display parameters
+  - Render wireframe or solid polyhedron models
+  - Adjust line width and threading for optimal performance
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ico

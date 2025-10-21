@@ -1,29 +1,29 @@
 ---
-title: "Download RTMP Streams - Dump Media Content | Online Free DevTools by Hexmos"
+title: 'Download RTMP Streams - Dump Media Content | Online Free DevTools by Hexmos'
 name: rtmpdump
-path: "/freedevtools/tldr/common/rtmpdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rtmpdump/"
-description: "Download RTMP streams with RTMPdump. Capture media content streamed over the Real Time Messaging Protocol (RTMP). Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rtmpdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rtmpdump/'
+description: 'Download RTMP streams with RTMPdump. Capture media content streamed over the Real Time Messaging Protocol (RTMP). Free online tool, no registration required.'
 category: common
 keywords:
-- RTMP stream downloader
-- RTMP capture tool
-- RTMP dump utility
-- Media stream grabber
-- Flash video downloader
-- RTMP recording software
-- Live stream ripper
-- RTMP stream analyzer
-- Command line stream downloader
-- RTMP protocol sniffer
+  - RTMP stream downloader
+  - RTMP capture tool
+  - RTMP dump utility
+  - Media stream grabber
+  - Flash video downloader
+  - RTMP recording software
+  - Live stream ripper
+  - RTMP stream analyzer
+  - Command line stream downloader
+  - RTMP protocol sniffer
 features:
-- Download media streamed via RTMP
-- Capture RTMP streams from Flash players
-- Specify connection parameters for RTMP streams
-- Download streams requiring a referrer URL
-- Save downloaded RTMP streams to FLV files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download media streamed via RTMP
+  - Capture RTMP streams from Flash players
+  - Specify connection parameters for RTMP streams
+  - Download streams requiring a referrer URL
+  - Save downloaded RTMP streams to FLV files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rtmpdump

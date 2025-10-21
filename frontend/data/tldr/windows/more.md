@@ -1,9 +1,9 @@
 ---
-title: "Display Paged Output - Control Text Output with More | Online Free DevTools by Hexmos"
+title: 'Display Paged Output - Control Text Output with More | Online Free DevTools by Hexmos'
 name: more
-path: "/freedevtools/tldr/windows/more/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/more/"
-description: "Control paged output with More. Display content from files or stdin and format text output. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/more/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/more/'
+description: 'Control paged output with More. Display content from files or stdin and format text output. Free online tool, no registration required.'
 category: windows
 keywords:
   - paginated output display
@@ -22,8 +22,8 @@ features:
   - Convert tabs to spaces
   - Clear the screen before displaying output
   - Start output display at a specific line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # more

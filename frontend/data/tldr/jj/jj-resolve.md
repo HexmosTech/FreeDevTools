@@ -1,9 +1,9 @@
 ---
-title: "Resolve Conflicts - Control JJ Merge Tool | Online Free DevTools by Hexmos"
+title: 'Resolve Conflicts - Control JJ Merge Tool | Online Free DevTools by Hexmos'
 name: jj-resolve
-path: "/freedevtools/tldr/jj/jj-resolve/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-resolve/"
-description: "Resolve conflicts efficiently with JJ Merge Tool, handling file merge issues. Manage revision conflicts easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-resolve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-resolve/'
+description: 'Resolve conflicts efficiently with JJ Merge Tool, handling file merge issues. Manage revision conflicts easily. Free online tool, no registration required.'
 category: common
 keywords:
   - jj resolve conflict
@@ -22,8 +22,8 @@ features:
   - Resolve conflicts in a specific revision
   - Resolve conflicts only within specified files
   - Accept incoming or outgoing versions during resolution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj resolve

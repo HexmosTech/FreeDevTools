@@ -1,29 +1,29 @@
 ---
-title: "Restore Git Files - Undo Changes | Online Free DevTools by Hexmos"
+title: 'Restore Git Files - Undo Changes | Online Free DevTools by Hexmos'
 name: git-restore
-path: "/freedevtools/tldr/git/git-restore/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-restore/"
-description: "Undo git changes with Git Restore command. Recover files, unstage modifications, and discard changes quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-restore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-restore/'
+description: 'Undo git changes with Git Restore command. Recover files, unstage modifications, and discard changes quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- git restore file
-- git restore unstaged changes
-- git restore commit version
-- git unstage file
-- git discard changes
-- git version control
-- git command line
-- git repository
-- git file recovery
-- git source control
+  - git restore file
+  - git restore unstaged changes
+  - git restore commit version
+  - git unstage file
+  - git discard changes
+  - git version control
+  - git command line
+  - git repository
+  - git file recovery
+  - git source control
 features:
-- Restore unstaged files to staged versions
-- Restore files to a specific commit version
-- Discard all unstaged changes in tracked files
-- Unstage files easily
-- Interactively select file sections to restore
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restore unstaged files to staged versions
+  - Restore files to a specific commit version
+  - Discard all unstaged changes in tracked files
+  - Unstage files easily
+  - Interactively select file sections to restore
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git restore

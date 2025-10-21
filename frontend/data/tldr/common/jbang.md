@@ -1,29 +1,29 @@
 ---
-title: "Create Java Programs - Run Source Code with Jbang | Online Free DevTools by Hexmos"
+title: 'Create Java Programs - Run Source Code with Jbang | Online Free DevTools by Hexmos'
 name: jbang
-path: "/freedevtools/tldr/common/jbang/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jbang/"
-description: "Create Java programs instantly with Jbang. Run self-contained source code directly without compiling. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jbang/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jbang/'
+description: 'Create Java programs instantly with Jbang. Run self-contained source code directly without compiling. Free online tool, no registration required.'
 category: common
 keywords:
-- java program creator
-- jbang java runner
-- java source code execution
-- java scripting tool
-- jbang script manager
-- java command line runner
-- java code snippet runner
-- linux java execution
-- macos java execution
-- cross platform java scripting
+  - java program creator
+  - jbang java runner
+  - java source code execution
+  - java scripting tool
+  - jbang script manager
+  - java command line runner
+  - java code snippet runner
+  - linux java execution
+  - macos java execution
+  - cross platform java scripting
 features:
-- Initialize Java classes and scripts easily
-- Run Java code snippets without compilation
-- Install scripts directly onto the user's PATH
-- Manage and run Java programs from the command line
-- Edit and debug scripts in various IDEs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Java classes and scripts easily
+  - Run Java code snippets without compilation
+  - Install scripts directly onto the user's PATH
+  - Manage and run Java programs from the command line
+  - Edit and debug scripts in various IDEs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jbang

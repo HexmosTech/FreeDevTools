@@ -1,29 +1,29 @@
 ---
-title: "Create BTRFS Snapshots - Manage Filesystems | Online Free DevTools by Hexmos"
+title: 'Create BTRFS Snapshots - Manage Filesystems | Online Free DevTools by Hexmos'
 name: rusnapshot
-path: "/freedevtools/tldr/linux/rusnapshot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rusnapshot/"
-description: "Create BTRFS snapshots with rusnapshot. Easily manage your filesystem, revert changes and backup data with this powerful command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rusnapshot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rusnapshot/'
+description: 'Create BTRFS snapshots with rusnapshot. Easily manage your filesystem, revert changes and backup data with this powerful command line tool. Free online tool, no registration required.'
 category: linux
 keywords:
-- btrfs snapshot
-- linux btrfs snapshot
-- filesystem snapshot
-- btrfs backup
-- linux btrfs backup
-- snapshot management
-- btrfs command line
-- rusnapshot
-- btrfs restore
-- linux filesystem
+  - btrfs snapshot
+  - linux btrfs snapshot
+  - filesystem snapshot
+  - btrfs backup
+  - linux btrfs backup
+  - snapshot management
+  - btrfs command line
+  - rusnapshot
+  - btrfs restore
+  - linux filesystem
 features:
-- Create snapshots from configuration files.
-- List available snapshots based on configuration.
-- Delete snapshots by ID or name.
-- Clean snapshots based on age and type.
-- Restore filesystems to a previous snapshot state.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create snapshots from configuration files.
+  - List available snapshots based on configuration.
+  - Delete snapshots by ID or name.
+  - Clean snapshots based on age and type.
+  - Restore filesystems to a previous snapshot state.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rusnapshot

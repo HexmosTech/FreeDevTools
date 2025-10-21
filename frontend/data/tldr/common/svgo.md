@@ -1,29 +1,29 @@
 ---
-title: "Optimize SVG - Optimize Vector Graphics with SVGO | Online Free DevTools by Hexmos"
+title: 'Optimize SVG - Optimize Vector Graphics with SVGO | Online Free DevTools by Hexmos'
 name: svgo
-path: "/freedevtools/tldr/common/svgo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/svgo/"
-description: "Optimize SVG vector graphics with SVGO. Reduce file sizes and improve website performance with this versatile optimizer. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/svgo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/svgo/'
+description: 'Optimize SVG vector graphics with SVGO. Reduce file sizes and improve website performance with this versatile optimizer. Free online tool, no registration required.'
 category: common
 keywords:
-- SVG optimizer
-- vector graphics optimization
-- SVG compression
-- command line SVG tools
-- lossless image optimization
-- Node.js SVG optimizer
-- SVG minification
-- front-end performance
-- image file size reduction
-- SVG cleanup
+  - SVG optimizer
+  - vector graphics optimization
+  - SVG compression
+  - command line SVG tools
+  - lossless image optimization
+  - Node.js SVG optimizer
+  - SVG minification
+  - front-end performance
+  - image file size reduction
+  - SVG cleanup
 features:
-- Optimizes SVG files using a variety of plugins
-- Compresses and minifies SVG code for smaller file sizes
-- Supports batch processing of multiple SVG files
-- Configurable with custom plugin sets
-- Integrates with command-line workflows
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Optimizes SVG files using a variety of plugins
+  - Compresses and minifies SVG code for smaller file sizes
+  - Supports batch processing of multiple SVG files
+  - Configurable with custom plugin sets
+  - Integrates with command-line workflows
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # svgo

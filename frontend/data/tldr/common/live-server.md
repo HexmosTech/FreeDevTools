@@ -1,29 +1,29 @@
 ---
-title: "Serve Files - Live Server with Live Reload | Online Free DevTools by Hexmos"
+title: 'Serve Files - Live Server with Live Reload | Online Free DevTools by Hexmos'
 name: live-server
-path: "/freedevtools/tldr/common/live-server/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/live-server/"
-description: "Serve files instantly with Live Server. Develop websites with live reload functionality for faster development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/live-server/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/live-server/'
+description: 'Serve files instantly with Live Server. Develop websites with live reload functionality for faster development. Free online tool, no registration required.'
 category: common
 keywords:
-- live reload server
-- development server
-- http server
-- web server
-- local server
-- localhost server
-- file server
-- web development server
-- auto reload server
-- static file server
+  - live reload server
+  - development server
+  - http server
+  - web server
+  - local server
+  - localhost server
+  - file server
+  - web development server
+  - auto reload server
+  - static file server
 features:
-- Serve static files from a local directory.
-- Automatically reload the browser on file changes.
-- Specify a custom port for the server.
-- Open a specific file in the browser.
-- Proxy requests to a different URL.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve static files from a local directory.
+  - Automatically reload the browser on file changes.
+  - Specify a custom port for the server.
+  - Open a specific file in the browser.
+  - Proxy requests to a different URL.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # live-server

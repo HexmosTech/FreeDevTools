@@ -1,29 +1,29 @@
 ---
-title: "AWS SQS - Manage Queues | Online Free DevTools by Hexmos"
+title: 'AWS SQS - Manage Queues | Online Free DevTools by Hexmos'
 name: aws-sqs
-path: "/freedevtools/tldr/aws/aws-sqs/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sqs/"
-description: "Manage queues with AWS SQS. Create, delete, and send messages using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-sqs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-sqs/'
+description: 'Manage queues with AWS SQS. Create, delete, and send messages using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- aws sqs queues
-- amazon sqs command
-- aws message queue
-- sqs cli
-- aws sqs manager
-- aws sqs send message
-- aws sqs delete queue
-- aws sqs list queues
-- aws sqs purge queue
-- aws sqs permission control
+  - aws sqs queues
+  - amazon sqs command
+  - aws message queue
+  - sqs cli
+  - aws sqs manager
+  - aws sqs send message
+  - aws sqs delete queue
+  - aws sqs list queues
+  - aws sqs purge queue
+  - aws sqs permission control
 features:
-- List available AWS SQS queues.
-- Create new queues with custom attributes.
-- Send messages to AWS SQS queues with specified attributes.
-- Delete messages from AWS SQS queues.
-- Manage queue permissions for specific AWS accounts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available AWS SQS queues.
+  - Create new queues with custom attributes.
+  - Send messages to AWS SQS queues with specified attributes.
+  - Delete messages from AWS SQS queues.
+  - Manage queue permissions for specific AWS accounts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws sqs

@@ -1,9 +1,9 @@
 ---
-title: "QM Resize - Control Disk Size | Online Free DevTools by Hexmos"
+title: 'QM Resize - Control Disk Size | Online Free DevTools by Hexmos'
 name: qm-resize
-path: "/freedevtools/tldr/linux/qm-resize/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-resize/"
-description: "Control virtual machine disk size with QM Resize. Efficiently manage and allocate disk space for optimal VM performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-resize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-resize/'
+description: 'Control virtual machine disk size with QM Resize. Efficiently manage and allocate disk space for optimal VM performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - proxmox resize disk
@@ -22,8 +22,8 @@ features:
   - Manage disk sizes via command line
   - Dynamically adjust VM disk capacity
   - Extend existing disk partitions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm resize

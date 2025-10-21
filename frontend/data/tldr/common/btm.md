@@ -1,29 +1,29 @@
 ---
-title: "Btm - Monitor System Resources | Online Free DevTools by Hexmos"
+title: 'Btm - Monitor System Resources | Online Free DevTools by Hexmos'
 name: btm
-path: "/freedevtools/tldr/common/btm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/btm/"
-description: "Monitor system resources effectively with Btm. Observe CPU, memory, disk I/O, and network usage in a graphical terminal interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/btm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/btm/'
+description: 'Monitor system resources effectively with Btm. Observe CPU, memory, disk I/O, and network usage in a graphical terminal interface. Free online tool, no registration required.'
 category: common
 keywords:
-- system monitor
-- resource monitor
-- performance monitor
-- terminal monitor
-- cpu usage
-- memory usage
-- disk I/O
-- network usage
-- linux monitor
-- macos monitor
+  - system monitor
+  - resource monitor
+  - performance monitor
+  - terminal monitor
+  - cpu usage
+  - memory usage
+  - disk I/O
+  - network usage
+  - linux monitor
+  - macos monitor
 features:
-- Display CPU, memory, disk, and network metrics
-- Show system temperatures and process information
-- Enable a basic mode for minimal resource usage
-- Customize chart marker styles
-- Monitor battery charge and health status
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display CPU, memory, disk, and network metrics
+  - Show system temperatures and process information
+  - Enable a basic mode for minimal resource usage
+  - Customize chart marker styles
+  - Monitor battery charge and health status
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btm

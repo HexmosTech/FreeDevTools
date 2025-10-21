@@ -1,29 +1,29 @@
 ---
-title: "Generate Ephemerides - Kosmorro Date & Location | Online Free DevTools by Hexmos"
+title: 'Generate Ephemerides - Kosmorro Date & Location | Online Free DevTools by Hexmos'
 name: kosmorro
-path: "/freedevtools/tldr/common/kosmorro/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kosmorro/"
-description: "Generate ephemerides with Kosmorro for specific dates and locations. Calculate celestial events and planetary positions using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kosmorro/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kosmorro/'
+description: 'Generate ephemerides with Kosmorro for specific dates and locations. Calculate celestial events and planetary positions using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- ephemeris generator
-- astronomical calculations
-- planetary positions
-- celestial events
-- date calculator
-- location based astronomy
-- command-line ephemeris
-- kosmorro ephemeris
-- linux ephemeris
-- macos ephemeris
+  - ephemeris generator
+  - astronomical calculations
+  - planetary positions
+  - celestial events
+  - date calculator
+  - location based astronomy
+  - command-line ephemeris
+  - kosmorro ephemeris
+  - linux ephemeris
+  - macos ephemeris
 features:
-- Calculate ephemerides for any date and location
-- Determine celestial events based on geographic position
-- Output ephemeris data in various formats
-- Generate ephemerides with timezone support
-- Create PDF reports of astronomical data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate ephemerides for any date and location
+  - Determine celestial events based on geographic position
+  - Output ephemeris data in various formats
+  - Generate ephemerides with timezone support
+  - Create PDF reports of astronomical data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kosmorro

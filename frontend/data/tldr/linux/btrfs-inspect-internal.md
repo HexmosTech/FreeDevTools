@@ -1,29 +1,29 @@
 ---
-title: "Btrfs Inspect - Query Filesystem | Online Free DevTools by Hexmos"
+title: 'Btrfs Inspect - Query Filesystem | Online Free DevTools by Hexmos'
 name: btrfs-inspect-internal
-path: "/freedevtools/tldr/linux/btrfs-inspect-internal/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-inspect-internal/"
-description: "Query filesystem details with Btrfs Inspect-Internal on Linux. Analyze metadata and troubleshoot your Btrfs file system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/btrfs-inspect-internal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/btrfs-inspect-internal/'
+description: 'Query filesystem details with Btrfs Inspect-Internal on Linux. Analyze metadata and troubleshoot your Btrfs file system. Free online tool, no registration required.'
 category: linux
 keywords:
-- btrfs filesystem query
-- btrfs metadata analysis
-- btrfs superblock dump
-- btrfs tree stats
-- btrfs inode resolve
-- btrfs logical resolve
-- linux btrfs inspect
-- btrfs filesystem debugging
-- btrfs partition inspection
-- btrfs internal information
+  - btrfs filesystem query
+  - btrfs metadata analysis
+  - btrfs superblock dump
+  - btrfs tree stats
+  - btrfs inode resolve
+  - btrfs logical resolve
+  - linux btrfs inspect
+  - btrfs filesystem debugging
+  - btrfs partition inspection
+  - btrfs internal information
 features:
-- Dump Btrfs superblock information
-- Resolve file inodes in a Btrfs filesystem
-- Resolve logical addresses in a Btrfs filesystem
-- Print Btrfs filesystem metadata information
-- Print Btrfs tree statistics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Dump Btrfs superblock information
+  - Resolve file inodes in a Btrfs filesystem
+  - Resolve logical addresses in a Btrfs filesystem
+  - Print Btrfs filesystem metadata information
+  - Print Btrfs tree statistics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btrfs inspect-internal

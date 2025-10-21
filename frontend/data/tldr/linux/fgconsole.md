@@ -1,9 +1,9 @@
 ---
-title: "Fgconsole - Print Terminal Number | Online Free DevTools by Hexmos"
+title: 'Fgconsole - Print Terminal Number | Online Free DevTools by Hexmos'
 name: fgconsole
-path: "/freedevtools/tldr/linux/fgconsole/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fgconsole/"
-description: "Print current terminal number with Fgconsole. Quickly identify the foreground virtual terminal and manage virtual terminals using Linux command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fgconsole/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fgconsole/'
+description: 'Print current terminal number with Fgconsole. Quickly identify the foreground virtual terminal and manage virtual terminals using Linux command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - terminal number command
@@ -22,8 +22,8 @@ features:
   - Determine the next available unallocated virtual terminal
   - Support for the '-n' or '--next-available' flag
   - Execute directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fgconsole

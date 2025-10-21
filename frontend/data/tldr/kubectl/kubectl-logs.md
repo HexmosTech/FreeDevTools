@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Logs - Show Pod Logs | Online Free DevTools by Hexmos"
+title: 'Kubectl Logs - Show Pod Logs | Online Free DevTools by Hexmos'
 name: kubectl-logs
-path: "/freedevtools/tldr/kubectl/kubectl-logs/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-logs/"
-description: "Show Pod logs instantly with Kubectl Logs. Monitor container output, debug application issues, and troubleshoot deployments. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-logs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-logs/'
+description: 'Show Pod logs instantly with Kubectl Logs. Monitor container output, debug application issues, and troubleshoot deployments. Free online tool, no registration required.'
 category: common
 keywords:
-- kubectl pod logs
-- kubernetes pod logs
-- container logs
-- kubernetes logging
-- kubectl logs deployment
-- pod logs stream
-- kubectl logs tail
-- kubernetes logs viewer
-- kubectl logs since
-- kubectl logs all containers
+  - kubectl pod logs
+  - kubernetes pod logs
+  - container logs
+  - kubernetes logging
+  - kubectl logs deployment
+  - pod logs stream
+  - kubectl logs tail
+  - kubernetes logs viewer
+  - kubectl logs since
+  - kubectl logs all containers
 features:
-- Stream container logs in real-time.
-- Filter logs by relative time.
-- Show logs for all containers in a pod.
-- Display the most recent logs from a pod.
-- View logs for a specific deployment.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Stream container logs in real-time.
+  - Filter logs by relative time.
+  - Show logs for all containers in a pod.
+  - Display the most recent logs from a pod.
+  - View logs for a specific deployment.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl logs

@@ -1,9 +1,9 @@
 ---
-title: "Generate ISO Image - Create Filesystems | Online Free DevTools by Hexmos"
+title: 'Generate ISO Image - Create Filesystems | Online Free DevTools by Hexmos'
 name: genisoimage
-path: "/freedevtools/tldr/linux/genisoimage/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/genisoimage/"
-description: "Generate ISO image files with genisoimage. Create ISO9660, Joliet, and HFS hybrid filesystems quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/genisoimage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/genisoimage/'
+description: 'Generate ISO image files with genisoimage. Create ISO9660, Joliet, and HFS hybrid filesystems quickly. Free online tool, no registration required.'
 category: linux
 keywords:
   - iso image generator
@@ -22,8 +22,8 @@ features:
   - Create HFS hybrid filesystem images.
   - Allow files larger than 2GiB.
   - Generate ISO image from directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # genisoimage

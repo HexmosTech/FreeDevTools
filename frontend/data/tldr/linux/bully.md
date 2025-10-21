@@ -1,9 +1,9 @@
 ---
-title: "Bully WPS Pin Cracker - Brute-force Wireless Networks | Online Free DevTools by Hexmos"
+title: 'Bully WPS Pin Cracker - Brute-force Wireless Networks | Online Free DevTools by Hexmos'
 name: bully
-path: "/freedevtools/tldr/linux/bully/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bully/"
-description: "Brute-force WPS pins with Bully WPS Pin Cracker.  Crack wireless network passwords quickly and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bully/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bully/'
+description: 'Brute-force WPS pins with Bully WPS Pin Cracker.  Crack wireless network passwords quickly and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - WPS pin brute-forcer
@@ -22,8 +22,8 @@ features:
   - Requires prior network information gathering with airodump-ng.
   - Provides command-line interface for ease of use.
   - Offers a clear help message with usage instructions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bully

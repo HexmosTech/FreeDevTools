@@ -1,29 +1,29 @@
 ---
-title: "Exoscale Storage - Manage SOS Buckets | Online Free DevTools by Hexmos"
+title: 'Exoscale Storage - Manage SOS Buckets | Online Free DevTools by Hexmos'
 name: exo-storage
-path: "/freedevtools/tldr/exo/exo-storage/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-storage/"
-description: "Manage Exoscale SOS buckets and objects with exo storage. Upload, download, list objects, and manage metadata easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo-storage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo-storage/'
+description: 'Manage Exoscale SOS buckets and objects with exo storage. Upload, download, list objects, and manage metadata easily. Free online tool, no registration required.'
 category: common
 keywords:
-- exoscale storage management
-- sos bucket manager
-- object storage command line
-- cloud storage tool
-- exoscale cli utility
-- sos bucket upload
-- sos bucket download
-- object metadata editor
-- exoscale object storage
-- sos bucket list
+  - exoscale storage management
+  - sos bucket manager
+  - object storage command line
+  - cloud storage tool
+  - exoscale cli utility
+  - sos bucket upload
+  - sos bucket download
+  - object metadata editor
+  - exoscale object storage
+  - sos bucket list
 features:
-- Create new Exoscale SOS buckets
-- Upload files to specified buckets
-- List objects within a given bucket
-- Download objects with dry-run simulation
-- Manage object metadata with custom keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Exoscale SOS buckets
+  - Upload files to specified buckets
+  - List objects within a given bucket
+  - Download objects with dry-run simulation
+  - Manage object metadata with custom keys
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo storage

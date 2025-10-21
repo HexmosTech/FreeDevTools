@@ -1,29 +1,29 @@
 ---
-title: "Search Files - Zfgrep String Matching | Online Free DevTools by Hexmos"
+title: 'Search Files - Zfgrep String Matching | Online Free DevTools by Hexmos'
 name: zfgrep
-path: "/freedevtools/tldr/common/zfgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zfgrep/"
-description: "Search strings with Zfgrep. Find exact matches in compressed or uncompressed files, offering efficient text searching. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zfgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zfgrep/'
+description: 'Search strings with Zfgrep. Find exact matches in compressed or uncompressed files, offering efficient text searching. Free online tool, no registration required.'
 category: common
 keywords:
-- compressed file search
-- fixed string search
-- zfgrep search
-- file content search
-- text search linux
-- linux grep alternative
-- string matching tool
-- grep fixed strings
-- command line search tool
-- search compressed files
+  - compressed file search
+  - fixed string search
+  - zfgrep search
+  - file content search
+  - text search linux
+  - linux grep alternative
+  - string matching tool
+  - grep fixed strings
+  - command line search tool
+  - search compressed files
 features:
-- Search for fixed strings in files
-- Count matching lines in files
-- Display line numbers of matches
-- Invert match to exclude lines
-- List filenames with matching content
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for fixed strings in files
+  - Count matching lines in files
+  - Display line numbers of matches
+  - Invert match to exclude lines
+  - List filenames with matching content
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zfgrep

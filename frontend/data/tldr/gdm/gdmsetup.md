@@ -1,29 +1,29 @@
 ---
-title: "GDM Setup - Configure GNOME Display Manager | Online Free DevTools by Hexmos"
+title: 'GDM Setup - Configure GNOME Display Manager | Online Free DevTools by Hexmos'
 name: gdmsetup
-path: "/freedevtools/tldr/gdm/gdmsetup/"
-canonical: "https://hexmos.com/freedevtools/tldr/gdm/gdmsetup/"
-description: "Configure GNOME Display Manager (GDM) with GDM Setup. Customize login screen settings and manage display configurations easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/gdm/gdmsetup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gdm/gdmsetup/'
+description: 'Configure GNOME Display Manager (GDM) with GDM Setup. Customize login screen settings and manage display configurations easily. Free online tool, no registration required.'
 category: common
 keywords:
-- gdm setup
-- gnome display manager configuration
-- linux gdm setup
-- x11 gdm configuration
-- gdm login screen settings
-- gdm configuration tool
-- gdm custom settings
-- gdm theme configuration
-- gdm access control
-- gdm session management
+  - gdm setup
+  - gnome display manager configuration
+  - linux gdm setup
+  - x11 gdm configuration
+  - gdm login screen settings
+  - gdm configuration tool
+  - gdm custom settings
+  - gdm theme configuration
+  - gdm access control
+  - gdm session management
 features:
-- Launch a graphical interface for GDM configuration.
-- Modify GDM configuration files directly.
-- Customize login screen appearance and behavior.
-- Manage user session settings through a GUI.
-- Configure display manager options on Linux systems.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch a graphical interface for GDM configuration.
+  - Modify GDM configuration files directly.
+  - Customize login screen appearance and behavior.
+  - Manage user session settings through a GUI.
+  - Configure display manager options on Linux systems.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdmsetup

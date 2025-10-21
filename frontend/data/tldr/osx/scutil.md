@@ -1,29 +1,29 @@
 ---
-title: "SCUTIL - Control System Configuration | Online Free DevTools by Hexmos"
+title: 'SCUTIL - Control System Configuration | Online Free DevTools by Hexmos'
 name: scutil
-path: "/freedevtools/tldr/osx/scutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/scutil/"
-description: "Control system configuration parameters with SCUTIL. Manage network settings, computer names, and hostnames on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/scutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/scutil/'
+description: 'Control system configuration parameters with SCUTIL. Manage network settings, computer names, and hostnames on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- osx system configuration
-- macos network settings
-- scutil command line
-- computer name management
-- hostname configuration
-- dns configuration mac
-- proxy settings osx
-- macos configuration tool
-- system settings editor
-- network diagnostics mac
+  - osx system configuration
+  - macos network settings
+  - scutil command line
+  - computer name management
+  - hostname configuration
+  - dns configuration mac
+  - proxy settings osx
+  - macos configuration tool
+  - system settings editor
+  - network diagnostics mac
 features:
-- Display DNS configuration settings
-- Display proxy configuration details
-- Get current computer name
-- Set or change computer name
-- Get or set hostname for macOS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display DNS configuration settings
+  - Display proxy configuration details
+  - Get current computer name
+  - Set or change computer name
+  - Get or set hostname for macOS
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scutil

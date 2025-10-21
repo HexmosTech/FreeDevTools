@@ -1,9 +1,9 @@
 ---
-title: "Install Flatpak Applications - Manage Packages | Online Free DevTools by Hexmos"
+title: 'Install Flatpak Applications - Manage Packages | Online Free DevTools by Hexmos'
 name: flatpak
-path: "/freedevtools/tldr/linux/flatpak/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak/"
-description: "Install and manage Flatpak applications with Flatpak. Update packages, add repositories, and remove unused apps on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/flatpak/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/flatpak/'
+description: 'Install and manage Flatpak applications with Flatpak. Update packages, add repositories, and remove unused apps on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
   - flatpak application manager
@@ -22,8 +22,8 @@ features:
   - Add and manage remote repositories
   - Remove installed and unused applications
   - Display information about installed applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flatpak

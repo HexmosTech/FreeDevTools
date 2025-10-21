@@ -1,29 +1,29 @@
 ---
-title: "Font Cache - Generate Font Cache Files | Online Free DevTools by Hexmos"
+title: 'Font Cache - Generate Font Cache Files | Online Free DevTools by Hexmos'
 name: fc-cache
-path: "/freedevtools/tldr/fc/fc-cache/"
-canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-cache/"
-description: "Generate font cache files efficiently with fc-cache. Improve font loading and application performance by rebuilding font caches. Free online tool, no registration required."
+path: '/freedevtools/tldr/fc/fc-cache/'
+canonical: 'https://hexmos.com/freedevtools/tldr/fc/fc-cache/'
+description: 'Generate font cache files efficiently with fc-cache. Improve font loading and application performance by rebuilding font caches. Free online tool, no registration required.'
 category: common
 keywords:
-- Font cache generator
-- Font cache builder
-- Font cache manager
-- Linux font cache
-- macOS font cache
-- Font directory scanner
-- Fontconfig cache
-- Font rendering performance
-- System font update
-- Command-line font tool
+  - Font cache generator
+  - Font cache builder
+  - Font cache manager
+  - Linux font cache
+  - macOS font cache
+  - Font directory scanner
+  - Fontconfig cache
+  - Font rendering performance
+  - System font update
+  - Command-line font tool
 features:
-- Scan font directories
-- Generate new font cache files
-- Force rebuild of font caches
-- Erase and regenerate font caches
-- Scan system-wide font directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan font directories
+  - Generate new font cache files
+  - Force rebuild of font caches
+  - Erase and regenerate font caches
+  - Scan system-wide font directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fc-cache

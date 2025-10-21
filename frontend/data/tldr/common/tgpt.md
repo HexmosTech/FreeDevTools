@@ -1,29 +1,29 @@
 ---
-title: "Generate AI Chat - Interact with AI Models via Command Line | Online Free DevTools by Hexmos"
+title: 'Generate AI Chat - Interact with AI Models via Command Line | Online Free DevTools by Hexmos'
 name: tgpt
-path: "/freedevtools/tldr/common/tgpt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tgpt/"
-description: "Generate AI chat effortlessly with tgpt, a command-line interface to talk to AI models without API keys. Access multiple AI providers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tgpt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tgpt/'
+description: 'Generate AI chat effortlessly with tgpt, a command-line interface to talk to AI models without API keys. Access multiple AI providers. Free online tool, no registration required.'
 category: common
 keywords:
-- ai chat generator
-- command line ai
-- openai cli
-- llama2 command line
-- koboldai command line
-- blackboxai command line
-- ai model selector
-- prompt engineering cli
-- text generation command line
-- ai provider manager
+  - ai chat generator
+  - command line ai
+  - openai cli
+  - llama2 command line
+  - koboldai command line
+  - blackboxai command line
+  - ai model selector
+  - prompt engineering cli
+  - text generation command line
+  - ai provider manager
 features:
-- Interact with AI models directly from the command line
-- Generate text and code using various AI providers
-- Generate images and save them to the current directory
-- Customize AI model parameters like temperature and max length
-- Execute shell commands using AI suggestions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Interact with AI models directly from the command line
+  - Generate text and code using various AI providers
+  - Generate images and save them to the current directory
+  - Customize AI model parameters like temperature and max length
+  - Execute shell commands using AI suggestions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tgpt

@@ -1,29 +1,29 @@
 ---
-title: "Databases SQL Mode - Control MySQL SQL Modes | Online Free DevTools by Hexmos"
+title: 'Databases SQL Mode - Control MySQL SQL Modes | Online Free DevTools by Hexmos'
 name: doctl-databases-sql-mode
-path: "/freedevtools/tldr/doctl/doctl-databases-sql-mode/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-sql-mode/"
-description: "Control MySQL SQL Modes with doctl databases sql-mode. Configure database clusters, get and set SQL modes, and manage database settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-databases-sql-mode/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-sql-mode/'
+description: 'Control MySQL SQL Modes with doctl databases sql-mode. Configure database clusters, get and set SQL modes, and manage database settings. Free online tool, no registration required.'
 category: common
 keywords:
-- doctl databases sql mode
-- MySQL SQL modes
-- database cluster configuration
-- doctl database management
-- DigitalOcean doctl
-- SQL mode settings
-- database sql mode
-- doctl command line
-- MySQL configuration
-- database administration
+  - doctl databases sql mode
+  - MySQL SQL modes
+  - database cluster configuration
+  - doctl database management
+  - DigitalOcean doctl
+  - SQL mode settings
+  - database sql mode
+  - doctl command line
+  - MySQL configuration
+  - database administration
 features:
-- Get the current SQL modes of a MySQL database cluster.
-- Set SQL modes for a MySQL database cluster.
-- Overwrite existing SQL modes with new modes.
-- Use doctl command with access tokens.
-- Configure MySQL cluster via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Get the current SQL modes of a MySQL database cluster.
+  - Set SQL modes for a MySQL database cluster.
+  - Overwrite existing SQL modes with new modes.
+  - Use doctl command with access tokens.
+  - Configure MySQL cluster via command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl databases sql-mode

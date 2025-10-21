@@ -1,29 +1,29 @@
 ---
-title: "Check Rust Code - Find Errors with Cargo Check | Online Free DevTools by Hexmos"
+title: 'Check Rust Code - Find Errors with Cargo Check | Online Free DevTools by Hexmos'
 name: cargo-check
-path: "/freedevtools/tldr/cargo/cargo-check/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-check/"
-description: "Check Rust code for errors instantly with Cargo Check. Analyze dependencies and ensure code quality using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-check/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-check/'
+description: 'Check Rust code for errors instantly with Cargo Check. Analyze dependencies and ensure code quality using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- rust code check
-- cargo check errors
-- rust syntax check
-- rust project analysis
-- rust dependency check
-- rust linter
-- rust compiler warnings
-- cargo project validation
-- rust language check
-- rust static analysis
+  - rust code check
+  - cargo check errors
+  - rust syntax check
+  - rust project analysis
+  - rust dependency check
+  - rust linter
+  - rust compiler warnings
+  - cargo project validation
+  - rust language check
+  - rust static analysis
 features:
-- Check Rust project for errors
-- Analyze dependencies for issues
-- Validate Rust code syntax
-- Check tests within a Rust project
-- Check Rust code with specific features enabled
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check Rust project for errors
+  - Analyze dependencies for issues
+  - Validate Rust code syntax
+  - Check tests within a Rust project
+  - Check Rust code with specific features enabled
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo check

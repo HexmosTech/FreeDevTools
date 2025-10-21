@@ -1,9 +1,9 @@
 ---
-title: "Taskset - Control CPU Affinity | Online Free DevTools by Hexmos"
+title: 'Taskset - Control CPU Affinity | Online Free DevTools by Hexmos'
 name: taskset
-path: "/freedevtools/tldr/linux/taskset/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/taskset/"
-description: "Control CPU affinity with Taskset. Easily manage process CPU assignments for optimal performance and resource allocation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/taskset/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/taskset/'
+description: 'Control CPU affinity with Taskset. Easily manage process CPU assignments for optimal performance and resource allocation. Free online tool, no registration required.'
 category: linux
 keywords:
   - taskset cpu affinity
@@ -22,8 +22,8 @@ features:
   - Start a new process with a specified CPU affinity.
   - Define CPU affinity for multiple non-sequential CPUs.
   - Define CPU affinity for a range of CPUs.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # taskset

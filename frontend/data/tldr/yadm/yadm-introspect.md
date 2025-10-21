@@ -1,29 +1,29 @@
 ---
-title: "Yadm Introspect - View Managed Data | Online Free DevTools by Hexmos"
+title: 'Yadm Introspect - View Managed Data | Online Free DevTools by Hexmos'
 name: yadm-introspect
-path: "/freedevtools/tldr/yadm/yadm-introspect/"
-canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-introspect/"
-description: "View managed data with Yadm Introspect. Quickly examine configurations, commands, and switches. Free online tool, no registration required."
+path: '/freedevtools/tldr/yadm/yadm-introspect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/yadm/yadm-introspect/'
+description: 'View managed data with Yadm Introspect. Quickly examine configurations, commands, and switches. Free online tool, no registration required.'
 category: common
 keywords:
-- yadm introspect commands
-- yadm introspect configs
-- yadm introspect switches
-- yadm introspect repo
-- yadm configuration management
-- dotfile management
-- yadm command line tool
-- linux configuration
-- macos configuration
-- cross platform configuration
+  - yadm introspect commands
+  - yadm introspect configs
+  - yadm introspect switches
+  - yadm introspect repo
+  - yadm configuration management
+  - dotfile management
+  - yadm command line tool
+  - linux configuration
+  - macos configuration
+  - cross platform configuration
 features:
-- Output available commands
-- Output managed configurations
-- Output available command line switches
-- Output repository details
-- Support command line completion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Output available commands
+  - Output managed configurations
+  - Output available command line switches
+  - Output repository details
+  - Support command line completion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yadm introspect

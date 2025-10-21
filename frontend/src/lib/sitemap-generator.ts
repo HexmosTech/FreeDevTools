@@ -1,4 +1,4 @@
-import { getAllCommands } from "./commands";
+import { getAllCommands } from './commands';
 
 export async function generateTldrSitemapEntries() {
   const commands = await getAllCommands();
@@ -6,21 +6,21 @@ export async function generateTldrSitemapEntries() {
     url: string;
     lastmod: Date;
     changefreq:
-      | "always"
-      | "hourly"
-      | "daily"
-      | "weekly"
-      | "monthly"
-      | "yearly"
-      | "never";
+      | 'always'
+      | 'hourly'
+      | 'daily'
+      | 'weekly'
+      | 'monthly'
+      | 'yearly'
+      | 'never';
     priority: number;
   }> = [];
 
   // Add main TLDR page
   entries.push({
-    url: "/freedevtools/tldr/",
+    url: '/freedevtools/tldr/',
     lastmod: new Date(),
-    changefreq: "daily",
+    changefreq: 'daily',
     priority: 1.0,
   });
 
@@ -29,7 +29,7 @@ export async function generateTldrSitemapEntries() {
     entries.push({
       url: `/freedevtools/tldr/${platform}/`,
       lastmod: new Date(),
-      changefreq: "daily",
+      changefreq: 'daily',
       priority: 0.9,
     });
 
@@ -38,7 +38,7 @@ export async function generateTldrSitemapEntries() {
       entries.push({
         url: command.url,
         lastmod: new Date(),
-        changefreq: "daily",
+        changefreq: 'daily',
         priority: 0.8,
       });
     });

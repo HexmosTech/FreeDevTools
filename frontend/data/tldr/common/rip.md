@@ -1,29 +1,29 @@
 ---
-title: "Rip Files - Remove and Recover Files | Online Free DevTools by Hexmos"
+title: 'Rip Files - Remove and Recover Files | Online Free DevTools by Hexmos'
 name: rip
-path: "/freedevtools/tldr/common/rip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rip/"
-description: "Remove files easily with Rip, the file deletion and recovery tool. Securely manage your deleted files and recover them when needed. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rip/'
+description: 'Remove files easily with Rip, the file deletion and recovery tool. Securely manage your deleted files and recover them when needed. Free online tool, no registration required.'
 category: common
 keywords:
-- file deletion
-- file recovery
-- command line file removal
-- recycle bin alternative
-- linux file deletion
-- macos file deletion
-- windows file deletion
-- file management
-- command line tools
-- graveyard files
+  - file deletion
+  - file recovery
+  - command line file removal
+  - recycle bin alternative
+  - linux file deletion
+  - macos file deletion
+  - windows file deletion
+  - file management
+  - command line tools
+  - graveyard files
 features:
-- Remove files and directories to a recoverable location
-- Interactively remove files with confirmation prompts
-- List files in the graveyard for recovery
-- Permanently delete files from the graveyard
-- Recover files from the most recent removal operation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove files and directories to a recoverable location
+  - Interactively remove files with confirmation prompts
+  - List files in the graveyard for recovery
+  - Permanently delete files from the graveyard
+  - Recover files from the most recent removal operation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rip

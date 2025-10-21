@@ -1,9 +1,9 @@
 ---
-title: "Control Systemd - Manage Services with systemctl | Online Free DevTools by Hexmos"
+title: 'Control Systemd - Manage Services with systemctl | Online Free DevTools by Hexmos'
 name: systemctl
-path: "/freedevtools/tldr/linux/systemctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl/"
-description: "Control and manage systemd services with the systemctl command.  Start, stop, restart, enable, and disable services easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemctl/'
+description: 'Control and manage systemd services with the systemctl command.  Start, stop, restart, enable, and disable services easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemctl commands
@@ -22,8 +22,8 @@ features:
   - Enable or disable services at boot time.
   - List running, failed, or all units.
   - Reload systemd to detect changes in unit files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemctl

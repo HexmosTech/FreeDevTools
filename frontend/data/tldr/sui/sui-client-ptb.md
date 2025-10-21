@@ -1,29 +1,29 @@
 ---
-title: "Create Sui PTB - Execute Programmable Transactions | Online Free DevTools by Hexmos"
+title: 'Create Sui PTB - Execute Programmable Transactions | Online Free DevTools by Hexmos'
 name: sui-client-ptb
-path: "/freedevtools/tldr/sui/sui-client-ptb/"
-canonical: "https://hexmos.com/freedevtools/tldr/sui/sui-client-ptb/"
-description: "Create Sui Programmable Transaction Blocks with sui-client-ptb. Build and execute complex transactions on the Sui blockchain. Free online tool, no registration required."
+path: '/freedevtools/tldr/sui/sui-client-ptb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sui/sui-client-ptb/'
+description: 'Create Sui Programmable Transaction Blocks with sui-client-ptb. Build and execute complex transactions on the Sui blockchain. Free online tool, no registration required.'
 category: common
 keywords:
-- Sui PTB creation
-- Programmable transaction builder
-- Sui blockchain transaction
-- Move call execution
-- Sui transaction scripting
-- Sui coin splitting
-- Sui object transfer
-- Sui package publishing
-- Sui transaction signing
-- Sui transaction execution
+  - Sui PTB creation
+  - Programmable transaction builder
+  - Sui blockchain transaction
+  - Move call execution
+  - Sui transaction scripting
+  - Sui coin splitting
+  - Sui object transfer
+  - Sui package publishing
+  - Sui transaction signing
+  - Sui transaction execution
 features:
-- Execute Move function calls within a transaction
-- Create Move vectors with specified data types
-- Split Sui gas coins and assign the new coins to a variable
-- Transfer Sui objects to specific addresses
-- Publish Move packages and transfer upgrade capabilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Move function calls within a transaction
+  - Create Move vectors with specified data types
+  - Split Sui gas coins and assign the new coins to a variable
+  - Transfer Sui objects to specific addresses
+  - Publish Move packages and transfer upgrade capabilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sui client ptb

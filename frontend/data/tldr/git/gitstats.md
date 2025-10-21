@@ -1,29 +1,29 @@
 ---
-title: "Generate Git Statistics - Analyze Repos | Online Free DevTools by Hexmos"
+title: 'Generate Git Statistics - Analyze Repos | Online Free DevTools by Hexmos'
 name: gitstats
-path: "/freedevtools/tldr/git/gitstats/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitstats/"
-description: "Generate Git repository statistics with gitstats. Analyze project history, contributor activity, and code metrics using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitstats/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitstats/'
+description: 'Generate Git repository statistics with gitstats. Analyze project history, contributor activity, and code metrics using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- git statistics generator
-- git repository analysis
-- git history metrics
-- git contributor analysis
-- git project statistics
-- git code metrics
-- command line git stats
-- linux gitstats
-- macos gitstats
-- windows gitstats
+  - git statistics generator
+  - git repository analysis
+  - git history metrics
+  - git contributor analysis
+  - git project statistics
+  - git code metrics
+  - command line git stats
+  - linux gitstats
+  - macos gitstats
+  - windows gitstats
 features:
-- Analyze a local Git repository.
-- Generate HTML reports of repository statistics.
-- Visualize project history and contributor activity.
-- Calculate code metrics like lines of code and commit frequency.
-- Output statistics to a specified directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze a local Git repository.
+  - Generate HTML reports of repository statistics.
+  - Visualize project history and contributor activity.
+  - Calculate code metrics like lines of code and commit frequency.
+  - Output statistics to a specified directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitstats

@@ -1,29 +1,29 @@
 ---
-title: "Troff - Format Documents with Groff | Online Free DevTools by Hexmos"
+title: 'Troff - Format Documents with Groff | Online Free DevTools by Hexmos'
 name: troff
-path: "/freedevtools/tldr/common/troff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/troff/"
-description: "Format documents instantly with Troff, the Groff typesetting processor. Convert text files into PostScript, PDF, or ASCII formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/troff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/troff/'
+description: 'Format documents instantly with Troff, the Groff typesetting processor. Convert text files into PostScript, PDF, or ASCII formats. Free online tool, no registration required.'
 category: common
 keywords:
-- groff document formatter
-- troff typesetting processor
-- postscript file generator
-- pdf file generator
-- ascii text converter
-- gnu troff command
-- roff file format
-- document publishing tool
-- linux document formatting
-- troff command line
+  - groff document formatter
+  - troff typesetting processor
+  - postscript file generator
+  - pdf file generator
+  - ascii text converter
+  - gnu troff command
+  - roff file format
+  - document publishing tool
+  - linux document formatting
+  - troff command line
 features:
-- Format documents for PostScript printers
-- Convert roff files to PDF format
-- Generate ASCII text output from roff files
-- Support me macro package for typesetting
-- Use man macro package for formatting man pages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format documents for PostScript printers
+  - Convert roff files to PDF format
+  - Generate ASCII text output from roff files
+  - Support me macro package for typesetting
+  - Use man macro package for formatting man pages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # troff

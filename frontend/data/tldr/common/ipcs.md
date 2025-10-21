@@ -1,29 +1,29 @@
 ---
-title: "Control IPC - Manage System Resources | Online Free DevTools by Hexmos"
+title: 'Control IPC - Manage System Resources | Online Free DevTools by Hexmos'
 name: ipcs
-path: "/freedevtools/tldr/common/ipcs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ipcs/"
-description: "Control IPC (Inter-Process Communication) resources with ipcs. Inspect shared memory, message queues, and semaphores. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ipcs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ipcs/'
+description: 'Control IPC (Inter-Process Communication) resources with ipcs. Inspect shared memory, message queues, and semaphores. Free online tool, no registration required.'
 category: common
 keywords:
-- XSI IPC facilities management
-- shared memory inspection
-- message queue analysis
-- semaphore array monitoring
-- linux IPC control
-- unix IPC status
-- system resource management
-- IPC resource usage
-- inter-process communication debugging
-- system administration tool
+  - XSI IPC facilities management
+  - shared memory inspection
+  - message queue analysis
+  - semaphore array monitoring
+  - linux IPC control
+  - unix IPC status
+  - system resource management
+  - IPC resource usage
+  - inter-process communication debugging
+  - system administration tool
 features:
-- Display information about shared memory segments
-- Inspect message queue status
-- Monitor semaphore array usage
-- Show process IDs of last IPC operators
-- Display IPC facility access times
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display information about shared memory segments
+  - Inspect message queue status
+  - Monitor semaphore array usage
+  - Show process IDs of last IPC operators
+  - Display IPC facility access times
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipcs

@@ -1,29 +1,29 @@
 ---
-title: "Deluge Console - Control BitTorrent Client | Online Free DevTools by Hexmos"
+title: 'Deluge Console - Control BitTorrent Client | Online Free DevTools by Hexmos'
 name: deluge-console
-path: "/freedevtools/tldr/common/deluge-console/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/deluge-console/"
-description: "Control your BitTorrent client with Deluge Console. Manage torrents, connect to daemons, and view torrent info. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/deluge-console/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/deluge-console/'
+description: 'Control your BitTorrent client with Deluge Console. Manage torrents, connect to daemons, and view torrent info. Free online tool, no registration required.'
 category: common
 keywords:
-- deluge console client
-- bittorrent control console
-- deluge torrent manager
-- command-line torrent client
-- torrent management linux
-- deluge daemon control
-- torrent add console
-- torrent info console
-- deluge pause resume
-- torrent remove console
+  - deluge console client
+  - bittorrent control console
+  - deluge torrent manager
+  - command-line torrent client
+  - torrent management linux
+  - deluge daemon control
+  - torrent add console
+  - torrent info console
+  - deluge pause resume
+  - torrent remove console
 features:
-- Connect to Deluge daemon instances remotely
-- Add torrents via URL, magnet link, or file path
-- Display detailed information about all torrents
-- Pause and resume individual torrents
-- Remove torrents from the daemon
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to Deluge daemon instances remotely
+  - Add torrents via URL, magnet link, or file path
+  - Display detailed information about all torrents
+  - Pause and resume individual torrents
+  - Remove torrents from the daemon
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # deluge-console

@@ -1,29 +1,29 @@
 ---
-title: "Brew List - Control Package Installations | Online Free DevTools by Hexmos"
+title: 'Brew List - Control Package Installations | Online Free DevTools by Hexmos'
 name: brew-list
-path: "/freedevtools/tldr/brew/brew-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-list/"
-description: "Control package installations with Brew List. Manage formulae and casks on macOS using command line. View installed packages and dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/brew/brew-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/brew/brew-list/'
+description: 'Control package installations with Brew List. Manage formulae and casks on macOS using command line. View installed packages and dependencies. Free online tool, no registration required.'
 category: common
 keywords:
-- brew package manager
-- macOS package manager
-- homebrew list
-- homebrew cask list
-- brew installed packages
-- brew formula list
-- brew cask artifacts
-- list homebrew packages
-- brew pinned packages
-- brew list command
+  - brew package manager
+  - macOS package manager
+  - homebrew list
+  - homebrew cask list
+  - brew installed packages
+  - brew formula list
+  - brew cask artifacts
+  - list homebrew packages
+  - brew pinned packages
+  - brew list command
 features:
-- List all installed formulae and casks.
-- Display files belonging to a specific installed formula.
-- Show artifacts of a particular cask.
-- Filter lists to show only formulae or only casks.
-- List only pinned formulae.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all installed formulae and casks.
+  - Display files belonging to a specific installed formula.
+  - Show artifacts of a particular cask.
+  - Filter lists to show only formulae or only casks.
+  - List only pinned formulae.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brew list

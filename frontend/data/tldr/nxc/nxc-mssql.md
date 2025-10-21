@@ -1,29 +1,29 @@
 ---
-title: "Nxc MSSQL Exploit - Pentest MSSQL Servers | Online Free DevTools by Hexmos"
+title: 'Nxc MSSQL Exploit - Pentest MSSQL Servers | Online Free DevTools by Hexmos'
 name: nxc-mssql
-path: "/freedevtools/tldr/nxc/nxc-mssql/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-mssql/"
-description: "Pentest MSSQL servers with nxc MSSQL. Find credentials, execute queries, and run commands with this network exploitation tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-mssql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-mssql/'
+description: 'Pentest MSSQL servers with nxc MSSQL. Find credentials, execute queries, and run commands with this network exploitation tool. Free online tool, no registration required.'
 category: common
 keywords:
-- mssql exploit
-- mssql pentesting
-- mssql penetration testing
-- mssql command execution
-- mssql query execution
-- mssql credential search
-- network exploitation
-- nxc mssql commands
-- nxc mssql exploit
-- sql server pentest
+  - mssql exploit
+  - mssql pentesting
+  - mssql penetration testing
+  - mssql command execution
+  - mssql query execution
+  - mssql credential search
+  - network exploitation
+  - nxc mssql commands
+  - nxc mssql exploit
+  - sql server pentest
 features:
-- Brute force MSSQL credentials using username and password lists
-- Execute arbitrary SQL queries on MSSQL servers
-- Execute shell commands via MSSQL
-- Upload and download files to/from MSSQL servers
-- Execute PowerShell commands without output on MSSQL servers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute force MSSQL credentials using username and password lists
+  - Execute arbitrary SQL queries on MSSQL servers
+  - Execute shell commands via MSSQL
+  - Upload and download files to/from MSSQL servers
+  - Execute PowerShell commands without output on MSSQL servers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc mssql

@@ -1,29 +1,29 @@
 ---
-title: "Genie - Manage systemd under WSL | Online Free DevTools by Hexmos"
+title: 'Genie - Manage systemd under WSL | Online Free DevTools by Hexmos'
 name: genie
-path: "/freedevtools/tldr/linux/genie/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/genie/"
-description: "Manage systemd processes with Genie under WSL. Easily initialize, run shells, and execute commands within a bottle namespace. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/genie/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/genie/'
+description: 'Manage systemd processes with Genie under WSL. Easily initialize, run shells, and execute commands within a bottle namespace. Free online tool, no registration required.'
 category: linux
 keywords:
-- systemd WSL manager
-- linux namespace tool
-- windows subsystem for linux genie
-- genie systemd bottle
-- wsl systemd control
-- linux systemd utility
-- command execution wsl
-- linux namespace initialization
-- wsl login shell
-- genie command runner
+  - systemd WSL manager
+  - linux namespace tool
+  - windows subsystem for linux genie
+  - genie systemd bottle
+  - wsl systemd control
+  - linux systemd utility
+  - command execution wsl
+  - linux namespace initialization
+  - wsl login shell
+  - genie command runner
 features:
-- Initialize a bottle namespace for systemd.
-- Run a login shell within a bottle.
-- Execute specific commands inside the bottle environment.
-- Manage systemd processes under WSL.
-- Provide a controlled environment for Linux applications.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a bottle namespace for systemd.
+  - Run a login shell within a bottle.
+  - Execute specific commands inside the bottle environment.
+  - Manage systemd processes under WSL.
+  - Provide a controlled environment for Linux applications.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # genie

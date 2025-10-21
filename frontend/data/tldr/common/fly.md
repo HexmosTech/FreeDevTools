@@ -1,29 +1,29 @@
 ---
-title: "Fly - Control Concourse CI Pipelines | Online Free DevTools by Hexmos"
+title: 'Fly - Control Concourse CI Pipelines | Online Free DevTools by Hexmos'
 name: fly
-path: "/freedevtools/tldr/common/fly/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fly/"
-description: "Control Concourse CI pipelines with Fly. Manage targets, update configurations, and destroy pipelines using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fly/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fly/'
+description: 'Control Concourse CI pipelines with Fly. Manage targets, update configurations, and destroy pipelines using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- concourse ci fly
-- concourse ci command line
-- ci pipeline management
-- fly cli tool
-- concourse target configuration
-- concourse pipeline update
-- concourse pipeline destroy
-- concourse ci automation
-- concourse workflow control
-- concourse ci deployment
+  - concourse ci fly
+  - concourse ci command line
+  - ci pipeline management
+  - fly cli tool
+  - concourse target configuration
+  - concourse pipeline update
+  - concourse pipeline destroy
+  - concourse ci automation
+  - concourse workflow control
+  - concourse ci deployment
 features:
-- Authenticate and manage Concourse CI targets
-- Update and configure Concourse CI pipelines
-- Unpause and control pipeline execution
-- Sync local fly version with target server
-- Destroy and manage pipeline lifecycles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate and manage Concourse CI targets
+  - Update and configure Concourse CI pipelines
+  - Unpause and control pipeline execution
+  - Sync local fly version with target server
+  - Destroy and manage pipeline lifecycles
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fly

@@ -1,29 +1,29 @@
 ---
-title: "Crack Passwords - John the Ripper | Online Free DevTools by Hexmos"
+title: 'Crack Passwords - John the Ripper | Online Free DevTools by Hexmos'
 name: john
-path: "/freedevtools/tldr/common/john/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/john/"
-description: "Crack password hashes with John the Ripper, a powerful password cracking tool. Recover lost passwords, audit security, and test password strength. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/john/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/john/'
+description: 'Crack password hashes with John the Ripper, a powerful password cracking tool. Recover lost passwords, audit security, and test password strength. Free online tool, no registration required.'
 category: common
 keywords:
-- password cracker
-- John the Ripper
-- password recovery
-- hash cracking
-- password audit
-- password security
-- linux password cracking
-- password strength tester
-- hash format identification
-- wordlist attack
+  - password cracker
+  - John the Ripper
+  - password recovery
+  - hash cracking
+  - password audit
+  - password security
+  - linux password cracking
+  - password strength tester
+  - hash format identification
+  - wordlist attack
 features:
-- Crack password hashes from various formats
-- Display recovered passwords from hash files
-- Crack passwords using custom wordlists
-- Identify supported hash formats
-- Restore interrupted cracking sessions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Crack password hashes from various formats
+  - Display recovered passwords from hash files
+  - Crack passwords using custom wordlists
+  - Identify supported hash formats
+  - Restore interrupted cracking sessions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # john

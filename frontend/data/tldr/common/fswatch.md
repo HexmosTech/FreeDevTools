@@ -1,29 +1,29 @@
 ---
-title: "Monitor File Changes - fswatch | Online Free DevTools by Hexmos"
+title: 'Monitor File Changes - fswatch | Online Free DevTools by Hexmos'
 name: fswatch
-path: "/freedevtools/tldr/common/fswatch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fswatch/"
-description: "Monitor file changes with fswatch, triggering actions on updates or deletions. Cross-platform file change monitor. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fswatch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fswatch/'
+description: 'Monitor file changes with fswatch, triggering actions on updates or deletions. Cross-platform file change monitor. Free online tool, no registration required.'
 category: common
 keywords:
-- file change monitor
-- file system monitor
-- directory change detection
-- real-time file monitoring
-- event-driven file watching
-- cross platform file watcher
-- file modification detection
-- fswatch bash script
-- fswatch linux
-- fswatch macos
+  - file change monitor
+  - file system monitor
+  - directory change detection
+  - real-time file monitoring
+  - event-driven file watching
+  - cross platform file watcher
+  - file modification detection
+  - fswatch bash script
+  - fswatch linux
+  - fswatch macos
 features:
-- Trigger commands upon file creation, modification, or deletion.
-- Watch multiple files and directories simultaneously.
-- Filter changes based on specific event types (e.g., Updated, Removed).
-- Output absolute paths of changed files for easy integration.
-- Monitor file system events in real-time.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trigger commands upon file creation, modification, or deletion.
+  - Watch multiple files and directories simultaneously.
+  - Filter changes based on specific event types (e.g., Updated, Removed).
+  - Output absolute paths of changed files for easy integration.
+  - Monitor file system events in real-time.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fswatch

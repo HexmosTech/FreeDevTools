@@ -1,29 +1,29 @@
 ---
-title: "Update Build Requires - SFDK Dependency Manager | Online Free DevTools by Hexmos"
+title: 'Update Build Requires - SFDK Dependency Manager | Online Free DevTools by Hexmos'
 name: sfdk-build-requires
-path: "/freedevtools/tldr/sfdk/sfdk-build-requires/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-requires/"
-description: "Manage Sailfish OS build dependencies with SFDK Build Requires. Refresh cache, install updates and compare environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-build-requires/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-requires/'
+description: 'Manage Sailfish OS build dependencies with SFDK Build Requires. Refresh cache, install updates and compare environments. Free online tool, no registration required.'
 category: common
 keywords:
-- SFDK build requires
-- Sailfish OS dependencies
-- SFDK dependency manager
-- build time dependencies
-- Sailfish build environment
-- qtc command line
-- SFDK build tools
-- build configuration
-- dependency updater
-- Sailfish SDK
+  - SFDK build requires
+  - Sailfish OS dependencies
+  - SFDK dependency manager
+  - build time dependencies
+  - Sailfish build environment
+  - qtc command line
+  - SFDK build tools
+  - build configuration
+  - dependency updater
+  - Sailfish SDK
 features:
-- Update build-time dependencies for Sailfish OS projects.
-- Refresh the cache for build requires subcommands.
-- Reset dependencies to omit extra ones.
-- Show the difference between current and clean build environments.
-- Install or update build-time dependencies.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update build-time dependencies for Sailfish OS projects.
+  - Refresh the cache for build requires subcommands.
+  - Reset dependencies to omit extra ones.
+  - Show the difference between current and clean build environments.
+  - Install or update build-time dependencies.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk build-requires

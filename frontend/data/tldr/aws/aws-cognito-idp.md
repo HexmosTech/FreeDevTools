@@ -1,29 +1,29 @@
 ---
-title: "Create Cognito User Pools - Control AWS Users | Online Free DevTools by Hexmos"
+title: 'Create Cognito User Pools - Control AWS Users | Online Free DevTools by Hexmos'
 name: aws-cognito-idp
-path: "/freedevtools/tldr/aws/aws-cognito-idp/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cognito-idp/"
-description: "Create Cognito User Pools with aws-cognito-idp for secure user authentication. Manage user accounts, groups, and settings easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-cognito-idp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-cognito-idp/'
+description: 'Create Cognito User Pools with aws-cognito-idp for secure user authentication. Manage user accounts, groups, and settings easily. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS Cognito user pool
-- Cognito user management
-- AWS identity management
-- CLI user authentication
-- Cognito CLI commands
-- AWS Cognito user groups
-- AWS Cognito identity provider
-- AWS Cognito authentication
-- common aws-cognito-idp
-- aws cognito-idp CLI
+  - AWS Cognito user pool
+  - Cognito user management
+  - AWS identity management
+  - CLI user authentication
+  - Cognito CLI commands
+  - AWS Cognito user groups
+  - AWS Cognito identity provider
+  - AWS Cognito authentication
+  - common aws-cognito-idp
+  - aws cognito-idp CLI
 features:
-- Create new Cognito user pools
-- List existing user pools
-- Delete specified user pools
-- Add users to a specific pool
-- Remove users from a specific pool
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Cognito user pools
+  - List existing user pools
+  - Delete specified user pools
+  - Add users to a specific pool
+  - Remove users from a specific pool
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws cognito-idp

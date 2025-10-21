@@ -1,29 +1,29 @@
 ---
-title: "Fossil Commit - Create Repository Versions | Online Free DevTools by Hexmos"
+title: 'Fossil Commit - Create Repository Versions | Online Free DevTools by Hexmos'
 name: fossil-commit
-path: "/freedevtools/tldr/fossil/fossil-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/fossil/fossil-commit/"
-description: "Create Fossil repository versions with Fossil Commit. Manage changesets, add comments, and specify files for commit. Free online tool, no registration required."
+path: '/freedevtools/tldr/fossil/fossil-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/fossil/fossil-commit/'
+description: 'Create Fossil repository versions with Fossil Commit. Manage changesets, add comments, and specify files for commit. Free online tool, no registration required.'
 category: common
 keywords:
-- fossil commit
-- fossil scm
-- fossil version control
-- fossil repository
-- fossil changeset
-- commit changes
-- scm commit
-- command line commit
-- fossil commit message
-- fossil ci
+  - fossil commit
+  - fossil scm
+  - fossil version control
+  - fossil repository
+  - fossil changeset
+  - commit changes
+  - scm commit
+  - command line commit
+  - fossil commit message
+  - fossil ci
 features:
-- Commit all changes in the current checkout
-- Specify a comment for the new version
-- Read comment from a file for the commit
-- Commit changes from specific files
-- Create a new Fossil repository version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Commit all changes in the current checkout
+  - Specify a comment for the new version
+  - Read comment from a file for the commit
+  - Commit changes from specific files
+  - Create a new Fossil repository version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fossil commit

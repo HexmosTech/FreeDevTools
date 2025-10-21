@@ -1,29 +1,29 @@
 ---
-title: "Make - Control Compilation with Makefile | Online Free DevTools by Hexmos"
+title: 'Make - Control Compilation with Makefile | Online Free DevTools by Hexmos'
 name: make
-path: "/freedevtools/tldr/common/make/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/make/"
-description: "Control compilation processes effectively with Make. Define build targets, execute tasks, and manage dependencies with Makefiles. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/make/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/make/'
+description: 'Control compilation processes effectively with Make. Define build targets, execute tasks, and manage dependencies with Makefiles. Free online tool, no registration required.'
 category: common
 keywords:
-- Makefile target runner
-- GNU Make utility
-- Build automation Linux
-- Source code compilation
-- Parallel job execution Make
-- Makefile dependency management
-- Make variable override
-- Command-line build control
-- Makefile parsing
-- Target build force
+  - Makefile target runner
+  - GNU Make utility
+  - Build automation Linux
+  - Source code compilation
+  - Parallel job execution Make
+  - Makefile dependency management
+  - Make variable override
+  - Command-line build control
+  - Makefile parsing
+  - Target build force
 features:
-- Execute targets defined in Makefiles
-- Control parallel job execution during compilation
-- Specify alternative Makefiles for builds
-- Override variables within Makefiles
-- Force target rebuilding regardless of source changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute targets defined in Makefiles
+  - Control parallel job execution during compilation
+  - Specify alternative Makefiles for builds
+  - Override variables within Makefiles
+  - Force target rebuilding regardless of source changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # make

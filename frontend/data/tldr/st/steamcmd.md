@@ -1,29 +1,29 @@
 ---
-title: "SteamCMD - Control Steam Applications | Online Free DevTools by Hexmos"
+title: 'SteamCMD - Control Steam Applications | Online Free DevTools by Hexmos'
 name: steamcmd
-path: "/freedevtools/tldr/st/steamcmd/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/steamcmd/"
-description: "Control Steam applications with SteamCMD. Install, update, and manage games using command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/steamcmd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/steamcmd/'
+description: 'Control Steam applications with SteamCMD. Install, update, and manage games using command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- SteamCMD application management
-- Steam command line tool
-- Steam app installer
-- Steam game updater
-- Steam download manager
-- Steam anonymous login
-- Steam update validate
-- Steam platform force
-- Steam user logout
-- Steam game deployment
+  - SteamCMD application management
+  - Steam command line tool
+  - Steam app installer
+  - Steam game updater
+  - Steam download manager
+  - Steam anonymous login
+  - Steam update validate
+  - Steam platform force
+  - Steam user logout
+  - Steam game deployment
 features:
-- Install Steam applications anonymously
-- Update Steam applications with credentials
-- Force install platform type for apps
-- Clear cached Steam login credentials
-- Validate application integrity after update
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Steam applications anonymously
+  - Update Steam applications with credentials
+  - Force install platform type for apps
+  - Clear cached Steam login credentials
+  - Validate application integrity after update
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # steamcmd

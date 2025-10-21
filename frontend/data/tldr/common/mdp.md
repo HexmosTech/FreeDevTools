@@ -1,29 +1,29 @@
 ---
-title: "Markdown Presentation - Create Slides from Markdown | Online Free DevTools by Hexmos"
+title: 'Markdown Presentation - Create Slides from Markdown | Online Free DevTools by Hexmos'
 name: mdp
-path: "/freedevtools/tldr/common/mdp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mdp/"
-description: "Create Markdown presentations with mdp effortlessly. Generate slideshows from Markdown files for terminal display. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mdp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mdp/'
+description: 'Create Markdown presentations with mdp effortlessly. Generate slideshows from Markdown files for terminal display. Free online tool, no registration required.'
 category: common
 keywords:
-- Markdown presentation generator
-- Terminal slideshow creator
-- CLI presentation tool
-- Markdown to slides converter
-- Presentation from Markdown
-- Command line presentation maker
-- Terminal presentation viewer
-- Markdown slideshow Linux
-- Markdown slideshow macOS
-- Command line slides creator
+  - Markdown presentation generator
+  - Terminal slideshow creator
+  - CLI presentation tool
+  - Markdown to slides converter
+  - Presentation from Markdown
+  - Command line presentation maker
+  - Terminal presentation viewer
+  - Markdown slideshow Linux
+  - Markdown slideshow macOS
+  - Command line slides creator
 features:
-- Generate terminal presentations from Markdown files
-- Disable transition effects for cleaner displays
-- Invert colors for readability on light backgrounds
-- Disable transparency for compatibility
-- Present Markdown slides from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate terminal presentations from Markdown files
+  - Disable transition effects for cleaner displays
+  - Invert colors for readability on light backgrounds
+  - Disable transparency for compatibility
+  - Present Markdown slides from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mdp

@@ -1,9 +1,9 @@
 ---
-title: "Getconf - Control System Configuration | Online Free DevTools by Hexmos"
+title: 'Getconf - Control System Configuration | Online Free DevTools by Hexmos'
 name: getconf
-path: "/freedevtools/tldr/linux/getconf/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/getconf/"
-description: "Control system configurations with Getconf. Retrieve configuration variables and system limits. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/getconf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/getconf/'
+description: 'Control system configurations with Getconf. Retrieve configuration variables and system limits. Free online tool, no registration required.'
 category: linux
 keywords:
   - Linux system configuration
@@ -22,8 +22,8 @@ features:
   - Check system architecture (32-bit or 64-bit)
   - Determine the maximum number of processes a user can run
   - Search for configuration values using grep
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # getconf

@@ -1,29 +1,29 @@
 ---
-title: "Control OpenTTD - Manage Transport Tycoon Games | Online Free DevTools by Hexmos"
+title: 'Control OpenTTD - Manage Transport Tycoon Games | Online Free DevTools by Hexmos'
 name: openttd
-path: "/freedevtools/tldr/common/openttd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/openttd/"
-description: "Control OpenTTD with ease. Manage Transport Tycoon Deluxe games, load saves, customize configurations and start dedicated servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/openttd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/openttd/'
+description: 'Control OpenTTD with ease. Manage Transport Tycoon Deluxe games, load saves, customize configurations and start dedicated servers. Free online tool, no registration required.'
 category: common
 keywords:
-- OpenTTD command
-- Transport Tycoon command line
-- OpenTTD server setup
-- OpenTTD configuration
-- OpenTTD save game
-- OpenTTD game control
-- OpenTTD resolution settings
-- OpenTTD dedicated server
-- OpenTTD network game
-- OpenTTD sound drivers
+  - OpenTTD command
+  - Transport Tycoon command line
+  - OpenTTD server setup
+  - OpenTTD configuration
+  - OpenTTD save game
+  - OpenTTD game control
+  - OpenTTD resolution settings
+  - OpenTTD dedicated server
+  - OpenTTD network game
+  - OpenTTD sound drivers
 features:
-- Launch OpenTTD with custom resolution settings
-- Load saved games directly from the command line
-- Configure OpenTTD using a custom configuration file
-- Start and manage dedicated OpenTTD servers
-- Connect to OpenTTD servers with password support
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch OpenTTD with custom resolution settings
+  - Load saved games directly from the command line
+  - Configure OpenTTD using a custom configuration file
+  - Start and manage dedicated OpenTTD servers
+  - Connect to OpenTTD servers with password support
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openttd

@@ -1,29 +1,29 @@
 ---
-title: "Clojure REPL - Start Interactive Shell | Online Free DevTools by Hexmos"
+title: 'Clojure REPL - Start Interactive Shell | Online Free DevTools by Hexmos'
 name: clj
-path: "/freedevtools/tldr/common/clj/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/clj/"
-description: "Start Clojure REPL with clj for interactive development and function execution. Resolve dependencies and manage ClojureScript projects easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/clj/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/clj/'
+description: 'Start Clojure REPL with clj for interactive development and function execution. Resolve dependencies and manage ClojureScript projects easily. Free online tool, no registration required.'
 category: common
 keywords:
-- clojure repl
-- clojure interactive shell
-- clojure function execution
-- clojure dependency management
-- clojure repl server
-- clojurescript repl
-- clj repl
-- clj function
-- deps.edn clojure
-- clojure cider nrepl
+  - clojure repl
+  - clojure interactive shell
+  - clojure function execution
+  - clojure dependency management
+  - clojure repl server
+  - clojurescript repl
+  - clj repl
+  - clj function
+  - deps.edn clojure
+  - clojure cider nrepl
 features:
-- Start an interactive Clojure REPL environment
-- Execute Clojure functions from the command line
-- Resolve project dependencies defined in deps.edn
-- Launch a ClojureScript REPL with browser integration
-- Start an nREPL server with CIDER middleware for enhanced development
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive Clojure REPL environment
+  - Execute Clojure functions from the command line
+  - Resolve project dependencies defined in deps.edn
+  - Launch a ClojureScript REPL with browser integration
+  - Start an nREPL server with CIDER middleware for enhanced development
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clj

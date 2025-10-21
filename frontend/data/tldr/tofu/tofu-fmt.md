@@ -1,29 +1,29 @@
 ---
-title: "Tofu Format - Format Tofu Configuration | Online Free DevTools by Hexmos"
+title: 'Tofu Format - Format Tofu Configuration | Online Free DevTools by Hexmos'
 name: tofu-fmt
-path: "/freedevtools/tldr/tofu/tofu-fmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu-fmt/"
-description: "Format Tofu configuration files with Tofu Format. Ensure consistent and readable infrastructure-as-code. Free online tool, no registration required."
+path: '/freedevtools/tldr/tofu/tofu-fmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tofu/tofu-fmt/'
+description: 'Format Tofu configuration files with Tofu Format. Ensure consistent and readable infrastructure-as-code. Free online tool, no registration required.'
 category: common
 keywords:
-- tofu format
-- tofu configuration format
-- infrastructure as code formatter
-- hcl format
-- terraform format
-- tofu fmt
-- configuration file formatter
-- opentofu format
-- opentofu configuration format
-- declarative configuration format
+  - tofu format
+  - tofu configuration format
+  - infrastructure as code formatter
+  - hcl format
+  - terraform format
+  - tofu fmt
+  - configuration file formatter
+  - opentofu format
+  - opentofu configuration format
+  - declarative configuration format
 features:
-- Format Tofu configuration files to a standard style
-- Recursively format configuration files in subdirectories
-- Display a diff of the formatting changes
-- Suppress the listing of formatted files
-- Ensure consistent formatting across your Tofu projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format Tofu configuration files to a standard style
+  - Recursively format configuration files in subdirectories
+  - Display a diff of the formatting changes
+  - Suppress the listing of formatted files
+  - Ensure consistent formatting across your Tofu projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tofu fmt

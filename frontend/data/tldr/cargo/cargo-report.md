@@ -1,29 +1,29 @@
 ---
-title: "Generate Rust Reports - Cargo Report | Online Free DevTools by Hexmos"
+title: 'Generate Rust Reports - Cargo Report | Online Free DevTools by Hexmos'
 name: cargo-report
-path: "/freedevtools/tldr/cargo/cargo-report/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-report/"
-description: "Generate comprehensive Rust reports with Cargo Report. Analyze future incompatibilities and package dependencies with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-report/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-report/'
+description: 'Generate comprehensive Rust reports with Cargo Report. Analyze future incompatibilities and package dependencies with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- rust report generator
-- cargo dependency report
-- rust future incompatibility report
-- cargo package analysis
-- rust crate analyzer
-- cargo build report
-- rust compilation warnings
-- cargo project inspection
-- rust dependency tree
-- cargo audit report
+  - rust report generator
+  - cargo dependency report
+  - rust future incompatibility report
+  - cargo package analysis
+  - rust crate analyzer
+  - cargo build report
+  - rust compilation warnings
+  - cargo project inspection
+  - rust dependency tree
+  - cargo audit report
 features:
-- Generate future incompatibility reports
-- Display reports by Cargo-generated ID
-- Analyze reports for specified packages
-- Identify potential compilation issues
-- Inspect crate dependencies and versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate future incompatibility reports
+  - Display reports by Cargo-generated ID
+  - Analyze reports for specified packages
+  - Identify potential compilation issues
+  - Inspect crate dependencies and versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo report

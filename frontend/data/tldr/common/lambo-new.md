@@ -1,29 +1,29 @@
 ---
-title: "Create Laravel Projects - Lambo New Command | Online Free DevTools by Hexmos"
+title: 'Create Laravel Projects - Lambo New Command | Online Free DevTools by Hexmos'
 name: lambo-new
-path: "/freedevtools/tldr/common/lambo-new/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lambo-new/"
-description: "Create Laravel applications quickly with Lambo New. Scaffold new projects, install dependencies, and configure databases easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lambo-new/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lambo-new/'
+description: 'Create Laravel applications quickly with Lambo New. Scaffold new projects, install dependencies, and configure databases easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Laravel project creator
-- Lambo application generator
-- Valet site creation
-- Laravel scaffolding tool
-- PHP project initialization
-- Command line Laravel setup
-- Database setup automation
-- Authentication scaffolding tool
-- Frontend template installer
-- Dependency management tool
+  - Laravel project creator
+  - Lambo application generator
+  - Valet site creation
+  - Laravel scaffolding tool
+  - PHP project initialization
+  - Command line Laravel setup
+  - Database setup automation
+  - Authentication scaffolding tool
+  - Frontend template installer
+  - Dependency management tool
 features:
-- Scaffold new Laravel applications
-- Install npm dependencies automatically
-- Create and link Valet sites
-- Configure databases during project creation
-- Add authentication scaffolding
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scaffold new Laravel applications
+  - Install npm dependencies automatically
+  - Create and link Valet sites
+  - Configure databases during project creation
+  - Add authentication scaffolding
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lambo new

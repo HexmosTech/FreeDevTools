@@ -1,29 +1,29 @@
 ---
-title: "Rustup Settings - Control Rust Installations | Online Free DevTools by Hexmos"
+title: 'Rustup Settings - Control Rust Installations | Online Free DevTools by Hexmos'
 name: rustup-set
-path: "/freedevtools/tldr/rustup/rustup-set/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-set/"
-description: "Control rustup settings easily with Rustup-Set. Manage host triples, profiles, and auto-updates for Rust installations. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-set/'
+description: 'Control rustup settings easily with Rustup-Set. Manage host triples, profiles, and auto-updates for Rust installations. Free online tool, no registration required.'
 category: common
 keywords:
-- rustup configuration
-- rust installation manager
-- rustup default host
-- rustup profile setting
-- rustup auto-update control
-- rustup command line
-- rustup settings management
-- rust development environment
-- rust toolchain manager
-- rustup profile configure
+  - rustup configuration
+  - rust installation manager
+  - rustup default host
+  - rustup profile setting
+  - rustup auto-update control
+  - rustup command line
+  - rustup settings management
+  - rust development environment
+  - rust toolchain manager
+  - rustup profile configure
 features:
-- Set the default host triple for rustup
-- Configure the default profile (minimal or default)
-- Enable or disable rustup auto-self-update
-- Check for rustup updates only
-- Modify rustup settings from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set the default host triple for rustup
+  - Configure the default profile (minimal or default)
+  - Enable or disable rustup auto-self-update
+  - Check for rustup updates only
+  - Modify rustup settings from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup set

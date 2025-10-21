@@ -1,29 +1,29 @@
 ---
-title: "Pueue Add - Enqueue Tasks | Online Free DevTools by Hexmos"
+title: 'Pueue Add - Enqueue Tasks | Online Free DevTools by Hexmos'
 name: pueue-add
-path: "/freedevtools/tldr/pueue/pueue-add/"
-canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-add/"
-description: "Enqueue tasks efficiently with Pueue Add. Manage task dependencies and execution order easily using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/pueue/pueue-add/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pueue/pueue-add/'
+description: 'Enqueue tasks efficiently with Pueue Add. Manage task dependencies and execution order easily using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- pueue task enqueue
-- queue task management
-- background process scheduler
-- command line task runner
-- pueue delayed execution
-- linux task scheduler
-- macos task scheduler
-- pueue task dependencies
-- pueue group scheduling
-- pueue labeled tasks
+  - pueue task enqueue
+  - queue task management
+  - background process scheduler
+  - command line task runner
+  - pueue delayed execution
+  - linux task scheduler
+  - macos task scheduler
+  - pueue task dependencies
+  - pueue group scheduling
+  - pueue labeled tasks
 features:
-- Enqueue commands to a task queue
-- Specify task dependencies for sequential execution
-- Schedule tasks with delays using datetime formats
-- Assign tasks to named groups for organized execution
-- Add labels to tasks for better identification and management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enqueue commands to a task queue
+  - Specify task dependencies for sequential execution
+  - Schedule tasks with delays using datetime formats
+  - Assign tasks to named groups for organized execution
+  - Add labels to tasks for better identification and management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pueue add

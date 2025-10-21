@@ -1,9 +1,9 @@
 ---
-title: "IPMI Control - Manage Servers with ipmitool | Online Free DevTools by Hexmos"
+title: 'IPMI Control - Manage Servers with ipmitool | Online Free DevTools by Hexmos'
 name: ipmitool
-path: "/freedevtools/tldr/linux/ipmitool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ipmitool/"
-description: "Control server hardware remotely with ipmitool.  Manage IPMI, access the shell, and monitor system health. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ipmitool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ipmitool/'
+description: 'Control server hardware remotely with ipmitool.  Manage IPMI, access the shell, and monitor system health. Free online tool, no registration required.'
 category: linux
 keywords:
   - ipmi command
@@ -22,8 +22,8 @@ features:
   - Monitor system health and sensor readings.
   - Manage power states (power on/off, reboot).
   - Configure and manage IPMI settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipmitool

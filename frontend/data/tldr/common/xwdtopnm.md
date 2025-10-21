@@ -1,29 +1,29 @@
 ---
-title: "Convert XWD to PNM - Format Image Files | Online Free DevTools by Hexmos"
+title: 'Convert XWD to PNM - Format Image Files | Online Free DevTools by Hexmos'
 name: xwdtopnm
-path: "/freedevtools/tldr/common/xwdtopnm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xwdtopnm/"
-description: "Convert XWD files to PNM format with xwdtopnm. Process image files with ease using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xwdtopnm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xwdtopnm/'
+description: 'Convert XWD files to PNM format with xwdtopnm. Process image files with ease using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- XWD to PNM converter
-- Image format conversion
-- X11 window dump to PNM
-- XWD image processing
-- PNM file creation
-- Command line image converter
-- Linux image tools
-- Netpbm image utilities
-- XWD file analyzer
-- Image header extraction
+  - XWD to PNM converter
+  - Image format conversion
+  - X11 window dump to PNM
+  - XWD image processing
+  - PNM file creation
+  - Command line image converter
+  - Linux image tools
+  - Netpbm image utilities
+  - XWD file analyzer
+  - Image header extraction
 features:
-- Convert XWD images to PNM format
-- Display verbose information about the conversion
-- Dump the X11 header of an XWD file
-- Process image files via command line
-- Supports X11 and X10 window dump files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert XWD images to PNM format
+  - Display verbose information about the conversion
+  - Dump the X11 header of an XWD file
+  - Process image files via command line
+  - Supports X11 and X10 window dump files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xwdtopnm

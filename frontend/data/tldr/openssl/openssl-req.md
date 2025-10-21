@@ -1,29 +1,29 @@
 ---
-title: "Generate CSR - OpenSSL Certificate Requests | Online Free DevTools by Hexmos"
+title: 'Generate CSR - OpenSSL Certificate Requests | Online Free DevTools by Hexmos'
 name: openssl-req
-path: "/freedevtools/tldr/openssl/openssl-req/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-req/"
-description: "Generate CSR with OpenSSL for secure communication. Create certificate signing requests, self-signed certificates, and manage key-pairs easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-req/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-req/'
+description: 'Generate CSR with OpenSSL for secure communication. Create certificate signing requests, self-signed certificates, and manage key-pairs easily. Free online tool, no registration required.'
 category: common
 keywords:
-- OpenSSL CSR generation
-- Certificate signing request
-- OpenSSL certificate creation
-- PKCS#10 request
-- Self-signed certificate
-- OpenSSL key pair
-- Linux certificate manager
-- macOS certificate utility
-- Command-line certificate tool
-- OpenSSL request tool
+  - OpenSSL CSR generation
+  - Certificate signing request
+  - OpenSSL certificate creation
+  - PKCS#10 request
+  - Self-signed certificate
+  - OpenSSL key pair
+  - Linux certificate manager
+  - macOS certificate utility
+  - Command-line certificate tool
+  - OpenSSL request tool
 features:
-- Generate certificate signing requests (CSR)
-- Create self-signed certificates with key pairs
-- Manage PKCS#10 certificate requests
-- Specify subject information for certificates
-- Define the validity period for certificates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate certificate signing requests (CSR)
+  - Create self-signed certificates with key pairs
+  - Manage PKCS#10 certificate requests
+  - Specify subject information for certificates
+  - Define the validity period for certificates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl req

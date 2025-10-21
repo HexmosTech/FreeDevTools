@@ -1,29 +1,29 @@
 ---
-title: "Set Node Version - Manage Node.js Versions | Online Free DevTools by Hexmos"
+title: 'Set Node Version - Manage Node.js Versions | Online Free DevTools by Hexmos'
 name: set-nodeversion
-path: "/freedevtools/tldr/set/set-nodeversion/"
-canonical: "https://hexmos.com/freedevtools/tldr/set/set-nodeversion/"
-description: "Manage Node.js versions easily with Set-NodeVersion. Control your Node.js environment and streamline development workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/set/set-nodeversion/'
+canonical: 'https://hexmos.com/freedevtools/tldr/set/set-nodeversion/'
+description: 'Manage Node.js versions easily with Set-NodeVersion. Control your Node.js environment and streamline development workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- node.js version manager
-- powershell node version
-- ps-nvm node version
-- set node version powershell
-- node version control
-- node.js version setter
-- windows node version
-- linux node version
-- macos node version
-- node.js environment manager
+  - node.js version manager
+  - powershell node version
+  - ps-nvm node version
+  - set node version powershell
+  - node version control
+  - node.js version setter
+  - windows node version
+  - linux node version
+  - macos node version
+  - node.js environment manager
 features:
-- Set Node.js version for current PowerShell session
-- Persist Node.js version for user-specific sessions
-- Set Node.js version for all users (machine-wide)
-- Specify Node.js version using version ranges (e.g., ^20)
-- Manage Node.js environment with ease
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set Node.js version for current PowerShell session
+  - Persist Node.js version for user-specific sessions
+  - Set Node.js version for all users (machine-wide)
+  - Specify Node.js version using version ranges (e.g., ^20)
+  - Manage Node.js environment with ease
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Set-NodeVersion

@@ -1,29 +1,29 @@
 ---
-title: "Control hledger - Plain Text Accounting | Online Free DevTools by Hexmos"
+title: 'Control hledger - Plain Text Accounting | Online Free DevTools by Hexmos'
 name: hledger
-path: "/freedevtools/tldr/hledger/hledger/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger/"
-description: "Control plain text accounting with hledger. Manage financial transactions, generate reports, and track expenses effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger/'
+description: 'Control plain text accounting with hledger. Manage financial transactions, generate reports, and track expenses effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- plain text accounting
-- hledger accounting
-- command line accounting
-- ledger journal
-- double entry bookkeeping
-- financial transactions
-- account balance
-- income statement
-- balance sheet
-- hledger command
+  - plain text accounting
+  - hledger accounting
+  - command line accounting
+  - ledger journal
+  - double entry bookkeeping
+  - financial transactions
+  - account balance
+  - income statement
+  - balance sheet
+  - hledger command
 features:
-- Record financial transactions interactively
-- Import transactions from CSV files
-- Print transaction reports from multiple journal files
-- Display account hierarchies and balances
-- Generate income and expense reports
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Record financial transactions interactively
+  - Import transactions from CSV files
+  - Print transaction reports from multiple journal files
+  - Display account hierarchies and balances
+  - Generate income and expense reports
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger

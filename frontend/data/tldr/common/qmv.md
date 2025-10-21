@@ -1,29 +1,29 @@
 ---
-title: "Qmv - Move Files Easily | Online Free DevTools by Hexmos"
+title: 'Qmv - Move Files Easily | Online Free DevTools by Hexmos'
 name: qmv
-path: "/freedevtools/tldr/common/qmv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qmv/"
-description: "Move files effortlessly with Qmv, a command-line tool for renaming files using your default text editor. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/qmv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qmv/'
+description: 'Move files effortlessly with Qmv, a command-line tool for renaming files using your default text editor. Free online tool, no registration required.'
 category: common
 keywords:
-- file renamer
-- directory renamer
-- batch file rename
-- batch directory rename
-- command line rename
-- terminal file move
-- bulk file rename
-- qmv file rename
-- linux file rename
-- macos file rename
+  - file renamer
+  - directory renamer
+  - batch file rename
+  - batch directory rename
+  - command line rename
+  - terminal file move
+  - bulk file rename
+  - qmv file rename
+  - linux file rename
+  - macos file rename
 features:
-- Rename files using a text editor interface
-- Move multiple files simultaneously
-- Rename directories using a text editor interface
-- Recursively move all files and directories within a directory
-- Swap source and target filenames in the editor
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rename files using a text editor interface
+  - Move multiple files simultaneously
+  - Rename directories using a text editor interface
+  - Recursively move all files and directories within a directory
+  - Swap source and target filenames in the editor
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qmv

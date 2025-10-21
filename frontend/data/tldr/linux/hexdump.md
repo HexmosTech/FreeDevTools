@@ -1,9 +1,9 @@
 ---
-title: "Hexdump - Format Data in Hexadecimal | Online Free DevTools by Hexmos"
+title: 'Hexdump - Format Data in Hexadecimal | Online Free DevTools by Hexmos'
 name: hexdump
-path: "/freedevtools/tldr/linux/hexdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hexdump/"
-description: "Format data with hexdump, displaying hexadecimal and ASCII representations of files.  View and analyze file contents in detail with various options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hexdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hexdump/'
+description: 'Format data with hexdump, displaying hexadecimal and ASCII representations of files.  View and analyze file contents in detail with various options. Free online tool, no registration required.'
 category: linux
 keywords:
   - hexadecimal viewer
@@ -22,8 +22,8 @@ features:
   - Allows specifying the number of bytes to interpret.
   - Supports suppressing duplicate line replacement.
   - Provides options for canonical output format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hexdump

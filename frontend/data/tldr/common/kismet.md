@@ -1,29 +1,29 @@
 ---
-title: "Wireless Network Detector - Analyze Networks with Kismet | Online Free DevTools by Hexmos"
+title: 'Wireless Network Detector - Analyze Networks with Kismet | Online Free DevTools by Hexmos'
 name: kismet
-path: "/freedevtools/tldr/common/kismet/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kismet/"
-description: "Analyze wireless networks with Kismet, the powerful wireless network detector and sniffer. Identify devices, capture packets and detect intrusions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kismet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kismet/'
+description: 'Analyze wireless networks with Kismet, the powerful wireless network detector and sniffer. Identify devices, capture packets and detect intrusions. Free online tool, no registration required.'
 category: common
 keywords:
-- Wireless network detector
-- Wireless network analyzer
-- Packet capture tool
-- Wireless intrusion detection system
-- Network wardriving tool
-- Linux wireless scanner
-- Kismet wireless sniffer
-- Wireless device identifier
-- Network security tool
-- Command line network analysis
+  - Wireless network detector
+  - Wireless network analyzer
+  - Packet capture tool
+  - Wireless intrusion detection system
+  - Network wardriving tool
+  - Linux wireless scanner
+  - Kismet wireless sniffer
+  - Wireless device identifier
+  - Network security tool
+  - Command line network analysis
 features:
-- Capture wireless packets from a specified interface
-- Monitor multiple wireless channels simultaneously
-- Log captured network data to an SQLite database
-- Enable alerts for specific wireless network events
-- Display detailed information about access point packets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture wireless packets from a specified interface
+  - Monitor multiple wireless channels simultaneously
+  - Log captured network data to an SQLite database
+  - Enable alerts for specific wireless network events
+  - Display detailed information about access point packets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kismet

@@ -1,29 +1,29 @@
 ---
-title: "NFS Pentesting - Exploit NFS Servers | Online Free DevTools by Hexmos"
+title: 'NFS Pentesting - Exploit NFS Servers | Online Free DevTools by Hexmos'
 name: nxc-nfs
-path: "/freedevtools/tldr/nxc/nxc-nfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-nfs/"
-description: "Exploit NFS servers with NXC NFS. Pentest network file systems, enumerate shares, and transfer files securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-nfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-nfs/'
+description: 'Exploit NFS servers with NXC NFS. Pentest network file systems, enumerate shares, and transfer files securely. Free online tool, no registration required.'
 category: common
 keywords:
-- NFS pentesting
-- Network file system exploitation
-- NFS share enumeration
-- NXC NFS tool
-- Linux NFS server security
-- NFS anonymous access exploit
-- Network security auditing
-- Penetration testing NFS
-- NFS file transfer
-- Command-line NFS analysis
+  - NFS pentesting
+  - Network file system exploitation
+  - NFS share enumeration
+  - NXC NFS tool
+  - Linux NFS server security
+  - NFS anonymous access exploit
+  - Network security auditing
+  - Penetration testing NFS
+  - NFS file transfer
+  - Command-line NFS analysis
 features:
-- Detect the version of a remote NFS server
-- List available NFS shares on a target
-- Enumerate exposed shares recursively to a specified depth
-- Download specified remote files from an NFS share
-- Upload specified local files to a remote NFS share
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect the version of a remote NFS server
+  - List available NFS shares on a target
+  - Enumerate exposed shares recursively to a specified depth
+  - Download specified remote files from an NFS share
+  - Upload specified local files to a remote NFS share
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc nfs

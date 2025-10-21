@@ -1,29 +1,29 @@
 ---
-title: "Vgrep - Search Text with Pager | Online Free DevTools by Hexmos"
+title: 'Vgrep - Search Text with Pager | Online Free DevTools by Hexmos'
 name: vgrep
-path: "/freedevtools/tldr/common/vgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vgrep/"
-description: "Search text efficiently with Vgrep, a user-friendly pager for grep. Easily browse search results and navigate large files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vgrep/'
+description: 'Search text efficiently with Vgrep, a user-friendly pager for grep. Easily browse search results and navigate large files. Free online tool, no registration required.'
 category: common
 keywords:
-- grep pager
-- command line pager
-- text search tool
-- grep alternative
-- vgrep linux
-- vgrep macos
-- terminal pager
-- recursive search tool
-- cached grep
-- command line text search
+  - grep pager
+  - command line pager
+  - text search tool
+  - grep alternative
+  - vgrep linux
+  - vgrep macos
+  - terminal pager
+  - recursive search tool
+  - cached grep
+  - command line text search
 features:
-- Recursively search directories for a pattern
-- Cache previous search results for later use
-- Open a specific match in the default editor
-- Display context lines around each match
-- Show match counts for each file and directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search directories for a pattern
+  - Cache previous search results for later use
+  - Open a specific match in the default editor
+  - Display context lines around each match
+  - Show match counts for each file and directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vgrep

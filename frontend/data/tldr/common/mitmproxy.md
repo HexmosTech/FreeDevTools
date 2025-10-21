@@ -1,29 +1,29 @@
 ---
-title: "Control HTTP Traffic - mitmproxy | Online Free DevTools by Hexmos"
+title: 'Control HTTP Traffic - mitmproxy | Online Free DevTools by Hexmos'
 name: mitmproxy
-path: "/freedevtools/tldr/common/mitmproxy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mitmproxy/"
-description: "Control HTTP traffic with mitmproxy, an interactive man-in-the-middle proxy. Intercept, inspect, and modify network requests easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mitmproxy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mitmproxy/'
+description: 'Control HTTP traffic with mitmproxy, an interactive man-in-the-middle proxy. Intercept, inspect, and modify network requests easily. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP proxy
-- man-in-the-middle proxy
-- traffic interception
-- network inspection
-- request modification
-- TLS decryption
-- SSL proxy
-- proxy server
-- mitmproxy linux
-- mitmproxy macos
+  - HTTP proxy
+  - man-in-the-middle proxy
+  - traffic interception
+  - network inspection
+  - request modification
+  - TLS decryption
+  - SSL proxy
+  - proxy server
+  - mitmproxy linux
+  - mitmproxy macos
 features:
-- Intercept and inspect HTTP/HTTPS traffic in real-time
-- Modify requests and responses on the fly
-- Save and replay captured HTTP flows
-- Decrypt SSL/TLS traffic for inspection
-- Automate traffic analysis with custom scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Intercept and inspect HTTP/HTTPS traffic in real-time
+  - Modify requests and responses on the fly
+  - Save and replay captured HTTP flows
+  - Decrypt SSL/TLS traffic for inspection
+  - Automate traffic analysis with custom scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mitmproxy

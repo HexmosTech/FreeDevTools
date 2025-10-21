@@ -1,29 +1,29 @@
 ---
-title: "Git Commit - Create Repository Commits | Online Free DevTools by Hexmos"
+title: 'Git Commit - Create Repository Commits | Online Free DevTools by Hexmos'
 name: git-commit
-path: "/freedevtools/tldr/git/git-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit/"
-description: "Create repository commits with Git Commit. Stage files, add messages, and amend commits for efficient version control. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-commit/'
+description: 'Create repository commits with Git Commit. Stage files, add messages, and amend commits for efficient version control. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit changes
-- git repository commit
-- git add commit
-- git commit message
-- git amend commit
-- git commit staged files
-- git commit specific files
-- git commit sign
-- git commit all
-- git commit empty
+  - git commit changes
+  - git repository commit
+  - git add commit
+  - git commit message
+  - git amend commit
+  - git commit staged files
+  - git commit specific files
+  - git commit sign
+  - git commit all
+  - git commit empty
 features:
-- Commit staged files with a message.
-- Amend the last commit with currently staged changes.
-- Sign commits with a specified GPG key.
-- Commit specific files to the repository.
-- Auto stage modified files before committing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Commit staged files with a message.
+  - Amend the last commit with currently staged changes.
+  - Sign commits with a specified GPG key.
+  - Commit specific files to the repository.
+  - Auto stage modified files before committing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git commit

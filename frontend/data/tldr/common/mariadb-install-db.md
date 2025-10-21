@@ -1,29 +1,29 @@
 ---
-title: "MariaDB Initialize - Create Databases | Online Free DevTools by Hexmos"
+title: 'MariaDB Initialize - Create Databases | Online Free DevTools by Hexmos'
 name: mariadb-install-db
-path: "/freedevtools/tldr/common/mariadb-install-db/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mariadb-install-db/"
-description: "Initialize databases with MariaDB Install DB. Quickly set up new MariaDB instances and configure data directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mariadb-install-db/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mariadb-install-db/'
+description: 'Initialize databases with MariaDB Install DB. Quickly set up new MariaDB instances and configure data directories. Free online tool, no registration required.'
 category: common
 keywords:
-- MariaDB database creation
-- MySQL database initialization
-- MariaDB install script
-- Linux MariaDB setup
-- MariaDB command line tool
-- Database configuration management
-- SQL database installation
-- MariaDB database server
-- Create MySQL database
-- Common MariaDB utilities
+  - MariaDB database creation
+  - MySQL database initialization
+  - MariaDB install script
+  - Linux MariaDB setup
+  - MariaDB command line tool
+  - Database configuration management
+  - SQL database installation
+  - MariaDB database server
+  - Create MySQL database
+  - Common MariaDB utilities
 features:
-- Initialize new MariaDB database instances
-- Configure data directory locations
-- Set user permissions for database access
-- Display help information for command options
-- Automatically configure database settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new MariaDB database instances
+  - Configure data directory locations
+  - Set user permissions for database access
+  - Display help information for command options
+  - Automatically configure database settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mariadb-install-db

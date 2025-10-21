@@ -1,29 +1,29 @@
 ---
-title: "Create Python Virtual Environments - venv | Online Free DevTools by Hexmos"
+title: 'Create Python Virtual Environments - venv | Online Free DevTools by Hexmos'
 name: venv
-path: "/freedevtools/tldr/common/venv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/venv/"
-description: "Create virtual environments with venv. Isolate project dependencies and manage Python versions effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/venv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/venv/'
+description: 'Create virtual environments with venv. Isolate project dependencies and manage Python versions effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- python virtual environment
-- venv python
-- python environment isolation
-- python package management
-- virtualenv linux
-- virtualenv windows
-- venv macos
-- python dependency management
-- python development environment
-- python environment creation
+  - python virtual environment
+  - venv python
+  - python environment isolation
+  - python package management
+  - virtualenv linux
+  - virtualenv windows
+  - venv macos
+  - python dependency management
+  - python development environment
+  - python environment creation
 features:
-- Create isolated Python environments
-- Manage project dependencies separately
-- Activate and deactivate virtual environments easily
-- Specify Python interpreter for each environment
-- Ensure reproducible project builds
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create isolated Python environments
+  - Manage project dependencies separately
+  - Activate and deactivate virtual environments easily
+  - Specify Python interpreter for each environment
+  - Ensure reproducible project builds
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # venv

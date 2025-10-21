@@ -1,29 +1,29 @@
 ---
-title: "Wrk - Generate HTTP Benchmarks | Online Free DevTools by Hexmos"
+title: 'Wrk - Generate HTTP Benchmarks | Online Free DevTools by Hexmos'
 name: wrk
-path: "/freedevtools/tldr/common/wrk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wrk/"
-description: "Generate HTTP benchmarks with Wrk, a powerful command-line tool. Measure website performance and optimize server configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wrk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wrk/'
+description: 'Generate HTTP benchmarks with Wrk, a powerful command-line tool. Measure website performance and optimize server configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP benchmarking
-- website performance testing
-- load testing tool
-- server stress test
-- wrk command line
-- performance analysis
-- HTTP request generator
-- benchmark tool
-- wrk http benchmark
-- web server testing
+  - HTTP benchmarking
+  - website performance testing
+  - load testing tool
+  - server stress test
+  - wrk command line
+  - performance analysis
+  - HTTP request generator
+  - benchmark tool
+  - wrk http benchmark
+  - web server testing
 features:
-- Generate HTTP load to simulate real-world traffic
-- Measure website response times and latency
-- Test web server performance under high load
-- Customize request headers for advanced testing
-- Configure threads, connections, and duration of the benchmark
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate HTTP load to simulate real-world traffic
+  - Measure website response times and latency
+  - Test web server performance under high load
+  - Customize request headers for advanced testing
+  - Configure threads, connections, and duration of the benchmark
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wrk

@@ -1,29 +1,29 @@
 ---
-title: "Convert GV to GXL - Generate GXL Files | Online Free DevTools by Hexmos"
+title: 'Convert GV to GXL - Generate GXL Files | Online Free DevTools by Hexmos'
 name: gv2gxl
-path: "/freedevtools/tldr/common/gv2gxl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gv2gxl/"
-description: "Generate GXL files with gv2gxl. Convert GV graph files to GXL format using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gv2gxl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gv2gxl/'
+description: 'Generate GXL files with gv2gxl. Convert GV graph files to GXL format using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- GV to GXL Converter
-- GraphViz to GXL
-- Graph file converter
-- GXL file generator
-- Convert graph format
-- GV to GXL conversion
-- Graphviz command line
-- Linux graph tools
-- MacOS graph tools
-- GXL from GV
+  - GV to GXL Converter
+  - GraphViz to GXL
+  - Graph file converter
+  - GXL file generator
+  - Convert graph format
+  - GV to GXL conversion
+  - Graphviz command line
+  - Linux graph tools
+  - MacOS graph tools
+  - GXL from GV
 features:
-- Convert GV graph files to GXL format
-- Process GV files using standard input/output
-- Generate GXL output from GV input
-- Support command-line options for conversion
-- Output GXL format graph data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert GV graph files to GXL format
+  - Process GV files using standard input/output
+  - Generate GXL output from GV input
+  - Support command-line options for conversion
+  - Output GXL format graph data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gv2gxl

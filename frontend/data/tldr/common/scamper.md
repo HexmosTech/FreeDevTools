@@ -1,29 +1,29 @@
 ---
-title: "Scamper - Analyze Network Topology and Performance | Online Free DevTools by Hexmos"
+title: 'Scamper - Analyze Network Topology and Performance | Online Free DevTools by Hexmos'
 name: scamper
-path: "/freedevtools/tldr/common/scamper/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/scamper/"
-description: "Analyze network topology with Scamper, a tool for actively probing the internet to analyze topology and performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/scamper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/scamper/'
+description: 'Analyze network topology with Scamper, a tool for actively probing the internet to analyze topology and performance. Free online tool, no registration required.'
 category: common
 keywords:
-- network topology analysis
-- internet probing
-- performance monitoring
-- traceroute tool
-- network diagnostic
-- sc_warts2text conversion
-- sc_ttlexp exploration
-- network mapping tool
-- linux network tools
-- command line network analysis
+  - network topology analysis
+  - internet probing
+  - performance monitoring
+  - traceroute tool
+  - network diagnostic
+  - sc_warts2text conversion
+  - sc_ttlexp exploration
+  - network mapping tool
+  - linux network tools
+  - command line network analysis
 features:
-- Perform traceroute to a specified destination
-- Execute multiple actions (ping, traceroute) on different targets
-- Ping multiple hosts using UDP with incremental port numbers
-- Utilize Multipath Discovery Algorithm (MDA) for load-balanced path detection
-- Sniff and record specific ICMP packets based on IP address and ID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform traceroute to a specified destination
+  - Execute multiple actions (ping, traceroute) on different targets
+  - Ping multiple hosts using UDP with incremental port numbers
+  - Utilize Multipath Discovery Algorithm (MDA) for load-balanced path detection
+  - Sniff and record specific ICMP packets based on IP address and ID
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scamper

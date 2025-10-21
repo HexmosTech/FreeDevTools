@@ -1,9 +1,9 @@
 ---
-title: "Fail2ban-client - Control Fail2ban Server | Online Free DevTools by Hexmos"
+title: 'Fail2ban-client - Control Fail2ban Server | Online Free DevTools by Hexmos'
 name: fail2ban-client
-path: "/freedevtools/tldr/linux/fail2ban-client/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fail2ban-client/"
-description: "Control your Fail2ban server effectively with fail2ban-client. Manage bans, check status, and ensure server health easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fail2ban-client/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fail2ban-client/'
+description: 'Control your Fail2ban server effectively with fail2ban-client. Manage bans, check status, and ensure server health easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - fail2ban server management
@@ -22,8 +22,8 @@ features:
   - Verify the responsiveness of the fail2ban server.
   - Manage multiple fail2ban jails simultaneously.
   - Unban multiple IPs from a jail with a single command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fail2ban-client

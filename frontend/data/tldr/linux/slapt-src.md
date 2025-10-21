@@ -1,29 +1,29 @@
 ---
-title: "Build Slackbuilds - Automate Builds with slapt-src | Online Free DevTools by Hexmos"
+title: 'Build Slackbuilds - Automate Builds with slapt-src | Online Free DevTools by Hexmos'
 name: slapt-src
-path: "/freedevtools/tldr/linux/slapt-src/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/slapt-src/"
-description: "Automate Slackbuild builds with slapt-src. Simplify package management and software installation on Slackware Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/slapt-src/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/slapt-src/'
+description: 'Automate Slackbuild builds with slapt-src. Simplify package management and software installation on Slackware Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- slackbuild builder
-- linux package manager
-- slackware package build
-- slapt-src automated build
-- build slackbuilds linux
-- slackbuild installer
-- slapt-src dependency resolver
-- linux application builder
-- command line package manager
-- build from source linux
+  - slackbuild builder
+  - linux package manager
+  - slackware package build
+  - slapt-src automated build
+  - build slackbuilds linux
+  - slackbuild installer
+  - slapt-src dependency resolver
+  - linux application builder
+  - command line package manager
+  - build from source linux
 features:
-- Automate building of Slackware packages.
-- Update available slackbuild list.
-- List available slackbuilds for installation.
-- Search for specific slackbuilds by name or description.
-- Display detailed information about a slackbuild.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automate building of Slackware packages.
+  - Update available slackbuild list.
+  - List available slackbuilds for installation.
+  - Search for specific slackbuilds by name or description.
+  - Display detailed information about a slackbuild.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # slapt-src

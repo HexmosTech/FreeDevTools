@@ -1,9 +1,9 @@
 ---
-title: "Logwatch - Summarize Logs | Online Free DevTools by Hexmos"
+title: 'Logwatch - Summarize Logs | Online Free DevTools by Hexmos'
 name: logwatch
-path: "/freedevtools/tldr/linux/logwatch/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/logwatch/"
-description: "Summarize logs efficiently with Logwatch. Analyze system logs and generate concise reports for security auditing and troubleshooting. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/logwatch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/logwatch/'
+description: 'Summarize logs efficiently with Logwatch. Analyze system logs and generate concise reports for security auditing and troubleshooting. Free online tool, no registration required.'
 category: linux
 keywords:
   - log analysis report
@@ -22,8 +22,8 @@ features:
   - Filter reports based on selected services
   - Analyze logs at different levels of detail
   - Identify security-related events in system logs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # logwatch

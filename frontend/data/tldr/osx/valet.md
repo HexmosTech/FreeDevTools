@@ -1,29 +1,29 @@
 ---
-title: "Control Valet - Manage Local Development Sites | Online Free DevTools by Hexmos"
+title: 'Control Valet - Manage Local Development Sites | Online Free DevTools by Hexmos'
 name: valet
-path: "/freedevtools/tldr/osx/valet/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/valet/"
-description: "Control local development sites with Valet. Quickly serve projects and create local tunnels on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/valet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/valet/'
+description: 'Control local development sites with Valet. Quickly serve projects and create local tunnels on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- valet local development
-- valet macOS
-- valet site hosting
-- valet local tunnels
-- valet park sites
-- valet share project
-- valet laravel
-- macOS development
-- local site hosting
-- valet ngrok
+  - valet local development
+  - valet macOS
+  - valet site hosting
+  - valet local tunnels
+  - valet park sites
+  - valet share project
+  - valet laravel
+  - macOS development
+  - local site hosting
+  - valet ngrok
 features:
-- Start the Valet daemon for site hosting
-- Register directories for automatic site discovery
-- Serve individual sites by linking application names
-- Share local projects through Ngrok tunnels
-- View a list of 'parked' directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the Valet daemon for site hosting
+  - Register directories for automatic site discovery
+  - Serve individual sites by linking application names
+  - Share local projects through Ngrok tunnels
+  - View a list of 'parked' directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # valet

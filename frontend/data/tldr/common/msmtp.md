@@ -1,29 +1,29 @@
 ---
-title: "Send Email - Send Emails via SMTP with msmtp | Online Free DevTools by Hexmos"
+title: 'Send Email - Send Emails via SMTP with msmtp | Online Free DevTools by Hexmos'
 name: msmtp
-path: "/freedevtools/tldr/common/msmtp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/msmtp/"
-description: "Send emails instantly with msmtp. Control SMTP settings and configure accounts for streamlined email sending via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/msmtp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/msmtp/'
+description: 'Send emails instantly with msmtp. Control SMTP settings and configure accounts for streamlined email sending via command line. Free online tool, no registration required.'
 category: common
 keywords:
-- smtp client
-- email sender
-- command line email
-- linux email
-- msmtp configuration
-- email authentication
-- send email from terminal
-- smtp protocol
-- email account manager
-- email command
+  - smtp client
+  - email sender
+  - command line email
+  - linux email
+  - msmtp configuration
+  - email authentication
+  - send email from terminal
+  - smtp protocol
+  - email account manager
+  - email command
 features:
-- Send emails via SMTP protocol
-- Configure multiple email accounts
-- Authenticate with SMTP servers
-- Send emails directly from the command line
-- Specify custom SMTP settings for each email
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send emails via SMTP protocol
+  - Configure multiple email accounts
+  - Authenticate with SMTP servers
+  - Send emails directly from the command line
+  - Specify custom SMTP settings for each email
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msmtp

@@ -1,29 +1,29 @@
 ---
-title: "XML Edit - Edit XML Documents | Online Free DevTools by Hexmos"
+title: 'XML Edit - Edit XML Documents | Online Free DevTools by Hexmos'
 name: xml-edit
-path: "/freedevtools/tldr/xml/xml-edit/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-edit/"
-description: "Edit XML documents easily with XML Edit. Modify, rename, delete, and update XML elements and attributes using XPATH expressions. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xml-edit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xml-edit/'
+description: 'Edit XML documents easily with XML Edit. Modify, rename, delete, and update XML elements and attributes using XPATH expressions. Free online tool, no registration required.'
 category: common
 keywords:
-- XML edit
-- XML editor
-- XML modification
-- XML XPATH
-- XML rename
-- XML delete
-- XML update
-- XML command line
-- XMLStarlet
-- XML transform
+  - XML edit
+  - XML editor
+  - XML modification
+  - XML XPATH
+  - XML rename
+  - XML delete
+  - XML update
+  - XML command line
+  - XMLStarlet
+  - XML transform
 features:
-- Delete XML elements based on XPATH expressions
-- Move XML element nodes between XPATH locations
-- Rename XML attributes using XPATH expressions
-- Update XML attribute values based on XPATH expressions
-- Modify XML structure via command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete XML elements based on XPATH expressions
+  - Move XML element nodes between XPATH locations
+  - Rename XML attributes using XPATH expressions
+  - Update XML attribute values based on XPATH expressions
+  - Modify XML structure via command-line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml edit

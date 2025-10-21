@@ -1,29 +1,29 @@
 ---
-title: "Trizen - Build AUR Packages | Online Free DevTools by Hexmos"
+title: 'Trizen - Build AUR Packages | Online Free DevTools by Hexmos'
 name: trizen
-path: "/freedevtools/tldr/linux/trizen/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/trizen/"
-description: "Build AUR packages easily with Trizen. Install, update, and remove packages from the Arch User Repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/trizen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/trizen/'
+description: 'Build AUR packages easily with Trizen. Install, update, and remove packages from the Arch User Repository. Free online tool, no registration required.'
 category: linux
 keywords:
-- aur package builder
-- trizen arch linux
-- aur package manager
-- linux package install
-- arch user repository
-- arch linux aur
-- aur package update
-- trizen package search
-- aur dependency resolver
-- linux aur helper
+  - aur package builder
+  - trizen arch linux
+  - aur package manager
+  - linux package install
+  - arch user repository
+  - arch linux aur
+  - aur package update
+  - trizen package search
+  - aur dependency resolver
+  - linux aur helper
 features:
-- Synchronize and update AUR packages
-- Install packages from the AUR
-- Remove packages and dependencies
-- Search the AUR package database
-- Show information about AUR packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize and update AUR packages
+  - Install packages from the AUR
+  - Remove packages and dependencies
+  - Search the AUR package database
+  - Show information about AUR packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trizen

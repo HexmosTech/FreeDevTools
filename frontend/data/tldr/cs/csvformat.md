@@ -1,29 +1,29 @@
 ---
-title: "CSV Format - Convert CSV to Custom Format | Online Free DevTools by Hexmos"
+title: 'CSV Format - Convert CSV to Custom Format | Online Free DevTools by Hexmos'
 name: csvformat
-path: "/freedevtools/tldr/cs/csvformat/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csvformat/"
-description: "Format CSV data easily with CSVFormat. Convert delimiters and line endings to create custom CSV outputs. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csvformat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csvformat/'
+description: 'Format CSV data easily with CSVFormat. Convert delimiters and line endings to create custom CSV outputs. Free online tool, no registration required.'
 category: common
 keywords:
-- csv formatting
-- csv conversion
-- tsv converter
-- delimiter changer
-- line ending converter
-- csv to tsv
-- csv quoting
-- common
-- command line csv
-- csvkit
+  - csv formatting
+  - csv conversion
+  - tsv converter
+  - delimiter changer
+  - line ending converter
+  - csv to tsv
+  - csv quoting
+  - common
+  - command line csv
+  - csvkit
 features:
-- Convert CSV to tab-delimited format (TSV).
-- Change delimiters to custom characters.
-- Convert line endings to carriage return + line feed.
-- Minimize or maximize quote usage in CSV output.
-- Customize CSV output format via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert CSV to tab-delimited format (TSV).
+  - Change delimiters to custom characters.
+  - Convert line endings to carriage return + line feed.
+  - Minimize or maximize quote usage in CSV output.
+  - Customize CSV output format via command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csvformat

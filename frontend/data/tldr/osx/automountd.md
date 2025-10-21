@@ -1,29 +1,29 @@
 ---
-title: "Automount Daemon - Control Mount Points on macOS | Online Free DevTools by Hexmos"
+title: 'Automount Daemon - Control Mount Points on macOS | Online Free DevTools by Hexmos'
 name: automountd
-path: "/freedevtools/tldr/osx/automountd/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/automountd/"
-description: "Control mount points automatically with Automount Daemon. Manage autofs configurations and dynamically mount/unmount network shares. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/automountd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/automountd/'
+description: 'Control mount points automatically with Automount Daemon. Manage autofs configurations and dynamically mount/unmount network shares. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS automount daemon
-- automountd configuration
-- automatic mount points osx
-- macOS network share management
-- autofs daemon control
-- osx file system automation
-- dynamic mount unmount macOS
-- automount daemon logging
-- launchd automount service
-- automountd troubleshooting macOS
+  - macOS automount daemon
+  - automountd configuration
+  - automatic mount points osx
+  - macOS network share management
+  - autofs daemon control
+  - osx file system automation
+  - dynamic mount unmount macOS
+  - automount daemon logging
+  - launchd automount service
+  - automountd troubleshooting macOS
 features:
-- Dynamically mount network shares
-- Automatically unmount idle file systems
-- Integrate with launchd for on-demand activation
-- Log detailed automount activity to syslog
-- Manage autofs configurations on macOS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Dynamically mount network shares
+  - Automatically unmount idle file systems
+  - Integrate with launchd for on-demand activation
+  - Log detailed automount activity to syslog
+  - Manage autofs configurations on macOS
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # automountd

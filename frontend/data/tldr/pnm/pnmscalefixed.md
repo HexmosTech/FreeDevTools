@@ -1,29 +1,29 @@
 ---
-title: "Scale PNM Images - Resize Image with pnmscalefixed | Online Free DevTools by Hexmos"
+title: 'Scale PNM Images - Resize Image with pnmscalefixed | Online Free DevTools by Hexmos'
 name: pnmscalefixed
-path: "/freedevtools/tldr/pnm/pnmscalefixed/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmscalefixed/"
-description: "Resize PNM images quickly with pnmscalefixed. Scale image dimensions and aspect ratio efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmscalefixed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmscalefixed/'
+description: 'Resize PNM images quickly with pnmscalefixed. Scale image dimensions and aspect ratio efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image scaling
-- image resizing
-- PNM scaling utility
-- pnmscalefixed command
-- Netpbm tools
-- image manipulation
-- PNM image converter
-- common command
-- image dimension change
-- aspect ratio scaling
+  - PNM image scaling
+  - image resizing
+  - PNM scaling utility
+  - pnmscalefixed command
+  - Netpbm tools
+  - image manipulation
+  - PNM image converter
+  - common command
+  - image dimension change
+  - aspect ratio scaling
 features:
-- Scale PNM images to specified width and height
-- Maintain aspect ratio while scaling
-- Resize by scale factors for width and height independently
-- Perform quick image scaling for efficiency
-- Convert image dimension using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scale PNM images to specified width and height
+  - Maintain aspect ratio while scaling
+  - Resize by scale factors for width and height independently
+  - Perform quick image scaling for efficiency
+  - Convert image dimension using command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmscalefixed

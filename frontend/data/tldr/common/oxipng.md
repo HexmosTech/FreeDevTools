@@ -1,29 +1,29 @@
 ---
-title: "OxiPNG Compressor - Optimize PNG Files Losslessly | Online Free DevTools by Hexmos"
+title: 'OxiPNG Compressor - Optimize PNG Files Losslessly | Online Free DevTools by Hexmos'
 name: oxipng
-path: "/freedevtools/tldr/common/oxipng/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/oxipng/"
-description: "Optimize PNG files with OxiPNG Compressor. Reduce PNG size losslessly using advanced compression techniques. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/oxipng/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/oxipng/'
+description: 'Optimize PNG files with OxiPNG Compressor. Reduce PNG size losslessly using advanced compression techniques. Free online tool, no registration required.'
 category: common
 keywords:
-- png compression
-- lossless png optimization
-- image compression tool
-- command line png optimizer
-- png file size reducer
-- oxipng compressor
-- png optimization linux
-- png optimization macos
-- png optimization common
-- zopfli png compression
+  - png compression
+  - lossless png optimization
+  - image compression tool
+  - command line png optimizer
+  - png file size reducer
+  - oxipng compressor
+  - png optimization linux
+  - png optimization macos
+  - png optimization common
+  - zopfli png compression
 features:
-- Losslessly compress PNG files
-- Optimize PNGs with various compression levels
-- Strip non-critical metadata from PNG images
-- Apply or remove PNG interlacing
-- Utilize the Zopfli compressor for maximum optimization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Losslessly compress PNG files
+  - Optimize PNGs with various compression levels
+  - Strip non-critical metadata from PNG images
+  - Apply or remove PNG interlacing
+  - Utilize the Zopfli compressor for maximum optimization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # oxipng

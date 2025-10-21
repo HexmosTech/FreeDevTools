@@ -1,9 +1,9 @@
 ---
-title: "Remove Logical Volumes - lvremove Command | Online Free DevTools by Hexmos"
+title: 'Remove Logical Volumes - lvremove Command | Online Free DevTools by Hexmos'
 name: lvremove
-path: "/freedevtools/tldr/linux/lvremove/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lvremove/"
-description: "Remove logical volumes with the lvremove command. Manage your LVM effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lvremove/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lvremove/'
+description: 'Remove logical volumes with the lvremove command. Manage your LVM effectively. Free online tool, no registration required.'
 category: linux
 keywords:
   - logical volume removal
@@ -22,8 +22,8 @@ features:
   - Manage LVM storage efficiently.
   - Integrate into shell scripts for automation.
   - Provides command-line control over LVM.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lvremove

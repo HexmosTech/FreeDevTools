@@ -1,29 +1,29 @@
 ---
-title: "CSV Diff - View Differences in CSV Files | Online Free DevTools by Hexmos"
+title: 'CSV Diff - View Differences in CSV Files | Online Free DevTools by Hexmos'
 name: csv-diff
-path: "/freedevtools/tldr/cs/csv-diff/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csv-diff/"
-description: "View differences with CSV Diff. Compare CSV files online, identify changed rows, and generate diff summaries. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csv-diff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csv-diff/'
+description: 'View differences with CSV Diff. Compare CSV files online, identify changed rows, and generate diff summaries. Free online tool, no registration required.'
 category: common
 keywords:
-- csv diff
-- csv comparison
-- csv diff tool
-- tsv diff
-- json diff
-- data diff
-- file comparison
-- command line csv diff
-- diff two csv files
-- csv diff online
+  - csv diff
+  - csv comparison
+  - csv diff tool
+  - tsv diff
+  - json diff
+  - data diff
+  - file comparison
+  - command line csv diff
+  - diff two csv files
+  - csv diff online
 features:
-- Compare CSV files by unique key column
-- Generate human-readable diff summaries
-- Display unchanged values in changed rows
-- Output diff results in JSON format
-- Identify added, removed, and modified rows
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare CSV files by unique key column
+  - Generate human-readable diff summaries
+  - Display unchanged values in changed rows
+  - Output diff results in JSON format
+  - Identify added, removed, and modified rows
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csv-diff

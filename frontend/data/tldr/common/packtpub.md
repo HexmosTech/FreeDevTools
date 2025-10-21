@@ -1,29 +1,29 @@
 ---
-title: "Download Packtpub Books - Get Free Ebooks | Online Free DevTools by Hexmos"
+title: 'Download Packtpub Books - Get Free Ebooks | Online Free DevTools by Hexmos'
 name: packtpub
-path: "/freedevtools/tldr/common/packtpub/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/packtpub/"
-description: "Download free Packtpub ebooks with Packtpub CLI. Access daily offers, login, logout, and manage your account effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/packtpub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/packtpub/'
+description: 'Download free Packtpub ebooks with Packtpub CLI. Access daily offers, login, logout, and manage your account effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- packtpub ebooks
-- free ebook downloader
-- packtpub download
-- packtpub cli
-- ebook download cli
-- free programming ebooks
-- packtpub offer
-- download pdf ebooks
-- download epub ebooks
-- download mobi ebooks
+  - packtpub ebooks
+  - free ebook downloader
+  - packtpub download
+  - packtpub cli
+  - ebook download cli
+  - free programming ebooks
+  - packtpub offer
+  - download pdf ebooks
+  - download epub ebooks
+  - download mobi ebooks
 features:
-- Download the daily free ebook offer
-- Download books in PDF, EPUB, and MOBI formats
-- Log in and out of your Packtpub account
-- View the current daily offer in the terminal
-- Open the daily offer in a web browser
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download the daily free ebook offer
+  - Download books in PDF, EPUB, and MOBI formats
+  - Log in and out of your Packtpub account
+  - View the current daily offer in the terminal
+  - Open the daily offer in a web browser
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # packtpub

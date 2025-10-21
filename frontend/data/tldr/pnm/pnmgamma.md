@@ -1,29 +1,29 @@
 ---
-title: "Gamma Correction - Adjust PNM Images | Online Free DevTools by Hexmos"
+title: 'Gamma Correction - Adjust PNM Images | Online Free DevTools by Hexmos'
 name: pnmgamma
-path: "/freedevtools/tldr/pnm/pnmgamma/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmgamma/"
-description: "Adjust gamma on PNM images with pnmgamma. Perform gamma correction, convert color spaces, and enhance image luminance easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmgamma/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmgamma/'
+description: 'Adjust gamma on PNM images with pnmgamma. Perform gamma correction, convert color spaces, and enhance image luminance easily. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image gamma correction
-- PNM gamma adjust
-- Gamma correction tool
-- PNM image editor
-- sRGB gamma conversion
-- BT.709 gamma conversion
-- Image luminance control
-- PNM color space conversion
-- Linux image processing
-- Command-line gamma tool
+  - PNM image gamma correction
+  - PNM gamma adjust
+  - Gamma correction tool
+  - PNM image editor
+  - sRGB gamma conversion
+  - BT.709 gamma conversion
+  - Image luminance control
+  - PNM color space conversion
+  - Linux image processing
+  - Command-line gamma tool
 features:
-- Convert PNM images between color spaces
-- Adjust gamma value for entire image
-- Adjust gamma values per color component
-- Convert images from BT.709 to linear or sRGB
-- Convert images from linear or sRGB to BT.709
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNM images between color spaces
+  - Adjust gamma value for entire image
+  - Adjust gamma values per color component
+  - Convert images from BT.709 to linear or sRGB
+  - Convert images from linear or sRGB to BT.709
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmgamma

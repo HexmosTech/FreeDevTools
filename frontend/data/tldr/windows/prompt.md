@@ -1,29 +1,29 @@
 ---
-title: "Prompt - Control Command Window Prompt | Online Free DevTools by Hexmos"
+title: 'Prompt - Control Command Window Prompt | Online Free DevTools by Hexmos'
 name: prompt
-path: "/freedevtools/tldr/windows/prompt/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/prompt/"
-description: "Control command window prompt with Prompt. Customize the DOS style prompt in Windows command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/prompt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/prompt/'
+description: 'Control command window prompt with Prompt. Customize the DOS style prompt in Windows command line. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows command prompt
-- command prompt customization
-- dos prompt change
-- windows prompt settings
-- command line prompt
-- shell prompt windows
-- prompt string windows
-- batch prompt customization
-- windows prompt variables
-- prompt configuration
+  - windows command prompt
+  - command prompt customization
+  - dos prompt change
+  - windows prompt settings
+  - command line prompt
+  - shell prompt windows
+  - prompt string windows
+  - batch prompt customization
+  - windows prompt variables
+  - prompt configuration
 features:
-- Reset prompt to default settings
-- Customize prompt with specific text
-- Display current date in the prompt
-- Display current time in the prompt
-- Modify prompt using prompt variables
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reset prompt to default settings
+  - Customize prompt with specific text
+  - Display current date in the prompt
+  - Display current time in the prompt
+  - Modify prompt using prompt variables
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prompt

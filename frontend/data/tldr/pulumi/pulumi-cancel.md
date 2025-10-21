@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Cancel - Stop Stack Updates | Online Free DevTools by Hexmos"
+title: 'Pulumi Cancel - Stop Stack Updates | Online Free DevTools by Hexmos'
 name: pulumi-cancel
-path: "/freedevtools/tldr/pulumi/pulumi-cancel/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-cancel/"
-description: "Stop running Pulumi stack updates with Pulumi Cancel. Cancel deployments and rollbacks efficiently for infrastructure as code. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-cancel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-cancel/'
+description: 'Stop running Pulumi stack updates with Pulumi Cancel. Cancel deployments and rollbacks efficiently for infrastructure as code. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi Cancel
-- Pulumi deployment cancel
-- Pulumi rollback cancel
-- IaC deployment cancel
-- Cloud deployment cancel
-- Pulumi stack management
-- Pulumi command line interface
-- infrastructure as code cancel
-- cloud infrastructure cancel
-- pulumi update stop
+  - Pulumi Cancel
+  - Pulumi deployment cancel
+  - Pulumi rollback cancel
+  - IaC deployment cancel
+  - Cloud deployment cancel
+  - Pulumi stack management
+  - Pulumi command line interface
+  - infrastructure as code cancel
+  - cloud infrastructure cancel
+  - pulumi update stop
 features:
-- Cancel running Pulumi stack updates
-- Forcefully stop deployments with confirmation bypass
-- Gracefully terminate ongoing rollbacks
-- Interrupt failed infrastructure deployments
-- Provide command-line control over Pulumi deployments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Cancel running Pulumi stack updates
+  - Forcefully stop deployments with confirmation bypass
+  - Gracefully terminate ongoing rollbacks
+  - Interrupt failed infrastructure deployments
+  - Provide command-line control over Pulumi deployments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi cancel

@@ -1,29 +1,29 @@
 ---
-title: "Act - Execute GitHub Actions Locally | Online Free DevTools by Hexmos"
+title: 'Act - Execute GitHub Actions Locally | Online Free DevTools by Hexmos'
 name: act
-path: "/freedevtools/tldr/common/act/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/act/"
-description: "Execute GitHub Actions locally with Act. Test your workflows and event triggers before committing to GitHub. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/act/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/act/'
+description: 'Execute GitHub Actions locally with Act. Test your workflows and event triggers before committing to GitHub. Free online tool, no registration required.'
 category: common
 keywords:
-- github actions local execution
-- docker workflow testing
-- act command line tool
-- github actions runner local
-- ci/cd local testing
-- workflow validation offline
-- github actions debug local
-- github actions local development
-- yaml workflow parser
-- local github actions emulator
+  - github actions local execution
+  - docker workflow testing
+  - act command line tool
+  - github actions runner local
+  - ci/cd local testing
+  - workflow validation offline
+  - github actions debug local
+  - github actions local development
+  - yaml workflow parser
+  - local github actions emulator
 features:
-- Execute GitHub Actions locally using Docker
-- List available jobs in a workflow
-- Run specific events and jobs
-- Perform dry runs to validate workflows
-- Display verbose logs for debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute GitHub Actions locally using Docker
+  - List available jobs in a workflow
+  - Run specific events and jobs
+  - Perform dry runs to validate workflows
+  - Display verbose logs for debugging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # act

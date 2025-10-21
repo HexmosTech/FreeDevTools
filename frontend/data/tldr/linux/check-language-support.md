@@ -1,29 +1,29 @@
 ---
-title: "Check Language - List Missing Packages | Online Free DevTools by Hexmos"
+title: 'Check Language - List Missing Packages | Online Free DevTools by Hexmos'
 name: check-language-support
-path: "/freedevtools/tldr/linux/check-language-support/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/check-language-support/"
-description: "Check language support with check-language-support. Identify missing language packages and locale support on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/check-language-support/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/check-language-support/'
+description: 'Check language support with check-language-support. Identify missing language packages and locale support on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- missing language packages
-- linux language support
-- locale package manager
-- ubuntu language check
-- apt package manager
-- debian language setup
-- language support diagnostics
-- language pack installation
-- language package installer
-- check language settings
+  - missing language packages
+  - linux language support
+  - locale package manager
+  - ubuntu language check
+  - apt package manager
+  - debian language setup
+  - language support diagnostics
+  - language pack installation
+  - language package installer
+  - check language settings
 features:
-- Identify missing language packages
-- Check locale support status
-- List packages for specific locales
-- Display installed language packages
-- Diagnose language support issues
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify missing language packages
+  - Check locale support status
+  - List packages for specific locales
+  - Display installed language packages
+  - Diagnose language support issues
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # check-language-support

@@ -1,9 +1,9 @@
 ---
-title: "Manage APX Package Managers - Create & Control Packages | Online Free DevTools by Hexmos"
+title: 'Manage APX Package Managers - Create & Control Packages | Online Free DevTools by Hexmos'
 name: apx-pkgmanagers
-path: "/freedevtools/tldr/linux/apx-pkgmanagers/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apx-pkgmanagers/"
-description: "Manage and control APX package managers with ease. Create, list, remove, and show package manager configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apx-pkgmanagers/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apx-pkgmanagers/'
+description: 'Manage and control APX package managers with ease. Create, list, remove, and show package manager configurations. Free online tool, no registration required.'
 category: linux
 keywords:
   - apx package manager management
@@ -22,8 +22,8 @@ features:
   - Remove existing package manager configurations.
   - Display detailed information about specific package managers.
   - Manage APX package configurations via the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apx pkgmanagers

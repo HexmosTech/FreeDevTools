@@ -1,29 +1,29 @@
 ---
-title: "Generate Git Request Pull - Create Pull Requests | Online Free DevTools by Hexmos"
+title: 'Generate Git Request Pull - Create Pull Requests | Online Free DevTools by Hexmos'
 name: git-request-pull
-path: "/freedevtools/tldr/git/git-request-pull/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-request-pull/"
-description: "Generate Git request pull commands with Git Request Pull. Create pull requests for Git repositories and collaborate effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-request-pull/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-request-pull/'
+description: 'Generate Git request pull commands with Git Request Pull. Create pull requests for Git repositories and collaborate effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- git request pull
-- git pull request
-- generate pull request
-- create pull request
-- git collaboration
-- version control
-- git command
-- git diff summary
-- git patch request
-- git upstream pull
+  - git request pull
+  - git pull request
+  - generate pull request
+  - create pull request
+  - git collaboration
+  - version control
+  - git command
+  - git diff summary
+  - git patch request
+  - git upstream pull
 features:
-- Generates a formatted request for incorporating changes.
-- Summarizes differences between branches for code review.
-- Creates a request suitable for sending to upstream maintainers.
-- Identifies changes between specified versions or branches.
-- Simplifies the process of contributing to Git projects.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generates a formatted request for incorporating changes.
+  - Summarizes differences between branches for code review.
+  - Creates a request suitable for sending to upstream maintainers.
+  - Identifies changes between specified versions or branches.
+  - Simplifies the process of contributing to Git projects.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git request-pull

@@ -1,29 +1,29 @@
 ---
-title: "Analyze Nginx Configs - Gixy Nginx Analyzer | Online Free DevTools by Hexmos"
+title: 'Analyze Nginx Configs - Gixy Nginx Analyzer | Online Free DevTools by Hexmos'
 name: gixy
-path: "/freedevtools/tldr/common/gixy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gixy/"
-description: "Analyze Nginx configurations with Gixy Nginx Analyzer. Detect common errors, security vulnerabilities, and performance issues in your Nginx setup. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gixy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gixy/'
+description: 'Analyze Nginx configurations with Gixy Nginx Analyzer. Detect common errors, security vulnerabilities, and performance issues in your Nginx setup. Free online tool, no registration required.'
 category: common
 keywords:
-- nginx configuration analyzer
-- nginx config validator
-- nginx syntax checker
-- nginx security audit
-- nginx performance analysis
-- gixy nginx linting
-- linux nginx configuration
-- nginx common mistakes
-- nginx vulnerability scanner
-- nginx security best practices
+  - nginx configuration analyzer
+  - nginx config validator
+  - nginx syntax checker
+  - nginx security audit
+  - nginx performance analysis
+  - gixy nginx linting
+  - linux nginx configuration
+  - nginx common mistakes
+  - nginx vulnerability scanner
+  - nginx security best practices
 features:
-- Analyze nginx configuration files for errors
-- Detect potential security vulnerabilities in nginx configs
-- Identify performance bottlenecks in nginx setup
-- Skip specific tests during analysis
-- Customize severity levels for analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze nginx configuration files for errors
+  - Detect potential security vulnerabilities in nginx configs
+  - Identify performance bottlenecks in nginx setup
+  - Skip specific tests during analysis
+  - Customize severity levels for analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gixy

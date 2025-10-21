@@ -1,29 +1,29 @@
 ---
-title: "Ccache - Control C/C++ Compilation Cache | Online Free DevTools by Hexmos"
+title: 'Ccache - Control C/C++ Compilation Cache | Online Free DevTools by Hexmos'
 name: ccache
-path: "/freedevtools/tldr/common/ccache/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ccache/"
-description: "Control C/C++ compilation with Ccache. Improve build times by caching compiler outputs and reusing them. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ccache/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ccache/'
+description: 'Control C/C++ compilation with Ccache. Improve build times by caching compiler outputs and reusing them. Free online tool, no registration required.'
 category: common
 keywords:
-- C++ compiler cache
-- C compiler cache
-- Compilation caching
-- Ccache statistics
-- Ccache clear
-- Ccache reset
-- Linux compiler cache
-- macOS compiler cache
-- Build time optimization
-- Compiler acceleration
+  - C++ compiler cache
+  - C compiler cache
+  - Compilation caching
+  - Ccache statistics
+  - Ccache clear
+  - Ccache reset
+  - Linux compiler cache
+  - macOS compiler cache
+  - Build time optimization
+  - Compiler acceleration
 features:
-- Show current cache statistics
-- Clear the entire cache content
-- Reset statistics to zero without clearing the cache
-- Compile C/C++ code using cached outputs
-- Accelerate compilation process for faster builds
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show current cache statistics
+  - Clear the entire cache content
+  - Reset statistics to zero without clearing the cache
+  - Compile C/C++ code using cached outputs
+  - Accelerate compilation process for faster builds
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ccache

@@ -1,9 +1,9 @@
 ---
-title: "Netstat - Control Network Connections | Online Free DevTools by Hexmos"
+title: 'Netstat - Control Network Connections | Online Free DevTools by Hexmos'
 name: netstat
-path: "/freedevtools/tldr/windows/netstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/netstat/"
-description: "Control network connections with Netstat, a command-line tool to display network statistics and active TCP connections. Analyze network performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/netstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/netstat/'
+description: 'Control network connections with Netstat, a command-line tool to display network statistics and active TCP connections. Analyze network performance. Free online tool, no registration required.'
 category: windows
 keywords:
   - netstat command
@@ -22,8 +22,8 @@ features:
   - Present network adapter statistics.
   - Reveal the IP routing table.
   - Display statistics by protocol.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # netstat

@@ -1,9 +1,9 @@
 ---
-title: "Monitor Processes - Control System Resources with top | Online Free DevTools by Hexmos"
+title: 'Monitor Processes - Control System Resources with top | Online Free DevTools by Hexmos'
 name: top
-path: "/freedevtools/tldr/linux/top/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/top/"
-description: "Monitor and control system resources in real-time with the top command. View process information, sort by various fields, and filter processes by user or PID. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/top/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/top/'
+description: 'Monitor and control system resources in real-time with the top command. View process information, sort by various fields, and filter processes by user or PID. Free online tool, no registration required.'
 category: linux
 keywords:
   - process monitoring command
@@ -22,8 +22,8 @@ features:
   - Sort processes by various fields (CPU, memory, etc.).
   - View individual threads of processes.
   - Interactive commands for detailed process control.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # top

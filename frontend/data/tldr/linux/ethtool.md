@@ -1,9 +1,9 @@
 ---
-title: "ethtool - Control Network Interfaces | Online Free DevTools by Hexmos"
+title: 'ethtool - Control Network Interfaces | Online Free DevTools by Hexmos'
 name: ethtool
-path: "/freedevtools/tldr/linux/ethtool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ethtool/"
-description: "Control network interface parameters with ethtool.  View network statistics, configure link settings, and troubleshoot network issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ethtool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ethtool/'
+description: 'Control network interface parameters with ethtool.  View network statistics, configure link settings, and troubleshoot network issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - network interface control linux
@@ -22,8 +22,8 @@ features:
   - Monitor network usage statistics.
   - Configure link speed, duplex mode, and auto-negotiation.
   - Control interface LEDs for identification.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ethtool

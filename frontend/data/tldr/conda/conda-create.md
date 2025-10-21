@@ -1,29 +1,29 @@
 ---
-title: "Conda Create - Generate Environments | Online Free DevTools by Hexmos"
+title: 'Conda Create - Generate Environments | Online Free DevTools by Hexmos'
 name: conda-create
-path: "/freedevtools/tldr/conda/conda-create/"
-canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-create/"
-description: "Generate conda environments with Conda Create. Install packages, clone environments, and manage dependencies using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/conda/conda-create/'
+canonical: 'https://hexmos.com/freedevtools/tldr/conda/conda-create/'
+description: 'Generate conda environments with Conda Create. Install packages, clone environments, and manage dependencies using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- conda environment creation
-- conda environment management
-- python environment setup
-- cross-platform environment
-- dependency management conda
-- conda package installation
-- conda environment cloning
-- linux conda create
-- macos conda create
-- windows conda create
+  - conda environment creation
+  - conda environment management
+  - python environment setup
+  - cross-platform environment
+  - dependency management conda
+  - conda package installation
+  - conda environment cloning
+  - linux conda create
+  - macos conda create
+  - windows conda create
 features:
-- Create new conda environments
-- Install specific python versions
-- Clone existing conda environments
-- Install specific packages in environments
-- Specify environment names
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new conda environments
+  - Install specific python versions
+  - Clone existing conda environments
+  - Install specific packages in environments
+  - Specify environment names
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # conda create

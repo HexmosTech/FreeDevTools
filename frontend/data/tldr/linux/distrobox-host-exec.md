@@ -1,9 +1,9 @@
 ---
-title: "Execute Command - Manage Host Processes with Distrobox | Online Free DevTools by Hexmos"
+title: 'Execute Command - Manage Host Processes with Distrobox | Online Free DevTools by Hexmos'
 name: distrobox-host-exec
-path: "/freedevtools/tldr/linux/distrobox-host-exec/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-host-exec/"
-description: "Execute commands on the host with Distrobox-host-exec for seamless container interaction. Manage host processes directly from your Distrobox. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/distrobox-host-exec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/distrobox-host-exec/'
+description: 'Execute commands on the host with Distrobox-host-exec for seamless container interaction. Manage host processes directly from your Distrobox. Free online tool, no registration required.'
 category: linux
 keywords:
   - distrobox host command execution
@@ -22,8 +22,8 @@ features:
   - Integrate host functionality into container workflow
   - Run scripts and utilities on the host from a container
   - Simplify host management from within a Distrobox
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # distrobox-host-exec

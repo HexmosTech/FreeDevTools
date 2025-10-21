@@ -1,9 +1,9 @@
 ---
-title: "Calculate IP Information - ipcalc Network Tool | Online Free DevTools by Hexmos"
+title: 'Calculate IP Information - ipcalc Network Tool | Online Free DevTools by Hexmos'
 name: ipcalc
-path: "/freedevtools/tldr/common/ipcalc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ipcalc/"
-description: "Calculate IP information with ipcalc. Determine subnet, broadcast address, and host range from an IP address and netmask. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ipcalc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ipcalc/'
+description: 'Calculate IP information with ipcalc. Determine subnet, broadcast address, and host range from an IP address and netmask. Free online tool, no registration required.'
 category: common
 keywords:
   - ipcalc subnet calculator
@@ -22,8 +22,8 @@ features:
   - Calculate host range within a subnet
   - Split network into specified sized blocks
   - Suppress bitwise output for cleaner results
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipcalc

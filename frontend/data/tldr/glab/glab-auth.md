@@ -1,29 +1,29 @@
 ---
-title: "GLab Auth - Authenticate GitLab Hosts | Online Free DevTools by Hexmos"
+title: 'GLab Auth - Authenticate GitLab Hosts | Online Free DevTools by Hexmos'
 name: glab-auth
-path: "/freedevtools/tldr/glab/glab-auth/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-auth/"
-description: "Authenticate with GitLab hosts instantly with GLab Auth. Manage authentication tokens, check status and connect to specific instances with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-auth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-auth/'
+description: 'Authenticate with GitLab hosts instantly with GLab Auth. Manage authentication tokens, check status and connect to specific instances with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- glab auth
-- gitlab authentication
-- glab login
-- gitlab token authentication
-- gitlab cli auth
-- command line authentication
-- glab hostname
-- gitlab host login
-- glab auth status
-- glab auth token
+  - glab auth
+  - gitlab authentication
+  - glab login
+  - gitlab token authentication
+  - gitlab cli auth
+  - command line authentication
+  - glab hostname
+  - gitlab host login
+  - glab auth status
+  - glab auth token
 features:
-- Authenticate with a GitLab host using interactive prompts
-- Authenticate using a GitLab personal access token
-- Check the current GitLab authentication status
-- Authenticate to a specific GitLab instance using its hostname
-- Manage multiple GitLab authentication configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate with a GitLab host using interactive prompts
+  - Authenticate using a GitLab personal access token
+  - Check the current GitLab authentication status
+  - Authenticate to a specific GitLab instance using its hostname
+  - Manage multiple GitLab authentication configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab auth

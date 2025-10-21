@@ -1,9 +1,9 @@
 ---
-title: "Control Directory Stack - popd Command | Online Free DevTools by Hexmos"
+title: 'Control Directory Stack - popd Command | Online Free DevTools by Hexmos'
 name: popd
-path: "/freedevtools/tldr/windows/popd/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/popd/"
-description: "Control your directory stack with the popd command. Easily navigate file systems and manage directory history. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/popd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/popd/'
+description: 'Control your directory stack with the popd command. Easily navigate file systems and manage directory history. Free online tool, no registration required.'
 category: windows
 keywords:
   - directory stack management
@@ -22,8 +22,8 @@ features:
   - Navigate back through previously visited directories.
   - Simplify complex directory traversal in scripts.
   - Access a history of recently used directories.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # popd

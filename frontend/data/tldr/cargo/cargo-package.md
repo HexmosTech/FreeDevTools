@@ -1,29 +1,29 @@
 ---
-title: "Package Rust Code - Create Cargo Package | Online Free DevTools by Hexmos"
+title: 'Package Rust Code - Create Cargo Package | Online Free DevTools by Hexmos'
 name: cargo-package
-path: "/freedevtools/tldr/cargo/cargo-package/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-package/"
-description: "Package Rust code with Cargo Package for distribution. Easily create distributable `.crate` files and verify package contents. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-package/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-package/'
+description: 'Package Rust code with Cargo Package for distribution. Easily create distributable `.crate` files and verify package contents. Free online tool, no registration required.'
 category: common
 keywords:
-- rust package
-- cargo package
-- crate package
-- rust crate
-- rust distribution
-- cargo distribution
-- rust packaging
-- cargo packaging
-- rust project package
-- cargo project package
+  - rust package
+  - cargo package
+  - crate package
+  - rust crate
+  - rust distribution
+  - cargo distribution
+  - rust packaging
+  - cargo packaging
+  - rust project package
+  - cargo project package
 features:
-- Create distributable `.crate` files
-- Verify package contents before publishing
-- List files to be included in the package
-- Perform checks before packaging
-- Package Rust projects locally
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create distributable `.crate` files
+  - Verify package contents before publishing
+  - List files to be included in the package
+  - Perform checks before packaging
+  - Package Rust projects locally
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo package

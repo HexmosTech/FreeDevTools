@@ -1,9 +1,9 @@
 ---
-title: "Wake-on-LAN Client - Send WoL Packets | Online Free DevTools by Hexmos"
+title: 'Wake-on-LAN Client - Send WoL Packets | Online Free DevTools by Hexmos'
 name: wol
-path: "/freedevtools/tldr/linux/wol/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wol/"
-description: "Send Wake-on-LAN magic packets with this simple client.  Manage network devices remotely using MAC address, IP, hostname or file input. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wol/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wol/'
+description: 'Send Wake-on-LAN magic packets with this simple client.  Manage network devices remotely using MAC address, IP, hostname or file input. Free online tool, no registration required.'
 category: linux
 keywords:
   - wake-on-lan client
@@ -22,8 +22,8 @@ features:
   - Specify target port for packet transmission.
   - Read device information from configuration files.
   - Supports verbose output for detailed operation logging.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wol

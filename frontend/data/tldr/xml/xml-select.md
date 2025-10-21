@@ -1,29 +1,29 @@
 ---
-title: "XML Select - Query XML Data with XPATH | Online Free DevTools by Hexmos"
+title: 'XML Select - Query XML Data with XPATH | Online Free DevTools by Hexmos'
 name: xml-select
-path: "/freedevtools/tldr/xml/xml-select/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-select/"
-description: "Query XML data efficiently with XML Select. Extract, count, and manipulate XML elements using XPATH expressions. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xml-select/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xml-select/'
+description: 'Query XML data efficiently with XML Select. Extract, count, and manipulate XML elements using XPATH expressions. Free online tool, no registration required.'
 category: common
 keywords:
-- xml select
-- xml xpath query
-- xml data extraction
-- xml element counting
-- xml data manipulation
-- xmlstarlet
-- command line xml tool
-- xpath selector
-- xml parsing linux
-- xml parsing macos
+  - xml select
+  - xml xpath query
+  - xml data extraction
+  - xml element counting
+  - xml data manipulation
+  - xmlstarlet
+  - command line xml tool
+  - xpath selector
+  - xml parsing linux
+  - xml parsing macos
 features:
-- Select data from XML files using XPATH expressions
-- Count elements within an XML document based on XPATH criteria
-- Extract specific sub-elements and their values from matched XML elements
-- Output XML content as text with customizable newlines
-- Process multiple XML files and aggregate results
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Select data from XML files using XPATH expressions
+  - Count elements within an XML document based on XPATH criteria
+  - Extract specific sub-elements and their values from matched XML elements
+  - Output XML content as text with customizable newlines
+  - Process multiple XML files and aggregate results
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml select

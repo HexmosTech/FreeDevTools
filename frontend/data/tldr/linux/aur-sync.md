@@ -1,9 +1,9 @@
 ---
-title: "Sync AUR Packages - Automate Builds | Online Free DevTools by Hexmos"
+title: 'Sync AUR Packages - Automate Builds | Online Free DevTools by Hexmos'
 name: aur-sync
-path: "/freedevtools/tldr/linux/aur-sync/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aur-sync/"
-description: "Automate AUR package syncing with aur-sync. Build, download, and upgrade packages from the Arch User Repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aur-sync/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aur-sync/'
+description: 'Automate AUR package syncing with aur-sync. Build, download, and upgrade packages from the Arch User Repository. Free online tool, no registration required.'
 category: linux
 keywords:
   - aur package sync
@@ -22,8 +22,8 @@ features:
   - Clean build files after installation
   - Install packages without interactive viewing
   - Ignore specific packages during upgrades
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aur sync

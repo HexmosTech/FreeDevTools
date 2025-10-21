@@ -1,29 +1,29 @@
 ---
-title: "Chage - Control Password Expiry | Online Free DevTools by Hexmos"
+title: 'Chage - Control Password Expiry | Online Free DevTools by Hexmos'
 name: chage
-path: "/freedevtools/tldr/linux/chage/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chage/"
-description: "Control user password expiry with Chage. Manage account expiration, force password changes and re-enable accounts on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/chage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chage/'
+description: 'Control user password expiry with Chage. Manage account expiration, force password changes and re-enable accounts on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- Linux password management
-- Change password expiry
-- User account control
-- Linux account management
-- Chage command examples
-- Linux chage options
-- Password expiration date
-- Force password change linux
-- Linux user account expiry
-- Disable password expiry
+  - Linux password management
+  - Change password expiry
+  - User account control
+  - Linux account management
+  - Chage command examples
+  - Linux chage options
+  - Password expiration date
+  - Force password change linux
+  - Linux user account expiry
+  - Disable password expiry
 features:
-- Set maximum password age
-- Disable password expiry for users
-- Set a specific account expiration date
-- Force users to change password on next login
-- Re-enable expired user accounts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set maximum password age
+  - Disable password expiry for users
+  - Set a specific account expiration date
+  - Force users to change password on next login
+  - Re-enable expired user accounts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chage

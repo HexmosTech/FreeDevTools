@@ -1,29 +1,29 @@
 ---
-title: "Manage Container Images - Skopeo Toolbox | Online Free DevTools by Hexmos"
+title: 'Manage Container Images - Skopeo Toolbox | Online Free DevTools by Hexmos'
 name: skopeo
-path: "/freedevtools/tldr/common/skopeo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/skopeo/"
-description: "Manage container images easily with Skopeo. Inspect, copy, and delete images across various registries. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/skopeo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/skopeo/'
+description: 'Manage container images easily with Skopeo. Inspect, copy, and delete images across various registries. Free online tool, no registration required.'
 category: common
 keywords:
-- container image manager
-- skopeo image inspection
-- docker image copy
-- registry image delete
-- container image registry
-- skopeo command line
-- container image tag
-- linux container image
-- skopeo authentication
-- container image download
+  - container image manager
+  - skopeo image inspection
+  - docker image copy
+  - registry image delete
+  - container image registry
+  - skopeo command line
+  - container image tag
+  - linux container image
+  - skopeo authentication
+  - container image download
 features:
-- Inspect remote container images from registries
-- List available tags for remote container images
-- Copy container images between registries
-- Delete container images from a registry
-- Authenticate with container registries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Inspect remote container images from registries
+  - List available tags for remote container images
+  - Copy container images between registries
+  - Delete container images from a registry
+  - Authenticate with container registries
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # skopeo

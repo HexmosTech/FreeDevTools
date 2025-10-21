@@ -1,29 +1,29 @@
 ---
-title: "Start darkhttpd Server - Serve Files Simply | Online Free DevTools by Hexmos"
+title: 'Start darkhttpd Server - Serve Files Simply | Online Free DevTools by Hexmos'
 name: darkhttpd
-path: "/freedevtools/tldr/common/darkhttpd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/darkhttpd/"
-description: "Serve files simply with darkhttpd. Quickly start a web server and share your documents and resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/darkhttpd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/darkhttpd/'
+description: 'Serve files simply with darkhttpd. Quickly start a web server and share your documents and resources. Free online tool, no registration required.'
 category: common
 keywords:
-- darkhttpd web server
-- simple web server
-- file serving linux
-- serve files command line
-- lightweight web server
-- http server configuration
-- document root server
-- linux web server
-- command line server
-- minimal http server
+  - darkhttpd web server
+  - simple web server
+  - file serving linux
+  - serve files command line
+  - lightweight web server
+  - http server configuration
+  - document root server
+  - linux web server
+  - command line server
+  - minimal http server
 features:
-- Serve files from a specified directory.
-- Run on a custom port.
-- Listen on a specific IP address.
-- Serve static content quickly.
-- Start a web server easily.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve files from a specified directory.
+  - Run on a custom port.
+  - Listen on a specific IP address.
+  - Serve static content quickly.
+  - Start a web server easily.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # darkhttpd

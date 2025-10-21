@@ -1,29 +1,29 @@
 ---
-title: "Crawl Websites - Katana Website Crawler | Online Free DevTools by Hexmos"
+title: 'Crawl Websites - Katana Website Crawler | Online Free DevTools by Hexmos'
 name: katana
-path: "/freedevtools/tldr/common/katana/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/katana/"
-description: "Crawl websites efficiently with Katana, a powerful website crawler designed for automation pipelines. Discover URLs and analyze web content easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/katana/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/katana/'
+description: 'Crawl websites efficiently with Katana, a powerful website crawler designed for automation pipelines. Discover URLs and analyze web content easily. Free online tool, no registration required.'
 category: common
 keywords:
-- website crawler
-- web crawler
-- headless browser crawler
-- automation crawler
-- directory crawler
-- katana crawler
-- web spider
-- URL crawler
-- projectdiscovery katana
-- web scraping tool
+  - website crawler
+  - web crawler
+  - headless browser crawler
+  - automation crawler
+  - directory crawler
+  - katana crawler
+  - web spider
+  - URL crawler
+  - projectdiscovery katana
+  - web scraping tool
 features:
-- Crawls a list of specified URLs.
-- Operates in headless mode using Chromium.
-- Supports proxy configurations for request handling.
-- Allows custom headers from a file.
-- Offers depth-first and breadth-first crawling strategies.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Crawls a list of specified URLs.
+  - Operates in headless mode using Chromium.
+  - Supports proxy configurations for request handling.
+  - Allows custom headers from a file.
+  - Offers depth-first and breadth-first crawling strategies.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # katana

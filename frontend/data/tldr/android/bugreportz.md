@@ -1,9 +1,9 @@
 ---
-title: "Generate Android Bug Reports - Diagnose System Issues | Online Free DevTools by Hexmos"
+title: 'Generate Android Bug Reports - Diagnose System Issues | Online Free DevTools by Hexmos'
 name: bugreportz
-path: "/freedevtools/tldr/android/bugreportz/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/bugreportz/"
-description: "Generate zipped Android bug reports with bugreportz. Collect system logs, identify device problems, and resolve Android errors. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/bugreportz/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/bugreportz/'
+description: 'Generate zipped Android bug reports with bugreportz. Collect system logs, identify device problems, and resolve Android errors. Free online tool, no registration required.'
 category: android
 keywords:
   - zipped android bug reports
@@ -22,8 +22,8 @@ features:
   - write bug report content to stdout using adb
   - display help information for bugreportz command
   - display the bugreportz version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bugreportz

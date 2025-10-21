@@ -1,29 +1,29 @@
 ---
-title: "psql - Query PostgreSQL Databases | Online Free DevTools by Hexmos"
+title: 'psql - Query PostgreSQL Databases | Online Free DevTools by Hexmos'
 name: psql
-path: "/freedevtools/tldr/common/psql/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/psql/"
-description: "Query PostgreSQL databases with psql command. Execute SQL queries, connect to remote servers, and manage databases via the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/psql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/psql/'
+description: 'Query PostgreSQL databases with psql command. Execute SQL queries, connect to remote servers, and manage databases via the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- postgresql query
-- postgresql command line
-- postgresql client
-- postgresql shell
-- database query tool
-- sql command execution
-- psql linux
-- psql macos
-- psql connect database
-- postgresql remote access
+  - postgresql query
+  - postgresql command line
+  - postgresql client
+  - postgresql shell
+  - database query tool
+  - sql command execution
+  - psql linux
+  - psql macos
+  - psql connect database
+  - postgresql remote access
 features:
-- Connect to local and remote PostgreSQL servers
-- Execute SQL queries from the command line
-- Run SQL scripts from files
-- Connect using various authentication methods
-- Automate database tasks using command-line arguments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to local and remote PostgreSQL servers
+  - Execute SQL queries from the command line
+  - Run SQL scripts from files
+  - Connect using various authentication methods
+  - Automate database tasks using command-line arguments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # psql

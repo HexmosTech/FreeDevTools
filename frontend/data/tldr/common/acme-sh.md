@@ -1,29 +1,29 @@
 ---
-title: "Generate Certificates - Control ACME DNS with acme.sh | Online Free DevTools by Hexmos"
+title: 'Generate Certificates - Control ACME DNS with acme.sh | Online Free DevTools by Hexmos'
 name: acme.sh
-path: "/freedevtools/tldr/common/acme-sh/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/acme-sh/"
+path: '/freedevtools/tldr/common/acme-sh/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/acme-sh/'
 description: "Generate SSL certificates with acme.sh, a Let's Encrypt client. Automate DNS challenges and secure domains easily. Free online tool, no registration required."
 category: common
 keywords:
-- acme.sh certificate
-- letsencrypt client
-- ssl certificate generator
-- acme dns challenge
-- acme.sh webroot
-- acme.sh standalone
-- acme.sh nginx
-- acme.sh apache
-- acme.sh wildcard certificate
-- acme certificate renewal
+  - acme.sh certificate
+  - letsencrypt client
+  - ssl certificate generator
+  - acme dns challenge
+  - acme.sh webroot
+  - acme.sh standalone
+  - acme.sh nginx
+  - acme.sh apache
+  - acme.sh wildcard certificate
+  - acme certificate renewal
 features:
-- Issue certificates via webroot mode.
-- Automate certificate issuance via DNS API.
-- Integrate with Nginx and Apache configurations.
-- Automatically renew certificates with specified commands.
-- Issue certificates for multiple domains in standalone mode.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Issue certificates via webroot mode.
+  - Automate certificate issuance via DNS API.
+  - Integrate with Nginx and Apache configurations.
+  - Automatically renew certificates with specified commands.
+  - Issue certificates for multiple domains in standalone mode.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # acme.sh

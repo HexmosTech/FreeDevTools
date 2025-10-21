@@ -1,9 +1,9 @@
 ---
-title: "Locale Checker - Manage System Locale Settings | Online Free DevTools by Hexmos"
+title: 'Locale Checker - Manage System Locale Settings | Online Free DevTools by Hexmos'
 name: locale
-path: "/freedevtools/tldr/linux/locale/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/locale/"
-description: "Manage and check system locale settings with the Locale Checker.  View available locales, display current date formats, and examine environment variables. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/locale/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/locale/'
+description: 'Manage and check system locale settings with the Locale Checker.  View available locales, display current date formats, and examine environment variables. Free online tool, no registration required.'
 category: linux
 keywords:
   - locale settings checker
@@ -22,8 +22,8 @@ features:
   - Show detailed metadata for each available locale.
   - Display the current date format based on the system's locale.
   - Check and manage your system's locale settings via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # locale

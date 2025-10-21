@@ -1,29 +1,29 @@
 ---
-title: "File Type - Determine File Type with File Command | Online Free DevTools by Hexmos"
+title: 'File Type - Determine File Type with File Command | Online Free DevTools by Hexmos'
 name: file
-path: "/freedevtools/tldr/common/file/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/file/"
-description: "Determine file type with File command. Identify file format, examine compressed archives, and work with special files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/file/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/file/'
+description: 'Determine file type with File command. Identify file format, examine compressed archives, and work with special files. Free online tool, no registration required.'
 category: common
 keywords:
-- file type identifier
-- file format detection
-- mime type lookup
-- zip archive analysis
-- special file identification
-- device file type
-- linux file command
-- macos file command
-- command line file type
-- file encoding detection
+  - file type identifier
+  - file format detection
+  - mime type lookup
+  - zip archive analysis
+  - special file identification
+  - device file type
+  - linux file command
+  - macos file command
+  - command line file type
+  - file encoding detection
 features:
-- Identifies file type based on content and metadata.
-- Examines contents of compressed archives like ZIP files.
-- Works with special and device files.
-- Continues file type detection until the end of the file.
-- Determines MIME encoding type of a file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identifies file type based on content and metadata.
+  - Examines contents of compressed archives like ZIP files.
+  - Works with special and device files.
+  - Continues file type detection until the end of the file.
+  - Determines MIME encoding type of a file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # file

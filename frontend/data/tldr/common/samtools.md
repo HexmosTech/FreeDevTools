@@ -1,29 +1,29 @@
 ---
-title: "Samtools - Manage Genomics Data | Online Free DevTools by Hexmos"
+title: 'Samtools - Manage Genomics Data | Online Free DevTools by Hexmos'
 name: samtools
-path: "/freedevtools/tldr/common/samtools/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/samtools/"
-description: "Manage Genomics data with Samtools, the command-line tool for processing SAM/BAM/CRAM files. Analyze sequencing data effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/samtools/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/samtools/'
+description: 'Manage Genomics data with Samtools, the command-line tool for processing SAM/BAM/CRAM files. Analyze sequencing data effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- genomics data management
-- samtools bam manipulation
-- sequence alignment processing
-- sam bam cram format
-- htslib toolkit
-- genomics analysis command line
-- bioinformatics tools
-- genomics sequencing data
-- genomics file conversion
-- genomics data indexing
+  - genomics data management
+  - samtools bam manipulation
+  - sequence alignment processing
+  - sam bam cram format
+  - htslib toolkit
+  - genomics analysis command line
+  - bioinformatics tools
+  - genomics sequencing data
+  - genomics file conversion
+  - genomics data indexing
 features:
-- Convert SAM to BAM format
-- Sort genomics data files
-- Index sorted BAM files for fast access
-- Merge multiple genomics files
-- Split files based on read groups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert SAM to BAM format
+  - Sort genomics data files
+  - Index sorted BAM files for fast access
+  - Merge multiple genomics files
+  - Split files based on read groups
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # samtools

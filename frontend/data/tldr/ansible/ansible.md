@@ -1,29 +1,29 @@
 ---
-title: "Ansible - Manage Remote Hosts | Online Free DevTools by Hexmos"
+title: 'Ansible - Manage Remote Hosts | Online Free DevTools by Hexmos'
 name: ansible
-path: "/freedevtools/tldr/ansible/ansible/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible/"
-description: "Manage remote hosts easily with Ansible. Automate tasks and configurations across multiple machines via SSH. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible/'
+description: 'Manage remote hosts easily with Ansible. Automate tasks and configurations across multiple machines via SSH. Free online tool, no registration required.'
 category: common
 keywords:
-- remote host management
-- SSH automation
-- configuration management
-- ansible playbook
-- infrastructure as code
-- ansible inventory
-- remote server configuration
-- ansible module
-- ansible command
-- linux automation
+  - remote host management
+  - SSH automation
+  - configuration management
+  - ansible playbook
+  - infrastructure as code
+  - ansible inventory
+  - remote server configuration
+  - ansible module
+  - ansible command
+  - linux automation
 features:
-- Execute commands on groups of remote hosts
-- Manage host configurations via inventory files
-- Automate tasks with administrative privileges
-- Ping hosts to verify connectivity
-- Display facts about remote hosts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands on groups of remote hosts
+  - Manage host configurations via inventory files
+  - Automate tasks with administrative privileges
+  - Ping hosts to verify connectivity
+  - Display facts about remote hosts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible

@@ -1,29 +1,29 @@
 ---
-title: "Format Manual Pages - Display Documentation | Online Free DevTools by Hexmos"
+title: 'Format Manual Pages - Display Documentation | Online Free DevTools by Hexmos'
 name: man
-path: "/freedevtools/tldr/common/man/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/man/"
-description: "Format documentation with Man command. Display manual pages and access command information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/man/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/man/'
+description: 'Format documentation with Man command. Display manual pages and access command information. Free online tool, no registration required.'
 category: common
 keywords:
-- manual pages formatter
-- display man pages
-- command documentation
-- linux man command
-- macos man command
-- unix man pages
-- command line help
-- system documentation
-- apropos search
-- man page viewer
+  - manual pages formatter
+  - display man pages
+  - command documentation
+  - linux man command
+  - macos man command
+  - unix man pages
+  - command line help
+  - system documentation
+  - apropos search
+  - man page viewer
 features:
-- Format and display command documentation
-- Search for man pages by keyword
-- Display man pages in a specific locale
-- Show the path to man page files
-- Open man pages in a web browser
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format and display command documentation
+  - Search for man pages by keyword
+  - Display man pages in a specific locale
+  - Show the path to man page files
+  - Open man pages in a web browser
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # man

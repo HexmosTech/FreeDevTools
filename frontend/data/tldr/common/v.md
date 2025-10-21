@@ -1,29 +1,29 @@
 ---
-title: "V Formatter - Format V Source Code | Online Free DevTools by Hexmos"
+title: 'V Formatter - Format V Source Code | Online Free DevTools by Hexmos'
 name: v
-path: "/freedevtools/tldr/common/v/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/v/"
-description: "Format V source code with V Formatter. Instantly format and manage V projects with ease using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/v/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/v/'
+description: 'Format V source code with V Formatter. Instantly format and manage V projects with ease using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- V source code formatter
-- V project manager
-- V compiler tool
-- V code runner
-- V code watcher
-- V repl environment
-- V language tools
-- V development commands
-- V syntax formatter
-- V code compilation
+  - V source code formatter
+  - V project manager
+  - V compiler tool
+  - V code runner
+  - V code watcher
+  - V repl environment
+  - V language tools
+  - V development commands
+  - V syntax formatter
+  - V code compilation
 features:
-- Compile V source code into executables
-- Run V programs directly from the command line
-- Automatically recompile and rerun files on modification
-- Open and interact with the V REPL environment
-- Format V source code files according to standard style
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile V source code into executables
+  - Run V programs directly from the command line
+  - Automatically recompile and rerun files on modification
+  - Open and interact with the V REPL environment
+  - Format V source code files according to standard style
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # v

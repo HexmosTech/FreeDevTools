@@ -1,9 +1,9 @@
 ---
-title: "Create CPIO Image - Archive Files | Online Free DevTools by Hexmos"
+title: 'Create CPIO Image - Archive Files | Online Free DevTools by Hexmos'
 name: create-image
-path: "/freedevtools/tldr/linux/create-image/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/create-image/"
-description: "Create CPIO image archives with Create-image. Manage file systems and software packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/create-image/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/create-image/'
+description: 'Create CPIO image archives with Create-image. Manage file systems and software packages. Free online tool, no registration required.'
 category: linux
 keywords:
   - CPIO image creation
@@ -22,8 +22,8 @@ features:
   - Archive software packages.
   - Simplify file system distribution.
   - Bundle files into a single archive.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # create-image

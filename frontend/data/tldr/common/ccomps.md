@@ -1,29 +1,29 @@
 ---
-title: "Decompose Graph - Analyze Connected Components | Online Free DevTools by Hexmos"
+title: 'Decompose Graph - Analyze Connected Components | Online Free DevTools by Hexmos'
 name: ccomps
-path: "/freedevtools/tldr/common/ccomps/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ccomps/"
-description: "Decompose graphs into connected components with ccomps. Analyze graph structure and identify subgraphs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ccomps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ccomps/'
+description: 'Decompose graphs into connected components with ccomps. Analyze graph structure and identify subgraphs. Free online tool, no registration required.'
 category: common
 keywords:
-- graph decomposition
-- connected components analysis
-- graphviz ccomps
-- graph algorithms
-- graph structure analysis
-- subgraph identification
-- graph analysis tools
-- linux graph decomposition
-- macos graph decomposition
-- windows graph decomposition
+  - graph decomposition
+  - connected components analysis
+  - graphviz ccomps
+  - graph algorithms
+  - graph structure analysis
+  - subgraph identification
+  - graph analysis tools
+  - linux graph decomposition
+  - macos graph decomposition
+  - windows graph decomposition
 features:
-- Decompose graphs into connected components
-- Print graph statistics (nodes, edges, components)
-- Output connected components to separate files
-- Analyze graph structure for connectivity
-- Visualize connected components using Graphviz
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decompose graphs into connected components
+  - Print graph statistics (nodes, edges, components)
+  - Output connected components to separate files
+  - Analyze graph structure for connectivity
+  - Visualize connected components using Graphviz
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ccomps

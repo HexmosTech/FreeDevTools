@@ -1,29 +1,29 @@
 ---
-title: "SQLx - Create and Manage Databases | Online Free DevTools by Hexmos"
+title: 'SQLx - Create and Manage Databases | Online Free DevTools by Hexmos'
 name: sqlx
-path: "/freedevtools/tldr/common/sqlx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sqlx/"
-description: "Create and manage databases with SQLx, the Rust SQL toolkit. Generate migrations, run pending updates, and revert changes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sqlx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sqlx/'
+description: 'Create and manage databases with SQLx, the Rust SQL toolkit. Generate migrations, run pending updates, and revert changes. Free online tool, no registration required.'
 category: common
 keywords:
-- sqlx database
-- sqlx migrate
-- rust sql toolkit
-- database migration tool
-- sql database management
-- sqlx cli
-- command line sql client
-- postgresql migration
-- mysql migration
-- sqlite migration
+  - sqlx database
+  - sqlx migrate
+  - rust sql toolkit
+  - database migration tool
+  - sql database management
+  - sqlx cli
+  - command line sql client
+  - postgresql migration
+  - mysql migration
+  - sqlite migration
 features:
-- Create databases specified in the DATABASE_URL
-- Generate SQL migration files with descriptions
-- Run pending SQL migrations
-- Revert the latest SQL migration
-- Drop specified databases
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create databases specified in the DATABASE_URL
+  - Generate SQL migration files with descriptions
+  - Run pending SQL migrations
+  - Revert the latest SQL migration
+  - Drop specified databases
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sqlx

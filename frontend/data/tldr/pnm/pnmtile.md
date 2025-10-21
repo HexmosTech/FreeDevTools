@@ -1,29 +1,29 @@
 ---
-title: "Generate Image Tiles - PNMTILE Image Replication | Online Free DevTools by Hexmos"
+title: 'Generate Image Tiles - PNMTILE Image Replication | Online Free DevTools by Hexmos'
 name: pnmtile
-path: "/freedevtools/tldr/pnm/pnmtile/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtile/"
-description: "Generate image tiles with PNMTILE, replicating images to specified dimensions. Efficient image manipulation for various applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmtile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmtile/'
+description: 'Generate image tiles with PNMTILE, replicating images to specified dimensions. Efficient image manipulation for various applications. Free online tool, no registration required.'
 category: common
 keywords:
-- pnm image tiling
-- image replication command
-- netpbm image processing
-- linux image tools
-- image manipulation software
-- pnm tile generator
-- command line image tiling
-- replicate pnm image
-- resize image tiles
-- tile image for print
+  - pnm image tiling
+  - image replication command
+  - netpbm image processing
+  - linux image tools
+  - image manipulation software
+  - pnm tile generator
+  - command line image tiling
+  - replicate pnm image
+  - resize image tiles
+  - tile image for print
 features:
-- Replicate a PNM image to fill a specified width and height.
-- Create tiled images for wallpapers or large format printing.
-- Scale the input image to fit the output dimensions when tiling.
-- Generate seamless image tiles by repeating the source image.
-- Output the tiled image in PNM format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Replicate a PNM image to fill a specified width and height.
+  - Create tiled images for wallpapers or large format printing.
+  - Scale the input image to fit the output dimensions when tiling.
+  - Generate seamless image tiles by repeating the source image.
+  - Output the tiled image in PNM format.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmtile

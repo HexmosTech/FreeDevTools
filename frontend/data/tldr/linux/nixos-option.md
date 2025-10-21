@@ -1,9 +1,9 @@
 ---
-title: "Inspect NixOS Configuration - List Options | Online Free DevTools by Hexmos"
+title: 'Inspect NixOS Configuration - List Options | Online Free DevTools by Hexmos'
 name: nixos-option
-path: "/freedevtools/tldr/linux/nixos-option/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nixos-option/"
-description: "Inspect NixOS configurations with nixos-option. List option keys, view boot modules, and manage user settings effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nixos-option/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nixos-option/'
+description: 'Inspect NixOS configurations with nixos-option. List option keys, view boot modules, and manage user settings effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - nixos configuration inspector
@@ -22,8 +22,8 @@ features:
   - List authorized keys for a specific user.
   - Display all remote builders.
   - Inspect options on a different NixOS configuration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nixos-option

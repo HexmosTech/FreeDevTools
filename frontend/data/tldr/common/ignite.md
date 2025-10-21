@@ -1,29 +1,29 @@
 ---
-title: "Ignite - Create React Native Apps | Online Free DevTools by Hexmos"
+title: 'Ignite - Create React Native Apps | Online Free DevTools by Hexmos'
 name: ignite
-path: "/freedevtools/tldr/common/ignite/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ignite/"
-description: "Create React Native applications effortlessly with Ignite. Scaffold projects, generate files from plugins and manage dependencies quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ignite/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ignite/'
+description: 'Create React Native applications effortlessly with Ignite. Scaffold projects, generate files from plugins and manage dependencies quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- react native boilerplate
-- react native generator
-- ignite plugin
-- react native cli
-- mobile app generator
-- react native scaffold
-- component generator
-- react native add plugin
-- react native remove plugin
-- react native project creator
+  - react native boilerplate
+  - react native generator
+  - ignite plugin
+  - react native cli
+  - mobile app generator
+  - react native scaffold
+  - component generator
+  - react native add plugin
+  - react native remove plugin
+  - react native project creator
 features:
-- Create new React Native projects with a single command
-- Generate files from existing Ignite plugins
-- Add new Ignite plugins to enhance project functionality
-- Remove Ignite plugins to streamline projects
-- Quickly scaffold entire React Native applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new React Native projects with a single command
+  - Generate files from existing Ignite plugins
+  - Add new Ignite plugins to enhance project functionality
+  - Remove Ignite plugins to streamline projects
+  - Quickly scaffold entire React Native applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ignite

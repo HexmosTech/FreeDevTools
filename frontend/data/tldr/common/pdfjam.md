@@ -1,29 +1,29 @@
 ---
-title: "PDF Merge - Create PDF Documents with Pdfjam | Online Free DevTools by Hexmos"
+title: 'PDF Merge - Create PDF Documents with Pdfjam | Online Free DevTools by Hexmos'
 name: pdfjam
-path: "/freedevtools/tldr/common/pdfjam/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pdfjam/"
-description: "Create PDF documents with Pdfjam. Easily merge, arrange, and manipulate PDF files from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pdfjam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pdfjam/'
+description: 'Create PDF documents with Pdfjam. Easily merge, arrange, and manipulate PDF files from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- pdf merge
-- pdf concatenation
-- pdf manipulation
-- pdf arrangement
-- pdf page extraction
-- pdf overlay
-- latex pdfpages
-- pdf command line
-- pdf utility
-- pdf printing
+  - pdf merge
+  - pdf concatenation
+  - pdf manipulation
+  - pdf arrangement
+  - pdf page extraction
+  - pdf overlay
+  - latex pdfpages
+  - pdf command line
+  - pdf utility
+  - pdf printing
 features:
-- Merge multiple PDF documents into a single file
-- Extract specific pages or page ranges from PDFs
-- Overlay scanned signatures onto PDF documents
-- Arrange PDF pages into custom grids (e.g., 2x2)
-- Reverse the order of pages within PDF files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Merge multiple PDF documents into a single file
+  - Extract specific pages or page ranges from PDFs
+  - Overlay scanned signatures onto PDF documents
+  - Arrange PDF pages into custom grids (e.g., 2x2)
+  - Reverse the order of pages within PDF files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdfjam

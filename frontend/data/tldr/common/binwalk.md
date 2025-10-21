@@ -1,29 +1,29 @@
 ---
-title: "Analyze Binaries - Firmware Analysis with Binwalk | Online Free DevTools by Hexmos"
+title: 'Analyze Binaries - Firmware Analysis with Binwalk | Online Free DevTools by Hexmos'
 name: binwalk
-path: "/freedevtools/tldr/common/binwalk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/binwalk/"
-description: "Analyze firmware binaries with Binwalk. Extract embedded files, analyze entropy, and identify file signatures for reverse engineering. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/binwalk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/binwalk/'
+description: 'Analyze firmware binaries with Binwalk. Extract embedded files, analyze entropy, and identify file signatures for reverse engineering. Free online tool, no registration required.'
 category: common
 keywords:
-- firmware analysis
-- binary analysis tool
-- embedded system security
-- file signature identification
-- entropy analysis tool
-- reverse engineering tool
-- binwalk analysis
-- linux binary analysis
-- firmware extraction
-- embedded file recovery
+  - firmware analysis
+  - binary analysis tool
+  - embedded system security
+  - file signature identification
+  - entropy analysis tool
+  - reverse engineering tool
+  - binwalk analysis
+  - linux binary analysis
+  - firmware extraction
+  - embedded file recovery
 features:
-- Extract embedded files from firmware images
-- Analyze binary entropy for anomalies
-- Identify file signatures within binaries
-- Recursively unpack nested archives and filesystems
-- Scan binaries for malicious code and vulnerabilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract embedded files from firmware images
+  - Analyze binary entropy for anomalies
+  - Identify file signatures within binaries
+  - Recursively unpack nested archives and filesystems
+  - Scan binaries for malicious code and vulnerabilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # binwalk

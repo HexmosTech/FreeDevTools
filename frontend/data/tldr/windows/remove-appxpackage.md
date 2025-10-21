@@ -1,29 +1,29 @@
 ---
-title: "Remove AppxPackage - Uninstall Windows Apps | Online Free DevTools by Hexmos"
+title: 'Remove AppxPackage - Uninstall Windows Apps | Online Free DevTools by Hexmos'
 name: remove-appxpackage
-path: "/freedevtools/tldr/windows/remove-appxpackage/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/remove-appxpackage/"
-description: "Uninstall Windows Apps with Remove-AppxPackage.  Quickly remove app packages from user accounts. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/remove-appxpackage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/remove-appxpackage/'
+description: 'Uninstall Windows Apps with Remove-AppxPackage.  Quickly remove app packages from user accounts. Free online tool, no registration required.'
 category: windows
 keywords:
-- appxpackage remover
-- windows app uninstaller
-- powershell appxpackage
-- remove windows app
-- uninstall appx package
-- windows app removal
-- appx removal powershell
-- remove appx package windows
-- powershell remove app
-- windows appx management
+  - appxpackage remover
+  - windows app uninstaller
+  - powershell appxpackage
+  - remove windows app
+  - uninstall appx package
+  - windows app removal
+  - appx removal powershell
+  - remove appx package windows
+  - powershell remove app
+  - windows appx management
 features:
-- Remove AppxPackage for specified user
-- Remove AppxPackage for all users
-- Preserve application data during removal
-- Uninstall app packages using PowerShell
-- Remove app packages with specific package name
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove AppxPackage for specified user
+  - Remove AppxPackage for all users
+  - Preserve application data during removal
+  - Uninstall app packages using PowerShell
+  - Remove app packages with specific package name
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Remove-AppxPackage

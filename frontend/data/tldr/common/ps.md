@@ -1,9 +1,9 @@
 ---
-title: "Process Manager - Control Running Processes with ps | Online Free DevTools by Hexmos"
+title: 'Process Manager - Control Running Processes with ps | Online Free DevTools by Hexmos'
 name: ps
-path: "/freedevtools/tldr/common/ps/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ps/"
-description: "Manage and control running processes with the ps command.  View process details, search for specific processes, and sort by memory usage. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ps/'
+description: 'Manage and control running processes with the ps command.  View process details, search for specific processes, and sort by memory usage. Free online tool, no registration required.'
 category: common
 keywords:
   - process monitoring command
@@ -22,8 +22,8 @@ features:
   - Display the full command line for each process.
   - View process information in a tree-like structure.
   - Sort processes by memory consumption or other metrics.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ps

@@ -1,29 +1,29 @@
 ---
-title: "Sui Move - Create and Build Move Projects | Online Free DevTools by Hexmos"
+title: 'Sui Move - Create and Build Move Projects | Online Free DevTools by Hexmos'
 name: sui-move
-path: "/freedevtools/tldr/sui/sui-move/"
-canonical: "https://hexmos.com/freedevtools/tldr/sui/sui-move/"
-description: "Create Move projects instantly with Sui Move. Build, test, migrate and manage your Sui Move projects using the CLI. Free online tool, no registration required."
+path: '/freedevtools/tldr/sui/sui-move/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sui/sui-move/'
+description: 'Create Move projects instantly with Sui Move. Build, test, migrate and manage your Sui Move projects using the CLI. Free online tool, no registration required.'
 category: common
 keywords:
-- Sui Move project creation
-- Sui Move build tool
-- Sui Move testing
-- Sui Move coverage analysis
-- Sui Move migration
-- Sui Move 2024 migration
-- Sui Move command line
-- Sui Move development
-- Sui Move package manager
-- Sui Move module coverage
+  - Sui Move project creation
+  - Sui Move build tool
+  - Sui Move testing
+  - Sui Move coverage analysis
+  - Sui Move migration
+  - Sui Move 2024 migration
+  - Sui Move command line
+  - Sui Move development
+  - Sui Move package manager
+  - Sui Move module coverage
 features:
-- Create new Sui Move projects
-- Build Sui Move packages
-- Test Sui Move code with coverage reporting
-- Migrate Sui Move packages to the latest version
-- Analyze Sui Move code coverage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Sui Move projects
+  - Build Sui Move packages
+  - Test Sui Move code with coverage reporting
+  - Migrate Sui Move packages to the latest version
+  - Analyze Sui Move code coverage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sui move

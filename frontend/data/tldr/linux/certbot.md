@@ -1,9 +1,9 @@
 ---
-title: "Certbot - Obtain SSL Certificates | Online Free DevTools by Hexmos"
+title: 'Certbot - Obtain SSL Certificates | Online Free DevTools by Hexmos'
 name: certbot
-path: "/freedevtools/tldr/linux/certbot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/certbot/"
-description: "Obtain and manage SSL certificates with Certbot.  Automate certificate renewal and easily integrate with web servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/certbot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/certbot/'
+description: 'Obtain and manage SSL certificates with Certbot.  Automate certificate renewal and easily integrate with web servers. Free online tool, no registration required.'
 category: linux
 keywords:
   - ssl certificate generation
@@ -22,8 +22,8 @@ features:
   - Integrate with Nginx, Apache, and other web servers.
   - Supports various authentication methods (webroot, nginx, apache).
   - Offers dry-run and test certificate options for safe testing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # certbot

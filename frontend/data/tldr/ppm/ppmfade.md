@@ -1,29 +1,29 @@
 ---
-title: "Generate PPM Fade - Image Transition | Online Free DevTools by Hexmos"
+title: 'Generate PPM Fade - Image Transition | Online Free DevTools by Hexmos'
 name: ppmfade
-path: "/freedevtools/tldr/ppm/ppmfade/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmfade/"
-description: "Generate image transitions with ppmfade. Create smooth fades between PPM images using various effects. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmfade/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmfade/'
+description: 'Generate image transitions with ppmfade. Create smooth fades between PPM images using various effects. Free online tool, no registration required.'
 category: common
 keywords:
-- ppm image transition
-- image fade generator
-- ppm fade effect
-- netpbm ppmfade
-- linux image manipulation
-- command line image tools
-- ppm image editor
-- image processing tool
-- cross platform image tools
-- ppm image converter
+  - ppm image transition
+  - image fade generator
+  - ppm fade effect
+  - netpbm ppmfade
+  - linux image manipulation
+  - command line image tools
+  - ppm image editor
+  - image processing tool
+  - cross platform image tools
+  - ppm image converter
 features:
-- Generate a transition between two PPM images
-- Create fades with different effects (mix, spread, shift, etc.)
-- Generate fades to or from a solid black image
-- Store resulting images sequentially
-- Command-line PPM image processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate a transition between two PPM images
+  - Create fades with different effects (mix, spread, shift, etc.)
+  - Generate fades to or from a solid black image
+  - Store resulting images sequentially
+  - Command-line PPM image processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmfade

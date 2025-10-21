@@ -1,9 +1,9 @@
 ---
-title: "Gamescope Control - Manage Game Layering | Online Free DevTools by Hexmos"
+title: 'Gamescope Control - Manage Game Layering | Online Free DevTools by Hexmos'
 name: gamescope
-path: "/freedevtools/tldr/linux/gamescope/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gamescope/"
-description: "Control game layering with Gamescope, a micro-compositor for enhanced gaming.  Manage game resolution, framerate, and output seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gamescope/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gamescope/'
+description: 'Control game layering with Gamescope, a micro-compositor for enhanced gaming.  Manage game resolution, framerate, and output seamlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - gamescope command
@@ -22,8 +22,8 @@ features:
   - Limit framerate for smoother gameplay
   - Integrate with Steam's Big Picture Mode
   - Manage display output preferences
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gamescope

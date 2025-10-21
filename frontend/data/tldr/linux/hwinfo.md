@@ -1,9 +1,9 @@
 ---
-title: "Hardware Info Probe - Investigate System Hardware | Online Free DevTools by Hexmos"
+title: 'Hardware Info Probe - Investigate System Hardware | Online Free DevTools by Hexmos'
 name: hwinfo
-path: "/freedevtools/tldr/linux/hwinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hwinfo/"
-description: "Investigate system hardware details with hwinfo.  Retrieve comprehensive information about CPU, memory, disk, and other components. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hwinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hwinfo/'
+description: 'Investigate system hardware details with hwinfo.  Retrieve comprehensive information about CPU, memory, disk, and other components. Free online tool, no registration required.'
 category: linux
 keywords:
   - hardware information linux
@@ -22,8 +22,8 @@ features:
   - Offers a concise summary mode for quick overview.
   - Allows saving the output to a file for later analysis.
   - Supports various hardware components (CPU, memory, disk, network, etc.).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hwinfo

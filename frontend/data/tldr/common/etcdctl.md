@@ -1,29 +1,29 @@
 ---
-title: "etcdctl - Control Key-Value Data | Online Free DevTools by Hexmos"
+title: 'etcdctl - Control Key-Value Data | Online Free DevTools by Hexmos'
 name: etcdctl
-path: "/freedevtools/tldr/common/etcdctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/etcdctl/"
-description: "Control key-value data instantly with etcdctl. Store, retrieve, and manage distributed data using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/etcdctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/etcdctl/'
+description: 'Control key-value data instantly with etcdctl. Store, retrieve, and manage distributed data using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- etcd key-value control
-- etcdctl data management
-- etcdctl command line
-- distributed key-value store
-- etcdctl snapshot backup
-- etcdctl cluster administration
-- etcdctl linux
-- etcdctl database interaction
-- etcdctl user management
-- etcdctl data watch
+  - etcd key-value control
+  - etcdctl data management
+  - etcdctl command line
+  - distributed key-value store
+  - etcdctl snapshot backup
+  - etcdctl cluster administration
+  - etcdctl linux
+  - etcdctl database interaction
+  - etcdctl user management
+  - etcdctl data watch
 features:
-- Store key-value pairs in etcd
-- Retrieve values associated with keys
-- Delete key-value pairs from etcd
-- Create and restore etcd snapshots
-- Watch keys for data changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Store key-value pairs in etcd
+  - Retrieve values associated with keys
+  - Delete key-value pairs from etcd
+  - Create and restore etcd snapshots
+  - Watch keys for data changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # etcdctl

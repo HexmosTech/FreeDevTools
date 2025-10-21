@@ -1,9 +1,9 @@
 ---
-title: "btrfs Filesystem - Manage Filesystem with btrfs | Online Free DevTools by Hexmos"
+title: 'btrfs Filesystem - Manage Filesystem with btrfs | Online Free DevTools by Hexmos'
 name: btrfs-filesystem
-path: "/freedevtools/tldr/linux/btrfs-filesystem/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-filesystem/"
-description: "Manage btrfs filesystems efficiently with the btrfs command.  Show usage, defragment files and directories, force sync data, and create swap files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/btrfs-filesystem/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/btrfs-filesystem/'
+description: 'Manage btrfs filesystems efficiently with the btrfs command.  Show usage, defragment files and directories, force sync data, and create swap files. Free online tool, no registration required.'
 category: linux
 keywords:
   - btrfs filesystem management
@@ -22,8 +22,8 @@ features:
   - Force synchronization of unwritten data blocks.
   - Create swap files with custom size and UUID.
   - Summarize disk usage recursively for directories.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btrfs filesystem

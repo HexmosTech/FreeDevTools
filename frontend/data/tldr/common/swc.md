@@ -1,29 +1,29 @@
 ---
-title: "SWC Compiler - Transpile JavaScript & TypeScript | Online Free DevTools by Hexmos"
+title: 'SWC Compiler - Transpile JavaScript & TypeScript | Online Free DevTools by Hexmos'
 name: swc
-path: "/freedevtools/tldr/common/swc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/swc/"
-description: "Transpile JavaScript and TypeScript code with SWC Compiler. Enjoy lightning-fast compilation and modern syntax support with this Rust-based tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/swc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/swc/'
+description: 'Transpile JavaScript and TypeScript code with SWC Compiler. Enjoy lightning-fast compilation and modern syntax support with this Rust-based tool. Free online tool, no registration required.'
 category: common
 keywords:
-- JavaScript compiler
-- TypeScript compiler
-- SWC transpiler
-- Rust compiler
-- JavaScript transformer
-- TypeScript transformer
-- ECMA script compilation
-- Code minification
-- Syntax transformation
-- Front-end optimization
+  - JavaScript compiler
+  - TypeScript compiler
+  - SWC transpiler
+  - Rust compiler
+  - JavaScript transformer
+  - TypeScript transformer
+  - ECMA script compilation
+  - Code minification
+  - Syntax transformation
+  - Front-end optimization
 features:
-- Transpile JavaScript and TypeScript code
-- Watch files for changes and re-compile
-- Output transpiled code to a specific file
-- Output transpiled code to a specific directory
-- Ignore specified files or directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Transpile JavaScript and TypeScript code
+  - Watch files for changes and re-compile
+  - Output transpiled code to a specific file
+  - Output transpiled code to a specific directory
+  - Ignore specified files or directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swc

@@ -1,29 +1,29 @@
 ---
-title: "Git Control - Manage Versions with Git Commands | Online Free DevTools by Hexmos"
+title: 'Git Control - Manage Versions with Git Commands | Online Free DevTools by Hexmos'
 name: git
-path: "/freedevtools/tldr/git/git/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git/"
-description: "Manage software versions efficiently with Git Control. Streamline collaboration and track changes seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git/'
+description: 'Manage software versions efficiently with Git Control. Streamline collaboration and track changes seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Git version control
-- Git distributed system
-- Git command line
-- Git repository management
-- Git commit history
-- Git branch management
-- Git push pull
-- Git remote repository
-- Git local repository
-- Git command cheat sheet
+  - Git version control
+  - Git distributed system
+  - Git command line
+  - Git repository management
+  - Git commit history
+  - Git branch management
+  - Git push pull
+  - Git remote repository
+  - Git local repository
+  - Git command cheat sheet
 features:
-- Initialize a new Git repository
-- Clone an existing Git repository
-- Track changes in files and directories
-- Commit changes to the repository history
-- Push and pull changes from remote repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new Git repository
+  - Clone an existing Git repository
+  - Track changes in files and directories
+  - Commit changes to the repository history
+  - Push and pull changes from remote repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git

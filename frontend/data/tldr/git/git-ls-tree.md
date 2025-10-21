@@ -1,29 +1,29 @@
 ---
-title: "Git List Tree - List Tree Contents | Online Free DevTools by Hexmos"
+title: 'Git List Tree - List Tree Contents | Online Free DevTools by Hexmos'
 name: git-ls-tree
-path: "/freedevtools/tldr/git/git-ls-tree/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-ls-tree/"
-description: "List tree contents with Git ls-tree. Inspect file structures and commit history using Git commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-ls-tree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-ls-tree/'
+description: 'List tree contents with Git ls-tree. Inspect file structures and commit history using Git commands. Free online tool, no registration required.'
 category: common
 keywords:
-- git list tree
-- git ls-tree command
-- git tree contents
-- git commit history
-- git file structure
-- git tree object
-- git directory listing
-- git repository files
-- linux git
-- macos git
+  - git list tree
+  - git ls-tree command
+  - git tree contents
+  - git commit history
+  - git file structure
+  - git tree object
+  - git directory listing
+  - git repository files
+  - linux git
+  - macos git
 features:
-- List contents of a specific branch
-- Recurse into subtrees of a commit
-- List only the filenames of a tree
-- Print filenames in a tree structure
-- Inspect file structures using Git
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List contents of a specific branch
+  - Recurse into subtrees of a commit
+  - List only the filenames of a tree
+  - Print filenames in a tree structure
+  - Inspect file structures using Git
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git ls-tree

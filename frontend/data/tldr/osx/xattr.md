@@ -1,29 +1,29 @@
 ---
-title: "Xattr - Control File Attributes | Online Free DevTools by Hexmos"
+title: 'Xattr - Control File Attributes | Online Free DevTools by Hexmos'
 name: xattr
-path: "/freedevtools/tldr/osx/xattr/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xattr/"
-description: "Control file attributes with Xattr on macOS. Easily manage extended filesystem attributes, set quarantine flags, and clear metadata. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xattr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xattr/'
+description: 'Control file attributes with Xattr on macOS. Easily manage extended filesystem attributes, set quarantine flags, and clear metadata. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS extended attributes
-- file attribute manager
-- xattr command line
-- quarantine flag macOS
-- metadata editor macOS
-- osx file attributes
-- filesystem attribute control
-- attribute key value editor
-- file metadata remover
-- extended attribute cleaner
+  - macOS extended attributes
+  - file attribute manager
+  - xattr command line
+  - quarantine flag macOS
+  - metadata editor macOS
+  - osx file attributes
+  - filesystem attribute control
+  - attribute key value editor
+  - file metadata remover
+  - extended attribute cleaner
 features:
-- List extended attributes of files
-- Write extended attributes to files
-- Delete specific extended attributes
-- Recursively remove attributes from directories
-- Clear all extended attributes from files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List extended attributes of files
+  - Write extended attributes to files
+  - Delete specific extended attributes
+  - Recursively remove attributes from directories
+  - Clear all extended attributes from files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xattr

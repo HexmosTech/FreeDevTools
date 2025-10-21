@@ -1,29 +1,29 @@
 ---
-title: "Mail Command - Send Email from Command Line | Online Free DevTools by Hexmos"
+title: 'Mail Command - Send Email from Command Line | Online Free DevTools by Hexmos'
 name: mail
-path: "/freedevtools/tldr/common/mail/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mail/"
-description: "Send email with Mail Command from your terminal. Compose messages, include attachments, and manage your mailbox quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mail/'
+description: 'Send email with Mail Command from your terminal. Compose messages, include attachments, and manage your mailbox quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- command line email
-- terminal mail
-- linux mail
-- unix mail
-- email client command line
-- mail sender command line
-- email composition command line
-- email attachment command line
-- bsd mail
-- send email from shell
+  - command line email
+  - terminal mail
+  - linux mail
+  - unix mail
+  - email client command line
+  - mail sender command line
+  - email composition command line
+  - email attachment command line
+  - bsd mail
+  - send email from shell
 features:
-- Send email messages directly from the command line
-- Include file contents as email body
-- Attach files to email messages
-- Check and manage personal mail interactively
-- Specify recipients, subject, and CC addresses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send email messages directly from the command line
+  - Include file contents as email body
+  - Attach files to email messages
+  - Check and manage personal mail interactively
+  - Specify recipients, subject, and CC addresses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mail

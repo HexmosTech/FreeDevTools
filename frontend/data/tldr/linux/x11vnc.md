@@ -1,29 +1,29 @@
 ---
-title: "X11VNC Control - Remote Linux Desktops | Online Free DevTools by Hexmos"
+title: 'X11VNC Control - Remote Linux Desktops | Online Free DevTools by Hexmos'
 name: x11vnc
-path: "/freedevtools/tldr/linux/x11vnc/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/x11vnc/"
-description: "Control remote Linux desktops with X11VNC. Enable VNC access on existing displays for easy management and collaboration. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/x11vnc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/x11vnc/'
+description: 'Control remote Linux desktops with X11VNC. Enable VNC access on existing displays for easy management and collaboration. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux vnc server
-- x11vnc remote access
-- desktop sharing linux
-- vnc display control
-- remote desktop viewer
-- linux remote administration
-- x11 vnc connection
-- shared vnc session
-- headless linux vnc
-- vnc server configuration
+  - linux vnc server
+  - x11vnc remote access
+  - desktop sharing linux
+  - vnc display control
+  - remote desktop viewer
+  - linux remote administration
+  - x11 vnc connection
+  - shared vnc session
+  - headless linux vnc
+  - vnc server configuration
 features:
-- Launch a VNC server on an existing display.
-- Allow multiple VNC clients to connect simultaneously.
-- Control a Linux desktop remotely using VNC.
-- Configure view-only VNC sessions.
-- Specify display and screen for VNC server.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch a VNC server on an existing display.
+  - Allow multiple VNC clients to connect simultaneously.
+  - Control a Linux desktop remotely using VNC.
+  - Configure view-only VNC sessions.
+  - Specify display and screen for VNC server.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # x11vnc

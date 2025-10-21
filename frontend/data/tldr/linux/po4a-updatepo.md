@@ -1,9 +1,9 @@
 ---
-title: "PO File Updater - Update PO Files | Online Free DevTools by Hexmos"
+title: 'PO File Updater - Update PO Files | Online Free DevTools by Hexmos'
 name: po4a-updatepo
-path: "/freedevtools/tldr/linux/po4a-updatepo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/po4a-updatepo/"
-description: "Update PO files efficiently with po4a-updatepo.  Synchronize your translation files with source changes quickly and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/po4a-updatepo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/po4a-updatepo/'
+description: 'Update PO files efficiently with po4a-updatepo.  Synchronize your translation files with source changes quickly and easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - po file updater
@@ -22,8 +22,8 @@ features:
   - Offers different formatting options for output.
   - Provides a command-line interface for easy integration.
   - Uses the po4a library for efficient translation management.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # po4a-updatepo

@@ -1,29 +1,29 @@
 ---
-title: "uv run - Execute Python Scripts | Online Free DevTools by Hexmos"
+title: 'uv run - Execute Python Scripts | Online Free DevTools by Hexmos'
 name: uv-run
-path: "/freedevtools/tldr/uv/uv-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-run/"
-description: "Execute Python scripts with uv run. Manage project dependencies, install packages on demand, and run in isolated environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-run/'
+description: 'Execute Python scripts with uv run. Manage project dependencies, install packages on demand, and run in isolated environments. Free online tool, no registration required.'
 category: common
 keywords:
-- python script runner
-- uv run python
-- python dependency manager
-- python module execution
-- venv manager
-- virtual environment runner
-- uv package installer
-- python project environment
-- uv isolated execution
-- uv no sync
+  - python script runner
+  - uv run python
+  - python dependency manager
+  - python module execution
+  - venv manager
+  - virtual environment runner
+  - uv package installer
+  - python project environment
+  - uv isolated execution
+  - uv no sync
 features:
-- Run Python scripts directly
-- Execute Python modules with `-m` flag
-- Install packages on demand for specific commands
-- Run scripts with project requirements
-- Execute in an isolated environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run Python scripts directly
+  - Execute Python modules with `-m` flag
+  - Install packages on demand for specific commands
+  - Run scripts with project requirements
+  - Execute in an isolated environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv run

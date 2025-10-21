@@ -1,29 +1,29 @@
 ---
-title: "JHAT Analyzer - Analyze Java Heap Dumps | Online Free DevTools by Hexmos"
+title: 'JHAT Analyzer - Analyze Java Heap Dumps | Online Free DevTools by Hexmos'
 name: jhat
-path: "/freedevtools/tldr/common/jhat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jhat/"
-description: "Analyze Java heap dumps with JHAT analyzer. Inspect memory usage, identify leaks, and optimize performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jhat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jhat/'
+description: 'Analyze Java heap dumps with JHAT analyzer. Inspect memory usage, identify leaks, and optimize performance. Free online tool, no registration required.'
 category: common
 keywords:
-- java heap analyzer
-- heap dump analysis
-- memory leak detection
-- jhat heap analysis
-- java memory analyzer
-- heap dump inspector
-- java heap dump tool
-- JVM heap analysis
-- memory usage analysis
-- java profiling
+  - java heap analyzer
+  - heap dump analysis
+  - memory leak detection
+  - jhat heap analysis
+  - java memory analyzer
+  - heap dump inspector
+  - java heap dump tool
+  - JVM heap analysis
+  - memory usage analysis
+  - java profiling
 features:
-- Analyze Java heap dump files.
-- Inspect object references and dependencies.
-- Identify memory leaks.
-- Generate HTML reports for easy viewing.
-- Configure memory usage for large heap dumps.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze Java heap dump files.
+  - Inspect object references and dependencies.
+  - Identify memory leaks.
+  - Generate HTML reports for easy viewing.
+  - Configure memory usage for large heap dumps.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jhat

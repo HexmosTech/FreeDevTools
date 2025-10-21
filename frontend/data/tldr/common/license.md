@@ -1,29 +1,29 @@
 ---
-title: "Generate Open-Source Licenses | Online Free DevTools by Hexmos"
+title: 'Generate Open-Source Licenses | Online Free DevTools by Hexmos'
 name: license
-path: "/freedevtools/tldr/common/license/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/license/"
-description: "Generate open-source licenses quickly with License. Customize author and year for legal compliance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/license/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/license/'
+description: 'Generate open-source licenses quickly with License. Customize author and year for legal compliance. Free online tool, no registration required.'
 category: common
 keywords:
-- open-source license generator
-- license creation tool
-- software license generation
-- MIT license generator
-- Apache license generator
-- GPL license generator
-- BSD license generator
-- license command line tool
-- license file creator
-- open-source project licensing
+  - open-source license generator
+  - license creation tool
+  - software license generation
+  - MIT license generator
+  - Apache license generator
+  - GPL license generator
+  - BSD license generator
+  - license command line tool
+  - license file creator
+  - open-source project licensing
 features:
-- Generate licenses from the command line
-- Customize author name and year
-- Save licenses to a file
-- List available licenses
-- Use default settings for quick license generation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate licenses from the command line
+  - Customize author name and year
+  - Save licenses to a file
+  - List available licenses
+  - Use default settings for quick license generation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # license

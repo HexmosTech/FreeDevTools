@@ -1,29 +1,29 @@
 ---
-title: "F-Droid Manager - Control Apps via ADB | Online Free DevTools by Hexmos"
+title: 'F-Droid Manager - Control Apps via ADB | Online Free DevTools by Hexmos'
 name: fdroidcl
-path: "/freedevtools/tldr/common/fdroidcl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fdroidcl/"
-description: "Control F-Droid apps via ADB with F-Droid Manager. Manage app installation, updates, and repositories on connected Android devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fdroidcl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fdroidcl/'
+description: 'Control F-Droid apps via ADB with F-Droid Manager. Manage app installation, updates, and repositories on connected Android devices. Free online tool, no registration required.'
 category: common
 keywords:
-- f-droid manager
-- android app manager
-- adb app installer
-- f-droid package manager
-- android repository management
-- command line app control
-- fdroidcl command
-- adb install apk
-- android app update
-- linux app management
+  - f-droid manager
+  - android app manager
+  - adb app installer
+  - f-droid package manager
+  - android repository management
+  - command line app control
+  - fdroidcl command
+  - adb install apk
+  - android app update
+  - linux app management
 features:
-- Fetch the latest F-Droid repository index
-- Install F-Droid applications directly via ADB
-- Manage F-Droid repositories (add, remove, enable, disable)
-- Search for applications within the F-Droid repository
-- Download APK files directly from the F-Droid repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fetch the latest F-Droid repository index
+  - Install F-Droid applications directly via ADB
+  - Manage F-Droid repositories (add, remove, enable, disable)
+  - Search for applications within the F-Droid repository
+  - Download APK files directly from the F-Droid repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fdroidcl

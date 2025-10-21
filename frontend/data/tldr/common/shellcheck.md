@@ -1,29 +1,29 @@
 ---
-title: "Shellcheck - Validate Shell Scripts | Online Free DevTools by Hexmos"
+title: 'Shellcheck - Validate Shell Scripts | Online Free DevTools by Hexmos'
 name: shellcheck
-path: "/freedevtools/tldr/common/shellcheck/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/shellcheck/"
-description: "Validate shell scripts instantly with Shellcheck. Detect errors and improve code quality with static analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/shellcheck/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/shellcheck/'
+description: 'Validate shell scripts instantly with Shellcheck. Detect errors and improve code quality with static analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- shell script validation
-- bash script checker
-- shell code analysis
-- static analysis tool
-- shellcheck linter
-- shell script debugging
-- linux shell scripting
-- shell script best practices
-- shell script error detection
-- sh syntax check
+  - shell script validation
+  - bash script checker
+  - shell code analysis
+  - static analysis tool
+  - shellcheck linter
+  - shell script debugging
+  - linux shell scripting
+  - shell script best practices
+  - shell script error detection
+  - sh syntax check
 features:
-- Check shell scripts for errors
-- Analyze shell scripts for deprecated features
-- Identify insecure code practices
-- Check sourced shell scripts
-- Customize output format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check shell scripts for errors
+  - Analyze shell scripts for deprecated features
+  - Identify insecure code practices
+  - Check sourced shell scripts
+  - Customize output format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shellcheck

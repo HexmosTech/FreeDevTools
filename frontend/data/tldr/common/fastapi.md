@@ -1,29 +1,29 @@
 ---
-title: "FastAPI Runner - Control Uvicorn Apps | Online Free DevTools by Hexmos"
+title: 'FastAPI Runner - Control Uvicorn Apps | Online Free DevTools by Hexmos'
 name: fastapi
-path: "/freedevtools/tldr/common/fastapi/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fastapi/"
-description: "Run FastAPI apps instantly with Uvicorn web server. Control host, port, and app directory for development and production. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fastapi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fastapi/'
+description: 'Run FastAPI apps instantly with Uvicorn web server. Control host, port, and app directory for development and production. Free online tool, no registration required.'
 category: common
 keywords:
-- fastapi runner
-- uvicorn server control
-- python web app deployment
-- development server with reload
-- fastapi development
-- api server configuration
-- python uvicorn configuration
-- web application management
-- command line api runner
-- fastapi development tool
+  - fastapi runner
+  - uvicorn server control
+  - python web app deployment
+  - development server with reload
+  - fastapi development
+  - api server configuration
+  - python uvicorn configuration
+  - web application management
+  - command line api runner
+  - fastapi development tool
 features:
-- Run FastAPI applications with automatic reload.
-- Specify custom host and port for the server.
-- Set application directory and app variable name.
-- Serve FastAPI apps in development mode.
-- Display help information for commands.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run FastAPI applications with automatic reload.
+  - Specify custom host and port for the server.
+  - Set application directory and app variable name.
+  - Serve FastAPI apps in development mode.
+  - Display help information for commands.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fastapi

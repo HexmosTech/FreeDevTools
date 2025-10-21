@@ -1,9 +1,9 @@
 ---
-title: "Quickget - Create Quickemu VMs | Online Free DevTools by Hexmos"
+title: 'Quickget - Create Quickemu VMs | Online Free DevTools by Hexmos'
 name: quickget
-path: "/freedevtools/tldr/linux/quickget/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/quickget/"
-description: "Create Quickemu virtual machines easily with quickget. Download and prepare OS images, configure VMs, and manage ISO files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/quickget/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/quickget/'
+description: 'Create Quickemu virtual machines easily with quickget. Download and prepare OS images, configure VMs, and manage ISO files. Free online tool, no registration required.'
 category: linux
 keywords:
   - quickemu vm creator
@@ -22,8 +22,8 @@ features:
   - Manages ISO files for various operating systems.
   - Supports multiple operating systems and versions.
   - Allows for selective download of images or configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # quickget

@@ -1,9 +1,9 @@
 ---
-title: "Clear Command - Clear Host | Online Free DevTools by Hexmos"
+title: 'Clear Command - Clear Host | Online Free DevTools by Hexmos'
 name: clear
-path: "/freedevtools/tldr/windows/clear/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/clear/"
-description: "Clear your terminal screen with Clear Command. Quickly remove all previous commands and output for a clean workspace. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/clear/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/clear/'
+description: 'Clear your terminal screen with Clear Command. Quickly remove all previous commands and output for a clean workspace. Free online tool, no registration required.'
 category: windows
 keywords:
   - clear command
@@ -22,8 +22,8 @@ features:
   - Provides a clean workspace
   - Resets the terminal output
   - Hides previous commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clear

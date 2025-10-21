@@ -1,29 +1,29 @@
 ---
-title: "Display Git Repo Info - Onefetch | Online Free DevTools by Hexmos"
+title: 'Display Git Repo Info - Onefetch | Online Free DevTools by Hexmos'
 name: onefetch
-path: "/freedevtools/tldr/common/onefetch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/onefetch/"
-description: "Display Git repository information and statistics with Onefetch. Analyze code contributions and project details quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/onefetch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/onefetch/'
+description: 'Display Git repository information and statistics with Onefetch. Analyze code contributions and project details quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- Git repository stats
-- Code statistics analyzer
-- Project information display
-- Git contribution analysis
-- Local repository information
-- Code churn metrics
-- Command line git info
-- Terminal git stats
-- Git repo summary
-- Git project overview
+  - Git repository stats
+  - Code statistics analyzer
+  - Project information display
+  - Git contribution analysis
+  - Local repository information
+  - Code churn metrics
+  - Command line git info
+  - Terminal git stats
+  - Git repo summary
+  - Git project overview
 features:
-- Displays comprehensive Git repository statistics
-- Analyzes code contributions by authors and languages
-- Identifies file churn and code complexity
-- Ignores bot and merge commits for cleaner analysis
-- Customizes output by excluding files and directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Displays comprehensive Git repository statistics
+  - Analyzes code contributions by authors and languages
+  - Identifies file churn and code complexity
+  - Ignores bot and merge commits for cleaner analysis
+  - Customizes output by excluding files and directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # onefetch

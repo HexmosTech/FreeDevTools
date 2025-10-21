@@ -1,9 +1,9 @@
 ---
-title: "KPackageTool5 - Manage Plasma Packages | Online Free DevTools by Hexmos"
+title: 'KPackageTool5 - Manage Plasma Packages | Online Free DevTools by Hexmos'
 name: kpackagetool5
-path: "/freedevtools/tldr/linux/kpackagetool5/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kpackagetool5/"
-description: "Manage Plasma packages with KPackageTool5.  Install, update, list, and remove Plasma applets and other package types easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kpackagetool5/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kpackagetool5/'
+description: 'Manage Plasma packages with KPackageTool5.  Install, update, list, and remove Plasma applets and other package types easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - plasma package manager
@@ -22,8 +22,8 @@ features:
   - List all installed Plasma applets (globally or per-user).
   - Remove Plasma applets by name.
   - List all known installable package types.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kpackagetool5

@@ -1,9 +1,9 @@
 ---
-title: "Manage Kernel Modules - Control Linux Modules with modprobe | Online Free DevTools by Hexmos"
+title: 'Manage Kernel Modules - Control Linux Modules with modprobe | Online Free DevTools by Hexmos'
 name: modprobe
-path: "/freedevtools/tldr/linux/modprobe/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/modprobe/"
-description: "Control Linux kernel modules efficiently with modprobe. Load, remove, and manage dependencies of kernel modules. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/modprobe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/modprobe/'
+description: 'Control Linux kernel modules efficiently with modprobe. Load, remove, and manage dependencies of kernel modules. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux module management
@@ -22,8 +22,8 @@ features:
   - Manage dependencies of kernel modules.
   - Perform a dry run to simulate module loading without actual changes.
   - Display dependencies of a specified kernel module.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # modprobe

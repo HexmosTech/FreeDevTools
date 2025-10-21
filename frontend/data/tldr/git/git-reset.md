@@ -1,29 +1,29 @@
 ---
-title: "Git Reset - Undo Commits and Changes | Online Free DevTools by Hexmos"
+title: 'Git Reset - Undo Commits and Changes | Online Free DevTools by Hexmos'
 name: git-reset
-path: "/freedevtools/tldr/git/git-reset/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-reset/"
-description: "Undo commits with Git Reset and unstage changes efficiently. Revert to previous states, keeping or discarding changes. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-reset/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-reset/'
+description: 'Undo commits with Git Reset and unstage changes efficiently. Revert to previous states, keeping or discarding changes. Free online tool, no registration required.'
 category: common
 keywords:
-- git reset commit
-- git unstage changes
-- git revert
-- git discard changes
-- git undo last commit
-- git hard reset
-- git soft reset
-- git reset head
-- git version control
-- git command line
+  - git reset commit
+  - git unstage changes
+  - git revert
+  - git discard changes
+  - git undo last commit
+  - git hard reset
+  - git soft reset
+  - git reset head
+  - git version control
+  - git command line
 features:
-- Unstage files or portions of files
-- Undo the last commit while keeping changes
-- Discard all uncommitted changes
-- Reset to a specific commit
-- Add changes to the index after undoing commits
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Unstage files or portions of files
+  - Undo the last commit while keeping changes
+  - Discard all uncommitted changes
+  - Reset to a specific commit
+  - Add changes to the index after undoing commits
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git reset

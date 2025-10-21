@@ -1,29 +1,29 @@
 ---
-title: "Netperf - Benchmark Network Throughput | Online Free DevTools by Hexmos"
+title: 'Netperf - Benchmark Network Throughput | Online Free DevTools by Hexmos'
 name: netperf
-path: "/freedevtools/tldr/common/netperf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/netperf/"
-description: "Benchmark network performance with Netperf. Measure network throughput and latency using command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/netperf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/netperf/'
+description: 'Benchmark network performance with Netperf. Measure network throughput and latency using command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- network throughput benchmark
-- netperf network testing
-- network performance analysis
-- linux network benchmark
-- network latency measurement
-- command line network testing
-- network performance monitoring
-- netperf command examples
-- socket performance testing
-- tcp/udp network benchmark
+  - network throughput benchmark
+  - netperf network testing
+  - network performance analysis
+  - linux network benchmark
+  - network latency measurement
+  - command line network testing
+  - network performance monitoring
+  - netperf command examples
+  - socket performance testing
+  - tcp/udp network benchmark
 features:
-- Measure network throughput between two hosts
-- Specify the sampling length for network tests
-- Connect to a remote server via IP address and port
-- Force IPv4 or IPv6 protocol for network connections
-- Test network performance using command-line options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure network throughput between two hosts
+  - Specify the sampling length for network tests
+  - Connect to a remote server via IP address and port
+  - Force IPv4 or IPv6 protocol for network connections
+  - Test network performance using command-line options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # netperf

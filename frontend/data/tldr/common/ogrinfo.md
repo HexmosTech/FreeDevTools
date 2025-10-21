@@ -1,29 +1,29 @@
 ---
-title: "OGRINFO - List Data Source Information | Online Free DevTools by Hexmos"
+title: 'OGRINFO - List Data Source Information | Online Free DevTools by Hexmos'
 name: ogrinfo
-path: "/freedevtools/tldr/common/ogrinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ogrinfo/"
-description: "List data source information with OGRINFO, a powerful geospatial data tool. Inspect vector data formats and metadata using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ogrinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ogrinfo/'
+description: 'List data source information with OGRINFO, a powerful geospatial data tool. Inspect vector data formats and metadata using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- geospatial data information
-- ogrinfo command line
-- vector data inspection
-- gdal data source
-- spatial data formats
-- geojson metadata
-- gpkg layer information
-- shapefile inspection
-- ogr2ogr alternative
-- common linux ogrinfo
+  - geospatial data information
+  - ogrinfo command line
+  - vector data inspection
+  - gdal data source
+  - spatial data formats
+  - geojson metadata
+  - gpkg layer information
+  - shapefile inspection
+  - ogr2ogr alternative
+  - common linux ogrinfo
 features:
-- List supported geospatial data formats
-- Inspect layers within a data source file
-- Extract detailed information about a specific layer
-- Filter features based on attribute conditions
-- Execute SQL queries to update geospatial data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List supported geospatial data formats
+  - Inspect layers within a data source file
+  - Extract detailed information about a specific layer
+  - Filter features based on attribute conditions
+  - Execute SQL queries to update geospatial data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ogrinfo

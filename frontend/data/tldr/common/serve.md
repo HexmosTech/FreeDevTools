@@ -1,29 +1,29 @@
 ---
-title: "Serve Files - Start Static HTTP Server | Online Free DevTools by Hexmos"
+title: 'Serve Files - Start Static HTTP Server | Online Free DevTools by Hexmos'
 name: serve
-path: "/freedevtools/tldr/common/serve/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/serve/"
-description: "Start static files serving with Serve. Quickly create a local HTTP server for development and testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/serve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/serve/'
+description: 'Start static files serving with Serve. Quickly create a local HTTP server for development and testing. Free online tool, no registration required.'
 category: common
 keywords:
-- static file server
-- serve directory
-- HTTP server
-- local server
-- command line server
-- serve files
-- static website hosting
-- dev server
-- simple HTTP server
-- file hosting
+  - static file server
+  - serve directory
+  - HTTP server
+  - local server
+  - command line server
+  - serve files
+  - static website hosting
+  - dev server
+  - simple HTTP server
+  - file hosting
 features:
-- Serve static files from a specified directory.
-- Start an HTTP server with CORS enabled.
-- Rewrite not-found requests to a specific file (e.g., index.html).
-- Start an HTTPS server using provided SSL certificates.
-- Configure the server using a JSON configuration file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve static files from a specified directory.
+  - Start an HTTP server with CORS enabled.
+  - Rewrite not-found requests to a specific file (e.g., index.html).
+  - Start an HTTPS server using provided SSL certificates.
+  - Configure the server using a JSON configuration file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # serve

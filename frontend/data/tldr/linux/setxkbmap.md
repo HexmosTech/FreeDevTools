@@ -1,9 +1,9 @@
 ---
-title: "Set Keyboard Layout - Control X Keyboard with setxkbmap | Online Free DevTools by Hexmos"
+title: 'Set Keyboard Layout - Control X Keyboard with setxkbmap | Online Free DevTools by Hexmos'
 name: setxkbmap
-path: "/freedevtools/tldr/linux/setxkbmap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/setxkbmap/"
-description: "Control keyboard layouts with setxkbmap.  Easily switch between multiple keyboard layouts, variants, and options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/setxkbmap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/setxkbmap/'
+description: 'Control keyboard layouts with setxkbmap.  Easily switch between multiple keyboard layouts, variants, and options. Free online tool, no registration required.'
 category: linux
 keywords:
   - keyboard layout manager
@@ -22,8 +22,8 @@ features:
   - Define keyboard layout variants (e.g., QWERTY).
   - Customize keyboard switching options (e.g., Alt+Caps Lock toggle).
   - List available layouts, variants, and options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # setxkbmap

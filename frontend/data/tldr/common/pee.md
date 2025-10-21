@@ -1,29 +1,29 @@
 ---
-title: "Control stdin with pee - Pipe stdin to Commands | Online Free DevTools by Hexmos"
+title: 'Control stdin with pee - Pipe stdin to Commands | Online Free DevTools by Hexmos'
 name: pee
-path: "/freedevtools/tldr/common/pee/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pee/"
-description: "Control stdin output with pee. Pipe standard input to multiple commands simultaneously for parallel processing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pee/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pee/'
+description: 'Control stdin output with pee. Pipe standard input to multiple commands simultaneously for parallel processing. Free online tool, no registration required.'
 category: common
 keywords:
-- stdin pipe
-- command tee
-- standard input manipulator
-- parallel command execution
-- linux stdin control
-- macos stdin tee
-- shell pipe tool
-- pee command alternative
-- stdin multiplexer
-- command line tee
+  - stdin pipe
+  - command tee
+  - standard input manipulator
+  - parallel command execution
+  - linux stdin control
+  - macos stdin tee
+  - shell pipe tool
+  - pee command alternative
+  - stdin multiplexer
+  - command line tee
 features:
-- Distribute stdin to multiple commands concurrently
-- Duplicate stdin streams for parallel processing
-- Tee stdin to stdout and other commands
-- Terminate on SIGPIPE and write errors
-- Execute a series of piped commands from a single input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Distribute stdin to multiple commands concurrently
+  - Duplicate stdin streams for parallel processing
+  - Tee stdin to stdout and other commands
+  - Terminate on SIGPIPE and write errors
+  - Execute a series of piped commands from a single input
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pee

@@ -1,29 +1,29 @@
 ---
-title: "iPlayer Downloader - Record BBC iPlayer Content | Online Free DevTools by Hexmos"
+title: 'iPlayer Downloader - Record BBC iPlayer Content | Online Free DevTools by Hexmos'
 name: get_iplayer
-path: "/freedevtools/tldr/get/get_iplayer/"
-canonical: "https://hexmos.com/freedevtools/tldr/get/get_iplayer/"
-description: "Download BBC iPlayer shows with iPlayer Downloader. Record your favorite programs and subtitles effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/get/get_iplayer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/get/get_iplayer/'
+description: 'Download BBC iPlayer shows with iPlayer Downloader. Record your favorite programs and subtitles effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- iPlayer downloader
-- BBC iPlayer recorder
-- BBC Sounds downloader
-- iPlayer subtitles download
-- media downloader
-- program recorder
-- video downloader
-- CLI iPlayer downloader
-- linux iPlayer
-- macos iPlayer
+  - iPlayer downloader
+  - BBC iPlayer recorder
+  - BBC Sounds downloader
+  - iPlayer subtitles download
+  - media downloader
+  - program recorder
+  - video downloader
+  - CLI iPlayer downloader
+  - linux iPlayer
+  - macos iPlayer
 features:
-- Search BBC iPlayer and BBC Sounds for programs
-- Record programs by name or URL
-- Download subtitles for iPlayer content
-- Automate recording and subtitle download in one command
-- Display help information for command options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search BBC iPlayer and BBC Sounds for programs
+  - Record programs by name or URL
+  - Download subtitles for iPlayer content
+  - Automate recording and subtitle download in one command
+  - Display help information for command options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # get_iplayer

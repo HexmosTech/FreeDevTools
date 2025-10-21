@@ -1,33 +1,39 @@
-import React, { useState, useEffect, useRef } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import DeepseekTokenCounterSkeleton from "./_DeepseekTokenCounterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useRef } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import DeepseekTokenCounterSkeleton from './_DeepseekTokenCounterSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Deepseek Models Configuration
 const DEEPSEEK_MODELS = {
-  "deepseek-v2": {
-    name: "Deepseek V2",
+  'deepseek-v2': {
+    name: 'Deepseek V2',
     context: 128000,
-    hub: "Xenova/llama-tokenizer", // public repo
+    hub: 'Xenova/llama-tokenizer', // public repo
   },
-  "deepseek-v3": {
-    name: "Deepseek V3",
+  'deepseek-v3': {
+    name: 'Deepseek V3',
     context: 128000,
-    hub: "Xenova/llama-tokenizer", // public repo
+    hub: 'Xenova/llama-tokenizer', // public repo
   },
-  "deepseek-r1": {
-    name: "Deepseek R1",
+  'deepseek-r1': {
+    name: 'Deepseek R1',
     context: 32768,
-    hub: "Xenova/llama-tokenizer", // public repo
+    hub: 'Xenova/llama-tokenizer', // public repo
   },
 };
 
@@ -44,8 +50,8 @@ const useDebouncedCallback = (
 };
 
 const DeepseekTokenCounter: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState("deepseek-v2");
+  const [input, setInput] = useState('');
+  const [selectedModel, setSelectedModel] = useState('deepseek-v2');
   const [tokens, setTokens] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [tokenizerLoading, setTokenizerLoading] = useState(false);
@@ -63,18 +69,21 @@ const DeepseekTokenCounter: React.FC = () => {
     const initTokenizer = async () => {
       setTokenizerLoading(true);
       try {
-        const { AutoTokenizer } = await import("@huggingface/transformers");
-        const modelConfig = DEEPSEEK_MODELS[selectedModel as keyof typeof DEEPSEEK_MODELS];
+        const { AutoTokenizer } = await import('@huggingface/transformers');
+        const modelConfig =
+          DEEPSEEK_MODELS[selectedModel as keyof typeof DEEPSEEK_MODELS];
         if (modelConfig?.hub) {
-          tokenizerRef.current = await AutoTokenizer.from_pretrained(modelConfig.hub);
+          tokenizerRef.current = await AutoTokenizer.from_pretrained(
+            modelConfig.hub
+          );
           if (input.trim() && tokenizerRef.current) {
             const encoding = tokenizerRef.current.encode(input);
             setTokens(encoding.length);
           }
         }
       } catch (error) {
-        console.error("Failed to load Deepseek tokenizer:", error);
-        toast.error("Failed to load Deepseek tokenizer. Please try again.");
+        console.error('Failed to load Deepseek tokenizer:', error);
+        toast.error('Failed to load Deepseek tokenizer. Please try again.');
         tokenizerRef.current = undefined;
       }
       setTokenizerLoading(false);
@@ -94,7 +103,7 @@ const DeepseekTokenCounter: React.FC = () => {
           const encoding = tokenizerRef.current.encode(input);
           setTokens(encoding.length);
         } catch (error) {
-          console.error("Tokenization error:", error);
+          console.error('Tokenization error:', error);
           setTokens(0);
         }
       }
@@ -104,21 +113,22 @@ const DeepseekTokenCounter: React.FC = () => {
   );
 
   const handleClear = () => {
-    setInput("");
+    setInput('');
     setTokens(0);
-    toast.success("Cleared input text");
+    toast.success('Cleared input text');
   };
 
   const copyTokenCount = () => {
-    const selectedModelConfig = DEEPSEEK_MODELS[selectedModel as keyof typeof DEEPSEEK_MODELS];
+    const selectedModelConfig =
+      DEEPSEEK_MODELS[selectedModel as keyof typeof DEEPSEEK_MODELS];
     const results = `Token Count: ${tokens}\nModel: ${selectedModelConfig?.name || selectedModel}\nCompany: Deepseek\nContext Limit: ${selectedModelConfig?.context.toLocaleString()} tokens\nText Length: ${input.length} characters\nWords: ${input.trim() ? input.split(/\s+/).length : 0}`;
     navigator.clipboard.writeText(results);
-    toast.success("Token count copied to clipboard!");
+    toast.success('Token count copied to clipboard!');
   };
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -140,7 +150,7 @@ const DeepseekTokenCounter: React.FC = () => {
                         Text Input
                       </label>
                       <div className="text-slate-500 dark:text-slate-400">
-                        {input.length} characters •{" "}
+                        {input.length} characters •{' '}
                         {input.trim() ? input.split(/\s+/).length : 0} words
                       </div>
                     </div>
@@ -201,10 +211,10 @@ const DeepseekTokenCounter: React.FC = () => {
                           }
                         </div>
                         <div className="text-xs text-slate-700 dark:text-slate-400 mb-1">
-                          Max context:{" "}
+                          Max context:{' '}
                           {DEEPSEEK_MODELS[
                             selectedModel as keyof typeof DEEPSEEK_MODELS
-                          ]?.context.toLocaleString()}{" "}
+                          ]?.context.toLocaleString()}{' '}
                           tokens
                         </div>
                         {tokens > 0 && (

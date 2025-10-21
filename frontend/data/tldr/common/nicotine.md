@@ -1,29 +1,29 @@
 ---
-title: "Control Soulseek P2P with Nicotine+ Client | Online Free DevTools by Hexmos"
+title: 'Control Soulseek P2P with Nicotine+ Client | Online Free DevTools by Hexmos'
 name: nicotine
-path: "/freedevtools/tldr/common/nicotine/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nicotine/"
-description: "Control Soulseek peer-to-peer network with Nicotine+. Download and share files anonymously using this powerful P2P client. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nicotine/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nicotine/'
+description: 'Control Soulseek peer-to-peer network with Nicotine+. Download and share files anonymously using this powerful P2P client. Free online tool, no registration required.'
 category: common
 keywords:
-- Soulseek P2P client
-- Nicotine+ download manager
-- File sharing command line
-- Anonymous file transfer
-- Soulseek client linux
-- Nicotine+ headless mode
-- P2P network client
-- File sharing rescan
-- Nicotine command-line
-- Soulseek peer to peer
+  - Soulseek P2P client
+  - Nicotine+ download manager
+  - File sharing command line
+  - Anonymous file transfer
+  - Soulseek client linux
+  - Nicotine+ headless mode
+  - P2P network client
+  - File sharing rescan
+  - Nicotine command-line
+  - Soulseek peer to peer
 features:
-- Start Nicotine+ in GUI mode
-- Launch Nicotine+ in headless mode for background operation
-- Rescan shared files for updated content
-- Display help information for command-line options
-- Manage Soulseek peer-to-peer connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start Nicotine+ in GUI mode
+  - Launch Nicotine+ in headless mode for background operation
+  - Rescan shared files for updated content
+  - Display help information for command-line options
+  - Manage Soulseek peer-to-peer connections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nicotine

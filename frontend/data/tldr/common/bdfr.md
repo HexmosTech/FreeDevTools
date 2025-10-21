@@ -1,29 +1,29 @@
 ---
-title: "BDfr Downloader - Download Reddit Content | Online Free DevTools by Hexmos"
+title: 'BDfr Downloader - Download Reddit Content | Online Free DevTools by Hexmos'
 name: bdfr
-path: "/freedevtools/tldr/common/bdfr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bdfr/"
-description: "Download Reddit content easily with Bdfr Downloader. Archive posts, save videos, and clone subreddits using a simple command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bdfr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bdfr/'
+description: 'Download Reddit content easily with Bdfr Downloader. Archive posts, save videos, and clone subreddits using a simple command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- Reddit downloader
-- Reddit image downloader
-- Reddit video downloader
-- Reddit content archiver
-- Reddit subreddit scraper
-- Bulk Reddit downloader
-- Reddit post downloader
-- Reddit data scraper
-- Command line Reddit tool
-- Bdfr downloader Linux
+  - Reddit downloader
+  - Reddit image downloader
+  - Reddit video downloader
+  - Reddit content archiver
+  - Reddit subreddit scraper
+  - Bulk Reddit downloader
+  - Reddit post downloader
+  - Reddit data scraper
+  - Command line Reddit tool
+  - Bdfr downloader Linux
 features:
-- Download Reddit videos and images in bulk
-- Archive Reddit posts and comments
-- Clone entire subreddits for offline access
-- Filter and sort downloads by subreddit, user, or time
-- Skip specified file extensions and avoid duplicates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download Reddit videos and images in bulk
+  - Archive Reddit posts and comments
+  - Clone entire subreddits for offline access
+  - Filter and sort downloads by subreddit, user, or time
+  - Skip specified file extensions and avoid duplicates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bdfr

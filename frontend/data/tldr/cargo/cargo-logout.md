@@ -1,29 +1,29 @@
 ---
-title: "Cargo Logout - Remove API Token | Online Free DevTools by Hexmos"
+title: 'Cargo Logout - Remove API Token | Online Free DevTools by Hexmos'
 name: cargo-logout
-path: "/freedevtools/tldr/cargo/cargo-logout/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-logout/"
-description: "Remove Cargo API tokens easily with Cargo Logout. Securely manage your Rust package registry credentials from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-logout/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-logout/'
+description: 'Remove Cargo API tokens easily with Cargo Logout. Securely manage your Rust package registry credentials from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- cargo logout
-- rust cargo logout
-- cargo registry authentication
-- rust package management
-- cargo credentials management
-- cargo api token
-- cargo crates.io
-- rust authentication
-- cargo configuration
-- rust registry
+  - cargo logout
+  - rust cargo logout
+  - cargo registry authentication
+  - rust package management
+  - cargo credentials management
+  - cargo api token
+  - cargo crates.io
+  - rust authentication
+  - cargo configuration
+  - rust registry
 features:
-- Remove API tokens from local storage
-- Manage cargo registry credentials
-- Specify the registry to logout from
-- Securely remove cargo authentication tokens
-- Clear cargo registry login information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove API tokens from local storage
+  - Manage cargo registry credentials
+  - Specify the registry to logout from
+  - Securely remove cargo authentication tokens
+  - Clear cargo registry login information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo logout

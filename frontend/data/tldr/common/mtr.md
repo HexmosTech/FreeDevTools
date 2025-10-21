@@ -1,29 +1,29 @@
 ---
-title: "MTR Traceroute - Diagnose Network Paths | Online Free DevTools by Hexmos"
+title: 'MTR Traceroute - Diagnose Network Paths | Online Free DevTools by Hexmos'
 name: mtr
-path: "/freedevtools/tldr/common/mtr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mtr/"
-description: "Diagnose network paths with MTR Traceroute. Identify network latency and packet loss using this combined traceroute and ping utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mtr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mtr/'
+description: 'Diagnose network paths with MTR Traceroute. Identify network latency and packet loss using this combined traceroute and ping utility. Free online tool, no registration required.'
 category: common
 keywords:
-- network traceroute
-- network latency tool
-- packet loss diagnosis
-- mtr traceroute linux
-- mtr command line
-- network troubleshooting
-- internet connectivity test
-- diagnose network issues
-- mtr network analysis
-- mtr ping tool
+  - network traceroute
+  - network latency tool
+  - packet loss diagnosis
+  - mtr traceroute linux
+  - mtr command line
+  - network troubleshooting
+  - internet connectivity test
+  - diagnose network issues
+  - mtr network analysis
+  - mtr ping tool
 features:
-- Trace network routes to identify bottlenecks.
-- Continuously ping hops to monitor network stability.
-- Disable hostname resolution for faster tracing.
-- Customize ping intervals for detailed analysis.
-- Display Autonomous System Numbers (ASN) for each hop.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trace network routes to identify bottlenecks.
+  - Continuously ping hops to monitor network stability.
+  - Disable hostname resolution for faster tracing.
+  - Customize ping intervals for detailed analysis.
+  - Display Autonomous System Numbers (ASN) for each hop.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mtr

@@ -1,9 +1,9 @@
 ---
-title: "SSLStrip - Perform SSL Stripping Attacks | Online Free DevTools by Hexmos"
+title: 'SSLStrip - Perform SSL Stripping Attacks | Online Free DevTools by Hexmos'
 name: sslstrip
-path: "/freedevtools/tldr/linux/sslstrip/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sslstrip/"
-description: "Perform SSL stripping attacks with SSLStrip for network security testing.  Intercept and manipulate HTTPS traffic. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sslstrip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sslstrip/'
+description: 'Perform SSL stripping attacks with SSLStrip for network security testing.  Intercept and manipulate HTTPS traffic. Free online tool, no registration required.'
 category: linux
 keywords:
   - ssl stripping attack
@@ -22,8 +22,8 @@ features:
   - Log all SSL and HTTP traffic.
   - Specify custom port for listening.
   - Specify file path for log storage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sslstrip

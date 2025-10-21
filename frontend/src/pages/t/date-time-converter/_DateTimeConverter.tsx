@@ -1,43 +1,43 @@
-import ToolBody from "@/components/tool/ToolBody";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import ToolBody from '@/components/tool/ToolBody';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolGridContainer from '@/components/tool/ToolGridContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader
-} from "@/components/ui/card";
-import CopyButton from "@/components/ui/copy-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+  CardHeader,
+} from '@/components/ui/card';
+import CopyButton from '@/components/ui/copy-button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
-import _DateTimeConverterWiki from "./_DateTimeConverterWiki";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import DateTimeConverterSkeleton from './_DateTimeConverterSkeleton';
+import _DateTimeConverterWiki from './_DateTimeConverterWiki';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const DateTimeConverter = () => {
-  const [input, setInput] = useState("");
-  const [inputFormat, setInputFormat] = useState("utc");
+  const [input, setInput] = useState('');
+  const [inputFormat, setInputFormat] = useState('utc');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [selectedTime, setSelectedTime] = useState("12:00");
+  const [selectedTime, setSelectedTime] = useState('12:00');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -63,20 +63,20 @@ const DateTimeConverter = () => {
     try {
       let parsedDate;
       switch (inputFormat) {
-        case "utc":
+        case 'utc':
           parsedDate = new Date(input);
           break;
-        case "iso":
+        case 'iso':
           parsedDate = new Date(input);
           break;
-        case "timestamp":
+        case 'timestamp':
           // Handle both seconds and milliseconds timestamps
           const timestamp = parseInt(input);
           parsedDate = new Date(
             timestamp < 10000000000 ? timestamp * 1000 : timestamp
           );
           break;
-        case "unix":
+        case 'unix':
           parsedDate = new Date(parseInt(input) * 1000);
           break;
         default:
@@ -94,20 +94,20 @@ const DateTimeConverter = () => {
   // Format functions
   const formatters = {
     jsLocale: () => {
-      return targetDate.toLocaleString("en-IN", {
-        timeZone: "Asia/Kolkata",
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        timeZoneName: "long",
+      return targetDate.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'long',
       });
     },
     iso8601: () => targetDate.toISOString(),
-    iso9075: () => targetDate.toISOString().replace("T", " ").slice(0, 19),
+    iso9075: () => targetDate.toISOString().replace('T', ' ').slice(0, 19),
     rfc3339: () => targetDate.toISOString(),
     rfc7231: () => targetDate.toUTCString(),
     unixTimestamp: () => Math.floor(targetDate.getTime() / 1000).toString(),
@@ -115,29 +115,29 @@ const DateTimeConverter = () => {
     utcFormat: () => targetDate.toUTCString(),
     mongoObjectId: () => {
       const timestamp = Math.floor(targetDate.getTime() / 1000).toString(16);
-      return timestamp.padStart(8, "0") + "0000000000000000";
+      return timestamp.padStart(8, '0') + '0000000000000000';
     },
     excelDateTime: () => {
-      const epoch = new Date("1899-12-30").getTime();
+      const epoch = new Date('1899-12-30').getTime();
       const days = (targetDate.getTime() - epoch) / (24 * 60 * 60 * 1000);
       return days.toFixed(11);
     },
   };
 
   const formatOptions = [
-    { value: "utc", label: "UTC format" },
-    { value: "iso", label: "ISO format" },
-    { value: "timestamp", label: "Timestamp (ms)" },
-    { value: "unix", label: "Unix timestamp" },
-    { value: "custom", label: "Custom format" },
+    { value: 'utc', label: 'UTC format' },
+    { value: 'iso', label: 'ISO format' },
+    { value: 'timestamp', label: 'Timestamp (ms)' },
+    { value: 'unix', label: 'Unix timestamp' },
+    { value: 'custom', label: 'Custom format' },
   ];
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
     if (date) {
-      const dateTimeString = format(date, "yyyy-MM-dd") + "T" + selectedTime;
+      const dateTimeString = format(date, 'yyyy-MM-dd') + 'T' + selectedTime;
       setInput(dateTimeString);
-      setInputFormat("iso");
+      setInputFormat('iso');
     }
   };
 
@@ -145,26 +145,26 @@ const DateTimeConverter = () => {
     const time = e.target.value;
     setSelectedTime(time);
     if (selectedDate) {
-      const dateTimeString = format(selectedDate, "yyyy-MM-dd") + "T" + time;
+      const dateTimeString = format(selectedDate, 'yyyy-MM-dd') + 'T' + time;
       setInput(dateTimeString);
-      setInputFormat("iso");
+      setInputFormat('iso');
     }
   };
 
   const getPlaceholder = () => {
     switch (inputFormat) {
-      case "utc":
-        return "e.g. 2025-08-24T14:30:00Z";
-      case "iso":
-        return "e.g. 2025-08-24T14:30:00.000Z";
-      case "timestamp":
-        return "e.g. 1692887400000 (milliseconds)";
-      case "unix":
-        return "e.g. 1692887400 (seconds)";
-      case "custom":
-        return "Enter your custom date format";
+      case 'utc':
+        return 'e.g. 2025-08-24T14:30:00Z';
+      case 'iso':
+        return 'e.g. 2025-08-24T14:30:00.000Z';
+      case 'timestamp':
+        return 'e.g. 1692887400000 (milliseconds)';
+      case 'unix':
+        return 'e.g. 1692887400 (seconds)';
+      case 'custom':
+        return 'Enter your custom date format';
       default:
-        return "Put your date string here...";
+        return 'Put your date string here...';
     }
   };
 
@@ -198,7 +198,7 @@ const DateTimeConverter = () => {
                   />
                   {input && (
                     <button
-                      onClick={() => setInput("")}
+                      onClick={() => setInput('')}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted/50"
                       title="Clear input"
                     >
@@ -231,8 +231,8 @@ const DateTimeConverter = () => {
                         >
                           <CalendarIcon className="w-5 h-5 mr-2" />
                           {selectedDate
-                            ? format(selectedDate, "PPP")
-                            : "Pick a date"}
+                            ? format(selectedDate, 'PPP')
+                            : 'Pick a date'}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -283,13 +283,13 @@ const DateTimeConverter = () => {
                       <div className="flex flex-col gap-4 flex-1">
                         {[
                           {
-                            label: "JS locale date string",
+                            label: 'JS locale date string',
                             value: formatters.jsLocale(),
                           },
-                          { label: "ISO 8601", value: formatters.iso8601() },
-                          { label: "ISO 9075", value: formatters.iso9075() },
-                          { label: "RFC 3339", value: formatters.rfc3339() },
-                          { label: "RFC 7231", value: formatters.rfc7231() },
+                          { label: 'ISO 8601', value: formatters.iso8601() },
+                          { label: 'ISO 9075', value: formatters.iso9075() },
+                          { label: 'RFC 3339', value: formatters.rfc3339() },
+                          { label: 'RFC 7231', value: formatters.rfc7231() },
                         ].map((format, index) => (
                           <div
                             key={index}
@@ -319,20 +319,20 @@ const DateTimeConverter = () => {
                       <div className="flex flex-col gap-4 flex-1">
                         {[
                           {
-                            label: "Unix timestamp",
+                            label: 'Unix timestamp',
                             value: formatters.unixTimestamp(),
                           },
-                          { label: "Timestamp", value: formatters.timestamp() },
+                          { label: 'Timestamp', value: formatters.timestamp() },
                           {
-                            label: "UTC format",
+                            label: 'UTC format',
                             value: formatters.utcFormat(),
                           },
                           {
-                            label: "Mongo ObjectID",
+                            label: 'Mongo ObjectID',
                             value: formatters.mongoObjectId(),
                           },
                           {
-                            label: "Excel date/time",
+                            label: 'Excel date/time',
                             value: formatters.excelDateTime(),
                           },
                         ].map((format, index) => (

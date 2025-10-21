@@ -1,29 +1,29 @@
 ---
-title: "Arptables - Control ARP Filtering Rules | Online Free DevTools by Hexmos"
+title: 'Arptables - Control ARP Filtering Rules | Online Free DevTools by Hexmos'
 name: arptables
-path: "/freedevtools/tldr/linux/arptables/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/arptables/"
-description: "Control ARP packet filtering with Arptables. Manage network traffic and enhance security using Linux command line rules. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/arptables/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/arptables/'
+description: 'Control ARP packet filtering with Arptables. Manage network traffic and enhance security using Linux command line rules. Free online tool, no registration required.'
 category: linux
 keywords:
-- ARP filtering linux
-- linux arptables rules
-- arptables packet filter
-- arptables network security
-- arptables firewall configuration
-- arptables IP address filter
-- arptables rule management
-- arptables packet dropping
-- arptables network troubleshooting
-- arptables traffic control
+  - ARP filtering linux
+  - linux arptables rules
+  - arptables packet filter
+  - arptables network security
+  - arptables firewall configuration
+  - arptables IP address filter
+  - arptables rule management
+  - arptables packet dropping
+  - arptables network troubleshooting
+  - arptables traffic control
 features:
-- List existing ARP filtering rules
-- Append rules to filter ARP packets
-- Delete specific ARP filtering rules
-- Flush all existing ARP filtering rules
-- Set default policies for ARP traffic
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing ARP filtering rules
+  - Append rules to filter ARP packets
+  - Delete specific ARP filtering rules
+  - Flush all existing ARP filtering rules
+  - Set default policies for ARP traffic
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arptables

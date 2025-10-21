@@ -1,29 +1,29 @@
 ---
-title: "Control SMB Shares - Impacket SMBClient | Online Free DevTools by Hexmos"
+title: 'Control SMB Shares - Impacket SMBClient | Online Free DevTools by Hexmos'
 name: impacket-smbclient
-path: "/freedevtools/tldr/impacket/impacket-smbclient/"
-canonical: "https://hexmos.com/freedevtools/tldr/impacket/impacket-smbclient/"
-description: "Control SMB shares with Impacket SMBClient. Enumerate shares, upload/download files, and execute commands on remote systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/impacket/impacket-smbclient/'
+canonical: 'https://hexmos.com/freedevtools/tldr/impacket/impacket-smbclient/'
+description: 'Control SMB shares with Impacket SMBClient. Enumerate shares, upload/download files, and execute commands on remote systems. Free online tool, no registration required.'
 category: common
 keywords:
-- SMB share control
-- SMB client linux
-- SMB file transfer
-- SMB command execution
-- Impacket SMB client
-- Windows SMB enumeration
-- Samba share management
-- Network file access
-- SMB share connect
-- Linux SMB client
+  - SMB share control
+  - SMB client linux
+  - SMB file transfer
+  - SMB command execution
+  - Impacket SMB client
+  - Windows SMB enumeration
+  - Samba share management
+  - Network file access
+  - SMB share connect
+  - Linux SMB client
 features:
-- Enumerate available SMB shares
-- Upload files to SMB shares
-- Download files from SMB shares
-- Execute commands on remote SMB servers
-- Connect to SMB shares with specified credentials
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate available SMB shares
+  - Upload files to SMB shares
+  - Download files from SMB shares
+  - Execute commands on remote SMB servers
+  - Connect to SMB shares with specified credentials
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # impacket-smbclient

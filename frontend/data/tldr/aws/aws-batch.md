@@ -1,29 +1,29 @@
 ---
-title: "AWS Batch - Run Compute Workloads | Online Free DevTools by Hexmos"
+title: 'AWS Batch - Run Compute Workloads | Online Free DevTools by Hexmos'
 name: aws-batch
-path: "/freedevtools/tldr/aws/aws-batch/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-batch/"
-description: "Run compute workloads with AWS Batch. Easily manage batch jobs, create compute environments and job queues for efficient processing. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-batch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-batch/'
+description: 'Run compute workloads with AWS Batch. Easily manage batch jobs, create compute environments and job queues for efficient processing. Free online tool, no registration required.'
 category: common
 keywords:
-- aws batch commands
-- aws batch job management
-- aws batch compute environment
-- aws batch job queue
-- batch processing aws
-- cloud computing aws
-- aws batch cli
-- aws cloud batch
-- distributed computing aws
-- amazon web services batch
+  - aws batch commands
+  - aws batch job management
+  - aws batch compute environment
+  - aws batch job queue
+  - batch processing aws
+  - cloud computing aws
+  - aws batch cli
+  - aws cloud batch
+  - distributed computing aws
+  - amazon web services batch
 features:
-- List running AWS Batch jobs
-- Create AWS Batch compute environments
-- Create AWS Batch job queues
-- Submit jobs to AWS Batch
-- Cancel AWS Batch jobs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List running AWS Batch jobs
+  - Create AWS Batch compute environments
+  - Create AWS Batch job queues
+  - Submit jobs to AWS Batch
+  - Cancel AWS Batch jobs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws batch

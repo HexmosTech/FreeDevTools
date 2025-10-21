@@ -1,29 +1,29 @@
 ---
-title: "Speed Test - Check Internet Speed and Ping | Online Free DevTools by Hexmos"
+title: 'Speed Test - Check Internet Speed and Ping | Online Free DevTools by Hexmos'
 name: speed-test
-path: "/freedevtools/tldr/common/speed-test/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/speed-test/"
-description: "Check your internet speed with Speed Test. Measure download speed, upload speed, and ping latency efficiently via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/speed-test/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/speed-test/'
+description: 'Check your internet speed with Speed Test. Measure download speed, upload speed, and ping latency efficiently via command line. Free online tool, no registration required.'
 category: common
 keywords:
-- internet speed test
-- network speed test
-- command line speed test
-- speedtest cli
-- ping test
-- bandwidth test
-- connection speed test
-- download speed test
-- upload speed test
-- latency test
+  - internet speed test
+  - network speed test
+  - command line speed test
+  - speedtest cli
+  - ping test
+  - bandwidth test
+  - connection speed test
+  - download speed test
+  - upload speed test
+  - latency test
 features:
-- Measure internet download speed
-- Measure internet upload speed
-- Measure network latency (ping)
-- Output results in JSON format
-- Display speed in megabytes per second
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure internet download speed
+  - Measure internet upload speed
+  - Measure network latency (ping)
+  - Output results in JSON format
+  - Display speed in megabytes per second
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # speed-test

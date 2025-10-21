@@ -1,29 +1,29 @@
 ---
-title: "Run Graphical Sudo - Execute Commands with Root | Online Free DevTools by Hexmos"
+title: 'Run Graphical Sudo - Execute Commands with Root | Online Free DevTools by Hexmos'
 name: gksudo
-path: "/freedevtools/tldr/linux/gksudo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gksudo/"
-description: "Execute commands with graphical sudo. Run graphical applications requiring root privileges securely and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gksudo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gksudo/'
+description: 'Execute commands with graphical sudo. Run graphical applications requiring root privileges securely and easily. Free online tool, no registration required.'
 category: linux
 keywords:
-- graphical sudo command
-- linux sudo graphical interface
-- gksudo linux alternative
-- execute command as root linux
-- run GUI as root
-- elevate privileges linux
-- deprecated sudo replacement
-- pkexec linux alternative
-- su mode execution linux
-- sudo mode execution linux
+  - graphical sudo command
+  - linux sudo graphical interface
+  - gksudo linux alternative
+  - execute command as root linux
+  - run GUI as root
+  - elevate privileges linux
+  - deprecated sudo replacement
+  - pkexec linux alternative
+  - su mode execution linux
+  - sudo mode execution linux
 features:
-- Run graphical commands with root privileges
-- Execute commands as a specific user
-- Preserve the current environment during execution
-- Force execution via `su` or `sudo`
-- Output debug information for commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run graphical commands with root privileges
+  - Execute commands as a specific user
+  - Preserve the current environment during execution
+  - Force execution via `su` or `sudo`
+  - Output debug information for commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gksudo

@@ -1,29 +1,29 @@
 ---
-title: "Iotop - Monitor I/O Usage by Processes | Online Free DevTools by Hexmos"
+title: 'Iotop - Monitor I/O Usage by Processes | Online Free DevTools by Hexmos'
 name: iotop
-path: "/freedevtools/tldr/common/iotop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/iotop/"
-description: "Monitor process I/O usage with Iotop. Identify performance bottlenecks and optimize system resource allocation using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/iotop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/iotop/'
+description: 'Monitor process I/O usage with Iotop. Identify performance bottlenecks and optimize system resource allocation using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- I/O monitoring
-- process I/O usage
-- disk I/O monitoring
-- linux I/O monitor
-- system performance analysis
-- iotop linux
-- iotop command
-- iotop performance
-- iotop disk
-- iotop system
+  - I/O monitoring
+  - process I/O usage
+  - disk I/O monitoring
+  - linux I/O monitor
+  - system performance analysis
+  - iotop linux
+  - iotop command
+  - iotop performance
+  - iotop disk
+  - iotop system
 features:
-- Display real-time I/O usage for processes and threads
-- Filter I/O data by processes or threads
-- Show accumulated I/O instead of bandwidth
-- Monitor I/O usage for specific PIDs
-- Operate in non-interactive batch mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display real-time I/O usage for processes and threads
+  - Filter I/O data by processes or threads
+  - Show accumulated I/O instead of bandwidth
+  - Monitor I/O usage for specific PIDs
+  - Operate in non-interactive batch mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iotop

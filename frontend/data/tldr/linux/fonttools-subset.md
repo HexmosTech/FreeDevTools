@@ -1,9 +1,9 @@
 ---
-title: "Subset Fonts - Generate Font Subsets | Online Free DevTools by Hexmos"
+title: 'Subset Fonts - Generate Font Subsets | Online Free DevTools by Hexmos'
 name: fonttools-subset
-path: "/freedevtools/tldr/linux/fonttools-subset/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fonttools-subset/"
-description: "Generate font subsets with fonttools subset. Optimize font file sizes and customize font features for web and application development. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fonttools-subset/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fonttools-subset/'
+description: 'Generate font subsets with fonttools subset. Optimize font file sizes and customize font features for web and application development. Free online tool, no registration required.'
 category: linux
 keywords:
   - font subset generator
@@ -22,8 +22,8 @@ features:
   - Customize OpenType layout features (e.g., kerning, oldstyle figures).
   - Specify output file names for subsets.
   - Optimize font file sizes by removing unused glyphs.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fonttools subset

@@ -1,9 +1,9 @@
 ---
-title: "Resize Container Storage - pct resize | Online Free DevTools by Hexmos"
+title: 'Resize Container Storage - pct resize | Online Free DevTools by Hexmos'
 name: pct-resize
-path: "/freedevtools/tldr/linux/pct-resize/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-resize/"
-description: "Resize container storage with pct resize command.  Manage container disk space easily and efficiently using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pct-resize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pct-resize/'
+description: 'Resize container storage with pct resize command.  Manage container disk space easily and efficiently using this powerful command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - container storage resize
@@ -22,8 +22,8 @@ features:
   - Modify the rootfs partition size.
   - Manage container disk space efficiently.
   - Works with Proxmox VE containers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pct resize

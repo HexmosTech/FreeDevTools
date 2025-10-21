@@ -1,29 +1,29 @@
 ---
-title: "Pueue - Pause Tasks and Groups | Online Free DevTools by Hexmos"
+title: 'Pueue - Pause Tasks and Groups | Online Free DevTools by Hexmos'
 name: pueue-pause
-path: "/freedevtools/tldr/pueue/pueue-pause/"
-canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-pause/"
-description: "Pause tasks with Pueue and manage task execution within groups. Control task flow with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/pueue/pueue-pause/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pueue/pueue-pause/'
+description: 'Pause tasks with Pueue and manage task execution within groups. Control task flow with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- pueue task pause
-- pause pueue tasks
-- pueue group pause
-- task management linux
-- command line task control
-- pueue task control
-- pueue pause command
-- background process pause
-- queue task pause
-- terminal task manager
+  - pueue task pause
+  - pause pueue tasks
+  - pueue group pause
+  - task management linux
+  - command line task control
+  - pueue task control
+  - pueue pause command
+  - background process pause
+  - queue task pause
+  - terminal task manager
 features:
-- Pause individual Pueue tasks
-- Pause all tasks in a specified group
-- Prevent groups from starting new tasks
-- Pause a task and its children processes
-- Pause all Pueue tasks globally
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pause individual Pueue tasks
+  - Pause all tasks in a specified group
+  - Prevent groups from starting new tasks
+  - Pause a task and its children processes
+  - Pause all Pueue tasks globally
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pueue pause

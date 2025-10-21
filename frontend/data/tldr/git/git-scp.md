@@ -1,29 +1,29 @@
 ---
-title: "Git SCP - Copy Files to Remote Repository | Online Free DevTools by Hexmos"
+title: 'Git SCP - Copy Files to Remote Repository | Online Free DevTools by Hexmos'
 name: git-scp
-path: "/freedevtools/tldr/git/git-scp/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-scp/"
-description: "Copy files to a remote Git repository with Git SCP. Transfer files securely using rsync. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-scp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-scp/'
+description: 'Copy files to a remote Git repository with Git SCP. Transfer files securely using rsync. Free online tool, no registration required.'
 category: common
 keywords:
-- git scp
-- git copy files
-- remote git repository copy
-- git extras scp
-- git rsync
-- git file transfer
-- git remote copy
-- git scp linux
-- git scp macos
-- git scp windows
+  - git scp
+  - git copy files
+  - remote git repository copy
+  - git extras scp
+  - git rsync
+  - git file transfer
+  - git remote copy
+  - git scp linux
+  - git scp macos
+  - git scp windows
 features:
-- Copy unstaged files to a remote repository
-- Copy staged files to a remote repository
-- Copy files from a specific commit to a remote repository
-- Copy specific files to a remote repository
-- Copy entire directories to a remote repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy unstaged files to a remote repository
+  - Copy staged files to a remote repository
+  - Copy files from a specific commit to a remote repository
+  - Copy specific files to a remote repository
+  - Copy entire directories to a remote repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git scp

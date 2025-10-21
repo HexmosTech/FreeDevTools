@@ -1,29 +1,29 @@
 ---
-title: "Display System Info - Generate Archey Reports | Online Free DevTools by Hexmos"
+title: 'Display System Info - Generate Archey Reports | Online Free DevTools by Hexmos'
 name: archey
-path: "/freedevtools/tldr/osx/archey/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/archey/"
-description: "Generate system information reports with Archey. Quickly display system specs and identify hardware details. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/archey/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/archey/'
+description: 'Generate system information reports with Archey. Quickly display system specs and identify hardware details. Free online tool, no registration required.'
 category: osx
 keywords:
-- system information generator
-- archey osx command
-- macos system report
-- display system specs
-- hardware details mac
-- system configuration osx
-- system architecture finder
-- software version reporter
-- archey macports alternative
-- command line system info
+  - system information generator
+  - archey osx command
+  - macos system report
+  - display system specs
+  - hardware details mac
+  - system configuration osx
+  - system architecture finder
+  - software version reporter
+  - archey macports alternative
+  - command line system info
 features:
-- Display system hardware information
-- Generate system software versions
-- Show network interface details
-- Report CPU and memory usage
-- Customize output with command options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display system hardware information
+  - Generate system software versions
+  - Show network interface details
+  - Report CPU and memory usage
+  - Customize output with command options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # archey

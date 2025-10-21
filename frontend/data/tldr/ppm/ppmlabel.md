@@ -1,29 +1,29 @@
 ---
-title: "PPM Label - Add Text to PPM Images | Online Free DevTools by Hexmos"
+title: 'PPM Label - Add Text to PPM Images | Online Free DevTools by Hexmos'
 name: ppmlabel
-path: "/freedevtools/tldr/ppm/ppmlabel/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmlabel/"
-description: "Add text to PPM images with PPM Label. Customize text position, color, angle, and size. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmlabel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmlabel/'
+description: 'Add text to PPM images with PPM Label. Customize text position, color, angle, and size. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM image label
-- PPM text adder
-- Add text to PPM
-- PPM image editor
-- Image labeling command
-- Netpbm PPM utility
-- Linux image tools
-- Command line PPM
-- PPM text overlay
-- PPM graphics manipulation
+  - PPM image label
+  - PPM text adder
+  - Add text to PPM
+  - PPM image editor
+  - Image labeling command
+  - Netpbm PPM utility
+  - Linux image tools
+  - Command line PPM
+  - PPM text overlay
+  - PPM graphics manipulation
 features:
-- Add custom text to PPM images.
-- Specify text position (x, y coordinates).
-- Customize text color and background color.
-- Adjust text tilt angle.
-- Control the size of the added text.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add custom text to PPM images.
+  - Specify text position (x, y coordinates).
+  - Customize text color and background color.
+  - Adjust text tilt angle.
+  - Control the size of the added text.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmlabel

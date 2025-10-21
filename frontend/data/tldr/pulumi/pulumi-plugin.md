@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Plugin Manager - Control Plugins | Online Free DevTools by Hexmos"
+title: 'Pulumi Plugin Manager - Control Plugins | Online Free DevTools by Hexmos'
 name: pulumi-plugin
-path: "/freedevtools/tldr/pulumi/pulumi-plugin/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-plugin/"
-description: "Control Pulumi plugins with Pulumi Plugin Manager. Install, list, and remove resource provider plugins. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-plugin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-plugin/'
+description: 'Control Pulumi plugins with Pulumi Plugin Manager. Install, list, and remove resource provider plugins. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi plugin manager
-- Pulumi resource plugin
-- Infrastructure as code plugin
-- Pulumi CLI plugin
-- Pulumi plugin install
-- Pulumi plugin list
-- Pulumi plugin remove
-- IaC plugin manager
-- Cloud resource plugin
-- Pulumi version management
+  - Pulumi plugin manager
+  - Pulumi resource plugin
+  - Infrastructure as code plugin
+  - Pulumi CLI plugin
+  - Pulumi plugin install
+  - Pulumi plugin list
+  - Pulumi plugin remove
+  - IaC plugin manager
+  - Cloud resource plugin
+  - Pulumi version management
 features:
-- List installed Pulumi plugins.
-- Install specific versions of Pulumi plugins.
-- Remove Pulumi plugins by kind, name, and version.
-- Manage resource and language provider plugins.
-- Display help information for plugin commands.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List installed Pulumi plugins.
+  - Install specific versions of Pulumi plugins.
+  - Remove Pulumi plugins by kind, name, and version.
+  - Manage resource and language provider plugins.
+  - Display help information for plugin commands.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi plugin

@@ -1,29 +1,29 @@
 ---
-title: "Create Backups with Duplicity - Encrypted & Versioned | Online Free DevTools by Hexmos"
+title: 'Create Backups with Duplicity - Encrypted & Versioned | Online Free DevTools by Hexmos'
 name: duplicity
-path: "/freedevtools/tldr/common/duplicity/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/duplicity/"
-description: "Create encrypted backups with Duplicity. Securely archive data, manage versions, and restore files with this powerful backup solution. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/duplicity/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/duplicity/'
+description: 'Create encrypted backups with Duplicity. Securely archive data, manage versions, and restore files with this powerful backup solution. Free online tool, no registration required.'
 category: common
 keywords:
-- Duplicity backup
-- Encrypted backup
-- Incremental backup
-- Versioned backup
-- Backup encryption
-- S3 backup
-- FTPS backup
-- WebDAV backup
-- Backup restore
-- Command line backup
+  - Duplicity backup
+  - Encrypted backup
+  - Incremental backup
+  - Versioned backup
+  - Backup encryption
+  - S3 backup
+  - FTPS backup
+  - WebDAV backup
+  - Backup restore
+  - Command line backup
 features:
-- Create incremental backups
-- Encrypt backups using GPG
-- Upload backups to various cloud services
-- Restore specific files or directories from backups
-- Delete old backup versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create incremental backups
+  - Encrypt backups using GPG
+  - Upload backups to various cloud services
+  - Restore specific files or directories from backups
+  - Delete old backup versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # duplicity

@@ -1,9 +1,9 @@
 ---
-title: "Investigate Sockets with ss - Network Monitoring | Online Free DevTools by Hexmos"
+title: 'Investigate Sockets with ss - Network Monitoring | Online Free DevTools by Hexmos'
 name: ss
-path: "/freedevtools/tldr/linux/ss/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ss/"
-description: "Investigate network sockets instantly with the ss command. Monitor TCP, UDP, and other socket connections, filter by state and port, and even kill connections. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ss/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ss/'
+description: 'Investigate network sockets instantly with the ss command. Monitor TCP, UDP, and other socket connections, filter by state and port, and even kill connections. Free online tool, no registration required.'
 category: linux
 keywords:
   - network socket investigation
@@ -22,8 +22,8 @@ features:
   - Show sockets connected to specific ports.
   - Identify processes associated with network connections.
   - Terminate unwanted socket connections.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ss

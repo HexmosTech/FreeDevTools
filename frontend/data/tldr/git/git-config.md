@@ -1,29 +1,29 @@
 ---
-title: "Git Config - Manage Git Configurations | Online Free DevTools by Hexmos"
+title: 'Git Config - Manage Git Configurations | Online Free DevTools by Hexmos'
 name: git-config
-path: "/freedevtools/tldr/git/git-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-config/"
-description: "Manage Git configurations easily with Git Config. Set global and local repository options, edit configurations, and revert to defaults. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-config/'
+description: 'Manage Git configurations easily with Git Config. Set global and local repository options, edit configurations, and revert to defaults. Free online tool, no registration required.'
 category: common
 keywords:
-- git configuration
-- git global config
-- git local config
-- git alias configuration
-- git config set
-- git config list
-- git config unset
-- git repository configuration
-- git user configuration
-- git command line configuration
+  - git configuration
+  - git global config
+  - git local config
+  - git alias configuration
+  - git config set
+  - git config list
+  - git config unset
+  - git repository configuration
+  - git user configuration
+  - git command line configuration
 features:
-- Set global or local Git configurations
-- List existing configuration entries with file origins
-- Define and manage Git aliases
-- Revert configuration entries to their default values
-- Edit Git configuration files directly in a text editor
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set global or local Git configurations
+  - List existing configuration entries with file origins
+  - Define and manage Git aliases
+  - Revert configuration entries to their default values
+  - Edit Git configuration files directly in a text editor
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git config

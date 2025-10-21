@@ -1,29 +1,29 @@
 ---
-title: "Generate D Code - Compile D Code with GDC | Online Free DevTools by Hexmos"
+title: 'Generate D Code - Compile D Code with GDC | Online Free DevTools by Hexmos'
 name: gdc
-path: "/freedevtools/tldr/common/gdc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdc/"
-description: "Generate D code with GDC compiler. Compile D programming language source code using GCC backend. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gdc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gdc/'
+description: 'Generate D code with GDC compiler. Compile D programming language source code using GCC backend. Free online tool, no registration required.'
 category: common
 keywords:
-- D compiler
-- GDC compiler
-- D code compilation
-- GCC backend D
-- D language
-- Compile D
-- D executable
-- D documentation generation
-- D interface files
-- D module dependencies
+  - D compiler
+  - GDC compiler
+  - D code compilation
+  - GCC backend D
+  - D language
+  - Compile D
+  - D executable
+  - D documentation generation
+  - D interface files
+  - D module dependencies
 features:
-- Create executable files from D source code
-- Print information about module dependencies
-- Generate Ddoc documentation for projects
-- Generate D interface files for module definitions
-- Compile without standard GCC libraries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create executable files from D source code
+  - Print information about module dependencies
+  - Generate Ddoc documentation for projects
+  - Generate D interface files for module definitions
+  - Compile without standard GCC libraries
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdc

@@ -1,29 +1,29 @@
 ---
-title: "Create Git Commit - Build Objects Easily | Online Free DevTools by Hexmos"
+title: 'Create Git Commit - Build Objects Easily | Online Free DevTools by Hexmos'
 name: git-commit-tree
-path: "/freedevtools/tldr/git/git-commit-tree/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit-tree/"
-description: "Create Git commit objects with git-commit-tree, a low-level utility. Specify parents, messages, and sign commits. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-commit-tree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-commit-tree/'
+description: 'Create Git commit objects with git-commit-tree, a low-level utility. Specify parents, messages, and sign commits. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit object
-- git commit-tree command
-- git create commit
-- git commit signing
-- git commit parent
-- git low level commit
-- git object creation
-- git tree commit
-- version control commit
-- source code commit
+  - git commit object
+  - git commit-tree command
+  - git create commit
+  - git commit signing
+  - git commit parent
+  - git low level commit
+  - git object creation
+  - git tree commit
+  - version control commit
+  - source code commit
 features:
-- Create commit objects from trees
-- Specify a parent commit
-- Sign commits using GPG
-- Read commit messages from a file
-- Define custom commit messages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create commit objects from trees
+  - Specify a parent commit
+  - Sign commits using GPG
+  - Read commit messages from a file
+  - Define custom commit messages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git commit-tree

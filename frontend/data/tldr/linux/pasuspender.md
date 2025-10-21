@@ -1,9 +1,9 @@
 ---
-title: "Control PulseAudio with pasuspender | Online Free DevTools by Hexmos"
+title: 'Control PulseAudio with pasuspender | Online Free DevTools by Hexmos'
 name: pasuspender
-path: "/freedevtools/tldr/linux/pasuspender/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pasuspender/"
-description: "Control PulseAudio using pasuspender to temporarily suspend it while running other commands like jackd.  Access ALSA audio devices seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pasuspender/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pasuspender/'
+description: 'Control PulseAudio using pasuspender to temporarily suspend it while running other commands like jackd.  Access ALSA audio devices seamlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - pulseaudio control command
@@ -22,8 +22,8 @@ features:
   - Integrates with other audio commands like jackd.
   - Provides a command-line interface for audio control.
   - Enables seamless switching between PulseAudio and ALSA.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pasuspender

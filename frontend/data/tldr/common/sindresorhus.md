@@ -1,9 +1,9 @@
 ---
-title: "Control Sindre Sorhus CLI - Interactive Tool | Online Free DevTools by Hexmos"
+title: 'Control Sindre Sorhus CLI - Interactive Tool | Online Free DevTools by Hexmos'
 name: sindresorhus
-path: "/freedevtools/tldr/common/sindresorhus/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sindresorhus/"
-description: "Control interactive command-line tools with Sindre Sorhus CLI. Access a curated list of utilities and improve workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sindresorhus/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sindresorhus/'
+description: 'Control interactive command-line tools with Sindre Sorhus CLI. Access a curated list of utilities and improve workflow. Free online tool, no registration required.'
 category: common
 keywords:
   - interactive CLI tool
@@ -22,8 +22,8 @@ features:
   - Enhance terminal workflow productivity.
   - Discover command-line applications by Sindre Sorhus.
   - Automate repetitive command-line tasks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sindresorhus

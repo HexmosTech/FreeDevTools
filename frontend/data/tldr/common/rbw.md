@@ -1,29 +1,29 @@
 ---
-title: "Password Manager - Control Passwords with rbw | Online Free DevTools by Hexmos"
+title: 'Password Manager - Control Passwords with rbw | Online Free DevTools by Hexmos'
 name: rbw
-path: "/freedevtools/tldr/common/rbw/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rbw/"
-description: "Control passwords efficiently with rbw Password Manager. Securely manage and generate passwords using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rbw/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rbw/'
+description: 'Control passwords efficiently with rbw Password Manager. Securely manage and generate passwords using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- command line password manager
-- bitwarden compatible manager
-- rbw password management
-- linux password manager
-- macos password manager
-- password generator cli
-- password retrieval tool
-- password vault management
-- command line vault access
-- password security tool
+  - command line password manager
+  - bitwarden compatible manager
+  - rbw password management
+  - linux password manager
+  - macos password manager
+  - password generator cli
+  - password retrieval tool
+  - password vault management
+  - command line vault access
+  - password security tool
 features:
-- Securely store and manage passwords.
-- Generate strong and unique passwords.
-- Retrieve passwords and usernames from the vault.
-- Copy passwords to the clipboard.
-- Lock and unlock the password vault.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely store and manage passwords.
+  - Generate strong and unique passwords.
+  - Retrieve passwords and usernames from the vault.
+  - Copy passwords to the clipboard.
+  - Lock and unlock the password vault.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rbw

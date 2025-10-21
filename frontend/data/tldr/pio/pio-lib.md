@@ -1,29 +1,29 @@
 ---
-title: "Manage PlatformIO Libraries - Install & Update | Online Free DevTools by Hexmos"
+title: 'Manage PlatformIO Libraries - Install & Update | Online Free DevTools by Hexmos'
 name: pio-lib
-path: "/freedevtools/tldr/pio/pio-lib/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-lib/"
-description: "Manage PlatformIO libraries with ease using pio lib. Install, update, search, and uninstall libraries quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-lib/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-lib/'
+description: 'Manage PlatformIO libraries with ease using pio lib. Install, update, search, and uninstall libraries quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO library manager
-- pio lib install
-- pio lib update
-- pio library search
-- PlatformIO library registry
-- embedded development libraries
-- IoT library management
-- Arduino library management
-- ESP32 library management
-- PlatformIO package manager
+  - PlatformIO library manager
+  - pio lib install
+  - pio lib update
+  - pio library search
+  - PlatformIO library registry
+  - embedded development libraries
+  - IoT library management
+  - Arduino library management
+  - ESP32 library management
+  - PlatformIO package manager
 features:
-- Install and manage PlatformIO libraries
-- Search for libraries in the registry
-- Update installed libraries to the latest versions
-- List installed and built-in libraries
-- Show library details and statistics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and manage PlatformIO libraries
+  - Search for libraries in the registry
+  - Update installed libraries to the latest versions
+  - List installed and built-in libraries
+  - Show library details and statistics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio lib

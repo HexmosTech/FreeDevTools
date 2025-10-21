@@ -1,9 +1,9 @@
 ---
-title: "Set-Location - Control PowerShell Directory | Online Free DevTools by Hexmos"
+title: 'Set-Location - Control PowerShell Directory | Online Free DevTools by Hexmos'
 name: sl
-path: "/freedevtools/tldr/windows/sl/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/sl/"
-description: "Control your PowerShell directory with Set-Location. Change directory easily and quickly, navigate file systems efficiently using the sl alias. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/sl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/sl/'
+description: 'Control your PowerShell directory with Set-Location. Change directory easily and quickly, navigate file systems efficiently using the sl alias. Free online tool, no registration required.'
 category: windows
 keywords:
   - powershell set location
@@ -22,8 +22,8 @@ features:
   - Simplify directory navigation tasks.
   - Shorten command syntax for directory changes.
   - Enhance PowerShell efficiency.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sl

@@ -1,29 +1,29 @@
 ---
-title: "Analyze Photos - Control Photo Libraries | Online Free DevTools by Hexmos"
+title: 'Analyze Photos - Control Photo Libraries | Online Free DevTools by Hexmos'
 name: photoanalysisd
-path: "/freedevtools/tldr/osx/photoanalysisd/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/photoanalysisd/"
-description: "Analyze photos with photoanalysisd to identify scenes and people within your photo library. Enhance image search and unlock memories. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/photoanalysisd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/photoanalysisd/'
+description: 'Analyze photos with photoanalysisd to identify scenes and people within your photo library. Enhance image search and unlock memories. Free online tool, no registration required.'
 category: osx
 keywords:
-- photo analysis macos
-- photo library analysis
-- image recognition osx
-- scene detection macos
-- object detection macos
-- people recognition osx
-- macos photo metadata
-- analyze photo memories
-- osx photo processing
-- photo insights macos
+  - photo analysis macos
+  - photo library analysis
+  - image recognition osx
+  - scene detection macos
+  - object detection macos
+  - people recognition osx
+  - macos photo metadata
+  - analyze photo memories
+  - osx photo processing
+  - photo insights macos
 features:
-- Analyze photo libraries automatically
-- Identify people in photos
-- Detect scenes and objects within images
-- Generate photo memories
-- Enhance image search capabilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze photo libraries automatically
+  - Identify people in photos
+  - Detect scenes and objects within images
+  - Generate photo memories
+  - Enhance image search capabilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # photoanalysisd

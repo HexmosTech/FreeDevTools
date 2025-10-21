@@ -1,29 +1,29 @@
 ---
-title: "Pueue Restart - Control Task Execution | Online Free DevTools by Hexmos"
+title: 'Pueue Restart - Control Task Execution | Online Free DevTools by Hexmos'
 name: pueue-restart
-path: "/freedevtools/tldr/pueue/pueue-restart/"
-canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-restart/"
-description: "Control task execution with Pueue Restart. Manage background processes and task queuing on your system efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/pueue/pueue-restart/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pueue/pueue-restart/'
+description: 'Control task execution with Pueue Restart. Manage background processes and task queuing on your system efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- pueue task restart
-- task queue management
-- background process control
-- process scheduler linux
-- pueue restart command
-- task execution control
-- linux task management
-- process queue restart
-- command line task manager
-- pueue task scheduler
+  - pueue task restart
+  - task queue management
+  - background process control
+  - process scheduler linux
+  - pueue restart command
+  - task execution control
+  - linux task management
+  - process queue restart
+  - command line task manager
+  - pueue task scheduler
 features:
-- Restart specific tasks by ID
-- Restart multiple tasks simultaneously
-- Edit tasks before restarting them
-- Restart failed tasks and stash them
-- Restart tasks in-place without enqueuing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restart specific tasks by ID
+  - Restart multiple tasks simultaneously
+  - Edit tasks before restarting them
+  - Restart failed tasks and stash them
+  - Restart tasks in-place without enqueuing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pueue restart

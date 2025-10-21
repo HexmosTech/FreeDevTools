@@ -1,29 +1,29 @@
 ---
-title: "Extract CSV Data - Filter Columns with csvcut | Online Free DevTools by Hexmos"
+title: 'Extract CSV Data - Filter Columns with csvcut | Online Free DevTools by Hexmos'
 name: csvcut
-path: "/freedevtools/tldr/cs/csvcut/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csvcut/"
-description: "Extract CSV data efficiently with csvcut, a powerful command-line tool for filtering and truncating CSV files. Streamline data manipulation. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csvcut/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csvcut/'
+description: 'Extract CSV data efficiently with csvcut, a powerful command-line tool for filtering and truncating CSV files. Streamline data manipulation. Free online tool, no registration required.'
 category: common
 keywords:
-- CSV data extraction
-- CSV column filtering
-- CSV file manipulation
-- csvcut command
-- command-line CSV tool
-- Linux CSV
-- macOS CSV
-- common CSV utils
-- CSV data truncation
-- csvkit
+  - CSV data extraction
+  - CSV column filtering
+  - CSV file manipulation
+  - csvcut command
+  - command-line CSV tool
+  - Linux CSV
+  - macOS CSV
+  - common CSV utils
+  - CSV data truncation
+  - csvkit
 features:
-- Extract columns by index
-- Extract columns by name
-- Exclude specific columns
-- Filter CSV data
-- Truncate CSV files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract columns by index
+  - Extract columns by name
+  - Exclude specific columns
+  - Filter CSV data
+  - Truncate CSV files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csvcut

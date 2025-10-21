@@ -1,29 +1,29 @@
 ---
-title: "Zig Compiler - Build and Format Code | Online Free DevTools by Hexmos"
+title: 'Zig Compiler - Build and Format Code | Online Free DevTools by Hexmos'
 name: zig
-path: "/freedevtools/tldr/common/zig/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zig/"
-description: "Build and format your projects with Zig Compiler. Compile, test, and translate C files to Zig code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zig/'
+description: 'Build and format your projects with Zig Compiler. Compile, test, and translate C files to Zig code. Free online tool, no registration required.'
 category: common
 keywords:
-- zig compiler
-- zig build tool
-- zig format code
-- zig cross compile
-- zig c++ compiler
-- zig translate c
-- zig init project
-- zig test build
-- zig linux
-- zig windows
+  - zig compiler
+  - zig build tool
+  - zig format code
+  - zig cross compile
+  - zig c++ compiler
+  - zig translate c
+  - zig init project
+  - zig test build
+  - zig linux
+  - zig windows
 features:
-- Compile Zig projects
-- Format Zig source code
-- Cross-compile for different architectures
-- Translate C code to Zig
-- Initialize new Zig projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Zig projects
+  - Format Zig source code
+  - Cross-compile for different architectures
+  - Translate C code to Zig
+  - Initialize new Zig projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zig

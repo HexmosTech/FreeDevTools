@@ -1,29 +1,29 @@
 ---
-title: "GitLab Repo - Manage Repositories | Online Free DevTools by Hexmos"
+title: 'GitLab Repo - Manage Repositories | Online Free DevTools by Hexmos'
 name: glab-repo
-path: "/freedevtools/tldr/glab/glab-repo/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-repo/"
-description: "Manage GitLab repositories easily with glab-repo. Create, clone, fork, and view repos from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-repo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-repo/'
+description: 'Manage GitLab repositories easily with glab-repo. Create, clone, fork, and view repos from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- GitLab repository management
-- glab repo commands
-- GitLab command line tool
-- Git repository manager
-- GitLab repo create
-- GitLab repo clone
-- GitLab repo fork
-- glab search repositories
-- GitLab web view repository
-- GitLab CLI repo
+  - GitLab repository management
+  - glab repo commands
+  - GitLab command line tool
+  - Git repository manager
+  - GitLab repo create
+  - GitLab repo clone
+  - GitLab repo fork
+  - glab search repositories
+  - GitLab web view repository
+  - GitLab CLI repo
 features:
-- Create new GitLab repositories
-- Clone existing repositories locally
-- Fork repositories into personal namespaces
-- View repositories in a web browser
-- Search for repositories within a GitLab instance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new GitLab repositories
+  - Clone existing repositories locally
+  - Fork repositories into personal namespaces
+  - View repositories in a web browser
+  - Search for repositories within a GitLab instance
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab repo

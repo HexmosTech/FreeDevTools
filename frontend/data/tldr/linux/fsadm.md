@@ -1,29 +1,29 @@
 ---
-title: "Fsadm - Check & Resize Filesystems | Online Free DevTools by Hexmos"
+title: 'Fsadm - Check & Resize Filesystems | Online Free DevTools by Hexmos'
 name: fsadm
-path: "/freedevtools/tldr/linux/fsadm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fsadm/"
-description: "Resize filesystems quickly with fsadm on Linux. Manage disk space and check filesystem integrity using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fsadm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fsadm/'
+description: 'Resize filesystems quickly with fsadm on Linux. Manage disk space and check filesystem integrity using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux filesystem resize
-- fsadm disk management
-- filesystem integrity check
-- linux volume resize
-- block device manager
-- linux storage utility
-- lvresize tool linux
-- ext4 resize online
-- logical volume management
-- linux disk space increase
+  - linux filesystem resize
+  - fsadm disk management
+  - filesystem integrity check
+  - linux volume resize
+  - block device manager
+  - linux storage utility
+  - lvresize tool linux
+  - ext4 resize online
+  - logical volume management
+  - linux disk space increase
 features:
-- Check filesystems for errors
-- Perform dry-run filesystem resizing
-- Grow filesystems to fill entire devices
-- Resize logical volumes together with filesystems
-- Resize ext2/3/4 filesystems offline
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check filesystems for errors
+  - Perform dry-run filesystem resizing
+  - Grow filesystems to fill entire devices
+  - Resize logical volumes together with filesystems
+  - Resize ext2/3/4 filesystems offline
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fsadm

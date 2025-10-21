@@ -1,29 +1,29 @@
 ---
-title: "TypeScript Compiler - Generate JavaScript from TypeScript | Online Free DevTools by Hexmos"
+title: 'TypeScript Compiler - Generate JavaScript from TypeScript | Online Free DevTools by Hexmos'
 name: tsc
-path: "/freedevtools/tldr/common/tsc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tsc/"
-description: "Generate JavaScript from TypeScript with the tsc compiler. Convert TypeScript code and transpile with different ES versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tsc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tsc/'
+description: 'Generate JavaScript from TypeScript with the tsc compiler. Convert TypeScript code and transpile with different ES versions. Free online tool, no registration required.'
 category: common
 keywords:
-- typescript compiler
-- ts to js
-- typescript to javascript converter
-- javascript generator
-- typescript transpiler
-- es5 compiler
-- esnext compiler
-- tsconfig json compiler
-- typescript watch mode
-- command line typescript
+  - typescript compiler
+  - ts to js
+  - typescript to javascript converter
+  - javascript generator
+  - typescript transpiler
+  - es5 compiler
+  - esnext compiler
+  - tsconfig json compiler
+  - typescript watch mode
+  - command line typescript
 features:
-- Compile TypeScript files to JavaScript.
-- Specify target ECMAScript version during compilation.
-- Compile TypeScript projects defined in `tsconfig.json`.
-- Enable watch mode for automatic recompilation.
-- Initialize a TypeScript project with default settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile TypeScript files to JavaScript.
+  - Specify target ECMAScript version during compilation.
+  - Compile TypeScript projects defined in `tsconfig.json`.
+  - Enable watch mode for automatic recompilation.
+  - Initialize a TypeScript project with default settings.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tsc

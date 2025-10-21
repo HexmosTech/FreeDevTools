@@ -1,29 +1,29 @@
 ---
-title: "Install TeX Live - Cross-Platform Installation | Online Free DevTools by Hexmos"
+title: 'Install TeX Live - Cross-Platform Installation | Online Free DevTools by Hexmos'
 name: install-tl
-path: "/freedevtools/tldr/install/install-tl/"
-canonical: "https://hexmos.com/freedevtools/tldr/install/install-tl/"
-description: "Install TeX Live seamlessly with install-tl. Perform cross-platform installation and customize your TeX distribution effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/install/install-tl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/install/install-tl/'
+description: 'Install TeX Live seamlessly with install-tl. Perform cross-platform installation and customize your TeX distribution effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX Live installer
-- cross-platform installer
-- TeX distribution install
-- LaTeX install
-- install-tl command
-- tex install macos
-- tex install linux
-- tex install windows
-- tex live profile
-- portable tex live
+  - TeX Live installer
+  - cross-platform installer
+  - TeX distribution install
+  - LaTeX install
+  - install-tl command
+  - tex install macos
+  - tex install linux
+  - tex install windows
+  - tex live profile
+  - portable tex live
 features:
-- Perform text-based installations
-- Launch GUI-based installations (requires Tcl/Tk)
-- Install from a specific profile file
-- Initialize settings from a profile file
-- Install for portable device usage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform text-based installations
+  - Launch GUI-based installations (requires Tcl/Tk)
+  - Install from a specific profile file
+  - Initialize settings from a profile file
+  - Install for portable device usage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # install-tl

@@ -1,29 +1,29 @@
 ---
-title: "Configure Cisco IOS - Control Network Configuration | Online Free DevTools by Hexmos"
+title: 'Configure Cisco IOS - Control Network Configuration | Online Free DevTools by Hexmos'
 name: configure
-path: "/freedevtools/tldr/cisco-ios/configure/"
-canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/configure/"
-description: "Control network configurations with Cisco IOS Configure. Enter configuration mode, navigate levels, and exit with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/cisco-ios/configure/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cisco-ios/configure/'
+description: 'Control network configurations with Cisco IOS Configure. Enter configuration mode, navigate levels, and exit with ease. Free online tool, no registration required.'
 category: cisco-ios
 keywords:
-- cisco ios configure command
-- cisco ios configuration mode
-- network configuration ios
-- ios configure terminal
-- cisco ios exit configuration
-- cisco ios end configuration
-- cisco configure command
-- cisco network configuration
-- cisco ios command line
-- configure cisco router
+  - cisco ios configure command
+  - cisco ios configuration mode
+  - network configuration ios
+  - ios configure terminal
+  - cisco ios exit configuration
+  - cisco ios end configuration
+  - cisco configure command
+  - cisco network configuration
+  - cisco ios command line
+  - configure cisco router
 features:
-- Enter configuration mode on Cisco IOS devices
-- Configure settings directly from the terminal
-- Back out one level in configuration mode
-- Exit global configuration mode
-- Manage Cisco IOS network parameters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enter configuration mode on Cisco IOS devices
+  - Configure settings directly from the terminal
+  - Back out one level in configuration mode
+  - Exit global configuration mode
+  - Manage Cisco IOS network parameters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # configure

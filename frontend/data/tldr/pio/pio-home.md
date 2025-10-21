@@ -1,29 +1,29 @@
 ---
-title: "Launch PlatformIO Home - Manage Embedded Development | Online Free DevTools by Hexmos"
+title: 'Launch PlatformIO Home - Manage Embedded Development | Online Free DevTools by Hexmos'
 name: pio-home
-path: "/freedevtools/tldr/pio/pio-home/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-home/"
-description: "Launch PlatformIO Home to manage embedded development environments with ease. Configure ports, bind IP addresses, and customize sessions. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-home/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-home/'
+description: 'Launch PlatformIO Home to manage embedded development environments with ease. Configure ports, bind IP addresses, and customize sessions. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO Home launch
-- PlatformIO IDE manager
-- embedded development platform
-- IoT project management
-- pio home command
-- PlatformIO web server
-- PlatformIO CLI
-- PlatformIO development
-- embedded systems tool
-- PlatformIO session control
+  - PlatformIO Home launch
+  - PlatformIO IDE manager
+  - embedded development platform
+  - IoT project management
+  - pio home command
+  - PlatformIO web server
+  - PlatformIO CLI
+  - PlatformIO development
+  - embedded systems tool
+  - PlatformIO session control
 features:
-- Launch PlatformIO Home in a web browser.
-- Configure the HTTP port for PlatformIO Home.
-- Bind PlatformIO Home to a specific IP address.
-- Prevent automatic browser opening for PlatformIO Home.
-- Automatically shut down the server after a specified timeout.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch PlatformIO Home in a web browser.
+  - Configure the HTTP port for PlatformIO Home.
+  - Bind PlatformIO Home to a specific IP address.
+  - Prevent automatic browser opening for PlatformIO Home.
+  - Automatically shut down the server after a specified timeout.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio home

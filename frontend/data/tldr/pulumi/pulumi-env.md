@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Env - Manage Environments | Online Free DevTools by Hexmos"
+title: 'Pulumi Env - Manage Environments | Online Free DevTools by Hexmos'
 name: pulumi-env
-path: "/freedevtools/tldr/pulumi/pulumi-env/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-env/"
-description: "Manage Pulumi environments effortlessly with Pulumi Env. Create, set, edit, and delete environment configurations with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-env/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-env/'
+description: 'Manage Pulumi environments effortlessly with Pulumi Env. Create, set, edit, and delete environment configurations with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- pulumi environment manager
-- pulumi config manager
-- pulumi environment variables
-- pulumi infrastructure as code
-- pulumi cloud configuration
-- infrastructure environment management
-- pulumi deployment environment
-- pulumi stack configuration
-- pulumi environment editor
-- pulumi environment automation
+  - pulumi environment manager
+  - pulumi config manager
+  - pulumi environment variables
+  - pulumi infrastructure as code
+  - pulumi cloud configuration
+  - infrastructure environment management
+  - pulumi deployment environment
+  - pulumi stack configuration
+  - pulumi environment editor
+  - pulumi environment automation
 features:
-- List existing Pulumi environments
-- Create new Pulumi environments
-- Set environment-specific configuration values
-- Edit Pulumi environment definitions
-- Delete environment variables and entire environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing Pulumi environments
+  - Create new Pulumi environments
+  - Set environment-specific configuration values
+  - Edit Pulumi environment definitions
+  - Delete environment variables and entire environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi env

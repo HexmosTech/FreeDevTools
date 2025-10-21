@@ -1,29 +1,29 @@
 ---
-title: "Kill Process - Terminate Processes with Signals | Online Free DevTools by Hexmos"
+title: 'Kill Process - Terminate Processes with Signals | Online Free DevTools by Hexmos'
 name: kill
-path: "/freedevtools/tldr/common/kill/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kill/"
-description: "Terminate processes with Kill Command. Send signals to manage and stop processes on Linux, macOS, and Unix systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kill/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kill/'
+description: 'Terminate processes with Kill Command. Send signals to manage and stop processes on Linux, macOS, and Unix systems. Free online tool, no registration required.'
 category: common
 keywords:
-- process termination signal
-- kill process command
-- linux process management
-- macOS process control
-- unix kill signal
-- SIGTERM signal process
-- SIGHUP process reload
-- SIGKILL force kill
-- process ID signal
-- group ID process signal
+  - process termination signal
+  - kill process command
+  - linux process management
+  - macOS process control
+  - unix kill signal
+  - SIGTERM signal process
+  - SIGHUP process reload
+  - SIGKILL force kill
+  - process ID signal
+  - group ID process signal
 features:
-- Terminate processes using specified signal IDs
-- List available signals for process control
-- Send termination signals to a program
-- Pause a program with the STOP signal
-- Send signals to processes with given group ID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Terminate processes using specified signal IDs
+  - List available signals for process control
+  - Send termination signals to a program
+  - Pause a program with the STOP signal
+  - Send signals to processes with given group ID
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kill

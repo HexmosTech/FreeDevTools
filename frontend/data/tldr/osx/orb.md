@@ -1,29 +1,29 @@
 ---
-title: "OrbStack - Control Linux VMs on macOS | Online Free DevTools by Hexmos"
+title: 'OrbStack - Control Linux VMs on macOS | Online Free DevTools by Hexmos'
 name: orb
-path: "/freedevtools/tldr/osx/orb/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/orb/"
-description: "Control Linux virtual machines on macOS with OrbStack. Create, manage, and execute commands in VMs directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/orb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/orb/'
+description: 'Control Linux virtual machines on macOS with OrbStack. Create, manage, and execute commands in VMs directly from your terminal. Free online tool, no registration required.'
 category: osx
 keywords:
-- orbstack
-- orbstack commands
-- macos vm manager
-- linux vm control
-- docker macos alternative
-- container management macos
-- virtual machine command line
-- lightweight vm macos
-- orbstack cli
-- orbstack ubuntu
+  - orbstack
+  - orbstack commands
+  - macos vm manager
+  - linux vm control
+  - docker macos alternative
+  - container management macos
+  - virtual machine command line
+  - lightweight vm macos
+  - orbstack cli
+  - orbstack ubuntu
 features:
-- Create and manage Linux virtual machines
-- Execute commands directly within VMs
-- Start and stop VMs with a simple command
-- Connect to VMs via SSH
-- List all running containers and VMs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage Linux virtual machines
+  - Execute commands directly within VMs
+  - Start and stop VMs with a simple command
+  - Connect to VMs via SSH
+  - List all running containers and VMs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # orb

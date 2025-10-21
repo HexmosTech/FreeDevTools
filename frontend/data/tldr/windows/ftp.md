@@ -1,9 +1,9 @@
 ---
-title: "FTP File Transfer - Control Remote Files Interactively | Online Free DevTools by Hexmos"
+title: 'FTP File Transfer - Control Remote Files Interactively | Online Free DevTools by Hexmos'
 name: ftp
-path: "/freedevtools/tldr/windows/ftp/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/ftp/"
-description: "Control remote files with FTP File Transfer, interactively connecting to servers and managing files with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/ftp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/ftp/'
+description: 'Control remote files with FTP File Transfer, interactively connecting to servers and managing files with ease. Free online tool, no registration required.'
 category: windows
 keywords:
   - ftp file transfer
@@ -22,8 +22,8 @@ features:
   - Execute FTP commands from a file
   - Log in as an anonymous user
   - Disable automatic login for secure connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ftp

@@ -1,29 +1,29 @@
 ---
-title: "WSL Open - Open Files in Windows from WSL | Online Free DevTools by Hexmos"
+title: 'WSL Open - Open Files in Windows from WSL | Online Free DevTools by Hexmos'
 name: wsl-open
-path: "/freedevtools/tldr/windows/wsl-open/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/wsl-open/"
-description: "Open files and URLs from WSL with WSL Open. Access Windows GUI applications from Linux environment seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/wsl-open/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/wsl-open/'
+description: 'Open files and URLs from WSL with WSL Open. Access Windows GUI applications from Linux environment seamlessly. Free online tool, no registration required.'
 category: windows
 keywords:
-- WSL file opener
-- Windows GUI application launcher
-- Linux file association
-- WSL default browser
-- Windows Explorer from WSL
-- Command line URL opener
-- WSL command line tool
-- Linux Windows integration
-- WSL open file
-- Windows WSL integration
+  - WSL file opener
+  - Windows GUI application launcher
+  - Linux file association
+  - WSL default browser
+  - Windows Explorer from WSL
+  - Command line URL opener
+  - WSL command line tool
+  - Linux Windows integration
+  - WSL open file
+  - Windows WSL integration
 features:
-- Open files in the default Windows application from WSL.
-- Launch URLs in the default Windows web browser from WSL.
-- Open the current directory in Windows Explorer from WSL.
-- Set wsl-open as the shell's default web browser.
-- Execute from the WSL command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open files in the default Windows application from WSL.
+  - Launch URLs in the default Windows web browser from WSL.
+  - Open the current directory in Windows Explorer from WSL.
+  - Set wsl-open as the shell's default web browser.
+  - Execute from the WSL command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wsl-open

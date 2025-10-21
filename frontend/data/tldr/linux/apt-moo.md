@@ -1,9 +1,9 @@
 ---
-title: "APT Moo - Print Cow Easter Egg | Online Free DevTools by Hexmos"
+title: 'APT Moo - Print Cow Easter Egg | Online Free DevTools by Hexmos'
 name: apt-moo
-path: "/freedevtools/tldr/linux/apt-moo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-moo/"
-description: "Print a fun cow easter egg with APT Moo.  This simple Linux command provides a lighthearted moment during your development workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apt-moo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apt-moo/'
+description: 'Print a fun cow easter egg with APT Moo.  This simple Linux command provides a lighthearted moment during your development workflow. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux command
@@ -22,8 +22,8 @@ features:
   - Offers a quick and simple command-line experience.
   - Is a built-in feature of the APT package manager.
   - Demonstrates a hidden, enjoyable aspect of Linux.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apt moo

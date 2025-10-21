@@ -1,29 +1,29 @@
 ---
-title: "Generate SQL from CSV - csvsql | Online Free DevTools by Hexmos"
+title: 'Generate SQL from CSV - csvsql | Online Free DevTools by Hexmos'
 name: csvsql
-path: "/freedevtools/tldr/cs/csvsql/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csvsql/"
-description: "Generate SQL statements from CSV files with csvsql. Convert CSV data to SQL, import into databases, and run queries directly. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csvsql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csvsql/'
+description: 'Generate SQL statements from CSV files with csvsql. Convert CSV data to SQL, import into databases, and run queries directly. Free online tool, no registration required.'
 category: common
 keywords:
-- csv to sql converter
-- generate sql from csv
-- csvsql command
-- csv to database import
-- query csv with sql
-- csvkit csvsql
-- csv sql generator
-- command line csv tool
-- sql create table from csv
-- csv data analysis tool
+  - csv to sql converter
+  - generate sql from csv
+  - csvsql command
+  - csv to database import
+  - query csv with sql
+  - csvkit csvsql
+  - csv sql generator
+  - command line csv tool
+  - sql create table from csv
+  - csv data analysis tool
 features:
-- Generate CREATE TABLE statements from CSV files
-- Import CSV data directly into SQL databases
-- Execute SQL queries on CSV data
-- Convert CSV files to SQL database format
-- Support various SQL database dialects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate CREATE TABLE statements from CSV files
+  - Import CSV data directly into SQL databases
+  - Execute SQL queries on CSV data
+  - Convert CSV files to SQL database format
+  - Support various SQL database dialects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csvsql

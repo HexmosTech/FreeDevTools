@@ -1,29 +1,29 @@
 ---
-title: "ERN - Create Native Apps and Containers | Online Free DevTools by Hexmos"
+title: 'ERN - Create Native Apps and Containers | Online Free DevTools by Hexmos'
 name: ern
-path: "/freedevtools/tldr/common/ern/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ern/"
-description: "Create native applications and manage containers with ERN. Streamline your iOS and Android app development process using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ern/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ern/'
+description: 'Create native applications and manage containers with ERN. Streamline your iOS and Android app development process using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- electrode native
-- ern command
-- create miniapp
-- run miniapp
-- create container
-- publish container
-- transform container
-- ios development
-- android development
-- mobile app development
+  - electrode native
+  - ern command
+  - create miniapp
+  - run miniapp
+  - create container
+  - publish container
+  - transform container
+  - ios development
+  - android development
+  - mobile app development
 features:
-- Generate Electrode Native applications (MiniApps)
-- Run MiniApps in iOS and Android Runner applications
-- Create Electrode Native containers for iOS and Android
-- Publish Electrode Native containers to local Maven repositories
-- Transform iOS containers into pre-compiled binary frameworks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate Electrode Native applications (MiniApps)
+  - Run MiniApps in iOS and Android Runner applications
+  - Create Electrode Native containers for iOS and Android
+  - Publish Electrode Native containers to local Maven repositories
+  - Transform iOS containers into pre-compiled binary frameworks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ern

@@ -1,9 +1,9 @@
 ---
-title: "Create VM Snapshots - qm snapshot | Online Free DevTools by Hexmos"
+title: 'Create VM Snapshots - qm snapshot | Online Free DevTools by Hexmos'
 name: qm-snapshot
-path: "/freedevtools/tldr/linux/qm-snapshot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-snapshot/"
-description: "Create virtual machine snapshots with qm snapshot.  Manage and rollback VM states easily using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-snapshot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-snapshot/'
+description: 'Create virtual machine snapshots with qm snapshot.  Manage and rollback VM states easily using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - vm snapshot creation
@@ -22,8 +22,8 @@ features:
   - Include VM state in snapshots for complete restoration.
   - List all snapshots for a given VM.
   - Rollback VMs to previous snapshot states.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm snapshot

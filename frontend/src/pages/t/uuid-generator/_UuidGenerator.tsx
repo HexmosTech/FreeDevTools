@@ -1,48 +1,48 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import UuidGeneratorSkeleton from "./_UuidGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import UuidGeneratorSkeleton from './_UuidGeneratorSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 // UUID Versions and their characteristics
 const UUID_VERSIONS = {
   v4: {
-    name: "Version 4 (Random)",
-    description: "Random UUIDs - most commonly used",
+    name: 'Version 4 (Random)',
+    description: 'Random UUIDs - most commonly used',
     generator: () => crypto.randomUUID(),
   },
   v1: {
-    name: "Version 1 (Timestamp)",
-    description: "Timestamp-based UUIDs (simulated)",
+    name: 'Version 1 (Timestamp)',
+    description: 'Timestamp-based UUIDs (simulated)',
     generator: () => generateUUIDv1(),
   },
   nil: {
-    name: "Nil UUID",
-    description: "All zeros UUID",
-    generator: () => "00000000-0000-0000-0000-000000000000",
+    name: 'Nil UUID',
+    description: 'All zeros UUID',
+    generator: () => '00000000-0000-0000-0000-000000000000',
   },
   max: {
-    name: "Max UUID",
-    description: "All ones UUID",
-    generator: () => "ffffffff-ffff-ffff-ffff-ffffffffffff",
+    name: 'Max UUID',
+    description: 'All ones UUID',
+    generator: () => 'ffffffff-ffff-ffff-ffff-ffffffffffff',
   },
 };
 
@@ -53,13 +53,13 @@ function generateUUIDv1(): string {
   const node = Math.floor(Math.random() * 0xffffffffffff);
 
   // Convert timestamp to UUID format (simplified)
-  const timeHex = timestamp.toString(16).padStart(16, "0");
+  const timeHex = timestamp.toString(16).padStart(16, '0');
   const timeLow = timeHex.slice(-8);
   const timeMid = timeHex.slice(-12, -8);
-  const timeHi = "1" + timeHex.slice(-15, -12); // Version 1
+  const timeHi = '1' + timeHex.slice(-15, -12); // Version 1
 
-  const clockSeqHex = clockSeq.toString(16).padStart(4, "0");
-  const nodeHex = node.toString(16).padStart(12, "0");
+  const clockSeqHex = clockSeq.toString(16).padStart(4, '0');
+  const nodeHex = node.toString(16).padStart(12, '0');
 
   return `${timeLow}-${timeMid}-${timeHi}-${clockSeqHex}-${nodeHex}`;
 }
@@ -77,46 +77,46 @@ function isValidUUID(uuid: string): boolean {
 // Extract UUID information
 function analyzeUUID(uuid: string) {
   if (!isValidUUID(uuid)) {
-    return { valid: false, error: "Invalid UUID format" };
+    return { valid: false, error: 'Invalid UUID format' };
   }
 
-  const parts = uuid.split("-");
+  const parts = uuid.split('-');
   const version = parseInt(parts[2][0], 16);
   const variant = parseInt(parts[3][0], 16);
 
-  let versionInfo = "Unknown";
+  let versionInfo = 'Unknown';
   switch (version) {
     case 1:
-      versionInfo = "Version 1 (Timestamp-based)";
+      versionInfo = 'Version 1 (Timestamp-based)';
       break;
     case 2:
-      versionInfo = "Version 2 (DCE Security)";
+      versionInfo = 'Version 2 (DCE Security)';
       break;
     case 3:
-      versionInfo = "Version 3 (MD5 hash)";
+      versionInfo = 'Version 3 (MD5 hash)';
       break;
     case 4:
-      versionInfo = "Version 4 (Random)";
+      versionInfo = 'Version 4 (Random)';
       break;
     case 5:
-      versionInfo = "Version 5 (SHA-1 hash)";
+      versionInfo = 'Version 5 (SHA-1 hash)';
       break;
     default:
       versionInfo = `Version ${version} (Unknown)`;
   }
 
-  let variantInfo = "Unknown";
-  if ((variant & 0x8) === 0) variantInfo = "Reserved (NCS)";
-  else if ((variant & 0xc) === 0x8) variantInfo = "RFC 4122";
-  else if ((variant & 0xe) === 0xc) variantInfo = "Microsoft";
-  else variantInfo = "Reserved (Future)";
+  let variantInfo = 'Unknown';
+  if ((variant & 0x8) === 0) variantInfo = 'Reserved (NCS)';
+  else if ((variant & 0xc) === 0x8) variantInfo = 'RFC 4122';
+  else if ((variant & 0xe) === 0xc) variantInfo = 'Microsoft';
+  else variantInfo = 'Reserved (Future)';
 
   return {
     valid: true,
     version: versionInfo,
     variant: variantInfo,
-    timestamp: version === 1 ? "Timestamp-based" : "N/A",
-    node: version === 1 ? parts[4] : "N/A",
+    timestamp: version === 1 ? 'Timestamp-based' : 'N/A',
+    node: version === 1 ? parts[4] : 'N/A',
     parts: {
       timeLow: parts[0],
       timeMid: parts[1],
@@ -129,13 +129,13 @@ function analyzeUUID(uuid: string) {
 
 const UuidGenerator: React.FC = () => {
   const [currentUuids, setCurrentUuids] = useState<string[]>([
-    "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   ]);
-  const [selectedVersion, setSelectedVersion] = useState<string>("v4");
+  const [selectedVersion, setSelectedVersion] = useState<string>('v4');
   const [bulkCount, setBulkCount] = useState<number>(1);
   const [uppercase, setUppercase] = useState<boolean>(false);
   const [removeDashes, setRemoveDashes] = useState<boolean>(false);
-  const [analyzeInput, setAnalyzeInput] = useState<string>("");
+  const [analyzeInput, setAnalyzeInput] = useState<string>('');
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -161,7 +161,7 @@ const UuidGenerator: React.FC = () => {
       }
 
       if (removeDashes) {
-        uuid = uuid.replace(/-/g, "");
+        uuid = uuid.replace(/-/g, '');
       }
 
       return uuid;
@@ -169,7 +169,7 @@ const UuidGenerator: React.FC = () => {
 
     setCurrentUuids(newUuids);
     toast.success(
-      `Generated ${count} UUID${count > 1 ? "s" : ""} successfully!`
+      `Generated ${count} UUID${count > 1 ? 's' : ''} successfully!`
     );
   }, [selectedVersion, bulkCount, uppercase, removeDashes]);
 
@@ -189,10 +189,10 @@ const UuidGenerator: React.FC = () => {
   }, [handleAnalyze]);
 
   const copyAllUuids = () => {
-    const allUuids = currentUuids.join("\n");
+    const allUuids = currentUuids.join('\n');
     navigator.clipboard.writeText(allUuids);
     toast.success(
-      `Copied ${currentUuids.length} UUID${currentUuids.length > 1 ? "s" : ""} to clipboard!`
+      `Copied ${currentUuids.length} UUID${currentUuids.length > 1 ? 's' : ''} to clipboard!`
     );
   };
 
@@ -310,7 +310,7 @@ const UuidGenerator: React.FC = () => {
                 {/* Generate Button */}
                 <div className="flex justify-center">
                   <Button onClick={generateUUIDs} size="lg" className="px-8">
-                    Generate UUID{bulkCount > 1 ? "s" : ""}
+                    Generate UUID{bulkCount > 1 ? 's' : ''}
                   </Button>
                 </div>
 
@@ -321,11 +321,11 @@ const UuidGenerator: React.FC = () => {
 
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Generated UUID{currentUuids.length > 1 ? "s" : ""} (
+                        Generated UUID{currentUuids.length > 1 ? 's' : ''} (
                         {currentUuids.length})
                       </Label>
                       <div className="flex gap-2">
-                        <CopyButton text={currentUuids.join("\n")} size="sm" />
+                        <CopyButton text={currentUuids.join('\n')} size="sm" />
                         <Button
                           variant="outline"
                           size="sm"
@@ -351,7 +351,7 @@ const UuidGenerator: React.FC = () => {
                     ) : (
                       /* Multiple UUIDs Display */
                       <Textarea
-                        value={currentUuids.join("\n")}
+                        value={currentUuids.join('\n')}
                         readOnly
                         className="h-40 font-mono text-sm bg-slate-50 dark:bg-slate-800 resize-none"
                         placeholder="Generated UUIDs will appear here..."
@@ -397,19 +397,19 @@ const UuidGenerator: React.FC = () => {
                           <div className="font-medium mb-2">✅ Valid UUID</div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                             <div>
-                              <span className="font-medium">Version:</span>{" "}
+                              <span className="font-medium">Version:</span>{' '}
                               {analysisResult.version}
                             </div>
                             <div>
-                              <span className="font-medium">Variant:</span>{" "}
+                              <span className="font-medium">Variant:</span>{' '}
                               {analysisResult.variant}
                             </div>
                             <div>
-                              <span className="font-medium">Timestamp:</span>{" "}
+                              <span className="font-medium">Timestamp:</span>{' '}
                               {analysisResult.timestamp}
                             </div>
                             <div>
-                              <span className="font-medium">Node:</span>{" "}
+                              <span className="font-medium">Node:</span>{' '}
                               {analysisResult.node}
                             </div>
                           </div>
@@ -592,7 +592,7 @@ const UuidGenerator: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Use Version 4 for most cases:</strong>{" "}
+                            <strong>Use Version 4 for most cases:</strong>{' '}
                             Random UUIDs provide the best balance of uniqueness
                             and unpredictability
                           </div>
@@ -602,7 +602,7 @@ const UuidGenerator: React.FC = () => {
                           <div>
                             <strong>
                               Use cryptographically secure generators:
-                            </strong>{" "}
+                            </strong>{' '}
                             Ensure your UUID generator uses a proper random
                             number source
                           </div>
@@ -647,7 +647,7 @@ const UuidGenerator: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Don't rely on UUIDs for security:</strong>{" "}
+                            <strong>Don't rely on UUIDs for security:</strong>{' '}
                             UUIDs are identifiers, not access tokens or
                             passwords
                           </div>
@@ -821,7 +821,7 @@ const UuidGenerator: React.FC = () => {
                             RFC 4122
                           </a>
                           {
-                            " - A Universally Unique Identifier (UUID) URN Namespace"
+                            ' - A Universally Unique Identifier (UUID) URN Namespace'
                           }
                         </div>
                         <div>
@@ -833,7 +833,7 @@ const UuidGenerator: React.FC = () => {
                           >
                             Wikipedia UUID
                           </a>
-                          {" - Comprehensive overview and examples"}
+                          {' - Comprehensive overview and examples'}
                         </div>
                         <div>
                           <a
@@ -844,7 +844,7 @@ const UuidGenerator: React.FC = () => {
                           >
                             UUID Validation
                           </a>
-                          {" - Online UUID testing and validation"}
+                          {' - Online UUID testing and validation'}
                         </div>
                       </div>
                     </div>

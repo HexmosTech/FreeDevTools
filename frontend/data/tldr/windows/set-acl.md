@@ -1,29 +1,29 @@
 ---
-title: "Set-Acl - Control Permissions in Windows | Online Free DevTools by Hexmos"
+title: 'Set-Acl - Control Permissions in Windows | Online Free DevTools by Hexmos'
 name: set-acl
-path: "/freedevtools/tldr/windows/set-acl/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/set-acl/"
-description: "Control file and registry permissions with Set-Acl in Windows. Quickly modify security descriptors for enhanced system security. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/set-acl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/set-acl/'
+description: 'Control file and registry permissions with Set-Acl in Windows. Quickly modify security descriptors for enhanced system security. Free online tool, no registration required.'
 category: windows
 keywords:
-- acl file permissions
-- set acl windows
-- windows set acl
-- powershell set acl
-- security descriptor control
-- windows file permissions manager
-- powershell acl management
-- set acl registry key
-- acl permissions editor
-- file security windows
+  - acl file permissions
+  - set acl windows
+  - windows set acl
+  - powershell set acl
+  - security descriptor control
+  - windows file permissions manager
+  - powershell acl management
+  - set acl registry key
+  - acl permissions editor
+  - file security windows
 features:
-- Change file security descriptors
-- Modify registry key permissions
-- Copy security descriptors between objects
-- Manage access control lists
-- Pass descriptors using the pipeline
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Change file security descriptors
+  - Modify registry key permissions
+  - Copy security descriptors between objects
+  - Manage access control lists
+  - Pass descriptors using the pipeline
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Set-Acl

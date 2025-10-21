@@ -1,9 +1,9 @@
 ---
-title: "Toolbox Image Remover - Remove Images | Online Free DevTools by Hexmos"
+title: 'Toolbox Image Remover - Remove Images | Online Free DevTools by Hexmos'
 name: toolbox-rmi
-path: "/freedevtools/tldr/linux/toolbox-rmi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-rmi/"
-description: "Remove Toolbox images quickly and easily with the toolbox rmi command.  Manage your container images efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/toolbox-rmi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/toolbox-rmi/'
+description: 'Remove Toolbox images quickly and easily with the toolbox rmi command.  Manage your container images efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - toolbox image removal
@@ -22,8 +22,8 @@ features:
   - Force removal of images used by containers.
   - Efficiently manage your Toolbox image storage.
   - Streamline your container image workflow.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # toolbox rmi

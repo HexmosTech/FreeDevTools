@@ -1,29 +1,29 @@
 ---
-title: "Analyze PHP Code - phploc Code Metrics | Online Free DevTools by Hexmos"
+title: 'Analyze PHP Code - phploc Code Metrics | Online Free DevTools by Hexmos'
 name: phploc
-path: "/freedevtools/tldr/php/phploc/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phploc/"
-description: "Analyze PHP code with phploc, a code metrics tool. Measure project size and structure quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phploc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phploc/'
+description: 'Analyze PHP code with phploc, a code metrics tool. Measure project size and structure quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP code analysis
-- PHP code metrics
-- phploc metrics tool
-- PHP project size
-- PHP code structure
-- PHP code analyzer
-- PHP code complexity
-- PHP code statistics
-- Command line PHP analysis
-- PHP quality assurance
+  - PHP code analysis
+  - PHP code metrics
+  - phploc metrics tool
+  - PHP project size
+  - PHP code structure
+  - PHP code analyzer
+  - PHP code complexity
+  - PHP code statistics
+  - Command line PHP analysis
+  - PHP quality assurance
 features:
-- Analyze PHP project code size and structure
-- Exclude specific files or directories from analysis
-- Generate CSV or XML reports of code metrics
-- Count PHPUnit test case classes and methods
-- Customize analyzed files using glob patterns
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze PHP project code size and structure
+  - Exclude specific files or directories from analysis
+  - Generate CSV or XML reports of code metrics
+  - Count PHPUnit test case classes and methods
+  - Customize analyzed files using glob patterns
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phploc

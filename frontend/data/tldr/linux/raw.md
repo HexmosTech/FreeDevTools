@@ -1,29 +1,29 @@
 ---
-title: "Raw Bind - Control Device Binding on Linux | Online Free DevTools by Hexmos"
+title: 'Raw Bind - Control Device Binding on Linux | Online Free DevTools by Hexmos'
 name: raw
-path: "/freedevtools/tldr/linux/raw/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/raw/"
-description: "Control raw device bindings with raw on Linux. Query existing bindings and manage raw character devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/raw/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/raw/'
+description: 'Control raw device bindings with raw on Linux. Query existing bindings and manage raw character devices. Free online tool, no registration required.'
 category: linux
 keywords:
-- raw device binding
-- linux raw character device
-- block device binding
-- raw device query
-- character device control
-- linux device manager
-- raw command
-- device mapping linux
-- raw device tools
-- linux command line tools
+  - raw device binding
+  - linux raw character device
+  - block device binding
+  - raw device query
+  - character device control
+  - linux device manager
+  - raw command
+  - device mapping linux
+  - raw device tools
+  - linux command line tools
 features:
-- Bind a raw character device to a block device
-- Query an existing raw device binding
-- List all bound raw devices
-- Manage device mappings
-- Control raw device access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Bind a raw character device to a block device
+  - Query an existing raw device binding
+  - List all bound raw devices
+  - Manage device mappings
+  - Control raw device access
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # raw

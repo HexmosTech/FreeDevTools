@@ -1,29 +1,29 @@
 ---
-title: "Internet Archive - Manage Files | Online Free DevTools by Hexmos"
+title: 'Internet Archive - Manage Files | Online Free DevTools by Hexmos'
 name: ia
-path: "/freedevtools/tldr/common/ia/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ia/"
+path: '/freedevtools/tldr/common/ia/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ia/'
 description: "Manage files on the Internet Archive with the 'ia' command-line tool. Upload, download, delete items and search for content. Free online tool, no registration required."
 category: common
 keywords:
-- internet archive command
-- archive.org cli
-- ia upload
-- ia download
-- internet archive search
-- internet archive metadata
-- archive.org command line
-- digital preservation tools
-- archive.org management
-- internet archive backup
+  - internet archive command
+  - archive.org cli
+  - ia upload
+  - ia download
+  - internet archive search
+  - internet archive metadata
+  - archive.org command line
+  - digital preservation tools
+  - archive.org management
+  - internet archive backup
 features:
-- Upload files to the Internet Archive
-- Download items from archive.org
-- Delete files from the archive
-- Search the archive using complex queries
-- Configure access with API keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload files to the Internet Archive
+  - Download items from archive.org
+  - Delete files from the archive
+  - Search the archive using complex queries
+  - Configure access with API keys
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ia

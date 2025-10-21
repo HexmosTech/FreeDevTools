@@ -1,29 +1,29 @@
 ---
-title: "Hg Update - Control Mercurial Changesets | Online Free DevTools by Hexmos"
+title: 'Hg Update - Control Mercurial Changesets | Online Free DevTools by Hexmos'
 name: hg-update
-path: "/freedevtools/tldr/hg/hg-update/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-update/"
-description: "Control Mercurial changesets with Hg Update. Revert to specific revisions, discard uncommitted changes and update to specific dates using Mercurial SCM. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-update/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-update/'
+description: 'Control Mercurial changesets with Hg Update. Revert to specific revisions, discard uncommitted changes and update to specific dates using Mercurial SCM. Free online tool, no registration required.'
 category: common
 keywords:
-- Mercurial changeset update
-- Mercurial revision control
-- Hg version history management
-- Hg discard changes
-- Hg date-based update
-- SCM update tool
-- Mercurial update command
-- Hg rollback tool
-- Hg command line update
-- Hg version control
+  - Mercurial changeset update
+  - Mercurial revision control
+  - Hg version history management
+  - Hg discard changes
+  - Hg date-based update
+  - SCM update tool
+  - Mercurial update command
+  - Hg rollback tool
+  - Hg command line update
+  - Hg version control
 features:
-- Update working directory to a specific changeset.
-- Revert to a specific revision.
-- Discard all uncommitted changes.
-- Update to the last commit matching a specific date.
-- Update to the tip of the current branch.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update working directory to a specific changeset.
+  - Revert to a specific revision.
+  - Discard all uncommitted changes.
+  - Update to the last commit matching a specific date.
+  - Update to the tip of the current branch.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg update

@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Import - Import Resources | Online Free DevTools by Hexmos"
+title: 'Pulumi Import - Import Resources | Online Free DevTools by Hexmos'
 name: pulumi-import
-path: "/freedevtools/tldr/pulumi/pulumi-import/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-import/"
-description: "Import resources with Pulumi Import. Manage cloud infrastructure by importing existing resources into your Pulumi stack with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-import/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-import/'
+description: 'Import resources with Pulumi Import. Manage cloud infrastructure by importing existing resources into your Pulumi stack with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi import resource
-- Infrastructure as Code import
-- Cloud resource import
-- Pulumi stack management
-- AWS resource import
-- Azure resource import
-- GCP resource import
-- Kubernetes resource import
-- IaC resource management
-- Terraform import Pulumi
+  - Pulumi import resource
+  - Infrastructure as Code import
+  - Cloud resource import
+  - Pulumi stack management
+  - AWS resource import
+  - Azure resource import
+  - GCP resource import
+  - Kubernetes resource import
+  - IaC resource management
+  - Terraform import Pulumi
 features:
-- Import existing cloud resources into Pulumi stacks
-- Generate resource definitions from existing infrastructure
-- Supports importing from various cloud providers (AWS, Azure, GCP)
-- Bulk import resources from JSON file
-- Output import configuration to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Import existing cloud resources into Pulumi stacks
+  - Generate resource definitions from existing infrastructure
+  - Supports importing from various cloud providers (AWS, Azure, GCP)
+  - Bulk import resources from JSON file
+  - Output import configuration to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi import

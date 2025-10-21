@@ -1,9 +1,9 @@
 ---
-title: "Remove Packages - Control Repo Packages | Online Free DevTools by Hexmos"
+title: 'Remove Packages - Control Repo Packages | Online Free DevTools by Hexmos'
 name: repo-remove
-path: "/freedevtools/tldr/linux/repo-remove/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/repo-remove/"
-description: "Control repo packages with repo-remove. Remove outdated or unwanted packages from your local software repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/repo-remove/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/repo-remove/'
+description: 'Control repo packages with repo-remove. Remove outdated or unwanted packages from your local software repository. Free online tool, no registration required.'
 category: linux
 keywords:
   - package removal
@@ -22,8 +22,8 @@ features:
   - Update the package database after removing packages
   - Facilitate efficient repository management
   - Automate package removal processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # repo-remove

@@ -1,9 +1,9 @@
 ---
-title: "Ifstatus - Display OpenWRT Status | Online Free DevTools by Hexmos"
+title: 'Ifstatus - Display OpenWRT Status | Online Free DevTools by Hexmos'
 name: ifstatus
-path: "/freedevtools/tldr/linux/ifstatus/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ifstatus/"
-description: "Display OpenWRT interface status with Ifstatus. Monitor network interfaces, retrieve configurations, and troubleshoot network issues effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ifstatus/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ifstatus/'
+description: 'Display OpenWRT interface status with Ifstatus. Monitor network interfaces, retrieve configurations, and troubleshoot network issues effectively. Free online tool, no registration required.'
 category: linux
 keywords:
   - OpenWRT interface status
@@ -22,8 +22,8 @@ features:
   - Retrieves detailed interface configurations.
   - Provides insights for network troubleshooting.
   - Offers command-line interface control.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ifstatus

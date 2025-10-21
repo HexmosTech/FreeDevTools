@@ -1,29 +1,29 @@
 ---
-title: "Format Data with Miller (mlr) | Online Free DevTools by Hexmos"
+title: 'Format Data with Miller (mlr) | Online Free DevTools by Hexmos'
 name: mlr
-path: "/freedevtools/tldr/common/mlr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mlr/"
-description: "Format data easily with Miller (mlr). Convert between CSV, JSON, TSV, and tabular formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mlr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mlr/'
+description: 'Format data easily with Miller (mlr). Convert between CSV, JSON, TSV, and tabular formats. Free online tool, no registration required.'
 category: common
 keywords:
-- csv formatter
-- json formatter
-- tsv formatter
-- tabular data converter
-- data transformation cli
-- miller command line
-- miller awk alternative
-- miller sed alternative
-- mlr csv json
-- linux data tools
+  - csv formatter
+  - json formatter
+  - tsv formatter
+  - tabular data converter
+  - data transformation cli
+  - miller command line
+  - miller awk alternative
+  - miller sed alternative
+  - mlr csv json
+  - linux data tools
 features:
-- Convert CSV, JSON, and TSV data formats.
-- Sort data based on field values (alphabetical or numerical).
-- Perform calculations on data fields.
-- Filter data based on regular expressions.
-- Pretty-print data in tabular or JSON formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert CSV, JSON, and TSV data formats.
+  - Sort data based on field values (alphabetical or numerical).
+  - Perform calculations on data fields.
+  - Filter data based on regular expressions.
+  - Pretty-print data in tabular or JSON formats.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mlr

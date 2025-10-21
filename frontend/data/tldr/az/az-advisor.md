@@ -1,29 +1,29 @@
 ---
-title: "Azure Advisor - Manage Subscriptions | Online Free DevTools by Hexmos"
+title: 'Azure Advisor - Manage Subscriptions | Online Free DevTools by Hexmos'
 name: az-advisor
-path: "/freedevtools/tldr/az/az-advisor/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-advisor/"
-description: "Manage Azure subscriptions effectively with az advisor. Optimize configuration and receive recommendations to enhance your cloud environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-advisor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-advisor/'
+description: 'Manage Azure subscriptions effectively with az advisor. Optimize configuration and receive recommendations to enhance your cloud environment. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure Advisor management
-- Azure subscription configuration
-- Azure recommendation list
-- az advisor command
-- Azure cloud optimization
-- Azure resource management
-- Azure cost reduction
-- Azure best practices
-- CLI advisor tool
-- Azure security advisor
+  - Azure Advisor management
+  - Azure subscription configuration
+  - Azure recommendation list
+  - az advisor command
+  - Azure cloud optimization
+  - Azure resource management
+  - Azure cost reduction
+  - Azure best practices
+  - CLI advisor tool
+  - Azure security advisor
 features:
-- List Azure Advisor configurations
-- Show specific Azure Advisor configuration details
-- List Azure Advisor recommendations
-- Enable Azure Advisor recommendations for resources
-- Disable Azure Advisor recommendations for resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List Azure Advisor configurations
+  - Show specific Azure Advisor configuration details
+  - List Azure Advisor recommendations
+  - Enable Azure Advisor recommendations for resources
+  - Disable Azure Advisor recommendations for resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az advisor

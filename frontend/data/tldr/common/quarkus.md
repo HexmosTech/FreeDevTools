@@ -1,29 +1,29 @@
 ---
-title: "Quarkus - Create Java Applications | Online Free DevTools by Hexmos"
+title: 'Quarkus - Create Java Applications | Online Free DevTools by Hexmos'
 name: quarkus
-path: "/freedevtools/tldr/common/quarkus/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/quarkus/"
-description: "Create Java applications instantly with Quarkus. Manage extensions, build containers, and deploy to Kubernetes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/quarkus/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/quarkus/'
+description: 'Create Java applications instantly with Quarkus. Manage extensions, build containers, and deploy to Kubernetes. Free online tool, no registration required.'
 category: common
 keywords:
-- quarkus application development
-- quarkus extension management
-- quarkus java framework
-- quarkus kubernetes deployment
-- quarkus container build
-- quarkus live coding
-- quarkus continuous testing
-- quarkus command line interface
-- java application generator
-- quarkus project update
+  - quarkus application development
+  - quarkus extension management
+  - quarkus java framework
+  - quarkus kubernetes deployment
+  - quarkus container build
+  - quarkus live coding
+  - quarkus continuous testing
+  - quarkus command line interface
+  - java application generator
+  - quarkus project update
 features:
-- Create new Quarkus application projects.
-- Run Quarkus projects in live coding mode.
-- Build container images using Docker.
-- Deploy Quarkus applications to Kubernetes.
-- Add and manage Quarkus extensions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Quarkus application projects.
+  - Run Quarkus projects in live coding mode.
+  - Build container images using Docker.
+  - Deploy Quarkus applications to Kubernetes.
+  - Add and manage Quarkus extensions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # quarkus

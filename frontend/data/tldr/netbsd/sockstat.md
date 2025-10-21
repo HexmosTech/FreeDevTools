@@ -1,9 +1,9 @@
 ---
-title: "List Sockets - Monitor Network Sockets with sockstat | Online Free DevTools by Hexmos"
+title: 'List Sockets - Monitor Network Sockets with sockstat | Online Free DevTools by Hexmos'
 name: sockstat
-path: "/freedevtools/tldr/netbsd/sockstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sockstat/"
-description: "Monitor network sockets on NetBSD with sockstat. Analyze network connections and troubleshoot network issues using socket information. Free online tool, no registration required."
+path: '/freedevtools/tldr/netbsd/sockstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/netbsd/sockstat/'
+description: 'Monitor network sockets on NetBSD with sockstat. Analyze network connections and troubleshoot network issues using socket information. Free online tool, no registration required.'
 category: netbsd
 keywords:
   - netbsd network socket monitoring
@@ -22,8 +22,8 @@ features:
   - Filter sockets by protocol and port on NetBSD
   - Display UNIX domain socket information on NetBSD
   - Show numeric socket output without name resolution on NetBSD
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sockstat

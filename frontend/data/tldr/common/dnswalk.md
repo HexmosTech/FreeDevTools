@@ -1,29 +1,29 @@
 ---
-title: "Validate DNS Zones - dnswalk Debugger | Online Free DevTools by Hexmos"
+title: 'Validate DNS Zones - dnswalk Debugger | Online Free DevTools by Hexmos'
 name: dnswalk
-path: "/freedevtools/tldr/common/dnswalk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dnswalk/"
-description: "Validate DNS zone configurations with dnswalk. Identify inconsistencies, best practice violations, and debug DNS pathways efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dnswalk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dnswalk/'
+description: 'Validate DNS zone configurations with dnswalk. Identify inconsistencies, best practice violations, and debug DNS pathways efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- DNS zone validation
-- DNS debugger
-- dnswalk command
-- DNS record analysis
-- DNS configuration check
-- Zone file analyzer
-- DNS troubleshooting
-- Linux dnswalk
-- command-line DNS tool
-- domain name validation
+  - DNS zone validation
+  - DNS debugger
+  - dnswalk command
+  - DNS record analysis
+  - DNS configuration check
+  - Zone file analyzer
+  - DNS troubleshooting
+  - Linux dnswalk
+  - command-line DNS tool
+  - domain name validation
 features:
-- Debug DNS pathways for FQDNs
-- Recursively process sub-domains
-- Check zones modified since last run
-- Identify invalid characters in domain names
-- Detect lame delegations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Debug DNS pathways for FQDNs
+  - Recursively process sub-domains
+  - Check zones modified since last run
+  - Identify invalid characters in domain names
+  - Detect lame delegations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnswalk

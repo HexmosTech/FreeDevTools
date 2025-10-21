@@ -1,29 +1,29 @@
 ---
-title: "Display Git Commits - Find Author Commits | Online Free DevTools by Hexmos"
+title: 'Display Git Commits - Find Author Commits | Online Free DevTools by Hexmos'
 name: git-contrib
-path: "/freedevtools/tldr/git/git-contrib/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-contrib/"
-description: "Display Git commits easily with git-contrib to find author contributions. Analyze code history and track changes by author. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-contrib/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-contrib/'
+description: 'Display Git commits easily with git-contrib to find author contributions. Analyze code history and track changes by author. Free online tool, no registration required.'
 category: common
 keywords:
-- git author commits
-- git contributor analysis
-- git commit history
-- find git commits
-- git author statistics
-- git code contribution
-- git contribution summary
-- linux git contrib
-- macos git contrib
-- command line git author
+  - git author commits
+  - git contributor analysis
+  - git commit history
+  - find git commits
+  - git author statistics
+  - git code contribution
+  - git contribution summary
+  - linux git contrib
+  - macos git contrib
+  - command line git author
 features:
-- Display commits for a specific author
-- Filter commits by author easily
-- Show commit hashes and messages
-- Analyze author contribution to a repository
-- Identify code ownership and responsibility
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display commits for a specific author
+  - Filter commits by author easily
+  - Show commit hashes and messages
+  - Analyze author contribution to a repository
+  - Identify code ownership and responsibility
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git contrib

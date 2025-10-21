@@ -1,6 +1,5 @@
 // Script used to create a light version of cluster.json without the extra metadata
 
-
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -23,7 +22,7 @@ async function createClusterLight() {
     for (const [key, cluster] of Object.entries(clusterData.clusters)) {
       lightCluster.clusters[key] = {
         name: cluster.name,
-        fileNames: cluster.fileNames.map(f => ({ fileName: f.fileName }))
+        fileNames: cluster.fileNames.map((f) => ({ fileName: f.fileName })),
       };
     }
     console.timeEnd('Create light cluster');

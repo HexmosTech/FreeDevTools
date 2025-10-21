@@ -1,29 +1,29 @@
 ---
-title: "Speedtest - Measure Network Speed | Online Free DevTools by Hexmos"
+title: 'Speedtest - Measure Network Speed | Online Free DevTools by Hexmos'
 name: speedtest-rs
-path: "/freedevtools/tldr/speedtest/speedtest-rs/"
-canonical: "https://hexmos.com/freedevtools/tldr/speedtest/speedtest-rs/"
-description: "Measure network speed with Speedtest-rs. Test download and upload speeds using the command line. Get a shareable link of results. Free online tool, no registration required."
+path: '/freedevtools/tldr/speedtest/speedtest-rs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/speedtest/speedtest-rs/'
+description: 'Measure network speed with Speedtest-rs. Test download and upload speeds using the command line. Get a shareable link of results. Free online tool, no registration required.'
 category: common
 keywords:
-- network speed test
-- command line speedtest
-- speedtest.net CLI
-- internet speed checker
-- bandwidth test
-- download speed test
-- upload speed test
-- latency test CLI
-- speedtest linux
-- speedtest macos
+  - network speed test
+  - command line speedtest
+  - speedtest.net CLI
+  - internet speed checker
+  - bandwidth test
+  - download speed test
+  - upload speed test
+  - latency test CLI
+  - speedtest linux
+  - speedtest macos
 features:
-- Test download and upload speeds
-- List speedtest.net servers by distance
-- Generate shareable results image
-- Display basic output information
-- Run download or upload test only
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Test download and upload speeds
+  - List speedtest.net servers by distance
+  - Generate shareable results image
+  - Display basic output information
+  - Run download or upload test only
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # speedtest-rs

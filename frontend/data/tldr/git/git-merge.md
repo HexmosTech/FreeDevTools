@@ -1,29 +1,29 @@
 ---
-title: "Git Merge - Merge Branches | Online Free DevTools by Hexmos"
+title: 'Git Merge - Merge Branches | Online Free DevTools by Hexmos'
 name: git-merge
-path: "/freedevtools/tldr/git/git-merge/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-merge/"
-description: "Merge branches effortlessly with Git Merge. Resolve conflicts, edit merge messages, and control your git history. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-merge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-merge/'
+description: 'Merge branches effortlessly with Git Merge. Resolve conflicts, edit merge messages, and control your git history. Free online tool, no registration required.'
 category: common
 keywords:
-- git merge branches
-- git branch merge
-- merge git repository
-- git merge conflicts
-- git merge command line
-- git merge abort
-- git merge strategy
-- git merge no ff
-- git merge edit message
-- git version control merge
+  - git merge branches
+  - git branch merge
+  - merge git repository
+  - git merge conflicts
+  - git merge command line
+  - git merge abort
+  - git merge strategy
+  - git merge no ff
+  - git merge edit message
+  - git version control merge
 features:
-- Merge a specified branch into the current branch
-- Edit the merge message before committing
-- Create a merge commit even when a fast-forward is possible
-- Abort an ongoing merge operation in case of conflicts
-- Merge using specific strategies and options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Merge a specified branch into the current branch
+  - Edit the merge message before committing
+  - Create a merge commit even when a fast-forward is possible
+  - Abort an ongoing merge operation in case of conflicts
+  - Merge using specific strategies and options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git merge

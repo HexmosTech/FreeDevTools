@@ -1,9 +1,9 @@
 ---
-title: "Autorandr - Control Screen Layout Automatically | Online Free DevTools by Hexmos"
+title: 'Autorandr - Control Screen Layout Automatically | Online Free DevTools by Hexmos'
 name: autorandr
-path: "/freedevtools/tldr/linux/autorandr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/autorandr/"
-description: "Control screen layout automatically with Autorandr. Save, load and manage multiple display configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/autorandr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/autorandr/'
+description: 'Control screen layout automatically with Autorandr. Save, load and manage multiple display configurations. Free online tool, no registration required.'
 category: linux
 keywords:
   - screen layout manager
@@ -22,8 +22,8 @@ features:
   - Automatically detect and load a profile
   - Set a default screen layout profile
   - Manage multiple display configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # autorandr

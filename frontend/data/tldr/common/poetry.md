@@ -1,29 +1,29 @@
 ---
-title: "Poetry - Manage Python Dependencies | Online Free DevTools by Hexmos"
+title: 'Poetry - Manage Python Dependencies | Online Free DevTools by Hexmos'
 name: poetry
-path: "/freedevtools/tldr/common/poetry/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/poetry/"
-description: "Manage Python dependencies easily with Poetry. Simplify project dependency management, create virtual environments, and publish packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/poetry/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/poetry/'
+description: 'Manage Python dependencies easily with Poetry. Simplify project dependency management, create virtual environments, and publish packages. Free online tool, no registration required.'
 category: common
 keywords:
-- python dependency manager
-- poetry package manager
-- pyproject.toml editor
-- python virtual environment
-- poetry add command
-- poetry install command
-- poetry update command
-- python package distribution
-- poetry versioning tool
-- python dependency resolver
+  - python dependency manager
+  - poetry package manager
+  - pyproject.toml editor
+  - python virtual environment
+  - poetry add command
+  - poetry install command
+  - poetry update command
+  - python package distribution
+  - poetry versioning tool
+  - python dependency resolver
 features:
-- Create new Python projects with dependency management
-- Install and manage project dependencies automatically
-- Update dependencies and lock versions with `poetry.lock`
-- Execute commands within project virtual environments
-- Bump project versions following semantic conventions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Python projects with dependency management
+  - Install and manage project dependencies automatically
+  - Update dependencies and lock versions with `poetry.lock`
+  - Execute commands within project virtual environments
+  - Bump project versions following semantic conventions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # poetry

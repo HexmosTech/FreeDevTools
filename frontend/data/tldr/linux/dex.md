@@ -1,9 +1,9 @@
 ---
-title: "Generate DesktopEntry Files - dex Command | Online Free DevTools by Hexmos"
+title: 'Generate DesktopEntry Files - dex Command | Online Free DevTools by Hexmos'
 name: dex
-path: "/freedevtools/tldr/linux/dex/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dex/"
-description: "Generate and execute DesktopEntry files with the dex command.  Manage application autostart, preview executions, and create desktop entries easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dex/'
+description: 'Generate and execute DesktopEntry files with the dex command.  Manage application autostart, preview executions, and create desktop entries easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - desktop entry generator
@@ -22,8 +22,8 @@ features:
   - Preview program execution without actually running them.
   - Manage application autostart entries in GNOME and other environments.
   - Create and execute single programs with terminal configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dex

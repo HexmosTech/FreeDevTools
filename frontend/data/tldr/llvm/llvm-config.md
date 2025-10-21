@@ -1,29 +1,29 @@
 ---
-title: "LLVM Config - Generate Compiler Flags | Online Free DevTools by Hexmos"
+title: 'LLVM Config - Generate Compiler Flags | Online Free DevTools by Hexmos'
 name: llvm-config
-path: "/freedevtools/tldr/llvm/llvm-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-config/"
-description: "Generate compiler flags with LLVM Config. Retrieve configuration information, link LLVM based programs, and manage LLVM installations. Free online tool, no registration required."
+path: '/freedevtools/tldr/llvm/llvm-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/llvm/llvm-config/'
+description: 'Generate compiler flags with LLVM Config. Retrieve configuration information, link LLVM based programs, and manage LLVM installations. Free online tool, no registration required.'
 category: common
 keywords:
-- LLVM configuration
-- compiler flags generator
-- link LLVM programs
-- LLVM targets
-- build system integration
-- clang++ compilation
-- LLVM installation prefix
-- Makefile integration
-- configure scripts
-- cross-platform LLVM
+  - LLVM configuration
+  - compiler flags generator
+  - link LLVM programs
+  - LLVM targets
+  - build system integration
+  - clang++ compilation
+  - LLVM installation prefix
+  - Makefile integration
+  - configure scripts
+  - cross-platform LLVM
 features:
-- Generate compiler and linker flags
-- Print LLVM installation prefix
-- List supported LLVM targets
-- Integrate with build systems (Makefiles, configure scripts)
-- Configure compilation of LLVM based programs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate compiler and linker flags
+  - Print LLVM installation prefix
+  - List supported LLVM targets
+  - Integrate with build systems (Makefiles, configure scripts)
+  - Configure compilation of LLVM based programs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # llvm-config

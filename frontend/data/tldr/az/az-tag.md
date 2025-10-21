@@ -1,29 +1,29 @@
 ---
-title: "AZ Tag - Manage Azure Resource Tags | Online Free DevTools by Hexmos"
+title: 'AZ Tag - Manage Azure Resource Tags | Online Free DevTools by Hexmos'
 name: az-tag
-path: "/freedevtools/tldr/az/az-tag/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-tag/"
-description: "Manage Azure resource tags with AZ Tag. Create, delete, list, and modify tags on Azure subscriptions and resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-tag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-tag/'
+description: 'Manage Azure resource tags with AZ Tag. Create, delete, list, and modify tags on Azure subscriptions and resources. Free online tool, no registration required.'
 category: common
 keywords:
-- azure tag manager
-- azure resource tag
-- azure cli tag
-- az tag command
-- azure tag create
-- azure tag delete
-- azure tag list
-- azure subscription tag
-- azure resource tagging
-- cli tag management
+  - azure tag manager
+  - azure resource tag
+  - azure cli tag
+  - az tag command
+  - azure tag create
+  - azure tag delete
+  - azure tag list
+  - azure subscription tag
+  - azure resource tagging
+  - cli tag management
 features:
-- Create new Azure resource tags
-- Delete existing Azure resource tags
-- List all tags on a subscription
-- Add values to existing tags
-- Remove values from existing tags
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Azure resource tags
+  - Delete existing Azure resource tags
+  - List all tags on a subscription
+  - Add values to existing tags
+  - Remove values from existing tags
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az tag

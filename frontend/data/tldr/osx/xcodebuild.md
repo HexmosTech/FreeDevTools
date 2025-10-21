@@ -1,29 +1,29 @@
 ---
-title: "Xcode Build - Build iOS/macOS Projects | Online Free DevTools by Hexmos"
+title: 'Xcode Build - Build iOS/macOS Projects | Online Free DevTools by Hexmos'
 name: xcodebuild
-path: "/freedevtools/tldr/osx/xcodebuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xcodebuild/"
-description: "Build iOS and macOS projects effortlessly with Xcode Build. Compile code, manage configurations, and generate deliverables using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xcodebuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xcodebuild/'
+description: 'Build iOS and macOS projects effortlessly with Xcode Build. Compile code, manage configurations, and generate deliverables using the command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- Xcode project builder
-- iOS build automation
-- macOS build tool
-- Command line build
-- Xcode command line
-- iOS project compilation
-- macOS project compilation
-- Xcode build configuration
-- iOS SDK build
-- macOS SDK build
+  - Xcode project builder
+  - iOS build automation
+  - macOS build tool
+  - Command line build
+  - Xcode command line
+  - iOS project compilation
+  - macOS project compilation
+  - Xcode build configuration
+  - iOS SDK build
+  - macOS SDK build
 features:
-- Build Xcode workspaces and projects
-- Specify build configurations and schemes
-- Clean build directories before building
-- Customize the output directory for build products
-- Show available SDKs for building
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Xcode workspaces and projects
+  - Specify build configurations and schemes
+  - Clean build directories before building
+  - Customize the output directory for build products
+  - Show available SDKs for building
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xcodebuild

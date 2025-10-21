@@ -1,29 +1,29 @@
 ---
-title: "Display Image - Show Images on Command Line | Online Free DevTools by Hexmos"
+title: 'Display Image - Show Images on Command Line | Online Free DevTools by Hexmos'
 name: imgcat
-path: "/freedevtools/tldr/common/imgcat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/imgcat/"
-description: "Display images quickly with imgcat. Show images directly in your terminal using command-line tools for faster workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/imgcat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/imgcat/'
+description: 'Display images quickly with imgcat. Show images directly in your terminal using command-line tools for faster workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- command line image display
-- terminal image viewer
-- iTerm2 image display
-- command line image tool
-- image display linux
-- image display macos
-- imgcat image viewer
-- command line image preview
-- terminal graphics display
-- console image display
+  - command line image display
+  - terminal image viewer
+  - iTerm2 image display
+  - command line image tool
+  - image display linux
+  - image display macos
+  - imgcat image viewer
+  - command line image preview
+  - terminal graphics display
+  - console image display
 features:
-- Display images directly in compatible terminals
-- Preview images from the command line
-- Support for iTerm2 terminal
-- Streamline image viewing workflows
-- Display image files from local paths
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display images directly in compatible terminals
+  - Preview images from the command line
+  - Support for iTerm2 terminal
+  - Streamline image viewing workflows
+  - Display image files from local paths
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # imgcat

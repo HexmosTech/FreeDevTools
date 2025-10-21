@@ -1,9 +1,9 @@
 ---
-title: "Execute Command - Control Processes | Online Free DevTools by Hexmos"
+title: 'Execute Command - Control Processes | Online Free DevTools by Hexmos'
 name: exec
-path: "/freedevtools/tldr/linux/exec/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/exec/"
-description: "Execute commands directly with exec. Control processes, modify environments, and run login shells. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/exec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/exec/'
+description: 'Execute commands directly with exec. Control processes, modify environments, and run login shells. Free online tool, no registration required.'
 category: linux
 keywords:
   - command execution
@@ -22,8 +22,8 @@ features:
   - Execute commands as a login shell.
   - Change the command name during execution.
   - Execute commands with a clean environment.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exec

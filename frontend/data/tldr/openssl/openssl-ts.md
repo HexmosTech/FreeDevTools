@@ -1,29 +1,29 @@
 ---
-title: "Generate Timestamp - OpenSSL TS | Online Free DevTools by Hexmos"
+title: 'Generate Timestamp - OpenSSL TS | Online Free DevTools by Hexmos'
 name: openssl-ts
-path: "/freedevtools/tldr/openssl/openssl-ts/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-ts/"
-description: "Generate and verify timestamps with OpenSSL TS. Create timestamp requests, check response data, and secure your files. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-ts/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-ts/'
+description: 'Generate and verify timestamps with OpenSSL TS. Create timestamp requests, check response data, and secure your files. Free online tool, no registration required.'
 category: common
 keywords:
-- timestamp generation
-- openssl timestamp
-- sha512 timestamp
-- timestamp request
-- timestamp response
-- openssl ts command
-- digital timestamp
-- file timestamp
-- tsq file
-- tsr file
+  - timestamp generation
+  - openssl timestamp
+  - sha512 timestamp
+  - timestamp request
+  - timestamp response
+  - openssl ts command
+  - digital timestamp
+  - file timestamp
+  - tsq file
+  - tsr file
 features:
-- Generate SHA-512 timestamp requests
-- Check timestamp response metadata
-- Verify timestamp request and response with SSL certificate
-- Create timestamp responses using key and signing certificate
-- Verify digital signatures of files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate SHA-512 timestamp requests
+  - Check timestamp response metadata
+  - Verify timestamp request and response with SSL certificate
+  - Create timestamp responses using key and signing certificate
+  - Verify digital signatures of files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl ts

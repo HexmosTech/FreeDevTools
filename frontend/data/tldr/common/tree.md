@@ -1,29 +1,29 @@
 ---
-title: "Tree - Visualize Directory Structure | Online Free DevTools by Hexmos"
+title: 'Tree - Visualize Directory Structure | Online Free DevTools by Hexmos'
 name: tree
-path: "/freedevtools/tldr/common/tree/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tree/"
-description: "Visualize directory structures with Tree. Explore files and folders in a tree-like format, understanding hierarchy easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tree/'
+description: 'Visualize directory structures with Tree. Explore files and folders in a tree-like format, understanding hierarchy easily. Free online tool, no registration required.'
 category: common
 keywords:
-- directory tree visualizer
-- file system tree
-- linux tree command
-- directory structure viewer
-- unix tree command
-- macos tree command
-- common tree tool
-- folder structure tree
-- recursive directory listing
-- command line tree
+  - directory tree visualizer
+  - file system tree
+  - linux tree command
+  - directory structure viewer
+  - unix tree command
+  - macos tree command
+  - common tree tool
+  - folder structure tree
+  - recursive directory listing
+  - command line tree
 features:
-- Display directory content as a tree.
-- Limit the depth of the tree display.
-- Show hidden files and directories.
-- Display file sizes in a human-readable format.
-- Filter files and directories using wildcard patterns.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display directory content as a tree.
+  - Limit the depth of the tree display.
+  - Show hidden files and directories.
+  - Display file sizes in a human-readable format.
+  - Filter files and directories using wildcard patterns.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tree

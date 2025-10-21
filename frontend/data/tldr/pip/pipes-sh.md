@@ -1,29 +1,29 @@
 ---
-title: "Pipes Terminal Generator - Create Animated Pipes | Online Free DevTools by Hexmos"
+title: 'Pipes Terminal Generator - Create Animated Pipes | Online Free DevTools by Hexmos'
 name: pipes.sh
-path: "/freedevtools/tldr/pip/pipes-sh/"
-canonical: "https://hexmos-com/freedevtools/tldr/pip/pipes-sh/"
-description: "Generate terminal pipes animations with pipes.sh. Customize color, pattern, and framerate using this Bash script. Free online tool, no registration required."
+path: '/freedevtools/tldr/pip/pipes-sh/'
+canonical: 'https://hexmos-com/freedevtools/tldr/pip/pipes-sh/'
+description: 'Generate terminal pipes animations with pipes.sh. Customize color, pattern, and framerate using this Bash script. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal pipes animation
-- bash script animation
-- linux terminal art
-- command line visualizer
-- animated terminal output
-- customizable pipes generator
-- shell script generator
-- random path generator
-- terminal graphics generator
-- pipes.sh animation tool
+  - terminal pipes animation
+  - bash script animation
+  - linux terminal art
+  - command line visualizer
+  - animated terminal output
+  - customizable pipes generator
+  - shell script generator
+  - random path generator
+  - terminal graphics generator
+  - pipes.sh animation tool
 features:
-- Customize pipe patterns
-- Change pipe colors
-- Adjust animation framerate
-- Disable colors for monochrome display
-- Display version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Customize pipe patterns
+  - Change pipe colors
+  - Adjust animation framerate
+  - Disable colors for monochrome display
+  - Display version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pipes.sh

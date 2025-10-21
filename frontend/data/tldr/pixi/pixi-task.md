@@ -1,29 +1,29 @@
 ---
-title: "Pixi Task - Manage Project Tasks | Online Free DevTools by Hexmos"
+title: 'Pixi Task - Manage Project Tasks | Online Free DevTools by Hexmos'
 name: pixi-task
-path: "/freedevtools/tldr/pixi/pixi-task/"
-canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi-task/"
-description: "Manage project tasks easily with Pixi Task. Automate workflows and streamline development using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/pixi/pixi-task/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pixi/pixi-task/'
+description: 'Manage project tasks easily with Pixi Task. Automate workflows and streamline development using simple commands. Free online tool, no registration required.'
 category: common
 keywords:
-- pixi task management
-- pixi project tasks
-- pixi task automation
-- pixi command line tasks
-- pixi task alias
-- pixi task list
-- pixi environment tasks
-- task management tool
-- project automation
-- devops task tool
+  - pixi task management
+  - pixi project tasks
+  - pixi task automation
+  - pixi command line tasks
+  - pixi task alias
+  - pixi task list
+  - pixi environment tasks
+  - task management tool
+  - project automation
+  - devops task tool
 features:
-- Create new project tasks
-- List existing tasks in the project
-- Remove tasks from the project environment
-- Create aliases for task commands
-- Automate project workflows
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new project tasks
+  - List existing tasks in the project
+  - Remove tasks from the project environment
+  - Create aliases for task commands
+  - Automate project workflows
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pixi task

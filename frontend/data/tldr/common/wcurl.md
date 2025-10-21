@@ -1,29 +1,29 @@
 ---
-title: "Download Files - wcurl Wrapper for Curl | Online Free DevTools by Hexmos"
+title: 'Download Files - wcurl Wrapper for Curl | Online Free DevTools by Hexmos'
 name: wcurl
-path: "/freedevtools/tldr/common/wcurl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wcurl/"
-description: "Download files easily with wcurl, a simple curl wrapper. Retrieve web resources and save them locally. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wcurl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wcurl/'
+description: 'Download files easily with wcurl, a simple curl wrapper. Retrieve web resources and save them locally. Free online tool, no registration required.'
 category: common
 keywords:
-- URL downloader
-- command line downloader
-- curl wrapper
-- wget alternative
-- file downloader
-- linux downloader
-- macos downloader
-- web resource retrieval
-- HTTP downloader
-- HTTPS downloader
+  - URL downloader
+  - command line downloader
+  - curl wrapper
+  - wget alternative
+  - file downloader
+  - linux downloader
+  - macos downloader
+  - web resource retrieval
+  - HTTP downloader
+  - HTTPS downloader
 features:
-- Download files from URLs
-- Save downloaded files with custom names
-- Use custom curl options
-- Resume interrupted downloads
-- Display download progress
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download files from URLs
+  - Save downloaded files with custom names
+  - Use custom curl options
+  - Resume interrupted downloads
+  - Display download progress
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wcurl

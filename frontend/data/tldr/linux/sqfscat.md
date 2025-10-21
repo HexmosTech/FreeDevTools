@@ -1,9 +1,9 @@
 ---
-title: "Concatenate Files - sqfscat Command | Online Free DevTools by Hexmos"
+title: 'Concatenate Files - sqfscat Command | Online Free DevTools by Hexmos'
 name: sqfscat
-path: "/freedevtools/tldr/linux/sqfscat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sqfscat/"
-description: "Concatenate files from a squashfs filesystem with sqfscat.  Extract and display file contents easily using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sqfscat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sqfscat/'
+description: 'Concatenate files from a squashfs filesystem with sqfscat.  Extract and display file contents easily using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - squashfs file concatenation
@@ -22,8 +22,8 @@ features:
   - Outputs the concatenated data to standard output (stdout).
   - Works with a single squashfs filesystem image.
   - Supports multiple file arguments for concatenation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sqfscat

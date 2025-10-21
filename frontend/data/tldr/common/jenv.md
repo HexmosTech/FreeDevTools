@@ -1,29 +1,29 @@
 ---
-title: "Manage Java Versions - jenv | Online Free DevTools by Hexmos"
+title: 'Manage Java Versions - jenv | Online Free DevTools by Hexmos'
 name: jenv
-path: "/freedevtools/tldr/common/jenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jenv/"
-description: "Manage Java versions with jenv, a command-line tool to control the JAVA_HOME environment variable. Simplify Java development workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jenv/'
+description: 'Manage Java versions with jenv, a command-line tool to control the JAVA_HOME environment variable. Simplify Java development workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- java version manager
-- jenv java environment
-- java sdk manager
-- java home manager
-- jdk version control
-- jenv linux
-- jenv macos
-- command line java
-- manage java versions
-- set java version
+  - java version manager
+  - jenv java environment
+  - java sdk manager
+  - java home manager
+  - jdk version control
+  - jenv linux
+  - jenv macos
+  - command line java
+  - manage java versions
+  - set java version
 features:
-- Add specific Java versions to jenv
-- Display currently used JDK version
-- List all managed JDKs
-- Set global Java Development Kit version
-- Set JDK version for current shell session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add specific Java versions to jenv
+  - Display currently used JDK version
+  - List all managed JDKs
+  - Set global Java Development Kit version
+  - Set JDK version for current shell session
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jenv

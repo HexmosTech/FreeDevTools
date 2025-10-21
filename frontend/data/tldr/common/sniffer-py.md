@@ -1,29 +1,29 @@
 ---
-title: "Capture Network Packets with Sniffer.py | Online Free DevTools by Hexmos"
+title: 'Capture Network Packets with Sniffer.py | Online Free DevTools by Hexmos'
 name: sniffer.py
-path: "/freedevtools/tldr/common/sniffer-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/sniffer-py/"
-description: "Capture network packets with Sniffer.py, an Impacket tool. Analyze TCP/IP traffic and monitor network activity effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sniffer-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/sniffer-py/'
+description: 'Capture network packets with Sniffer.py, an Impacket tool. Analyze TCP/IP traffic and monitor network activity effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- network packet capture
-- tcpdump alternative
-- raw socket sniffer
-- impacket sniffer
-- protocol analyzer
-- network traffic monitor
-- linux packet sniffer
-- windows packet sniffer
-- icmp packet capture
-- tcp packet capture
+  - network packet capture
+  - tcpdump alternative
+  - raw socket sniffer
+  - impacket sniffer
+  - protocol analyzer
+  - network traffic monitor
+  - linux packet sniffer
+  - windows packet sniffer
+  - icmp packet capture
+  - tcp packet capture
 features:
-- Capture network packets using raw sockets
-- Filter packets by protocol (TCP, UDP, ICMP)
-- Display packet data for analysis
-- Monitor network traffic in real-time
-- Utilize Impacket library for packet manipulation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture network packets using raw sockets
+  - Filter packets by protocol (TCP, UDP, ICMP)
+  - Display packet data for analysis
+  - Monitor network traffic in real-time
+  - Utilize Impacket library for packet manipulation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sniffer.py

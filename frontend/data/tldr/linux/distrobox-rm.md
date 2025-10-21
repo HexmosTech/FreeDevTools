@@ -1,9 +1,9 @@
 ---
-title: "Distrobox Remove - Delete Containers | Online Free DevTools by Hexmos"
+title: 'Distrobox Remove - Delete Containers | Online Free DevTools by Hexmos'
 name: distrobox-rm
-path: "/freedevtools/tldr/linux/distrobox-rm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-rm/"
-description: "Remove Distrobox containers effortlessly with Distrobox Remove. Manage and delete your containers with a simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/distrobox-rm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/distrobox-rm/'
+description: 'Remove Distrobox containers effortlessly with Distrobox Remove. Manage and delete your containers with a simple command. Free online tool, no registration required.'
 category: linux
 keywords:
   - distrobox container removal
@@ -22,8 +22,8 @@ features:
   - Streamline container lifecycle management
   - Simplify container environment cleanup
   - Execute container removal via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # distrobox-rm

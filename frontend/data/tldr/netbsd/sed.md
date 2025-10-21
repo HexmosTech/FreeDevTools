@@ -1,9 +1,9 @@
 ---
-title: "SED - Edit Text Scriptably | Online Free DevTools by Hexmos"
+title: 'SED - Edit Text Scriptably | Online Free DevTools by Hexmos'
 name: sed
-path: "/freedevtools/tldr/netbsd/sed/"
-canonical: "https://hexmos.com/freedevtools/tldr/netbsd/sed/"
-description: "Edit text scriptably with SED. Use text substitution for batch editing text files. Free online tool, no registration required."
+path: '/freedevtools/tldr/netbsd/sed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/netbsd/sed/'
+description: 'Edit text scriptably with SED. Use text substitution for batch editing text files. Free online tool, no registration required.'
 category: netbsd
 keywords:
   - text stream editor for NetBSD
@@ -22,8 +22,8 @@ features:
   - delay file opening for optimized text processing
   - use GNU regex extensions for advanced pattern matching on NetBSD
   - modify files in place without temporary copies on NetBSD
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sed

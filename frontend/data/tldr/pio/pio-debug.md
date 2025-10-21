@@ -1,29 +1,29 @@
 ---
-title: "PIO Debug - Debug PlatformIO Projects | Online Free DevTools by Hexmos"
+title: 'PIO Debug - Debug PlatformIO Projects | Online Free DevTools by Hexmos'
 name: pio-debug
-path: "/freedevtools/tldr/pio/pio-debug/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-debug/"
-description: "Debug projects with PIO Debug. Analyze code, set breakpoints, and step through execution in PlatformIO IDE. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-debug/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-debug/'
+description: 'Debug projects with PIO Debug. Analyze code, set breakpoints, and step through execution in PlatformIO IDE. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO Debugging
-- PIO Debugger
-- Embedded System Debug
-- PlatformIO Project Debug
-- GDB Debug PlatformIO
-- PlatformIO Debug Configuration
-- Embedded Software Debugging
-- Cross-Platform Debugging
-- PIO Remote Debugging
-- PlatformIO Debug Environment
+  - PlatformIO Debugging
+  - PIO Debugger
+  - Embedded System Debug
+  - PlatformIO Project Debug
+  - GDB Debug PlatformIO
+  - PlatformIO Debug Configuration
+  - Embedded Software Debugging
+  - Cross-Platform Debugging
+  - PIO Remote Debugging
+  - PlatformIO Debug Environment
 features:
-- Debug PlatformIO projects in the current directory
-- Debug a specific PlatformIO project by path
-- Debug a specific environment within a PlatformIO project
-- Debug using a custom project configuration file
-- Utilize GDB debugger with specified options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Debug PlatformIO projects in the current directory
+  - Debug a specific PlatformIO project by path
+  - Debug a specific environment within a PlatformIO project
+  - Debug using a custom project configuration file
+  - Utilize GDB debugger with specified options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio debug

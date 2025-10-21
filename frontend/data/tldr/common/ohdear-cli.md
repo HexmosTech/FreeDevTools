@@ -1,29 +1,29 @@
 ---
-title: "Oh Dear CLI - Control Website Monitoring | Online Free DevTools by Hexmos"
+title: 'Oh Dear CLI - Control Website Monitoring | Online Free DevTools by Hexmos'
 name: ohdear-cli
-path: "/freedevtools/tldr/common/ohdear-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ohdear-cli/"
-description: "Control website monitoring with Oh Dear CLI. Manage sites, view status, and add new sites easily using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ohdear-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ohdear-cli/'
+description: 'Control website monitoring with Oh Dear CLI. Manage sites, view status, and add new sites easily using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- ohdear cli
-- website monitoring cli
-- site management cli
-- ohdear command line tool
-- website status cli
-- site monitoring tool
-- command line website monitor
-- ohdear sites management
-- ohdear user details
-- ohdear site status
+  - ohdear cli
+  - website monitoring cli
+  - site management cli
+  - ohdear command line tool
+  - website status cli
+  - site monitoring tool
+  - command line website monitor
+  - ohdear sites management
+  - ohdear user details
+  - ohdear site status
 features:
-- Display authenticated user information.
-- Add new websites to Oh Dear.
-- List websites and their monitoring status.
-- Display details for a specific website.
-- Manage website monitoring from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display authenticated user information.
+  - Add new websites to Oh Dear.
+  - List websites and their monitoring status.
+  - Display details for a specific website.
+  - Manage website monitoring from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ohdear-cli

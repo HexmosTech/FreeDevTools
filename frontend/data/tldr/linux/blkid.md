@@ -1,29 +1,29 @@
 ---
-title: "Blkid - List Partitions and UUIDs | Online Free DevTools by Hexmos"
+title: 'Blkid - List Partitions and UUIDs | Online Free DevTools by Hexmos'
 name: blkid
-path: "/freedevtools/tldr/linux/blkid/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/blkid/"
-description: "List partitions and their UUIDs with Blkid. Easily identify devices and mount points on your Linux system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/blkid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/blkid/'
+description: 'List partitions and their UUIDs with Blkid. Easily identify devices and mount points on your Linux system. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux partitions
-- linux UUID
-- blkid command
-- device identification
-- filesystem information
-- partition listing
-- device mapping
-- block device UUID
-- linux disk management
-- block device information
+  - linux partitions
+  - linux UUID
+  - blkid command
+  - device identification
+  - filesystem information
+  - partition listing
+  - device mapping
+  - block device UUID
+  - linux disk management
+  - block device information
 features:
-- List all recognized partitions
-- Display Universally Unique Identifiers (UUIDs)
-- Show partition mountpoints
-- Present partition information in table format
-- Retrieve specific UUID values from a partition
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all recognized partitions
+  - Display Universally Unique Identifiers (UUIDs)
+  - Show partition mountpoints
+  - Present partition information in table format
+  - Retrieve specific UUID values from a partition
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blkid

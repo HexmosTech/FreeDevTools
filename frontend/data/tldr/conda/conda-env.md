@@ -1,29 +1,29 @@
 ---
-title: "Conda Env - Manage Environments | Online Free DevTools by Hexmos"
+title: 'Conda Env - Manage Environments | Online Free DevTools by Hexmos'
 name: conda-env
-path: "/freedevtools/tldr/conda/conda-env/"
-canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-env/"
-description: "Manage Conda environments with Conda Env. Create, update, remove and list environments efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/conda/conda-env/'
+canonical: 'https://hexmos.com/freedevtools/tldr/conda/conda-env/'
+description: 'Manage Conda environments with Conda Env. Create, update, remove and list environments efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- conda environment manager
-- conda environment creator
-- conda environment remover
-- conda environment lister
-- conda environment updater
-- yaml environment management
-- txt environment creation
-- python environment management
-- cross-platform environment
-- environment variable control
+  - conda environment manager
+  - conda environment creator
+  - conda environment remover
+  - conda environment lister
+  - conda environment updater
+  - yaml environment management
+  - txt environment creation
+  - python environment management
+  - cross-platform environment
+  - environment variable control
 features:
-- Create conda environments from YAML or TXT files
-- Remove environments and their contents
-- Update environments based on a file
-- List available conda environments
-- Configure environment variables
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create conda environments from YAML or TXT files
+  - Remove environments and their contents
+  - Update environments based on a file
+  - List available conda environments
+  - Configure environment variables
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # conda env

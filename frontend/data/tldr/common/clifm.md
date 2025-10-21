@@ -1,29 +1,29 @@
 ---
-title: "Control clifm - Command-Line File Manager | Online Free DevTools by Hexmos"
+title: 'Control clifm - Command-Line File Manager | Online Free DevTools by Hexmos'
 name: clifm
-path: "/freedevtools/tldr/common/clifm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/clifm/"
-description: "Control files with clifm, a powerful command-line file manager for navigating and manipulating files on Linux, macOS, and other platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/clifm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/clifm/'
+description: 'Control files with clifm, a powerful command-line file manager for navigating and manipulating files on Linux, macOS, and other platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- command-line file manager
-- terminal file manager
-- linux file navigation
-- macos file management
-- console file explorer
-- cli file operations
-- file system command line
-- ncurses file manager
-- lightweight file manager
-- command-line directory tool
+  - command-line file manager
+  - terminal file manager
+  - linux file navigation
+  - macos file management
+  - console file explorer
+  - cli file operations
+  - file system command line
+  - ncurses file manager
+  - lightweight file manager
+  - command-line directory tool
 features:
-- Navigate the file system using command-line interface
-- Perform file operations directly from the terminal
-- Search and filter files using regular expressions
-- Select and manipulate multiple files efficiently
-- Open files and directories by entry list number
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Navigate the file system using command-line interface
+  - Perform file operations directly from the terminal
+  - Search and filter files using regular expressions
+  - Select and manipulate multiple files efficiently
+  - Open files and directories by entry list number
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clifm

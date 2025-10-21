@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to YUV - Image Conversion | Online Free DevTools by Hexmos"
+title: 'Convert PPM to YUV - Image Conversion | Online Free DevTools by Hexmos'
 name: ppmtoeyuv
-path: "/freedevtools/tldr/ppm/ppmtoeyuv/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoeyuv/"
-description: "Convert PPM images to Berkeley YUV files with ppmtoeyuv. Effortlessly change image formats using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmtoeyuv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtoeyuv/'
+description: 'Convert PPM images to Berkeley YUV files with ppmtoeyuv. Effortlessly change image formats using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to YUV converter
-- Image format conversion
-- Berkeley YUV file
-- PPM image conversion
-- command line image tools
-- Netpbm image processing
-- Linux image converter
-- macOS image converter
-- PPM to YUV tool
-- image encoding conversion
+  - PPM to YUV converter
+  - Image format conversion
+  - Berkeley YUV file
+  - PPM image conversion
+  - command line image tools
+  - Netpbm image processing
+  - Linux image converter
+  - macOS image converter
+  - PPM to YUV tool
+  - image encoding conversion
 features:
-- Convert PPM images to Berkeley YUV format
-- Process image files from the command line
-- Encode images to the YUV color space
-- Generate YUV files from PPM input
-- Stream conversion output to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to Berkeley YUV format
+  - Process image files from the command line
+  - Encode images to the YUV color space
+  - Generate YUV files from PPM input
+  - Stream conversion output to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtoeyuv

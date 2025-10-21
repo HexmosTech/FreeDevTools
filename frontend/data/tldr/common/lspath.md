@@ -1,29 +1,29 @@
 ---
-title: "List PATH - Display Environment Paths | Online Free DevTools by Hexmos"
+title: 'List PATH - Display Environment Paths | Online Free DevTools by Hexmos'
 name: lspath
-path: "/freedevtools/tldr/common/lspath/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lspath/"
-description: "List system PATH variables with Lspath. Display environment paths, with optional paging. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lspath/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lspath/'
+description: 'List system PATH variables with Lspath. Display environment paths, with optional paging. Free online tool, no registration required.'
 category: common
 keywords:
-- path lister
-- environment variables
-- path viewer
-- shell path
-- command line path
-- terminal path
-- linux path
-- macos path
-- windows path
-- environment configuration
+  - path lister
+  - environment variables
+  - path viewer
+  - shell path
+  - command line path
+  - terminal path
+  - linux path
+  - macos path
+  - windows path
+  - environment configuration
 features:
-- Displays system PATH variable content
-- Lists each path element on a new line
-- Supports paged output for long PATH variables
-- Works on multiple operating systems
-- Simplifies PATH troubleshooting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Displays system PATH variable content
+  - Lists each path element on a new line
+  - Supports paged output for long PATH variables
+  - Works on multiple operating systems
+  - Simplifies PATH troubleshooting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lspath

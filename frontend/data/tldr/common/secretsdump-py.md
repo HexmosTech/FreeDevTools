@@ -1,29 +1,29 @@
 ---
-title: "Dump NTLM Hashes - Secretsdump.py Windows Credentials | Online Free DevTools by Hexmos"
+title: 'Dump NTLM Hashes - Secretsdump.py Windows Credentials | Online Free DevTools by Hexmos'
 name: secretsdump.py
-path: "/freedevtools/tldr/common/secretsdump-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/secretsdump-py/"
-description: "Dump NTLM hashes with secretsdump.py, extracting Windows credentials and Active Directory information. Free online tool, no registration required for credential recovery."
+path: '/freedevtools/tldr/common/secretsdump-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/secretsdump-py/'
+description: 'Dump NTLM hashes with secretsdump.py, extracting Windows credentials and Active Directory information. Free online tool, no registration required for credential recovery.'
 category: common
 keywords:
-- NTLM Hash Dumper
-- Windows Credential Extraction
-- Active Directory Dump
-- SAM Database Extraction
-- Pass-the-Hash Attack
-- Windows Password Recovery
-- Domain Credential Dump
-- Credential Dumping Impacket
-- secretsdump.py Usage
-- Windows Security Tool
+  - NTLM Hash Dumper
+  - Windows Credential Extraction
+  - Active Directory Dump
+  - SAM Database Extraction
+  - Pass-the-Hash Attack
+  - Windows Password Recovery
+  - Domain Credential Dump
+  - Credential Dumping Impacket
+  - secretsdump.py Usage
+  - Windows Security Tool
 features:
-- Extracts NTLM hashes from Windows systems remotely
-- Dumps plaintext passwords from domain controllers
-- Retrieves credentials from Active Directory's NTDS.dit file
-- Extracts hashes from local SAM databases
-- Supports pass-the-hash authentication
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extracts NTLM hashes from Windows systems remotely
+  - Dumps plaintext passwords from domain controllers
+  - Retrieves credentials from Active Directory's NTDS.dit file
+  - Extracts hashes from local SAM databases
+  - Supports pass-the-hash authentication
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # secretsdump.py

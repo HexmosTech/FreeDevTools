@@ -1,29 +1,29 @@
 ---
-title: "Configure Authconfig - System Authentication | Online Free DevTools by Hexmos"
+title: 'Configure Authconfig - System Authentication | Online Free DevTools by Hexmos'
 name: authconfig
-path: "/freedevtools/tldr/linux/authconfig/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/authconfig/"
-description: "Configure system authentication with Authconfig. Secure your Linux system by enabling or disabling various authentication methods. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/authconfig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/authconfig/'
+description: 'Configure system authentication with Authconfig. Secure your Linux system by enabling or disabling various authentication methods. Free online tool, no registration required.'
 category: linux
 keywords:
-- "linux authconfig"
-- "system authentication configuration"
-- "password hashing algorithm"
-- "LDAP authentication linux"
-- "NIS configuration linux"
-- "kerberos authentication linux"
-- "winbind authentication linux"
-- "active directory authentication linux"
-- "local authorization linux"
-- "linux security configuration"
+  - 'linux authconfig'
+  - 'system authentication configuration'
+  - 'password hashing algorithm'
+  - 'LDAP authentication linux'
+  - 'NIS configuration linux'
+  - 'kerberos authentication linux'
+  - 'winbind authentication linux'
+  - 'active directory authentication linux'
+  - 'local authorization linux'
+  - 'linux security configuration'
 features:
-- "Configure password hashing algorithms"
-- "Enable or disable LDAP authentication"
-- "Enable Network Information Service (NIS)"
-- "Enable Kerberos authentication"
-- "Enable Winbind (Active Directory) authentication"
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - 'Configure password hashing algorithms'
+  - 'Enable or disable LDAP authentication'
+  - 'Enable Network Information Service (NIS)'
+  - 'Enable Kerberos authentication'
+  - 'Enable Winbind (Active Directory) authentication'
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # authconfig

@@ -1,29 +1,29 @@
 ---
-title: "AFInfo - Parse Audio Metadata | Online Free DevTools by Hexmos"
+title: 'AFInfo - Parse Audio Metadata | Online Free DevTools by Hexmos'
 name: afinfo
-path: "/freedevtools/tldr/osx/afinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/afinfo/"
-description: "Parse audio metadata with AFInfo, the built-in OSX audio file information tool. Analyze file data, extract info dictionaries, and validate audio files. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/afinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/afinfo/'
+description: 'Parse audio metadata with AFInfo, the built-in OSX audio file information tool. Analyze file data, extract info dictionaries, and validate audio files. Free online tool, no registration required.'
 category: osx
 keywords:
-- osx audio metadata parser
-- mac audio file analyzer
-- afinfo command line tool
-- audio info dictionary extractor
-- osx audio file validator
-- audio metadata reader
-- audio file format inspector
-- command line audio tools
-- audio file properties viewer
-- macos audio analysis
+  - osx audio metadata parser
+  - mac audio file analyzer
+  - afinfo command line tool
+  - audio info dictionary extractor
+  - osx audio file validator
+  - audio metadata reader
+  - audio file format inspector
+  - command line audio tools
+  - audio file properties viewer
+  - macos audio analysis
 features:
-- Display audio file metadata
-- Print audio file info dictionaries
-- Output audio data in XML format
-- Check audio files for warnings
-- Show brief audio file descriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display audio file metadata
+  - Print audio file info dictionaries
+  - Output audio data in XML format
+  - Check audio files for warnings
+  - Show brief audio file descriptions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # afinfo

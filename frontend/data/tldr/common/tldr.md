@@ -1,29 +1,29 @@
 ---
-title: "TLDR - Display Command Help Pages | Online Free DevTools by Hexmos"
+title: 'TLDR - Display Command Help Pages | Online Free DevTools by Hexmos'
 name: tldr
-path: "/freedevtools/tldr/common/tldr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tldr/"
-description: "Display command help with TLDR. Access concise, community-maintained command documentation instantly. Free online tool, no registration required. Get quick shell documentation."
+path: '/freedevtools/tldr/common/tldr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tldr/'
+description: 'Display command help with TLDR. Access concise, community-maintained command documentation instantly. Free online tool, no registration required. Get quick shell documentation.'
 category: common
 keywords:
-- command help pages
-- tldr pages
-- command line documentation
-- quick shell help
-- tldr client
-- linux command help
-- macOS command help
-- windows command help
-- common commands
-- simplified man pages
+  - command help pages
+  - tldr pages
+  - command line documentation
+  - quick shell help
+  - tldr client
+  - linux command help
+  - macOS command help
+  - windows command help
+  - common commands
+  - simplified man pages
 features:
-- Display concise command documentation
-- Access community-maintained help pages
-- Support multiple platforms (Linux, macOS, Windows)
-- Update local cache of tldr pages
-- List available command examples
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display concise command documentation
+  - Access community-maintained help pages
+  - Support multiple platforms (Linux, macOS, Windows)
+  - Update local cache of tldr pages
+  - List available command examples
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tldr

@@ -1,29 +1,29 @@
 ---
-title: "Font Diff - Compare Font Differences with ftxdiff | Online Free DevTools by Hexmos"
+title: 'Font Diff - Compare Font Differences with ftxdiff | Online Free DevTools by Hexmos'
 name: ftxdiff
-path: "/freedevtools/tldr/osx/ftxdiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/ftxdiff/"
-description: "Compare font differences instantly with ftxdiff. Analyze glyph variations and character set changes between font files on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/ftxdiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/ftxdiff/'
+description: 'Compare font differences instantly with ftxdiff. Analyze glyph variations and character set changes between font files on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- font difference analyzer
-- font comparison tool
-- font file diff
-- ttc diff osx
-- font validation macos
-- glyph comparison tool
-- font metadata analyzer
-- opentype diff
-- truetype diff
-- font file inspector
+  - font difference analyzer
+  - font comparison tool
+  - font file diff
+  - ttc diff osx
+  - font validation macos
+  - glyph comparison tool
+  - font metadata analyzer
+  - opentype diff
+  - truetype diff
+  - font file inspector
 features:
-- Output font differences to a specified text file.
-- Include glyph names in the diff output.
-- Include unicode names in the diff output.
-- Compare two font files to identify variations.
-- Analyze character set changes between fonts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Output font differences to a specified text file.
+  - Include glyph names in the diff output.
+  - Include unicode names in the diff output.
+  - Compare two font files to identify variations.
+  - Analyze character set changes between fonts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ftxdiff

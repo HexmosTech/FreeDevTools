@@ -1,29 +1,29 @@
 ---
-title: "CSS Lint - Validate CSS Code | Online Free DevTools by Hexmos"
+title: 'CSS Lint - Validate CSS Code | Online Free DevTools by Hexmos'
 name: csslint
-path: "/freedevtools/tldr/cs/csslint/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csslint/"
-description: "Validate CSS code with CSS Lint. Identify errors and warnings in your stylesheets to improve code quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csslint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csslint/'
+description: 'Validate CSS code with CSS Lint. Identify errors and warnings in your stylesheets to improve code quality. Free online tool, no registration required.'
 category: common
 keywords:
-- CSS validator
-- CSS code linter
-- CSS syntax checker
-- Style sheet validator
-- CSS error detection
-- CSS warning analyzer
-- CSS best practices checker
-- Command line CSS lint
-- CSS style guide enforcement
-- CSS quality assurance
+  - CSS validator
+  - CSS code linter
+  - CSS syntax checker
+  - Style sheet validator
+  - CSS error detection
+  - CSS warning analyzer
+  - CSS best practices checker
+  - Command line CSS lint
+  - CSS style guide enforcement
+  - CSS quality assurance
 features:
-- Lints single or multiple CSS files
-- Lists all possible style rules
-- Treats specific rules as errors
-- Treats specific rules as warnings
-- Ignores specific rules during linting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lints single or multiple CSS files
+  - Lists all possible style rules
+  - Treats specific rules as errors
+  - Treats specific rules as warnings
+  - Ignores specific rules during linting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csslint

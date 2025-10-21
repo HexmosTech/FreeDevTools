@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Config - Manage Kubernetes Configuration | Online Free DevTools by Hexmos"
+title: 'Kubectl Config - Manage Kubernetes Configuration | Online Free DevTools by Hexmos'
 name: kubectl-config
-path: "/freedevtools/tldr/kubectl/kubectl-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-config/"
-description: "Manage Kubernetes cluster access instantly with Kubectl Config. Configure contexts, switch namespaces, and add custom kubeconfig files. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-config/'
+description: 'Manage Kubernetes cluster access instantly with Kubectl Config. Configure contexts, switch namespaces, and add custom kubeconfig files. Free online tool, no registration required.'
 category: common
 keywords:
-- Kubernetes configuration manager
-- Kubeconfig file editor
-- Kubectl context switcher
-- Kubernetes namespace manager
-- Kubeconfig YAML parser
-- Kubernetes cluster access tool
-- CLI kubeconfig manager
-- Kubernetes command line config
-- Kubectl cluster administration
-- Kubernetes cluster context management
+  - Kubernetes configuration manager
+  - Kubeconfig file editor
+  - Kubectl context switcher
+  - Kubernetes namespace manager
+  - Kubeconfig YAML parser
+  - Kubernetes cluster access tool
+  - CLI kubeconfig manager
+  - Kubernetes command line config
+  - Kubectl cluster administration
+  - Kubernetes cluster context management
 features:
-- Get and display Kubernetes cluster contexts
-- Switch between Kubernetes contexts quickly
-- Set the default namespace for current Kubernetes context
-- Add and manage custom kubeconfig files
-- Delete Kubernetes clusters, contexts, or users
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Get and display Kubernetes cluster contexts
+  - Switch between Kubernetes contexts quickly
+  - Set the default namespace for current Kubernetes context
+  - Add and manage custom kubeconfig files
+  - Delete Kubernetes clusters, contexts, or users
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl config

@@ -1,29 +1,29 @@
 ---
-title: "Get WUHistory - Control Windows Updates History | Online Free DevTools by Hexmos"
+title: 'Get WUHistory - Control Windows Updates History | Online Free DevTools by Hexmos'
 name: get-wuhistory
-path: "/freedevtools/tldr/windows/get-wuhistory/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/get-wuhistory/"
-description: "Control Windows updates history with Get-WUHistory. View, filter, and report installed updates easily with this command. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/get-wuhistory/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/get-wuhistory/'
+description: 'Control Windows updates history with Get-WUHistory. View, filter, and report installed updates easily with this command. Free online tool, no registration required.'
 category: windows
 keywords:
-- Windows update history
-- PowerShell update history
-- Get-WUHistory command
-- Windows update reporting
-- Windows update automation
-- Windows update management
-- PowerShell module
-- PSWindowsUpdate
-- Windows update logs
-- Windows security updates
+  - Windows update history
+  - PowerShell update history
+  - Get-WUHistory command
+  - Windows update reporting
+  - Windows update automation
+  - Windows update management
+  - PowerShell module
+  - PSWindowsUpdate
+  - Windows update logs
+  - Windows security updates
 features:
-- Retrieve Windows update history
-- Filter updates by date
-- Report updates via email
-- List last installed updates
-- Automate update history retrieval
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve Windows update history
+  - Filter updates by date
+  - Report updates via email
+  - List last installed updates
+  - Automate update history retrieval
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Get-WUHistory

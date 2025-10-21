@@ -21,7 +21,7 @@ export function extractSVGDimensions(svgContent: string): SVGDimensions {
 
   let width = 24; // default
   let height = 24; // default
-  let viewBox = "0 0 24 24"; // default
+  let viewBox = '0 0 24 24'; // default
 
   // Parse width and height
   if (widthMatch) {
@@ -117,7 +117,7 @@ export function processSVGContent(
   targetSize: number = 96,
   padding: number = 0.15 // 15% padding on each side
 ): string {
-  if (!svgContent || !svgContent.includes("<svg")) {
+  if (!svgContent || !svgContent.includes('<svg')) {
     return svgContent;
   }
 

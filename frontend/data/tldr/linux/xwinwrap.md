@@ -1,9 +1,9 @@
 ---
-title: "Run Programs as Background - xwinwrap Control | Online Free DevTools by Hexmos"
+title: 'Run Programs as Background - xwinwrap Control | Online Free DevTools by Hexmos'
 name: xwinwrap
-path: "/freedevtools/tldr/linux/xwinwrap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xwinwrap/"
-description: "Control background processes with xwinwrap.  Run videos or programs as desktop wallpaper, adjust opacity, and position on multiple monitors. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xwinwrap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xwinwrap/'
+description: 'Control background processes with xwinwrap.  Run videos or programs as desktop wallpaper, adjust opacity, and position on multiple monitors. Free online tool, no registration required.'
 category: linux
 keywords:
   - xwinwrap background process
@@ -22,8 +22,8 @@ features:
   - Adjust the opacity of the background program.
   - Supports multiple monitors.
   - Integrates seamlessly with mpv video player.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xwinwrap

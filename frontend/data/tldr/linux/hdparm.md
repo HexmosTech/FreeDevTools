@@ -1,9 +1,9 @@
 ---
-title: "Control Hard Drive Parameters - hdparm | Online Free DevTools by Hexmos"
+title: 'Control Hard Drive Parameters - hdparm | Online Free DevTools by Hexmos'
 name: hdparm
-path: "/freedevtools/tldr/linux/hdparm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hdparm/"
-description: "Control hard drive parameters with hdparm, set SATA and IDE drive settings for power management and performance tuning. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hdparm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hdparm/'
+description: 'Control hard drive parameters with hdparm, set SATA and IDE drive settings for power management and performance tuning. Free online tool, no registration required.'
 category: linux
 keywords:
   - hard drive parameters
@@ -22,8 +22,8 @@ features:
   - Force a hard drive to enter standby mode
   - Set a hard drive's standby timeout
   - Test hard drive read speed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hdparm

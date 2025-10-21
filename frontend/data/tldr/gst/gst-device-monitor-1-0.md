@@ -1,29 +1,29 @@
 ---
-title: "List Devices - Monitor GStreamer Devices | Online Free DevTools by Hexmos"
+title: 'List Devices - Monitor GStreamer Devices | Online Free DevTools by Hexmos'
 name: gst-device-monitor-1.0
-path: "/freedevtools/tldr/gst/gst-device-monitor-1-0/"
-canonical: "https://hexmos-com/freedevtools/tldr/gst/gst-device-monitor-1-0/"
-description: "List devices with gst-device-monitor-1.0, a GStreamer tool for monitoring audio and video sources/sinks. Identify and track device changes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/gst/gst-device-monitor-1-0/'
+canonical: 'https://hexmos-com/freedevtools/tldr/gst/gst-device-monitor-1-0/'
+description: 'List devices with gst-device-monitor-1.0, a GStreamer tool for monitoring audio and video sources/sinks. Identify and track device changes easily. Free online tool, no registration required.'
 category: common
 keywords:
-- GStreamer device listing
-- GStreamer device monitoring
-- audio source detection
-- video source detection
-- audio sink detection
-- video sink detection
-- GStreamer device manager
-- multimedia device enumeration
-- Linux device monitor
-- command-line device list
+  - GStreamer device listing
+  - GStreamer device monitoring
+  - audio source detection
+  - video source detection
+  - audio sink detection
+  - video sink detection
+  - GStreamer device manager
+  - multimedia device enumeration
+  - Linux device monitor
+  - command-line device list
 features:
-- List all detected audio and video devices
-- Monitor devices for changes in real-time
-- Filter devices by type (audio/video source/sink)
-- Display device properties and capabilities
-- Identify device names and descriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all detected audio and video devices
+  - Monitor devices for changes in real-time
+  - Filter devices by type (audio/video source/sink)
+  - Display device properties and capabilities
+  - Identify device names and descriptions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gst-device-monitor-1.0

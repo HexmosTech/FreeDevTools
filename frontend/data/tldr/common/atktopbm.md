@@ -1,29 +1,29 @@
 ---
-title: "Convert ATK to PBM - Image Conversion | Online Free DevTools by Hexmos"
+title: 'Convert ATK to PBM - Image Conversion | Online Free DevTools by Hexmos'
 name: atktopbm
-path: "/freedevtools/tldr/common/atktopbm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/atktopbm/"
-description: "Convert ATK raster images to PBM format with atktopbm. Optimize images for various uses and ensure compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/atktopbm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/atktopbm/'
+description: 'Convert ATK raster images to PBM format with atktopbm. Optimize images for various uses and ensure compatibility. Free online tool, no registration required.'
 category: common
 keywords:
-- ATK to PBM conversion
-- raster image conversion
-- PBM image generation
-- Andrew Toolkit image
-- Netpbm image tools
-- image format conversion
-- ATK image converter
-- linux image processing
-- command line image tool
-- image manipulation
+  - ATK to PBM conversion
+  - raster image conversion
+  - PBM image generation
+  - Andrew Toolkit image
+  - Netpbm image tools
+  - image format conversion
+  - ATK image converter
+  - linux image processing
+  - command line image tool
+  - image manipulation
 features:
-- Convert Andrew Toolkit raster to PBM images
-- Process ATK files from command line
-- Output PBM image data
-- Support batch image conversion
-- Integrate with Netpbm image processing pipeline
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Andrew Toolkit raster to PBM images
+  - Process ATK files from command line
+  - Output PBM image data
+  - Support batch image conversion
+  - Integrate with Netpbm image processing pipeline
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # atktopbm

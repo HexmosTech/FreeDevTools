@@ -1,29 +1,29 @@
 ---
-title: "PIO Project - Manage PlatformIO Projects | Online Free DevTools by Hexmos"
+title: 'PIO Project - Manage PlatformIO Projects | Online Free DevTools by Hexmos'
 name: pio-project
-path: "/freedevtools/tldr/pio/pio-project/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-project/"
-description: "Manage PlatformIO projects with PIO Project. Initialize projects, configure boards, and customize project settings for seamless embedded development. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-project/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-project/'
+description: 'Manage PlatformIO projects with PIO Project. Initialize projects, configure boards, and customize project settings for seamless embedded development. Free online tool, no registration required.'
 category: common
 keywords:
-- platformio project management
-- pio project initialization
-- pio project configuration
-- embedded project creation
-- arduino project setup
-- esp32 project management
-- platformio cli tool
-- pio project commands
-- iot project development
-- embedded systems project
+  - platformio project management
+  - pio project initialization
+  - pio project configuration
+  - embedded project creation
+  - arduino project setup
+  - esp32 project management
+  - platformio cli tool
+  - pio project commands
+  - iot project development
+  - embedded systems project
 features:
-- Initialize new PlatformIO projects
-- Configure project settings via command line
-- Specify board IDs for project creation
-- Print project configurations
-- Manage project options dynamically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new PlatformIO projects
+  - Configure project settings via command line
+  - Specify board IDs for project creation
+  - Print project configurations
+  - Manage project options dynamically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio project

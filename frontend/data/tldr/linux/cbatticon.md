@@ -1,9 +1,9 @@
 ---
-title: "cbatticon - Monitor Battery Status | Online Free DevTools by Hexmos"
+title: 'cbatticon - Monitor Battery Status | Online Free DevTools by Hexmos'
 name: cbatticon
-path: "/freedevtools/tldr/linux/cbatticon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cbatticon/"
-description: "Monitor battery status and customize notifications with cbatticon.  Display battery information in your system tray with customizable intervals and icons. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cbatticon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cbatticon/'
+description: 'Monitor battery status and customize notifications with cbatticon.  Display battery information in your system tray with customizable intervals and icons. Free online tool, no registration required.'
 category: linux
 keywords:
   - battery icon monitor
@@ -22,8 +22,8 @@ features:
   - Supports various icon types for visual customization.
   - Allows specifying a specific battery to monitor.
   - Executes a custom command when critical battery level is reached.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cbatticon

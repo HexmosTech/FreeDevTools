@@ -1,29 +1,29 @@
 ---
-title: "Control Dock Items - Manage macOS Dock with dockutil | Online Free DevTools by Hexmos"
+title: 'Control Dock Items - Manage macOS Dock with dockutil | Online Free DevTools by Hexmos'
 name: dockutil
-path: "/freedevtools/tldr/osx/dockutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/dockutil/"
-description: "Control macOS dock items easily with dockutil. Add, remove, and organize applications, directories, and URLs in your dock. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/dockutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/dockutil/'
+description: 'Control macOS dock items easily with dockutil. Add, remove, and organize applications, directories, and URLs in your dock. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS dock manager
-- dock item controller
-- application launcher manager
-- dock customization tool
-- osx dock configuration
-- dockutil command-line
-- dock item organizer
-- dock application adder
-- dock URL manager
-- spacer tile remover
+  - macOS dock manager
+  - dock item controller
+  - application launcher manager
+  - dock customization tool
+  - osx dock configuration
+  - dockutil command-line
+  - dock item organizer
+  - dock application adder
+  - dock URL manager
+  - spacer tile remover
 features:
-- Add applications to the macOS dock.
-- Remove applications from the macOS dock.
-- Manage dock items using command-line interface.
-- Add spacers to organize dock sections.
-- Customize dock item views and display types.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add applications to the macOS dock.
+  - Remove applications from the macOS dock.
+  - Manage dock items using command-line interface.
+  - Add spacers to organize dock sections.
+  - Customize dock item views and display types.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dockutil

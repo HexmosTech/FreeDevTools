@@ -1,29 +1,29 @@
 ---
-title: "Network Quality - Measure Internet Speed | Online Free DevTools by Hexmos"
+title: 'Network Quality - Measure Internet Speed | Online Free DevTools by Hexmos'
 name: networkquality
-path: "/freedevtools/tldr/osx/networkquality/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/networkquality/"
-description: "Measure network quality with networkquality. Analyze upload and download speeds, test network interfaces. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/networkquality/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/networkquality/'
+description: 'Measure network quality with networkquality. Analyze upload and download speeds, test network interfaces. Free online tool, no registration required.'
 category: osx
 keywords:
-- network speed test
-- internet speed test macos
-- network diagnostic tool
-- macos network troubleshooting
-- bandwidth measurement osx
-- network performance analysis
-- osx network quality check
-- command line network test
-- network quality metrics
-- wifi speed test mac
+  - network speed test
+  - internet speed test macos
+  - network diagnostic tool
+  - macos network troubleshooting
+  - bandwidth measurement osx
+  - network performance analysis
+  - osx network quality check
+  - command line network test
+  - network quality metrics
+  - wifi speed test mac
 features:
-- Measure network upload and download speeds
-- Test network quality for default interface
-- Specify a particular network interface for testing
-- Conduct sequential upload and download speed tests
-- Provide verbose output for detailed analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure network upload and download speeds
+  - Test network quality for default interface
+  - Specify a particular network interface for testing
+  - Conduct sequential upload and download speed tests
+  - Provide verbose output for detailed analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # networkQuality

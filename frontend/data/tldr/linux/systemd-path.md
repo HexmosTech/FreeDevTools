@@ -1,9 +1,9 @@
 ---
-title: "Control System Paths - Query Paths with systemd-path | Online Free DevTools by Hexmos"
+title: 'Control System Paths - Query Paths with systemd-path | Online Free DevTools by Hexmos'
 name: systemd-path
-path: "/freedevtools/tldr/linux/systemd-path/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-path/"
-description: "Control system paths efficiently with systemd-path. Query, list, and manage system and user paths on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-path/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-path/'
+description: 'Control system paths efficiently with systemd-path. Query, list, and manage system and user paths on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd path management
@@ -22,8 +22,8 @@ features:
   - Customize output with a suffix string.
   - Quickly print the version of systemd-path.
   - Simplify system path management on Linux.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-path

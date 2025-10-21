@@ -1,29 +1,29 @@
 ---
-title: "Control npm Package Access - Manage Permissions | Online Free DevTools by Hexmos"
+title: 'Control npm Package Access - Manage Permissions | Online Free DevTools by Hexmos'
 name: npm-access
-path: "/freedevtools/tldr/npm/npm-access/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-access/"
-description: "Control npm package access and permissions with npm access. Manage collaborators, set package status, and configure two-factor authentication. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-access/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-access/'
+description: 'Control npm package access and permissions with npm access. Manage collaborators, set package status, and configure two-factor authentication. Free online tool, no registration required.'
 category: common
 keywords:
-- npm access control
-- npm package permissions
-- npm collaborator management
-- npm scope access
-- npm package visibility
-- npm two-factor authentication
-- node package manager access
-- npm access management
-- npm publish access
-- npm team access
+  - npm access control
+  - npm package permissions
+  - npm collaborator management
+  - npm scope access
+  - npm package visibility
+  - npm two-factor authentication
+  - node package manager access
+  - npm access management
+  - npm publish access
+  - npm team access
 features:
-- List packages for a user or scope in npm registry.
-- List collaborators on an npm package.
-- Set public or private status for npm packages.
-- Grant or revoke access to a specific scope or team.
-- Configure two-factor authentication for npm package publishing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List packages for a user or scope in npm registry.
+  - List collaborators on an npm package.
+  - Set public or private status for npm packages.
+  - Grant or revoke access to a specific scope or team.
+  - Configure two-factor authentication for npm package publishing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm access

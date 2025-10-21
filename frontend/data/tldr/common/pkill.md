@@ -1,29 +1,29 @@
 ---
-title: "PKill - Control Processes by Name | Online Free DevTools by Hexmos"
+title: 'PKill - Control Processes by Name | Online Free DevTools by Hexmos'
 name: pkill
-path: "/freedevtools/tldr/common/pkill/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pkill/"
-description: "Control processes by name with PKill. Quickly terminate or signal processes using their name or command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pkill/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pkill/'
+description: 'Control processes by name with PKill. Quickly terminate or signal processes using their name or command line. Free online tool, no registration required.'
 category: common
 keywords:
-- process killer
-- kill process by name
-- terminate process
-- signal process
-- linux pkill
-- macos pkill
-- command line process control
-- process management
-- kill command
-- process signal
+  - process killer
+  - kill process by name
+  - terminate process
+  - signal process
+  - linux pkill
+  - macos pkill
+  - command line process control
+  - process management
+  - kill command
+  - process signal
 features:
-- Kill processes by name
-- Terminate processes matching a full command
-- Forcefully kill processes
-- Send specific signals to processes
-- Kill a specific instance of a process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Kill processes by name
+  - Terminate processes matching a full command
+  - Forcefully kill processes
+  - Send specific signals to processes
+  - Kill a specific instance of a process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkill

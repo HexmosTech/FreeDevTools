@@ -1,29 +1,29 @@
 ---
-title: "Khal Calendar - Schedule Events with Command Line | Online Free DevTools by Hexmos"
+title: 'Khal Calendar - Schedule Events with Command Line | Online Free DevTools by Hexmos'
 name: khal
-path: "/freedevtools/tldr/common/khal/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/khal/"
-description: "Schedule events with Khal, a powerful command-line calendar. Manage appointments, lists, and calendars seamlessly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/khal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/khal/'
+description: 'Schedule events with Khal, a powerful command-line calendar. Manage appointments, lists, and calendars seamlessly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- command line calendar
-- terminal calendar application
-- khal schedule events
-- khal list events
-- khal calendar view
-- khal appointment manager
-- khal icalendar
-- text based calendar
-- linux calendar
-- macos calendar
+  - command line calendar
+  - terminal calendar application
+  - khal schedule events
+  - khal list events
+  - khal calendar view
+  - khal appointment manager
+  - khal icalendar
+  - text based calendar
+  - linux calendar
+  - macos calendar
 features:
-- List events from the command line
-- Add new events to a specified calendar
-- Print calendar view for specified time period
-- Filter events by calendar
-- Schedule events for specific dates and times
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List events from the command line
+  - Add new events to a specified calendar
+  - Print calendar view for specified time period
+  - Filter events by calendar
+  - Schedule events for specific dates and times
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # khal

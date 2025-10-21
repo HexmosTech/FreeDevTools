@@ -1,29 +1,29 @@
 ---
-title: "Create Git Alias - Command Shortcuts | Online Free DevTools by Hexmos"
+title: 'Create Git Alias - Command Shortcuts | Online Free DevTools by Hexmos'
 name: git-alias
-path: "/freedevtools/tldr/git/git-alias/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-alias/"
-description: "Create Git aliases with this tool for shortcutting repetitive commands. Enhance workflow and boost productivity through command-line efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-alias/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-alias/'
+description: 'Create Git aliases with this tool for shortcutting repetitive commands. Enhance workflow and boost productivity through command-line efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- git alias generator
-- git command alias
-- bash alias git
-- git shortcut creation
-- git command line tools
-- git productivity boost
-- git alias management
-- command line alias tool
-- terminal alias generator
-- shell alias git
+  - git alias generator
+  - git command alias
+  - bash alias git
+  - git shortcut creation
+  - git command line tools
+  - git productivity boost
+  - git alias management
+  - command line alias tool
+  - terminal alias generator
+  - shell alias git
 features:
-- Define custom shortcuts for Git commands
-- List existing Git aliases
-- Search for specific Git aliases by name
-- Simplify complex Git operations
-- Improve command-line workflow efficiency
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define custom shortcuts for Git commands
+  - List existing Git aliases
+  - Search for specific Git aliases by name
+  - Simplify complex Git operations
+  - Improve command-line workflow efficiency
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git alias

@@ -1,29 +1,29 @@
 ---
-title: "JJ Evolog - Track Change Evolution | Online Free DevTools by Hexmos"
+title: 'JJ Evolog - Track Change Evolution | Online Free DevTools by Hexmos'
 name: jj-evolog
-path: "/freedevtools/tldr/jj/jj-evolog/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-evolog/"
-description: "Track change evolution with JJ Evolog. Visualize commit history and understand the evolution of your code. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-evolog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-evolog/'
+description: 'Track change evolution with JJ Evolog. Visualize commit history and understand the evolution of your code. Free online tool, no registration required.'
 category: common
 keywords:
-- JJ Evolog
-- Change Evolution Tracker
-- Commit History Viewer
-- Revision Graph Tool
-- JJ VCS
-- Version Control History
-- Commit Lineage
-- Code Evolution Analysis
-- Revision History Tool
-- Graph of Change
+  - JJ Evolog
+  - Change Evolution Tracker
+  - Commit History Viewer
+  - Revision Graph Tool
+  - JJ VCS
+  - Version Control History
+  - Commit Lineage
+  - Code Evolution Analysis
+  - Revision History Tool
+  - Graph of Change
 features:
-- Visualize commit history over time
-- Track the lineage of changes
-- Show diff statistics for each revision
-- Display summaries of changes in the evolution log
-- Show how revisions have evolved
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Visualize commit history over time
+  - Track the lineage of changes
+  - Show diff statistics for each revision
+  - Display summaries of changes in the evolution log
+  - Show how revisions have evolved
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj evolog

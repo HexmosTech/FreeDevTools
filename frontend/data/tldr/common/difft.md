@@ -1,9 +1,9 @@
 ---
-title: "Compare Files - Syntax Aware Diff Tool | Online Free DevTools by Hexmos"
+title: 'Compare Files - Syntax Aware Diff Tool | Online Free DevTools by Hexmos'
 name: difft
-path: "/freedevtools/tldr/common/difft/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/difft/"
-description: "Compare files based on syntax with difft, a syntax-aware diff tool. Find differences, ignore comments, and customize display. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/difft/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/difft/'
+description: 'Compare files based on syntax with difft, a syntax-aware diff tool. Find differences, ignore comments, and customize display. Free online tool, no registration required.'
 category: common
 keywords:
   - syntax aware diff
@@ -22,8 +22,8 @@ features:
   - Customize diff display modes (side-by-side, inline, JSON).
   - Enable or disable syntax highlighting.
   - Detect only presence of differences without detailed output.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # difft

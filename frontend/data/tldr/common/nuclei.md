@@ -1,29 +1,29 @@
 ---
-title: "Nuclei Scanner - Scan for Vulnerabilities with YAML DSL | Online Free DevTools by Hexmos"
+title: 'Nuclei Scanner - Scan for Vulnerabilities with YAML DSL | Online Free DevTools by Hexmos'
 name: nuclei
-path: "/freedevtools/tldr/common/nuclei/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nuclei/"
-description: "Scan for vulnerabilities quickly with Nuclei Scanner using a simple YAML-based DSL. Identify security flaws and misconfigurations easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nuclei/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nuclei/'
+description: 'Scan for vulnerabilities quickly with Nuclei Scanner using a simple YAML-based DSL. Identify security flaws and misconfigurations easily. Free online tool, no registration required.'
 category: common
 keywords:
-- nuclei vulnerability scanner
-- yaml security scanning
-- nuclei template engine
-- vulnerability assessment tool
-- penetration testing scanner
-- nuclei http scan
-- nuclei dns scan
-- nuclei file scan
-- nuclei workflow scan
-- nuclei security automation
+  - nuclei vulnerability scanner
+  - yaml security scanning
+  - nuclei template engine
+  - vulnerability assessment tool
+  - penetration testing scanner
+  - nuclei http scan
+  - nuclei dns scan
+  - nuclei file scan
+  - nuclei workflow scan
+  - nuclei security automation
 features:
-- Scan for vulnerabilities using YAML-based templates
-- Update nuclei templates to the latest version
-- Run automatic web scans using Wappalyzer technology detection
-- Export results to markdown files
-- Run scans based on specific template conditions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan for vulnerabilities using YAML-based templates
+  - Update nuclei templates to the latest version
+  - Run automatic web scans using Wappalyzer technology detection
+  - Export results to markdown files
+  - Run scans based on specific template conditions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nuclei

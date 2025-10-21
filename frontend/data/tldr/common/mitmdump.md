@@ -1,29 +1,29 @@
 ---
-title: "MITMDump - Capture and Analyze HTTP Traffic | Online Free DevTools by Hexmos"
+title: 'MITMDump - Capture and Analyze HTTP Traffic | Online Free DevTools by Hexmos'
 name: mitmdump
-path: "/freedevtools/tldr/common/mitmdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mitmdump/"
-description: "Capture HTTP traffic with MITMDump. Analyze, record, and transform network data with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mitmdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mitmdump/'
+description: 'Capture HTTP traffic with MITMDump. Analyze, record, and transform network data with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP traffic capture
-- network analysis tool
-- mitmdump traffic recording
-- intercept HTTP requests
-- mitmproxy command-line
-- HTTP proxy analyzer
-- network packet inspection
-- traffic filtering mitmdump
-- DNS traffic intercept
-- command-line HTTP debugging
+  - HTTP traffic capture
+  - network analysis tool
+  - mitmdump traffic recording
+  - intercept HTTP requests
+  - mitmproxy command-line
+  - HTTP proxy analyzer
+  - network packet inspection
+  - traffic filtering mitmdump
+  - DNS traffic intercept
+  - command-line HTTP debugging
 features:
-- Record HTTP traffic to a file for later analysis.
-- Filter captured traffic based on request methods.
-- Replay saved HTTP traffic for testing purposes.
-- Intercept DNS traffic for security analysis.
-- Programmatically transform HTTP traffic using scripts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Record HTTP traffic to a file for later analysis.
+  - Filter captured traffic based on request methods.
+  - Replay saved HTTP traffic for testing purposes.
+  - Intercept DNS traffic for security analysis.
+  - Programmatically transform HTTP traffic using scripts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mitmdump

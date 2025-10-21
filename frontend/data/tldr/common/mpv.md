@@ -1,29 +1,29 @@
 ---
-title: "Play Video - Control Audio/Video Playback with MPV | Online Free DevTools by Hexmos"
+title: 'Play Video - Control Audio/Video Playback with MPV | Online Free DevTools by Hexmos'
 name: mpv
-path: "/freedevtools/tldr/common/mpv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mpv/"
-description: "Control audio/video playback with MPV. Enhance your media viewing experience by controlling speed and subtitles. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mpv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mpv/'
+description: 'Control audio/video playback with MPV. Enhance your media viewing experience by controlling speed and subtitles. Free online tool, no registration required.'
 category: common
 keywords:
-- video player control
-- audio player control
-- mpv media playback
-- command-line video
-- cli audio player
-- subtitle support
-- media speed control
-- linux video player
-- macos video player
-- url media playback
+  - video player control
+  - audio player control
+  - mpv media playback
+  - command-line video
+  - cli audio player
+  - subtitle support
+  - media speed control
+  - linux video player
+  - macos video player
+  - url media playback
 features:
-- Play audio/video from URL or file paths
-- Control playback speed with precise adjustments
-- Add external subtitle files for enhanced viewing
-- Jump backward/forward with customizable time intervals
-- Take screenshots of current video frames
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Play audio/video from URL or file paths
+  - Control playback speed with precise adjustments
+  - Add external subtitle files for enhanced viewing
+  - Jump backward/forward with customizable time intervals
+  - Take screenshots of current video frames
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mpv

@@ -1,29 +1,29 @@
 ---
-title: "Regex Replacement - Replace Text Fast with fastmod | Online Free DevTools by Hexmos"
+title: 'Regex Replacement - Replace Text Fast with fastmod | Online Free DevTools by Hexmos'
 name: fastmod
-path: "/freedevtools/tldr/common/fastmod/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fastmod/"
-description: "Replace text fast with fastmod, a powerful command-line text replacement tool. Perform quick find and replace operations across your codebase. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fastmod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fastmod/'
+description: 'Replace text fast with fastmod, a powerful command-line text replacement tool. Perform quick find and replace operations across your codebase. Free online tool, no registration required.'
 category: common
 keywords:
-- regex replacement tool
-- find and replace command line
-- bulk text replacement
-- codebase text modification
-- fast text substitution
-- sed alternative
-- text manipulation tool
-- rust regex engine
-- cross-platform text editor
-- batch file replace
+  - regex replacement tool
+  - find and replace command line
+  - bulk text replacement
+  - codebase text modification
+  - fast text substitution
+  - sed alternative
+  - text manipulation tool
+  - rust regex engine
+  - cross-platform text editor
+  - batch file replace
 features:
-- Replace text using regular expressions
-- Perform case-insensitive replacements
-- Filter files using glob patterns
-- Replace exact strings without regex
-- Print changed files after replacement
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Replace text using regular expressions
+  - Perform case-insensitive replacements
+  - Filter files using glob patterns
+  - Replace exact strings without regex
+  - Print changed files after replacement
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fastmod

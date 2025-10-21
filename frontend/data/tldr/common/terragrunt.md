@@ -1,29 +1,29 @@
 ---
-title: "Control Terraform Infrastructure with Terragrunt | Online Free DevTools by Hexmos"
+title: 'Control Terraform Infrastructure with Terragrunt | Online Free DevTools by Hexmos'
 name: terragrunt
-path: "/freedevtools/tldr/common/terragrunt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/terragrunt/"
-description: "Control Terraform infrastructure effortlessly with Terragrunt. Manage configurations, automate deployments, and keep arguments DRY. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/terragrunt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/terragrunt/'
+description: 'Control Terraform infrastructure effortlessly with Terragrunt. Manage configurations, automate deployments, and keep arguments DRY. Free online tool, no registration required.'
 category: common
 keywords:
-- terragrunt infrastructure control
-- terraform configuration management
-- terragrunt deployment automation
-- terragrunt plan generation
-- terragrunt apply orchestration
-- terragrunt show deployment status
-- terragrunt output values
-- terragrunt destroy automation
-- terragrunt stack management
-- terragrunt DRY configuration
+  - terragrunt infrastructure control
+  - terraform configuration management
+  - terragrunt deployment automation
+  - terragrunt plan generation
+  - terragrunt apply orchestration
+  - terragrunt show deployment status
+  - terragrunt output values
+  - terragrunt destroy automation
+  - terragrunt stack management
+  - terragrunt DRY configuration
 features:
-- Generate and show execution plans for Terraform configurations
-- Apply Terraform configurations to build or change infrastructure
-- Display current Terraform deployment status from state files
-- Output values defined in Terraform modules
-- Destroy Terraform-managed infrastructure resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate and show execution plans for Terraform configurations
+  - Apply Terraform configurations to build or change infrastructure
+  - Display current Terraform deployment status from state files
+  - Output values defined in Terraform modules
+  - Destroy Terraform-managed infrastructure resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # terragrunt

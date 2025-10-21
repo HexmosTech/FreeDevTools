@@ -1,29 +1,32 @@
-import React, { useEffect, useState } from "react";
-import LiveReviewBrand from "./LiveReviewBrand";
+import React, { useEffect, useState } from 'react';
+import LiveReviewBrand from './LiveReviewBrand';
 
 // Learn More Button Component
-const LearnMoreButton: React.FC<{ size?: "sm" | "md" }> = ({ size = "md" }) => {
-  const isSmall = size === "sm";
+const LearnMoreButton: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }) => {
+  const isSmall = size === 'sm';
 
   return (
     <button
-      className={`flex justify-between items-center cursor-pointer shadow-[1px_2px_0px_black] border border-black rounded-[6px] relative overflow-hidden z-100 transition-all duration-250 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[0px_1px_0px_black] active:brightness-75 group ${isSmall ? "px-1 py-0.5" : "px-1 py-1"
-        } bg-yellow-100 hover:bg-yellow-600`}
+      className={`flex justify-between items-center cursor-pointer shadow-[1px_2px_0px_black] border border-black rounded-[6px] relative overflow-hidden z-100 transition-all duration-250 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[0px_1px_0px_black] active:brightness-75 group ${
+        isSmall ? 'px-1 py-0.5' : 'px-1 py-1'
+      } bg-yellow-100 hover:bg-yellow-600`}
     >
       <div
-        className={`relative text-black flex justify-start items-center font-semibold ${isSmall ? "text-[10px]" : "text-xs"
-          }`}
+        className={`relative text-black flex justify-start items-center font-semibold ${
+          isSmall ? 'text-[10px]' : 'text-xs'
+        }`}
       >
         <span className="relative transition-all duration-250 mr-1">Learn</span>
         <span className="relative transition-all duration-250 mr-1">More</span>
       </div>
       <div
-        className={`border border-black rounded-full bg-red-200 group-hover:bg-red-600 relative overflow-hidden transition-all duration-250 group-hover:translate-x-[1px] group-active:translate-x-[2px] ${isSmall ? "p-0.5 mr-0.5" : "p-1 mr-1"
-          }`}
+        className={`border border-black rounded-full bg-red-200 group-hover:bg-red-600 relative overflow-hidden transition-all duration-250 group-hover:translate-x-[1px] group-active:translate-x-[2px] ${
+          isSmall ? 'p-0.5 mr-0.5' : 'p-1 mr-1'
+        }`}
       >
         <svg
-          width={isSmall ? "8" : "12"}
-          height={isSmall ? "8" : "12"}
+          width={isSmall ? '8' : '12'}
+          height={isSmall ? '8' : '12'}
           viewBox="0 0 45 38"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -41,10 +44,10 @@ const LearnMoreButton: React.FC<{ size?: "sm" | "md" }> = ({ size = "md" }) => {
 
 // Close Button Component - Updated to handle responsive sizing
 const CloseButton: React.FC<{
-  size?: "sm" | "md";
+  size?: 'sm' | 'md';
   onClick: (e: React.MouseEvent) => void;
-}> = ({ size = "md", onClick }) => {
-  const isSmall = size === "sm";
+}> = ({ size = 'md', onClick }) => {
+  const isSmall = size === 'sm';
 
   return (
     <button
@@ -53,7 +56,7 @@ const CloseButton: React.FC<{
       className={`absolute top-2 right-2 flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-yellow-200 rounded-full transition-colors duration-200 z-10 py-2 pr-2`}
     >
       <svg
-        className={`${isSmall ? "w-4 h-4" : "w-5 h-5"} xl:w-5 xl:h-5`}
+        className={`${isSmall ? 'w-4 h-4' : 'w-5 h-5'} xl:w-5 xl:h-5`}
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -77,57 +80,57 @@ interface AdVariation {
   textColor: string;
 }
 
-const link = "https://hexmos.com/livereview/";
+const link = 'https://hexmos.com/livereview/';
 
 const adVariations: AdVariation[] = [
   {
-    id: "variation-1",
-    title: "Code Review In Seconds",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800",
+    id: 'variation-1',
+    title: 'Code Review In Seconds',
+    description: 'Self-Hosted AI Code Reviewer',
+    backgroundColor: 'bg-blue-200',
+    textColor: 'text-gray-800',
   },
   {
-    id: "variation-2",
-    title: "Reduce Production Outages",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800",
+    id: 'variation-2',
+    title: 'Reduce Production Outages',
+    description: 'Self-Hosted AI Code Reviewer',
+    backgroundColor: 'bg-blue-200',
+    textColor: 'text-gray-800',
   },
   {
-    id: "variation-3",
-    title: "Reduce costly production bugs",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800",
+    id: 'variation-3',
+    title: 'Reduce costly production bugs',
+    description: 'Self-Hosted AI Code Reviewer',
+    backgroundColor: 'bg-blue-200',
+    textColor: 'text-gray-800',
   },
   {
-    id: "variation-4",
-    title: "Minimize downtime from code errors",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800",
+    id: 'variation-4',
+    title: 'Minimize downtime from code errors',
+    description: 'Self-Hosted AI Code Reviewer',
+    backgroundColor: 'bg-blue-200',
+    textColor: 'text-gray-800',
   },
   {
-    id: "variation-5",
-    title: "Avoid expensive production outages",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800",
+    id: 'variation-5',
+    title: 'Avoid expensive production outages',
+    description: 'Self-Hosted AI Code Reviewer',
+    backgroundColor: 'bg-blue-200',
+    textColor: 'text-gray-800',
   },
   {
-    id: "variation-6",
-    title: "Reduce bottlenecks in code reviews",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800",
+    id: 'variation-6',
+    title: 'Reduce bottlenecks in code reviews',
+    description: 'Self-Hosted AI Code Reviewer',
+    backgroundColor: 'bg-blue-200',
+    textColor: 'text-gray-800',
   },
   {
-    id: "variation-7",
-    title: "Reduce context-switching for engineers",
-    description: "Self-Hosted AI Code Reviewer",
-    backgroundColor: "bg-blue-200",
-    textColor: "text-gray-800",
+    id: 'variation-7',
+    title: 'Reduce context-switching for engineers',
+    description: 'Self-Hosted AI Code Reviewer',
+    backgroundColor: 'bg-blue-200',
+    textColor: 'text-gray-800',
   },
 ];
 
@@ -164,7 +167,7 @@ const AdBanner: React.FC = () => {
     >
       <CloseButton size="sm" onClick={handleClose} />
       <a
-        href={link + "?variation=" + currentVariation}
+        href={link + '?variation=' + currentVariation}
         target="_blank"
         rel="noopener noreferrer"
         className="block h-full hover:bg-yellow transition-colors duration-300 rounded-lg

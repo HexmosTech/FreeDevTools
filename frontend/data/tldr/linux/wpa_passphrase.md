@@ -1,9 +1,9 @@
 ---
-title: "Generate WPA-PSK Key - WPA Passphrase Generator | Online Free DevTools by Hexmos"
+title: 'Generate WPA-PSK Key - WPA Passphrase Generator | Online Free DevTools by Hexmos'
 name: wpa_passphrase
-path: "/freedevtools/tldr/linux/wpa_passphrase/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wpa_passphrase/"
-description: "Generate WPA-PSK keys with wpa_passphrase.  This command-line tool securely creates WPA/WPA2 pre-shared keys. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wpa_passphrase/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wpa_passphrase/'
+description: 'Generate WPA-PSK keys with wpa_passphrase.  This command-line tool securely creates WPA/WPA2 pre-shared keys. Free online tool, no registration required.'
 category: linux
 keywords:
   - wpa passphrase generator
@@ -22,8 +22,8 @@ features:
   - Computes WPA and WPA2 compatible keys.
   - Enhances WiFi network security.
   - Provides a secure method for key generation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wpa_passphrase

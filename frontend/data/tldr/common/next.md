@@ -1,29 +1,29 @@
 ---
-title: "Generate Next.js App - Build Optimized Apps | Online Free DevTools by Hexmos"
+title: 'Generate Next.js App - Build Optimized Apps | Online Free DevTools by Hexmos'
 name: next
-path: "/freedevtools/tldr/common/next/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/next/"
-description: "Generate Next.js applications for production with Next.js CLI. Build, start, and export your React apps with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/next/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/next/'
+description: 'Generate Next.js applications for production with Next.js CLI. Build, start, and export your React apps with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Next.js app generator
-- React server-side rendering
-- Production build tool
-- Static HTML exporter
-- Next.js development server
-- Next.js CLI commands
-- JavaScript web framework
-- SSR application builder
-- Web application deployment
-- Next.js telemetry
+  - Next.js app generator
+  - React server-side rendering
+  - Production build tool
+  - Static HTML exporter
+  - Next.js development server
+  - Next.js CLI commands
+  - JavaScript web framework
+  - SSR application builder
+  - Web application deployment
+  - Next.js telemetry
 features:
-- Build Next.js applications for production
-- Start the Next.js development server
-- Export Next.js apps to static HTML
-- Run Next.js applications in production mode
-- Display Next.js telemetry status
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Next.js applications for production
+  - Start the Next.js development server
+  - Export Next.js apps to static HTML
+  - Run Next.js applications in production mode
+  - Display Next.js telemetry status
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # next

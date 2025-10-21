@@ -1,29 +1,29 @@
 ---
-title: "Fastd - Control VPN Daemon | Online Free DevTools by Hexmos"
+title: 'Fastd - Control VPN Daemon | Online Free DevTools by Hexmos'
 name: fastd
-path: "/freedevtools/tldr/common/fastd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fastd/"
-description: "Control your VPN daemon with Fastd, supporting various encryption methods. Securely manage network connections with a lightweight, configurable VPN tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fastd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fastd/'
+description: 'Control your VPN daemon with Fastd, supporting various encryption methods. Securely manage network connections with a lightweight, configurable VPN tool. Free online tool, no registration required.'
 category: common
 keywords:
-- VPN daemon control
-- Linux VPN configuration
-- Fastd configuration manager
-- Layer 2 VPN setup
-- Layer 3 VPN setup
-- Freifunk network management
-- Encryption protocol manager
-- Network tunnel configuration
-- Keypair generation tool
-- Fastd network security
+  - VPN daemon control
+  - Linux VPN configuration
+  - Fastd configuration manager
+  - Layer 2 VPN setup
+  - Layer 3 VPN setup
+  - Freifunk network management
+  - Encryption protocol manager
+  - Network tunnel configuration
+  - Keypair generation tool
+  - Fastd network security
 features:
-- Start VPN with custom configuration
-- Verify VPN configuration files
-- Generate new encryption keypairs
-- Display public key from private key
-- Configure Layer 3 VPN with custom MTU
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start VPN with custom configuration
+  - Verify VPN configuration files
+  - Generate new encryption keypairs
+  - Display public key from private key
+  - Configure Layer 3 VPN with custom MTU
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fastd

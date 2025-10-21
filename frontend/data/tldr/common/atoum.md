@@ -1,29 +1,29 @@
 ---
-title: "atoum Test Runner - Execute PHP Unit Tests | Online Free DevTools by Hexmos"
+title: 'atoum Test Runner - Execute PHP Unit Tests | Online Free DevTools by Hexmos'
 name: atoum
-path: "/freedevtools/tldr/common/atoum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/atoum/"
-description: "Execute PHP unit tests effectively with atoum Test Runner. Streamline testing workflows and ensure code reliability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/atoum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/atoum/'
+description: 'Execute PHP unit tests effectively with atoum Test Runner. Streamline testing workflows and ensure code reliability. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP unit testing framework
-- atoum test runner
-- PHP testing CLI
-- PHP code testing
-- Unit test execution
-- Code quality assurance
-- PHP namespace testing
-- Tag-based testing
-- Bootstrap file loading
-- Configuration file testing
+  - PHP unit testing framework
+  - atoum test runner
+  - PHP testing CLI
+  - PHP code testing
+  - Unit test execution
+  - Code quality assurance
+  - PHP namespace testing
+  - Tag-based testing
+  - Bootstrap file loading
+  - Configuration file testing
 features:
-- Run all tests in a project.
-- Execute tests based on namespaces.
-- Run tests tagged with specific identifiers.
-- Load custom bootstrap files for test environments.
-- Use configuration files for test parameters.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run all tests in a project.
+  - Execute tests based on namespaces.
+  - Run tests tagged with specific identifiers.
+  - Load custom bootstrap files for test environments.
+  - Use configuration files for test parameters.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # atoum

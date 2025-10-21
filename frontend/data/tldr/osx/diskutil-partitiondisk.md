@@ -1,29 +1,29 @@
 ---
-title: "Partition Disk - Format Volumes with Diskutil on OSX | Online Free DevTools by Hexmos"
+title: 'Partition Disk - Format Volumes with Diskutil on OSX | Online Free DevTools by Hexmos'
 name: diskutil-partitiondisk
-path: "/freedevtools/tldr/osx/diskutil-partitiondisk/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/diskutil-partitiondisk/"
-description: "Format disk volumes easily with Diskutil PartitionDisk on OSX. Manage partitions using APM, MBR, or GPT schemes. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/diskutil-partitiondisk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/diskutil-partitiondisk/'
+description: 'Format disk volumes easily with Diskutil PartitionDisk on OSX. Manage partitions using APM, MBR, or GPT schemes. Free online tool, no registration required.'
 category: osx
 keywords:
-- disk partition formatter
-- diskutil volume manager
-- osx disk partitioning
-- macos disk format tool
-- gpt partition manager
-- mbr partition utility
-- apm disk formatter
-- command line disk partition
-- diskutil partition disk command
-- mac disk utility
+  - disk partition formatter
+  - diskutil volume manager
+  - osx disk partitioning
+  - macos disk format tool
+  - gpt partition manager
+  - mbr partition utility
+  - apm disk formatter
+  - command line disk partition
+  - diskutil partition disk command
+  - mac disk utility
 features:
-- Reformat volumes using APM, MBR, or GPT partitioning schemes.
-- Create single partitions with specified filesystems and names.
-- Define custom partition sizes.
-- Create multiple partitions with different file systems and sizes.
-- List all supported filesystems for partitioning.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reformat volumes using APM, MBR, or GPT partitioning schemes.
+  - Create single partitions with specified filesystems and names.
+  - Define custom partition sizes.
+  - Create multiple partitions with different file systems and sizes.
+  - List all supported filesystems for partitioning.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # diskutil partitionDisk

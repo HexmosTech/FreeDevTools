@@ -1,29 +1,29 @@
 ---
-title: "RPC Dump - Discover RPC Endpoints with rpcdump.py | Online Free DevTools by Hexmos"
+title: 'RPC Dump - Discover RPC Endpoints with rpcdump.py | Online Free DevTools by Hexmos'
 name: rpcdump.py
-path: "/freedevtools/tldr/common/rpcdump-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/rpcdump-py/"
-description: "Discover RPC endpoints with rpcdump.py. Enumerate RPC services and identify potential vulnerabilities for security auditing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rpcdump-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/rpcdump-py/'
+description: 'Discover RPC endpoints with rpcdump.py. Enumerate RPC services and identify potential vulnerabilities for security auditing. Free online tool, no registration required.'
 category: common
 keywords:
-- RPC endpoint discovery
-- RPC service enumeration
-- Windows RPC dump
-- Impacket rpcdump.py
-- Network service discovery
-- Remote procedure call scan
-- RPC security audit
-- RPC port scanner
-- Endpoint Mapper scan
-- Network reconnaissance
+  - RPC endpoint discovery
+  - RPC service enumeration
+  - Windows RPC dump
+  - Impacket rpcdump.py
+  - Network service discovery
+  - Remote procedure call scan
+  - RPC security audit
+  - RPC port scanner
+  - Endpoint Mapper scan
+  - Network reconnaissance
 features:
-- Dump RPC endpoints using credentials
-- Dump RPC endpoints using NTLM hashes
-- Specify target IP address
-- Connect to a specific port
-- Enable debug output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Dump RPC endpoints using credentials
+  - Dump RPC endpoints using NTLM hashes
+  - Specify target IP address
+  - Connect to a specific port
+  - Enable debug output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpcdump.py

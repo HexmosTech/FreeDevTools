@@ -1,29 +1,29 @@
 ---
-title: "Docker Images - Manage Docker Images | Online Free DevTools by Hexmos"
+title: 'Docker Images - Manage Docker Images | Online Free DevTools by Hexmos'
 name: docker-images
-path: "/freedevtools/tldr/docker/docker-images/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-images/"
-description: "Manage Docker images effortlessly with Docker Images. List, filter, and sort Docker images to optimize container resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-images/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-images/'
+description: 'Manage Docker images effortlessly with Docker Images. List, filter, and sort Docker images to optimize container resources. Free online tool, no registration required.'
 category: common
 keywords:
-- docker images management
-- docker image list
-- docker image filter
-- docker image sort
-- docker image prune
-- docker image cleanup
-- container image analysis
-- docker cli images
-- docker image size
-- docker dangling images
+  - docker images management
+  - docker image list
+  - docker image filter
+  - docker image sort
+  - docker image prune
+  - docker image cleanup
+  - container image analysis
+  - docker cli images
+  - docker image size
+  - docker dangling images
 features:
-- List all Docker images
-- Filter images based on various criteria
-- Sort images by size or other attributes
-- Identify and remove unused Docker images
-- Display image information in different formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all Docker images
+  - Filter images based on various criteria
+  - Sort images by size or other attributes
+  - Identify and remove unused Docker images
+  - Display image information in different formats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker images

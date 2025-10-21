@@ -1,9 +1,9 @@
 ---
-title: "Flatpak Mask - Control Updates with Flatpak | Online Free DevTools by Hexmos"
+title: 'Flatpak Mask - Control Updates with Flatpak | Online Free DevTools by Hexmos'
 name: flatpak-mask
-path: "/freedevtools/tldr/linux/flatpak-mask/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak-mask/"
-description: "Control Flatpak updates easily with Flatpak Mask. Manage application updates and prevent automatic installations using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/flatpak-mask/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/flatpak-mask/'
+description: 'Control Flatpak updates easily with Flatpak Mask. Manage application updates and prevent automatic installations using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - flatpak update management
@@ -22,8 +22,8 @@ features:
   - List all currently masked update patterns.
   - Control both user and system-level updates.
   - Manage updates via simple command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flatpak mask

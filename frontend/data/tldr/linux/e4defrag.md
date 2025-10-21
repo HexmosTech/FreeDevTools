@@ -1,9 +1,9 @@
 ---
-title: "Defragment Ext4 Filesystem - e4defrag Command | Online Free DevTools by Hexmos"
+title: 'Defragment Ext4 Filesystem - e4defrag Command | Online Free DevTools by Hexmos'
 name: e4defrag
-path: "/freedevtools/tldr/linux/e4defrag/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/e4defrag/"
-description: "Defragment ext4 filesystems easily with the e4defrag command.  Check filesystem fragmentation and optimize performance for faster read/write speeds. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/e4defrag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/e4defrag/'
+description: 'Defragment ext4 filesystems easily with the e4defrag command.  Check filesystem fragmentation and optimize performance for faster read/write speeds. Free online tool, no registration required.'
 category: linux
 keywords:
   - ext4 defragmentation
@@ -22,8 +22,8 @@ features:
   - Provides verbose output showing fragmentation before and after defragmentation.
   - Allows checking fragmentation without performing defragmentation.
   - Supports specifying the target filesystem device.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # e4defrag

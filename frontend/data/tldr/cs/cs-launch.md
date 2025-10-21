@@ -1,29 +1,29 @@
 ---
-title: "Launch Application - Run Apps Directly with cs-launch | Online Free DevTools by Hexmos"
+title: 'Launch Application - Run Apps Directly with cs-launch | Online Free DevTools by Hexmos'
 name: cs-launch
-path: "/freedevtools/tldr/cs/cs-launch/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-launch/"
-description: "Launch application easily with cs-launch, running apps directly from Maven dependencies. Streamline development workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/cs-launch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/cs-launch/'
+description: 'Launch application easily with cs-launch, running apps directly from Maven dependencies. Streamline development workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- coursier launch application
-- launch java application
-- maven dependency launch
-- cs launch command
-- application launcher cli
-- java application runner
-- coursier cli tool
-- application deployment tool
-- command-line application launcher
-- java dependency manager
+  - coursier launch application
+  - launch java application
+  - maven dependency launch
+  - cs launch command
+  - application launcher cli
+  - java application runner
+  - coursier cli tool
+  - application deployment tool
+  - command-line application launcher
+  - java dependency manager
 features:
-- Launch applications directly from Maven dependencies
-- Specify application version for launching
-- Define main class for application launch
-- Customize Java options and JVM memory settings
-- Execute applications with command-line arguments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch applications directly from Maven dependencies
+  - Specify application version for launching
+  - Define main class for application launch
+  - Customize Java options and JVM memory settings
+  - Execute applications with command-line arguments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cs launch

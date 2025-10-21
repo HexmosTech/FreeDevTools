@@ -1,29 +1,29 @@
 ---
-title: "Alias - Create Command Shortcuts | Online Free DevTools by Hexmos"
+title: 'Alias - Create Command Shortcuts | Online Free DevTools by Hexmos'
 name: alias
-path: "/freedevtools/tldr/common/alias/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/alias/"
-description: "Create command shortcuts with Alias. Define custom aliases for frequently used commands to improve efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/alias/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/alias/'
+description: 'Create command shortcuts with Alias. Define custom aliases for frequently used commands to improve efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- command alias creation
-- shell alias definition
-- terminal alias shortcut
-- bash alias management
-- zsh alias configuration
-- command line alias
-- linux alias
-- macos alias
-- alias command substitution
-- shortcut command generator
+  - command alias creation
+  - shell alias definition
+  - terminal alias shortcut
+  - bash alias management
+  - zsh alias configuration
+  - command line alias
+  - linux alias
+  - macos alias
+  - alias command substitution
+  - shortcut command generator
 features:
-- Define custom command shortcuts
-- Create persistent aliases in shell configuration files
-- List existing aliases
-- Remove defined aliases
-- Execute complex commands with simple aliases
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define custom command shortcuts
+  - Create persistent aliases in shell configuration files
+  - List existing aliases
+  - Remove defined aliases
+  - Execute complex commands with simple aliases
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # alias

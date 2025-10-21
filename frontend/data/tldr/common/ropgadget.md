@@ -1,29 +1,29 @@
 ---
-title: "Find ROP Gadgets - Analyze Binaries | Online Free DevTools by Hexmos"
+title: 'Find ROP Gadgets - Analyze Binaries | Online Free DevTools by Hexmos'
 name: ropgadget
-path: "/freedevtools/tldr/common/ropgadget/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ropgadget/"
-description: "Find ROP gadgets with ROPgadget. Analyze binary files for Return-Oriented Programming vulnerabilities and exploit development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ropgadget/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ropgadget/'
+description: 'Find ROP gadgets with ROPgadget. Analyze binary files for Return-Oriented Programming vulnerabilities and exploit development. Free online tool, no registration required.'
 category: common
 keywords:
-- ROP gadget finder
-- binary analysis tool
-- exploit development tool
-- ROP chain generator
-- vulnerability research
-- security audit
-- assembly code analysis
-- reverse engineering tool
-- ROPgadget analysis
-- ROP exploit
+  - ROP gadget finder
+  - binary analysis tool
+  - exploit development tool
+  - ROP chain generator
+  - vulnerability research
+  - security audit
+  - assembly code analysis
+  - reverse engineering tool
+  - ROPgadget analysis
+  - ROP exploit
 features:
-- List ROP gadgets in binary files
-- Filter gadgets based on regular expressions
-- Exclude specific gadget types
-- Exclude gadgets with bad bytes
-- Limit search depth for gadgets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List ROP gadgets in binary files
+  - Filter gadgets based on regular expressions
+  - Exclude specific gadget types
+  - Exclude gadgets with bad bytes
+  - Limit search depth for gadgets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ROPgadget

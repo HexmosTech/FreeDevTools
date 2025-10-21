@@ -1,29 +1,29 @@
 ---
-title: "Sublime Text - Edit Files Quickly | Online Free DevTools by Hexmos"
+title: 'Sublime Text - Edit Files Quickly | Online Free DevTools by Hexmos'
 name: subl
-path: "/freedevtools/tldr/common/subl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/subl/"
-description: "Edit files quickly with Sublime Text using command line. Open, navigate, and modify files with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/subl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/subl/'
+description: 'Edit files quickly with Sublime Text using command line. Open, navigate, and modify files with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- sublime text editor
-- text editor command line
-- file editor linux
-- file editor macos
-- code editor windows
-- open files sublime
-- sublime text line number
-- sublime text new window
-- sublime text add to window
-- sublime text directory
+  - sublime text editor
+  - text editor command line
+  - file editor linux
+  - file editor macos
+  - code editor windows
+  - open files sublime
+  - sublime text line number
+  - sublime text new window
+  - sublime text add to window
+  - sublime text directory
 features:
-- Open files and directories in Sublime Text
-- Navigate to specific line numbers within files
-- Add files or directories to the current Sublime Text window
-- Open files or directories in a new Sublime Text window
-- Edit files quickly via the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open files and directories in Sublime Text
+  - Navigate to specific line numbers within files
+  - Add files or directories to the current Sublime Text window
+  - Open files or directories in a new Sublime Text window
+  - Edit files quickly via the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # subl

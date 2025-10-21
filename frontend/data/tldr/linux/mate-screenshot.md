@@ -1,29 +1,29 @@
 ---
-title: "Screenshot Maker - Create Screenshots in Linux | Online Free DevTools by Hexmos"
+title: 'Screenshot Maker - Create Screenshots in Linux | Online Free DevTools by Hexmos'
 name: mate-screenshot
-path: "/freedevtools/tldr/linux/mate-screenshot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mate-screenshot/"
-description: "Create screenshots easily with Mate Screenshot. Capture full screen, specific windows, or custom areas. Free online tool, no registration required. Linux screenshot tool."
+path: '/freedevtools/tldr/linux/mate-screenshot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mate-screenshot/'
+description: 'Create screenshots easily with Mate Screenshot. Capture full screen, specific windows, or custom areas. Free online tool, no registration required. Linux screenshot tool.'
 category: linux
 keywords:
-- linux screenshot maker
-- mate screenshot tool
-- command line screenshot
-- linux screen capture
-- screenshot with delay linux
-- mate desktop screenshot
-- interactive screenshot linux
-- area selection screenshot
-- window screenshot command
-- borderless screenshot linux
+  - linux screenshot maker
+  - mate screenshot tool
+  - command line screenshot
+  - linux screen capture
+  - screenshot with delay linux
+  - mate desktop screenshot
+  - interactive screenshot linux
+  - area selection screenshot
+  - window screenshot command
+  - borderless screenshot linux
 features:
-- Capture full screen screenshots.
-- Capture active window screenshots.
-- Select and capture a specific area.
-- Capture screenshots interactively with a GUI.
-- Add delay to the screenshot capture.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture full screen screenshots.
+  - Capture active window screenshots.
+  - Select and capture a specific area.
+  - Capture screenshots interactively with a GUI.
+  - Add delay to the screenshot capture.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mate-screenshot

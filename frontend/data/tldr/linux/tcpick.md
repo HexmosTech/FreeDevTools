@@ -1,9 +1,9 @@
 ---
-title: "Analyze Network Traffic with tcpick | Online Free DevTools by Hexmos"
+title: 'Analyze Network Traffic with tcpick | Online Free DevTools by Hexmos'
 name: tcpick
-path: "/freedevtools/tldr/linux/tcpick/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tcpick/"
-description: "Analyze network traffic with tcpick, a powerful packet sniffing and network analysis tool. Capture and display TCP connections and data with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tcpick/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tcpick/'
+description: 'Analyze network traffic with tcpick, a powerful packet sniffing and network analysis tool. Capture and display TCP connections and data with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - network traffic analyzer
@@ -22,8 +22,8 @@ features:
   - Display detailed TCP connection information
   - Analyze captured network data
   - Filter traffic based on host, port, and interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tcpick

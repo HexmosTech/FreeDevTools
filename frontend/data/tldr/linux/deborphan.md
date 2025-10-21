@@ -1,29 +1,29 @@
 ---
-title: "Deborphan - Find Orphan Packages | Online Free DevTools by Hexmos"
+title: 'Deborphan - Find Orphan Packages | Online Free DevTools by Hexmos'
 name: deborphan
-path: "/freedevtools/tldr/linux/deborphan/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/deborphan/"
-description: "Find orphan packages with Deborphan, your Linux package manager cleanup tool. Identify and remove unused dependencies easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/deborphan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/deborphan/'
+description: 'Find orphan packages with Deborphan, your Linux package manager cleanup tool. Identify and remove unused dependencies easily. Free online tool, no registration required.'
 category: linux
 keywords:
-- Linux orphan packages
-- APT package cleanup
-- Debian orphan removal
-- Orphan library finder
-- Unused dependencies
-- deborphan command
-- APT dependencies
-- Linux package manager
-- Remove orphan packages
-- System cleanup Linux
+  - Linux orphan packages
+  - APT package cleanup
+  - Debian orphan removal
+  - Orphan library finder
+  - Unused dependencies
+  - deborphan command
+  - APT dependencies
+  - Linux package manager
+  - Remove orphan packages
+  - System cleanup Linux
 features:
-- Identifies orphan library packages.
-- Detects packages suggested but not required.
-- Guesses potential library packages.
-- Cleans unused package dependencies.
-- Simplifies system maintenance.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identifies orphan library packages.
+  - Detects packages suggested but not required.
+  - Guesses potential library packages.
+  - Cleans unused package dependencies.
+  - Simplifies system maintenance.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # deborphan

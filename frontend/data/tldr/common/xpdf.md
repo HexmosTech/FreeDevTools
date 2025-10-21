@@ -1,29 +1,29 @@
 ---
-title: "View PDF Files - Display PDF Documents with Xpdf | Online Free DevTools by Hexmos"
+title: 'View PDF Files - Display PDF Documents with Xpdf | Online Free DevTools by Hexmos'
 name: xpdf
-path: "/freedevtools/tldr/common/xpdf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xpdf/"
-description: "Display PDF documents efficiently with Xpdf. Open, zoom, and navigate PDF files using command line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xpdf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xpdf/'
+description: 'Display PDF documents efficiently with Xpdf. Open, zoom, and navigate PDF files using command line options. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF viewer
-- PDF document viewer
-- Open PDF file linux
-- PDF fullscreen mode
-- Command line PDF tool
-- PDF file reader
-- Xpdf command
-- Compressed PDF support
-- PDF zoom control
-- PDF page navigation
+  - PDF viewer
+  - PDF document viewer
+  - Open PDF file linux
+  - PDF fullscreen mode
+  - Command line PDF tool
+  - PDF file reader
+  - Xpdf command
+  - Compressed PDF support
+  - PDF zoom control
+  - PDF page navigation
 features:
-- Open PDF files from the command line
-- Navigate to a specific page within a PDF
-- Display PDF in fullscreen mode
-- Specify initial zoom level for PDF viewing
-- Open compressed PDF files directly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open PDF files from the command line
+  - Navigate to a specific page within a PDF
+  - Display PDF in fullscreen mode
+  - Specify initial zoom level for PDF viewing
+  - Open compressed PDF files directly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xpdf

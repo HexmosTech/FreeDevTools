@@ -1,29 +1,29 @@
 ---
-title: "Dolt Checkout - Manage Branches & Tables | Online Free DevTools by Hexmos"
+title: 'Dolt Checkout - Manage Branches & Tables | Online Free DevTools by Hexmos'
 name: dolt-checkout
-path: "/freedevtools/tldr/dolt/dolt-checkout/"
-canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-checkout/"
-description: "Manage database branches and tables with Dolt Checkout. Revert changes, switch branches, and create new branches with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/dolt/dolt-checkout/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dolt/dolt-checkout/'
+description: 'Manage database branches and tables with Dolt Checkout. Revert changes, switch branches, and create new branches with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Dolt branch checkout
-- Dolt table checkout
-- Dolt version control
-- Dolt database management
-- Dolt command line
-- Dolt revert changes
-- Dolt create branch
-- Git-like checkout tool
-- SQL database checkout
-- Dolt SQL version control
+  - Dolt branch checkout
+  - Dolt table checkout
+  - Dolt version control
+  - Dolt database management
+  - Dolt command line
+  - Dolt revert changes
+  - Dolt create branch
+  - Git-like checkout tool
+  - SQL database checkout
+  - Dolt SQL version control
 features:
-- Switch between Dolt branches.
-- Revert unstaged changes to a table.
-- Create new branches based on the current state.
-- Create new branches based on a specific commit.
-- Manage database versions using command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Switch between Dolt branches.
+  - Revert unstaged changes to a table.
+  - Create new branches based on the current state.
+  - Create new branches based on a specific commit.
+  - Manage database versions using command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dolt checkout

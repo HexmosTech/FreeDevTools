@@ -1,9 +1,9 @@
 ---
-title: "Netplan - Configure Network Settings with YAML | Online Free DevTools by Hexmos"
+title: 'Netplan - Configure Network Settings with YAML | Online Free DevTools by Hexmos'
 name: netplan
-path: "/freedevtools/tldr/linux/netplan/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/netplan/"
-description: "Configure network settings with Netplan, the YAML-based network configuration tool. Apply changes, generate configurations, and troubleshoot issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/netplan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/netplan/'
+description: 'Configure network settings with Netplan, the YAML-based network configuration tool. Apply changes, generate configurations, and troubleshoot issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - netplan configuration
@@ -22,8 +22,8 @@ features:
   - Configure network interfaces to use DHCP
   - Test network configurations before permanent application
   - Display the current Netplan configuration status
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # netplan

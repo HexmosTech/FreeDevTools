@@ -1,9 +1,9 @@
 ---
-title: "Generate Man Pages - help2man Tool | Online Free DevTools by Hexmos"
+title: 'Generate Man Pages - help2man Tool | Online Free DevTools by Hexmos'
 name: help2man
-path: "/freedevtools/tldr/common/help2man/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/help2man/"
-description: "Generate man pages easily with help2man. Convert --help output to manual pages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/help2man/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/help2man/'
+description: 'Generate man pages easily with help2man. Convert --help output to manual pages. Free online tool, no registration required.'
 category: common
 keywords:
   - man page generator
@@ -22,8 +22,8 @@ features:
   - Supports setting a custom man page section number
   - Outputs man pages to a file or standard output
   - Converts version output into man pages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # help2man

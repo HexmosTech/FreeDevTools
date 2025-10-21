@@ -1,29 +1,29 @@
 ---
-title: "Crawl Websites - Manage Scrapy Projects | Online Free DevTools by Hexmos"
+title: 'Crawl Websites - Manage Scrapy Projects | Online Free DevTools by Hexmos'
 name: scrapy
-path: "/freedevtools/tldr/common/scrapy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/scrapy/"
-description: "Crawl websites effectively with Scrapy. Manage web scraping projects, extract data, and automate web crawling tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/scrapy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/scrapy/'
+description: 'Crawl websites effectively with Scrapy. Manage web scraping projects, extract data, and automate web crawling tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- web crawling framework
-- scrapy project management
-- web scraping spider
-- data extraction tool
-- website crawler
-- scrapy commands
-- python web scraping
-- scrapy tutorial
-- command line crawler
-- headless browser scraping
+  - web crawling framework
+  - scrapy project management
+  - web scraping spider
+  - data extraction tool
+  - website crawler
+  - scrapy commands
+  - python web scraping
+  - scrapy tutorial
+  - command line crawler
+  - headless browser scraping
 features:
-- Create Scrapy projects with ease
-- Generate and edit web scraping spiders
-- Run spiders to crawl and extract data
-- Fetch webpage content as Scrapy sees it
-- Interact with page source via the Scrapy shell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Scrapy projects with ease
+  - Generate and edit web scraping spiders
+  - Run spiders to crawl and extract data
+  - Fetch webpage content as Scrapy sees it
+  - Interact with page source via the Scrapy shell
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scrapy

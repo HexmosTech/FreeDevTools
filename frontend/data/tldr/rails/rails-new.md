@@ -1,29 +1,29 @@
 ---
-title: "Create Rails App - Generate New Rails Projects | Online Free DevTools by Hexmos"
+title: 'Create Rails App - Generate New Rails Projects | Online Free DevTools by Hexmos'
 name: rails-new
-path: "/freedevtools/tldr/rails/rails-new/"
-canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-new/"
-description: "Create Rails applications instantly with Rails new. Generate API-only apps, specify databases, and skip JavaScript generation. Free online tool, no registration required."
+path: '/freedevtools/tldr/rails/rails-new/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rails/rails-new/'
+description: 'Create Rails applications instantly with Rails new. Generate API-only apps, specify databases, and skip JavaScript generation. Free online tool, no registration required.'
 category: common
 keywords:
-- Rails application generator
-- Rails new command
-- Ruby on Rails project
-- Rails API creation
-- Rails database configuration
-- Rails JavaScript skip
-- Rails project scaffolding
-- Rails application development
-- Ruby on Rails command line
-- Rails project initialization
+  - Rails application generator
+  - Rails new command
+  - Ruby on Rails project
+  - Rails API creation
+  - Rails database configuration
+  - Rails JavaScript skip
+  - Rails project scaffolding
+  - Rails application development
+  - Ruby on Rails command line
+  - Rails project initialization
 features:
-- Generate new Rails applications
-- Create API-only Rails projects
-- Specify database for Rails application
-- Skip JavaScript file generation in Rails project
-- Display help information for rails new command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate new Rails applications
+  - Create API-only Rails projects
+  - Specify database for Rails application
+  - Skip JavaScript file generation in Rails project
+  - Display help information for rails new command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rails new

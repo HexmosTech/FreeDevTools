@@ -1,29 +1,29 @@
 ---
-title: "Debugfs - Debug Linux Filesystems | Online Free DevTools by Hexmos"
+title: 'Debugfs - Debug Linux Filesystems | Online Free DevTools by Hexmos'
 name: debugfs
-path: "/freedevtools/tldr/linux/debugfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/debugfs/"
-description: "Debug Linux ext2/ext3/ext4 filesystems with Debugfs. Inspect file system metadata, recover deleted files, and troubleshoot file system issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/debugfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/debugfs/'
+description: 'Debug Linux ext2/ext3/ext4 filesystems with Debugfs. Inspect file system metadata, recover deleted files, and troubleshoot file system issues. Free online tool, no registration required.'
 category: linux
 keywords:
-- ext4 filesystem debugger
-- linux filesystem debug
-- debug ext3 filesystem
-- ext2 filesystem analysis
-- filesystem metadata viewer
-- recover deleted linux files
-- debugfs command line
-- linux disk repair
-- filesystem block inspection
-- ext filesystem examiner
+  - ext4 filesystem debugger
+  - linux filesystem debug
+  - debug ext3 filesystem
+  - ext2 filesystem analysis
+  - filesystem metadata viewer
+  - recover deleted linux files
+  - debugfs command line
+  - linux disk repair
+  - filesystem block inspection
+  - ext filesystem examiner
 features:
-- Inspect file system metadata
-- Open filesystem in read-only or read-write mode
-- Execute commands from a specified file
-- View filesystem statistics within the debugfs console
-- List all available debugfs commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Inspect file system metadata
+  - Open filesystem in read-only or read-write mode
+  - Execute commands from a specified file
+  - View filesystem statistics within the debugfs console
+  - List all available debugfs commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # debugfs

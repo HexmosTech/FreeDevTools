@@ -1,9 +1,9 @@
 ---
-title: "Manage System Extensions - Control systemd-sysext | Online Free DevTools by Hexmos"
+title: 'Manage System Extensions - Control systemd-sysext | Online Free DevTools by Hexmos'
 name: systemd-sysext
-path: "/freedevtools/tldr/linux/systemd-sysext/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-sysext/"
-description: "Control system extension images with systemd-sysext.  List, merge, unmerge, and refresh extensions easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-sysext/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-sysext/'
+description: 'Control system extension images with systemd-sysext.  List, merge, unmerge, and refresh extensions easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd extension management
@@ -22,8 +22,8 @@ features:
   - Unmerge system extension images from the system.
   - Refresh system extensions by unmerging and remerging.
   - Check the current merge status of system extensions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-sysext

@@ -1,9 +1,9 @@
 ---
-title: "Manage Multicast Addresses with ip maddress | Online Free DevTools by Hexmos"
+title: 'Manage Multicast Addresses with ip maddress | Online Free DevTools by Hexmos'
 name: ip-maddress
-path: "/freedevtools/tldr/linux/ip-maddress/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-maddress/"
-description: "Manage multicast addresses using the ip maddress command.  View subscribed programs, join and leave multicast groups, and manage network interfaces. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ip-maddress/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ip-maddress/'
+description: 'Manage multicast addresses using the ip maddress command.  View subscribed programs, join and leave multicast groups, and manage network interfaces. Free online tool, no registration required.'
 category: linux
 keywords:
   - ip maddress command
@@ -22,8 +22,8 @@ features:
   - Statically join multicast groups.
   - Statically leave multicast groups.
   - Display help information for the command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ip maddress

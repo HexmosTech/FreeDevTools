@@ -1,29 +1,29 @@
 ---
-title: "Filter Network Traffic - Control Packets with ngrep | Online Free DevTools by Hexmos"
+title: 'Filter Network Traffic - Control Packets with ngrep | Online Free DevTools by Hexmos'
 name: ngrep
-path: "/freedevtools/tldr/common/ngrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ngrep/"
-description: "Filter network traffic with ngrep, a powerful tool for analyzing packets using regular expressions. Capture, inspect, and debug network communications. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ngrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ngrep/'
+description: 'Filter network traffic with ngrep, a powerful tool for analyzing packets using regular expressions. Capture, inspect, and debug network communications. Free online tool, no registration required.'
 category: common
 keywords:
-- network traffic filter
-- packet capture ngrep
-- regex network analysis
-- network traffic analysis linux
-- ngrep command line
-- tcpdump alternative
-- network debugging tool
-- packet sniffer
-- network monitoring
-- traffic pattern analysis
+  - network traffic filter
+  - packet capture ngrep
+  - regex network analysis
+  - network traffic analysis linux
+  - ngrep command line
+  - tcpdump alternative
+  - network debugging tool
+  - packet sniffer
+  - network monitoring
+  - traffic pattern analysis
 features:
-- Capture network traffic on any interface
-- Filter packets based on regular expressions
-- Monitor traffic to or from specific hosts
-- Analyze traffic on a specified port
-- Inspect packet content for specific keywords
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture network traffic on any interface
+  - Filter packets based on regular expressions
+  - Monitor traffic to or from specific hosts
+  - Analyze traffic on a specified port
+  - Inspect packet content for specific keywords
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ngrep

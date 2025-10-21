@@ -1,29 +1,29 @@
 ---
-title: "Start MySQL Server - Control Database Instances | Online Free DevTools by Hexmos"
+title: 'Start MySQL Server - Control Database Instances | Online Free DevTools by Hexmos'
 name: mysqld
-path: "/freedevtools/tldr/common/mysqld/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mysqld/"
-description: "Start MySQL server instances with mysqld. Manage database connections, configure logging, and customize port settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mysqld/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mysqld/'
+description: 'Start MySQL server instances with mysqld. Manage database connections, configure logging, and customize port settings. Free online tool, no registration required.'
 category: common
 keywords:
-- mysql server start
-- mysql database server
-- mysqld command
-- database instance control
-- mysql configuration
-- server logging
-- port customization
-- linux mysql
-- macos mysql
-- common database commands
+  - mysql server start
+  - mysql database server
+  - mysqld command
+  - database instance control
+  - mysql configuration
+  - server logging
+  - port customization
+  - linux mysql
+  - macos mysql
+  - common database commands
 features:
-- Start the MySQL database server with default settings.
-- Customize the server's port for network connections.
-- Redirect logging output to a specified file.
-- Print default arguments for configuration review.
-- Read configuration options from a specified file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the MySQL database server with default settings.
+  - Customize the server's port for network connections.
+  - Redirect logging output to a specified file.
+  - Print default arguments for configuration review.
+  - Read configuration options from a specified file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mysqld

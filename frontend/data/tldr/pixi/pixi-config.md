@@ -1,29 +1,29 @@
 ---
-title: "Pixi Config - Manage Project Configuration | Online Free DevTools by Hexmos"
+title: 'Pixi Config - Manage Project Configuration | Online Free DevTools by Hexmos'
 name: pixi-config
-path: "/freedevtools/tldr/pixi/pixi-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi-config/"
-description: "Manage project configuration with Pixi Config. Configure project settings, dependencies, and environments using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/pixi/pixi-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pixi/pixi-config/'
+description: 'Manage project configuration with Pixi Config. Configure project settings, dependencies, and environments using command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- pixi config management
-- pixi environment configuration
-- pixi project settings
-- pixi dependency management
-- pixi command-line configuration
-- pixi project configuration file
-- pixi config edit
-- pixi config list
-- pixi config set
-- pixi config unset
+  - pixi config management
+  - pixi environment configuration
+  - pixi project settings
+  - pixi dependency management
+  - pixi command-line configuration
+  - pixi project configuration file
+  - pixi config edit
+  - pixi config list
+  - pixi config set
+  - pixi config unset
 features:
-- Edit the pixi configuration file.
-- List all pixi configurations.
-- Prepend values to configuration keys.
-- Append values to configuration keys.
-- Set and unset configuration keys.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Edit the pixi configuration file.
+  - List all pixi configurations.
+  - Prepend values to configuration keys.
+  - Append values to configuration keys.
+  - Set and unset configuration keys.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pixi config

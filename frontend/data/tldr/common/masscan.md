@@ -1,29 +1,29 @@
 ---
-title: "Network Scan - Discover Open Ports | Online Free DevTools by Hexmos"
+title: 'Network Scan - Discover Open Ports | Online Free DevTools by Hexmos'
 name: masscan
-path: "/freedevtools/tldr/common/masscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/masscan/"
-description: "Perform network scanning with Masscan to quickly identify open ports and services. Discover vulnerabilities with this powerful scanner, free online, no registration needed."
+path: '/freedevtools/tldr/common/masscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/masscan/'
+description: 'Perform network scanning with Masscan to quickly identify open ports and services. Discover vulnerabilities with this powerful scanner, free online, no registration needed.'
 category: common
 keywords:
-- network scan tool
-- port scanner online
-- masscan network scanner
-- ip address scanner
-- vulnerability scanner
-- network security scanner
-- masscan command line
-- open port detection
-- fast network scan
-- masscan linux
+  - network scan tool
+  - port scanner online
+  - masscan network scanner
+  - ip address scanner
+  - vulnerability scanner
+  - network security scanner
+  - masscan command line
+  - open port detection
+  - fast network scan
+  - masscan linux
 features:
-- Scan entire networks quickly for open ports.
-- Exclude specific IP ranges from scans.
-- Output scan results in various formats (JSON, XML).
-- Perform version detection using banner grabbing.
-- Read scan results from binary files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan entire networks quickly for open ports.
+  - Exclude specific IP ranges from scans.
+  - Output scan results in various formats (JSON, XML).
+  - Perform version detection using banner grabbing.
+  - Read scan results from binary files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # masscan

@@ -1,29 +1,29 @@
 ---
-title: "Generate Git Commit Graph - Track Repository History | Online Free DevTools by Hexmos"
+title: 'Generate Git Commit Graph - Track Repository History | Online Free DevTools by Hexmos'
 name: git-commit-graph
-path: "/freedevtools/tldr/git/git-commit-graph/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-commit-graph/"
-description: "Generate Git commit graphs with git-commit-graph. Visualize repository history and optimize Git performance using advanced graph features. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-commit-graph/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-commit-graph/'
+description: 'Generate Git commit graphs with git-commit-graph. Visualize repository history and optimize Git performance using advanced graph features. Free online tool, no registration required.'
 category: common
 keywords:
-- Git commit graph generator
-- Commit history visualization
-- Repository graph analysis
-- Git performance optimization
-- Graph-based commit traversal
-- Incremental commit graph
-- Git repository maintenance
-- Commit graph indexing
-- Directed acyclic graph (DAG) for Git
-- Git commit graph verification
+  - Git commit graph generator
+  - Commit history visualization
+  - Repository graph analysis
+  - Git performance optimization
+  - Graph-based commit traversal
+  - Incremental commit graph
+  - Git repository maintenance
+  - Commit graph indexing
+  - Directed acyclic graph (DAG) for Git
+  - Git commit graph verification
 features:
-- Write a commit-graph file for packed commits
-- Generate a commit-graph for all reachable commits
-- Append new commits to an existing commit-graph
-- Improve Git performance by using commit-graph files
-- Visualize and analyze Git repository history
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Write a commit-graph file for packed commits
+  - Generate a commit-graph for all reachable commits
+  - Append new commits to an existing commit-graph
+  - Improve Git performance by using commit-graph files
+  - Visualize and analyze Git repository history
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git commit-graph

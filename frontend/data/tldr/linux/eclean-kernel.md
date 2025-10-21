@@ -1,29 +1,29 @@
 ---
-title: "Eclean-kernel - Remove Old Kernels | Online Free DevTools by Hexmos"
+title: 'Eclean-kernel - Remove Old Kernels | Online Free DevTools by Hexmos'
 name: eclean-kernel
-path: "/freedevtools/tldr/linux/eclean-kernel/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eclean-kernel/"
-description: "Remove old kernels easily with eclean-kernel. Clean up your Gentoo system and reclaim disk space by removing obsolete kernel versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eclean-kernel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eclean-kernel/'
+description: 'Remove old kernels easily with eclean-kernel. Clean up your Gentoo system and reclaim disk space by removing obsolete kernel versions. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux kernel cleaner
-- gentoo kernel removal
-- eclean-kernel command
-- remove old kernels linux
-- gentoo cleanup tool
-- linux system maintenance
-- kernel version management
-- command line kernel tool
-- disk space recovery linux
-- obsolete kernel removal
+  - linux kernel cleaner
+  - gentoo kernel removal
+  - eclean-kernel command
+  - remove old kernels linux
+  - gentoo cleanup tool
+  - linux system maintenance
+  - kernel version management
+  - command line kernel tool
+  - disk space recovery linux
+  - obsolete kernel removal
 features:
-- Lists all available kernel files on the system
-- Removes specific kernel versions from Gentoo
-- Retains a specified number of newest kernels
-- Prompts for confirmation before removing kernels
-- Automates the kernel cleanup process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lists all available kernel files on the system
+  - Removes specific kernel versions from Gentoo
+  - Retains a specified number of newest kernels
+  - Prompts for confirmation before removing kernels
+  - Automates the kernel cleanup process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eclean-kernel

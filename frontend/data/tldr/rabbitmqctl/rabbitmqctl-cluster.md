@@ -1,29 +1,29 @@
 ---
-title: "RabbitMQ Cluster - Control Nodes | Online Free DevTools by Hexmos"
+title: 'RabbitMQ Cluster - Control Nodes | Online Free DevTools by Hexmos'
 name: rabbitmqctl-cluster
-path: "/freedevtools/tldr/rabbitmqctl/rabbitmqctl-cluster/"
-canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-cluster/"
-description: "Control RabbitMQ nodes easily with RabbitMQ Cluster command. Manage cluster status and node operations efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/rabbitmqctl/rabbitmqctl-cluster/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-cluster/'
+description: 'Control RabbitMQ nodes easily with RabbitMQ Cluster command. Manage cluster status and node operations efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- rabbitmq cluster control
-- rabbitmq node management
-- cluster status command
-- rabbitmqctl cluster administration
-- rabbitmq node stop
-- rabbitmq node start
-- rabbitmq node reset
-- rabbitmq join cluster
-- rabbitmq cluster tools
-- amqp cluster management
+  - rabbitmq cluster control
+  - rabbitmq node management
+  - cluster status command
+  - rabbitmqctl cluster administration
+  - rabbitmq node stop
+  - rabbitmq node start
+  - rabbitmq node reset
+  - rabbitmq join cluster
+  - rabbitmq cluster tools
+  - amqp cluster management
 features:
-- Display RabbitMQ cluster status
-- Start and stop RabbitMQ applications on specific nodes
-- Stop specific RabbitMQ nodes
-- Reset RabbitMQ nodes to a clean state
-- Join existing RabbitMQ clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display RabbitMQ cluster status
+  - Start and stop RabbitMQ applications on specific nodes
+  - Stop specific RabbitMQ nodes
+  - Reset RabbitMQ nodes to a clean state
+  - Join existing RabbitMQ clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rabbitmqctl-cluster

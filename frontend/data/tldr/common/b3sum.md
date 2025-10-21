@@ -1,29 +1,29 @@
 ---
-title: "Calculate B3SUM Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Calculate B3SUM Checksums - Verify File Integrity | Online Free DevTools by Hexmos'
 name: b3sum
-path: "/freedevtools/tldr/common/b3sum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/b3sum/"
-description: "Calculate file checksums with B3SUM. Verify file integrity and detect corruption easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/b3sum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/b3sum/'
+description: 'Calculate file checksums with B3SUM. Verify file integrity and detect corruption easily. Free online tool, no registration required.'
 category: common
 keywords:
-- B3SUM checksum generator
-- BLAKE3 hash calculator
-- file integrity checker
-- checksum verification tool
-- command line checksum
-- cryptographic checksum tool
-- Linux checksum utility
-- macOS checksum generator
-- Windows checksum checker
-- file integrity validation
+  - B3SUM checksum generator
+  - BLAKE3 hash calculator
+  - file integrity checker
+  - checksum verification tool
+  - command line checksum
+  - cryptographic checksum tool
+  - Linux checksum utility
+  - macOS checksum generator
+  - Windows checksum checker
+  - file integrity validation
 features:
-- Calculate BLAKE3 checksums for files
-- Verify file integrity against known checksums
-- Generate checksums from standard input
-- Check checksums from a file list
-- Suppress output except for errors and missing files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate BLAKE3 checksums for files
+  - Verify file integrity against known checksums
+  - Generate checksums from standard input
+  - Check checksums from a file list
+  - Suppress output except for errors and missing files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # b3sum

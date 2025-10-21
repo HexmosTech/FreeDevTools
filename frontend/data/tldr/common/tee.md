@@ -1,29 +1,29 @@
 ---
-title: "Tee Command - Duplicate Standard Input Output | Online Free DevTools by Hexmos"
+title: 'Tee Command - Duplicate Standard Input Output | Online Free DevTools by Hexmos'
 name: tee
-path: "/freedevtools/tldr/common/tee/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tee/"
-description: "Duplicate standard input and output with Tee command. Stream data to multiple files or commands. Free online tool, no registration required"
+path: '/freedevtools/tldr/common/tee/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tee/'
+description: 'Duplicate standard input and output with Tee command. Stream data to multiple files or commands. Free online tool, no registration required'
 category: common
 keywords:
-- standard input duplication
-- output redirection linux
-- tee command usage
-- command line tee
-- pipe stdin to file
-- linux tee append
-- tee to multiple files
-- tee command examples
-- tee command stdout
-- tee command tutorial
+  - standard input duplication
+  - output redirection linux
+  - tee command usage
+  - command line tee
+  - pipe stdin to file
+  - linux tee append
+  - tee to multiple files
+  - tee command examples
+  - tee command stdout
+  - tee command tutorial
 features:
-- Duplicate standard input to multiple files simultaneously
-- Append standard input to existing files
-- Pipe standard input to another command
-- Write standard input to the terminal and files
-- Redirect output to different commands for processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Duplicate standard input to multiple files simultaneously
+  - Append standard input to existing files
+  - Pipe standard input to another command
+  - Write standard input to the terminal and files
+  - Redirect output to different commands for processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tee

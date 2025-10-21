@@ -1,29 +1,29 @@
 ---
-title: "Speedtest CLI - Test Internet Bandwidth | Online Free DevTools by Hexmos"
+title: 'Speedtest CLI - Test Internet Bandwidth | Online Free DevTools by Hexmos'
 name: speedtest-cli
-path: "/freedevtools/tldr/speedtest/speedtest-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/speedtest/speedtest-cli/"
-description: "Test internet bandwidth with Speedtest CLI. Measure download speed, upload speed and latency using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/speedtest/speedtest-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/speedtest/speedtest-cli/'
+description: 'Test internet bandwidth with Speedtest CLI. Measure download speed, upload speed and latency using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- internet speed test cli
-- command line bandwidth test
-- speedtest net cli
-- network speed test
-- download speed test
-- upload speed test
-- latency test cli
-- connection speed test
-- speedtest cli linux
-- speedtest cli macos
+  - internet speed test cli
+  - command line bandwidth test
+  - speedtest net cli
+  - network speed test
+  - download speed test
+  - upload speed test
+  - latency test cli
+  - connection speed test
+  - speedtest cli linux
+  - speedtest cli macos
 features:
-- Measure internet download speed
-- Measure internet upload speed
-- Test network latency (ping)
-- Display results in bytes
-- Output results in JSON format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure internet download speed
+  - Measure internet upload speed
+  - Test network latency (ping)
+  - Display results in bytes
+  - Output results in JSON format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # speedtest-cli

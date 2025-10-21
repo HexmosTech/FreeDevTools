@@ -1,4 +1,4 @@
-# Sitemap Indexability Checker 
+# Sitemap Indexability Checker
 
 This script scans all URLs listed in a sitemap, checks their indexability signals, and generates a structured PDF report with the results.
 
@@ -6,18 +6,17 @@ This script scans all URLs listed in a sitemap, checks their indexability signal
 
 ## Features
 
-* Supports both `urlset` and `sitemapindex` sitemap formats
-* Concurrent URL processing (configurable for speed)
-* Detects:
-  * HTTP status codes (200 / 3xx / 4xx / 5xx)
-  * Redirects
-  * `noindex` meta tags
-  * Canonical tag mismatches or invalid targets
-  * Soft 404s (based on page content length or error indicators)
-* Generates a color-coded PDF report:
-
-  * Summary stats
-  * Full table of URLs and issues
+- Supports both `urlset` and `sitemapindex` sitemap formats
+- Concurrent URL processing (configurable for speed)
+- Detects:
+  - HTTP status codes (200 / 3xx / 4xx / 5xx)
+  - Redirects
+  - `noindex` meta tags
+  - Canonical tag mismatches or invalid targets
+  - Soft 404s (based on page content length or error indicators)
+- Generates a color-coded PDF report:
+  - Summary stats
+  - Full table of URLs and issues
 
 ---
 
@@ -45,8 +44,8 @@ Example:
 node sitemap-checker.cjs https://example.com/sitemap.xml 30
 ```
 
-* `<sitemap-url>` → Required
-* `[concurrency]` → Optional (defaults to 20)
+- `<sitemap-url>` → Required
+- `[concurrency]` → Optional (defaults to 20)
 
 ---
 
@@ -85,8 +84,6 @@ sitemap_report-example-com-sitemap.pdf
 | Canonical   | Validates if canonical exists and returns 200                             |
 | Soft 404    | Triggered when body content is too short or contains “Not Found” messages |
 
-
-
 ---
 
 # Cluster Similarity checker
@@ -97,18 +94,17 @@ This script compares metadata of PNG files against existing clusters and compute
 
 ### Features
 
-* Reads two JSON files:
+- Reads two JSON files:
+  - `cluster1.json` — existing clusters with metadata
+  - `cluster2.json` — cluster file to compare with
 
-  * `cluster1.json` — existing clusters with metadata
-  * `cluster2.json` — cluster file to compare with
-* Flattens metadata fields (`title`, `description`, `keywords`, `tags`, `synonyms`, `usecases`, `emotional_cues`) into a single string
-* Uses **TF-IDF vectorization** to represent text
-* Computes **cosine similarity** between the clusters
-* Outputs a JSON file with:
-
-  * Most similar cluster for each PNG
-  * Similarity percentage
-  * Notes (e.g., missing metadata)
+- Flattens metadata fields (`title`, `description`, `keywords`, `tags`, `synonyms`, `usecases`, `emotional_cues`) into a single string
+- Uses **TF-IDF vectorization** to represent text
+- Computes **cosine similarity** between the clusters
+- Outputs a JSON file with:
+  - Most similar cluster for each PNG
+  - Similarity percentage
+  - Notes (e.g., missing metadata)
 
 ---
 
@@ -130,15 +126,14 @@ python compute_similarity_clusters.py
 
 Input files:
 
-* `cluster.json`
-* `cluster_output_png.json`
+- `cluster.json`
+- `cluster_output_png.json`
 
 Output:
 
-* `cluster_similarity.json` — contains similarity results for each PNG file.
+- `cluster_similarity.json` — contains similarity results for each PNG file.
 
 ---
-
 
 ### Sample Output
 
@@ -152,10 +147,7 @@ Output:
 }
 ```
 
-
 ---
-
-
 
 # Web Page Similarity Checker
 
@@ -165,15 +157,15 @@ This script compares the visible text content of two web pages and computes a si
 
 ### Features
 
-* Fetches and cleans HTML content from two URLs
+- Fetches and cleans HTML content from two URLs
+  - Removes `<script>`, `<style>`, and `<noscript>` tags
+  - Normalizes whitespace and extracts visible text
 
-  * Removes `<script>`, `<style>`, and `<noscript>` tags
-  * Normalizes whitespace and extracts visible text
-* Computes similarity using:
+- Computes similarity using:
+  - TF-IDF vectorization
+  - Cosine similarity
 
-  * TF-IDF vectorization
-  * Cosine similarity
-* Outputs a **similarity percentage** between the two pages
+- Outputs a **similarity percentage** between the two pages
 
 ---
 
@@ -219,6 +211,6 @@ Similarity between pages: 76.42%
 
 ### Notes
 
-* Pages with empty or inaccessible content are treated as 0% similar.
-* Only visible text is considered; images, CSS, or JavaScript content is ignored.
-* Useful for detecting near-duplicate or very similar pages before SEO indexing.
+- Pages with empty or inaccessible content are treated as 0% similar.
+- Only visible text is considered; images, CSS, or JavaScript content is ignored.
+- Useful for detecting near-duplicate or very similar pages before SEO indexing.

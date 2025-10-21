@@ -1,29 +1,29 @@
 ---
-title: "Chkrootkit - Scan System for Rootkits | Online Free DevTools by Hexmos"
+title: 'Chkrootkit - Scan System for Rootkits | Online Free DevTools by Hexmos'
 name: chkrootkit
-path: "/freedevtools/tldr/common/chkrootkit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chkrootkit/"
-description: "Scan system for rootkits with chkrootkit. Detect security threats and vulnerabilities on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chkrootkit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chkrootkit/'
+description: 'Scan system for rootkits with chkrootkit. Detect security threats and vulnerabilities on Linux systems. Free online tool, no registration required.'
 category: common
 keywords:
-- linux rootkit scanner
-- system security audit
-- detect malware linux
-- chkrootkit command
-- rootkit detection tool
-- linux security scanner
-- system integrity check
-- vulnerability assessment linux
-- security exploit detection
-- compromised system scan
+  - linux rootkit scanner
+  - system security audit
+  - detect malware linux
+  - chkrootkit command
+  - rootkit detection tool
+  - linux security scanner
+  - system integrity check
+  - vulnerability assessment linux
+  - security exploit detection
+  - compromised system scan
 features:
-- Scan a system for known rootkits
-- Detect signs of kernel-level modification
-- Identify backdoors and trojans
-- Perform system binaries integrity checks
-- Exclude specific files from scanning
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan a system for known rootkits
+  - Detect signs of kernel-level modification
+  - Identify backdoors and trojans
+  - Perform system binaries integrity checks
+  - Exclude specific files from scanning
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chkrootkit

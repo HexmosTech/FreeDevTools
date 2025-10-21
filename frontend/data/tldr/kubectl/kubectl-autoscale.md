@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Autoscale - Create Pod Autoscalers | Online Free DevTools by Hexmos"
+title: 'Kubectl Autoscale - Create Pod Autoscalers | Online Free DevTools by Hexmos'
 name: kubectl-autoscale
-path: "/freedevtools/tldr/kubectl/kubectl-autoscale/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-autoscale/"
-description: "Create pod autoscalers with Kubectl Autoscale. Intelligently scale Kubernetes deployments based on cluster demands. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-autoscale/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-autoscale/'
+description: 'Create pod autoscalers with Kubectl Autoscale. Intelligently scale Kubernetes deployments based on cluster demands. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes pod autoscaling
-- kubectl deployment scaling
-- kubernetes horizontal pod autoscaler
-- kubectl cpu autoscaling
-- kubernetes replica scaling
-- kubectl scale deployment
-- kubernetes cluster autoscaling
-- kubectl autoscale command
-- kubernetes pod management
-- kubectl deployment controller
+  - kubernetes pod autoscaling
+  - kubectl deployment scaling
+  - kubernetes horizontal pod autoscaler
+  - kubectl cpu autoscaling
+  - kubernetes replica scaling
+  - kubectl scale deployment
+  - kubernetes cluster autoscaling
+  - kubectl autoscale command
+  - kubernetes pod management
+  - kubectl deployment controller
 features:
-- Automatically scale pod count based on CPU utilization
-- Define minimum and maximum replica counts for deployments
-- Configure target CPU utilization for autoscaling
-- Dynamically adjust replica count to meet demand
-- Integrate with Kubernetes deployment controllers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically scale pod count based on CPU utilization
+  - Define minimum and maximum replica counts for deployments
+  - Configure target CPU utilization for autoscaling
+  - Dynamically adjust replica count to meet demand
+  - Integrate with Kubernetes deployment controllers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl autoscale

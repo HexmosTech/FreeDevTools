@@ -1,29 +1,29 @@
 ---
-title: "Git Remote - Manage Remote Repositories | Online Free DevTools by Hexmos"
+title: 'Git Remote - Manage Remote Repositories | Online Free DevTools by Hexmos'
 name: git-remote
-path: "/freedevtools/tldr/git/git-remote/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-remote/"
-description: "Manage Git remote repositories with Git Remote. Control tracked repositories, add, remove, rename remotes with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-remote/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-remote/'
+description: 'Manage Git remote repositories with Git Remote. Control tracked repositories, add, remove, rename remotes with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- git remote management
-- git remote repository
-- git remote add
-- git remote remove
-- git remote rename
-- git remote URL
-- git remote branch
-- git remote origin
-- git bash git remote
-- git command line
+  - git remote management
+  - git remote repository
+  - git remote add
+  - git remote remove
+  - git remote rename
+  - git remote URL
+  - git remote branch
+  - git remote origin
+  - git bash git remote
+  - git command line
 features:
-- List existing remote repositories with names and URLs.
-- Show detailed information about a specific remote.
-- Add new remote repositories to your local Git configuration.
-- Change the URL of an existing remote repository.
-- Remove remote repositories from your local Git configuration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing remote repositories with names and URLs.
+  - Show detailed information about a specific remote.
+  - Add new remote repositories to your local Git configuration.
+  - Change the URL of an existing remote repository.
+  - Remove remote repositories from your local Git configuration.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git remote

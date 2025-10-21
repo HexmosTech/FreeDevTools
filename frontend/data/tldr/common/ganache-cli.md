@@ -1,29 +1,29 @@
 ---
-title: "Ganache CLI - Create Private Ethereum Blockchains | Online Free DevTools by Hexmos"
+title: 'Ganache CLI - Create Private Ethereum Blockchains | Online Free DevTools by Hexmos'
 name: ganache-cli
-path: "/freedevtools/tldr/common/ganache-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ganache-cli/"
-description: "Create private Ethereum blockchains with Ganache CLI. Easily test and debug smart contracts in a controlled environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ganache-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ganache-cli/'
+description: 'Create private Ethereum blockchains with Ganache CLI. Easily test and debug smart contracts in a controlled environment. Free online tool, no registration required.'
 category: common
 keywords:
-- Ethereum blockchain
-- private blockchain
-- ganache-cli
-- truffle suite
-- smart contract testing
-- ethereum development
-- blockchain testing
-- ganache cli commands
-- ethereum simulation
-- blockchain emulator
+  - Ethereum blockchain
+  - private blockchain
+  - ganache-cli
+  - truffle suite
+  - smart contract testing
+  - ethereum development
+  - blockchain testing
+  - ganache cli commands
+  - ethereum simulation
+  - blockchain emulator
 features:
-- Simulate a local Ethereum blockchain environment
-- Deploy and test smart contracts
-- Customize accounts and balances
-- Control blockchain parameters such as gas limit
-- Inspect transactions and blocks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Simulate a local Ethereum blockchain environment
+  - Deploy and test smart contracts
+  - Customize accounts and balances
+  - Control blockchain parameters such as gas limit
+  - Inspect transactions and blocks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ganache-cli

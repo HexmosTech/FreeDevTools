@@ -1,29 +1,29 @@
 ---
-title: "Sui Command - Interact with Sui Network | Online Free DevTools by Hexmos"
+title: 'Sui Command - Interact with Sui Network | Online Free DevTools by Hexmos'
 name: sui
-path: "/freedevtools/tldr/sui/sui/"
-canonical: "https://hexmos.com/freedevtools/tldr/sui/sui/"
-description: "Interact with the Sui Network using Sui Command. Publish smart contracts, execute transactions, and manage your Sui blockchain. Free online tool, no registration required."
+path: '/freedevtools/tldr/sui/sui/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sui/sui/'
+description: 'Interact with the Sui Network using Sui Command. Publish smart contracts, execute transactions, and manage your Sui blockchain. Free online tool, no registration required.'
 category: common
 keywords:
-- Sui blockchain command
-- Sui network interaction
-- Sui smart contract deployment
-- Sui transaction execution
-- Sui local network setup
-- Sui CLI tool
-- Sui object management
-- Sui Move build
-- Sui development
-- Sui cargo install
+  - Sui blockchain command
+  - Sui network interaction
+  - Sui smart contract deployment
+  - Sui transaction execution
+  - Sui local network setup
+  - Sui CLI tool
+  - Sui object management
+  - Sui Move build
+  - Sui development
+  - Sui cargo install
 features:
-- Execute Sui subcommands for network interaction
-- Build tools for Sui smart contracts using Move
-- Publish smart contracts and get object information
-- Start and manage a local Sui network
-- Update Sui from source using cargo install
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Sui subcommands for network interaction
+  - Build tools for Sui smart contracts using Move
+  - Publish smart contracts and get object information
+  - Start and manage a local Sui network
+  - Update Sui from source using cargo install
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sui

@@ -1,29 +1,29 @@
 ---
-title: "Parse Shell Options - Control Arguments | Online Free DevTools by Hexmos"
+title: 'Parse Shell Options - Control Arguments | Online Free DevTools by Hexmos'
 name: getopts
-path: "/freedevtools/tldr/get/getopts/"
-canonical: "https://hexmos.com/freedevtools/tldr/get/getopts/"
-description: "Parse shell options efficiently with Getopts. Control arguments and manage options in your shell scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/get/getopts/'
+canonical: 'https://hexmos.com/freedevtools/tldr/get/getopts/'
+description: 'Parse shell options efficiently with Getopts. Control arguments and manage options in your shell scripts. Free online tool, no registration required.'
 category: common
 keywords:
-- shell options parser
-- bash argument parsing
-- getopts command line
-- shell scripting options
-- linux getopts utility
-- command line arguments
-- shell option handling
-- bash getopts example
-- getopts script
-- posix getopts standard
+  - shell options parser
+  - bash argument parsing
+  - getopts command line
+  - shell scripting options
+  - linux getopts utility
+  - command line arguments
+  - shell option handling
+  - bash getopts example
+  - getopts script
+  - posix getopts standard
 features:
-- Parse short shell options
-- Check for required arguments
-- Handle multiple shell options
-- Reset option parsing
-- Enable silent error handling
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Parse short shell options
+  - Check for required arguments
+  - Handle multiple shell options
+  - Reset option parsing
+  - Enable silent error handling
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # getopts

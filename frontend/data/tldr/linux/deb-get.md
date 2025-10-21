@@ -1,29 +1,29 @@
 ---
-title: "Install DEB Packages - Manage .deb Files | Online Free DevTools by Hexmos"
+title: 'Install DEB Packages - Manage .deb Files | Online Free DevTools by Hexmos'
 name: deb-get
-path: "/freedevtools/tldr/linux/deb-get/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/deb-get/"
-description: "Install .deb packages easily with deb-get, the apt-get alternative for managing software on Linux. Update, search, and remove .deb files quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/deb-get/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/deb-get/'
+description: 'Install .deb packages easily with deb-get, the apt-get alternative for managing software on Linux. Update, search, and remove .deb files quickly. Free online tool, no registration required.'
 category: linux
 keywords:
-- deb package installer
-- deb package manager
-- apt-get alternative
-- linux deb install
-- deb-get install package
-- deb-get update package
-- deb package repository
-- deb file manager
-- deb-get linux
-- command line deb installer
+  - deb package installer
+  - deb package manager
+  - apt-get alternative
+  - linux deb install
+  - deb-get install package
+  - deb-get update package
+  - deb package repository
+  - deb file manager
+  - deb-get linux
+  - command line deb installer
 features:
-- Install .deb packages from third-party repositories
-- Update the package list for available .deb packages
-- Search for specific .deb packages by name
-- Upgrade all installed .deb packages to the latest version
-- Remove or purge installed .deb packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install .deb packages from third-party repositories
+  - Update the package list for available .deb packages
+  - Search for specific .deb packages by name
+  - Upgrade all installed .deb packages to the latest version
+  - Remove or purge installed .deb packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # deb-get

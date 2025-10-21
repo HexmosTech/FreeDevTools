@@ -1,9 +1,9 @@
 ---
-title: "Control Windows CMD - Command Interpreter | Online Free DevTools by Hexmos"
+title: 'Control Windows CMD - Command Interpreter | Online Free DevTools by Hexmos'
 name: cmd
-path: "/freedevtools/tldr/windows/cmd/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/cmd/"
-description: "Control Windows CMD commands with this command interpreter. Execute batch scripts, run specific commands, and manage system processes. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/cmd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/cmd/'
+description: 'Control Windows CMD commands with this command interpreter. Execute batch scripts, run specific commands, and manage system processes. Free online tool, no registration required.'
 category: windows
 keywords:
   - windows command interpreter
@@ -22,8 +22,8 @@ features:
   - Enable or disable command extensions
   - Enable or disable delayed variable expansion
   - Execute commands with unicode encoding
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cmd

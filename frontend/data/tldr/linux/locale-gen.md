@@ -1,29 +1,29 @@
 ---
-title: "Generate Locale - Define System Locales | Online Free DevTools by Hexmos"
+title: 'Generate Locale - Define System Locales | Online Free DevTools by Hexmos'
 name: locale-gen
-path: "/freedevtools/tldr/linux/locale-gen/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/locale-gen/"
-description: "Generate system locales with locale-gen for Linux environments. Configure internationalization settings and language support. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/locale-gen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/locale-gen/'
+description: 'Generate system locales with locale-gen for Linux environments. Configure internationalization settings and language support. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux locale generator
-- system locale configuration
-- locale definition linux
-- locale-gen command
-- internationalization linux
-- i18n configuration
-- language support linux
-- linux system administration
-- terminal locale management
-- regional settings linux
+  - linux locale generator
+  - system locale configuration
+  - locale definition linux
+  - locale-gen command
+  - internationalization linux
+  - i18n configuration
+  - language support linux
+  - linux system administration
+  - terminal locale management
+  - regional settings linux
 features:
-- Generate locales from /etc/locale.gen
-- Update system locale settings
-- Configure language support
-- Maintain existing locale definitions
-- Create localized environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate locales from /etc/locale.gen
+  - Update system locale settings
+  - Configure language support
+  - Maintain existing locale definitions
+  - Create localized environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # locale-gen

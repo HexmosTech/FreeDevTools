@@ -1,9 +1,9 @@
 ---
-title: "Reserve PipeWire Devices - Control Audio with pw-reserve | Online Free DevTools by Hexmos"
+title: 'Reserve PipeWire Devices - Control Audio with pw-reserve | Online Free DevTools by Hexmos'
 name: pw-reserve
-path: "/freedevtools/tldr/linux/pw-reserve/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-reserve/"
-description: "Control audio device reservation with pw-reserve.  Monitor or reserve PipeWire audio devices easily via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pw-reserve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pw-reserve/'
+description: 'Control audio device reservation with pw-reserve.  Monitor or reserve PipeWire audio devices easily via command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - PipeWire device reservation
@@ -22,8 +22,8 @@ features:
   - Supports specifying devices by name.
   - Provides a simple command-line interface.
   - Integrates seamlessly with PipeWire.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pw-reserve

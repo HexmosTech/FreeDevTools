@@ -1,29 +1,29 @@
 ---
-title: "TLMGR Pinning - Manage Package Pinning | Online Free DevTools by Hexmos"
+title: 'TLMGR Pinning - Manage Package Pinning | Online Free DevTools by Hexmos'
 name: tlmgr-pinning
-path: "/freedevtools/tldr/tlmgr/tlmgr-pinning/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-pinning/"
-description: "Manage TLMGR package pinning with TLMGR Pinning. Add, remove, and show pinning data for package repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-pinning/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-pinning/'
+description: 'Manage TLMGR package pinning with TLMGR Pinning. Add, remove, and show pinning data for package repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- TLMGR package pinning
-- TeX Live package manager
-- TLMGR repository management
-- TLMGR pinning configuration
-- LaTeX package pinning
-- TeX Live pinning tool
-- Package repository control
-- TLMGR update control
-- Linux package pinning
-- macOS package pinning
+  - TLMGR package pinning
+  - TeX Live package manager
+  - TLMGR repository management
+  - TLMGR pinning configuration
+  - LaTeX package pinning
+  - TeX Live pinning tool
+  - Package repository control
+  - TLMGR update control
+  - Linux package pinning
+  - macOS package pinning
 features:
-- Show current package pinning data
-- Pin packages to specific repositories
-- Remove specific packages from pinning
-- Remove all pinning data for a repository
-- Manage package versions for TeX Live
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show current package pinning data
+  - Pin packages to specific repositories
+  - Remove specific packages from pinning
+  - Remove all pinning data for a repository
+  - Manage package versions for TeX Live
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr pinning

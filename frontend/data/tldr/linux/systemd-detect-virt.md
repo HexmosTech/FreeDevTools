@@ -1,9 +1,9 @@
 ---
-title: "Detect Virtualization - Systemd Tool | Online Free DevTools by Hexmos"
+title: 'Detect Virtualization - Systemd Tool | Online Free DevTools by Hexmos'
 name: systemd-detect-virt
-path: "/freedevtools/tldr/linux/systemd-detect-virt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-detect-virt/"
-description: "Detect virtualization environments with systemd-detect-virt.  Identify VMs and containers quickly and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-detect-virt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-detect-virt/'
+description: 'Detect virtualization environments with systemd-detect-virt.  Identify VMs and containers quickly and easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd virtualization detection
@@ -22,8 +22,8 @@ features:
   - Provides detailed output listing detected virtualization technologies.
   - Offers quiet mode for silent checking without output.
   - Allows for separate detection of VM or container virtualization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-detect-virt

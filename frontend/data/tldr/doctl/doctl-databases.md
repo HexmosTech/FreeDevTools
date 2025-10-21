@@ -1,29 +1,29 @@
 ---
-title: "Control Databases - Manage DigitalOcean Clusters | Online Free DevTools by Hexmos"
+title: 'Control Databases - Manage DigitalOcean Clusters | Online Free DevTools by Hexmos'
 name: doctl-databases
-path: "/freedevtools/tldr/doctl/doctl-databases/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases/"
-description: "Control databases with doctl-databases, manage your DigitalOcean MySQL, Redis, PostgreSQL, and MongoDB clusters easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-databases/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-databases/'
+description: 'Control databases with doctl-databases, manage your DigitalOcean MySQL, Redis, PostgreSQL, and MongoDB clusters easily. Free online tool, no registration required.'
 category: common
 keywords:
-- DigitalOcean databases control
-- doctl database management
-- MySQL cluster command line
-- Redis database administration
-- PostgreSQL database CLI
-- MongoDB database control
-- doctl create database
-- doctl delete database
-- doctl list databases
-- DigitalOcean database commands
+  - DigitalOcean databases control
+  - doctl database management
+  - MySQL cluster command line
+  - Redis database administration
+  - PostgreSQL database CLI
+  - MongoDB database control
+  - doctl create database
+  - doctl delete database
+  - doctl list databases
+  - DigitalOcean database commands
 features:
-- Create DigitalOcean database clusters
-- Delete existing database clusters
-- List all database clusters
-- Get details for a specific database cluster
-- Manage databases with access tokens
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create DigitalOcean database clusters
+  - Delete existing database clusters
+  - List all database clusters
+  - Get details for a specific database cluster
+  - Manage databases with access tokens
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl databases

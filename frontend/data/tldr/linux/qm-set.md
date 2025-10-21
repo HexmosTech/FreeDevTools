@@ -1,9 +1,9 @@
 ---
-title: "VM Set - Control Virtual Machine Options | Online Free DevTools by Hexmos"
+title: 'VM Set - Control Virtual Machine Options | Online Free DevTools by Hexmos'
 name: qm-set
-path: "/freedevtools/tldr/linux/qm-set/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-set/"
-description: "Control virtual machine settings with VM Set. Configure CPU cores, memory, network devices and GPU passthrough. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-set/'
+description: 'Control virtual machine settings with VM Set. Configure CPU cores, memory, network devices and GPU passthrough. Free online tool, no registration required.'
 category: linux
 keywords:
   - VM configuration
@@ -22,8 +22,8 @@ features:
   - Allocate CPU cores to a VM
   - Allocate memory to a VM
   - Configure network devices for a VM
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm set

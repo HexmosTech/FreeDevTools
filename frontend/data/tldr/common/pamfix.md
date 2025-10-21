@@ -1,29 +1,29 @@
 ---
-title: "Fix PAM Images - Repair Netpbm Files | Online Free DevTools by Hexmos"
+title: 'Fix PAM Images - Repair Netpbm Files | Online Free DevTools by Hexmos'
 name: pamfix
-path: "/freedevtools/tldr/common/pamfix/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamfix/"
-description: "Repair corrupted Netpbm images with pamfix. Quickly fix PAM, PBM, PGM, and PPM files, handle missing data, and adjust pixel values. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamfix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamfix/'
+description: 'Repair corrupted Netpbm images with pamfix. Quickly fix PAM, PBM, PGM, and PPM files, handle missing data, and adjust pixel values. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM fixer
-- Netpbm repair
-- Image file repair
-- PBM fix
-- PGM fix
-- PPM fix
-- PAM validation
-- Image validation
-- Linux image tools
-- Command line image tools
+  - PAM fixer
+  - Netpbm repair
+  - Image file repair
+  - PBM fix
+  - PGM fix
+  - PPM fix
+  - PAM validation
+  - Image validation
+  - Linux image tools
+  - Command line image tools
 features:
-- Fix Netpbm files with missing data
-- Clip pixel values exceeding maxval
-- Change maxval to accommodate pixel values
-- Truncate corrupted Netpbm files
-- Repair multiple Netpbm image formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fix Netpbm files with missing data
+  - Clip pixel values exceeding maxval
+  - Change maxval to accommodate pixel values
+  - Truncate corrupted Netpbm files
+  - Repair multiple Netpbm image formats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamfix

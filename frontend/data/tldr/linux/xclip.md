@@ -1,29 +1,29 @@
 ---
-title: "Control Xclip Clipboard - Linux Data Transfer | Online Free DevTools by Hexmos"
+title: 'Control Xclip Clipboard - Linux Data Transfer | Online Free DevTools by Hexmos'
 name: xclip
-path: "/freedevtools/tldr/linux/xclip/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xclip/"
-description: "Control clipboard data with Xclip, a versatile Linux command-line tool. Transfer data between applications efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xclip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xclip/'
+description: 'Control clipboard data with Xclip, a versatile Linux command-line tool. Transfer data between applications efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
-- xclip clipboard
-- linux clipboard manager
-- x11 clipboard
-- command line clipboard
-- clipboard data transfer
-- linux data transfer
-- xclip copy paste
-- terminal clipboard
-- primary selection
-- system clipboard
+  - xclip clipboard
+  - linux clipboard manager
+  - x11 clipboard
+  - command line clipboard
+  - clipboard data transfer
+  - linux data transfer
+  - xclip copy paste
+  - terminal clipboard
+  - primary selection
+  - system clipboard
 features:
-- Copy command output to X11 clipboard
-- Paste clipboard content to console
-- Transfer data between applications
-- Manipulate primary and secondary selections
-- Integrate with system clipboard for cut and paste
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy command output to X11 clipboard
+  - Paste clipboard content to console
+  - Transfer data between applications
+  - Manipulate primary and secondary selections
+  - Integrate with system clipboard for cut and paste
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xclip

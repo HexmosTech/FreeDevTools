@@ -1,29 +1,29 @@
 ---
-title: "CodeCommit - Control Git Repositories | Online Free DevTools by Hexmos"
+title: 'CodeCommit - Control Git Repositories | Online Free DevTools by Hexmos'
 name: aws-codecommit
-path: "/freedevtools/tldr/aws/aws-codecommit/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-codecommit/"
-description: "Control Git repositories with AWS CodeCommit. Manage your source code securely and collaborate effectively with a managed service. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-codecommit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-codecommit/'
+description: 'Control Git repositories with AWS CodeCommit. Manage your source code securely and collaborate effectively with a managed service. Free online tool, no registration required.'
 category: common
 keywords:
-- aws codecommit
-- codecommit repository
-- git repository aws
-- aws source control
-- version control aws
-- aws code management
-- codecommit cli
-- aws command line interface
-- git aws
-- aws cloud development
+  - aws codecommit
+  - codecommit repository
+  - git repository aws
+  - aws source control
+  - version control aws
+  - aws code management
+  - codecommit cli
+  - aws command line interface
+  - git aws
+  - aws cloud development
 features:
-- Securely host private Git repositories
-- Manage source code version control
-- Access repositories via the AWS CLI
-- Display help information for CodeCommit commands
-- Show detailed command usage examples
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely host private Git repositories
+  - Manage source code version control
+  - Access repositories via the AWS CLI
+  - Display help information for CodeCommit commands
+  - Show detailed command usage examples
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws codecommit

@@ -1,29 +1,29 @@
 ---
-title: "Convert PNM to JPEG - Image Conversion | Online Free DevTools by Hexmos"
+title: 'Convert PNM to JPEG - Image Conversion | Online Free DevTools by Hexmos'
 name: pnmtojpeg
-path: "/freedevtools/tldr/pnm/pnmtojpeg/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtojpeg/"
-description: "Convert PNM images to JPEG format with pnmtojpeg. Effortlessly transform image files between formats using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmtojpeg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmtojpeg/'
+description: 'Convert PNM images to JPEG format with pnmtojpeg. Effortlessly transform image files between formats using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM to JPEG conversion
-- Image format conversion
-- JPEG converter
-- PNM image processing
-- Command line image tools
-- Netpbm utilities
-- Linux image conversion
-- macOS image conversion
-- PNM to JFIF
-- PNM to EXIF
+  - PNM to JPEG conversion
+  - Image format conversion
+  - JPEG converter
+  - PNM image processing
+  - Command line image tools
+  - Netpbm utilities
+  - Linux image conversion
+  - macOS image conversion
+  - PNM to JFIF
+  - PNM to EXIF
 features:
-- Convert PNM images to JPEG format.
-- Output JPEG/JFIF/EXIF image files.
-- Read PNM images as input.
-- Display version information.
-- Convert images using the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNM images to JPEG format.
+  - Output JPEG/JFIF/EXIF image files.
+  - Read PNM images as input.
+  - Display version information.
+  - Convert images using the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmtojpeg

@@ -1,29 +1,29 @@
 ---
-title: "Vagrant Validate - Check Vagrantfile Syntax | Online Free DevTools by Hexmos"
+title: 'Vagrant Validate - Check Vagrantfile Syntax | Online Free DevTools by Hexmos'
 name: vagrant-validate
-path: "/freedevtools/tldr/vagrant/vagrant-validate/"
-canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-validate/"
-description: "Validate Vagrantfile syntax with Vagrant Validate. Quickly check your Vagrantfile for errors and proper structure using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/vagrant/vagrant-validate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vagrant/vagrant-validate/'
+description: 'Validate Vagrantfile syntax with Vagrant Validate. Quickly check your Vagrantfile for errors and proper structure using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- vagrant validate
-- vagrantfile syntax check
-- vagrant configuration validation
-- vagrant error detection
-- vagrantfile syntax analyzer
-- vagrantfile linter
-- vagrantfile validation tool
-- vagrantfile configuration checker
-- vagrant command
-- vagrant infrastructure as code
+  - vagrant validate
+  - vagrantfile syntax check
+  - vagrant configuration validation
+  - vagrant error detection
+  - vagrantfile syntax analyzer
+  - vagrantfile linter
+  - vagrantfile validation tool
+  - vagrantfile configuration checker
+  - vagrant command
+  - vagrant infrastructure as code
 features:
-- Validates Vagrantfile syntax
-- Checks Vagrantfile structure for errors
-- Ignores provider-specific configuration options
-- Detects syntax errors in Vagrantfiles
-- Ensures Vagrantfile is correctly structured
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validates Vagrantfile syntax
+  - Checks Vagrantfile structure for errors
+  - Ignores provider-specific configuration options
+  - Detects syntax errors in Vagrantfiles
+  - Ensures Vagrantfile is correctly structured
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vagrant validate

@@ -1,29 +1,29 @@
 ---
-title: "Nix-Store - Manage Package Store | Online Free DevTools by Hexmos"
+title: 'Nix-Store - Manage Package Store | Online Free DevTools by Hexmos'
 name: nix-store
-path: "/freedevtools/tldr/nix/nix-store/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-store/"
-description: "Manage your Nix package store with Nix-Store. Optimize disk usage, repair corrupted stores, and query package information efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-store/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-store/'
+description: 'Manage your Nix package store with Nix-Store. Optimize disk usage, repair corrupted stores, and query package information efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Nix package manager
-- Nix store management
-- Nixos package store
-- Nix store garbage collection
-- Nix store optimization
-- Nix store path query
-- Nix store repair
-- Linux package management
-- Functional package management
-- Declarative package management
+  - Nix package manager
+  - Nix store management
+  - Nixos package store
+  - Nix store garbage collection
+  - Nix store optimization
+  - Nix store path query
+  - Nix store repair
+  - Linux package management
+  - Functional package management
+  - Declarative package management
 features:
-- Optimize Nix store disk usage
-- Repair corrupted Nix stores
-- Query package information from the store
-- Perform garbage collection on the store
-- Manage store paths and references
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Optimize Nix store disk usage
+  - Repair corrupted Nix stores
+  - Query package information from the store
+  - Perform garbage collection on the store
+  - Manage store paths and references
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix-store

@@ -1,29 +1,29 @@
 ---
-title: "Change Directory - Navigate File Systems | Online Free DevTools by Hexmos"
+title: 'Change Directory - Navigate File Systems | Online Free DevTools by Hexmos'
 name: cd
-path: "/freedevtools/tldr/common/cd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cd/"
-description: "Change directory instantly with cd command. Navigate file systems and access different directories easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cd/'
+description: 'Change directory instantly with cd command. Navigate file systems and access different directories easily. Free online tool, no registration required.'
 category: common
 keywords:
-- change directory command
-- navigate file systems
-- directory traversal
-- linux cd command
-- macos cd command
-- bash cd command
-- command line navigation
-- terminal navigation
-- path manipulation
-- current directory
+  - change directory command
+  - navigate file systems
+  - directory traversal
+  - linux cd command
+  - macos cd command
+  - bash cd command
+  - command line navigation
+  - terminal navigation
+  - path manipulation
+  - current directory
 features:
-- Change the current working directory
-- Navigate to parent directories
-- Access user's home directory
-- Switch to previously accessed directories
-- Go to the root directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Change the current working directory
+  - Navigate to parent directories
+  - Access user's home directory
+  - Switch to previously accessed directories
+  - Go to the root directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cd

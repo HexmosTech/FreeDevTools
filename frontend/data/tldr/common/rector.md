@@ -1,29 +1,29 @@
 ---
-title: "Refactor PHP Code - Automate Updates with Rector | Online Free DevTools by Hexmos"
+title: 'Refactor PHP Code - Automate Updates with Rector | Online Free DevTools by Hexmos'
 name: rector
-path: "/freedevtools/tldr/common/rector/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rector/"
-description: "Automate PHP code refactoring with Rector. Upgrade legacy PHP applications, enforce coding standards, and improve code quality effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rector/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rector/'
+description: 'Automate PHP code refactoring with Rector. Upgrade legacy PHP applications, enforce coding standards, and improve code quality effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP code refactoring
-- Automated code update
-- Rector PHP
-- PHP upgrade tool
-- PHP coding standards
-- Legacy code migration
-- PHP static analysis
-- PHP refactoring tool
-- PHP 7 upgrade
-- PHP 8 upgrade
+  - PHP code refactoring
+  - Automated code update
+  - Rector PHP
+  - PHP upgrade tool
+  - PHP coding standards
+  - Legacy code migration
+  - PHP static analysis
+  - PHP refactoring tool
+  - PHP 7 upgrade
+  - PHP 8 upgrade
 features:
-- Automates PHP code upgrades from older versions
-- Enforces consistent coding standards across projects
-- Detects and fixes common code smells
-- Simplifies complex code refactoring tasks
-- Provides dry-run mode to preview changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automates PHP code upgrades from older versions
+  - Enforces consistent coding standards across projects
+  - Detects and fixes common code smells
+  - Simplifies complex code refactoring tasks
+  - Provides dry-run mode to preview changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rector

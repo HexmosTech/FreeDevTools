@@ -1,9 +1,9 @@
 ---
-title: "Control Postfix Configuration - Manage Mail Server Settings | Online Free DevTools by Hexmos"
+title: 'Control Postfix Configuration - Manage Mail Server Settings | Online Free DevTools by Hexmos'
 name: postconf
-path: "/freedevtools/tldr/linux/postconf/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/postconf/"
-description: "Manage Postfix configuration files with Postconf. Inspect, edit, and customize your mail server settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/postconf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/postconf/'
+description: 'Manage Postfix configuration files with Postconf. Inspect, edit, and customize your mail server settings. Free online tool, no registration required.'
 category: linux
 keywords:
   - postfix configuration
@@ -22,8 +22,8 @@ features:
   - Show default parameter settings
   - List available SASL plugin types
   - List supported lookup table types
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # postconf

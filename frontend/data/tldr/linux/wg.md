@@ -1,29 +1,29 @@
 ---
-title: "WireGuard Control - Manage VPN Interfaces | Online Free DevTools by Hexmos"
+title: 'WireGuard Control - Manage VPN Interfaces | Online Free DevTools by Hexmos'
 name: wg
-path: "/freedevtools/tldr/linux/wg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wg/"
-description: "Manage WireGuard VPN interfaces with wg. Generate keys and view configurations securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wg/'
+description: 'Manage WireGuard VPN interfaces with wg. Generate keys and view configurations securely. Free online tool, no registration required.'
 category: linux
 keywords:
-- wireguard configuration
-- vpn interface manager
-- linux network configuration
-- wg key generator
-- wireguard status check
-- wireguard private key
-- wireguard public key
-- secure network configuration
-- linux vpn tool
-- wireguard command line
+  - wireguard configuration
+  - vpn interface manager
+  - linux network configuration
+  - wg key generator
+  - wireguard status check
+  - wireguard private key
+  - wireguard public key
+  - secure network configuration
+  - linux vpn tool
+  - wireguard command line
 features:
-- Check the status of WireGuard interfaces
-- Generate new private keys
-- Generate public keys from private keys
-- Display the current configuration of an interface
-- Manage WireGuard VPN connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check the status of WireGuard interfaces
+  - Generate new private keys
+  - Generate public keys from private keys
+  - Display the current configuration of an interface
+  - Manage WireGuard VPN connections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wg

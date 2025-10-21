@@ -1,29 +1,29 @@
 ---
-title: "Download ISIS Files - Sync Content | Online Free DevTools by Hexmos"
+title: 'Download ISIS Files - Sync Content | Online Free DevTools by Hexmos'
 name: isisdl
-path: "/freedevtools/tldr/common/isisdl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/isisdl/"
-description: "Download ISIS content easily with isisdl. Sync ISIS files and compress videos using this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/isisdl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/isisdl/'
+description: 'Download ISIS content easily with isisdl. Sync ISIS files and compress videos using this command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- isis downloader
-- isis file downloader
-- isis content sync
-- tub isis download
-- isis video download
-- command line downloader
-- linux downloader
-- macos downloader
-- windows downloader
-- isisdl command
+  - isis downloader
+  - isis file downloader
+  - isis content sync
+  - tub isis download
+  - isis video download
+  - command line downloader
+  - linux downloader
+  - macos downloader
+  - windows downloader
+  - isisdl command
 features:
-- Synchronize ISIS content locally
-- Limit download rate
-- Compress downloaded videos with ffmpeg
-- Initialize configuration via wizard
-- Calculate file checksums during sync
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize ISIS content locally
+  - Limit download rate
+  - Compress downloaded videos with ffmpeg
+  - Initialize configuration via wizard
+  - Calculate file checksums during sync
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # isisdl

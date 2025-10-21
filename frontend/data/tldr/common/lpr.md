@@ -1,29 +1,29 @@
 ---
-title: "Print Files - Print Documents via Command Line | Online Free DevTools by Hexmos"
+title: 'Print Files - Print Documents via Command Line | Online Free DevTools by Hexmos'
 name: lpr
-path: "/freedevtools/tldr/common/lpr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lpr/"
-description: "Print files efficiently with lpr. Control printer output, specify page ranges, and manage printing options via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lpr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lpr/'
+description: 'Print files efficiently with lpr. Control printer output, specify page ranges, and manage printing options via command line. Free online tool, no registration required.'
 category: common
 keywords:
-- command line printing
-- linux print command
-- cups printing system
-- lpr print utility
-- print document linux
-- command line document printing
-- print queue manager
-- linux command line tools
-- printer management command
-- unix printing
+  - command line printing
+  - linux print command
+  - cups printing system
+  - lpr print utility
+  - print document linux
+  - command line document printing
+  - print queue manager
+  - linux command line tools
+  - printer management command
+  - unix printing
 features:
-- Print files to the default printer.
-- Specify the number of copies to print.
-- Designate a specific printer for printing.
-- Print a specific page or range of pages.
-- Print double-sided documents.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print files to the default printer.
+  - Specify the number of copies to print.
+  - Designate a specific printer for printing.
+  - Print a specific page or range of pages.
+  - Print double-sided documents.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lpr

@@ -1,29 +1,29 @@
 ---
-title: "Copy Disk Image - Forensics with dcfldd | Online Free DevTools by Hexmos"
+title: 'Copy Disk Image - Forensics with dcfldd | Online Free DevTools by Hexmos'
 name: dcfldd
-path: "/freedevtools/tldr/common/dcfldd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dcfldd/"
-description: "Copy disk image with dcfldd, an enhanced dd command for forensics. Securely acquire data and generate cryptographic hashes for integrity verification. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dcfldd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dcfldd/'
+description: 'Copy disk image with dcfldd, an enhanced dd command for forensics. Securely acquire data and generate cryptographic hashes for integrity verification. Free online tool, no registration required.'
 category: common
 keywords:
-- disk image copy
-- forensic data acquisition
-- command line imaging
-- raw image creation
-- data hashing tool
-- secure data copying
-- disk cloning linux
-- dcfldd forensics
-- drive imaging tool
-- disk sector copy
+  - disk image copy
+  - forensic data acquisition
+  - command line imaging
+  - raw image creation
+  - data hashing tool
+  - secure data copying
+  - disk cloning linux
+  - dcfldd forensics
+  - drive imaging tool
+  - disk sector copy
 features:
-- Copy entire disks to raw image files
-- Generate SHA256 cryptographic hashes of copied images
-- Hash data in chunks for progress tracking and verification
-- Log cryptographic hashes for audit trails
-- Acquire forensic images via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy entire disks to raw image files
+  - Generate SHA256 cryptographic hashes of copied images
+  - Hash data in chunks for progress tracking and verification
+  - Log cryptographic hashes for audit trails
+  - Acquire forensic images via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dcfldd

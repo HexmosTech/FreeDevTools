@@ -1,29 +1,29 @@
 ---
-title: "Generate Changelog - git-cliff | Online Free DevTools by Hexmos"
+title: 'Generate Changelog - git-cliff | Online Free DevTools by Hexmos'
 name: git-cliff
-path: "/freedevtools/tldr/git/git-cliff/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-cliff/"
-description: "Generate changelogs with git-cliff. Automate release note creation and customize your changelog output. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-cliff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-cliff/'
+description: 'Generate changelogs with git-cliff. Automate release note creation and customize your changelog output. Free online tool, no registration required.'
 category: common
 keywords:
-- git changelog generator
-- changelog automation
-- release note generator
-- git commit history
-- markdown changelog
-- toml configuration
-- git tag analysis
-- semantic versioning changelog
-- command-line changelog
-- customizable changelog
+  - git changelog generator
+  - changelog automation
+  - release note generator
+  - git commit history
+  - markdown changelog
+  - toml configuration
+  - git tag analysis
+  - semantic versioning changelog
+  - command-line changelog
+  - customizable changelog
 features:
-- Generate changelogs from Git commits.
-- Customize changelog output with TOML configuration.
-- Filter commits based on tags.
-- Support semantic versioning.
-- Output changelogs in Markdown format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate changelogs from Git commits.
+  - Customize changelog output with TOML configuration.
+  - Filter commits based on tags.
+  - Support semantic versioning.
+  - Output changelogs in Markdown format.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git cliff

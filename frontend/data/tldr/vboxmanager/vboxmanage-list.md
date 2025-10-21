@@ -1,29 +1,29 @@
 ---
-title: "VBoxManage List - Control Virtual Machines | Online Free DevTools by Hexmos"
+title: 'VBoxManage List - Control Virtual Machines | Online Free DevTools by Hexmos'
 name: vboxmanage-list
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-list/"
-description: "Control virtual machines with VBoxManage List. Manage VMs, networks, and extensions. View virtual disk settings with this free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-list/'
+description: 'Control virtual machines with VBoxManage List. Manage VMs, networks, and extensions. View virtual disk settings with this free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine control
-- vboxmanage list vms
-- virtualbox command line
-- vm configuration settings
-- virtual disk management
-- host network interface
-- vbox extensions list
-- running virtual machines
-- virtual machine groups
-- virtualbox host info
+  - virtual machine control
+  - vboxmanage list vms
+  - virtualbox command line
+  - vm configuration settings
+  - virtual disk management
+  - host network interface
+  - vbox extensions list
+  - running virtual machines
+  - virtual machine groups
+  - virtualbox host info
 features:
-- List all virtual machines
-- Show available DHCP servers
-- Display installed extension packs
-- Show virtual disk settings
-- List host-only network interfaces
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all virtual machines
+  - Show available DHCP servers
+  - Display installed extension packs
+  - Show virtual disk settings
+  - List host-only network interfaces
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage list

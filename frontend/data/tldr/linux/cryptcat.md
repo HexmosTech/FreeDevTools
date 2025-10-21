@@ -1,29 +1,29 @@
 ---
-title: "Cryptcat - Encrypt Network Connections | Online Free DevTools by Hexmos"
+title: 'Cryptcat - Encrypt Network Connections | Online Free DevTools by Hexmos'
 name: cryptcat
-path: "/freedevtools/tldr/linux/cryptcat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cryptcat/"
-description: "Encrypt network connections with Cryptcat. Securely transmit data over networks using encryption. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cryptcat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cryptcat/'
+description: 'Encrypt network connections with Cryptcat. Securely transmit data over networks using encryption. Free online tool, no registration required.'
 category: linux
 keywords:
-- encrypted network connection
-- secure data transfer
-- cryptcat linux
-- network encryption tool
-- command line encryption
-- network security
-- tcp encryption
-- port scanning linux
-- proxy tool linux
-- secure communication linux
+  - encrypted network connection
+  - secure data transfer
+  - cryptcat linux
+  - network encryption tool
+  - command line encryption
+  - network security
+  - tcp encryption
+  - port scanning linux
+  - proxy tool linux
+  - secure communication linux
 features:
-- Encrypt data streams over TCP/IP networks
-- Listen for encrypted connections on specified ports
-- Connect to remote hosts using encryption
-- Perform port scanning with verbose output
-- Act as a proxy to forward encrypted data streams
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encrypt data streams over TCP/IP networks
+  - Listen for encrypted connections on specified ports
+  - Connect to remote hosts using encryption
+  - Perform port scanning with verbose output
+  - Act as a proxy to forward encrypted data streams
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cryptcat

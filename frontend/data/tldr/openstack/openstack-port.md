@@ -1,29 +1,29 @@
 ---
-title: "OpenStack Port - Manage Network Ports | Online Free DevTools by Hexmos"
+title: 'OpenStack Port - Manage Network Ports | Online Free DevTools by Hexmos'
 name: openstack-port
-path: "/freedevtools/tldr/openstack/openstack-port/"
-canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-port/"
-description: "Manage network ports with OpenStack Port. Configure virtual network interfaces and control IP address assignments. Free online tool, no registration required."
+path: '/freedevtools/tldr/openstack/openstack-port/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openstack/openstack-port/'
+description: 'Manage network ports with OpenStack Port. Configure virtual network interfaces and control IP address assignments. Free online tool, no registration required.'
 category: common
 keywords:
-- openstack network port management
-- openstack virtual interface configuration
-- openstack port IP assignment
-- openstack port creation
-- openstack port deletion
-- openstack network configuration
-- openstack neutron port
-- openstack port subnet association
-- cloud network port control
-- openstack port list
+  - openstack network port management
+  - openstack virtual interface configuration
+  - openstack port IP assignment
+  - openstack port creation
+  - openstack port deletion
+  - openstack network configuration
+  - openstack neutron port
+  - openstack port subnet association
+  - cloud network port control
+  - openstack port list
 features:
-- List all OpenStack network ports
-- Display detailed port information
-- Create ports on specific networks
-- Assign fixed IPs to network ports
-- Delete OpenStack network ports
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all OpenStack network ports
+  - Display detailed port information
+  - Create ports on specific networks
+  - Assign fixed IPs to network ports
+  - Delete OpenStack network ports
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openstack port

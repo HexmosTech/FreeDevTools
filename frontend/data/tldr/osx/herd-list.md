@@ -1,29 +1,29 @@
 ---
-title: "Herd List - List Herd Commands | Online Free DevTools by Hexmos"
+title: 'Herd List - List Herd Commands | Online Free DevTools by Hexmos'
 name: herd-list
-path: "/freedevtools/tldr/osx/herd-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/herd-list/"
-description: "List Herd commands quickly with Herd List. View available commands and namespaces in your Herd PHP platform. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/herd-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/herd-list/'
+description: 'List Herd commands quickly with Herd List. View available commands and namespaces in your Herd PHP platform. Free online tool, no registration required.'
 category: osx
 keywords:
-- herd commands list
-- list herd php commands
-- laravel herd commands
-- herd command reference
-- herd command namespace
-- osx herd commands
-- herd list raw output
-- herd list format output
-- herd command documentation
-- php command listing
+  - herd commands list
+  - list herd php commands
+  - laravel herd commands
+  - herd command reference
+  - herd command namespace
+  - osx herd commands
+  - herd list raw output
+  - herd list format output
+  - herd command documentation
+  - php command listing
 features:
-- List all available Herd commands.
-- List commands within a specific namespace.
-- Output commands in raw format for integration.
-- Display commands in txt, xml, json, or md format.
-- List commands without argument descriptions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all available Herd commands.
+  - List commands within a specific namespace.
+  - Output commands in raw format for integration.
+  - Display commands in txt, xml, json, or md format.
+  - List commands without argument descriptions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # herd list

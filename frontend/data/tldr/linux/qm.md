@@ -1,9 +1,9 @@
 ---
-title: "QEMU Manager - Control VMs | Online Free DevTools by Hexmos"
+title: 'QEMU Manager - Control VMs | Online Free DevTools by Hexmos'
 name: qm
-path: "/freedevtools/tldr/linux/qm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm/"
-description: "Control QEMU virtual machines with QEMU Manager. Start, stop, clone, and manage VMs easily. Free online tool, no registration required for VM management."
+path: '/freedevtools/tldr/linux/qm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm/'
+description: 'Control QEMU virtual machines with QEMU Manager. Start, stop, clone, and manage VMs easily. Free online tool, no registration required for VM management.'
 category: linux
 keywords:
   - qemu virtual machine manager
@@ -22,8 +22,8 @@ features:
   - Show virtual machine configurations
   - Start and stop virtual machines
   - Destroy virtual machines and resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm

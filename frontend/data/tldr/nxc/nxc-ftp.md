@@ -1,29 +1,29 @@
 ---
-title: "FTP Exploitation - Pentest FTP Servers | Online Free DevTools by Hexmos"
+title: 'FTP Exploitation - Pentest FTP Servers | Online Free DevTools by Hexmos'
 name: nxc-ftp
-path: "/freedevtools/tldr/nxc/nxc-ftp/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-ftp/"
-description: "Pentest FTP servers with nxc-ftp. Exploit vulnerabilities and gain access using credential brute-forcing and file manipulation. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-ftp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-ftp/'
+description: 'Pentest FTP servers with nxc-ftp. Exploit vulnerabilities and gain access using credential brute-forcing and file manipulation. Free online tool, no registration required.'
 category: common
 keywords:
-- FTP pentesting
-- FTP exploitation tool
-- NXC FTP module
-- Network exploitation framework
-- FTP brute force attack
-- FTP file download
-- FTP file upload
-- FTP server security
-- Password cracking FTP
-- Network penetration testing
+  - FTP pentesting
+  - FTP exploitation tool
+  - NXC FTP module
+  - Network exploitation framework
+  - FTP brute force attack
+  - FTP file download
+  - FTP file upload
+  - FTP server security
+  - Password cracking FTP
+  - Network penetration testing
 features:
-- Brute force FTP credentials using username and password lists.
-- Perform directory listings on FTP servers.
-- Download files from FTP servers using valid credentials.
-- Upload files to FTP servers using valid credentials.
-- Continue credential searching after a successful login.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute force FTP credentials using username and password lists.
+  - Perform directory listings on FTP servers.
+  - Download files from FTP servers using valid credentials.
+  - Upload files to FTP servers using valid credentials.
+  - Continue credential searching after a successful login.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc ftp

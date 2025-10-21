@@ -1,29 +1,29 @@
 ---
-title: "OpenShift CLI - Manage Containers | Online Free DevTools by Hexmos"
+title: 'OpenShift CLI - Manage Containers | Online Free DevTools by Hexmos'
 name: oc
-path: "/freedevtools/tldr/common/oc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/oc/"
-description: "Manage containers with OpenShift CLI. Deploy applications, control pods, and manage projects from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/oc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/oc/'
+description: 'Manage containers with OpenShift CLI. Deploy applications, control pods, and manage projects from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- openshift cli
-- container management
-- openshift commands
-- kubernetes cli
-- pod management
-- project management
-- container deployment
-- openshift application
-- openshift project
-- openshift pod
+  - openshift cli
+  - container management
+  - openshift commands
+  - kubernetes cli
+  - pod management
+  - project management
+  - container deployment
+  - openshift application
+  - openshift project
+  - openshift pod
 features:
-- Manage OpenShift Container Platform projects
-- Deploy applications to OpenShift Container Platform
-- Control container pods within OpenShift
-- Execute commands within container environments
-- Manage user sessions with the OpenShift CLI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage OpenShift Container Platform projects
+  - Deploy applications to OpenShift Container Platform
+  - Control container pods within OpenShift
+  - Execute commands within container environments
+  - Manage user sessions with the OpenShift CLI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # oc

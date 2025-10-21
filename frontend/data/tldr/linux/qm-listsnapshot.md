@@ -1,9 +1,9 @@
 ---
-title: "List VM Snapshot - Manage Virtual Machine Snapshots | Online Free DevTools by Hexmos"
+title: 'List VM Snapshot - Manage Virtual Machine Snapshots | Online Free DevTools by Hexmos'
 name: qm-listsnapshot
-path: "/freedevtools/tldr/linux/qm-listsnapshot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-listsnapshot/"
-description: "List virtual machine snapshots with qm-listsnapshot. Easily manage, restore, and delete snapshots of your VMs. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-listsnapshot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-listsnapshot/'
+description: 'List virtual machine snapshots with qm-listsnapshot. Easily manage, restore, and delete snapshots of your VMs. Free online tool, no registration required.'
 category: linux
 keywords:
   - VM snapshot management
@@ -22,8 +22,8 @@ features:
   - Manage VM backups via snapshots
   - Interact with the Proxmox VE environment
   - Automate snapshot management tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm listsnapshot

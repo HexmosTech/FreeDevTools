@@ -1,29 +1,29 @@
 ---
-title: "Kernel Install - Add/Remove Kernels | Online Free DevTools by Hexmos"
+title: 'Kernel Install - Add/Remove Kernels | Online Free DevTools by Hexmos'
 name: kernel-install
-path: "/freedevtools/tldr/linux/kernel-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kernel-install/"
-description: "Manage kernel images with Kernel Install. Add, remove, and inspect kernel and initrd images in /boot. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kernel-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kernel-install/'
+description: 'Manage kernel images with Kernel Install. Add, remove, and inspect kernel and initrd images in /boot. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux kernel install
-- kernel management linux
-- bootloader configuration linux
-- initrd image management
-- kernel version control
-- linux kernel update tool
-- kernel image manipulation
-- grub configuration tool
-- systemd boot configuration
-- linux boot process
+  - linux kernel install
+  - kernel management linux
+  - bootloader configuration linux
+  - initrd image management
+  - kernel version control
+  - linux kernel update tool
+  - kernel image manipulation
+  - grub configuration tool
+  - systemd boot configuration
+  - linux boot process
 features:
-- Add kernel and initrd images to the bootloader partition
-- Remove specific kernel versions from the bootloader
-- Inspect kernel image paths and parameters
-- Configure the boot process on Linux systems
-- Integrate with systemd-boot and other bootloaders
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add kernel and initrd images to the bootloader partition
+  - Remove specific kernel versions from the bootloader
+  - Inspect kernel image paths and parameters
+  - Configure the boot process on Linux systems
+  - Integrate with systemd-boot and other bootloaders
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kernel-install

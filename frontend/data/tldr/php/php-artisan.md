@@ -1,29 +1,29 @@
 ---
-title: "PHP Artisan - Control Laravel Applications | Online Free DevTools by Hexmos"
+title: 'PHP Artisan - Control Laravel Applications | Online Free DevTools by Hexmos'
 name: php-artisan
-path: "/freedevtools/tldr/php/php-artisan/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/php-artisan/"
-description: "Control Laravel applications with PHP Artisan. Manage migrations, generate models, and serve your application. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/php-artisan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/php-artisan/'
+description: 'Control Laravel applications with PHP Artisan. Manage migrations, generate models, and serve your application. Free online tool, no registration required.'
 category: common
 keywords:
-- php artisan command
-- laravel artisan commands
-- laravel artisan cli
-- php artisan serve
-- php artisan tinker
-- laravel model generator
-- php artisan help
-- artisan command list
-- laravel development tool
-- php artisan migration
+  - php artisan command
+  - laravel artisan commands
+  - laravel artisan cli
+  - php artisan serve
+  - php artisan tinker
+  - laravel model generator
+  - php artisan help
+  - artisan command list
+  - laravel development tool
+  - php artisan migration
 features:
-- Start the Laravel development server
-- Launch the interactive Tinker shell
-- Generate Eloquent models with migrations
-- Display available Artisan commands
-- Automate common Laravel tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the Laravel development server
+  - Launch the interactive Tinker shell
+  - Generate Eloquent models with migrations
+  - Display available Artisan commands
+  - Automate common Laravel tasks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # php artisan

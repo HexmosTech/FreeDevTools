@@ -1,29 +1,29 @@
 ---
-title: "Nix Store - Control Package Storage | Online Free DevTools by Hexmos"
+title: 'Nix Store - Control Package Storage | Online Free DevTools by Hexmos'
 name: nix-store.2
-path: "/freedevtools/tldr/nix/nix-store-2/"
-canonical: "https://hexmos-com/freedevtools/tldr/nix/nix-store-2/"
-description: "Control Nix package storage with Nix Store. Optimize disk space, delete unused paths, and manage dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-store-2/'
+canonical: 'https://hexmos-com/freedevtools/tldr/nix/nix-store-2/'
+description: 'Control Nix package storage with Nix Store. Optimize disk space, delete unused paths, and manage dependencies. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- nix store management
-- nix store garbage collection
-- nix dependency tree
-- nix store path deletion
-- nix optimize disk space
-- nix hard linking
-- nixos package management
-- nix store analysis
-- linux package manager
+  - nix package manager
+  - nix store management
+  - nix store garbage collection
+  - nix dependency tree
+  - nix store path deletion
+  - nix optimize disk space
+  - nix hard linking
+  - nixos package management
+  - nix store analysis
+  - linux package manager
 features:
-- Collect and remove unused store paths (garbage collection).
-- Optimize disk space by hard-linking identical files.
-- Delete specific store paths.
-- Display the dependency tree of a store path.
-- Show all store paths that depend on a given store path.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Collect and remove unused store paths (garbage collection).
+  - Optimize disk space by hard-linking identical files.
+  - Delete specific store paths.
+  - Display the dependency tree of a store path.
+  - Show all store paths that depend on a given store path.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix-store

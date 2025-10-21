@@ -1,29 +1,29 @@
 ---
-title: "I2cset - Control I2C Devices | Online Free DevTools by Hexmos"
+title: 'I2cset - Control I2C Devices | Online Free DevTools by Hexmos'
 name: i2cset
-path: "/freedevtools/tldr/linux/i2cset/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/i2cset/"
-description: "Control I2C devices with i2cset. Easily set register values on I2C devices from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/i2cset/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/i2cset/'
+description: 'Control I2C devices with i2cset. Easily set register values on I2C devices from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- i2c device control
-- i2c register write
-- linux i2cset command
-- i2c bus configuration
-- smbus register set
-- i2cset hexadecimal address
-- embedded i2c control
-- i2c command line tool
-- linux i2c debugging
-- i2c peripheral programming
+  - i2c device control
+  - i2c register write
+  - linux i2cset command
+  - i2c bus configuration
+  - smbus register set
+  - i2cset hexadecimal address
+  - embedded i2c control
+  - i2c command line tool
+  - linux i2c debugging
+  - i2c peripheral programming
 features:
-- Write to specific registers on I2C devices
-- Set register values using hexadecimal addressing
-- Force write operations without confirmation
-- Specify data write modes for I2C communication
-- Control I2C devices via command line in Linux
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Write to specific registers on I2C devices
+  - Set register values using hexadecimal addressing
+  - Force write operations without confirmation
+  - Specify data write modes for I2C communication
+  - Control I2C devices via command line in Linux
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # i2cset

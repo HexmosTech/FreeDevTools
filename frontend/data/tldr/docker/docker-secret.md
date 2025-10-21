@@ -1,29 +1,29 @@
 ---
-title: "Create Docker Secrets - Manage Swarm Secrets | Online Free DevTools by Hexmos"
+title: 'Create Docker Secrets - Manage Swarm Secrets | Online Free DevTools by Hexmos'
 name: docker-secret
-path: "/freedevtools/tldr/docker/docker-secret/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-secret/"
-description: "Create Docker secrets securely with Docker Secret manager. Manage swarm secrets, store sensitive data, and improve container security. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-secret/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-secret/'
+description: 'Create Docker secrets securely with Docker Secret manager. Manage swarm secrets, store sensitive data, and improve container security. Free online tool, no registration required.'
 category: common
 keywords:
-- docker secret management
-- docker swarm secrets
-- docker container security
-- docker secrets from file
-- docker secrets stdin
-- docker secrets list
-- docker secrets inspect
-- docker secrets remove
-- docker secret command line
-- docker secret cli
+  - docker secret management
+  - docker swarm secrets
+  - docker container security
+  - docker secrets from file
+  - docker secrets stdin
+  - docker secrets list
+  - docker secrets inspect
+  - docker secrets remove
+  - docker secret command line
+  - docker secret cli
 features:
-- Create Docker secrets from stdin
-- Create Docker secrets from a file
-- List all Docker secrets
-- Inspect Docker secrets details
-- Remove one or more Docker secrets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Docker secrets from stdin
+  - Create Docker secrets from a file
+  - List all Docker secrets
+  - Inspect Docker secrets details
+  - Remove one or more Docker secrets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker secret

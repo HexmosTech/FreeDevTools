@@ -1,29 +1,29 @@
 ---
-title: "Sequelize ORM - Generate Database Models | Online Free DevTools by Hexmos"
+title: 'Sequelize ORM - Generate Database Models | Online Free DevTools by Hexmos'
 name: sequelize
-path: "/freedevtools/tldr/common/sequelize/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sequelize/"
-description: "Generate database models with Sequelize ORM. Automate database interactions using migrations and seeding. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sequelize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sequelize/'
+description: 'Generate database models with Sequelize ORM. Automate database interactions using migrations and seeding. Free online tool, no registration required.'
 category: common
 keywords:
-- Sequelize model generation
-- Node.js ORM tool
-- Database migration tool
-- Database seeding tool
-- PostgreSQL Sequelize commands
-- MySQL Sequelize commands
-- SQLite Sequelize commands
-- Sequelize command line interface
-- ORM database automation
-- Database schema management
+  - Sequelize model generation
+  - Node.js ORM tool
+  - Database migration tool
+  - Database seeding tool
+  - PostgreSQL Sequelize commands
+  - MySQL Sequelize commands
+  - SQLite Sequelize commands
+  - Sequelize command line interface
+  - ORM database automation
+  - Database schema management
 features:
-- Generate database models with specified attributes
-- Run database migrations to update schema
-- Revert database migrations to previous versions
-- Create database seed files for initial data
-- Populate database with data from seed files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate database models with specified attributes
+  - Run database migrations to update schema
+  - Revert database migrations to previous versions
+  - Create database seed files for initial data
+  - Populate database with data from seed files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sequelize

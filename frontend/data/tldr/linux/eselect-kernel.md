@@ -1,9 +1,9 @@
 ---
-title: "Manage Linux Kernel - eselect Kernel Control | Online Free DevTools by Hexmos"
+title: 'Manage Linux Kernel - eselect Kernel Control | Online Free DevTools by Hexmos'
 name: eselect-kernel
-path: "/freedevtools/tldr/linux/eselect-kernel/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-kernel/"
-description: "Control Linux kernel selection with eselect kernel.  List, set, and manage kernel symlinks easily via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eselect-kernel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eselect-kernel/'
+description: 'Control Linux kernel selection with eselect kernel.  List, set, and manage kernel symlinks easily via command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux kernel manager
@@ -22,8 +22,8 @@ features:
   - Display the current kernel symlink target.
   - Set the kernel symlink to the currently running kernel.
   - Manage multiple Linux kernel versions efficiently.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eselect kernel

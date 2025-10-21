@@ -1,29 +1,29 @@
 ---
-title: "Packer - Build Machine Images | Online Free DevTools by Hexmos"
+title: 'Packer - Build Machine Images | Online Free DevTools by Hexmos'
 name: packer
-path: "/freedevtools/tldr/common/packer/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/packer/"
-description: "Build machine images easily with Packer. Automate image creation, validate configurations, and format Packer files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/packer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/packer/'
+description: 'Build machine images easily with Packer. Automate image creation, validate configurations, and format Packer files. Free online tool, no registration required.'
 category: common
 keywords:
-- packer image builder
-- automated image creation
-- packer configuration validation
-- packer file formatting
-- machine image automation
-- infrastructure as code image
-- cloud image generation
-- packer hcl format
-- packer json build
-- packer template validation
+  - packer image builder
+  - automated image creation
+  - packer configuration validation
+  - packer file formatting
+  - machine image automation
+  - infrastructure as code image
+  - cloud image generation
+  - packer hcl format
+  - packer json build
+  - packer template validation
 features:
-- Automates the creation of machine images for various platforms
-- Validates Packer configuration files for syntax and errors
-- Formats Packer HCL files for readability and consistency
-- Enables building images from JSON configurations
-- Supports automated image deployment workflows
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automates the creation of machine images for various platforms
+  - Validates Packer configuration files for syntax and errors
+  - Formats Packer HCL files for readability and consistency
+  - Enables building images from JSON configurations
+  - Supports automated image deployment workflows
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # packer

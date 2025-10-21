@@ -1,29 +1,29 @@
 ---
-title: "Edit Text with Nvim - Text Editing | Online Free DevTools by Hexmos"
+title: 'Edit Text with Nvim - Text Editing | Online Free DevTools by Hexmos'
 name: nvim
-path: "/freedevtools/tldr/common/nvim/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nvim/"
-description: "Edit text quickly with Nvim. Manipulate and manage text files using this versatile command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nvim/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nvim/'
+description: 'Edit text quickly with Nvim. Manipulate and manage text files using this versatile command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- nvim text editor
-- neovim editor commands
-- command line text editing
-- vim text editing
-- text manipulation nvim
-- file editing nvim
-- nvim search replace
-- neovim configuration
-- nvim keyboard shortcuts
-- cross-platform text editor
+  - nvim text editor
+  - neovim editor commands
+  - command line text editing
+  - vim text editing
+  - text manipulation nvim
+  - file editing nvim
+  - nvim search replace
+  - neovim configuration
+  - nvim keyboard shortcuts
+  - cross-platform text editor
 features:
-- Open and edit files
-- Search for patterns within files
-- Perform regex-based search and replace
-- Save and quit files
-- Undo previous operations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit files
+  - Search for patterns within files
+  - Perform regex-based search and replace
+  - Save and quit files
+  - Undo previous operations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nvim

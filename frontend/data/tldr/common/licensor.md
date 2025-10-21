@@ -1,29 +1,29 @@
 ---
-title: "Generate License Files - Licensor | Online Free DevTools by Hexmos"
+title: 'Generate License Files - Licensor | Online Free DevTools by Hexmos'
 name: licensor
-path: "/freedevtools/tldr/common/licensor/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/licensor/"
-description: "Generate license files effortlessly with Licensor. Quickly create MIT, Apache, and other open-source licenses. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/licensor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/licensor/'
+description: 'Generate license files effortlessly with Licensor. Quickly create MIT, Apache, and other open-source licenses. Free online tool, no registration required.'
 category: common
 keywords:
-- license generator
-- open source license
-- MIT license
-- Apache license
-- GPL license
-- BSD license
-- license creator
-- software license
-- license template
-- command line license
+  - license generator
+  - open source license
+  - MIT license
+  - Apache license
+  - GPL license
+  - BSD license
+  - license creator
+  - software license
+  - license template
+  - command line license
 features:
-- Generate licenses from the command line
-- Support for common open-source licenses (MIT, Apache, GPL, BSD)
-- Allow specifying a copyright holder
-- List available licenses
-- List available license exceptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate licenses from the command line
+  - Support for common open-source licenses (MIT, Apache, GPL, BSD)
+  - Allow specifying a copyright holder
+  - List available licenses
+  - List available license exceptions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # licensor

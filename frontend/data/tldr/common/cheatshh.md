@@ -1,29 +1,29 @@
 ---
-title: "Cheatshh - Manage CLI Cheatsheets | Online Free DevTools by Hexmos"
+title: 'Cheatshh - Manage CLI Cheatsheets | Online Free DevTools by Hexmos'
 name: cheatshh
-path: "/freedevtools/tldr/common/cheatshh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cheatshh/"
-description: "Manage CLI cheatsheets easily with Cheatshh. Customize descriptions and groups for quick reference. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cheatshh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cheatshh/'
+description: 'Manage CLI cheatsheets easily with Cheatshh. Customize descriptions and groups for quick reference. Free online tool, no registration required.'
 category: common
 keywords:
-- cli cheatsheet manager
-- command line cheatsheet
-- cheatsheet customizer
-- cheatsheet group editor
-- cli command organizer
-- cheatsheet description manager
-- tldr custom cheatsheets
-- cheatshh commands
-- bash cheatsheet tool
-- zsh cheatsheet tool
+  - cli cheatsheet manager
+  - command line cheatsheet
+  - cheatsheet customizer
+  - cheatsheet group editor
+  - cli command organizer
+  - cheatsheet description manager
+  - tldr custom cheatsheets
+  - cheatshh commands
+  - bash cheatsheet tool
+  - zsh cheatsheet tool
 features:
-- Add new commands to your cheatsheet
-- Edit descriptions of existing commands
-- Delete commands from your cheatsheet
-- Create new groups for commands
-- Edit existing group names and descriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add new commands to your cheatsheet
+  - Edit descriptions of existing commands
+  - Delete commands from your cheatsheet
+  - Create new groups for commands
+  - Edit existing group names and descriptions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cheatshh

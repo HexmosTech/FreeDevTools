@@ -1,29 +1,29 @@
 ---
-title: "Type Command - Display Command Type | Online Free DevTools by Hexmos"
+title: 'Type Command - Display Command Type | Online Free DevTools by Hexmos'
 name: type
-path: "/freedevtools/tldr/common/type/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/type/"
-description: "Display command type with Type command. Identify command type, location, and definition across various shells. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/type/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/type/'
+description: 'Display command type with Type command. Identify command type, location, and definition across various shells. Free online tool, no registration required.'
 category: common
 keywords:
-- command type identifier
-- shell command analysis
-- bash command type
-- zsh command type
-- fish command type
-- linux command type
-- command location finder
-- command definition display
-- executable path lookup
-- shell scripting tool
+  - command type identifier
+  - shell command analysis
+  - bash command type
+  - zsh command type
+  - fish command type
+  - linux command type
+  - command location finder
+  - command definition display
+  - executable path lookup
+  - shell scripting tool
 features:
-- Determine the type of a command (alias, keyword, function, etc.).
-- Locate the disk file that would be executed for a command.
-- Display all locations of an executable in Bash/fish/Zsh.
-- Identify built-in commands in various shells.
-- Analyze command definitions in shell scripts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Determine the type of a command (alias, keyword, function, etc.).
+  - Locate the disk file that would be executed for a command.
+  - Display all locations of an executable in Bash/fish/Zsh.
+  - Identify built-in commands in various shells.
+  - Analyze command definitions in shell scripts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # type

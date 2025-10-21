@@ -1,29 +1,29 @@
 ---
-title: "Install Binaries - Download Prebuilt Executables | Online Free DevTools by Hexmos"
+title: 'Install Binaries - Download Prebuilt Executables | Online Free DevTools by Hexmos'
 name: eget
-path: "/freedevtools/tldr/common/eget/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/eget/"
-description: "Download binaries easily with Eget. Install prebuilt executables from GitHub repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/eget/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/eget/'
+description: 'Download binaries easily with Eget. Install prebuilt executables from GitHub repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- prebuilt binaries download
-- github release installer
-- executable installer
-- command line installer
-- cross platform binaries
-- asset downloader
-- versioned binaries
-- linux binary installer
-- macos binary installer
-- windows binary installer
+  - prebuilt binaries download
+  - github release installer
+  - executable installer
+  - command line installer
+  - cross platform binaries
+  - asset downloader
+  - versioned binaries
+  - linux binary installer
+  - macos binary installer
+  - windows binary installer
 features:
-- Download prebuilt binaries from GitHub releases.
-- Install binaries from specified URLs.
-- Specify the installation directory for downloaded files.
-- Download specific Git tags instead of latest release.
-- Download pre-release versions of binaries.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download prebuilt binaries from GitHub releases.
+  - Install binaries from specified URLs.
+  - Specify the installation directory for downloaded files.
+  - Download specific Git tags instead of latest release.
+  - Download pre-release versions of binaries.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eget

@@ -1,9 +1,9 @@
 ---
-title: "List Files - Control Directories | Online Free DevTools by Hexmos"
+title: 'List Files - Control Directories | Online Free DevTools by Hexmos'
 name: dir
-path: "/freedevtools/tldr/cisco-ios/dir/"
-canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/dir/"
-description: "List files instantly with the DIR command. Navigate directories, manage filesystems and view file details easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/cisco-ios/dir/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cisco-ios/dir/'
+description: 'List files instantly with the DIR command. Navigate directories, manage filesystems and view file details easily. Free online tool, no registration required.'
 category: cisco-ios
 keywords:
   - list files command
@@ -22,8 +22,8 @@ features:
   - Display available filesystems
   - Navigate directory structures via command line
   - Manage file access and permissions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dir

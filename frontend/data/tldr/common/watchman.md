@@ -1,29 +1,29 @@
 ---
-title: "Watch Files - Trigger Actions with Watchman | Online Free DevTools by Hexmos"
+title: 'Watch Files - Trigger Actions with Watchman | Online Free DevTools by Hexmos'
 name: watchman
-path: "/freedevtools/tldr/common/watchman/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/watchman/"
-description: "Trigger actions with Watchman when file changes occur. Monitor directories, automate build processes, and manage file system events efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/watchman/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/watchman/'
+description: 'Trigger actions with Watchman when file changes occur. Monitor directories, automate build processes, and manage file system events efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- file system monitor
-- watchman file trigger
-- file change detection
-- directory watching
-- watchman automation
-- file event handler
-- watchman trigger script
-- linux file monitor
-- macos file monitor
-- windows file monitor
+  - file system monitor
+  - watchman file trigger
+  - file change detection
+  - directory watching
+  - watchman automation
+  - file event handler
+  - watchman trigger script
+  - linux file monitor
+  - macos file monitor
+  - windows file monitor
 features:
-- Watch project directories for file changes
-- Execute custom commands on file modification
-- List watched directories and associated triggers
-- Delete specific or all directory watches and triggers
-- Temporarily shut down the watchman server
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Watch project directories for file changes
+  - Execute custom commands on file modification
+  - List watched directories and associated triggers
+  - Delete specific or all directory watches and triggers
+  - Temporarily shut down the watchman server
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # watchman

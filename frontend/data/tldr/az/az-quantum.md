@@ -1,29 +1,29 @@
 ---
-title: "Azure Quantum - Manage Workspaces & Submit Jobs | Online Free DevTools by Hexmos"
+title: 'Azure Quantum - Manage Workspaces & Submit Jobs | Online Free DevTools by Hexmos'
 name: az-quantum
-path: "/freedevtools/tldr/az/az-quantum/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-quantum/"
-description: "Manage Azure Quantum workspaces and submit quantum jobs with az quantum. Streamline quantum computing workflows and optimize job execution. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-quantum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-quantum/'
+description: 'Manage Azure Quantum workspaces and submit quantum jobs with az quantum. Streamline quantum computing workflows and optimize job execution. Free online tool, no registration required.'
 category: common
 keywords:
-- azure quantum workspace management
-- quantum job submission azure
-- azure cli quantum computing
-- quantum computing workspace creation
-- qir job submission azure
-- azure quantum target configuration
-- quantum job output retrieval
-- azure quantum offerings
-- quantum workspace listing
-- quantum job management
+  - azure quantum workspace management
+  - quantum job submission azure
+  - azure cli quantum computing
+  - quantum computing workspace creation
+  - qir job submission azure
+  - azure quantum target configuration
+  - quantum job output retrieval
+  - azure quantum offerings
+  - quantum workspace listing
+  - quantum job management
 features:
-- Create and manage Azure Quantum workspaces
-- Submit QIR quantum jobs to specified targets
-- List and retrieve quantum job outputs
-- Enumerate available provider offerings in a location
-- Set default targets for job submissions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage Azure Quantum workspaces
+  - Submit QIR quantum jobs to specified targets
+  - List and retrieve quantum job outputs
+  - Enumerate available provider offerings in a location
+  - Set default targets for job submissions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az quantum

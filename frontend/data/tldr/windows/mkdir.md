@@ -1,9 +1,9 @@
 ---
-title: "Create Directory - Organize Files | Online Free DevTools by Hexmos"
+title: 'Create Directory - Organize Files | Online Free DevTools by Hexmos'
 name: mkdir
-path: "/freedevtools/tldr/windows/mkdir/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/mkdir/"
-description: "Create directories easily with mkdir. Organize your files and manage your file system efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/mkdir/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/mkdir/'
+description: 'Create directories easily with mkdir. Organize your files and manage your file system efficiently. Free online tool, no registration required.'
 category: windows
 keywords:
   - directory creation command
@@ -22,8 +22,8 @@ features:
   - Organize files and folders
   - Manage file systems using command-line
   - Simplify directory creation tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkdir

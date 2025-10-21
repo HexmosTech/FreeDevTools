@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import React from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 
 interface ToolVideoProps {
   title: string;
@@ -21,7 +21,7 @@ const ToolVideo: React.FC<ToolVideoProps> = ({
       </CardHeader>
       <CardContent className="p-6 pt-0">
         <p className="text-slate-800 dark:text-slate-400 mb-4">{description}</p>
-        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+        <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
           <iframe
             className="absolute top-0 left-0 w-full h-full rounded-lg"
             src={videoUrl}

@@ -1,29 +1,29 @@
 ---
-title: "Diffoscope - Compare Files and Directories | Online Free DevTools by Hexmos"
+title: 'Diffoscope - Compare Files and Directories | Online Free DevTools by Hexmos'
 name: diffoscope
-path: "/freedevtools/tldr/common/diffoscope/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/diffoscope/"
-description: "Compare files and directories effortlessly with Diffoscope. Analyze archives and identify differences between versions for effective debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/diffoscope/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/diffoscope/'
+description: 'Compare files and directories effortlessly with Diffoscope. Analyze archives and identify differences between versions for effective debugging. Free online tool, no registration required.'
 category: common
 keywords:
-- file comparison
-- directory comparison
-- archive analysis
-- diff tool
-- file analyzer
-- directory analyzer
-- diffoscope linux
-- diffoscope compare
-- file versioning
-- directory versioning
+  - file comparison
+  - directory comparison
+  - archive analysis
+  - diff tool
+  - file analyzer
+  - directory analyzer
+  - diffoscope linux
+  - diffoscope compare
+  - file versioning
+  - directory versioning
 features:
-- Compare files and directories recursively
-- Generate HTML reports for detailed analysis
-- Exclude files based on pattern matching
-- Control directory metadata comparison behavior
-- Display or suppress progress bar during comparison
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare files and directories recursively
+  - Generate HTML reports for detailed analysis
+  - Exclude files based on pattern matching
+  - Control directory metadata comparison behavior
+  - Display or suppress progress bar during comparison
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # diffoscope

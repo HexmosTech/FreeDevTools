@@ -1,29 +1,29 @@
 ---
-title: "Calendar Control with gcalcli - Interact with Google Calendar | Online Free DevTools by Hexmos"
+title: 'Calendar Control with gcalcli - Interact with Google Calendar | Online Free DevTools by Hexmos'
 name: gcalcli
-path: "/freedevtools/tldr/common/gcalcli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcalcli/"
-description: "Control Google Calendar from the command line with gcalcli. Manage events, list schedules, and add quick events seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gcalcli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gcalcli/'
+description: 'Control Google Calendar from the command line with gcalcli. Manage events, list schedules, and add quick events seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Google Calendar CLI
-- gcalcli command line
-- Calendar event manager
-- Schedule event CLI
-- Google calendar linux
-- Google calendar bash
-- Google calendar terminal
-- Event reminder command
-- List google calendar events
-- Add google calendar event
+  - Google Calendar CLI
+  - gcalcli command line
+  - Calendar event manager
+  - Schedule event CLI
+  - Google calendar linux
+  - Google calendar bash
+  - Google calendar terminal
+  - Event reminder command
+  - List google calendar events
+  - Add google calendar event
 features:
-- List events for all calendars
-- Show events between specific dates
-- Display calendar of events by week
-- Quickly add events to Google Calendar
-- Trigger interactive event addition prompt
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List events for all calendars
+  - Show events between specific dates
+  - Display calendar of events by week
+  - Quickly add events to Google Calendar
+  - Trigger interactive event addition prompt
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcalcli

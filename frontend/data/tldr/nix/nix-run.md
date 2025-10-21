@@ -1,29 +1,29 @@
 ---
-title: "Nix Run - Execute Applications from Flakes | Online Free DevTools by Hexmos"
+title: 'Nix Run - Execute Applications from Flakes | Online Free DevTools by Hexmos'
 name: nix-run
-path: "/freedevtools/tldr/nix/nix-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-run/"
-description: "Execute applications seamlessly with Nix Run. Effortlessly run applications from Nix flakes, manage dependencies, and reproduce environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-run/'
+description: 'Execute applications seamlessly with Nix Run. Effortlessly run applications from Nix flakes, manage dependencies, and reproduce environments. Free online tool, no registration required.'
 category: common
 keywords:
-- nix flake execution
-- nix run command
-- nix package runner
-- nix application deployment
-- nix reproducible builds
-- nix package management
-- linux application runner
-- macos application runner
-- cross-platform application execution
-- nix environment manager
+  - nix flake execution
+  - nix run command
+  - nix package runner
+  - nix application deployment
+  - nix reproducible builds
+  - nix package management
+  - linux application runner
+  - macos application runner
+  - cross-platform application execution
+  - nix environment manager
 features:
-- Execute applications directly from Nix flakes
-- Run applications from remote repositories
-- Specify application versions using tags or revisions
-- Execute applications with custom arguments
-- Run applications from specific subdirectories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute applications directly from Nix flakes
+  - Run applications from remote repositories
+  - Specify application versions using tags or revisions
+  - Execute applications with custom arguments
+  - Run applications from specific subdirectories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix run

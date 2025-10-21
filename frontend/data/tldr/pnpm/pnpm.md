@@ -1,29 +1,29 @@
 ---
-title: "PNPM Manager - Control Node Packages | Online Free DevTools by Hexmos"
+title: 'PNPM Manager - Control Node Packages | Online Free DevTools by Hexmos'
 name: pnpm
-path: "/freedevtools/tldr/pnpm/pnpm/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnpm/pnpm/"
-description: "Control Node.js packages with PNPM Manager. Install, uninstall, and manage dependencies efficiently. Improve project speed and disk space. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnpm/pnpm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnpm/pnpm/'
+description: 'Control Node.js packages with PNPM Manager. Install, uninstall, and manage dependencies efficiently. Improve project speed and disk space. Free online tool, no registration required.'
 category: common
 keywords:
-- node package manager
-- pnpm package manager
-- node.js dependency manager
-- javascript package manager
-- fast node package install
-- disk space efficient pnpm
-- pnpm install command
-- pnpm add package
-- pnpm remove package
-- pnpm global install
+  - node package manager
+  - pnpm package manager
+  - node.js dependency manager
+  - javascript package manager
+  - fast node package install
+  - disk space efficient pnpm
+  - pnpm install command
+  - pnpm add package
+  - pnpm remove package
+  - pnpm global install
 features:
-- Manage Node.js project dependencies
-- Install specific versions of packages
-- Add packages as development dependencies
-- Uninstall packages from projects
-- List installed modules in a tree structure
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage Node.js project dependencies
+  - Install specific versions of packages
+  - Add packages as development dependencies
+  - Uninstall packages from projects
+  - List installed modules in a tree structure
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnpm

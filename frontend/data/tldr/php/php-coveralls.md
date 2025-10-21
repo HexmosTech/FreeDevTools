@@ -1,29 +1,29 @@
 ---
-title: "Generate PHP Coverage Reports with php-coveralls | Online Free DevTools by Hexmos"
+title: 'Generate PHP Coverage Reports with php-coveralls | Online Free DevTools by Hexmos'
 name: php-coveralls
-path: "/freedevtools/tldr/php/php-coveralls/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/php-coveralls/"
-description: "Generate PHP coverage reports effortlessly with php-coveralls. Analyze code coverage for improved software quality with this free online tool, no registration required."
+path: '/freedevtools/tldr/php/php-coveralls/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/php-coveralls/'
+description: 'Generate PHP coverage reports effortlessly with php-coveralls. Analyze code coverage for improved software quality with this free online tool, no registration required.'
 category: common
 keywords:
-- PHP code coverage
-- PHP coverage report generation
-- Coveralls PHP client
-- PHP test coverage analysis
-- PHP CI coverage reporting
-- php-coveralls integration
-- Code coverage XML
-- PHP code quality
-- PHP software testing
-- command-line coverage reporting
+  - PHP code coverage
+  - PHP coverage report generation
+  - Coveralls PHP client
+  - PHP test coverage analysis
+  - PHP CI coverage reporting
+  - php-coveralls integration
+  - Code coverage XML
+  - PHP code quality
+  - PHP software testing
+  - command-line coverage reporting
 features:
-- Sends coverage data to Coveralls from the command line.
-- Supports specifying a root directory for coverage analysis.
-- Allows configuration via a .coveralls.yml file.
-- Provides verbose output for detailed debugging.
-- Excludes source files with no executable statements from coverage reports.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Sends coverage data to Coveralls from the command line.
+  - Supports specifying a root directory for coverage analysis.
+  - Allows configuration via a .coveralls.yml file.
+  - Provides verbose output for detailed debugging.
+  - Excludes source files with no executable statements from coverage reports.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # php-coveralls

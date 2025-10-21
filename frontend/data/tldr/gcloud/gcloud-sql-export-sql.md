@@ -1,29 +1,29 @@
 ---
-title: "SQL Export - Create Database Backups with gcloud | Online Free DevTools by Hexmos"
+title: 'SQL Export - Create Database Backups with gcloud | Online Free DevTools by Hexmos'
 name: gcloud-sql-export-sql
-path: "/freedevtools/tldr/gcloud/gcloud-sql-export-sql/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-sql-export-sql/"
-description: "Export SQL databases with gcloud SQL Export. Create backups, migrate data, and manage database instances easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-sql-export-sql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-sql-export-sql/'
+description: 'Export SQL databases with gcloud SQL Export. Create backups, migrate data, and manage database instances easily. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud SQL export
-- SQL database backup
-- Cloud SQL export to GCS
-- MySQL export gcloud
-- PostgreSQL export gcloud
-- Database migration gcloud
-- Cloud SQL data dump
-- gcloud SQL backup command
-- gcloud database export
-- SQL export utility
+  - gcloud SQL export
+  - SQL database backup
+  - Cloud SQL export to GCS
+  - MySQL export gcloud
+  - PostgreSQL export gcloud
+  - Database migration gcloud
+  - Cloud SQL data dump
+  - gcloud SQL backup command
+  - gcloud database export
+  - SQL export utility
 features:
-- Export Cloud SQL databases to SQL files in Google Cloud Storage.
-- Perform asynchronous database exports for non-blocking operations.
-- Export specific databases or tables from a Cloud SQL instance.
-- Offload exports to temporary instances to reduce source instance load.
-- Compress SQL exports using gzip for smaller file sizes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Export Cloud SQL databases to SQL files in Google Cloud Storage.
+  - Perform asynchronous database exports for non-blocking operations.
+  - Export specific databases or tables from a Cloud SQL instance.
+  - Offload exports to temporary instances to reduce source instance load.
+  - Compress SQL exports using gzip for smaller file sizes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud sql export sql

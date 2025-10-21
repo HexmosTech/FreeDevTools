@@ -1,29 +1,29 @@
 ---
-title: "Create Infrastructure with Tofu - Deploy Code | Online Free DevTools by Hexmos"
+title: 'Create Infrastructure with Tofu - Deploy Code | Online Free DevTools by Hexmos'
 name: tofu
-path: "/freedevtools/tldr/tofu/tofu/"
-canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu/"
-description: "Create infrastructure with Tofu, an open-source Terraform fork, for cloud deployment. Automate infrastructure management with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/tofu/tofu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tofu/tofu/'
+description: 'Create infrastructure with Tofu, an open-source Terraform fork, for cloud deployment. Automate infrastructure management with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- infrastructure as code
-- tofu infrastructure
-- terraform alternative
-- cloud deployment tool
-- infrastructure automation
-- tofu init
-- tofu apply
-- tofu destroy
-- tofu plan
-- infrastructure management tool
+  - infrastructure as code
+  - tofu infrastructure
+  - terraform alternative
+  - cloud deployment tool
+  - infrastructure automation
+  - tofu init
+  - tofu apply
+  - tofu destroy
+  - tofu plan
+  - infrastructure management tool
 features:
-- Initialize Tofu configurations
-- Validate Tofu syntax
-- Format configuration files
-- Generate infrastructure execution plans
-- Destroy infrastructure resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Tofu configurations
+  - Validate Tofu syntax
+  - Format configuration files
+  - Generate infrastructure execution plans
+  - Destroy infrastructure resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tofu

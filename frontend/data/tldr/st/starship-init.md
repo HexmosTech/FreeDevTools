@@ -1,29 +1,29 @@
 ---
-title: "Generate Starship Init - Shell Integration | Online Free DevTools by Hexmos"
+title: 'Generate Starship Init - Shell Integration | Online Free DevTools by Hexmos'
 name: starship-init
-path: "/freedevtools/tldr/st/starship-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/starship-init/"
-description: "Generate shell integration code with Starship Init. Customize your terminal prompt and enhance your command-line experience. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/starship-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/starship-init/'
+description: 'Generate shell integration code with Starship Init. Customize your terminal prompt and enhance your command-line experience. Free online tool, no registration required.'
 category: common
 keywords:
-- starship init generator
-- shell integration code
-- terminal prompt customization
-- starship config bash
-- starship config zsh
-- starship prompt fish
-- cross-shell prompt
-- command-line interface
-- prompt configuration
-- starship prompt powershell
+  - starship init generator
+  - shell integration code
+  - terminal prompt customization
+  - starship config bash
+  - starship config zsh
+  - starship prompt fish
+  - cross-shell prompt
+  - command-line interface
+  - prompt configuration
+  - starship prompt powershell
 features:
-- Generate shell integration code for various shells
-- Customize terminal prompt appearance and behavior
-- Integrate Starship with Bash, Zsh, Fish, and other shells
-- Append Starship integration code to shell configuration files
-- Display help information about Starship init
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate shell integration code for various shells
+  - Customize terminal prompt appearance and behavior
+  - Integrate Starship with Bash, Zsh, Fish, and other shells
+  - Append Starship integration code to shell configuration files
+  - Display help information about Starship init
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # starship init

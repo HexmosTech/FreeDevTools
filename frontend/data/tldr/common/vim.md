@@ -1,29 +1,29 @@
 ---
-title: "Vim Editor - Control Text Editing with Vim | Online Free DevTools by Hexmos"
+title: 'Vim Editor - Control Text Editing with Vim | Online Free DevTools by Hexmos'
 name: vim
-path: "/freedevtools/tldr/common/vim/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vim/"
-description: "Control text editing with Vim Editor, a powerful command-line text editor. Perform regex substitutions, search patterns, and navigate files efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vim/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vim/'
+description: 'Control text editing with Vim Editor, a powerful command-line text editor. Perform regex substitutions, search patterns, and navigate files efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- text editor vim
-- command line vim
-- vim regex substitution
-- vim file navigation
-- vim search pattern
-- vim text manipulation
-- vim help manual
-- vim save quit
-- vim line numbers
-- vim command mode
+  - text editor vim
+  - command line vim
+  - vim regex substitution
+  - vim file navigation
+  - vim search pattern
+  - vim text manipulation
+  - vim help manual
+  - vim save quit
+  - vim line numbers
+  - vim command mode
 features:
-- Open and edit files from the command line
-- Perform regular expression substitutions
-- Search for patterns within a file
-- Display line numbers for easy navigation
-- Save changes and exit the editor
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit files from the command line
+  - Perform regular expression substitutions
+  - Search for patterns within a file
+  - Display line numbers for easy navigation
+  - Save changes and exit the editor
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vim

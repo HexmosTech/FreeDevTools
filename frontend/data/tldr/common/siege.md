@@ -1,29 +1,29 @@
 ---
-title: "Siege Load Testing - Benchmark Websites | Online Free DevTools by Hexmos"
+title: 'Siege Load Testing - Benchmark Websites | Online Free DevTools by Hexmos'
 name: siege
-path: "/freedevtools/tldr/common/siege/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/siege/"
-description: "Benchmark websites with Siege load testing tool. Analyze website performance and simulate user traffic for stress testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/siege/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/siege/'
+description: 'Benchmark websites with Siege load testing tool. Analyze website performance and simulate user traffic for stress testing. Free online tool, no registration required.'
 category: common
 keywords:
-- website load testing
-- HTTP load testing
-- website benchmarking
-- siege load testing tool
-- command line load testing
-- website performance testing
-- website stress testing
-- Linux load testing
-- macOS load testing
-- network performance analysis
+  - website load testing
+  - HTTP load testing
+  - website benchmarking
+  - siege load testing tool
+  - command line load testing
+  - website performance testing
+  - website stress testing
+  - Linux load testing
+  - macOS load testing
+  - network performance analysis
 features:
-- Perform HTTP load testing on websites
-- Benchmark website performance under stress
-- Simulate concurrent users to test website capacity
-- Run tests for a specified duration
-- Test multiple URLs from a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform HTTP load testing on websites
+  - Benchmark website performance under stress
+  - Simulate concurrent users to test website capacity
+  - Run tests for a specified duration
+  - Test multiple URLs from a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # siege

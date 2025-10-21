@@ -1,29 +1,29 @@
 ---
-title: "Systemd-firstboot - Initialize System Settings | Online Free DevTools by Hexmos"
+title: 'Systemd-firstboot - Initialize System Settings | Online Free DevTools by Hexmos'
 name: systemd-firstboot
-path: "/freedevtools/tldr/linux/systemd-firstboot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-firstboot/"
-description: "Initialize system settings with systemd-firstboot. Configure hostname, keymap, and root password effortlessly on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-firstboot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-firstboot/'
+description: 'Initialize system settings with systemd-firstboot. Configure hostname, keymap, and root password effortlessly on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- systemd firstboot
-- linux system initialization
-- systemd configuration
-- first boot setup linux
-- set hostname linux
-- configure keymap linux
-- root password manager
-- systemd root password reset
-- linux first boot config
-- systemd-firstboot linux
+  - systemd firstboot
+  - linux system initialization
+  - systemd configuration
+  - first boot setup linux
+  - set hostname linux
+  - configure keymap linux
+  - root password manager
+  - systemd root password reset
+  - linux first boot config
+  - systemd-firstboot linux
 features:
-- Set system hostname during first boot
-- Configure keyboard layout for Linux
-- Set or reset root password securely
-- Force configuration even if files exist
-- Remove existing systemd-firstboot configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set system hostname during first boot
+  - Configure keyboard layout for Linux
+  - Set or reset root password securely
+  - Force configuration even if files exist
+  - Remove existing systemd-firstboot configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-firstboot

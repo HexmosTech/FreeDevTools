@@ -1,29 +1,29 @@
 ---
-title: "Watch Command - Monitor Program Output | Online Free DevTools by Hexmos"
+title: 'Watch Command - Monitor Program Output | Online Free DevTools by Hexmos'
 name: watch
-path: "/freedevtools/tldr/common/watch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/watch/"
-description: "Monitor program output with Watch Command. Execute commands periodically and observe changes with highlighting. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/watch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/watch/'
+description: 'Monitor program output with Watch Command. Execute commands periodically and observe changes with highlighting. Free online tool, no registration required.'
 category: common
 keywords:
-- Command Monitor
-- Program Output Viewer
-- Watch Command Linux
-- Linux Terminal Watch
-- Realtime Command Output
-- Periodic Command Execution
-- Terminal Output Monitor
-- Watch Command macOS
-- macOS Command Watcher
-- Full Screen Output
+  - Command Monitor
+  - Program Output Viewer
+  - Watch Command Linux
+  - Linux Terminal Watch
+  - Realtime Command Output
+  - Periodic Command Execution
+  - Terminal Output Monitor
+  - Watch Command macOS
+  - macOS Command Watcher
+  - Full Screen Output
 features:
-- Execute programs periodically
-- Highlight differences in output
-- Display output in full-screen mode
-- Monitor commands at specified intervals
-- Exit when output changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute programs periodically
+  - Highlight differences in output
+  - Display output in full-screen mode
+  - Monitor commands at specified intervals
+  - Exit when output changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # watch

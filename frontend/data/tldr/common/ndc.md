@@ -1,29 +1,29 @@
 ---
-title: "Name Daemon Control - Manage Name Servers | Online Free DevTools by Hexmos"
+title: 'Name Daemon Control - Manage Name Servers | Online Free DevTools by Hexmos'
 name: ndc
-path: "/freedevtools/tldr/common/ndc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ndc/"
-description: "Control name servers effectively with Name Daemon Control (ndc). Configure DNS settings, manage zones, and ensure stable name resolution. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ndc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ndc/'
+description: 'Control name servers effectively with Name Daemon Control (ndc). Configure DNS settings, manage zones, and ensure stable name resolution. Free online tool, no registration required.'
 category: common
 keywords:
-- name daemon control
-- ndc name server control
-- DNS server management
-- bind9 control
-- name server configuration
-- domain name management
-- DNS zone management
-- Linux name server
-- UNIX name server control
-- name server debugging
+  - name daemon control
+  - ndc name server control
+  - DNS server management
+  - bind9 control
+  - name server configuration
+  - domain name management
+  - DNS zone management
+  - Linux name server
+  - UNIX name server control
+  - name server debugging
 features:
-- Set control channel rendezvous point
-- Bind to a specific localsock address
-- Set path to pidfile for signal control
-- Enable debugging for troubleshooting
-- List available built-in commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set control channel rendezvous point
+  - Bind to a specific localsock address
+  - Set path to pidfile for signal control
+  - Enable debugging for troubleshooting
+  - List available built-in commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ndc

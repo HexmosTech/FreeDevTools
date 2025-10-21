@@ -1,29 +1,29 @@
 ---
-title: "Angular CLI - Generate Angular Apps | Online Free DevTools by Hexmos"
+title: 'Angular CLI - Generate Angular Apps | Online Free DevTools by Hexmos'
 name: ng
-path: "/freedevtools/tldr/common/ng/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ng/"
-description: "Generate Angular applications with Angular CLI. Quickly scaffold components, classes, and directives. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ng/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ng/'
+description: 'Generate Angular applications with Angular CLI. Quickly scaffold components, classes, and directives. Free online tool, no registration required.'
 category: common
 keywords:
-- angular cli generator
-- angular application creator
-- angular component generator
-- angular directive generator
-- angular class generator
-- angular development
-- command line interface
-- angular build tool
-- typescript application generator
-- javascript application generator
+  - angular cli generator
+  - angular application creator
+  - angular component generator
+  - angular directive generator
+  - angular class generator
+  - angular development
+  - command line interface
+  - angular build tool
+  - typescript application generator
+  - javascript application generator
 features:
-- Create new Angular applications from scratch.
-- Add components, classes, and directives to existing applications.
-- Build and serve Angular applications for development and production.
-- Run unit tests to ensure application quality.
-- Display the current Angular CLI version.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Angular applications from scratch.
+  - Add components, classes, and directives to existing applications.
+  - Build and serve Angular applications for development and production.
+  - Run unit tests to ensure application quality.
+  - Display the current Angular CLI version.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ng

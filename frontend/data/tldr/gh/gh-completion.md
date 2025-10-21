@@ -1,29 +1,29 @@
 ---
-title: "Generate GitHub CLI Completion - Shell Scripts | Online Free DevTools by Hexmos"
+title: 'Generate GitHub CLI Completion - Shell Scripts | Online Free DevTools by Hexmos'
 name: gh-completion
-path: "/freedevtools/tldr/gh/gh-completion/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-completion/"
-description: "Generate completion scripts with GitHub CLI. Enhance shell usability and streamline command input on bash, zsh, fish, and powershell. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-completion/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-completion/'
+description: 'Generate completion scripts with GitHub CLI. Enhance shell usability and streamline command input on bash, zsh, fish, and powershell. Free online tool, no registration required.'
 category: common
 keywords:
-- github cli completion script
-- shell completion generator
-- bash completion script
-- zsh completion script
-- fish completion script
-- powershell completion script
-- cli auto completion
-- github command line tools
-- github cli shortcuts
-- command line completion generator
+  - github cli completion script
+  - shell completion generator
+  - bash completion script
+  - zsh completion script
+  - fish completion script
+  - powershell completion script
+  - cli auto completion
+  - github command line tools
+  - github cli shortcuts
+  - command line completion generator
 features:
-- Generate shell completion scripts for GitHub CLI.
-- Support completion for bash shell.
-- Support completion for zsh shell.
-- Support completion for fish shell.
-- Support completion for powershell shell.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate shell completion scripts for GitHub CLI.
+  - Support completion for bash shell.
+  - Support completion for zsh shell.
+  - Support completion for fish shell.
+  - Support completion for powershell shell.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh completion

@@ -1,9 +1,9 @@
 ---
-title: "Pacman Database - Manage Arch Packages | Online Free DevTools by Hexmos"
+title: 'Pacman Database - Manage Arch Packages | Online Free DevTools by Hexmos'
 name: pacman-database
-path: "/freedevtools/tldr/linux/pacman-database/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-database/"
-description: "Manage Arch Linux packages efficiently with Pacman Database.  Control package attributes, check dependencies, and ensure database synchronization. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacman-database/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacman-database/'
+description: 'Manage Arch Linux packages efficiently with Pacman Database.  Control package attributes, check dependencies, and ensure database synchronization. Free online tool, no registration required.'
 category: linux
 keywords:
   - pacman database management
@@ -22,8 +22,8 @@ features:
   - Verify database synchronization for downloadable package dependencies
   - Operate in quiet mode for concise error reporting
   - Modify attributes of installed Arch Linux packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacman --database

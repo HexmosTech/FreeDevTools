@@ -1,29 +1,29 @@
 ---
-title: "Manage Python Packages - Control pip Commands | Online Free DevTools by Hexmos"
+title: 'Manage Python Packages - Control pip Commands | Online Free DevTools by Hexmos'
 name: pip
-path: "/freedevtools/tldr/pip/pip/"
-canonical: "https://hexmos.com/freedevtools/tldr/pip/pip/"
-description: "Manage Python packages effortlessly with pip. Install, upgrade, and uninstall packages using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/pip/pip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pip/pip/'
+description: 'Manage Python packages effortlessly with pip. Install, upgrade, and uninstall packages using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Python package manager
-- pip install package
-- pip upgrade package
-- pip uninstall package
-- Python requirements.txt
-- pip show package info
-- install Python packages
-- manage Python dependencies
-- Python development tools
-- command line package manager
+  - Python package manager
+  - pip install package
+  - pip upgrade package
+  - pip uninstall package
+  - Python requirements.txt
+  - pip show package info
+  - install Python packages
+  - manage Python dependencies
+  - Python development tools
+  - command line package manager
 features:
-- Install Python packages easily
-- Upgrade existing packages quickly
-- Uninstall unwanted packages cleanly
-- List installed packages into a file
-- Display detailed package information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Python packages easily
+  - Upgrade existing packages quickly
+  - Uninstall unwanted packages cleanly
+  - List installed packages into a file
+  - Display detailed package information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pip

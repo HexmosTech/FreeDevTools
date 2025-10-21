@@ -1,29 +1,29 @@
 ---
-title: "GitHub Reference - Generate Command Help | Online Free DevTools by Hexmos"
+title: 'GitHub Reference - Generate Command Help | Online Free DevTools by Hexmos'
 name: gh-reference
-path: "/freedevtools/tldr/gh/gh-reference/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-reference/"
-description: "Generate GitHub CLI command reference with gh-reference. Get detailed help and documentation instantly. View all available commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-reference/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-reference/'
+description: 'Generate GitHub CLI command reference with gh-reference. Get detailed help and documentation instantly. View all available commands. Free online tool, no registration required.'
 category: common
 keywords:
-- github cli reference
-- command line reference
-- gh reference
-- github documentation generator
-- cli command help
-- github manual pages
-- github cli commands
-- markdown reference generator
-- github cli linux
-- github cli macos
+  - github cli reference
+  - command line reference
+  - gh reference
+  - github documentation generator
+  - cli command help
+  - github manual pages
+  - github cli commands
+  - markdown reference generator
+  - github cli linux
+  - github cli macos
 features:
-- Generate markdown reference for all `gh` commands
-- Display detailed help information for GitHub CLI
-- Provide command-line access to GitHub documentation
-- View available commands and their usage
-- Access comprehensive GitHub CLI documentation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate markdown reference for all `gh` commands
+  - Display detailed help information for GitHub CLI
+  - Provide command-line access to GitHub documentation
+  - View available commands and their usage
+  - Access comprehensive GitHub CLI documentation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh reference

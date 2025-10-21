@@ -1,29 +1,29 @@
 ---
-title: "SmalltalkCI - Test Smalltalk Projects | Online Free DevTools by Hexmos"
+title: 'SmalltalkCI - Test Smalltalk Projects | Online Free DevTools by Hexmos'
 name: smalltalkci
-path: "/freedevtools/tldr/common/smalltalkci/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/smalltalkci/"
-description: "Test Smalltalk projects with SmalltalkCI, a framework supporting GitHub Actions, Travis CI, and GitLab CI. Automate your Smalltalk testing workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/smalltalkci/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/smalltalkci/'
+description: 'Test Smalltalk projects with SmalltalkCI, a framework supporting GitHub Actions, Travis CI, and GitLab CI. Automate your Smalltalk testing workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- smalltalk testing framework
-- smalltalk ci/cd
-- github actions smalltalk
-- travis ci smalltalk
-- gitlab ci smalltalk
-- smalltalk image testing
-- smalltalk automation
-- ston configuration smalltalk
-- smalltalk vm runner
-- smalltalk project tester
+  - smalltalk testing framework
+  - smalltalk ci/cd
+  - github actions smalltalk
+  - travis ci smalltalk
+  - gitlab ci smalltalk
+  - smalltalk image testing
+  - smalltalk automation
+  - ston configuration smalltalk
+  - smalltalk vm runner
+  - smalltalk project tester
 features:
-- Run Smalltalk tests from a configuration file.
-- Debug Smalltalk tests in headful mode (with GUI).
-- Download and prepare pre-configured Smalltalk images for testing.
-- Specify a custom Smalltalk image and VM for testing.
-- Clean up caches and delete builds after testing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run Smalltalk tests from a configuration file.
+  - Debug Smalltalk tests in headful mode (with GUI).
+  - Download and prepare pre-configured Smalltalk images for testing.
+  - Specify a custom Smalltalk image and VM for testing.
+  - Clean up caches and delete builds after testing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smalltalkci

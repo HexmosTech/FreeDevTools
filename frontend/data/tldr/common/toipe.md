@@ -1,29 +1,29 @@
 ---
-title: "Typing Test - Improve Speed and Accuracy | Online Free DevTools by Hexmos"
+title: 'Typing Test - Improve Speed and Accuracy | Online Free DevTools by Hexmos'
 name: toipe
-path: "/freedevtools/tldr/common/toipe/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/toipe/"
-description: "Improve typing speed with Toipe typing test. Practice touch typing, enhance accuracy, and customize wordlists with this terminal tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/toipe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/toipe/'
+description: 'Improve typing speed with Toipe typing test. Practice touch typing, enhance accuracy, and customize wordlists with this terminal tool. Free online tool, no registration required.'
 category: common
 keywords:
-- typing test online
-- command line typing test
-- terminal typing practice
-- touch typing trainer
-- speed typing test
-- custom wordlist typing
-- linux typing tool
-- macos typing tool
-- shell typing game
-- crab flavored typing
+  - typing test online
+  - command line typing test
+  - terminal typing practice
+  - touch typing trainer
+  - speed typing test
+  - custom wordlist typing
+  - linux typing tool
+  - macos typing tool
+  - shell typing game
+  - crab flavored typing
 features:
-- Conduct typing tests using default wordlists
-- Practice with specific custom wordlists
-- Test typing using custom files
-- Configure the number of words per test
-- Enable punctuation for realistic practice
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Conduct typing tests using default wordlists
+  - Practice with specific custom wordlists
+  - Test typing using custom files
+  - Configure the number of words per test
+  - Enable punctuation for realistic practice
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # toipe

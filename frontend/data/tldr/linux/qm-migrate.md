@@ -1,9 +1,9 @@
 ---
-title: "Migrate VMs - Control Proxmox Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Migrate VMs - Control Proxmox Virtual Machines | Online Free DevTools by Hexmos'
 name: qm-migrate
-path: "/freedevtools/tldr/linux/qm-migrate/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-migrate/"
-description: "Migrate Proxmox virtual machines with qm migrate. Control VM migration tasks, bandwidth, and online migration options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-migrate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-migrate/'
+description: 'Migrate Proxmox virtual machines with qm migrate. Control VM migration tasks, bandwidth, and online migration options. Free online tool, no registration required.'
 category: linux
 keywords:
   - vm migration command
@@ -22,8 +22,8 @@ features:
   - Force migration of VMs using local devices (root access required).
   - Perform online/live migration of running virtual machines.
   - Enable live storage migration for local disks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm migrate

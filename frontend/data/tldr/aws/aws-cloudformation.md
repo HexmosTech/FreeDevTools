@@ -1,29 +1,29 @@
 ---
-title: "Create AWS CloudFormation Stacks - Manage Infrastructure as Code | Online Free DevTools by Hexmos"
+title: 'Create AWS CloudFormation Stacks - Manage Infrastructure as Code | Online Free DevTools by Hexmos'
 name: aws-cloudformation
-path: "/freedevtools/tldr/aws/aws-cloudformation/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloudformation/"
-description: "Create AWS CloudFormation stacks and manage infrastructure as code with this CLI tool. Automate provisioning and updates of your resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-cloudformation/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-cloudformation/'
+description: 'Create AWS CloudFormation stacks and manage infrastructure as code with this CLI tool. Automate provisioning and updates of your resources. Free online tool, no registration required.'
 category: common
 keywords:
-- aws cloudformation
-- cloud infrastructure automation
-- infrastructure as code cli
-- aws stack creation
-- aws cloud deployment
-- cloudformation template management
-- aws resource provisioning
-- cloudformation stack status
-- aws infrastructure management
-- cloudformation drift detection
+  - aws cloudformation
+  - cloud infrastructure automation
+  - infrastructure as code cli
+  - aws stack creation
+  - aws cloud deployment
+  - cloudformation template management
+  - aws resource provisioning
+  - cloudformation stack status
+  - aws infrastructure management
+  - cloudformation drift detection
 features:
-- Create and manage AWS CloudFormation stacks
-- Provision AWS resources using templates
-- Check status of running CloudFormation stacks
-- Detect drift in CloudFormation stacks
-- Delete CloudFormation stacks when no longer needed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage AWS CloudFormation stacks
+  - Provision AWS resources using templates
+  - Check status of running CloudFormation stacks
+  - Detect drift in CloudFormation stacks
+  - Delete CloudFormation stacks when no longer needed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws cloudformation

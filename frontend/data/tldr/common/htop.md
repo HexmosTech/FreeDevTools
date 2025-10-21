@@ -1,29 +1,29 @@
 ---
-title: "Control Processes - htop Process Viewer | Online Free DevTools by Hexmos"
+title: 'Control Processes - htop Process Viewer | Online Free DevTools by Hexmos'
 name: htop
-path: "/freedevtools/tldr/common/htop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/htop/"
-description: "Control system processes with htop process viewer. Monitor CPU usage and memory consumption with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/htop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/htop/'
+description: 'Control system processes with htop process viewer. Monitor CPU usage and memory consumption with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- process monitor
-- system process viewer
-- htop linux
-- htop macos
-- htop command line
-- process activity manager
-- cpu usage monitor
-- memory usage monitor
-- process tree viewer
-- real time process info
+  - process monitor
+  - system process viewer
+  - htop linux
+  - htop macos
+  - htop command line
+  - process activity manager
+  - cpu usage monitor
+  - memory usage monitor
+  - process tree viewer
+  - real time process info
 features:
-- Display real-time process information
-- Filter processes by username
-- Visualize process hierarchy in tree view
-- Sort processes by various metrics
-- Adjust update delay for monitoring frequency
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display real-time process information
+  - Filter processes by username
+  - Visualize process hierarchy in tree view
+  - Sort processes by various metrics
+  - Adjust update delay for monitoring frequency
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # htop

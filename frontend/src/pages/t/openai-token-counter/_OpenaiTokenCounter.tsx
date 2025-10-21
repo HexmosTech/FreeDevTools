@@ -1,90 +1,90 @@
-import React, { useState, useEffect, useRef } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import LlmTokenCounterSkeleton from "./_OpenaiTokenCounterSkeleton";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect, useRef } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import LlmTokenCounterSkeleton from './_OpenaiTokenCounterSkeleton';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Tiktoken } from "js-tiktoken";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolVideo from '@/components/tool/ToolVideo';
+import { Tiktoken } from 'js-tiktoken';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // OpenAI Models Configuration
 const OPENAI_MODELS = {
-  "gpt-5": {
-    name: "GPT-5",
+  'gpt-5': {
+    name: 'GPT-5',
     context: 400000,
   },
-  "o4-mini": {
-    name: "o4-mini",
+  'o4-mini': {
+    name: 'o4-mini',
     context: 200000,
   },
   o3: {
-    name: "o3",
+    name: 'o3',
     context: 200000,
   },
-  "o3-mini": {
-    name: "o3-mini",
+  'o3-mini': {
+    name: 'o3-mini',
     context: 200000,
   },
   o1: {
-    name: "o1",
+    name: 'o1',
     context: 200000,
   },
-  "o1-pro": {
-    name: "o1-pro",
+  'o1-pro': {
+    name: 'o1-pro',
     context: 200000,
   },
-  "gpt-4.1": {
-    name: "GPT-4.1",
+  'gpt-4.1': {
+    name: 'GPT-4.1',
     context: 1047576,
   },
-  "gpt-4o": {
-    name: "GPT-4o",
+  'gpt-4o': {
+    name: 'GPT-4o',
     context: 128000,
   },
-  "gpt-4o-mini": {
-    name: "GPT-4o mini",
+  'gpt-4o-mini': {
+    name: 'GPT-4o mini',
     context: 128000,
   },
-  "gpt-4-turbo": {
-    name: "GPT-4 Turbo",
+  'gpt-4-turbo': {
+    name: 'GPT-4 Turbo',
     context: 128000,
   },
-  "gpt-4": {
-    name: "GPT-4",
+  'gpt-4': {
+    name: 'GPT-4',
     context: 8192,
   },
-  "gpt-3.5-turbo": {
-    name: "GPT-3.5 Turbo",
+  'gpt-3.5-turbo': {
+    name: 'GPT-3.5 Turbo',
     context: 16385,
   },
-  "text-embedding-3-large": {
-    name: "Embedding V3 large",
+  'text-embedding-3-large': {
+    name: 'Embedding V3 large',
     context: 8191,
   },
-  "text-embedding-3-small": {
-    name: "Embedding V3 small",
+  'text-embedding-3-small': {
+    name: 'Embedding V3 small',
     context: 8191,
   },
-  "text-embedding-ada-002": {
-    name: "Embedding Ada 002",
+  'text-embedding-ada-002': {
+    name: 'Embedding Ada 002',
     context: 8191,
   },
 };
@@ -102,8 +102,8 @@ const useDebouncedCallback = (
 };
 
 const OpenaiTokenCounter: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState("gpt-4o");
+  const [input, setInput] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gpt-4o');
   const [tokens, setTokens] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [tokenizerLoading, setTokenizerLoading] = useState(false);
@@ -122,23 +122,23 @@ const OpenaiTokenCounter: React.FC = () => {
     const initTokenizer = async () => {
       setTokenizerLoading(true);
       try {
-        const { encodingForModel } = await import("js-tiktoken");
+        const { encodingForModel } = await import('js-tiktoken');
 
         // Use the model value directly, fallback for newer models
         let tokenizerModel = selectedModel;
         const supportedModels = [
-          "gpt-3.5-turbo",
-          "gpt-4",
-          "gpt-4-turbo",
-          "gpt-4o",
-          "gpt-4o-mini",
-          "text-embedding-3-large",
-          "text-embedding-3-small",
-          "text-embedding-ada-002",
+          'gpt-3.5-turbo',
+          'gpt-4',
+          'gpt-4-turbo',
+          'gpt-4o',
+          'gpt-4o-mini',
+          'text-embedding-3-large',
+          'text-embedding-3-small',
+          'text-embedding-ada-002',
         ];
         if (!supportedModels.includes(selectedModel)) {
           // Use gpt-4o as fallback for newer models
-          tokenizerModel = "gpt-4o";
+          tokenizerModel = 'gpt-4o';
         }
 
         tokenizerRef.current = encodingForModel(tokenizerModel as any);
@@ -149,8 +149,8 @@ const OpenaiTokenCounter: React.FC = () => {
           setTokens(encoding.length);
         }
       } catch (error) {
-        console.error("Failed to load tiktoken:", error);
-        toast.error("Failed to load OpenAI tokenizer. Please try again.");
+        console.error('Failed to load tiktoken:', error);
+        toast.error('Failed to load OpenAI tokenizer. Please try again.');
         tokenizerRef.current = undefined;
       }
       setTokenizerLoading(false);
@@ -172,7 +172,7 @@ const OpenaiTokenCounter: React.FC = () => {
           const encoding = tokenizerRef.current.encode(input);
           setTokens(encoding.length);
         } catch (error) {
-          console.error("Tokenization error:", error);
+          console.error('Tokenization error:', error);
           setTokens(0);
         }
       }
@@ -182,9 +182,9 @@ const OpenaiTokenCounter: React.FC = () => {
   );
 
   const handleClear = () => {
-    setInput("");
+    setInput('');
     setTokens(0);
-    toast.success("Cleared input text");
+    toast.success('Cleared input text');
   };
 
   const copyTokenCount = () => {
@@ -199,7 +199,7 @@ Text Length: ${input.length} characters
 Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
 
     navigator.clipboard.writeText(results);
-    toast.success("Token count copied to clipboard!");
+    toast.success('Token count copied to clipboard!');
   };
 
   return (
@@ -229,7 +229,7 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
                         Text Input
                       </label>
                       <div className="text-sm text-slate-500 dark:text-slate-400">
-                        {input.length} characters •{" "}
+                        {input.length} characters •{' '}
                         {input.trim() ? input.split(/\s+/).length : 0} words
                       </div>
                     </div>
@@ -309,10 +309,10 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
                           }
                         </div>
                         <div className="text-xs text-slate-700 dark:text-slate-400 mb-1">
-                          Max context:{" "}
+                          Max context:{' '}
                           {OPENAI_MODELS[
                             selectedModel as keyof typeof OPENAI_MODELS
-                          ]?.context.toLocaleString()}{" "}
+                          ]?.context.toLocaleString()}{' '}
                           tokens
                         </div>
                         {tokens > 0 && (
@@ -361,15 +361,15 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
                 <div className="text-slate-800 dark:text-slate-400 space-y-4">
                   <p>
                     When you use OpenAI's API, the text you send and receive is
-                    broken down into smaller chunks called{" "}
+                    broken down into smaller chunks called{' '}
                     <strong>tokens</strong>. Tokens can be words, parts of
                     words, or even punctuation. Think of tokens as the building
                     blocks that the model reads and writes.
                   </p>
 
                   <p>
-                    Typically, one token is about{" "}
-                    <strong>four characters</strong> or{" "}
+                    Typically, one token is about{' '}
+                    <strong>four characters</strong> or{' '}
                     <strong>three-quarters of a word</strong> in English. Before
                     generating a response, the API counts how many tokens are in
                     your prompt and the generated output. This helps manage how
@@ -384,7 +384,7 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
                   </div>
 
                   <p>
-                    OpenAI provides a handy tokenizer tool and libraries like{" "}
+                    OpenAI provides a handy tokenizer tool and libraries like{' '}
                     <strong>Tiktoken</strong> to see how text is split into
                     tokens, making it easier to estimate usage and costs. Our
                     tool uses the same Tiktoken library that OpenAI uses

@@ -1,9 +1,9 @@
 ---
-title: "Pyrit WPA/WPA2 Cracker - Crack Passwords with Pyrit | Online Free DevTools by Hexmos"
+title: 'Pyrit WPA/WPA2 Cracker - Crack Passwords with Pyrit | Online Free DevTools by Hexmos'
 name: pyrit
-path: "/freedevtools/tldr/linux/pyrit/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pyrit/"
-description: "Crack WPA/WPA2 passwords efficiently with Pyrit.  This powerful command-line tool utilizes computational power for fast cracking. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pyrit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pyrit/'
+description: 'Crack WPA/WPA2 passwords efficiently with Pyrit.  This powerful command-line tool utilizes computational power for fast cracking. Free online tool, no registration required.'
 category: linux
 keywords:
   - WPA2 password cracker
@@ -22,8 +22,8 @@ features:
   - Utilize multiple cores for accelerated cracking
   - Benchmark system performance for optimal cracking speed
   - Perform batch password translation using pre-shared keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pyrit

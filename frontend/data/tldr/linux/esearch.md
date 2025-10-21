@@ -1,9 +1,9 @@
 ---
-title: "Esearch - Perform Entrez Searches | Online Free DevTools by Hexmos"
+title: 'Esearch - Perform Entrez Searches | Online Free DevTools by Hexmos'
 name: esearch
-path: "/freedevtools/tldr/linux/esearch/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/esearch/"
-description: "Perform advanced Entrez searches with Esearch to query biological databases like PubMed and protein. Quickly retrieve data with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/esearch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/esearch/'
+description: 'Perform advanced Entrez searches with Esearch to query biological databases like PubMed and protein. Quickly retrieve data with this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - entrez search
@@ -22,8 +22,8 @@ features:
   - Retrieve sequences containing metadata.
   - Query pubmed database.
   - Support regular expression based searching.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # esearch

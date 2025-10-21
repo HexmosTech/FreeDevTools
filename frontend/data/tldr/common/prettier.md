@@ -1,29 +1,29 @@
 ---
-title: "Format Code with Prettier - JavaScript, CSS, YAML | Online Free DevTools by Hexmos"
+title: 'Format Code with Prettier - JavaScript, CSS, YAML | Online Free DevTools by Hexmos'
 name: prettier
-path: "/freedevtools/tldr/common/prettier/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/prettier/"
-description: "Format code instantly with Prettier. Enhance code quality and maintain consistency across JavaScript, CSS, and YAML files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/prettier/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/prettier/'
+description: 'Format code instantly with Prettier. Enhance code quality and maintain consistency across JavaScript, CSS, and YAML files. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript formatter
-- code formatting tool
-- css formatter
-- yaml formatter
-- json formatter
-- prettier cli
-- code beautifier
-- javascript code style
-- automatic code formatting
-- prettier code style
+  - javascript formatter
+  - code formatting tool
+  - css formatter
+  - yaml formatter
+  - json formatter
+  - prettier cli
+  - code beautifier
+  - javascript code style
+  - automatic code formatting
+  - prettier code style
 features:
-- Format code files and output to stdout
-- Check if code files are already formatted
-- Format files recursively and replace the originals
-- Use configuration files for customized formatting rules
-- Format JavaScript, TypeScript, CSS, JSON, and YAML files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format code files and output to stdout
+  - Check if code files are already formatted
+  - Format files recursively and replace the originals
+  - Use configuration files for customized formatting rules
+  - Format JavaScript, TypeScript, CSS, JSON, and YAML files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prettier

@@ -1,29 +1,29 @@
 ---
-title: "PHP Script Execute - Run PHP Code | Online Free DevTools by Hexmos"
+title: 'PHP Script Execute - Run PHP Code | Online Free DevTools by Hexmos'
 name: php
-path: "/freedevtools/tldr/php/php/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/php/"
-description: "Execute PHP scripts efficiently with PHP Script Runner. Easily test syntax, run code snippets, and manage built-in web servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/php/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/php/'
+description: 'Execute PHP scripts efficiently with PHP Script Runner. Easily test syntax, run code snippets, and manage built-in web servers. Free online tool, no registration required.'
 category: common
 keywords:
-- php script execution
-- php command line
-- php syntax checker
-- php interactive mode
-- php web server
-- php extension list
-- php configuration info
-- php function info
-- cli php
-- php runner
+  - php script execution
+  - php command line
+  - php syntax checker
+  - php interactive mode
+  - php web server
+  - php extension list
+  - php configuration info
+  - php function info
+  - cli php
+  - php runner
 features:
-- Execute PHP scripts from the command line
-- Check PHP syntax for errors
-- Run PHP code interactively
-- Start a built-in PHP web server
-- Display installed PHP extensions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute PHP scripts from the command line
+  - Check PHP syntax for errors
+  - Run PHP code interactively
+  - Start a built-in PHP web server
+  - Display installed PHP extensions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # php

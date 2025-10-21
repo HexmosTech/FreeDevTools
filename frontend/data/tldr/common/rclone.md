@@ -1,29 +1,29 @@
 ---
-title: "Control Cloud Files - rclone Copy/Sync | Online Free DevTools by Hexmos"
+title: 'Control Cloud Files - rclone Copy/Sync | Online Free DevTools by Hexmos'
 name: rclone
-path: "/freedevtools/tldr/common/rclone/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rclone/"
-description: "Control cloud files with rclone. Copy, sync, and manage files across various cloud services. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rclone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rclone/'
+description: 'Control cloud files with rclone. Copy, sync, and manage files across various cloud services. Free online tool, no registration required.'
 category: common
 keywords:
-- cloud file copy
-- cloud file sync
-- rclone cloud storage
-- rclone file transfer
-- rclone backup
-- rclone command line
-- cloud service management
-- rclone aws s3
-- rclone google drive
-- cross-platform file sync
+  - cloud file copy
+  - cloud file sync
+  - rclone cloud storage
+  - rclone file transfer
+  - rclone backup
+  - rclone command line
+  - cloud service management
+  - rclone aws s3
+  - rclone google drive
+  - cross-platform file sync
 features:
-- Copy files and directories between local and remote cloud storage.
-- Synchronize files, deleting from the destination if not present in the source.
-- List contents of cloud storage directories from the command line.
-- Mount remote cloud storage as a local file system.
-- Delete files and directories from remote cloud storage services.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy files and directories between local and remote cloud storage.
+  - Synchronize files, deleting from the destination if not present in the source.
+  - List contents of cloud storage directories from the command line.
+  - Mount remote cloud storage as a local file system.
+  - Delete files and directories from remote cloud storage services.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rclone

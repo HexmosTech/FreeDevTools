@@ -1,29 +1,29 @@
 ---
-title: "Create GKE Clusters - Manage Containers with gcloud | Online Free DevTools by Hexmos"
+title: 'Create GKE Clusters - Manage Containers with gcloud | Online Free DevTools by Hexmos'
 name: gcloud-container
-path: "/freedevtools/tldr/gcloud/gcloud-container/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-container/"
-description: "Create and manage containerized applications with gcloud container. Deploy Kubernetes clusters and configure kubectl effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-container/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-container/'
+description: 'Create and manage containerized applications with gcloud container. Deploy Kubernetes clusters and configure kubectl effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud Kubernetes clusters
-- container management Google Cloud
-- GKE cluster creation
-- kubectl configuration gcloud
-- container image tagging
-- Google container engine CLI
-- cloud container orchestration
-- Kubernetes deployment gcloud
-- Google cloud shell container
-- gcloud container commands
+  - gcloud Kubernetes clusters
+  - container management Google Cloud
+  - GKE cluster creation
+  - kubectl configuration gcloud
+  - container image tagging
+  - Google container engine CLI
+  - cloud container orchestration
+  - Kubernetes deployment gcloud
+  - Google cloud shell container
+  - gcloud container commands
 features:
-- Create and manage GKE clusters from the command line.
-- Update kubeconfig for seamless kubectl integration.
-- List container image tags and digests.
-- Describe existing Kubernetes clusters in Google Cloud.
-- Register gcloud as a Docker credential helper.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage GKE clusters from the command line.
+  - Update kubeconfig for seamless kubectl integration.
+  - List container image tags and digests.
+  - Describe existing Kubernetes clusters in Google Cloud.
+  - Register gcloud as a Docker credential helper.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud container

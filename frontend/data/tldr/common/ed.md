@@ -1,29 +1,29 @@
 ---
-title: "Edit Text - Control Text Files with ed | Online Free DevTools by Hexmos"
+title: 'Edit Text - Control Text Files with ed | Online Free DevTools by Hexmos'
 name: ed
-path: "/freedevtools/tldr/common/ed/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ed/"
-description: "Edit text files directly with ed, the original Unix text editor. Replace strings, navigate lines, and modify content efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ed/'
+description: 'Edit text files directly with ed, the original Unix text editor. Replace strings, navigate lines, and modify content efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- text editor command
-- unix text editor
-- linux text editor
-- ed command
-- gnu ed
-- file editing tool
-- command line text editor
-- regex replace
-- search and replace text
-- batch text edit
+  - text editor command
+  - unix text editor
+  - linux text editor
+  - ed command
+  - gnu ed
+  - file editing tool
+  - command line text editor
+  - regex replace
+  - search and replace text
+  - batch text edit
 features:
-- Edit files from the command line
-- Perform regex based find and replace
-- Start interactive editor sessions
-- Control exit status behavior
-- Execute commands without diagnostics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Edit files from the command line
+  - Perform regex based find and replace
+  - Start interactive editor sessions
+  - Control exit status behavior
+  - Execute commands without diagnostics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ed

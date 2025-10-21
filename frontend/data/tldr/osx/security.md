@@ -1,9 +1,9 @@
 ---
-title: "Security - Manage Keychains & Certificates | Online Free DevTools by Hexmos"
+title: 'Security - Manage Keychains & Certificates | Online Free DevTools by Hexmos'
 name: security
-path: "/freedevtools/tldr/osx/security/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/security/"
-description: "Manage keychains and certificates with Security. Securely store passwords, add trusted certs, and administer security settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/security/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/security/'
+description: 'Manage keychains and certificates with Security. Securely store passwords, add trusted certs, and administer security settings. Free online tool, no registration required.'
 category: osx
 keywords:
   - keychain management
@@ -22,8 +22,8 @@ features:
   - Create new keychains with passwords.
   - Set certificate identity preferences for services.
   - Add and remove trusted CA certificates.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # security

@@ -1,29 +1,29 @@
 ---
-title: "TypeORM - Generate Database Structures | Online Free DevTools by Hexmos"
+title: 'TypeORM - Generate Database Structures | Online Free DevTools by Hexmos'
 name: typeorm
-path: "/freedevtools/tldr/common/typeorm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/typeorm/"
-description: "Generate database structures instantly with TypeORM. Create migrations, manage entities, and execute queries with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/typeorm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/typeorm/'
+description: 'Generate database structures instantly with TypeORM. Create migrations, manage entities, and execute queries with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- typeorm orm
-- javascript orm
-- nodejs orm
-- typeorm migration
-- typeorm entity
-- database schema generator
-- orm schema management
-- typeorm cli
-- typescript orm
-- database migration tool
+  - typeorm orm
+  - javascript orm
+  - nodejs orm
+  - typeorm migration
+  - typeorm entity
+  - database schema generator
+  - orm schema management
+  - typeorm cli
+  - typescript orm
+  - database migration tool
 features:
-- Generate new TypeORM project structures
-- Create empty migration files
-- Generate migration files with SQL statements
-- Run all pending database migrations
-- Create new entity files in specified directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate new TypeORM project structures
+  - Create empty migration files
+  - Generate migration files with SQL statements
+  - Run all pending database migrations
+  - Create new entity files in specified directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # typeorm

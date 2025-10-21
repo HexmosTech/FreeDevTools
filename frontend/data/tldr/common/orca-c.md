@@ -1,9 +1,9 @@
 ---
-title: "Control ORCA Sequencer - C-Port Tool | Online Free DevTools by Hexmos"
+title: 'Control ORCA Sequencer - C-Port Tool | Online Free DevTools by Hexmos'
 name: orca-c
-path: "/freedevtools/tldr/common/orca-c/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/orca-c/"
-description: "Control ORCA sequencer parameters with orca-c, a C-port of the ORCA live programming environment. Create procedural sequencers easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/orca-c/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/orca-c/'
+description: 'Control ORCA sequencer parameters with orca-c, a C-port of the ORCA live programming environment. Create procedural sequencers easily. Free online tool, no registration required.'
 category: common
 keywords:
   - ORCA sequencer control
@@ -22,8 +22,8 @@ features:
   - Set a custom tempo for the sequencer.
   - Define the grid size for the ORCA environment.
   - Configure the maximum number of undo steps.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # orca-c

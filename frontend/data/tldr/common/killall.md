@@ -1,29 +1,29 @@
 ---
-title: "Control Killall - Terminate Processes | Online Free DevTools by Hexmos"
+title: 'Control Killall - Terminate Processes | Online Free DevTools by Hexmos'
 name: killall
-path: "/freedevtools/tldr/common/killall/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/killall/"
-description: "Control processes with Killall. Send signals to terminate processes by name on Linux and macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/killall/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/killall/'
+description: 'Control processes with Killall. Send signals to terminate processes by name on Linux and macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- killall command
-- terminate process linux
-- kill process macos
-- signal process termination
-- linux killall utility
-- macos killall utility
-- process management linux
-- process management macos
-- command line process termination
-- send signal to process
+  - killall command
+  - terminate process linux
+  - kill process macos
+  - signal process termination
+  - linux killall utility
+  - macos killall utility
+  - process management linux
+  - process management macos
+  - command line process termination
+  - send signal to process
 features:
-- Terminate processes by name
-- Send specific signals to processes
-- Interactively confirm process termination
-- List available signal names
-- Forcefully terminate processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Terminate processes by name
+  - Send specific signals to processes
+  - Interactively confirm process termination
+  - List available signal names
+  - Forcefully terminate processes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # killall

@@ -1,29 +1,29 @@
 ---
-title: "Kubernetes Dashboard - Monitor Clusters with kdash | Online Free DevTools by Hexmos"
+title: 'Kubernetes Dashboard - Monitor Clusters with kdash | Online Free DevTools by Hexmos'
 name: kdash
-path: "/freedevtools/tldr/common/kdash/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kdash/"
-description: "Monitor Kubernetes clusters in real-time with kdash. Visualize resource utilization, track pod status, and troubleshoot issues quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kdash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kdash/'
+description: 'Monitor Kubernetes clusters in real-time with kdash. Visualize resource utilization, track pod status, and troubleshoot issues quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes dashboard
-- kubernetes cluster monitoring
-- kubectl dashboard
-- terminal kubernetes dashboard
-- kubernetes resource management
-- kubernetes pod status
-- k8s monitoring tool
-- kubernetes performance analysis
-- command line kubernetes
-- kubernetes troubleshooting
+  - kubernetes dashboard
+  - kubernetes cluster monitoring
+  - kubectl dashboard
+  - terminal kubernetes dashboard
+  - kubernetes resource management
+  - kubernetes pod status
+  - k8s monitoring tool
+  - kubernetes performance analysis
+  - command line kubernetes
+  - kubernetes troubleshooting
 features:
-- Display real-time cluster metrics in a terminal UI
-- Monitor pod status, resource utilization, and network activity
-- View logs and events for specific deployments and services
-- Customize the dashboard layout and metrics display
-- Debug applications running in a Kubernetes cluster
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display real-time cluster metrics in a terminal UI
+  - Monitor pod status, resource utilization, and network activity
+  - View logs and events for specific deployments and services
+  - Customize the dashboard layout and metrics display
+  - Debug applications running in a Kubernetes cluster
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kdash

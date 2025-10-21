@@ -1,29 +1,29 @@
 ---
-title: "Detect Steganography - Analyze Images with zsteg | Online Free DevTools by Hexmos"
+title: 'Detect Steganography - Analyze Images with zsteg | Online Free DevTools by Hexmos'
 name: zsteg
-path: "/freedevtools/tldr/common/zsteg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zsteg/"
-description: "Detect Steganography with zsteg. Analyze PNG and BMP images for hidden data and reveal secret messages using various steganographic techniques. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zsteg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zsteg/'
+description: 'Detect Steganography with zsteg. Analyze PNG and BMP images for hidden data and reveal secret messages using various steganographic techniques. Free online tool, no registration required.'
 category: common
 keywords:
-- PNG Steganography Detection
-- BMP Steganography Analysis
-- LSB Steganography Decoder
-- ZLIB Data Extraction
-- Steganography tool linux
-- Image Forensics Tool
-- Data Hiding Analysis
-- Digital Image Analysis
-- Image Steganography Detector
-- Hidden Data Extractor
+  - PNG Steganography Detection
+  - BMP Steganography Analysis
+  - LSB Steganography Decoder
+  - ZLIB Data Extraction
+  - Steganography tool linux
+  - Image Forensics Tool
+  - Data Hiding Analysis
+  - Digital Image Analysis
+  - Image Steganography Detector
+  - Hidden Data Extractor
 features:
-- Detect hidden data within PNG images
-- Analyze BMP images for steganographic content
-- Extract LSB steganography from images
-- Identify ZLIB-compressed data in image files
-- Iterate pixels with different ordering methods
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect hidden data within PNG images
+  - Analyze BMP images for steganographic content
+  - Extract LSB steganography from images
+  - Identify ZLIB-compressed data in image files
+  - Iterate pixels with different ordering methods
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zsteg

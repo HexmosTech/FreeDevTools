@@ -1,9 +1,9 @@
 ---
-title: "Fakeroot - Run Commands as Root | Online Free DevTools by Hexmos"
+title: 'Fakeroot - Run Commands as Root | Online Free DevTools by Hexmos'
 name: fakeroot
-path: "/freedevtools/tldr/linux/fakeroot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fakeroot/"
-description: "Run commands with fakeroot to simulate root privileges for file manipulation.  Easily manage file permissions and execute commands requiring elevated access. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fakeroot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fakeroot/'
+description: 'Run commands with fakeroot to simulate root privileges for file manipulation.  Easily manage file permissions and execute commands requiring elevated access. Free online tool, no registration required.'
 category: linux
 keywords:
   - fakeroot command
@@ -22,8 +22,8 @@ features:
   - Saves and loads fakeroot environments for repeated use.
   - Offers options to maintain real file ownership.
   - Provides clear help documentation for usage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fakeroot

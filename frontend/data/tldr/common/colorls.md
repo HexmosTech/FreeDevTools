@@ -1,29 +1,29 @@
 ---
-title: "Beautify ls - Format Directory Listings with Colorls | Online Free DevTools by Hexmos"
+title: 'Beautify ls - Format Directory Listings with Colorls | Online Free DevTools by Hexmos'
 name: colorls
-path: "/freedevtools/tldr/common/colorls/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/colorls/"
-description: "Format directory listings with Colorls to enhance readability, offering colorful output and Font Awesome icons. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/colorls/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/colorls/'
+description: 'Format directory listings with Colorls to enhance readability, offering colorful output and Font Awesome icons. Free online tool, no registration required.'
 category: common
 keywords:
-- directory listing formatter
-- colorized ls output
-- font awesome ls
-- colorful terminal ls
-- linux ls alternative
-- macos ls alternative
-- unix ls enhancements
-- terminal styling
-- beautify command line
-- enhanced ls command
+  - directory listing formatter
+  - colorized ls output
+  - font awesome ls
+  - colorful terminal ls
+  - linux ls alternative
+  - macos ls alternative
+  - unix ls enhancements
+  - terminal styling
+  - beautify command line
+  - enhanced ls command
 features:
-- Display files with color-coded output
-- Incorporate Font Awesome icons for file types
-- List files one per line for clarity
-- Show all files, including hidden ones
-- Present detailed file information in long format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display files with color-coded output
+  - Incorporate Font Awesome icons for file types
+  - List files one per line for clarity
+  - Show all files, including hidden ones
+  - Present detailed file information in long format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # colorls

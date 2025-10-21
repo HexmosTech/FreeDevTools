@@ -1,29 +1,29 @@
 ---
-title: "Cargo Test - Execute Rust Tests | Online Free DevTools by Hexmos"
+title: 'Cargo Test - Execute Rust Tests | Online Free DevTools by Hexmos'
 name: cargo-test
-path: "/freedevtools/tldr/cargo/cargo-test/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-test/"
-description: "Execute Rust package tests with Cargo Test. Debug Rust code, optimize test execution and control test concurrency. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-test/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-test/'
+description: 'Execute Rust package tests with Cargo Test. Debug Rust code, optimize test execution and control test concurrency. Free online tool, no registration required.'
 category: common
 keywords:
-- rust test execution
-- cargo test command
-- rust unit testing
-- rust integration testing
-- rust test runner
-- rust testing framework
-- cross platform testing rust
-- rust command line testing
-- rust workspace testing
-- rust package testing
+  - rust test execution
+  - cargo test command
+  - rust unit testing
+  - rust integration testing
+  - rust test runner
+  - rust testing framework
+  - cross platform testing rust
+  - rust command line testing
+  - rust workspace testing
+  - rust package testing
 features:
-- Run tests with specific name filters
-- Set the number of test threads for concurrency
-- Test artifacts in release mode with optimizations
-- Test all packages in a workspace
-- Run tests for a specific package
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run tests with specific name filters
+  - Set the number of test threads for concurrency
+  - Test artifacts in release mode with optimizations
+  - Test all packages in a workspace
+  - Run tests for a specific package
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo test

@@ -1,9 +1,9 @@
 ---
-title: "Resolve Domain Names - Query DNS with systemd-resolve | Online Free DevTools by Hexmos"
+title: 'Resolve Domain Names - Query DNS with systemd-resolve | Online Free DevTools by Hexmos'
 name: systemd-resolve
-path: "/freedevtools/tldr/linux/systemd-resolve/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-resolve/"
-description: "Resolve domain names with systemd-resolve. Query DNS records, IPv4, and IPv6 addresses. A simple alternative to dig and nslookup. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-resolve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-resolve/'
+description: 'Resolve domain names with systemd-resolve. Query DNS records, IPv4, and IPv6 addresses. A simple alternative to dig and nslookup. Free online tool, no registration required.'
 category: linux
 keywords:
   - domain name resolver
@@ -22,8 +22,8 @@ features:
   - Discover network services
   - Perform IPv4 and IPv6 address lookups
   - Verify DNS configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-resolve

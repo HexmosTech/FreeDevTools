@@ -1,29 +1,29 @@
 ---
-title: "Generate Ruby Documentation - YARD | Online Free DevTools by Hexmos"
+title: 'Generate Ruby Documentation - YARD | Online Free DevTools by Hexmos'
 name: yard
-path: "/freedevtools/tldr/common/yard/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/yard/"
-description: "Generate Ruby documentation with YARD. Quickly create and manage API documentation for your Ruby projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/yard/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/yard/'
+description: 'Generate Ruby documentation with YARD. Quickly create and manage API documentation for your Ruby projects. Free online tool, no registration required.'
 category: common
 keywords:
-- Ruby documentation generator
-- YARD documentation tool
-- API documentation Ruby
-- Ruby code documentation
-- Ruby documentation command line
-- Ruby YARD documentation
-- Generate Ruby documentation
-- YARD Ruby gems
-- RDoc alternative
-- Ruby project documentation
+  - Ruby documentation generator
+  - YARD documentation tool
+  - API documentation Ruby
+  - Ruby code documentation
+  - Ruby documentation command line
+  - Ruby YARD documentation
+  - Generate Ruby documentation
+  - YARD Ruby gems
+  - RDoc alternative
+  - Ruby project documentation
 features:
-- Generate documentation for Ruby projects
-- Create single-file documentation outputs
-- List undocumented objects in Ruby code
-- Analyze Ruby code for documentation completeness
-- Customize documentation output format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate documentation for Ruby projects
+  - Create single-file documentation outputs
+  - List undocumented objects in Ruby code
+  - Analyze Ruby code for documentation completeness
+  - Customize documentation output format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yard

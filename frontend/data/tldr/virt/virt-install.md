@@ -1,29 +1,29 @@
 ---
-title: "Create Virtual Machines - Using Virt-install | Online Free DevTools by Hexmos"
+title: 'Create Virtual Machines - Using Virt-install | Online Free DevTools by Hexmos'
 name: virt-install
-path: "/freedevtools/tldr/virt/virt-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-install/"
-description: "Create virtual machines easily with Virt-install. Quickly set up and manage virtualized environments using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/virt/virt-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virt/virt-install/'
+description: 'Create virtual machines easily with Virt-install. Quickly set up and manage virtualized environments using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine creation
-- virt-install command
-- libvirt virtual machine
-- kvm virtual machine
-- qemu virtual machine
-- linux virtualization
-- virtual machine manager
-- command line virtualization
-- os installation virt-install
-- virt-install examples
+  - virtual machine creation
+  - virt-install command
+  - libvirt virtual machine
+  - kvm virtual machine
+  - qemu virtual machine
+  - linux virtualization
+  - virtual machine manager
+  - command line virtualization
+  - os installation virt-install
+  - virt-install examples
 features:
-- Create virtual machines with specified memory and storage.
-- Configure virtual machine architecture and boot options.
-- Create diskless virtual machines for live environments.
-- Automate virtual machine deployments using Kickstart.
-- Define CPU topology and model for optimal performance.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create virtual machines with specified memory and storage.
+  - Configure virtual machine architecture and boot options.
+  - Create diskless virtual machines for live environments.
+  - Automate virtual machine deployments using Kickstart.
+  - Define CPU topology and model for optimal performance.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virt-install

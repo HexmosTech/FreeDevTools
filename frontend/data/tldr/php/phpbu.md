@@ -1,29 +1,29 @@
 ---
-title: "PHP Backup - Create Database Backups with phpbu | Online Free DevTools by Hexmos"
+title: 'PHP Backup - Create Database Backups with phpbu | Online Free DevTools by Hexmos'
 name: phpbu
-path: "/freedevtools/tldr/php/phpbu/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpbu/"
-description: "Create PHP backups effortlessly with phpbu. Automate database backups and application backups with configuration files. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpbu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpbu/'
+description: 'Create PHP backups effortlessly with phpbu. Automate database backups and application backups with configuration files. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP backup utility
-- MySQL backup command
-- Database backup script
-- Application backup automation
-- Command-line backup tool
-- PHP backup configuration
-- phpbu backup manager
-- XML backup configuration
-- Server backup script
-- Automated backup solutions
+  - PHP backup utility
+  - MySQL backup command
+  - Database backup script
+  - Application backup automation
+  - Command-line backup tool
+  - PHP backup configuration
+  - phpbu backup manager
+  - XML backup configuration
+  - Server backup script
+  - Automated backup solutions
 features:
-- Create backups using a configuration file
-- Limit backups to specific tasks
-- Simulate backup actions without executing them
-- Automate PHP application backups
-- Manage database backups from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create backups using a configuration file
+  - Limit backups to specific tasks
+  - Simulate backup actions without executing them
+  - Automate PHP application backups
+  - Manage database backups from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpbu

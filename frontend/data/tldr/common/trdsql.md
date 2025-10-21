@@ -1,9 +1,9 @@
 ---
-title: "Execute SQL on Data - trdsql Query Tool | Online Free DevTools by Hexmos"
+title: 'Execute SQL on Data - trdsql Query Tool | Online Free DevTools by Hexmos'
 name: trdsql
-path: "/freedevtools/tldr/common/trdsql/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/trdsql/"
-description: "Execute SQL queries on various data formats with trdsql. Convert JSON, CSV, YAML & more to SQL databases. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/trdsql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/trdsql/'
+description: 'Execute SQL queries on various data formats with trdsql. Convert JSON, CSV, YAML & more to SQL databases. Free online tool, no registration required.'
 category: common
 keywords:
   - SQL query tool
@@ -22,8 +22,8 @@ features:
   - Connect to PostgreSQL and MySQL databases
   - Merge content of multiple CSV files using SQL UNION
   - Query compressed log files directly using SQL
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trdsql

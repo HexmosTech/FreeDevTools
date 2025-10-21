@@ -1,29 +1,29 @@
 ---
-title: "Analyze PHP with Psalm - Find Errors | Online Free DevTools by Hexmos"
+title: 'Analyze PHP with Psalm - Find Errors | Online Free DevTools by Hexmos'
 name: psalm
-path: "/freedevtools/tldr/common/psalm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/psalm/"
-description: "Analyze PHP code with Psalm, a static analysis tool to detect errors in your applications. Improve code quality and prevent runtime issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/psalm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/psalm/'
+description: 'Analyze PHP code with Psalm, a static analysis tool to detect errors in your applications. Improve code quality and prevent runtime issues. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP Static Analysis
-- Psalm PHP Analyzer
-- PHP Code Error Detection
-- PHP Code Validation
-- PHP Code Quality
-- Psalm Configuration
-- PHP Linter
-- PHP Static Analysis Tool
-- Common PHP Tools
-- Command Line PHP Analysis
+  - PHP Static Analysis
+  - Psalm PHP Analyzer
+  - PHP Code Error Detection
+  - PHP Code Validation
+  - PHP Code Quality
+  - Psalm Configuration
+  - PHP Linter
+  - PHP Static Analysis Tool
+  - Common PHP Tools
+  - Command Line PHP Analysis
 features:
-- Analyze PHP code for errors and potential issues
-- Generate Psalm configuration files for projects
-- Display statistics about code analysis results
-- Customize analysis with specific configuration files
-- Run analysis in parallel with multiple threads
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze PHP code for errors and potential issues
+  - Generate Psalm configuration files for projects
+  - Display statistics about code analysis results
+  - Customize analysis with specific configuration files
+  - Run analysis in parallel with multiple threads
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # psalm

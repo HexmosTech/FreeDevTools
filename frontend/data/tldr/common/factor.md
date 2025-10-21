@@ -1,29 +1,29 @@
 ---
-title: "Factor Number - Generate Prime Factors | Online Free DevTools by Hexmos"
+title: 'Factor Number - Generate Prime Factors | Online Free DevTools by Hexmos'
 name: factor
-path: "/freedevtools/tldr/common/factor/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/factor/"
-description: "Generate prime factors with Factor Number. Decompose numbers into their prime components. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/factor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/factor/'
+description: 'Generate prime factors with Factor Number. Decompose numbers into their prime components. Free online tool, no registration required.'
 category: common
 keywords:
-- prime factorization
-- factor number
-- number decomposition
-- prime factor generator
-- linux factor command
-- macos factor command
-- command line factor
-- math factor
-- number theory tool
-- algorithmic factorization
+  - prime factorization
+  - factor number
+  - number decomposition
+  - prime factor generator
+  - linux factor command
+  - macos factor command
+  - command line factor
+  - math factor
+  - number theory tool
+  - algorithmic factorization
 features:
-- Calculate the prime factorization of a given number
-- Accept input from standard input (stdin)
-- Output prime factors to standard output
-- Decompose large integers into their prime components
-- Provide a command-line interface for prime factorization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate the prime factorization of a given number
+  - Accept input from standard input (stdin)
+  - Output prime factors to standard output
+  - Decompose large integers into their prime components
+  - Provide a command-line interface for prime factorization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # factor

@@ -1,29 +1,29 @@
 ---
-title: "Check Drupal Code - Detect Deprecations | Online Free DevTools by Hexmos"
+title: 'Check Drupal Code - Detect Deprecations | Online Free DevTools by Hexmos'
 name: drupal-check
-path: "/freedevtools/tldr/common/drupal-check/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/drupal-check/"
-description: "Check Drupal code for deprecations with Drupal-Check. Analyze code quality, exclude directories, and improve Drupal development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/drupal-check/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/drupal-check/'
+description: 'Check Drupal code for deprecations with Drupal-Check. Analyze code quality, exclude directories, and improve Drupal development. Free online tool, no registration required.'
 category: common
 keywords:
-- Drupal code check
-- PHP deprecation scanner
-- Drupal static analysis
-- Drupal coding standards
-- Drupal code quality
-- Drupal project analysis
-- Drupal security scan
-- Drupal code review
-- Drupal code sniffer
-- Drupal development tool
+  - Drupal code check
+  - PHP deprecation scanner
+  - Drupal static analysis
+  - Drupal coding standards
+  - Drupal code quality
+  - Drupal project analysis
+  - Drupal security scan
+  - Drupal code review
+  - Drupal code sniffer
+  - Drupal development tool
 features:
-- Detect Drupal PHP code deprecations
-- Exclude specific directories from checks
-- Perform static analysis for coding issues
-- Suppress progress bar output
-- Analyze entire Drupal projects for errors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect Drupal PHP code deprecations
+  - Exclude specific directories from checks
+  - Perform static analysis for coding issues
+  - Suppress progress bar output
+  - Analyze entire Drupal projects for errors
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # drupal-check

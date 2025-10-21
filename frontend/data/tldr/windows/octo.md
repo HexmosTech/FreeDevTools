@@ -1,29 +1,29 @@
 ---
-title: "Octo - Deploy Releases | Online Free DevTools by Hexmos"
+title: 'Octo - Deploy Releases | Online Free DevTools by Hexmos'
 name: octo
-path: "/freedevtools/tldr/windows/octo/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/octo/"
-description: "Deploy releases with Octo. Automate software deployments to Octopus Deploy server from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/octo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/octo/'
+description: 'Deploy releases with Octo. Automate software deployments to Octopus Deploy server from the command line. Free online tool, no registration required.'
 category: windows
 keywords:
-- Octopus Deploy command line
-- Octo CLI
-- Windows deployment automation
-- Octo create release
-- Octo push package
-- Octo deploy release
-- Octopus Deploy package manager
-- Windows Octo tool
-- Octo Windows command
-- Octopus deployment scripting
+  - Octopus Deploy command line
+  - Octo CLI
+  - Windows deployment automation
+  - Octo create release
+  - Octo push package
+  - Octo deploy release
+  - Octopus Deploy package manager
+  - Windows Octo tool
+  - Octo Windows command
+  - Octopus deployment scripting
 features:
-- Create Octopus Deploy packages from the command line
-- Push packages to an Octopus Deploy repository
-- Create new releases within Octopus Deploy projects
-- Deploy existing releases to specified environments
-- Target specific tenants during deployments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Octopus Deploy packages from the command line
+  - Push packages to an Octopus Deploy repository
+  - Create new releases within Octopus Deploy projects
+  - Deploy existing releases to specified environments
+  - Target specific tenants during deployments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # octo

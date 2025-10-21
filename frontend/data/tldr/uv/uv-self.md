@@ -1,29 +1,29 @@
 ---
-title: "uv - Manage uv Executable | Online Free DevTools by Hexmos"
+title: 'uv - Manage uv Executable | Online Free DevTools by Hexmos'
 name: uv-self
-path: "/freedevtools/tldr/uv/uv-self/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-self/"
-description: "Manage uv executable with uv-self. Update, check version, and control the uv package installer. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-self/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-self/'
+description: 'Manage uv executable with uv-self. Update, check version, and control the uv package installer. Free online tool, no registration required.'
 category: common
 keywords:
-- uv package manager
-- uv executable update
-- uv version management
-- uv self update
-- uv command line tool
-- python package installation
-- uv python installer
-- uv self version
-- cross-platform installer
-- astral uv
+  - uv package manager
+  - uv executable update
+  - uv version management
+  - uv self update
+  - uv command line tool
+  - python package installation
+  - uv python installer
+  - uv self version
+  - cross-platform installer
+  - astral uv
 features:
-- Update uv to the latest version
-- Check for available uv updates
-- Display the current uv version
-- Display version information in JSON format
-- Update to a specific uv version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update uv to the latest version
+  - Check for available uv updates
+  - Display the current uv version
+  - Display version information in JSON format
+  - Update to a specific uv version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv self

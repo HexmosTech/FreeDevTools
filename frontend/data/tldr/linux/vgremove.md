@@ -1,9 +1,9 @@
 ---
-title: "Remove Volume Groups - Control LVM with vgremove | Online Free DevTools by Hexmos"
+title: 'Remove Volume Groups - Control LVM with vgremove | Online Free DevTools by Hexmos'
 name: vgremove
-path: "/freedevtools/tldr/linux/vgremove/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/vgremove/"
-description: "Remove LVM volume groups with vgremove.  Manage and control your logical volumes efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/vgremove/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/vgremove/'
+description: 'Remove LVM volume groups with vgremove.  Manage and control your logical volumes efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - lvm volume group removal
@@ -22,8 +22,8 @@ features:
   - Set debug level for detailed logging.
   - Utilize custom configuration settings.
   - Provides helpful usage information via the help command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vgremove

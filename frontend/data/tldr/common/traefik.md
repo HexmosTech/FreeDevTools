@@ -1,29 +1,29 @@
 ---
-title: "Control Traefik - HTTP Reverse Proxy | Online Free DevTools by Hexmos"
+title: 'Control Traefik - HTTP Reverse Proxy | Online Free DevTools by Hexmos'
 name: traefik
-path: "/freedevtools/tldr/common/traefik/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/traefik/"
-description: "Control HTTP reverse proxy with Traefik. Load balance traffic, configure routes, and manage certificates with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/traefik/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/traefik/'
+description: 'Control HTTP reverse proxy with Traefik. Load balance traffic, configure routes, and manage certificates with this free online tool, no registration required.'
 category: common
 keywords:
-- traefik reverse proxy
-- http load balancer
-- traefik configuration
-- traefik docker
-- traefik kubernetes
-- traefik certificates
-- traefik routing
-- traefik toml
-- traefik command line
-- traefik cluster mode
+  - traefik reverse proxy
+  - http load balancer
+  - traefik configuration
+  - traefik docker
+  - traefik kubernetes
+  - traefik certificates
+  - traefik routing
+  - traefik toml
+  - traefik command line
+  - traefik cluster mode
 features:
-- Start Traefik with default configurations.
-- Load custom Traefik configuration files.
-- Enable cluster mode for high availability.
-- Expose the Traefik web UI for management.
-- Configure HTTP routing and load balancing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start Traefik with default configurations.
+  - Load custom Traefik configuration files.
+  - Enable cluster mode for high availability.
+  - Expose the Traefik web UI for management.
+  - Configure HTTP routing and load balancing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # traefik

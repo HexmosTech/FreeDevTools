@@ -1,29 +1,29 @@
 ---
-title: "Control Window with Xkill - Kill Windows | Online Free DevTools by Hexmos"
+title: 'Control Window with Xkill - Kill Windows | Online Free DevTools by Hexmos'
 name: xkill
-path: "/freedevtools/tldr/common/xkill/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xkill/"
-description: "Control windows with Xkill, a graphical tool to terminate unresponsive applications. Manage X server sessions and troubleshoot GUI issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xkill/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xkill/'
+description: 'Control windows with Xkill, a graphical tool to terminate unresponsive applications. Manage X server sessions and troubleshoot GUI issues. Free online tool, no registration required.'
 category: common
 keywords:
-- xkill window killer
-- linux window manager
-- X server control
-- graphical process termination
-- interactive kill signal
-- X window system
-- kill unresponsive application
-- linux GUI tool
-- X display management
-- window ID termination
+  - xkill window killer
+  - linux window manager
+  - X server control
+  - graphical process termination
+  - interactive kill signal
+  - X window system
+  - kill unresponsive application
+  - linux GUI tool
+  - X display management
+  - window ID termination
 features:
-- Interactively kill windows with a mouse cursor.
-- Terminate windows using their unique ID.
-- Force quit applications in the X Window System.
-- Select a specific window for termination.
-- Cancel window termination by pressing any mouse button.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Interactively kill windows with a mouse cursor.
+  - Terminate windows using their unique ID.
+  - Force quit applications in the X Window System.
+  - Select a specific window for termination.
+  - Cancel window termination by pressing any mouse button.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xkill

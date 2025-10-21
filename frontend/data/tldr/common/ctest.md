@@ -1,29 +1,29 @@
 ---
-title: "CTest - Generate Test Reports | Online Free DevTools by Hexmos"
+title: 'CTest - Generate Test Reports | Online Free DevTools by Hexmos'
 name: ctest
-path: "/freedevtools/tldr/common/ctest/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ctest/"
+path: '/freedevtools/tldr/common/ctest/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ctest/'
 description: "Generate test reports with CTest. Automate software testing, manage test suites, and analyze results using CMake's test driver. Free online tool, no registration required."
 category: common
 keywords:
-- CMake test automation
-- CTest test driver
-- software test report generator
-- parallel testing CMake
-- regression testing CMake
-- CTest Linux
-- CTest MacOS
-- CTest Windows
-- CMake CI/CD
-- CMake testing framework
+  - CMake test automation
+  - CTest test driver
+  - software test report generator
+  - parallel testing CMake
+  - regression testing CMake
+  - CTest Linux
+  - CTest MacOS
+  - CTest Windows
+  - CMake CI/CD
+  - CMake testing framework
 features:
-- Run all tests defined in a CMake project
-- Execute tests in parallel for faster results
-- List available tests within a CMake project
-- Run a single test by name or regular expression
-- Output test results on failure for debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run all tests defined in a CMake project
+  - Execute tests in parallel for faster results
+  - List available tests within a CMake project
+  - Run a single test by name or regular expression
+  - Output test results on failure for debugging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ctest

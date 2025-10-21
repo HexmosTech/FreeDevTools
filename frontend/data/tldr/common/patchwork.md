@@ -1,29 +1,29 @@
 ---
-title: "Patchwork - Render Graphviz Images | Online Free DevTools by Hexmos"
+title: 'Patchwork - Render Graphviz Images | Online Free DevTools by Hexmos'
 name: patchwork
-path: "/freedevtools/tldr/common/patchwork/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/patchwork/"
-description: "Render graph network diagrams with Patchwork. Convert Graphviz DOT files to various image formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/patchwork/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/patchwork/'
+description: 'Render graph network diagrams with Patchwork. Convert Graphviz DOT files to various image formats. Free online tool, no registration required.'
 category: common
 keywords:
-- graphviz image renderer
-- dot file converter
-- network graph generator
-- squareified treemap
-- graph layout tool
-- image format conversion
-- graph visualization
-- graphviz to png
-- graphviz to svg
-- patchwork command line
+  - graphviz image renderer
+  - dot file converter
+  - network graph generator
+  - squareified treemap
+  - graph layout tool
+  - image format conversion
+  - graph visualization
+  - graphviz to png
+  - graphviz to svg
+  - patchwork command line
 features:
-- Render graphviz DOT files to images
-- Convert graphs to PNG, SVG, PDF, and other formats
-- Layout graphs using dot, neato, twopi, circo, fdp, sfdp, osage, & patchwork
-- Generate images from stdin/stdout
-- Create squareified treemap network graphs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render graphviz DOT files to images
+  - Convert graphs to PNG, SVG, PDF, and other formats
+  - Layout graphs using dot, neato, twopi, circo, fdp, sfdp, osage, & patchwork
+  - Generate images from stdin/stdout
+  - Create squareified treemap network graphs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # patchwork

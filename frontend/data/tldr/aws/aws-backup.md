@@ -1,29 +1,29 @@
 ---
-title: "AWS Backup - Control Cloud Data Backups | Online Free DevTools by Hexmos"
+title: 'AWS Backup - Control Cloud Data Backups | Online Free DevTools by Hexmos'
 name: aws-backup
-path: "/freedevtools/tldr/aws/aws-backup/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-backup/"
-description: "Control cloud data backups with AWS Backup. Schedule backups, manage recovery points, and protect your Amazon Web Services data. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-backup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-backup/'
+description: 'Control cloud data backups with AWS Backup. Schedule backups, manage recovery points, and protect your Amazon Web Services data. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS backup automation
-- AWS data protection
-- Cloud backup management
-- Amazon backup scheduling
-- AWS recovery points
-- AWS backup policies
-- AWS backup CLI
-- AWS backup reports
-- AWS EBS snapshot
-- AWS S3 backup
+  - AWS backup automation
+  - AWS data protection
+  - Cloud backup management
+  - Amazon backup scheduling
+  - AWS recovery points
+  - AWS backup policies
+  - AWS backup CLI
+  - AWS backup reports
+  - AWS EBS snapshot
+  - AWS S3 backup
 features:
-- Schedule automated cloud backups for AWS services
-- Manage backup policies and retention rules
-- Delete AWS backup plans
-- List AWS backup plans for your account
-- Generate and display backup reports
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Schedule automated cloud backups for AWS services
+  - Manage backup policies and retention rules
+  - Delete AWS backup plans
+  - List AWS backup plans for your account
+  - Generate and display backup reports
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws backup

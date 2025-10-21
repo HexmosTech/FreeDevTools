@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface ToolBodyProps {
   children: React.ReactNode;
@@ -6,7 +6,7 @@ interface ToolBodyProps {
 }
 
 const ToolBody: React.FC<ToolBodyProps> = ({ children, className }) => {
-  return <div className={`space-y-0 ${className ?? ""}`}>{children}</div>;
+  return <div className={`space-y-0 ${className ?? ''}`}>{children}</div>;
 };
 
 export default ToolBody;

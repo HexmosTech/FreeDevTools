@@ -1,29 +1,29 @@
 ---
-title: "RabbitMQ Vhosts - Control Virtual Hosts | Online Free DevTools by Hexmos"
+title: 'RabbitMQ Vhosts - Control Virtual Hosts | Online Free DevTools by Hexmos'
 name: rabbitmqctl-vhosts
-path: "/freedevtools/tldr/rabbitmqctl/rabbitmqctl-vhosts/"
-canonical: "https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-vhosts/"
-description: "Control RabbitMQ virtual hosts easily with rabbitmqctl-vhosts. Manage vhosts, set permissions, and ensure secure multi-tenancy. Free online tool, no registration required."
+path: '/freedevtools/tldr/rabbitmqctl/rabbitmqctl-vhosts/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rabbitmqctl/rabbitmqctl-vhosts/'
+description: 'Control RabbitMQ virtual hosts easily with rabbitmqctl-vhosts. Manage vhosts, set permissions, and ensure secure multi-tenancy. Free online tool, no registration required.'
 category: common
 keywords:
-- RabbitMQ vhosts management
-- RabbitMQ virtual hosts control
-- RabbitMQ vhost configuration
-- rabbitmqctl vhost commands
-- AMQP virtual hosts
-- Message queue vhosts
-- Distributed messaging vhosts
-- RabbitMQ multi-tenancy
-- Erlang RabbitMQ vhosts
-- Command-line vhost management
+  - RabbitMQ vhosts management
+  - RabbitMQ virtual hosts control
+  - RabbitMQ vhost configuration
+  - rabbitmqctl vhost commands
+  - AMQP virtual hosts
+  - Message queue vhosts
+  - Distributed messaging vhosts
+  - RabbitMQ multi-tenancy
+  - Erlang RabbitMQ vhosts
+  - Command-line vhost management
 features:
-- List existing RabbitMQ virtual hosts
-- Add new virtual hosts to RabbitMQ
-- Delete specified virtual hosts from RabbitMQ
-- Set user permissions for specific virtual hosts
-- Clear user permissions on RabbitMQ virtual hosts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing RabbitMQ virtual hosts
+  - Add new virtual hosts to RabbitMQ
+  - Delete specified virtual hosts from RabbitMQ
+  - Set user permissions for specific virtual hosts
+  - Clear user permissions on RabbitMQ virtual hosts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rabbitmqctl-vhosts

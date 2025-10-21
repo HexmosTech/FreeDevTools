@@ -1,29 +1,29 @@
 ---
-title: "Schedule Leave - Set Leave Reminders | Online Free DevTools by Hexmos"
+title: 'Schedule Leave - Set Leave Reminders | Online Free DevTools by Hexmos'
 name: leave
-path: "/freedevtools/tldr/common/leave/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/leave/"
-description: "Schedule leave alerts with Leave. Set time-based reminders to depart on time, preventing overstays. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/leave/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/leave/'
+description: 'Schedule leave alerts with Leave. Set time-based reminders to depart on time, preventing overstays. Free online tool, no registration required.'
 category: common
 keywords:
-- leave reminder
-- schedule departure
-- set leave alert
-- command line leave
-- linux leave command
-- freebsd leave command
-- terminal leave
-- time-based reminder
-- cron alternative
-- leave notifier
+  - leave reminder
+  - schedule departure
+  - set leave alert
+  - command line leave
+  - linux leave command
+  - freebsd leave command
+  - terminal leave
+  - time-based reminder
+  - cron alternative
+  - leave notifier
 features:
-- Schedule reminders to depart at a specific time.
-- Set alerts based on a relative time duration.
-- Display leave reminders in the terminal.
-- Receive notifications when it's time to leave.
-- Easily remove reminders using the `kill` command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Schedule reminders to depart at a specific time.
+  - Set alerts based on a relative time duration.
+  - Display leave reminders in the terminal.
+  - Receive notifications when it's time to leave.
+  - Easily remove reminders using the `kill` command.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # leave

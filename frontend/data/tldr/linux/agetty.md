@@ -1,9 +1,9 @@
 ---
-title: "Control agetty TTY - Open Ports and Prompt Login | Online Free DevTools by Hexmos"
+title: 'Control agetty TTY - Open Ports and Prompt Login | Online Free DevTools by Hexmos'
 name: agetty
-path: "/freedevtools/tldr/linux/agetty/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/agetty/"
-description: "Control TTY ports with agetty. Open ports, prompt logins, and execute commands via serial console.  Free online tool, no registration required for this TTY manager."
+path: '/freedevtools/tldr/linux/agetty/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/agetty/'
+description: 'Control TTY ports with agetty. Open ports, prompt logins, and execute commands via serial console.  Free online tool, no registration required for this TTY manager.'
 category: linux
 keywords:
   - tty controller
@@ -22,8 +22,8 @@ features:
   - Override the TERM environment variable.
   - Skip the login and invoke another program.
   - Change the root directory for login.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # agetty

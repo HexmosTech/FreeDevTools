@@ -1,29 +1,29 @@
 ---
-title: "LZ4 Compressor - Compress and Decompress LZ4 Files | Online Free DevTools by Hexmos"
+title: 'LZ4 Compressor - Compress and Decompress LZ4 Files | Online Free DevTools by Hexmos'
 name: lz4
-path: "/freedevtools/tldr/common/lz4/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lz4/"
-description: "Compress and decompress files with LZ4 Compressor. Efficiently manage LZ4 archives with this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lz4/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lz4/'
+description: 'Compress and decompress files with LZ4 Compressor. Efficiently manage LZ4 archives with this command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- LZ4 compressor
-- LZ4 decompressor
-- LZ4 archive
-- file compression
-- data decompression
-- command line compression
-- linux compression
-- macos compression
-- lz4 cli
-- fast compression algorithm
+  - LZ4 compressor
+  - LZ4 decompressor
+  - LZ4 archive
+  - file compression
+  - data decompression
+  - command line compression
+  - linux compression
+  - macos compression
+  - lz4 cli
+  - fast compression algorithm
 features:
-- Compress files into LZ4 archives
-- Decompress LZ4 files
-- Decompress LZ4 to standard output
-- Compress directories with tar and LZ4
-- Use best compression level for optimal size
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files into LZ4 archives
+  - Decompress LZ4 files
+  - Decompress LZ4 to standard output
+  - Compress directories with tar and LZ4
+  - Use best compression level for optimal size
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lz4

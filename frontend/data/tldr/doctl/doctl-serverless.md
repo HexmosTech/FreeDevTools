@@ -1,29 +1,29 @@
 ---
-title: "Control Serverless Functions - DigitalOcean | Online Free DevTools by Hexmos"
+title: 'Control Serverless Functions - DigitalOcean | Online Free DevTools by Hexmos'
 name: doctl-serverless
-path: "/freedevtools/tldr/doctl/doctl-serverless/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-serverless/"
-description: "Control Serverless Functions instantly with doctl-serverless command. Deploy projects, get metadata, and check function status. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-serverless/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-serverless/'
+description: 'Control Serverless Functions instantly with doctl-serverless command. Deploy projects, get metadata, and check function status. Free online tool, no registration required.'
 category: common
 keywords:
-- serverless functions control
-- digitalocean serverless deploy
-- doctl serverless metadata
-- digitalocean functions management
-- serverless project deployment
-- doctl connect functions namespace
-- digitalocean serverless status
-- serverless function monitoring
-- digitalocean functions command-line
-- doctl serverless configuration
+  - serverless functions control
+  - digitalocean serverless deploy
+  - doctl serverless metadata
+  - digitalocean functions management
+  - serverless project deployment
+  - doctl connect functions namespace
+  - digitalocean serverless status
+  - serverless function monitoring
+  - digitalocean functions command-line
+  - doctl serverless configuration
 features:
-- Connect to a functions namespace
-- Deploy serverless functions project
-- Obtain metadata for a functions project
-- Display serverless support status
-- Manage DigitalOcean serverless functions from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to a functions namespace
+  - Deploy serverless functions project
+  - Obtain metadata for a functions project
+  - Display serverless support status
+  - Manage DigitalOcean serverless functions from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl serverless

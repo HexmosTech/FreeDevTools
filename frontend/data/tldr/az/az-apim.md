@@ -1,29 +1,29 @@
 ---
-title: "APIM Manager - Manage Azure APIs | Online Free DevTools by Hexmos"
+title: 'APIM Manager - Manage Azure APIs | Online Free DevTools by Hexmos'
 name: az-apim
-path: "/freedevtools/tldr/az/az-apim/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-apim/"
-description: "Manage Azure APIs with APIM Manager. Create, update, and delete API Management service instances using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-apim/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-apim/'
+description: 'Manage Azure APIs with APIM Manager. Create, update, and delete API Management service instances using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- azure apim manager
-- azure api management
-- apim service management
-- azure cli apim
-- azure api gateway
-- apim instance control
-- azure resource manager apim
-- azure cloud apim
-- cli apim management
-- az apim linux
+  - azure apim manager
+  - azure api management
+  - apim service management
+  - azure cli apim
+  - azure api gateway
+  - apim instance control
+  - azure resource manager apim
+  - azure cloud apim
+  - cli apim management
+  - az apim linux
 features:
-- List existing API Management services.
-- Create new API Management service instances.
-- Delete API Management service instances.
-- Show details of a specified API Management service.
-- Update properties of existing API Management services.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing API Management services.
+  - Create new API Management service instances.
+  - Delete API Management service instances.
+  - Show details of a specified API Management service.
+  - Update properties of existing API Management services.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az apim

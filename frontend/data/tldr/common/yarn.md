@@ -1,29 +1,29 @@
 ---
-title: "Manage Yarn Packages - Install, Remove | Online Free DevTools by Hexmos"
+title: 'Manage Yarn Packages - Install, Remove | Online Free DevTools by Hexmos'
 name: yarn
-path: "/freedevtools/tldr/common/yarn/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/yarn/"
-description: "Manage dependencies with Yarn. Install, remove, and update JavaScript packages for your projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/yarn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/yarn/'
+description: 'Manage dependencies with Yarn. Install, remove, and update JavaScript packages for your projects. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript package manager
-- nodejs package manager
-- yarn install
-- yarn add
-- yarn remove
-- yarn global add
-- package dependency management
-- yarn package manager
-- yarn command line
-- yarn package.json
+  - javascript package manager
+  - nodejs package manager
+  - yarn install
+  - yarn add
+  - yarn remove
+  - yarn global add
+  - package dependency management
+  - yarn package manager
+  - yarn command line
+  - yarn package.json
 features:
-- Install JavaScript packages globally
-- Manage project dependencies defined in package.json
-- Add packages as dependencies to a project
-- Uninstall packages and remove them from package.json
-- Create and initialize a new package.json file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install JavaScript packages globally
+  - Manage project dependencies defined in package.json
+  - Add packages as dependencies to a project
+  - Uninstall packages and remove them from package.json
+  - Create and initialize a new package.json file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yarn

@@ -1,9 +1,9 @@
 ---
-title: "Swupd Package Manager - Manage Clear Linux Packages | Online Free DevTools by Hexmos"
+title: 'Swupd Package Manager - Manage Clear Linux Packages | Online Free DevTools by Hexmos'
 name: swupd
-path: "/freedevtools/tldr/linux/swupd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/swupd/"
-description: "Manage Clear Linux packages efficiently with swupd. Update, install, remove, and verify bundles effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/swupd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/swupd/'
+description: 'Manage Clear Linux packages efficiently with swupd. Update, install, remove, and verify bundles effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package manager
@@ -22,8 +22,8 @@ features:
   - List all installed software bundles.
   - Search for specific packages within installed bundles.
   - Add, remove, and verify the integrity of software bundles.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swupd

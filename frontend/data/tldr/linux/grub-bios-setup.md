@@ -1,9 +1,9 @@
 ---
-title: "GRUB BIOS Setup - Configure GRUB Bootloader | Online Free DevTools by Hexmos"
+title: 'GRUB BIOS Setup - Configure GRUB Bootloader | Online Free DevTools by Hexmos'
 name: grub-bios-setup
-path: "/freedevtools/tldr/linux/grub-bios-setup/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-bios-setup/"
-description: "Configure GRUB bootloader with grub-bios-setup for BIOS systems.  Set up a device to boot using GRUB easily and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/grub-bios-setup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/grub-bios-setup/'
+description: 'Configure GRUB bootloader with grub-bios-setup for BIOS systems.  Set up a device to boot using GRUB easily and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - grub bios setup
@@ -22,8 +22,8 @@ features:
   - Allows specifying a custom installation directory for GRUB.
   - Configures GRUB for BIOS-based systems.
   - Provides a command-line interface for GRUB setup.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grub-bios-setup

@@ -1,29 +1,29 @@
 ---
-title: "Create New-Item - File and Directory Creation | Online Free DevTools by Hexmos"
+title: 'Create New-Item - File and Directory Creation | Online Free DevTools by Hexmos'
 name: new-item
-path: "/freedevtools/tldr/windows/new-item/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/new-item/"
-description: "Create files and directories with New-Item. Manage file system objects and registry entries using this PowerShell command. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/new-item/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/new-item/'
+description: 'Create files and directories with New-Item. Manage file system objects and registry entries using this PowerShell command. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows file creation
-- powershell new-item command
-- directory creation windows
-- registry entry creation windows
-- symbolic link creation windows
-- hard link creation windows
-- junction creation windows
-- file manipulation powershell
-- create file from command line
-- powershell file management
+  - windows file creation
+  - powershell new-item command
+  - directory creation windows
+  - registry entry creation windows
+  - symbolic link creation windows
+  - hard link creation windows
+  - junction creation windows
+  - file manipulation powershell
+  - create file from command line
+  - powershell file management
 features:
-- Create new files and directories
-- Write content to new files
-- Create symbolic links, hard links, and junctions
-- Create new registry entries
-- Manage multiple file locations with single command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new files and directories
+  - Write content to new files
+  - Create symbolic links, hard links, and junctions
+  - Create new registry entries
+  - Manage multiple file locations with single command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # New-Item

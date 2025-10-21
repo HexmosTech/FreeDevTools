@@ -1,9 +1,9 @@
 ---
-title: "Halt System - Control System Shutdown | Online Free DevTools by Hexmos"
+title: 'Halt System - Control System Shutdown | Online Free DevTools by Hexmos'
 name: halt
-path: "/freedevtools/tldr/linux/halt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/halt/"
-description: "Control system shutdown with Halt System command. Power off, reboot, or halt immediately using flags. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/halt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/halt/'
+description: 'Control system shutdown with Halt System command. Power off, reboot, or halt immediately using flags. Free online tool, no registration required.'
 category: linux
 keywords:
   - system halt command
@@ -22,8 +22,8 @@ features:
   - Reboot the system quickly
   - Force halt without system manager
   - Write shutdown entry to wtmp
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # halt

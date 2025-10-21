@@ -1,29 +1,29 @@
 ---
-title: "Pulumi State - Edit Stack State | Online Free DevTools by Hexmos"
+title: 'Pulumi State - Edit Stack State | Online Free DevTools by Hexmos'
 name: pulumi-state
-path: "/freedevtools/tldr/pulumi/pulumi-state/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-state/"
+path: '/freedevtools/tldr/pulumi/pulumi-state/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-state/'
 description: "Edit your Pulumi stack's state with Pulumi State. Move resources, repair invalid states, and manage deployments. Free online tool, no registration required."
 category: common
 keywords:
-- pulumi state editor
-- pulumi stack management
-- infrastructure as code state
-- cloud resource migration
-- pulumi state repair
-- pulumi state delete
-- pulumi resource rename
-- pulumi stack manipulation
-- pulumi state command line
-- iac state management
+  - pulumi state editor
+  - pulumi stack management
+  - infrastructure as code state
+  - cloud resource migration
+  - pulumi state repair
+  - pulumi state delete
+  - pulumi resource rename
+  - pulumi stack manipulation
+  - pulumi state command line
+  - iac state management
 features:
-- Delete specific resources from a Pulumi stack's state.
-- Move resources between different Pulumi stacks.
-- Rename resources within a Pulumi stack.
-- Repair corrupted or invalid Pulumi stack states.
-- Edit a stack's state directly in a text editor.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete specific resources from a Pulumi stack's state.
+  - Move resources between different Pulumi stacks.
+  - Rename resources within a Pulumi stack.
+  - Repair corrupted or invalid Pulumi stack states.
+  - Edit a stack's state directly in a text editor.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi state

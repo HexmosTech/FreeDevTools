@@ -1,29 +1,29 @@
 ---
-title: "Manage Azure Redis - Control Caches | Online Free DevTools by Hexmos"
+title: 'Manage Azure Redis - Control Caches | Online Free DevTools by Hexmos'
 name: az-redis
-path: "/freedevtools/tldr/az/az-redis/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-redis/"
-description: "Manage Azure Redis caches with AZ Redis. Control, create, update, export and delete Redis instances. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-redis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-redis/'
+description: 'Manage Azure Redis caches with AZ Redis. Control, create, update, export and delete Redis instances. Free online tool, no registration required.'
 category: common
 keywords:
-- azure redis management
-- azure redis command line
-- redis cache control
-- az redis cli
-- azure cli redis
-- redis instance manager
-- azure cache manager
-- redis data export
-- azure redis delete
-- azure redis update
+  - azure redis management
+  - azure redis command line
+  - redis cache control
+  - az redis cli
+  - azure cli redis
+  - redis instance manager
+  - azure cache manager
+  - redis data export
+  - azure redis delete
+  - azure redis update
 features:
-- Create new Azure Redis cache instances
-- Update existing Redis cache configurations
-- Export data stored in Redis caches
-- Delete Redis caches from Azure
-- Manage Redis resources via the Azure CLI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Azure Redis cache instances
+  - Update existing Redis cache configurations
+  - Export data stored in Redis caches
+  - Delete Redis caches from Azure
+  - Manage Redis resources via the Azure CLI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az redis

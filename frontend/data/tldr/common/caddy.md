@@ -1,29 +1,29 @@
 ---
-title: "Caddy Server - Control Web Server with Automatic HTTPS | Online Free DevTools by Hexmos"
+title: 'Caddy Server - Control Web Server with Automatic HTTPS | Online Free DevTools by Hexmos'
 name: caddy
-path: "/freedevtools/tldr/common/caddy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/caddy/"
-description: "Control your web server easily with Caddy Server. Manage HTTPS certificates automatically and reverse proxy configurations effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/caddy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/caddy/'
+description: 'Control your web server easily with Caddy Server. Manage HTTPS certificates automatically and reverse proxy configurations effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- web server control
-- automatic https server
-- caddy configuration
-- reverse proxy server
-- golang web server
-- caddyfile editor
-- file server caddy
-- linux caddy server
-- macos caddy server
-- windows caddy server
+  - web server control
+  - automatic https server
+  - caddy configuration
+  - reverse proxy server
+  - golang web server
+  - caddyfile editor
+  - file server caddy
+  - linux caddy server
+  - macos caddy server
+  - windows caddy server
 features:
-- Start Caddy server in the foreground
-- Configure Caddy server with a Caddyfile
-- Run a file server with browsable interface
-- Create reverse proxy configurations quickly
-- Stop background Caddy server processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start Caddy server in the foreground
+  - Configure Caddy server with a Caddyfile
+  - Run a file server with browsable interface
+  - Create reverse proxy configurations quickly
+  - Stop background Caddy server processes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # caddy

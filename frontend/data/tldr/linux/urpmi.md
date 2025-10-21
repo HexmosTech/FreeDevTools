@@ -1,29 +1,29 @@
 ---
-title: "Install Packages - Control Mageia Packages with urpmi | Online Free DevTools by Hexmos"
+title: 'Install Packages - Control Mageia Packages with urpmi | Online Free DevTools by Hexmos'
 name: urpmi
-path: "/freedevtools/tldr/linux/urpmi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmi/"
-description: "Install packages effortlessly with urpmi for Mageia. Manage software installations, updates, and dependencies with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/urpmi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/urpmi/'
+description: 'Install packages effortlessly with urpmi for Mageia. Manage software installations, updates, and dependencies with ease. Free online tool, no registration required.'
 category: linux
 keywords:
-- mageia package manager
-- linux package installer
-- urpmi install package
-- rpm package management
-- mageia software update
-- linux command line package tool
-- urpmi dependency resolution
-- mageia package repository
-- urpmi orphaned packages
-- install local rpm linux
+  - mageia package manager
+  - linux package installer
+  - urpmi install package
+  - rpm package management
+  - mageia software update
+  - linux command line package tool
+  - urpmi dependency resolution
+  - mageia package repository
+  - urpmi orphaned packages
+  - install local rpm linux
 features:
-- Install packages from repositories or local RPM files
-- Download packages without immediate installation
-- Update all installed packages automatically
-- Update packages across multiple machines in parallel
-- Mark orphaned packages as manually installed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages from repositories or local RPM files
+  - Download packages without immediate installation
+  - Update all installed packages automatically
+  - Update packages across multiple machines in parallel
+  - Mark orphaned packages as manually installed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # urpmi

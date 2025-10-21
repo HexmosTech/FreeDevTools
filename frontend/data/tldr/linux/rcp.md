@@ -1,29 +1,29 @@
 ---
-title: "RCP - Copy Files Between Systems | Online Free DevTools by Hexmos"
+title: 'RCP - Copy Files Between Systems | Online Free DevTools by Hexmos'
 name: rcp
-path: "/freedevtools/tldr/linux/rcp/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rcp/"
-description: "Copy files seamlessly with RCP, the remote file copy command. Securely transfer files between local and remote Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rcp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rcp/'
+description: 'Copy files seamlessly with RCP, the remote file copy command. Securely transfer files between local and remote Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux rcp
-- remote file copy
-- rcp command
-- copy files between systems
-- linux file transfer
-- secure file transfer linux
-- remote copy utility
-- linux rcp command
-- remote file copy command
-- linux file system manipulation
+  - linux rcp
+  - remote file copy
+  - rcp command
+  - copy files between systems
+  - linux file transfer
+  - secure file transfer linux
+  - remote copy utility
+  - linux rcp command
+  - remote file copy command
+  - linux file system manipulation
 features:
-- Copy files to remote hosts
-- Copy directories recursively
-- Preserve file attributes during transfer
-- Force copy without confirmation prompt
-- Transfer files securely over a network
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy files to remote hosts
+  - Copy directories recursively
+  - Preserve file attributes during transfer
+  - Force copy without confirmation prompt
+  - Transfer files securely over a network
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rcp

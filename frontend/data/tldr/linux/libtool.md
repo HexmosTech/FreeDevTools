@@ -1,29 +1,29 @@
 ---
-title: "Libtool - Create Libraries Portably | Online Free DevTools by Hexmos"
+title: 'Libtool - Create Libraries Portably | Online Free DevTools by Hexmos'
 name: libtool
-path: "/freedevtools/tldr/linux/libtool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/libtool/"
-description: "Create portable libraries with Libtool on Linux. Simplify shared library usage behind a consistent interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/libtool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/libtool/'
+description: 'Create portable libraries with Libtool on Linux. Simplify shared library usage behind a consistent interface. Free online tool, no registration required.'
 category: linux
 keywords:
-- libtool create library
-- libtool shared library
-- libtool compile object
-- libtool install library
-- libtool uninstall library
-- linux libtool
-- portable library creation
-- library management linux
-- libtool gnu
-- libtool linking
+  - libtool create library
+  - libtool shared library
+  - libtool compile object
+  - libtool install library
+  - libtool uninstall library
+  - linux libtool
+  - portable library creation
+  - library management linux
+  - libtool gnu
+  - libtool linking
 features:
-- Compiles source files into libtool objects.
-- Creates libraries or executables with consistent interface.
-- Automatically sets library path for uninstalled programs.
-- Installs shared libraries to a specified directory.
-- Deletes installed or uninstalled libraries/executables.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compiles source files into libtool objects.
+  - Creates libraries or executables with consistent interface.
+  - Automatically sets library path for uninstalled programs.
+  - Installs shared libraries to a specified directory.
+  - Deletes installed or uninstalled libraries/executables.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # libtool

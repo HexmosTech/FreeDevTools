@@ -1,29 +1,29 @@
 ---
-title: "Resolve Path - Display Path Contents | Online Free DevTools by Hexmos"
+title: 'Resolve Path - Display Path Contents | Online Free DevTools by Hexmos'
 name: resolve-path
-path: "/freedevtools/tldr/windows/resolve-path/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/resolve-path/"
-description: "Resolve paths with Resolve-Path. Display file and directory contents, navigate UNC paths, and get relative path information. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/resolve-path/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/resolve-path/'
+description: 'Resolve paths with Resolve-Path. Display file and directory contents, navigate UNC paths, and get relative path information. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows resolve path
-- powershell resolve path
-- powershell file path
-- powershell directory path
-- unc path resolution
-- relative path calculation
-- path wildcard expansion
-- windows path tools
-- powershell scripting
-- powershell path management
+  - windows resolve path
+  - powershell resolve path
+  - powershell file path
+  - powershell directory path
+  - unc path resolution
+  - relative path calculation
+  - path wildcard expansion
+  - windows path tools
+  - powershell scripting
+  - powershell path management
 features:
-- Resolve wildcard characters in file paths
-- Display the contents of a path
-- Resolve UNC network paths
-- Calculate relative paths from specified locations
-- Expand paths using environment variables
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Resolve wildcard characters in file paths
+  - Display the contents of a path
+  - Resolve UNC network paths
+  - Calculate relative paths from specified locations
+  - Expand paths using environment variables
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Resolve-Path

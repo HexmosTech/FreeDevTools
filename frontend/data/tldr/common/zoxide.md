@@ -1,29 +1,29 @@
 ---
-title: "Control Directories - Zoxide Directory Jumper | Online Free DevTools by Hexmos"
+title: 'Control Directories - Zoxide Directory Jumper | Online Free DevTools by Hexmos'
 name: zoxide
-path: "/freedevtools/tldr/common/zoxide/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zoxide/"
-description: "Control directories quickly with Zoxide, a smart directory jumper for command line. Navigate efficiently based on ranking algorithm. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zoxide/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zoxide/'
+description: 'Control directories quickly with Zoxide, a smart directory jumper for command line. Navigate efficiently based on ranking algorithm. Free online tool, no registration required.'
 category: common
 keywords:
-- directory jumper
-- zoxide navigation
-- command line directory
-- ranked directory access
-- shell directory tool
-- terminal directory change
-- directory history
-- linux directory navigation
-- macos directory jumper
-- frequent directory access
+  - directory jumper
+  - zoxide navigation
+  - command line directory
+  - ranked directory access
+  - shell directory tool
+  - terminal directory change
+  - directory history
+  - linux directory navigation
+  - macos directory jumper
+  - frequent directory access
 features:
-- Jumps to the best matching directory based on frequency
-- Allows interactive directory search with fzf
-- Enables adding and ranking directories
-- Provides command aliases for quick access
-- Facilitates removing directories from the database
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Jumps to the best matching directory based on frequency
+  - Allows interactive directory search with fzf
+  - Enables adding and ranking directories
+  - Provides command aliases for quick access
+  - Facilitates removing directories from the database
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zoxide

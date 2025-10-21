@@ -1,29 +1,29 @@
 ---
-title: "PIO Manager - Manage Embedded Development with PIO | Online Free DevTools by Hexmos"
+title: 'PIO Manager - Manage Embedded Development with PIO | Online Free DevTools by Hexmos'
 name: pio
-path: "/freedevtools/tldr/pio/pio/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio/"
-description: "Manage embedded development environments easily with PIO Manager. Build, test, and deploy embedded software projects quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio/'
+description: 'Manage embedded development environments easily with PIO Manager. Build, test, and deploy embedded software projects quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- PIO manager
-- embedded development
-- platformIO
-- arduino IDE
-- IoT development
-- firmware build tools
-- embedded software tools
-- pio cli
-- avr development
-- stm32 development
+  - PIO manager
+  - embedded development
+  - platformIO
+  - arduino IDE
+  - IoT development
+  - firmware build tools
+  - embedded software tools
+  - pio cli
+  - avr development
+  - stm32 development
 features:
-- Build and compile embedded software projects
-- Manage dependencies for embedded systems
-- Upload firmware to various embedded boards
-- Configure project settings for different platforms
-- Execute custom commands within the PIO environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build and compile embedded software projects
+  - Manage dependencies for embedded systems
+  - Upload firmware to various embedded boards
+  - Configure project settings for different platforms
+  - Execute custom commands within the PIO environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio

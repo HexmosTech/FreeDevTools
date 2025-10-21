@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { X, Wrench, BookOpen, FileText, Image, PenLine, Smile } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import React, { useState, useEffect } from 'react';
+import {
+  X,
+  Wrench,
+  BookOpen,
+  FileText,
+  Image,
+  PenLine,
+  Smile,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 // Add TypeScript declaration for our global window properties
 declare global {
@@ -49,46 +57,46 @@ interface SearchResponse {
 async function searchUtilities(query: string): Promise<SearchResponse> {
   try {
     const response = await fetch(
-      "https://search.apps.hexmos.com/indexes/freedevtools/search",
+      'https://search.apps.hexmos.com/indexes/freedevtools/search',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization:
-            "Bearer 509923210c1fbc863d8cd8d01ffc062bac61aa503944c5d65b155e6cafdaddb5",
+            'Bearer 509923210c1fbc863d8cd8d01ffc062bac61aa503944c5d65b155e6cafdaddb5',
         },
         body: JSON.stringify({ q: query }),
       }
     );
 
     if (!response.ok) {
-      throw new Error("Search failed: " + response.statusText);
+      throw new Error('Search failed: ' + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Search error:", error);
+    console.error('Search error:', error);
     return {
       hits: [],
-      query: "",
+      query: '',
       processingTimeMs: 0,
       limit: 0,
       offset: 0,
-      estimatedTotalHits: 0
+      estimatedTotalHits: 0,
     };
   }
 }
 
 const SearchPage: React.FC = () => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchInfo, setSearchInfo] = useState<{
     totalHits: number;
     processingTime: number;
   } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   // Add this function to update the URL hash
   const updateUrlHash = (searchQuery: string) => {
@@ -98,7 +106,11 @@ const SearchPage: React.FC = () => {
     } else {
       // Clear hash if search is empty
       if (window.location.hash.startsWith('#search')) {
-        history.pushState("", document.title, window.location.pathname + window.location.search);
+        history.pushState(
+          '',
+          document.title,
+          window.location.pathname + window.location.search
+        );
       }
     }
   };
@@ -109,7 +121,9 @@ const SearchPage: React.FC = () => {
     const checkHashForSearch = () => {
       if (window.location.hash.startsWith('#search?q=')) {
         try {
-          const hashParams = new URLSearchParams(window.location.hash.substring(8)); // Remove '#search?'
+          const hashParams = new URLSearchParams(
+            window.location.hash.substring(8)
+          ); // Remove '#search?'
           const searchParam = hashParams.get('q');
           if (searchParam) {
             // Update both local state and global search state
@@ -125,7 +139,7 @@ const SearchPage: React.FC = () => {
     };
 
     checkHashForSearch();
-    
+
     // Also listen for hash changes
     window.addEventListener('hashchange', checkHashForSearch);
     return () => {
@@ -138,14 +152,17 @@ const SearchPage: React.FC = () => {
     const handleSearchQueryChange = (event: CustomEvent) => {
       const newQuery = event.detail.query;
       setQuery(newQuery);
-      
+
       // Update URL hash when query changes
       updateUrlHash(newQuery);
     };
 
     // Add event listener
-    window.addEventListener('searchQueryChanged', handleSearchQueryChange as EventListener);
-    
+    window.addEventListener(
+      'searchQueryChanged',
+      handleSearchQueryChange as EventListener
+    );
+
     // Initial load from global state if it exists
     if (window.searchState && window.searchState.getQuery()) {
       const initialQuery = window.searchState.getQuery();
@@ -154,7 +171,10 @@ const SearchPage: React.FC = () => {
     }
 
     return () => {
-      window.removeEventListener('searchQueryChanged', handleSearchQueryChange as EventListener);
+      window.removeEventListener(
+        'searchQueryChanged',
+        handleSearchQueryChange as EventListener
+      );
     };
   }, []);
 
@@ -170,14 +190,14 @@ const SearchPage: React.FC = () => {
       setLoading(true);
       try {
         const searchResponse = await searchUtilities(query);
-        console.log("Search results:", searchResponse);
+        console.log('Search results:', searchResponse);
         setResults(searchResponse.hits || []);
         setSearchInfo({
           totalHits: searchResponse.estimatedTotalHits || 0,
-          processingTime: searchResponse.processingTimeMs || 0
+          processingTime: searchResponse.processingTimeMs || 0,
         });
       } catch (error) {
-        console.error("Search error:", error);
+        console.error('Search error:', error);
         setResults([]);
         setSearchInfo(null);
       } finally {
@@ -192,23 +212,26 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     updateUrlHash(query);
   }, [query]);
-  
+
   // Filter results by category
-  const filteredResults = activeCategory === "all" 
-    ? results 
-    : results.filter(result => {
-        if (activeCategory === "emoji") {
-          return result.category?.toLowerCase() === "emojis";
-        }
-        return result.category?.toLowerCase() === activeCategory.toLowerCase();
-      });
+  const filteredResults =
+    activeCategory === 'all'
+      ? results
+      : results.filter((result) => {
+          if (activeCategory === 'emoji') {
+            return result.category?.toLowerCase() === 'emojis';
+          }
+          return (
+            result.category?.toLowerCase() === activeCategory.toLowerCase()
+          );
+        });
 
   const handleSelect = (result: SearchResult) => {
     if (result.path) {
       // Navigate directly to the path since it already includes the full path
       window.location.href = `https://hexmos.com${result.path}`;
     } else {
-      console.warn("No path found for result:", result);
+      console.warn('No path found for result:', result);
     }
   };
 
@@ -216,18 +239,22 @@ const SearchPage: React.FC = () => {
   const clearResults = () => {
     // Clear the query in this component
     setQuery('');
-    
+
     // Update the global search state to empty string
     if (window.searchState) {
       window.searchState.setQuery('');
     }
-    
+
     // Clear URL hash
     if (window.location.hash.startsWith('#search')) {
-      history.pushState("", document.title, window.location.pathname + window.location.search);
+      history.pushState(
+        '',
+        document.title,
+        window.location.pathname + window.location.search
+      );
     }
   };
-  
+
   // If no search query, don't show the search UI
   if (!query.trim()) {
     return null;
@@ -239,75 +266,73 @@ const SearchPage: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4 mt-8 md:mt-0">
           <h2 className="text-xl font-medium">
-            {searchInfo ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"` : `Search Results for "${query}"`}
+            {searchInfo
+              ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"`
+              : `Search Results for "${query}"`}
           </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearResults}
-          >
+          <Button variant="ghost" size="sm" onClick={clearResults}>
             <X className="h-4 w-4 mr-1" />
             Clear results
           </Button>
         </div>
         <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
           <Button
-            variant={activeCategory === "all" ? "default" : "outline"}
+            variant={activeCategory === 'all' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setActiveCategory("all")}
+            onClick={() => setActiveCategory('all')}
             className="whitespace-nowrap text-xs lg:text-sm"
           >
             All
           </Button>
           <Button
-            variant={activeCategory === "tools" ? "default" : "outline"}
+            variant={activeCategory === 'tools' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setActiveCategory("tools")}
+            onClick={() => setActiveCategory('tools')}
             className="whitespace-nowrap text-xs lg:text-sm"
           >
             <Wrench className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Tools
           </Button>
           <Button
-            variant={activeCategory === "tldr" ? "default" : "outline"}
+            variant={activeCategory === 'tldr' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setActiveCategory("tldr")}
+            onClick={() => setActiveCategory('tldr')}
             className="whitespace-nowrap text-xs lg:text-sm"
           >
             <BookOpen className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             TLDR
           </Button>
           <Button
-            variant={activeCategory === "cheatsheets" ? "default" : "outline"}
+            variant={activeCategory === 'cheatsheets' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setActiveCategory("cheatsheets")}
+            onClick={() => setActiveCategory('cheatsheets')}
             className="whitespace-nowrap text-xs lg:text-sm"
           >
             <FileText className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             Cheatsheets
           </Button>
           <Button
-            variant={activeCategory === "png_icons" ? "default" : "outline"}
+            variant={activeCategory === 'png_icons' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setActiveCategory("png_icons")}
+            onClick={() => setActiveCategory('png_icons')}
             className="whitespace-nowrap text-xs lg:text-sm"
           >
             <Image className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             PNG Icons
           </Button>
           <Button
-            variant={activeCategory === "svg_icons" ? "default" : "outline"}
+            variant={activeCategory === 'svg_icons' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setActiveCategory("svg_icons")}
+            onClick={() => setActiveCategory('svg_icons')}
             className="whitespace-nowrap text-xs lg:text-sm"
           >
             <PenLine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
             SVG Icons
           </Button>
           <Button
-            variant={activeCategory === "emoji" ? "default" : "outline"}
+            variant={activeCategory === 'emoji' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setActiveCategory("emoji")}
+            onClick={() => setActiveCategory('emoji')}
             className="whitespace-nowrap text-xs lg:text-sm"
           >
             <Smile className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
@@ -338,7 +363,7 @@ const SearchPage: React.FC = () => {
           </p>
           <Button
             variant="link"
-            onClick={() => setActiveCategory("all")}
+            onClick={() => setActiveCategory('all')}
             className="mt-2"
           >
             View all results
@@ -370,18 +395,18 @@ const SearchPage: React.FC = () => {
             };
 
             return (
-              <a 
+              <a
                 key={result.id || index}
                 href={result.path ? `https://hexmos.com${result.path}` : '#'}
                 className="block no-underline"
               >
-                {result.category?.toLowerCase() === "emojis" ? (
-                  <Card 
-                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col"
-                  >
+                {result.category?.toLowerCase() === 'emojis' ? (
+                  <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col">
                     <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
                       {result.category && (
-                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
+                        <div
+                          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
+                        >
                           {result.category}
                         </div>
                       )}
@@ -389,24 +414,27 @@ const SearchPage: React.FC = () => {
                         {result.code}
                       </div>
                       <span className="font-medium text-center text-xs">
-                        {result.name || result.title || "Untitled"}
+                        {result.name || result.title || 'Untitled'}
                       </span>
                     </div>
                   </Card>
-                ) : result.category?.toLowerCase() === "svg_icons" || result.category?.toLowerCase() === "png_icons" ? (
-                  <Card
-                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col"
-                  >
+                ) : result.category?.toLowerCase() === 'svg_icons' ||
+                  result.category?.toLowerCase() === 'png_icons' ? (
+                  <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
                     <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
                       {result.category && (
-                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
-                          {result.category === "svg_icons" ? "SVG Icons" : "PNG Icons"}
+                        <div
+                          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
+                        >
+                          {result.category === 'svg_icons'
+                            ? 'SVG Icons'
+                            : 'PNG Icons'}
                         </div>
                       )}
                       <div className="w-16 h-16 mb-3 flex items-center justify-center bg-white dark:bg-gray-100 rounded-md p-2">
-                        <img 
-                          src={`https://hexmos.com/freedevtools${result.image}`} 
-                          alt={result.name || result.title || "Icon"} 
+                        <img
+                          src={`https://hexmos.com/freedevtools${result.image}`}
+                          alt={result.name || result.title || 'Icon'}
                           className="w-full h-full object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
@@ -414,23 +442,23 @@ const SearchPage: React.FC = () => {
                         />
                       </div>
                       <span className="text-center text-xs text-gray-700 dark:text-gray-300">
-                        {result.name || result.title || "Untitled"}
+                        {result.name || result.title || 'Untitled'}
                       </span>
                     </div>
                   </Card>
-                ) : (                
-                  <Card
-                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col"
-                  >
+                ) : (
+                  <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
                     <div className="p-4 flex flex-col h-full relative">
                       {result.category && (
-                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
+                        <div
+                          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
+                        >
                           {result.category}
                         </div>
                       )}
                       <div className="pr-16 mb-2">
                         <span className="font-bold text-md">
-                          {result.name || result.title || "Untitled"}
+                          {result.name || result.title || 'Untitled'}
                         </span>
                       </div>
                       {result.description && (

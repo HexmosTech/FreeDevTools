@@ -1,29 +1,29 @@
 ---
-title: "Create Git Trees - Build Tree Objects | Online Free DevTools by Hexmos"
+title: 'Create Git Trees - Build Tree Objects | Online Free DevTools by Hexmos'
 name: git-mktree
-path: "/freedevtools/tldr/git/git-mktree/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-mktree/"
-description: "Create Git trees with git mktree. Generate tree objects from ls-tree formatted output and manage repository structures. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-mktree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-mktree/'
+description: 'Create Git trees with git mktree. Generate tree objects from ls-tree formatted output and manage repository structures. Free online tool, no registration required.'
 category: common
 keywords:
-- git tree
-- git mktree
-- git object
-- create git tree
-- ls-tree output
-- git repository
-- git command
-- version control
-- git data structure
-- git index
+  - git tree
+  - git mktree
+  - git object
+  - create git tree
+  - ls-tree output
+  - git repository
+  - git command
+  - version control
+  - git data structure
+  - git index
 features:
-- Build a Git tree object from ls-tree formatted text
-- Allow missing objects during tree creation
-- Process NUL-terminated ls-tree output
-- Enable batch creation of multiple tree objects
-- Sort and build trees from standard input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build a Git tree object from ls-tree formatted text
+  - Allow missing objects during tree creation
+  - Process NUL-terminated ls-tree output
+  - Enable batch creation of multiple tree objects
+  - Sort and build trees from standard input
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git mktree

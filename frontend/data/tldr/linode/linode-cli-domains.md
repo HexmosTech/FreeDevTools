@@ -1,29 +1,29 @@
 ---
-title: "Linode Domains - Manage DNS | Online Free DevTools by Hexmos"
+title: 'Linode Domains - Manage DNS | Online Free DevTools by Hexmos'
 name: linode-cli-domains
-path: "/freedevtools/tldr/linode/linode-cli-domains/"
-canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-domains/"
-description: "Manage Linode domains and DNS configurations with Linode CLI. Easily create, update, and delete domain records. Free online tool, no registration required."
+path: '/freedevtools/tldr/linode/linode-cli-domains/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linode/linode-cli-domains/'
+description: 'Manage Linode domains and DNS configurations with Linode CLI. Easily create, update, and delete domain records. Free online tool, no registration required.'
 category: common
 keywords:
-- Linode domains management
-- Linode DNS configuration
-- linode-cli domains commands
-- DNS record management
-- domain management command line
-- cloud DNS control
-- Linux domain configuration
-- command line DNS management
-- Linode DNS records
-- DNS automation
+  - Linode domains management
+  - Linode DNS configuration
+  - linode-cli domains commands
+  - DNS record management
+  - domain management command line
+  - cloud DNS control
+  - Linux domain configuration
+  - command line DNS management
+  - Linode DNS records
+  - DNS automation
 features:
-- List all Linode domains.
-- Create new Linode domains.
-- View details of specific domains.
-- Manage DNS records for Linode domains.
-- Delete unwanted DNS records.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all Linode domains.
+  - Create new Linode domains.
+  - View details of specific domains.
+  - Manage DNS records for Linode domains.
+  - Delete unwanted DNS records.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # linode-cli domains

@@ -1,29 +1,29 @@
 ---
-title: "MuPDF Viewer - Open and View PDF Files | Online Free DevTools by Hexmos"
+title: 'MuPDF Viewer - Open and View PDF Files | Online Free DevTools by Hexmos'
 name: mupdf
-path: "/freedevtools/tldr/common/mupdf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mupdf/"
-description: "View PDF files easily with MuPDF Viewer. Open, zoom, and customize PDF display with command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mupdf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mupdf/'
+description: 'View PDF files easily with MuPDF Viewer. Open, zoom, and customize PDF display with command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF viewer
-- PDF reader
-- XPS viewer
-- E-book viewer
-- Command-line PDF viewer
-- MuPDF command
-- Open PDF Linux
-- View PDF macOS
-- Password protected PDF
-- Lightweight PDF viewer
+  - PDF viewer
+  - PDF reader
+  - XPS viewer
+  - E-book viewer
+  - Command-line PDF viewer
+  - MuPDF command
+  - Open PDF Linux
+  - View PDF macOS
+  - Password protected PDF
+  - Lightweight PDF viewer
 features:
-- Open PDF documents on a specified page
-- Open password-protected PDF files
-- Customize zoom level by specifying DPI
-- Invert colors for improved readability
-- Tint PDF display with custom colors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open PDF documents on a specified page
+  - Open password-protected PDF files
+  - Customize zoom level by specifying DPI
+  - Invert colors for improved readability
+  - Tint PDF display with custom colors
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mupdf

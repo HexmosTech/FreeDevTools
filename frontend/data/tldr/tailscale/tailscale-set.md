@@ -1,29 +1,29 @@
 ---
-title: "Tailscale Set - Control Network Preferences | Online Free DevTools by Hexmos"
+title: 'Tailscale Set - Control Network Preferences | Online Free DevTools by Hexmos'
 name: tailscale-set
-path: "/freedevtools/tldr/tailscale/tailscale-set/"
-canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-set/"
-description: "Control network configurations with Tailscale Set. Manage Tailscale preferences and adjust network settings directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/tailscale/tailscale-set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tailscale/tailscale-set/'
+description: 'Control network configurations with Tailscale Set. Manage Tailscale preferences and adjust network settings directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Tailscale network configuration
-- Tailscale preference settings
-- VPN configuration settings
-- Network settings management
-- Tailscale CLI control
-- Linux network settings
-- MacOS network settings
-- Windows network settings
-- Command line VPN
-- Secure network configuration
+  - Tailscale network configuration
+  - Tailscale preference settings
+  - VPN configuration settings
+  - Network settings management
+  - Tailscale CLI control
+  - Linux network settings
+  - MacOS network settings
+  - Windows network settings
+  - Command line VPN
+  - Secure network configuration
 features:
-- Modify Tailscale network preferences
-- Adjust network settings via command line
-- Configure Tailscale up options
-- Control VPN parameters
-- Set network configuration programmatically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Modify Tailscale network preferences
+  - Adjust network settings via command line
+  - Configure Tailscale up options
+  - Control VPN parameters
+  - Set network configuration programmatically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tailscale set

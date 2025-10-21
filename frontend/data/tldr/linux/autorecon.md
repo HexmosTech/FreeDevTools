@@ -1,9 +1,9 @@
 ---
-title: "Autorecon - Automate Network Reconnaissance | Online Free DevTools by Hexmos"
+title: 'Autorecon - Automate Network Reconnaissance | Online Free DevTools by Hexmos'
 name: autorecon
-path: "/freedevtools/tldr/linux/autorecon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/autorecon/"
-description: "Automate network reconnaissance with Autorecon. Perform comprehensive network scans and service enumeration quickly and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/autorecon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/autorecon/'
+description: 'Automate network reconnaissance with Autorecon. Perform comprehensive network scans and service enumeration quickly and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - network reconnaissance automation
@@ -22,8 +22,8 @@ features:
   - Outputs detailed scan results to a directory
   - Supports TCP and UDP port scanning
   - Allows specifying custom port ranges
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # autorecon

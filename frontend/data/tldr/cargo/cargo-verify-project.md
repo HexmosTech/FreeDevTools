@@ -1,29 +1,29 @@
 ---
-title: "Verify Cargo Project - Validate Cargo.toml Manifest | Online Free DevTools by Hexmos"
+title: 'Verify Cargo Project - Validate Cargo.toml Manifest | Online Free DevTools by Hexmos'
 name: cargo-verify-project
-path: "/freedevtools/tldr/cargo/cargo-verify-project/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-verify-project/"
-description: "Verify Cargo projects accurately with Cargo Verify Project. Validate `Cargo.toml` manifests and ensure project integrity quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-verify-project/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-verify-project/'
+description: 'Verify Cargo projects accurately with Cargo Verify Project. Validate `Cargo.toml` manifests and ensure project integrity quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- cargo project verification
-- cargo manifest validation
-- toml manifest checker
-- rust project integrity
-- cargo.toml validator
-- cargo build check
-- rust manifest analyzer
-- cargo dependency validation
-- rust project structure
-- cargo project correctness
+  - cargo project verification
+  - cargo manifest validation
+  - toml manifest checker
+  - rust project integrity
+  - cargo.toml validator
+  - cargo build check
+  - rust manifest analyzer
+  - cargo dependency validation
+  - rust project structure
+  - cargo project correctness
 features:
-- Checks the correctness of the Cargo.toml manifest
-- Validates the project's dependencies
-- Identifies errors in the manifest file
-- Provides a JSON output of the verification results
-- Supports specifying a custom manifest path
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checks the correctness of the Cargo.toml manifest
+  - Validates the project's dependencies
+  - Identifies errors in the manifest file
+  - Provides a JSON output of the verification results
+  - Supports specifying a custom manifest path
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo verify-project

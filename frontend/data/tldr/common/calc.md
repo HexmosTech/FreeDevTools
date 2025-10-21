@@ -1,29 +1,29 @@
 ---
-title: "Calculator - Perform Arbitrary Precision Calculations | Online Free DevTools by Hexmos"
+title: 'Calculator - Perform Arbitrary Precision Calculations | Online Free DevTools by Hexmos'
 name: calc
-path: "/freedevtools/tldr/common/calc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/calc/"
-description: "Perform arbitrary precision calculations with calc. Use calc for interactive terminal calculations and scripting. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/calc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/calc/'
+description: 'Perform arbitrary precision calculations with calc. Use calc for interactive terminal calculations and scripting. Free online tool, no registration required.'
 category: common
 keywords:
-- arbitrary precision calculator
-- terminal calculator linux
-- command line calculator
-- interactive calculator
-- calc math calculations
-- calc scripting
-- calc formatting output
-- calc permission mode
-- calc manual
-- calc help documentation
+  - arbitrary precision calculator
+  - terminal calculator linux
+  - command line calculator
+  - interactive calculator
+  - calc math calculations
+  - calc scripting
+  - calc formatting output
+  - calc permission mode
+  - calc manual
+  - calc help documentation
 features:
-- Calculate expressions with arbitrary precision.
-- Execute calculations in interactive or non-interactive mode.
-- Suppress output formatting for scripting purposes.
-- Switch to interactive mode after performing a calculation.
-- Set a specific permission mode for calculator operations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate expressions with arbitrary precision.
+  - Execute calculations in interactive or non-interactive mode.
+  - Suppress output formatting for scripting purposes.
+  - Switch to interactive mode after performing a calculation.
+  - Set a specific permission mode for calculator operations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # calc

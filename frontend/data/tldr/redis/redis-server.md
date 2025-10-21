@@ -1,29 +1,29 @@
 ---
-title: "Control Redis Server - Persistent Key-Value Database | Online Free DevTools by Hexmos"
+title: 'Control Redis Server - Persistent Key-Value Database | Online Free DevTools by Hexmos'
 name: redis-server
-path: "/freedevtools/tldr/redis/redis-server/"
-canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-server/"
-description: "Control Redis server settings and instances with this free online tool. Manage your key-value database and logging options. Free online tool, no registration required."
+path: '/freedevtools/tldr/redis/redis-server/'
+canonical: 'https://hexmos.com/freedevtools/tldr/redis/redis-server/'
+description: 'Control Redis server settings and instances with this free online tool. Manage your key-value database and logging options. Free online tool, no registration required.'
 category: common
 keywords:
-- redis server control
-- persistent key-value database
-- redis configuration management
-- redis command line interface
-- redis logging control
-- linux redis server
-- macos redis server
-- redis background process
-- redis port management
-- redis configuration file
+  - redis server control
+  - persistent key-value database
+  - redis configuration management
+  - redis command line interface
+  - redis logging control
+  - linux redis server
+  - macos redis server
+  - redis background process
+  - redis port management
+  - redis configuration file
 features:
-- Start Redis server with default or custom port
-- Run Redis server as a background process
-- Configure Redis server using a configuration file
-- Control Redis server logging levels
-- Manage persistent key-value storage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start Redis server with default or custom port
+  - Run Redis server as a background process
+  - Configure Redis server using a configuration file
+  - Control Redis server logging levels
+  - Manage persistent key-value storage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # redis-server

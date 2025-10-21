@@ -1,9 +1,9 @@
 ---
-title: "Yum Package Manager - Manage Software Packages | Online Free DevTools by Hexmos"
+title: 'Yum Package Manager - Manage Software Packages | Online Free DevTools by Hexmos'
 name: yum
-path: "/freedevtools/tldr/linux/yum/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/yum/"
-description: "Manage software packages efficiently with Yum Package Manager. Install, update, remove, and query packages on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/yum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/yum/'
+description: 'Manage software packages efficiently with Yum Package Manager. Install, update, remove, and query packages on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package manager
@@ -22,8 +22,8 @@ features:
   - Remove unwanted software packages
   - Search for available packages
   - Resolve package dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yum

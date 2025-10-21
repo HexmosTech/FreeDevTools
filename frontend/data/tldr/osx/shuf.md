@@ -1,9 +1,9 @@
 ---
-title: "Generate Random Permutations with Shuf | Online Free DevTools by Hexmos"
+title: 'Generate Random Permutations with Shuf | Online Free DevTools by Hexmos'
 name: shuf
-path: "/freedevtools/tldr/osx/shuf/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/shuf/"
-description: "Generate random permutations with Shuf. Easily shuffle lines in a file or generate random numbers. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/shuf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/shuf/'
+description: 'Generate random permutations with Shuf. Easily shuffle lines in a file or generate random numbers. Free online tool, no registration required.'
 category: osx
 keywords:
   - random permutation generator
@@ -22,8 +22,8 @@ features:
   - Write shuffled output to a new file
   - Generate a sequence of random numbers
   - Specify an input range for number generation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shuf

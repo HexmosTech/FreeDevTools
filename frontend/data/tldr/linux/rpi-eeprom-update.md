@@ -1,9 +1,9 @@
 ---
-title: "Update Raspberry Pi EEPROM - Manage Firmware | Online Free DevTools by Hexmos"
+title: 'Update Raspberry Pi EEPROM - Manage Firmware | Online Free DevTools by Hexmos'
 name: rpi-eeprom-update
-path: "/freedevtools/tldr/linux/rpi-eeprom-update/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpi-eeprom-update/"
-description: "Manage Raspberry Pi EEPROM firmware updates with rpi-eeprom-update.  View EEPROM information, update firmware, cancel updates, and troubleshoot issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpi-eeprom-update/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpi-eeprom-update/'
+description: 'Manage Raspberry Pi EEPROM firmware updates with rpi-eeprom-update.  View EEPROM information, update firmware, cancel updates, and troubleshoot issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - raspberry pi eeprom update
@@ -22,8 +22,8 @@ features:
   - Cancel a pending EEPROM update.
   - Display detailed help information for command usage.
   - Manage and troubleshoot Raspberry Pi EEPROM issues.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpi-eeprom-update

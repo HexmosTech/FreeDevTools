@@ -1,29 +1,29 @@
 ---
-title: "Create Quarto Projects - Render Docs with Quarto | Online Free DevTools by Hexmos"
+title: 'Create Quarto Projects - Render Docs with Quarto | Online Free DevTools by Hexmos'
 name: quarto
-path: "/freedevtools/tldr/common/quarto/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/quarto/"
-description: "Create documents and websites with Quarto, an open-source publishing system. Render QMD, RMD, and IPYNB files to multiple formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/quarto/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/quarto/'
+description: 'Create documents and websites with Quarto, an open-source publishing system. Render QMD, RMD, and IPYNB files to multiple formats. Free online tool, no registration required.'
 category: common
 keywords:
-- quarto document generation
-- quarto website creation
-- quarto markdown rendering
-- quarto publishing system
-- quarto rmd conversion
-- quarto qmd rendering
-- quarto ipynb conversion
-- quarto github pages
-- quarto netlify deployment
-- quarto scientific publishing
+  - quarto document generation
+  - quarto website creation
+  - quarto markdown rendering
+  - quarto publishing system
+  - quarto rmd conversion
+  - quarto qmd rendering
+  - quarto ipynb conversion
+  - quarto github pages
+  - quarto netlify deployment
+  - quarto scientific publishing
 features:
-- Create new Quarto projects of various types
-- Render documents to HTML, PDF, or DOCX formats
-- Preview documents and websites locally
-- Publish to Quarto Pub, Github Pages, RStudio Connect, or Netlify
-- Convert R Markdown and Jupyter Notebooks to various formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Quarto projects of various types
+  - Render documents to HTML, PDF, or DOCX formats
+  - Preview documents and websites locally
+  - Publish to Quarto Pub, Github Pages, RStudio Connect, or Netlify
+  - Convert R Markdown and Jupyter Notebooks to various formats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # quarto

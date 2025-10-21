@@ -1,29 +1,29 @@
 ---
-title: "Hostname - Show or Set Host Name | Online Free DevTools by Hexmos"
+title: 'Hostname - Show or Set Host Name | Online Free DevTools by Hexmos'
 name: hostname
-path: "/freedevtools/tldr/common/hostname/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hostname/"
-description: "Show or set the hostname with the hostname command. Control system identification and manage network settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hostname/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hostname/'
+description: 'Show or set the hostname with the hostname command. Control system identification and manage network settings. Free online tool, no registration required.'
 category: common
 keywords:
-- hostname command
-- set hostname
-- show hostname
-- linux hostname
-- macos hostname
-- network hostname
-- system hostname
-- fqdn hostname
-- hostname ip address
-- common commands
+  - hostname command
+  - set hostname
+  - show hostname
+  - linux hostname
+  - macos hostname
+  - network hostname
+  - system hostname
+  - fqdn hostname
+  - hostname ip address
+  - common commands
 features:
-- Display the current hostname of the system.
-- Set a new hostname for the system.
-- Show the network address associated with the hostname.
-- Display the Fully Qualified Domain Name (FQDN).
-- Manage system identification via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the current hostname of the system.
+  - Set a new hostname for the system.
+  - Show the network address associated with the hostname.
+  - Display the Fully Qualified Domain Name (FQDN).
+  - Manage system identification via command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hostname

@@ -1,29 +1,29 @@
 ---
-title: "APK Leaks - Expose Secrets in APK Files | Online Free DevTools by Hexmos"
+title: 'APK Leaks - Expose Secrets in APK Files | Online Free DevTools by Hexmos'
 name: apkleaks
-path: "/freedevtools/tldr/common/apkleaks/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/apkleaks/"
-description: "Expose secrets with APKLeaks, a powerful tool to uncover URIs, endpoints, and sensitive data within APK files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/apkleaks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/apkleaks/'
+description: 'Expose secrets with APKLeaks, a powerful tool to uncover URIs, endpoints, and sensitive data within APK files. Free online tool, no registration required.'
 category: common
 keywords:
-- apk secrets scanner
-- android vulnerability scanner
-- apk endpoint extractor
-- apk uri extractor
-- apk file analyzer
-- reverse engineering apk
-- android security scan
-- linux apk analysis
-- jadx decompiler apk
-- apk password finder
+  - apk secrets scanner
+  - android vulnerability scanner
+  - apk endpoint extractor
+  - apk uri extractor
+  - apk file analyzer
+  - reverse engineering apk
+  - android security scan
+  - linux apk analysis
+  - jadx decompiler apk
+  - apk password finder
 features:
-- Scan APK files for sensitive data exposure
-- Identify URIs and endpoints within APKs
-- Extract secrets from decompiled APK code
-- Integrate with jadx disassembler for in-depth analysis
-- Save scan results to a specified output file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan APK files for sensitive data exposure
+  - Identify URIs and endpoints within APKs
+  - Extract secrets from decompiled APK code
+  - Integrate with jadx disassembler for in-depth analysis
+  - Save scan results to a specified output file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apkleaks

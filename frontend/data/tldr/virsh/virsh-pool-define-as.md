@@ -1,29 +1,29 @@
 ---
-title: "Create Virsh Pool - Define Storage Pools | Online Free DevTools by Hexmos"
+title: 'Create Virsh Pool - Define Storage Pools | Online Free DevTools by Hexmos'
 name: virsh-pool-define-as
-path: "/freedevtools/tldr/virsh/virsh-pool-define-as/"
-canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-define-as/"
-description: "Create virsh pool configurations with Virsh Pool Define. Define storage pool settings for virtual machines on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/virsh/virsh-pool-define-as/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-define-as/'
+description: 'Create virsh pool configurations with Virsh Pool Define. Define storage pool settings for virtual machines on Linux systems. Free online tool, no registration required.'
 category: common
 keywords:
-- virsh pool definition
-- virsh storage pool configuration
-- libvirt storage pool
-- virtual machine storage
-- virsh pool create
-- linux virsh commands
-- kvm storage management
-- qemu storage pools
-- virsh pool xml
-- persistent storage pool
+  - virsh pool definition
+  - virsh storage pool configuration
+  - libvirt storage pool
+  - virtual machine storage
+  - virsh pool create
+  - linux virsh commands
+  - kvm storage management
+  - qemu storage pools
+  - virsh pool xml
+  - persistent storage pool
 features:
-- Define storage pool configurations from command line
-- Specify storage pool type (directory, disk, etc.)
-- Set target path for the storage pool
-- Create XML configuration file for the storage pool
-- Enable persistent storage allocation for VMs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define storage pool configurations from command line
+  - Specify storage pool type (directory, disk, etc.)
+  - Set target path for the storage pool
+  - Create XML configuration file for the storage pool
+  - Enable persistent storage allocation for VMs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virsh pool-define-as

@@ -1,8 +1,8 @@
 ---
-title: "Query Package Info - Control Mageia Packages | Online Free DevTools by Hexmos"
+title: 'Query Package Info - Control Mageia Packages | Online Free DevTools by Hexmos'
 name: urpmq
-path: "/freedevtools/tldr/linux/urpmq/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmq/"
+path: '/freedevtools/tldr/linux/urpmq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/urpmq/'
 description: "Query package information with urpmq. Find dependencies, list media sources, and search for packages using Mageia's package manager. Free online tool, no registration required."
 category: linux
 keywords:
@@ -22,8 +22,8 @@ features:
   - List required packages for an RPM file with sources
   - List all configured media with their URLs
   - Search for packages by keyword and display group/version/release
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # urpmq

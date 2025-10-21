@@ -1,29 +1,29 @@
 ---
-title: "Extract HTML Content - Control with htmlq | Online Free DevTools by Hexmos"
+title: 'Extract HTML Content - Control with htmlq | Online Free DevTools by Hexmos'
 name: htmlq
-path: "/freedevtools/tldr/common/htmlq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/htmlq/"
-description: "Extract HTML content with htmlq, a CSS selector tool. Query HTML files efficiently from the command line with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/htmlq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/htmlq/'
+description: 'Extract HTML content with htmlq, a CSS selector tool. Query HTML files efficiently from the command line with this free online tool, no registration required.'
 category: common
 keywords:
-- HTML content extraction
-- CSS selector query
-- HTML parsing command line
-- HTML data retrieval
-- HTML scraping tool
-- Command line HTML parser
-- HTML query utility
-- HTML filtering tool
-- HTML node removal
-- HTML pretty print
+  - HTML content extraction
+  - CSS selector query
+  - HTML parsing command line
+  - HTML data retrieval
+  - HTML scraping tool
+  - Command line HTML parser
+  - HTML query utility
+  - HTML filtering tool
+  - HTML node removal
+  - HTML pretty print
 features:
-- Extract content using CSS selectors
-- Get text content from specific elements
-- Find links based on attribute values
-- Remove unwanted nodes from HTML
-- Pretty print HTML output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract content using CSS selectors
+  - Get text content from specific elements
+  - Find links based on attribute values
+  - Remove unwanted nodes from HTML
+  - Pretty print HTML output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # htmlq

@@ -1,29 +1,29 @@
 ---
-title: "Crictl - Control Container Runtimes | Online Free DevTools by Hexmos"
+title: 'Crictl - Control Container Runtimes | Online Free DevTools by Hexmos'
 name: crictl
-path: "/freedevtools/tldr/common/crictl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/crictl/"
-description: "Control container runtimes with Crictl. Inspect pods, manage images and execute commands inside containers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/crictl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/crictl/'
+description: 'Control container runtimes with Crictl. Inspect pods, manage images and execute commands inside containers. Free online tool, no registration required.'
 category: common
 keywords:
-- container runtime interface
-- crictl command line tool
-- kubernetes container management
-- docker container runtime
-- pod management crictl
-- container image inspection
-- cri tools linux
-- kubernetes node debugging
-- crictl container logs
-- container runtime commands
+  - container runtime interface
+  - crictl command line tool
+  - kubernetes container management
+  - docker container runtime
+  - pod management crictl
+  - container image inspection
+  - cri tools linux
+  - kubernetes node debugging
+  - crictl container logs
+  - container runtime commands
 features:
-- List Kubernetes pods and their status.
-- Inspect details of running containers.
-- Execute commands within a container.
-- Pull container images from a registry.
-- Manage and remove container images.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List Kubernetes pods and their status.
+  - Inspect details of running containers.
+  - Execute commands within a container.
+  - Pull container images from a registry.
+  - Manage and remove container images.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crictl

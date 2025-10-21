@@ -1,29 +1,29 @@
 ---
-title: "Nix Search - Find Nix Packages | Online Free DevTools by Hexmos"
+title: 'Nix Search - Find Nix Packages | Online Free DevTools by Hexmos'
 name: nix-search
-path: "/freedevtools/tldr/nix/nix-search/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-search/"
-description: "Find Nix packages effortlessly with Nix Search. Explore package details, search nixpkgs and GitHub repositories, all through command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-search/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-search/'
+description: 'Find Nix packages effortlessly with Nix Search. Explore package details, search nixpkgs and GitHub repositories, all through command line. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package search
-- nix flake search
-- nixpkgs package finder
-- github nix packages
-- nix command line tool
-- nix package manager
-- linux package search
-- macos package search
-- cross platform package management
-- nix package description
+  - nix package search
+  - nix flake search
+  - nixpkgs package finder
+  - github nix packages
+  - nix command line tool
+  - nix package manager
+  - linux package search
+  - macos package search
+  - cross platform package management
+  - nix package description
 features:
-- Search for packages in nixpkgs
-- Display package descriptions from nixpkgs
-- Find packages within GitHub flakes
-- Search packages based on name and description
-- Locate available packages from a flake
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for packages in nixpkgs
+  - Display package descriptions from nixpkgs
+  - Find packages within GitHub flakes
+  - Search packages based on name and description
+  - Locate available packages from a flake
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix search

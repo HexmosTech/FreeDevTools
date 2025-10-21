@@ -1,29 +1,29 @@
 ---
-title: "Version Control - Manage Project Versions | Online Free DevTools by Hexmos"
+title: 'Version Control - Manage Project Versions | Online Free DevTools by Hexmos'
 name: uv-version
-path: "/freedevtools/tldr/uv/uv-version/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-version/"
-description: "Manage project versions with Version Control, a command line utility. Bump versions, set specific versions, and preview changes with uv. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-version/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-version/'
+description: 'Manage project versions with Version Control, a command line utility. Bump versions, set specific versions, and preview changes with uv. Free online tool, no registration required.'
 category: common
 keywords:
-- project versioning
-- semantic versioning
-- pyproject.toml update
-- uv version control
-- package version manager
-- command line version tool
-- version bumping
-- python version management
-- version preview
-- workspace version update
+  - project versioning
+  - semantic versioning
+  - pyproject.toml update
+  - uv version control
+  - package version manager
+  - command line version tool
+  - version bumping
+  - python version management
+  - version preview
+  - workspace version update
 features:
-- Display current project version
-- Set project version to a specific value
-- Bump project version using semantic versioning
-- Preview version changes without writing to pyproject.toml
-- Update version for a specific package in a workspace
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current project version
+  - Set project version to a specific value
+  - Bump project version using semantic versioning
+  - Preview version changes without writing to pyproject.toml
+  - Update version for a specific package in a workspace
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv version

@@ -1,9 +1,9 @@
 ---
-title: "blkdiscard - Securely Discard Device Blocks | Online Free DevTools by Hexmos"
+title: 'blkdiscard - Securely Discard Device Blocks | Online Free DevTools by Hexmos'
 name: blkdiscard
-path: "/freedevtools/tldr/linux/blkdiscard/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/blkdiscard/"
-description: "Securely discard device blocks with blkdiscard.  Manage storage space and enhance SSD performance by removing data. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/blkdiscard/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/blkdiscard/'
+description: 'Securely discard device blocks with blkdiscard.  Manage storage space and enhance SSD performance by removing data. Free online tool, no registration required.'
 category: linux
 keywords:
   - blkdiscard command
@@ -22,8 +22,8 @@ features:
   - Allows discarding a specified length of data.
   - Improves SSD performance by reclaiming space.
   - Enhances data security by removing sensitive information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blkdiscard

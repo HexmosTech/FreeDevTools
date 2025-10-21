@@ -1,29 +1,29 @@
 ---
-title: "PowerShell Control - Manage System with PWSH | Online Free DevTools by Hexmos"
+title: 'PowerShell Control - Manage System with PWSH | Online Free DevTools by Hexmos'
 name: pwsh
-path: "/freedevtools/tldr/common/pwsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pwsh/"
-description: "Control your system with PowerShell PWSH, a cross-platform task automation and configuration management framework. Execute commands and scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pwsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pwsh/'
+description: 'Control your system with PowerShell PWSH, a cross-platform task automation and configuration management framework. Execute commands and scripts. Free online tool, no registration required.'
 category: common
 keywords:
-- powershell scripting
-- pwsh command line
-- cross-platform powershell
-- system administration scripting
-- task automation pwsh
-- powershell core commands
-- linux pwsh
-- macos pwsh
-- windows pwsh
-- configuration management script
+  - powershell scripting
+  - pwsh command line
+  - cross-platform powershell
+  - system administration scripting
+  - task automation pwsh
+  - powershell core commands
+  - linux pwsh
+  - macos pwsh
+  - windows pwsh
+  - configuration management script
 features:
-- Start interactive PowerShell sessions
-- Execute PowerShell commands and scripts
-- Control PowerShell version selection
-- Manage PowerShell input and output formats
-- Prevent shell exit after startup commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start interactive PowerShell sessions
+  - Execute PowerShell commands and scripts
+  - Control PowerShell version selection
+  - Manage PowerShell input and output formats
+  - Prevent shell exit after startup commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pwsh

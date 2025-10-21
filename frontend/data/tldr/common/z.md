@@ -1,29 +1,29 @@
 ---
-title: "Z Directory Jumper - Quickly Navigate Directories | Online Free DevTools by Hexmos"
+title: 'Z Directory Jumper - Quickly Navigate Directories | Online Free DevTools by Hexmos'
 name: z
-path: "/freedevtools/tldr/common/z/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/z/"
-description: "Quickly jump to directories with Z Directory Jumper. Find frequently used folders using string patterns or regex, increasing command-line efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/z/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/z/'
+description: 'Quickly jump to directories with Z Directory Jumper. Find frequently used folders using string patterns or regex, increasing command-line efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- directory jumper
-- command line navigation
-- terminal directory
-- z directory tool
-- frequent directory access
-- regex directory search
-- shell directory manager
-- linux directory navigation
-- macos directory navigation
-- command line productivity
+  - directory jumper
+  - command line navigation
+  - terminal directory
+  - z directory tool
+  - frequent directory access
+  - regex directory search
+  - shell directory manager
+  - linux directory navigation
+  - macos directory navigation
+  - command line productivity
 features:
-- Navigate to frequently used directories using partial names.
-- Utilize regular expressions for advanced directory matching.
-- Rank directories based on frequency of access.
-- Remove directories from the tracked list.
-- Restrict matches to subdirectories of the current directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Navigate to frequently used directories using partial names.
+  - Utilize regular expressions for advanced directory matching.
+  - Rank directories based on frequency of access.
+  - Remove directories from the tracked list.
+  - Restrict matches to subdirectories of the current directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # z

@@ -1,9 +1,9 @@
 ---
-title: "Fake Time Control - Manage System Time for Commands | Online Free DevTools by Hexmos"
+title: 'Fake Time Control - Manage System Time for Commands | Online Free DevTools by Hexmos'
 name: faketime
-path: "/freedevtools/tldr/linux/faketime/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/faketime/"
-description: "Control system time for commands with faketime. Easily simulate past, present, and future dates for testing and debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/faketime/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/faketime/'
+description: 'Control system time for commands with faketime. Easily simulate past, present, and future dates for testing and debugging. Free online tool, no registration required.'
 category: linux
 keywords:
   - time manipulation command
@@ -22,8 +22,8 @@ features:
   - Enables debugging of date/time related issues.
   - Supports specifying past, present, or future times.
   - Integrates seamlessly with command-line tools.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # faketime

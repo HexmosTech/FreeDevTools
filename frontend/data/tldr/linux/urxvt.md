@@ -1,9 +1,9 @@
 ---
-title: "Control urxvt Terminal - Customize Terminal Emulator | Online Free DevTools by Hexmos"
+title: 'Control urxvt Terminal - Customize Terminal Emulator | Online Free DevTools by Hexmos'
 name: urxvt
-path: "/freedevtools/tldr/linux/urxvt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/urxvt/"
-description: "Control terminal behavior with urxvt, a highly customizable terminal emulator. Tailor your command-line experience with advanced configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/urxvt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/urxvt/'
+description: 'Control terminal behavior with urxvt, a highly customizable terminal emulator. Tailor your command-line experience with advanced configurations. Free online tool, no registration required.'
 category: linux
 keywords:
   - urxvt terminal
@@ -22,8 +22,8 @@ features:
   - Run commands within a new terminal instance
   - Keep terminal windows open after command execution
   - Integrate commands within a sh shell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # urxvt

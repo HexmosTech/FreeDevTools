@@ -1,29 +1,29 @@
 ---
-title: "Convert PNM to PCLXL - Generate Printer Streams | Online Free DevTools by Hexmos"
+title: 'Convert PNM to PCLXL - Generate Printer Streams | Online Free DevTools by Hexmos'
 name: pnmtopclxl
-path: "/freedevtools/tldr/pnm/pnmtopclxl/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopclxl/"
-description: "Convert PNM files to PCLXL printer streams with pnmtopclxl. Create print-ready documents and specify resolution easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmtopclxl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmtopclxl/'
+description: 'Convert PNM files to PCLXL printer streams with pnmtopclxl. Create print-ready documents and specify resolution easily. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM to PCLXL converter
-- PCLXL printer stream generator
-- Image to PCLXL conversion
-- Netpbm PCLXL
-- Raster graphics to PCLXL
-- HP LaserJet PCLXL
-- Linux print command
-- Common command line tools
-- Image format conversion
-- PNM image processing
+  - PNM to PCLXL converter
+  - PCLXL printer stream generator
+  - Image to PCLXL conversion
+  - Netpbm PCLXL
+  - Raster graphics to PCLXL
+  - HP LaserJet PCLXL
+  - Linux print command
+  - Common command line tools
+  - Image format conversion
+  - PNM image processing
 features:
-- Convert PNM images to PCLXL printer streams
-- Specify image resolution and page offsets
-- Generate duplex printer streams for various paper sizes
-- Support vertical and horizontal duplex printing
-- Create print-ready documents from PNM files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNM images to PCLXL printer streams
+  - Specify image resolution and page offsets
+  - Generate duplex printer streams for various paper sizes
+  - Support vertical and horizontal duplex printing
+  - Create print-ready documents from PNM files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmtopclxl

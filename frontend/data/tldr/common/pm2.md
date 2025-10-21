@@ -1,29 +1,29 @@
 ---
-title: "PM2 - Manage Node.js Processes | Online Free DevTools by Hexmos"
+title: 'PM2 - Manage Node.js Processes | Online Free DevTools by Hexmos'
 name: pm2
-path: "/freedevtools/tldr/common/pm2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pm2/"
-description: "Manage Node.js processes with PM2. Monitor, start, stop, and restart applications with ease. Control your Node.js deployments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pm2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pm2/'
+description: 'Manage Node.js processes with PM2. Monitor, start, stop, and restart applications with ease. Control your Node.js deployments. Free online tool, no registration required.'
 category: common
 keywords:
-- node.js process manager
-- pm2 process control
-- node.js application monitoring
-- pm2 log management
-- pm2 configuration tool
-- linux process manager
-- macos process manager
-- pm2 deployment tool
-- node.js process automation
-- pm2 startup script
+  - node.js process manager
+  - pm2 process control
+  - node.js application monitoring
+  - pm2 log management
+  - pm2 configuration tool
+  - linux process manager
+  - macos process manager
+  - pm2 deployment tool
+  - node.js process automation
+  - pm2 startup script
 features:
-- Start and name Node.js processes for easy management
-- Monitor real-time performance of Node.js applications
-- Stop, restart, and manage Node.js processes efficiently
-- Dump and resurrect process states for persistence
-- Manage application logs and configurations centrally
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and name Node.js processes for easy management
+  - Monitor real-time performance of Node.js applications
+  - Stop, restart, and manage Node.js processes efficiently
+  - Dump and resurrect process states for persistence
+  - Manage application logs and configurations centrally
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pm2

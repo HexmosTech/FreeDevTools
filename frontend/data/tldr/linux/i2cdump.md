@@ -1,9 +1,9 @@
 ---
-title: "I2cdump - Dump I2C Registers | Online Free DevTools by Hexmos"
+title: 'I2cdump - Dump I2C Registers | Online Free DevTools by Hexmos'
 name: i2cdump
-path: "/freedevtools/tldr/linux/i2cdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/i2cdump/"
-description: "Dump I2C registers with I2cdump. Easily inspect and debug I2C device communication. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/i2cdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/i2cdump/'
+description: 'Dump I2C registers with I2cdump. Easily inspect and debug I2C device communication. Free online tool, no registration required.'
 category: linux
 keywords:
   - I2C register dump
@@ -22,8 +22,8 @@ features:
   - Specify I2C communication mode for dumping
   - Dump a specific range of registers
   - Inspect I2C device communication
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # i2cdump

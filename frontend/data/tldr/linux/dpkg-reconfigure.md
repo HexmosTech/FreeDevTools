@@ -1,9 +1,9 @@
 ---
-title: "Reconfigure Packages - Manage Linux Software | Online Free DevTools by Hexmos"
+title: 'Reconfigure Packages - Manage Linux Software | Online Free DevTools by Hexmos'
 name: dpkg-reconfigure
-path: "/freedevtools/tldr/linux/dpkg-reconfigure/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dpkg-reconfigure/"
-description: "Reconfigure Linux packages easily with dpkg-reconfigure.  Manage installed software and settings using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dpkg-reconfigure/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dpkg-reconfigure/'
+description: 'Reconfigure Linux packages easily with dpkg-reconfigure.  Manage installed software and settings using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package reconfiguration
@@ -22,8 +22,8 @@ features:
   - Manage multiple packages simultaneously.
   - Utilize command-line interface for efficient management.
   - Adjust package configurations without re-installation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dpkg-reconfigure

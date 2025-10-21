@@ -1,29 +1,29 @@
 ---
-title: "Korn Shell - Execute Commands | Online Free DevTools by Hexmos"
+title: 'Korn Shell - Execute Commands | Online Free DevTools by Hexmos'
 name: ksh
-path: "/freedevtools/tldr/common/ksh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ksh/"
-description: "Execute commands with Korn Shell.  Run scripts, check syntax, and debug code using this versatile shell interpreter. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ksh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ksh/'
+description: 'Execute commands with Korn Shell.  Run scripts, check syntax, and debug code using this versatile shell interpreter. Free online tool, no registration required.'
 category: common
 keywords:
-- ksh command
-- korn shell script
-- shell scripting
-- ksh syntax check
-- linux ksh
-- posix shell
-- command line interpreter
-- shell interpreter
-- bash compatible shell
-- ksh interactive shell
+  - ksh command
+  - korn shell script
+  - shell scripting
+  - ksh syntax check
+  - linux ksh
+  - posix shell
+  - command line interpreter
+  - shell interpreter
+  - bash compatible shell
+  - ksh interactive shell
 features:
-- Execute shell commands interactively
-- Execute scripts directly from the command line
-- Check script syntax for errors before execution
-- Print each command before execution for debugging
-- Run commands in a non-interactive shell session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute shell commands interactively
+  - Execute scripts directly from the command line
+  - Check script syntax for errors before execution
+  - Print each command before execution for debugging
+  - Run commands in a non-interactive shell session
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ksh

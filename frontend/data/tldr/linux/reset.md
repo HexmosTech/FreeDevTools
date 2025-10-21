@@ -1,9 +1,9 @@
 ---
-title: "Reset Terminal - Reinitialize Terminal Screen | Online Free DevTools by Hexmos"
+title: 'Reset Terminal - Reinitialize Terminal Screen | Online Free DevTools by Hexmos'
 name: reset
-path: "/freedevtools/tldr/linux/reset/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/reset/"
-description: "Reinitialize terminal screen with Reset Terminal. Quickly clear your terminal, restoring it to its original state. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/reset/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/reset/'
+description: 'Reinitialize terminal screen with Reset Terminal. Quickly clear your terminal, restoring it to its original state. Free online tool, no registration required.'
 category: linux
 keywords:
   - terminal reset
@@ -22,8 +22,8 @@ features:
   - Restores terminal to default settings.
   - Resets terminal formatting.
   - Displays terminal type when requested.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # reset

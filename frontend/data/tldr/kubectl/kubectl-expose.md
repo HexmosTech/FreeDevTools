@@ -1,29 +1,29 @@
 ---
-title: "Create Kubernetes Service - Expose Resources | Online Free DevTools by Hexmos"
+title: 'Create Kubernetes Service - Expose Resources | Online Free DevTools by Hexmos'
 name: kubectl-expose
-path: "/freedevtools/tldr/kubectl/kubectl-expose/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-expose/"
-description: "Create Kubernetes service easily with kubectl-expose. Expose your applications and manage network access with simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-expose/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-expose/'
+description: 'Create Kubernetes service easily with kubectl-expose. Expose your applications and manage network access with simple commands. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes service creation
-- kubectl expose command
-- kubernetes networking
-- expose deployment kubernetes
-- service discovery kubernetes
-- kubernetes service manager
-- cluster ip service
-- nodeport service
-- loadbalancer service
-- kubernetes api expose
+  - kubernetes service creation
+  - kubectl expose command
+  - kubernetes networking
+  - expose deployment kubernetes
+  - service discovery kubernetes
+  - kubernetes service manager
+  - cluster ip service
+  - nodeport service
+  - loadbalancer service
+  - kubernetes api expose
 features:
-- Expose a resource as a Kubernetes service
-- Define node port and target container port mappings
-- Expose resources using YAML configuration files
-- Create services with custom names
-- Easily manage application networking in Kubernetes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Expose a resource as a Kubernetes service
+  - Define node port and target container port mappings
+  - Expose resources using YAML configuration files
+  - Create services with custom names
+  - Easily manage application networking in Kubernetes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl expose

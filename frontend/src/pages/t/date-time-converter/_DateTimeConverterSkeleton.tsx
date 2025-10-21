@@ -1,12 +1,8 @@
-import ToolBody from "@/components/tool/ToolBody";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
+import ToolBody from '@/components/tool/ToolBody';
+import ToolGridContainer from '@/components/tool/ToolGridContainer';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import React from 'react';
 
 const DateTimeConverterSkeleton: React.FC = () => {
   return (
@@ -42,7 +38,10 @@ const DateTimeConverterSkeleton: React.FC = () => {
           <CardContent>
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
               {Array.from({ length: 10 }).map((_, index) => (
-                <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div
+                  key={index}
+                  className="flex flex-col sm:flex-row sm:items-center gap-3"
+                >
                   <Skeleton className="w-[140px] sm:w-[160px] h-4" />
                   <div className="flex-1 min-w-0">
                     <div className="bg-muted rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3 border">

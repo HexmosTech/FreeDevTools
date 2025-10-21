@@ -1,29 +1,29 @@
 ---
-title: "Users - List Logged-in Users | Online Free DevTools by Hexmos"
+title: 'Users - List Logged-in Users | Online Free DevTools by Hexmos'
 name: gusers
-path: "/freedevtools/tldr/osx/gusers/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/gusers/"
-description: "List logged-in users with gusers on macOS. Identify active user accounts and manage system access using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/gusers/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/gusers/'
+description: 'List logged-in users with gusers on macOS. Identify active user accounts and manage system access using command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- users list
-- logged-in users
-- macOS users
-- osx users
-- command line users
-- terminal users
-- user accounts
-- system users
-- active users
-- gusers command
+  - users list
+  - logged-in users
+  - macOS users
+  - osx users
+  - command line users
+  - terminal users
+  - user accounts
+  - system users
+  - active users
+  - gusers command
 features:
-- List currently logged-in users
-- Identify user accounts on the system
-- Display user login information
-- Provide command-line user management
-- Integrate with macOS user authentication
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List currently logged-in users
+  - Identify user accounts on the system
+  - Display user login information
+  - Provide command-line user management
+  - Integrate with macOS user authentication
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gusers

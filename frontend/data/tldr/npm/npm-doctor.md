@@ -1,9 +1,9 @@
 ---
-title: "Validate npm Environment - npm Doctor Tool | Online Free DevTools by Hexmos"
+title: 'Validate npm Environment - npm Doctor Tool | Online Free DevTools by Hexmos'
 name: npm-doctor
-path: "/freedevtools/tldr/npm/npm-doctor/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-doctor/"
-description: "Validate npm environment with npm Doctor, identify issues, and resolve problems. Check versions and permissions effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-doctor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-doctor/'
+description: 'Validate npm environment with npm Doctor, identify issues, and resolve problems. Check versions and permissions effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
   - npm environment check
@@ -22,8 +22,8 @@ features:
   - Verify Node.js and npm versions in use.
   - Analyze permissions issues for npm directories.
   - Validate cached package files and checksums.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm doctor

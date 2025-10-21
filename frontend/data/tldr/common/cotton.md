@@ -1,29 +1,29 @@
 ---
-title: "Cotton - Validate Markdown Test Specifications | Online Free DevTools by Hexmos"
+title: 'Cotton - Validate Markdown Test Specifications | Online Free DevTools by Hexmos'
 name: cotton
-path: "/freedevtools/tldr/common/cotton/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cotton/"
-description: "Validate markdown test specifications with Cotton. Quickly run tests, check assertions, and automate documentation testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cotton/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cotton/'
+description: 'Validate markdown test specifications with Cotton. Quickly run tests, check assertions, and automate documentation testing. Free online tool, no registration required.'
 category: common
 keywords:
-- markdown test runner
-- test specification validator
-- markdown assertion tool
-- test documentation automation
-- markdown testing framework
-- command-line test runner
-- cotton test specification
-- github markdown tests
-- documentation test suite
-- common platform testing
+  - markdown test runner
+  - test specification validator
+  - markdown assertion tool
+  - test documentation automation
+  - markdown testing framework
+  - command-line test runner
+  - cotton test specification
+  - github markdown tests
+  - documentation test suite
+  - common platform testing
 features:
-- Run markdown test specifications from the command line
-- Validate assertions within markdown files
-- Disable certificate verification for testing purposes
-- Stop execution upon the first test failure
-- Specify a base URL for resolving relative paths
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run markdown test specifications from the command line
+  - Validate assertions within markdown files
+  - Disable certificate verification for testing purposes
+  - Stop execution upon the first test failure
+  - Specify a base URL for resolving relative paths
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cotton

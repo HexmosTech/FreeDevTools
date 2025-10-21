@@ -1,29 +1,29 @@
 ---
-title: "Analyze Network Traffic - Zeek | Online Free DevTools by Hexmos"
+title: 'Analyze Network Traffic - Zeek | Online Free DevTools by Hexmos'
 name: zeek
-path: "/freedevtools/tldr/common/zeek/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zeek/"
-description: "Analyze network traffic passively with Zeek. Extract network metadata, perform security monitoring and gain insights with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zeek/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zeek/'
+description: 'Analyze network traffic passively with Zeek. Extract network metadata, perform security monitoring and gain insights with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- network traffic analysis
-- zeek network analyzer
-- network security monitoring
-- packet capture analysis
-- network metadata extraction
-- zeek command line
-- network intrusion detection
-- pcap file analysis
-- zeek scripting
-- network protocol analysis
+  - network traffic analysis
+  - zeek network analyzer
+  - network security monitoring
+  - packet capture analysis
+  - network metadata extraction
+  - zeek command line
+  - network intrusion detection
+  - pcap file analysis
+  - zeek scripting
+  - network protocol analysis
 features:
-- Analyze live network traffic from a specified interface.
-- Process traffic data from PCAP files.
-- Apply custom scripts for advanced analysis.
-- Filter traffic based on tcpdump filters.
-- Run Zeek in bare mode to disable script loading.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze live network traffic from a specified interface.
+  - Process traffic data from PCAP files.
+  - Apply custom scripts for advanced analysis.
+  - Filter traffic based on tcpdump filters.
+  - Run Zeek in bare mode to disable script loading.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zeek

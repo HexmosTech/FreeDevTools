@@ -1,9 +1,9 @@
 ---
-title: "Delete Groups - Manage System Groups | Online Free DevTools by Hexmos"
+title: 'Delete Groups - Manage System Groups | Online Free DevTools by Hexmos'
 name: groupdel
-path: "/freedevtools/tldr/linux/groupdel/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/groupdel/"
-description: "Delete existing system groups with groupdel. Manage user groups efficiently using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/groupdel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/groupdel/'
+description: 'Delete existing system groups with groupdel. Manage user groups efficiently using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - group deletion linux
@@ -22,8 +22,8 @@ features:
   - Requires sudo privileges for execution.
   - Integrates seamlessly with other group management commands.
   - Provides a simple and efficient method for group deletion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # groupdel

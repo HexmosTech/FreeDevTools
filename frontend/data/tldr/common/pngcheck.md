@@ -1,29 +1,29 @@
 ---
-title: "PNG Check - Validate PNG Images | Online Free DevTools by Hexmos"
+title: 'PNG Check - Validate PNG Images | Online Free DevTools by Hexmos'
 name: pngcheck
-path: "/freedevtools/tldr/common/pngcheck/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pngcheck/"
-description: "Validate PNG images quickly with PNGCheck. Verify integrity, extract embedded data, and diagnose issues in PNG, JNG, and MNG files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pngcheck/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pngcheck/'
+description: 'Validate PNG images quickly with PNGCheck. Verify integrity, extract embedded data, and diagnose issues in PNG, JNG, and MNG files. Free online tool, no registration required.'
 category: common
 keywords:
-- png integrity check
-- png file validator
-- png image verification
-- png image analyzer
-- png extraction
-- png data recovery
-- png forensics tool
-- png corruption detection
-- linux pngcheck
-- macos pngcheck
+  - png integrity check
+  - png file validator
+  - png image verification
+  - png image analyzer
+  - png extraction
+  - png data recovery
+  - png forensics tool
+  - png corruption detection
+  - linux pngcheck
+  - macos pngcheck
 features:
-- Verify the integrity of PNG image files
-- Extract embedded images from PNGs
-- Diagnose PNG file corruption issues
-- Display detailed information about PNG files
-- Search for and extract PNG images from any file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Verify the integrity of PNG image files
+  - Extract embedded images from PNGs
+  - Diagnose PNG file corruption issues
+  - Display detailed information about PNG files
+  - Search for and extract PNG images from any file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pngcheck

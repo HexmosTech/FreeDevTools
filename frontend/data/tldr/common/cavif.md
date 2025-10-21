@@ -1,29 +1,29 @@
 ---
-title: "Convert Images to AVIF - Create AVIF Files | Online Free DevTools by Hexmos"
+title: 'Convert Images to AVIF - Create AVIF Files | Online Free DevTools by Hexmos'
 name: cavif
-path: "/freedevtools/tldr/common/cavif/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cavif/"
-description: "Convert images to AVIF with cavif. Create high-quality, compressed AVIF files from PNG and JPEG images using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cavif/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cavif/'
+description: 'Convert images to AVIF with cavif. Create high-quality, compressed AVIF files from PNG and JPEG images using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- AVIF image converter
-- PNG to AVIF
-- JPEG to AVIF
-- command line image conversion
-- lossless image compression
-- cavif rust
-- avif encoder
-- image optimization
-- image format conversion
-- avif file creator
+  - AVIF image converter
+  - PNG to AVIF
+  - JPEG to AVIF
+  - command line image conversion
+  - lossless image compression
+  - cavif rust
+  - avif encoder
+  - image optimization
+  - image format conversion
+  - avif file creator
 features:
-- Convert PNG images to AVIF format.
-- Convert JPEG images to AVIF format.
-- Adjust the AVIF encoding quality.
-- Specify the output file location.
-- Overwrite existing output files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNG images to AVIF format.
+  - Convert JPEG images to AVIF format.
+  - Adjust the AVIF encoding quality.
+  - Specify the output file location.
+  - Overwrite existing output files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cavif

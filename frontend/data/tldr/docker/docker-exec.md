@@ -1,29 +1,29 @@
 ---
-title: "Docker Exec - Execute Commands in Running Containers | Online Free DevTools by Hexmos"
+title: 'Docker Exec - Execute Commands in Running Containers | Online Free DevTools by Hexmos'
 name: docker-exec
-path: "/freedevtools/tldr/docker/docker-exec/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-exec/"
-description: "Execute commands in running containers with Docker Exec. Manage processes, debug applications, and interact with Dockerized environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-exec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-exec/'
+description: 'Execute commands in running containers with Docker Exec. Manage processes, debug applications, and interact with Dockerized environments. Free online tool, no registration required.'
 category: common
 keywords:
-- docker execute command
-- docker container shell
-- docker interactive session
-- docker background process
-- docker environment variable
-- docker user context
-- docker command line
-- docker container management
-- docker cli
-- linux container execute
+  - docker execute command
+  - docker container shell
+  - docker interactive session
+  - docker background process
+  - docker environment variable
+  - docker user context
+  - docker command line
+  - docker container management
+  - docker cli
+  - linux container execute
 features:
-- Execute commands within a running Docker container.
-- Access an interactive shell inside a Docker container.
-- Run commands in the background of a Docker container.
-- Set environment variables for commands executed inside a container.
-- Execute commands as a specific user within a Docker container.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands within a running Docker container.
+  - Access an interactive shell inside a Docker container.
+  - Run commands in the background of a Docker container.
+  - Set environment variables for commands executed inside a container.
+  - Execute commands as a specific user within a Docker container.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker exec

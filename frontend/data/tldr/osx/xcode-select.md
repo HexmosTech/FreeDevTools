@@ -1,29 +1,29 @@
 ---
-title: "Xcode Select - Control Xcode Versions | Online Free DevTools by Hexmos"
+title: 'Xcode Select - Control Xcode Versions | Online Free DevTools by Hexmos'
 name: xcode-select
-path: "/freedevtools/tldr/osx/xcode-select/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xcode-select/"
-description: "Control Xcode versions quickly with Xcode Select. Switch developer directories, update Xcode paths, and manage command-line tools with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xcode-select/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xcode-select/'
+description: 'Control Xcode versions quickly with Xcode Select. Switch developer directories, update Xcode paths, and manage command-line tools with ease. Free online tool, no registration required.'
 category: osx
 keywords:
-- Xcode version manager
-- macOS developer tools
-- Xcode command line utility
-- Xcode developer directory selection
-- macOS Xcode path configuration
-- Xcode CLI tool
-- Xcode development environment management
-- Xcode toolchain selection
-- Xcode SDK configuration
-- Xcode command-line tools installer
+  - Xcode version manager
+  - macOS developer tools
+  - Xcode command line utility
+  - Xcode developer directory selection
+  - macOS Xcode path configuration
+  - Xcode CLI tool
+  - Xcode development environment management
+  - Xcode toolchain selection
+  - Xcode SDK configuration
+  - Xcode command-line tools installer
 features:
-- Switch between multiple Xcode versions
-- Update Xcode path after moving the application
-- Print the currently selected developer directory
-- Reset the developer directory to the default search mechanism
-- Install Xcode's command-line tools
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Switch between multiple Xcode versions
+  - Update Xcode path after moving the application
+  - Print the currently selected developer directory
+  - Reset the developer directory to the default search mechanism
+  - Install Xcode's command-line tools
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xcode-select

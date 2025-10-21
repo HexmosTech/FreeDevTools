@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Label - Manage Kubernetes Labels | Online Free DevTools by Hexmos"
+title: 'Kubectl Label - Manage Kubernetes Labels | Online Free DevTools by Hexmos'
 name: kubectl-label
-path: "/freedevtools/tldr/kubectl/kubectl-label/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-label/"
-description: "Manage Kubernetes labels effortlessly with Kubectl Label. Tag pods, nodes, and other resources for organized management. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-label/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-label/'
+description: 'Manage Kubernetes labels effortlessly with Kubectl Label. Tag pods, nodes, and other resources for organized management. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes label manager
-- kubectl label tool
-- kubernetes resource labeling
-- kubectl pod labeling
-- kubernetes node labels
-- kubernetes object metadata
-- label kubernetes resources
-- kubectl label command
-- k8s label management
-- kubernetes label selector
+  - kubernetes label manager
+  - kubectl label tool
+  - kubernetes resource labeling
+  - kubectl pod labeling
+  - kubernetes node labels
+  - kubernetes object metadata
+  - label kubernetes resources
+  - kubectl label command
+  - k8s label management
+  - kubernetes label selector
 features:
-- Add labels to Kubernetes pods
-- Update existing labels on Kubernetes resources
-- Remove labels from Kubernetes objects
-- Label Kubernetes resources using definition files
-- Label all pods within a Kubernetes namespace
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add labels to Kubernetes pods
+  - Update existing labels on Kubernetes resources
+  - Remove labels from Kubernetes objects
+  - Label Kubernetes resources using definition files
+  - Label all pods within a Kubernetes namespace
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl label

@@ -1,29 +1,29 @@
 ---
-title: "Control AWS Cloud9 Environments | Online Free DevTools by Hexmos"
+title: 'Control AWS Cloud9 Environments | Online Free DevTools by Hexmos'
 name: aws-cloud9
-path: "/freedevtools/tldr/aws/aws-cloud9/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloud9/"
-description: "Control your AWS Cloud9 development environments with this tool. Manage environments, members, and statuses easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-cloud9/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-cloud9/'
+description: 'Control your AWS Cloud9 development environments with this tool. Manage environments, members, and statuses easily. Free online tool, no registration required.'
 category: common
 keywords:
-- aws cloud9 control
-- aws cloud9 environment manager
-- cloud ide management
-- aws cloud9 cli tool
-- aws cloud9 automation
-- aws cloud9 environment creation
-- aws cloud9 environment deletion
-- aws cloud9 membership management
-- aws cloud9 status monitoring
-- aws cloud9 sdk
+  - aws cloud9 control
+  - aws cloud9 environment manager
+  - cloud ide management
+  - aws cloud9 cli tool
+  - aws cloud9 automation
+  - aws cloud9 environment creation
+  - aws cloud9 environment deletion
+  - aws cloud9 membership management
+  - aws cloud9 status monitoring
+  - aws cloud9 sdk
 features:
-- List existing Cloud9 environments.
-- Create new Cloud9 development environments on EC2.
-- Describe details of specific Cloud9 environments.
-- Manage environment memberships and permissions.
-- Monitor the status of Cloud9 development environments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing Cloud9 environments.
+  - Create new Cloud9 development environments on EC2.
+  - Describe details of specific Cloud9 environments.
+  - Manage environment memberships and permissions.
+  - Monitor the status of Cloud9 development environments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws cloud9

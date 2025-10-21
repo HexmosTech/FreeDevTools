@@ -1,29 +1,29 @@
 ---
-title: "MySQL CLI - Control Databases with mycli | Online Free DevTools by Hexmos"
+title: 'MySQL CLI - Control Databases with mycli | Online Free DevTools by Hexmos'
 name: mycli
-path: "/freedevtools/tldr/common/mycli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mycli/"
-description: "Control databases instantly with mycli. Manage MySQL, MariaDB, and Percona databases through command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mycli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mycli/'
+description: 'Control databases instantly with mycli. Manage MySQL, MariaDB, and Percona databases through command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- MySQL CLI
-- MariaDB CLI
-- Percona CLI
-- Database command line tool
-- MySQL command line interface
-- MariaDB command line interface
-- Percona command line interface
-- SQL auto completion
-- SQL syntax highlighting
-- Database client
+  - MySQL CLI
+  - MariaDB CLI
+  - Percona CLI
+  - Database command line tool
+  - MySQL command line interface
+  - MariaDB command line interface
+  - Percona command line interface
+  - SQL auto completion
+  - SQL syntax highlighting
+  - Database client
 features:
-- Connect to MySQL, MariaDB, and Percona databases
-- Auto-complete SQL queries and database objects
-- Highlight SQL syntax for improved readability
-- Execute SQL commands directly from the terminal
-- Manage databases through a command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to MySQL, MariaDB, and Percona databases
+  - Auto-complete SQL queries and database objects
+  - Highlight SQL syntax for improved readability
+  - Execute SQL commands directly from the terminal
+  - Manage databases through a command-line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mycli

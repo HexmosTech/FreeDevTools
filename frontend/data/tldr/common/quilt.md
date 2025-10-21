@@ -1,29 +1,29 @@
 ---
-title: "Manage Patches with Quilt - Patch Management | Online Free DevTools by Hexmos"
+title: 'Manage Patches with Quilt - Patch Management | Online Free DevTools by Hexmos'
 name: quilt
-path: "/freedevtools/tldr/common/quilt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/quilt/"
-description: "Manage code patches with Quilt, a powerful patch management tool. Import, create, and refresh patches with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/quilt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/quilt/'
+description: 'Manage code patches with Quilt, a powerful patch management tool. Import, create, and refresh patches with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Quilt patch management
-- Quilt patch series
-- Quilt import patch
-- Quilt create patch
-- Quilt refresh patch
-- Quilt push patch
-- Quilt pop patch
-- Linux patch management
-- Code patch manager
-- Software patch utility
+  - Quilt patch management
+  - Quilt patch series
+  - Quilt import patch
+  - Quilt create patch
+  - Quilt refresh patch
+  - Quilt push patch
+  - Quilt pop patch
+  - Linux patch management
+  - Code patch manager
+  - Software patch utility
 features:
-- Import existing patches from files
-- Create new patches for code changes
-- Add files to a current patch
-- Refresh patches with updated changes
-- Apply and remove patches from a series
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Import existing patches from files
+  - Create new patches for code changes
+  - Add files to a current patch
+  - Refresh patches with updated changes
+  - Apply and remove patches from a series
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # quilt

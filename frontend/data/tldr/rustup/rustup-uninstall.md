@@ -1,29 +1,29 @@
 ---
-title: "Rustup Uninstall - Remove Rust Toolchains | Online Free DevTools by Hexmos"
+title: 'Rustup Uninstall - Remove Rust Toolchains | Online Free DevTools by Hexmos'
 name: rustup-uninstall
-path: "/freedevtools/tldr/rustup/rustup-uninstall/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-uninstall/"
-description: "Uninstall Rust toolchains easily with Rustup. Remove specific Rust versions and manage your Rust environment effortlessly using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-uninstall/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-uninstall/'
+description: 'Uninstall Rust toolchains easily with Rustup. Remove specific Rust versions and manage your Rust environment effortlessly using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- rust toolchain uninstall
-- rustup uninstall toolchain
-- rust version removal
-- rust environment management
-- rust toolchain manager
-- rust cross-compilation
-- rust development environment
-- rust compiler removal
-- rust version manager
-- rust development tools
+  - rust toolchain uninstall
+  - rustup uninstall toolchain
+  - rust version removal
+  - rust environment management
+  - rust toolchain manager
+  - rust cross-compilation
+  - rust development environment
+  - rust compiler removal
+  - rust version manager
+  - rust development tools
 features:
-- Remove specific Rust toolchains
-- Manage installed Rust versions
-- Clean up outdated Rust environments
-- Uninstall components of a Rust toolchain
-- Free up disk space by removing unused Rust versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove specific Rust toolchains
+  - Manage installed Rust versions
+  - Clean up outdated Rust environments
+  - Uninstall components of a Rust toolchain
+  - Free up disk space by removing unused Rust versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup uninstall

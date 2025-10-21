@@ -1,29 +1,29 @@
 ---
-title: "Azure Security Audit - Generate Prowler Reports | Online Free DevTools by Hexmos"
+title: 'Azure Security Audit - Generate Prowler Reports | Online Free DevTools by Hexmos'
 name: prowler-azure
-path: "/freedevtools/tldr/prowler/prowler-azure/"
-canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-azure/"
-description: "Audit Azure security with Prowler Azure. Generate compliance reports and identify vulnerabilities in your Azure environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/prowler/prowler-azure/'
+canonical: 'https://hexmos.com/freedevtools/tldr/prowler/prowler-azure/'
+description: 'Audit Azure security with Prowler Azure. Generate compliance reports and identify vulnerabilities in your Azure environment. Free online tool, no registration required.'
 category: common
 keywords:
-- azure security audit
-- prowler azure assessment
-- azure compliance check
-- azure vulnerability scan
-- azure security best practices
-- azure cli security
-- azure security report
-- cloud security audit
-- security assessment azure
-- azure prowler command
+  - azure security audit
+  - prowler azure assessment
+  - azure compliance check
+  - azure vulnerability scan
+  - azure security best practices
+  - azure cli security
+  - azure security report
+  - cloud security audit
+  - security assessment azure
+  - azure prowler command
 features:
-- Assess Azure security configurations against best practices.
-- Generate detailed reports on security compliance status.
-- Perform automated audits for Azure subscriptions.
-- Identify potential security vulnerabilities in Azure resources.
-- Support authentication using Azure CLI, Service Principal, and Managed Identity.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Assess Azure security configurations against best practices.
+  - Generate detailed reports on security compliance status.
+  - Perform automated audits for Azure subscriptions.
+  - Identify potential security vulnerabilities in Azure resources.
+  - Support authentication using Azure CLI, Service Principal, and Managed Identity.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prowler azure

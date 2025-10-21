@@ -1,29 +1,29 @@
 ---
-title: "Format Python Code - Black Formatter | Online Free DevTools by Hexmos"
+title: 'Format Python Code - Black Formatter | Online Free DevTools by Hexmos'
 name: black
-path: "/freedevtools/tldr/common/black/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/black/"
-description: "Format Python code efficiently with Black, the uncompromising code formatter. Ensure consistent style and improve code readability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/black/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/black/'
+description: 'Format Python code efficiently with Black, the uncompromising code formatter. Ensure consistent style and improve code readability. Free online tool, no registration required.'
 category: common
 keywords:
-- python code formatter
-- black python formatter
-- auto format python
-- python style guide
-- python linting
-- code style checker
-- code formatting tool
-- black command line
-- consistent code style
-- python code beautifier
+  - python code formatter
+  - black python formatter
+  - auto format python
+  - python style guide
+  - python linting
+  - code style checker
+  - code formatting tool
+  - black command line
+  - consistent code style
+  - python code beautifier
 features:
-- Auto-formats Python files and directories.
-- Formats code from a string input.
-- Checks for formatting changes without applying them.
-- Displays a diff of proposed formatting changes.
-- Silently formats, emitting only error messages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Auto-formats Python files and directories.
+  - Formats code from a string input.
+  - Checks for formatting changes without applying them.
+  - Displays a diff of proposed formatting changes.
+  - Silently formats, emitting only error messages.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # black

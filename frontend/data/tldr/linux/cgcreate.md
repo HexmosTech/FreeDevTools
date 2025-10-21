@@ -1,29 +1,29 @@
 ---
-title: "Cgroup Create - Control Resource Groups | Online Free DevTools by Hexmos"
+title: 'Cgroup Create - Control Resource Groups | Online Free DevTools by Hexmos'
 name: cgcreate
-path: "/freedevtools/tldr/linux/cgcreate/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cgcreate/"
-description: "Create resource control groups with Cgroup Create. Limit CPU, memory, and network resources for processes on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cgcreate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cgcreate/'
+description: 'Create resource control groups with Cgroup Create. Limit CPU, memory, and network resources for processes on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux cgroup create
-- cgroup management linux
-- linux resource control
-- linux process control
-- cgroup memory management
-- cgroup cpu management
-- cgroup network control
-- cgroup limit resources
-- linux cgroups
-- control groups linux
+  - linux cgroup create
+  - cgroup management linux
+  - linux resource control
+  - linux process control
+  - cgroup memory management
+  - cgroup cpu management
+  - cgroup network control
+  - cgroup limit resources
+  - linux cgroups
+  - control groups linux
 features:
-- Create new cgroups for resource management
-- Manage CPU usage for specific processes
-- Limit memory consumption of process groups
-- Control network access for defined cgroups
-- Create subgroups for granular resource allocation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new cgroups for resource management
+  - Manage CPU usage for specific processes
+  - Limit memory consumption of process groups
+  - Control network access for defined cgroups
+  - Create subgroups for granular resource allocation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cgcreate

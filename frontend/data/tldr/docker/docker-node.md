@@ -1,29 +1,29 @@
 ---
-title: "Docker Node - Manage Swarm Nodes | Online Free DevTools by Hexmos"
+title: 'Docker Node - Manage Swarm Nodes | Online Free DevTools by Hexmos'
 name: docker-node
-path: "/freedevtools/tldr/docker/docker-node/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-node/"
-description: "Manage Docker Swarm nodes effectively with Docker Node commands. Inspect node details, promote/demote managers, and update node metadata. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-node/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-node/'
+description: 'Manage Docker Swarm nodes effectively with Docker Node commands. Inspect node details, promote/demote managers, and update node metadata. Free online tool, no registration required.'
 category: common
 keywords:
-- Docker Swarm node management
-- Docker node command line
-- Docker node inspection
-- Docker node update
-- Docker node promotion
-- Docker node demotion
-- Docker node removal
-- Docker swarm orchestration
-- Docker node metadata
-- Docker node availability
+  - Docker Swarm node management
+  - Docker node command line
+  - Docker node inspection
+  - Docker node update
+  - Docker node promotion
+  - Docker node demotion
+  - Docker node removal
+  - Docker swarm orchestration
+  - Docker node metadata
+  - Docker node availability
 features:
-- List nodes in a Docker Swarm cluster.
-- Display detailed information about Docker nodes.
-- Promote or demote nodes within a Docker Swarm.
-- Remove nodes from a Docker Swarm.
-- Update the availability and roles of Docker nodes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List nodes in a Docker Swarm cluster.
+  - Display detailed information about Docker nodes.
+  - Promote or demote nodes within a Docker Swarm.
+  - Remove nodes from a Docker Swarm.
+  - Update the availability and roles of Docker nodes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker node

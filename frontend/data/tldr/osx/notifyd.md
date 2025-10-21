@@ -1,29 +1,29 @@
 ---
-title: "Control Notifications - Manage OSX Notifications | Online Free DevTools by Hexmos"
+title: 'Control Notifications - Manage OSX Notifications | Online Free DevTools by Hexmos'
 name: notifyd
-path: "/freedevtools/tldr/osx/notifyd/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/notifyd/"
-description: "Control system notifications with notifyd, the OSX notification server. Manage alerts, debug notification behavior, and configure logging. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/notifyd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/notifyd/'
+description: 'Control system notifications with notifyd, the OSX notification server. Manage alerts, debug notification behavior, and configure logging. Free online tool, no registration required.'
 category: osx
 keywords:
-- osx notification server
-- macos notification manager
-- notifyd command line
-- osx notifyd logging
-- system notifications osx
-- debug osx notifications
-- notification control osx
-- manage notifyd
-- osx alerts configuration
-- notifyd debug messages
+  - osx notification server
+  - macos notification manager
+  - notifyd command line
+  - osx notifyd logging
+  - system notifications osx
+  - debug osx notifications
+  - notification control osx
+  - manage notifyd
+  - osx alerts configuration
+  - notifyd debug messages
 features:
-- Start the notifyd daemon
-- Log debug messages to a specified file
-- Manage system notifications on OSX
-- Configure notification server behavior
-- Enable debugging of notification delivery
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the notifyd daemon
+  - Log debug messages to a specified file
+  - Manage system notifications on OSX
+  - Configure notification server behavior
+  - Enable debugging of notification delivery
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # notifyd

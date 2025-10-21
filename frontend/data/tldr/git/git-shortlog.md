@@ -1,29 +1,29 @@
 ---
-title: "Git Shortlog - Summarize Git Log Output | Online Free DevTools by Hexmos"
+title: 'Git Shortlog - Summarize Git Log Output | Online Free DevTools by Hexmos'
 name: git-shortlog
-path: "/freedevtools/tldr/git/git-shortlog/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-shortlog/"
-description: "Summarize Git log output with Git Shortlog. Analyze commit history and author contributions using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-shortlog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-shortlog/'
+description: 'Summarize Git log output with Git Shortlog. Analyze commit history and author contributions using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit summary
-- git log analyzer
-- git shortlog command
-- git author statistics
-- git commit history
-- git contributor analysis
-- git commit breakdown
-- git repository summary
-- git command line tool
-- linux git shortlog
+  - git commit summary
+  - git log analyzer
+  - git shortlog command
+  - git author statistics
+  - git commit history
+  - git contributor analysis
+  - git commit breakdown
+  - git repository summary
+  - git command line tool
+  - linux git shortlog
 features:
-- Summarize commit history by author
-- Group commits by committer identity
-- Sort commits by number of contributions
-- Analyze commit activity within a revision range
-- Display user emails and commit counts across branches
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Summarize commit history by author
+  - Group commits by committer identity
+  - Sort commits by number of contributions
+  - Analyze commit activity within a revision range
+  - Display user emails and commit counts across branches
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git shortlog

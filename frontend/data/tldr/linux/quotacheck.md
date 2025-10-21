@@ -1,9 +1,9 @@
 ---
-title: "Quotacheck - Manage Disk Usage with Quota Files | Online Free DevTools by Hexmos"
+title: 'Quotacheck - Manage Disk Usage with Quota Files | Online Free DevTools by Hexmos'
 name: quotacheck
-path: "/freedevtools/tldr/linux/quotacheck/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/quotacheck/"
-description: "Manage disk usage efficiently with quotacheck.  Scan filesystems, check and repair quota files to control disk space allocation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/quotacheck/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/quotacheck/'
+description: 'Manage disk usage efficiently with quotacheck.  Scan filesystems, check and repair quota files to control disk space allocation. Free online tool, no registration required.'
 category: linux
 keywords:
   - disk space quota check
@@ -22,8 +22,8 @@ features:
   - Repairs damaged quota files
   - Allows checking quotas on specific users and groups
   - Offers verbose and debug modes for detailed analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # quotacheck

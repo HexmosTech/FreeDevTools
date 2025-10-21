@@ -1,29 +1,29 @@
 ---
-title: "Perl Script Interpreter - Run Perl Scripts | Online Free DevTools by Hexmos"
+title: 'Perl Script Interpreter - Run Perl Scripts | Online Free DevTools by Hexmos'
 name: perl
-path: "/freedevtools/tldr/common/perl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/perl/"
-description: "Run Perl scripts instantly with the Perl Script Interpreter. Execute commands, filter text, and manipulate files using the Perl language. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/perl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/perl/'
+description: 'Run Perl scripts instantly with the Perl Script Interpreter. Execute commands, filter text, and manipulate files using the Perl language. Free online tool, no registration required.'
 category: common
 keywords:
-- Perl script execution
-- Perl code interpreter
-- Perl regex filtering
-- Perl file manipulation
-- Perl in-place substitution
-- Perl command line
-- Linux Perl
-- Perl one-liner
-- Perl text processing
-- Perl documentation lookup
+  - Perl script execution
+  - Perl code interpreter
+  - Perl regex filtering
+  - Perl file manipulation
+  - Perl in-place substitution
+  - Perl command line
+  - Linux Perl
+  - Perl one-liner
+  - Perl text processing
+  - Perl documentation lookup
 features:
-- Execute Perl scripts directly from the command line.
-- Filter text using complex regular expressions with Perl.
-- Perform in-place file substitutions with backup options.
-- Access Perl's extensive inline documentation.
-- Extract specific capture groups from text using regular expressions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Perl scripts directly from the command line.
+  - Filter text using complex regular expressions with Perl.
+  - Perform in-place file substitutions with backup options.
+  - Access Perl's extensive inline documentation.
+  - Extract specific capture groups from text using regular expressions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # perl

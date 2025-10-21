@@ -1,29 +1,29 @@
 ---
-title: "Shotcut - Edit Videos with Shotcut | Online Free DevTools by Hexmos"
+title: 'Shotcut - Edit Videos with Shotcut | Online Free DevTools by Hexmos'
 name: shotcut
-path: "/freedevtools/tldr/common/shotcut/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/shotcut/"
-description: "Edit videos easily with Shotcut. Process audio and video files, apply effects, and create professional-quality videos using this free tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/shotcut/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/shotcut/'
+description: 'Edit videos easily with Shotcut. Process audio and video files, apply effects, and create professional-quality videos using this free tool. Free online tool, no registration required.'
 category: common
 keywords:
-- video editor
-- video editing software
-- Shotcut video editor
-- open source video editor
-- cross platform video editor
-- video processing command line
-- audio video editing
-- shotcut command line options
-- video editing linux
-- video editing windows
+  - video editor
+  - video editing software
+  - Shotcut video editor
+  - open source video editor
+  - cross platform video editor
+  - video processing command line
+  - audio video editing
+  - shotcut command line options
+  - video editing linux
+  - video editing windows
 features:
-- Open and edit multiple audio and video files
-- Start Shotcut with a specific audio driver
-- Launch Shotcut in fullscreen mode
-- Enable GPU processing for faster rendering
-- Access command-line options for advanced control
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit multiple audio and video files
+  - Start Shotcut with a specific audio driver
+  - Launch Shotcut in fullscreen mode
+  - Enable GPU processing for faster rendering
+  - Access command-line options for advanced control
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shotcut

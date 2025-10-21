@@ -1,29 +1,29 @@
 ---
-title: "Track Time - Manage Work Time with Moro | Online Free DevTools by Hexmos"
+title: 'Track Time - Manage Work Time with Moro | Online Free DevTools by Hexmos'
 name: moro
-path: "/freedevtools/tldr/common/moro/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/moro/"
-description: "Track work time effectively with Moro. Manage time logs and notes effortlessly for improved productivity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/moro/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/moro/'
+description: 'Track work time effectively with Moro. Manage time logs and notes effortlessly for improved productivity. Free online tool, no registration required.'
 category: common
 keywords:
-- work time tracker
-- time logging tool
-- work day management
-- moro time tracking
-- command line time tracker
-- time report generator
-- work log command
-- time tracking automation
-- work hours calculator
-- productivity time tracking
+  - work time tracker
+  - time logging tool
+  - work day management
+  - moro time tracking
+  - command line time tracker
+  - time report generator
+  - work log command
+  - time tracking automation
+  - work hours calculator
+  - productivity time tracking
 features:
-- Track work start and end times
-- Add notes to time logs
-- Generate daily time reports
-- Display all historical time logs
-- Calculate total work hours
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Track work start and end times
+  - Add notes to time logs
+  - Generate daily time reports
+  - Display all historical time logs
+  - Calculate total work hours
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # moro

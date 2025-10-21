@@ -1,29 +1,29 @@
 ---
-title: "Control SSH Servers - nxc-ssh Exploitation | Online Free DevTools by Hexmos"
+title: 'Control SSH Servers - nxc-ssh Exploitation | Online Free DevTools by Hexmos'
 name: nxc-ssh
-path: "/freedevtools/tldr/nxc/nxc-ssh/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-ssh/"
-description: "Control SSH servers with nxc-ssh, a pentesting exploitation tool. Automate password spraying, credential searching, and privilege escalation. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-ssh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-ssh/'
+description: 'Control SSH servers with nxc-ssh, a pentesting exploitation tool. Automate password spraying, credential searching, and privilege escalation. Free online tool, no registration required.'
 category: common
 keywords:
-- ssh exploitation
-- ssh pentesting
-- nxc-ssh automation
-- password spraying linux
-- credential search macos
-- ssh bruteforce common
-- linux privilege escalation
-- ssh key authentication
-- network reconnaissance
-- penetration testing tools
+  - ssh exploitation
+  - ssh pentesting
+  - nxc-ssh automation
+  - password spraying linux
+  - credential search macos
+  - ssh bruteforce common
+  - linux privilege escalation
+  - ssh key authentication
+  - network reconnaissance
+  - penetration testing tools
 features:
-- Automate password spraying attacks against SSH servers.
-- Search for valid SSH credentials using username and password lists.
-- Authenticate using private keys with password passphrase support.
-- Test SSH credentials across a range of target IP addresses.
-- Check for sudo privileges after successful SSH login.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automate password spraying attacks against SSH servers.
+  - Search for valid SSH credentials using username and password lists.
+  - Authenticate using private keys with password passphrase support.
+  - Test SSH credentials across a range of target IP addresses.
+  - Check for sudo privileges after successful SSH login.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc ssh

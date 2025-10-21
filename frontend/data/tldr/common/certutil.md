@@ -1,29 +1,29 @@
 ---
-title: "Certutil - Manage Certificates & Keys | Online Free DevTools by Hexmos"
+title: 'Certutil - Manage Certificates & Keys | Online Free DevTools by Hexmos'
 name: certutil
-path: "/freedevtools/tldr/common/certutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/certutil/"
-description: "Manage certificates and keys with Certutil. Secure your systems and applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/certutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/certutil/'
+description: 'Manage certificates and keys with Certutil. Secure your systems and applications. Free online tool, no registration required.'
 category: common
 keywords:
-- certutil certificate management
-- nss database certificates
-- linux certificate utility
-- certificate key generation
-- certutil private key management
-- certutil certificate database
-- certutil trust attributes
-- certutil server certificate management
-- certutil subject alternative names
-- common certificate tools
+  - certutil certificate management
+  - nss database certificates
+  - linux certificate utility
+  - certificate key generation
+  - certutil private key management
+  - certutil certificate database
+  - certutil trust attributes
+  - certutil server certificate management
+  - certutil subject alternative names
+  - common certificate tools
 features:
-- Create new certificate databases
-- List all certificates in a database
-- Manage private keys with password protection
-- Add signed certificates to databases
-- Add subject alternative names to certificates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new certificate databases
+  - List all certificates in a database
+  - Manage private keys with password protection
+  - Add signed certificates to databases
+  - Add subject alternative names to certificates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # certutil

@@ -1,29 +1,29 @@
 ---
-title: "Croc Transfer - Securely Send Files | Online Free DevTools by Hexmos"
+title: 'Croc Transfer - Securely Send Files | Online Free DevTools by Hexmos'
 name: croc
-path: "/freedevtools/tldr/common/croc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/croc/"
-description: "Transfer files securely with Croc! Quickly send and receive files of any size across networks using a passphrase. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/croc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/croc/'
+description: 'Transfer files securely with Croc! Quickly send and receive files of any size across networks using a passphrase. Free online tool, no registration required.'
 category: common
 keywords:
-- croc file transfer
-- secure file transfer
-- command-line file transfer
-- cross-platform file transfer
-- croc relay transfer
-- encrypted file transfer
-- terminal file transfer
-- local network file transfer
-- croc transfer linux
-- croc transfer macos
+  - croc file transfer
+  - secure file transfer
+  - command-line file transfer
+  - cross-platform file transfer
+  - croc relay transfer
+  - encrypted file transfer
+  - terminal file transfer
+  - local network file transfer
+  - croc transfer linux
+  - croc transfer macos
 features:
-- Send files and directories securely
-- Receive files using a passphrase
-- Transfer data over a custom relay
-- Host a relay for enhanced connectivity
-- Send data cross-platform using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send files and directories securely
+  - Receive files using a passphrase
+  - Transfer data over a custom relay
+  - Host a relay for enhanced connectivity
+  - Send data cross-platform using command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # croc

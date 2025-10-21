@@ -1,9 +1,9 @@
 ---
-title: "Manage Packages - Control Software with pkgin | Online Free DevTools by Hexmos"
+title: 'Manage Packages - Control Software with pkgin | Online Free DevTools by Hexmos'
 name: pkgin
-path: "/freedevtools/tldr/netbsd/pkgin/"
-canonical: "https://hexmos.com/freedevtools/tldr/netbsd/pkgin/"
-description: "Manage pkgsrc binary packages effortlessly with pkgin on NetBSD. Streamline software installation, removal, and upgrades on your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/netbsd/pkgin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/netbsd/pkgin/'
+description: 'Manage pkgsrc binary packages effortlessly with pkgin on NetBSD. Streamline software installation, removal, and upgrades on your system. Free online tool, no registration required.'
 category: netbsd
 keywords:
   - NetBSD package management
@@ -22,8 +22,8 @@ features:
   - Upgrade all installed packages to the latest versions
   - Search for packages by name or description
   - Automatically remove orphaned dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkgin

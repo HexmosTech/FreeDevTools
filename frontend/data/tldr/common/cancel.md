@@ -1,29 +1,29 @@
 ---
-title: "Cancel Print Jobs - Control Print Queue | Online Free DevTools by Hexmos"
+title: 'Cancel Print Jobs - Control Print Queue | Online Free DevTools by Hexmos'
 name: cancel
-path: "/freedevtools/tldr/common/cancel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cancel/"
-description: "Control print jobs with Cancel. Manage your print queue, cancel specific print jobs or all jobs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cancel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cancel/'
+description: 'Control print jobs with Cancel. Manage your print queue, cancel specific print jobs or all jobs. Free online tool, no registration required.'
 category: common
 keywords:
-- print job cancel
-- cancel print command
-- cups cancel jobs
-- lp cancel printer
-- linux cancel print
-- macos cancel print
-- cancel print queue
-- cancel print server
-- command line print cancel
-- print management tools
+  - print job cancel
+  - cancel print command
+  - cups cancel jobs
+  - lp cancel printer
+  - linux cancel print
+  - macos cancel print
+  - cancel print queue
+  - cancel print server
+  - command line print cancel
+  - print management tools
 features:
-- Cancel the current job on the default printer
-- Cancel all jobs owned by a specific user
-- Cancel a specific job from a specific printer
-- Cancel all jobs of all printers
-- Cancel jobs from a specific server and delete job data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Cancel the current job on the default printer
+  - Cancel all jobs owned by a specific user
+  - Cancel a specific job from a specific printer
+  - Cancel all jobs of all printers
+  - Cancel jobs from a specific server and delete job data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cancel

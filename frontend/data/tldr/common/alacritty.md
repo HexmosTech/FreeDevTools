@@ -1,29 +1,29 @@
 ---
-title: "Alacritty Terminal - Control Terminal Emulation | Online Free DevTools by Hexmos"
+title: 'Alacritty Terminal - Control Terminal Emulation | Online Free DevTools by Hexmos'
 name: alacritty
-path: "/freedevtools/tldr/common/alacritty/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/alacritty/"
-description: "Control terminal emulation with Alacritty Terminal Emulator. Manage windows, execute commands, and configure profiles easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/alacritty/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/alacritty/'
+description: 'Control terminal emulation with Alacritty Terminal Emulator. Manage windows, execute commands, and configure profiles easily. Free online tool, no registration required.'
 category: common
 keywords:
-- alacritty terminal emulator
-- gpu accelerated terminal
-- cross platform terminal
-- command line terminal
-- alacritty configuration
-- terminal window management
-- linux terminal
-- macos terminal
-- windows terminal
-- alacritty commands
+  - alacritty terminal emulator
+  - gpu accelerated terminal
+  - cross platform terminal
+  - command line terminal
+  - alacritty configuration
+  - terminal window management
+  - linux terminal
+  - macos terminal
+  - windows terminal
+  - alacritty commands
 features:
-- Launch a new Alacritty terminal window.
-- Start the Alacritty daemon in the background.
-- Create new windows within an existing Alacritty process.
-- Specify a working directory for the shell.
-- Execute commands directly in a new Alacritty window.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch a new Alacritty terminal window.
+  - Start the Alacritty daemon in the background.
+  - Create new windows within an existing Alacritty process.
+  - Specify a working directory for the shell.
+  - Execute commands directly in a new Alacritty window.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # alacritty

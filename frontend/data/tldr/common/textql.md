@@ -1,29 +1,29 @@
 ---
-title: "Execute SQL on Text - Query CSV/TSV with TextQL | Online Free DevTools by Hexmos"
+title: 'Execute SQL on Text - Query CSV/TSV with TextQL | Online Free DevTools by Hexmos'
 name: textql
-path: "/freedevtools/tldr/common/textql/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/textql/"
-description: "Execute SQL queries directly on text files with TextQL. Analyze CSV and TSV data with SQL, ideal for data analysis and reporting. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/textql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/textql/'
+description: 'Execute SQL queries directly on text files with TextQL. Analyze CSV and TSV data with SQL, ideal for data analysis and reporting. Free online tool, no registration required.'
 category: common
 keywords:
-- SQL CSV query
-- SQL TSV query
-- TextQL SQL
-- CSV SQL command line
-- TSV SQL command line
-- SQL text file
-- SQL data analysis
-- SQL flat file
-- SQL delimited data
-- SQL text processing
+  - SQL CSV query
+  - SQL TSV query
+  - TextQL SQL
+  - CSV SQL command line
+  - TSV SQL command line
+  - SQL text file
+  - SQL data analysis
+  - SQL flat file
+  - SQL delimited data
+  - SQL text processing
 features:
-- Query CSV and TSV files using SQL syntax
-- Specify delimiters for different text file formats
-- Read data from standard input for flexible data sources
-- Join data from multiple text files based on common columns
-- Format output with custom delimiters and headers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Query CSV and TSV files using SQL syntax
+  - Specify delimiters for different text file formats
+  - Read data from standard input for flexible data sources
+  - Join data from multiple text files based on common columns
+  - Format output with custom delimiters and headers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # textql

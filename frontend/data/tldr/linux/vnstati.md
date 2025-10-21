@@ -1,9 +1,9 @@
 ---
-title: "Generate Network Stats PNGs - vnstati Command | Online Free DevTools by Hexmos"
+title: 'Generate Network Stats PNGs - vnstati Command | Online Free DevTools by Hexmos'
 name: vnstati
-path: "/freedevtools/tldr/linux/vnstati/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/vnstati/"
-description: "Generate PNG network statistics images with vnstati.  Visualize your network traffic data easily with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/vnstati/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/vnstati/'
+description: 'Generate PNG network statistics images with vnstati.  Visualize your network traffic data easily with this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - network traffic visualization
@@ -22,8 +22,8 @@ features:
   - Creates top 10 traffic-intensive days reports.
   - Displays monthly traffic statistics for the past year.
   - Presents hourly traffic statistics for the past 24 hours.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vnstati

@@ -1,29 +1,29 @@
 ---
-title: "LaTeX Compiler - Generate Documents with latexmk | Online Free DevTools by Hexmos"
+title: 'LaTeX Compiler - Generate Documents with latexmk | Online Free DevTools by Hexmos'
 name: latexmk
-path: "/freedevtools/tldr/common/latexmk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/latexmk/"
-description: "Generate LaTeX documents automatically with latexmk. Compile, update, and clean LaTeX projects effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/latexmk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/latexmk/'
+description: 'Generate LaTeX documents automatically with latexmk. Compile, update, and clean LaTeX projects effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- latex compiler
-- latex document generator
-- latex PDF compiler
-- latex DVI compiler
-- latex automatic compilation
-- latex build tool
-- latex document management
-- tex compilation
-- command line latex
-- latexmk automation
+  - latex compiler
+  - latex document generator
+  - latex PDF compiler
+  - latex DVI compiler
+  - latex automatic compilation
+  - latex build tool
+  - latex document management
+  - tex compilation
+  - command line latex
+  - latexmk automation
 features:
-- Compile LaTeX source files into various document formats.
-- Automatically run LaTeX multiple times as needed.
-- Continuously update documents based on source file changes.
-- Force document generation despite errors.
-- Clean up temporary LaTeX files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile LaTeX source files into various document formats.
+  - Automatically run LaTeX multiple times as needed.
+  - Continuously update documents based on source file changes.
+  - Force document generation despite errors.
+  - Clean up temporary LaTeX files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # latexmk

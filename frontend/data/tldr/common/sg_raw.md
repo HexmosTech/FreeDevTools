@@ -1,29 +1,29 @@
 ---
-title: "SCSI Control - Send Raw SCSI Commands | Online Free DevTools by Hexmos"
+title: 'SCSI Control - Send Raw SCSI Commands | Online Free DevTools by Hexmos'
 name: sg_raw
-path: "/freedevtools/tldr/common/sg_raw/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sg_raw/"
-description: "Control SCSI devices with sg_raw. Send raw SCSI commands, manipulate optical drives, and debug device interactions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sg_raw/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sg_raw/'
+description: 'Control SCSI devices with sg_raw. Send raw SCSI commands, manipulate optical drives, and debug device interactions. Free online tool, no registration required.'
 category: common
 keywords:
-- raw SCSI command
-- SCSI device control
-- sg_raw command
-- optical drive control
-- Linux SCSI commands
-- SCSI pass-through
-- storage device control
-- SCSI debug
-- send SCSI command
-- Linux sg_raw
+  - raw SCSI command
+  - SCSI device control
+  - sg_raw command
+  - optical drive control
+  - Linux SCSI commands
+  - SCSI pass-through
+  - storage device control
+  - SCSI debug
+  - send SCSI command
+  - Linux sg_raw
 features:
-- Send arbitrary SCSI commands to devices.
-- Control optical drive tray loading and unloading.
-- Read and send data directly to SCSI devices.
-- Customize command execution with timeout options.
-- Dump returned data in binary format for detailed analysis.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send arbitrary SCSI commands to devices.
+  - Control optical drive tray loading and unloading.
+  - Read and send data directly to SCSI devices.
+  - Customize command execution with timeout options.
+  - Dump returned data in binary format for detailed analysis.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sg_raw

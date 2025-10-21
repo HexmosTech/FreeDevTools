@@ -1,29 +1,29 @@
 ---
-title: "Calculate BLAKE2 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Calculate BLAKE2 Checksums - Verify File Integrity | Online Free DevTools by Hexmos'
 name: b2sum
-path: "/freedevtools/tldr/common/b2sum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/b2sum/"
-description: "Calculate BLAKE2 checksums with b2sum for robust file integrity verification. Generate and check file checksums effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/b2sum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/b2sum/'
+description: 'Calculate BLAKE2 checksums with b2sum for robust file integrity verification. Generate and check file checksums effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- BLAKE2 checksum generator
-- file integrity checker
-- cryptographic checksum tool
-- b2sum command line
-- Linux checksum utility
-- checksum verification
-- file hash calculator
-- BLAKE2 hash algorithm
-- data integrity validation
-- command line checksum tool
+  - BLAKE2 checksum generator
+  - file integrity checker
+  - cryptographic checksum tool
+  - b2sum command line
+  - Linux checksum utility
+  - checksum verification
+  - file hash calculator
+  - BLAKE2 hash algorithm
+  - data integrity validation
+  - command line checksum tool
 features:
-- Calculate BLAKE2 checksums for files
-- Verify file integrity using checksums
-- Generate checksums from standard input
-- Check checksums against a checksum file
-- Ignore missing files during verification
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate BLAKE2 checksums for files
+  - Verify file integrity using checksums
+  - Generate checksums from standard input
+  - Check checksums against a checksum file
+  - Ignore missing files during verification
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # b2sum

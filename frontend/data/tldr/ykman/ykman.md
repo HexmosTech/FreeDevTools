@@ -1,29 +1,29 @@
 ---
-title: "YubiKey Manager - Configure YubiKeys | Online Free DevTools by Hexmos"
+title: 'YubiKey Manager - Configure YubiKeys | Online Free DevTools by Hexmos'
 name: ykman
-path: "/freedevtools/tldr/ykman/ykman/"
-canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman/"
-description: "Configure YubiKeys with YubiKey Manager. Manage FIDO, OATH, and OpenPGP applications effortlessly using this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/ykman/ykman/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ykman/ykman/'
+description: 'Configure YubiKeys with YubiKey Manager. Manage FIDO, OATH, and OpenPGP applications effortlessly using this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- yubikey configuration
-- yubikey manager
-- fido management
-- oath management
-- openpgp management
-- ykman command
-- yubikey serial number
-- yubikey firmware
-- yubico authentication
-- two factor authentication
+  - yubikey configuration
+  - yubikey manager
+  - fido management
+  - oath management
+  - openpgp management
+  - ykman command
+  - yubikey serial number
+  - yubikey firmware
+  - yubico authentication
+  - two factor authentication
 features:
-- Display YubiKey general information
-- List connected YubiKeys
-- Configure application settings
-- Manage FIDO applications
-- Manage OATH applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display YubiKey general information
+  - List connected YubiKeys
+  - Configure application settings
+  - Manage FIDO applications
+  - Manage OATH applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ykman

@@ -1,29 +1,29 @@
 ---
-title: "DVC Config - Manage DVC Repository Configurations | Online Free DevTools by Hexmos"
+title: 'DVC Config - Manage DVC Repository Configurations | Online Free DevTools by Hexmos'
 name: dvc-config
-path: "/freedevtools/tldr/dvc/dvc-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-config/"
-description: "Manage DVC repository configurations with DVC Config. Configure project settings, remotes and parameters via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/dvc/dvc-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dvc/dvc-config/'
+description: 'Manage DVC repository configurations with DVC Config. Configure project settings, remotes and parameters via command line. Free online tool, no registration required.'
 category: common
 keywords:
-- dvc config
-- dvc repository configuration
-- data version control configuration
-- dvc remote config
-- dvc project config
-- dvc global config
-- dvc system config
-- dvc config settings
-- dvc config parameters
-- dvc command line config
+  - dvc config
+  - dvc repository configuration
+  - data version control configuration
+  - dvc remote config
+  - dvc project config
+  - dvc global config
+  - dvc system config
+  - dvc config settings
+  - dvc config parameters
+  - dvc command line config
 features:
-- Set DVC configurations at project level
-- Configure DVC remotes easily
-- Unset DVC configuration values
-- Manage DVC settings from command line
-- Configure DVC at local, global, or system level
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set DVC configurations at project level
+  - Configure DVC remotes easily
+  - Unset DVC configuration values
+  - Manage DVC settings from command line
+  - Configure DVC at local, global, or system level
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dvc config

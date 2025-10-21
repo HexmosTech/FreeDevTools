@@ -1,29 +1,29 @@
 ---
-title: "Generate sdef - Create Scripting Definitions | Online Free DevTools by Hexmos"
+title: 'Generate sdef - Create Scripting Definitions | Online Free DevTools by Hexmos'
 name: sdef
-path: "/freedevtools/tldr/osx/sdef/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/sdef/"
-description: "Generate scripting definitions with sdef, a powerful command line interface for macOS. Automate application scripting. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/sdef/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/sdef/'
+description: 'Generate scripting definitions with sdef, a powerful command line interface for macOS. Automate application scripting. Free online tool, no registration required.'
 category: osx
 keywords:
-- scripting definitions
-- sdef generator
-- macOS scripting
-- AppleScript definitions
-- application scripting
-- sdef tool osx
-- scriptable application definitions
-- osx automation
-- generate sdef file
-- Cocoa scripting
+  - scripting definitions
+  - sdef generator
+  - macOS scripting
+  - AppleScript definitions
+  - application scripting
+  - sdef tool osx
+  - scriptable application definitions
+  - osx automation
+  - generate sdef file
+  - Cocoa scripting
 features:
-- Generate sdef files from scriptable applications
-- Print scripting definitions to the console
-- Extract scripting information from application bundles
-- Automate application scripting tasks on macOS
-- Inspect application's scripting interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate sdef files from scriptable applications
+  - Print scripting definitions to the console
+  - Extract scripting information from application bundles
+  - Automate application scripting tasks on macOS
+  - Inspect application's scripting interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sdef

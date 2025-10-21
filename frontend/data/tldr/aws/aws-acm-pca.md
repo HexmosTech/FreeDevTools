@@ -1,29 +1,29 @@
 ---
-title: "ACM PCA - Manage AWS Private Certificates | Online Free DevTools by Hexmos"
+title: 'ACM PCA - Manage AWS Private Certificates | Online Free DevTools by Hexmos'
 name: aws-acm-pca
-path: "/freedevtools/tldr/aws/aws-acm-pca/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-acm-pca/"
-description: "Manage AWS Private Certificates with ACM PCA. Create, describe, list, and revoke certificates using the AWS command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-acm-pca/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-acm-pca/'
+description: 'Manage AWS Private Certificates with ACM PCA. Create, describe, list, and revoke certificates using the AWS command line. Free online tool, no registration required.'
 category: common
 keywords:
-- aws acm pca certificate authority
-- aws acm pca private certificate
-- aws acm pca command line
-- acm pca certificate management
-- aws certificate authority management
-- aws acm pca revoke certificate
-- aws acm pca create certificate
-- aws acm pca cli
-- aws acm pca openssl
-- aws acm pca certificate signing request
+  - aws acm pca certificate authority
+  - aws acm pca private certificate
+  - aws acm pca command line
+  - acm pca certificate management
+  - aws certificate authority management
+  - aws acm pca revoke certificate
+  - aws acm pca create certificate
+  - aws acm pca cli
+  - aws acm pca openssl
+  - aws acm pca certificate signing request
 features:
-- Create and manage private certificate authorities in AWS
-- Issue certificates from a private certificate authority
-- Revoke certificates based on serial number and reason
-- Retrieve certificate details using the ARN
-- Update certificate authority configurations and statuses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage private certificate authorities in AWS
+  - Issue certificates from a private certificate authority
+  - Revoke certificates based on serial number and reason
+  - Retrieve certificate details using the ARN
+  - Update certificate authority configurations and statuses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws acm-pca

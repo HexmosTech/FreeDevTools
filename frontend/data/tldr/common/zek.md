@@ -1,29 +1,29 @@
 ---
-title: "Generate XML Struct - Zek | Online Free DevTools by Hexmos"
+title: 'Generate XML Struct - Zek | Online Free DevTools by Hexmos'
 name: zek
-path: "/freedevtools/tldr/common/zek/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zek/"
-description: "Generate Go structs from XML with Zek. Convert XML data structures into Go code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zek/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zek/'
+description: 'Generate Go structs from XML with Zek. Convert XML data structures into Go code. Free online tool, no registration required.'
 category: common
 keywords:
-- XML to Go struct
-- Go struct generator
-- XML code generator
-- Convert XML to Go
-- Generate struct from XML
-- XML parsing Go
-- Command line XML parser
-- Go data structures from XML
-- zek XML conversion
-- XML to Go code
+  - XML to Go struct
+  - Go struct generator
+  - XML code generator
+  - Convert XML to Go
+  - Generate struct from XML
+  - XML parsing Go
+  - Command line XML parser
+  - Go data structures from XML
+  - zek XML conversion
+  - XML to Go code
 features:
-- Generates Go structs from XML input
-- Reads XML from stdin
-- Writes Go struct output to stdout
-- Saves Go code to a file
-- Generates example Go programs from XML
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generates Go structs from XML input
+  - Reads XML from stdin
+  - Writes Go struct output to stdout
+  - Saves Go code to a file
+  - Generates example Go programs from XML
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zek

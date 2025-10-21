@@ -1,29 +1,29 @@
 ---
-title: "Archive Files - Create 7zr Archives | Online Free DevTools by Hexmos"
+title: 'Archive Files - Create 7zr Archives | Online Free DevTools by Hexmos'
 name: 7zr
-path: "/freedevtools/tldr/common/7zr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/7zr/"
-description: "Create 7z archives with 7zr, a high-compression file archiver. Compress files, encrypt archives, and extract content. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/7zr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/7zr/'
+description: 'Create 7z archives with 7zr, a high-compression file archiver. Compress files, encrypt archives, and extract content. Free online tool, no registration required.'
 category: common
 keywords:
-- 7z archiver
-- 7z file compression
-- 7z archive extraction
-- 7z command line
-- 7zr archive
-- 7zr compression
-- 7zr extraction
-- file archiving
-- data compression
-- 7z encryption
+  - 7z archiver
+  - 7z file compression
+  - 7z archive extraction
+  - 7z command line
+  - 7zr archive
+  - 7zr compression
+  - 7zr extraction
+  - file archiving
+  - data compression
+  - 7z encryption
 features:
-- Create highly compressed 7z archives.
-- Encrypt existing archives with password protection.
-- Extract archive contents to a specified directory.
-- List the contents of a 7z archive.
-- Set the compression level for 7z archives.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create highly compressed 7z archives.
+  - Encrypt existing archives with password protection.
+  - Extract archive contents to a specified directory.
+  - List the contents of a 7z archive.
+  - Set the compression level for 7z archives.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # 7zr

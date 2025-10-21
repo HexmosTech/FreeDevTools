@@ -1,29 +1,29 @@
 ---
-title: "Manage Vagrant Boxes - Create VMs | Online Free DevTools by Hexmos"
+title: 'Manage Vagrant Boxes - Create VMs | Online Free DevTools by Hexmos'
 name: vagrant-box
-path: "/freedevtools/tldr/vagrant/vagrant-box/"
-canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-box/"
-description: "Manage Vagrant boxes with Vagrant-Box. Create, update, and remove virtual machine images easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/vagrant/vagrant-box/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vagrant/vagrant-box/'
+description: 'Manage Vagrant boxes with Vagrant-Box. Create, update, and remove virtual machine images easily. Free online tool, no registration required.'
 category: common
 keywords:
-- vagrant box management
-- virtual machine images
-- vagrant box creation
-- vagrant box update
-- vagrant box removal
-- vagrant box list
-- vagrant ubuntu box
-- vagrant windows box
-- vagrant cloud boxes
-- vagrant prune boxes
+  - vagrant box management
+  - virtual machine images
+  - vagrant box creation
+  - vagrant box update
+  - vagrant box removal
+  - vagrant box list
+  - vagrant ubuntu box
+  - vagrant windows box
+  - vagrant cloud boxes
+  - vagrant prune boxes
 features:
-- List all installed Vagrant boxes
-- Add boxes from URLs or local files
-- Remove unused or outdated boxes
-- Update boxes to the latest version
-- Prune old versions of installed boxes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all installed Vagrant boxes
+  - Add boxes from URLs or local files
+  - Remove unused or outdated boxes
+  - Update boxes to the latest version
+  - Prune old versions of installed boxes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vagrant box

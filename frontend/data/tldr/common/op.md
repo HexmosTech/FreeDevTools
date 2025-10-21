@@ -1,29 +1,29 @@
 ---
-title: "1Password CLI - Manage Secrets & Vaults | Online Free DevTools by Hexmos"
+title: '1Password CLI - Manage Secrets & Vaults | Online Free DevTools by Hexmos'
 name: op
-path: "/freedevtools/tldr/common/op/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/op/"
-description: "Manage secrets effortlessly with 1Password CLI. Securely access vaults, create items, and inject secrets using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/op/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/op/'
+description: 'Manage secrets effortlessly with 1Password CLI. Securely access vaults, create items, and inject secrets using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- 1Password CLI manager
-- 1Password vault access
-- Secret injection CLI
-- 1Password item creation
-- Vault management CLI
-- op command-line tool
-- Password manager CLI
-- Secret reference tool
-- Command line secrets
-- Shell script secrets
+  - 1Password CLI manager
+  - 1Password vault access
+  - Secret injection CLI
+  - 1Password item creation
+  - Vault management CLI
+  - op command-line tool
+  - Password manager CLI
+  - Secret reference tool
+  - Command line secrets
+  - Shell script secrets
 features:
-- Sign in to 1Password accounts
-- List available vaults
-- Retrieve item details in JSON
-- Create new items in vaults
-- Inject secrets into commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Sign in to 1Password accounts
+  - List available vaults
+  - Retrieve item details in JSON
+  - Create new items in vaults
+  - Inject secrets into commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # op

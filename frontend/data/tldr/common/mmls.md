@@ -1,9 +1,9 @@
 ---
-title: "Display Partition Layout - Mmls Tool | Online Free DevTools by Hexmos"
+title: 'Display Partition Layout - Mmls Tool | Online Free DevTools by Hexmos'
 name: mmls
-path: "/freedevtools/tldr/common/mmls/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mmls/"
-description: "Display partition layout information with Mmls. Analyze disk images and volume systems, identify partition types, and recover data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mmls/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mmls/'
+description: 'Display partition layout information with Mmls. Analyze disk images and volume systems, identify partition types, and recover data. Free online tool, no registration required.'
 category: common
 keywords:
   - disk image analyzer
@@ -22,8 +22,8 @@ features:
   - Analyze split EWF images
   - Display nested partition tables
   - Identify different partition table types
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mmls

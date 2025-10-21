@@ -1,29 +1,29 @@
 ---
-title: "Gitlab Control - Manage GitLab Services | Online Free DevTools by Hexmos"
+title: 'Gitlab Control - Manage GitLab Services | Online Free DevTools by Hexmos'
 name: gitlab-ctl
-path: "/freedevtools/tldr/git/gitlab-ctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitlab-ctl/"
-description: "Control GitLab services effectively with gitlab-ctl. Manage, restart, and monitor GitLab components efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitlab-ctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitlab-ctl/'
+description: 'Control GitLab services effectively with gitlab-ctl. Manage, restart, and monitor GitLab components efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- gitlab control
-- gitlab service management
-- omnibus gitlab manager
-- gitlab restart service
-- gitlab logs monitoring
-- gitlab reconfigure application
-- linux gitlab control
-- unix gitlab manager
-- gitlab service status
-- gitlab command line tool
+  - gitlab control
+  - gitlab service management
+  - omnibus gitlab manager
+  - gitlab restart service
+  - gitlab logs monitoring
+  - gitlab reconfigure application
+  - linux gitlab control
+  - unix gitlab manager
+  - gitlab service status
+  - gitlab command line tool
 features:
-- Display the status of GitLab services
-- Restart individual or all GitLab services
-- Tail logs for real-time monitoring
-- Reconfigure the GitLab application
-- Send kill signals to specific GitLab services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the status of GitLab services
+  - Restart individual or all GitLab services
+  - Tail logs for real-time monitoring
+  - Reconfigure the GitLab application
+  - Send kill signals to specific GitLab services
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitlab-ctl

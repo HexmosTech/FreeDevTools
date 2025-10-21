@@ -1,29 +1,29 @@
 ---
-title: "PIA Control - Manage Private Internet Access via Command Line | Online Free DevTools by Hexmos"
+title: 'PIA Control - Manage Private Internet Access via Command Line | Online Free DevTools by Hexmos'
 name: piactl
-path: "/freedevtools/tldr/common/piactl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/piactl/"
-description: "Control Private Internet Access VPN with PIACTL. Securely manage connections, regions, and background settings via the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/piactl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/piactl/'
+description: 'Control Private Internet Access VPN with PIACTL. Securely manage connections, regions, and background settings via the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- piactl command
-- private internet access control
-- vpn command line
-- piactl linux
-- piactl macos
-- piactl windows
-- pia vpn cli
-- piactl connect
-- piactl region selection
-- vpn configuration tool
+  - piactl command
+  - private internet access control
+  - vpn command line
+  - piactl linux
+  - piactl macos
+  - piactl windows
+  - pia vpn cli
+  - piactl connect
+  - piactl region selection
+  - vpn configuration tool
 features:
-- Connect and disconnect from Private Internet Access VPN
-- Manage VPN server region selection
-- Enable or disable the background daemon
-- Authenticate with a login file
-- Display available VPN regions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect and disconnect from Private Internet Access VPN
+  - Manage VPN server region selection
+  - Enable or disable the background daemon
+  - Authenticate with a login file
+  - Display available VPN regions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # piactl

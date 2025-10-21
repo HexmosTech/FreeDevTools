@@ -1,29 +1,29 @@
 ---
-title: "Analyze Multimedia Streams - ffprobe | Online Free DevTools by Hexmos"
+title: 'Analyze Multimedia Streams - ffprobe | Online Free DevTools by Hexmos'
 name: ffprobe
-path: "/freedevtools/tldr/common/ffprobe/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ffprobe/"
-description: "Analyze multimedia streams with ffprobe. Extract video metadata, check frame rates, and determine bitrates effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ffprobe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ffprobe/'
+description: 'Analyze multimedia streams with ffprobe. Extract video metadata, check frame rates, and determine bitrates effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- multimedia stream analyzer
-- ffprobe metadata extraction
-- video bitrate analysis
-- frame rate detection
-- media duration checker
-- video width height check
-- ffmpeg stream analysis
-- audio stream information
-- mp4 metadata reader
-- video stream inspection
+  - multimedia stream analyzer
+  - ffprobe metadata extraction
+  - video bitrate analysis
+  - frame rate detection
+  - media duration checker
+  - video width height check
+  - ffmpeg stream analysis
+  - audio stream information
+  - mp4 metadata reader
+  - video stream inspection
 features:
-- Display all stream information for a media file.
-- Extract media duration.
-- Determine video frame rate.
-- Display video width and height.
-- Analyze average video bit rate.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all stream information for a media file.
+  - Extract media duration.
+  - Determine video frame rate.
+  - Display video width and height.
+  - Analyze average video bit rate.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ffprobe

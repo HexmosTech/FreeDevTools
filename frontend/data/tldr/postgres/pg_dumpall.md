@@ -1,29 +1,29 @@
 ---
-title: "pg_dumpall - Extract PostgreSQL Databases | Online Free DevTools by Hexmos"
+title: 'pg_dumpall - Extract PostgreSQL Databases | Online Free DevTools by Hexmos'
 name: pg_dumpall
-path: "/freedevtools/tldr/postgres/pg_dumpall/"
-canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_dumpall/"
-description: "Extract PostgreSQL databases with pg_dumpall. Back up entire database clusters and save them as SQL scripts for restoration or migration. Free online tool, no registration required."
+path: '/freedevtools/tldr/postgres/pg_dumpall/'
+canonical: 'https://hexmos.com/freedevtools/tldr/postgres/pg_dumpall/'
+description: 'Extract PostgreSQL databases with pg_dumpall. Back up entire database clusters and save them as SQL scripts for restoration or migration. Free online tool, no registration required.'
 category: common
 keywords:
-- PostgreSQL database dump
-- database backup script
-- PostgreSQL cluster extract
-- pg_dumpall schema
-- SQL database export
-- PostgreSQL data recovery
-- command line database
-- dump PostgreSQL data
-- pg_dumpall linux
-- pg_dumpall database
+  - PostgreSQL database dump
+  - database backup script
+  - PostgreSQL cluster extract
+  - pg_dumpall schema
+  - SQL database export
+  - PostgreSQL data recovery
+  - command line database
+  - dump PostgreSQL data
+  - pg_dumpall linux
+  - pg_dumpall database
 features:
-- Extract entire PostgreSQL clusters to SQL scripts
-- Dump database schema only
-- Dump database data only
-- Specify username, host and port for database connection
-- Back up multiple databases with a single command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract entire PostgreSQL clusters to SQL scripts
+  - Dump database schema only
+  - Dump database data only
+  - Specify username, host and port for database connection
+  - Back up multiple databases with a single command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pg_dumpall

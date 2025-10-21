@@ -1,29 +1,29 @@
 ---
-title: "Control PlatformIO Devices - Monitor and Manage | Online Free DevTools by Hexmos"
+title: 'Control PlatformIO Devices - Monitor and Manage | Online Free DevTools by Hexmos'
 name: pio-device
-path: "/freedevtools/tldr/pio/pio-device/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-device/"
-description: "Control PlatformIO devices with ease using this tool. Manage ports, monitor serial communication and debug embedded systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-device/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-device/'
+description: 'Control PlatformIO devices with ease using this tool. Manage ports, monitor serial communication and debug embedded systems. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO device manager
-- serial port monitoring
-- embedded system debugging
-- pio device serial communication
-- PlatformIO device list
-- interactive device monitor
-- USB device management
-- ttyUSB serial ports
-- PlatformIO serial monitor
-- device communication tool
+  - PlatformIO device manager
+  - serial port monitoring
+  - embedded system debugging
+  - pio device serial communication
+  - PlatformIO device list
+  - interactive device monitor
+  - USB device management
+  - ttyUSB serial ports
+  - PlatformIO serial monitor
+  - device communication tool
 features:
-- List available serial ports and logical devices.
-- Start an interactive device monitor for serial communication.
-- Specify the port to monitor for specific devices.
-- Set custom baud rates for serial communication.
-- Configure end-of-line characters for device monitoring.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available serial ports and logical devices.
+  - Start an interactive device monitor for serial communication.
+  - Specify the port to monitor for specific devices.
+  - Set custom baud rates for serial communication.
+  - Configure end-of-line characters for device monitoring.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio device

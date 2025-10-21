@@ -1,29 +1,29 @@
 ---
-title: "Nx Workspace Manager - Control Builds & Tests | Online Free DevTools by Hexmos"
+title: 'Nx Workspace Manager - Control Builds & Tests | Online Free DevTools by Hexmos'
 name: nx
-path: "/freedevtools/tldr/common/nx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nx/"
-description: "Control Nx workspace builds and tests with Nx Workspace Manager. Execute targets, manage projects, and optimize workflows using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nx/'
+description: 'Control Nx workspace builds and tests with Nx Workspace Manager. Execute targets, manage projects, and optimize workflows using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- nx workspace manager
-- nx build automation
-- nx project testing
-- nx target execution
-- nx affected command
-- nx monorepo management
-- nx task runner
-- nx CLI commands
-- nx project dependencies
-- nx distributed task execution
+  - nx workspace manager
+  - nx build automation
+  - nx project testing
+  - nx target execution
+  - nx affected command
+  - nx monorepo management
+  - nx task runner
+  - nx CLI commands
+  - nx project dependencies
+  - nx distributed task execution
 features:
-- Build specified projects in an Nx workspace
-- Test specified projects within the workspace
-- Execute custom targets on individual projects
-- Execute a specific target on multiple Nx projects simultaneously
-- Run tasks only on projects that have changed since the last commit
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build specified projects in an Nx workspace
+  - Test specified projects within the workspace
+  - Execute custom targets on individual projects
+  - Execute a specific target on multiple Nx projects simultaneously
+  - Run tasks only on projects that have changed since the last commit
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nx

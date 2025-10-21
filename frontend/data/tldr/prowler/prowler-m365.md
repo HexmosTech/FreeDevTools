@@ -1,29 +1,29 @@
 ---
-title: "Prowler M365 - Assess Security Configurations | Online Free DevTools by Hexmos"
+title: 'Prowler M365 - Assess Security Configurations | Online Free DevTools by Hexmos'
 name: prowler-m365
-path: "/freedevtools/tldr/prowler/prowler-m365/"
-canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-m365/"
-description: "Assess Microsoft 365 security configurations with Prowler M365. Identify vulnerabilities and ensure best practices using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/prowler/prowler-m365/'
+canonical: 'https://hexmos.com/freedevtools/tldr/prowler/prowler-m365/'
+description: 'Assess Microsoft 365 security configurations with Prowler M365. Identify vulnerabilities and ensure best practices using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- M365 security assessment
-- Microsoft 365 security configuration
-- Prowler M365 scan
-- cloud security auditing
-- M365 compliance check
-- Microsoft 365 best practices
-- Azure AD security audit
-- Microsoft 365 security posture
-- prowler command line tool
-- M365 security vulnerability scanner
+  - M365 security assessment
+  - Microsoft 365 security configuration
+  - Prowler M365 scan
+  - cloud security auditing
+  - M365 compliance check
+  - Microsoft 365 best practices
+  - Azure AD security audit
+  - Microsoft 365 security posture
+  - prowler command line tool
+  - M365 security vulnerability scanner
 features:
-- Audit Microsoft 365 security configurations
-- Identify potential vulnerabilities in your M365 environment
-- Ensure compliance with security best practices
-- Authenticate using service principals or Azure CLI
-- Run specific M365 security checks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Audit Microsoft 365 security configurations
+  - Identify potential vulnerabilities in your M365 environment
+  - Ensure compliance with security best practices
+  - Authenticate using service principals or Azure CLI
+  - Run specific M365 security checks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prowler m365

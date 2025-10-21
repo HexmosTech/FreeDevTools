@@ -1,9 +1,9 @@
 ---
-title: "Log Messages - Control System Log with Logger | Online Free DevTools by Hexmos"
+title: 'Log Messages - Control System Log with Logger | Online Free DevTools by Hexmos'
 name: logger
-path: "/freedevtools/tldr/linux/logger/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/logger/"
-description: "Control system logs with Logger. Add messages to syslog, filter by priority, and send to remote servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/logger/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/logger/'
+description: 'Control system logs with Logger. Add messages to syslog, filter by priority, and send to remote servers. Free online tool, no registration required.'
 category: linux
 keywords:
   - System Log Message
@@ -22,8 +22,8 @@ features:
   - Send log output to a remote syslog server
   - Use a specific tag for logged lines
   - Filter log messages by priority level
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # logger

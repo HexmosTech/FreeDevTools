@@ -1,29 +1,29 @@
 ---
-title: "Enumerate AD Users - Find Roasting Targets | Online Free DevTools by Hexmos"
+title: 'Enumerate AD Users - Find Roasting Targets | Online Free DevTools by Hexmos'
 name: getnpusers.py
-path: "/freedevtools/tldr/get/getnpusers-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/get/getnpusers-py/"
-description: "Enumerate Active Directory users with GetNPUsers.py to identify potential AS-REP roasting targets, enabling penetration testers to uncover security vulnerabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/get/getnpusers-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/get/getnpusers-py/'
+description: 'Enumerate Active Directory users with GetNPUsers.py to identify potential AS-REP roasting targets, enabling penetration testers to uncover security vulnerabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- active directory enumeration
-- as-rep roasting
-- kerberos pre-authentication
-- getnpusers.py impacket
-- active directory hacking
-- windows security auditing
-- domain user enumeration
-- network penetration testing
-- ad security vulnerability scanning
-- impacket exploit
+  - active directory enumeration
+  - as-rep roasting
+  - kerberos pre-authentication
+  - getnpusers.py impacket
+  - active directory hacking
+  - windows security auditing
+  - domain user enumeration
+  - network penetration testing
+  - ad security vulnerability scanning
+  - impacket exploit
 features:
-- Enumerate users with disabled Kerberos pre-authentication
-- Perform AS-REP roasting attacks
-- Dump crackable Kerberos hashes
-- Authenticate with specified credentials
-- Support pass-the-hash authentication
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate users with disabled Kerberos pre-authentication
+  - Perform AS-REP roasting attacks
+  - Dump crackable Kerberos hashes
+  - Authenticate with specified credentials
+  - Support pass-the-hash authentication
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # GetNPUsers.py

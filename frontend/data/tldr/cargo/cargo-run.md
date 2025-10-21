@@ -1,29 +1,29 @@
 ---
-title: "Run Cargo Package - Execute Rust Code | Online Free DevTools by Hexmos"
+title: 'Run Cargo Package - Execute Rust Code | Online Free DevTools by Hexmos'
 name: cargo-run
-path: "/freedevtools/tldr/cargo/cargo-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-run/"
-description: "Execute Rust code with Cargo Run. Build and run your Cargo packages quickly. Manage features and profiles with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-run/'
+description: 'Execute Rust code with Cargo Run. Build and run your Cargo packages quickly. Manage features and profiles with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- cargo package runner
-- rust code execution
-- cargo build and run
-- command line rust
-- cargo features management
-- cargo profiles configuration
-- rust development tool
-- cargo project execution
-- rust binary execution
-- cargo run examples
+  - cargo package runner
+  - rust code execution
+  - cargo build and run
+  - command line rust
+  - cargo features management
+  - cargo profiles configuration
+  - rust development tool
+  - cargo project execution
+  - rust binary execution
+  - cargo run examples
 features:
-- Execute Rust binaries directly
-- Specify target binaries to run
-- Activate or disable Cargo features
-- Configure custom profiles for execution
-- Run examples defined in the Cargo project
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Rust binaries directly
+  - Specify target binaries to run
+  - Activate or disable Cargo features
+  - Configure custom profiles for execution
+  - Run examples defined in the Cargo project
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo run

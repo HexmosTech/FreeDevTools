@@ -1,29 +1,29 @@
 ---
-title: "Extract XML Elements - Analyze XML Structure | Online Free DevTools by Hexmos"
+title: 'Extract XML Elements - Analyze XML Structure | Online Free DevTools by Hexmos'
 name: xml-elements
-path: "/freedevtools/tldr/xml/xml-elements/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-elements/"
-description: "Extract XML elements easily with XML Elements tool. Analyze XML structure, attributes, and values effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xml-elements/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xml-elements/'
+description: 'Extract XML elements easily with XML Elements tool. Analyze XML structure, attributes, and values effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- xml elements extraction
-- xml structure analyzer
-- xpath generation
-- xml attributes extraction
-- xml value extraction
-- xml parsing linux
-- xml processing command line
-- xmlstarlet elements
-- xml document structure
-- common xml tasks
+  - xml elements extraction
+  - xml structure analyzer
+  - xpath generation
+  - xml attributes extraction
+  - xml value extraction
+  - xml parsing linux
+  - xml processing command line
+  - xmlstarlet elements
+  - xml document structure
+  - common xml tasks
 features:
-- Extract XML elements to generate XPath expressions.
-- Extract elements, attributes, and values from XML documents.
-- Print sorted unique elements to reveal XML structure.
-- Limit extraction depth for focused XML analysis.
-- Display help information for command usage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract XML elements to generate XPath expressions.
+  - Extract elements, attributes, and values from XML documents.
+  - Print sorted unique elements to reveal XML structure.
+  - Limit extraction depth for focused XML analysis.
+  - Display help information for command usage.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml elements

@@ -1,29 +1,29 @@
 ---
-title: "Generate Rust Documentation - Cargo Doc | Online Free DevTools by Hexmos"
+title: 'Generate Rust Documentation - Cargo Doc | Online Free DevTools by Hexmos'
 name: cargo-doc
-path: "/freedevtools/tldr/cargo/cargo-doc/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-doc/"
-description: "Generate Rust documentation with Cargo Doc.  Build and open project documentation, manage dependencies, and view package-specific docs. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-doc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-doc/'
+description: 'Generate Rust documentation with Cargo Doc.  Build and open project documentation, manage dependencies, and view package-specific docs. Free online tool, no registration required.'
 category: common
 keywords:
-- rust documentation generator
-- cargo doc command
-- rust package documentation
-- crate documentation build
-- rust cli documentation
-- cargo documentation dependencies
-- rust project docs
-- cargo doc examples
-- rust documentation tool
-- cargo documentation flags
+  - rust documentation generator
+  - cargo doc command
+  - rust package documentation
+  - crate documentation build
+  - rust cli documentation
+  - cargo documentation dependencies
+  - rust project docs
+  - cargo doc examples
+  - rust documentation tool
+  - cargo documentation flags
 features:
-- Build documentation for Rust projects
-- Exclude dependencies from documentation builds
-- Open documentation in a web browser
-- Target specific packages for documentation
-- Customize documentation output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build documentation for Rust projects
+  - Exclude dependencies from documentation builds
+  - Open documentation in a web browser
+  - Target specific packages for documentation
+  - Customize documentation output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo doc

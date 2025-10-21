@@ -1,29 +1,29 @@
 ---
-title: "Secure Delete - Erase Files Securely | Online Free DevTools by Hexmos"
+title: 'Secure Delete - Erase Files Securely | Online Free DevTools by Hexmos'
 name: sdelete
-path: "/freedevtools/tldr/windows/sdelete/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/sdelete/"
-description: "Securely erase files with SDelete. Delete files and clean free space on Windows securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/sdelete/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/sdelete/'
+description: 'Securely erase files with SDelete. Delete files and clean free space on Windows securely. Free online tool, no registration required.'
 category: windows
 keywords:
-- secure delete windows
-- sdelete windows command
-- file deletion tool
-- windows file eraser
-- secure data removal
-- disk cleaning utility
-- data sanitization tool
-- secure file shredder
-- windows disk eraser
-- sdelete secure erase
+  - secure delete windows
+  - sdelete windows command
+  - file deletion tool
+  - windows file eraser
+  - secure data removal
+  - disk cleaning utility
+  - data sanitization tool
+  - secure file shredder
+  - windows disk eraser
+  - sdelete secure erase
 features:
-- Securely delete files with multiple passes
-- Erase directories and subdirectories recursively
-- Clean free space on volumes securely
-- Zero out physical disks for secure deletion
-- Overwrite data to prevent recovery
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely delete files with multiple passes
+  - Erase directories and subdirectories recursively
+  - Clean free space on volumes securely
+  - Zero out physical disks for secure deletion
+  - Overwrite data to prevent recovery
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sdelete

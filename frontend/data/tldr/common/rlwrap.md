@@ -1,29 +1,29 @@
 ---
-title: "Control REPL Commands - rlwrap Line Editing | Online Free DevTools by Hexmos"
+title: 'Control REPL Commands - rlwrap Line Editing | Online Free DevTools by Hexmos'
 name: rlwrap
-path: "/freedevtools/tldr/common/rlwrap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rlwrap/"
-description: "Control REPL command line editing with rlwrap, enhancing functionality. Add persistent history and prompt completion to any REPL. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rlwrap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rlwrap/'
+description: 'Control REPL command line editing with rlwrap, enhancing functionality. Add persistent history and prompt completion to any REPL. Free online tool, no registration required.'
 category: common
 keywords:
-- REPL command control
-- line editing tool
-- persistent history repl
-- prompt completion repl
-- rlwrap line editor
-- rlwrap completion
-- rlwrap history
-- command line editing
-- repl wrapper linux
-- repl wrapper macos
+  - REPL command control
+  - line editing tool
+  - persistent history repl
+  - prompt completion repl
+  - rlwrap line editor
+  - rlwrap completion
+  - rlwrap history
+  - command line editing
+  - repl wrapper linux
+  - repl wrapper macos
 features:
-- Add line editing to REPL commands
-- Maintain persistent command history
-- Enable prompt completion for REPLs
-- Support ANSI color codes in prompts
-- Facilitate case-sensitive filename completion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add line editing to REPL commands
+  - Maintain persistent command history
+  - Enable prompt completion for REPLs
+  - Support ANSI color codes in prompts
+  - Facilitate case-sensitive filename completion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rlwrap

@@ -1,29 +1,29 @@
 ---
-title: "Create Jupyter Notebooks - Analyze Data | Online Free DevTools by Hexmos"
+title: 'Create Jupyter Notebooks - Analyze Data | Online Free DevTools by Hexmos'
 name: jupyter
-path: "/freedevtools/tldr/common/jupyter/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jupyter/"
-description: "Create and share interactive data analysis notebooks with Jupyter. Analyze data, perform scientific computing and machine learning tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jupyter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jupyter/'
+description: 'Create and share interactive data analysis notebooks with Jupyter. Analyze data, perform scientific computing and machine learning tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- jupyter notebook editor
-- ipynb notebook creator
-- data analysis notebook
-- scientific computing tool
-- machine learning notebook
-- jupyter notebook converter
-- web-based coding environment
-- python notebook editor
-- data visualization tool
-- interactive computing platform
+  - jupyter notebook editor
+  - ipynb notebook creator
+  - data analysis notebook
+  - scientific computing tool
+  - machine learning notebook
+  - jupyter notebook converter
+  - web-based coding environment
+  - python notebook editor
+  - data visualization tool
+  - interactive computing platform
 features:
-- Start a local Jupyter notebook server
-- Export notebooks to various formats like HTML or PDF
-- Manage Jupyter notebooks on a specific port
-- List running Jupyter notebook servers
-- Start JupyterLab in the current directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a local Jupyter notebook server
+  - Export notebooks to various formats like HTML or PDF
+  - Manage Jupyter notebooks on a specific port
+  - List running Jupyter notebook servers
+  - Start JupyterLab in the current directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jupyter

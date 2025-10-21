@@ -1,29 +1,29 @@
 ---
-title: "Generate C Code - wasm2c WebAssembly to C | Online Free DevTools by Hexmos"
+title: 'Generate C Code - wasm2c WebAssembly to C | Online Free DevTools by Hexmos'
 name: wasm2c
-path: "/freedevtools/tldr/wasm/wasm2c/"
-canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm2c/"
-description: "Generate C code with wasm2c. Easily convert WebAssembly binaries to readable C source and header files for cross-platform development. Free online tool, no registration required."
+path: '/freedevtools/tldr/wasm/wasm2c/'
+canonical: 'https://hexmos.com/freedevtools/tldr/wasm/wasm2c/'
+description: 'Generate C code with wasm2c. Easily convert WebAssembly binaries to readable C source and header files for cross-platform development. Free online tool, no registration required.'
 category: common
 keywords:
-- WebAssembly to C converter
-- WASM to C code generation
-- C source code generator
-- Wasm2c compiler
-- WebAssembly development
-- Binary to C conversion
-- Cross-platform C development
-- WABT wasm2c
-- WASM decompiler
-- C header file creation
+  - WebAssembly to C converter
+  - WASM to C code generation
+  - C source code generator
+  - Wasm2c compiler
+  - WebAssembly development
+  - Binary to C conversion
+  - Cross-platform C development
+  - WABT wasm2c
+  - WASM decompiler
+  - C header file creation
 features:
-- Convert WebAssembly binaries to C source code
-- Generate corresponding C header files
-- Output C code to the console
-- Write C output to specified files
-- Facilitate cross-platform development with C code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert WebAssembly binaries to C source code
+  - Generate corresponding C header files
+  - Output C code to the console
+  - Write C output to specified files
+  - Facilitate cross-platform development with C code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wasm2c

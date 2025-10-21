@@ -1,29 +1,29 @@
 ---
-title: "Hardware Database - Manage Hardware with systemd-hwdb | Online Free DevTools by Hexmos"
+title: 'Hardware Database - Manage Hardware with systemd-hwdb | Online Free DevTools by Hexmos'
 name: systemd-hwdb
-path: "/freedevtools/tldr/linux/systemd-hwdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-hwdb/"
-description: "Manage hardware data with systemd-hwdb on Linux. Update udev hardware database and query device information efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-hwdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-hwdb/'
+description: 'Manage hardware data with systemd-hwdb on Linux. Update udev hardware database and query device information efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
-- udev hardware database
-- systemd hardware management
-- linux hardware information
-- hardware modalias query
-- systemd-hwdb update
-- udev rule generation
-- linux device enumeration
-- hardware database query tool
-- device configuration management
-- systemd udevadm
+  - udev hardware database
+  - systemd hardware management
+  - linux hardware information
+  - hardware modalias query
+  - systemd-hwdb update
+  - udev rule generation
+  - linux device enumeration
+  - hardware database query tool
+  - device configuration management
+  - systemd udevadm
 features:
-- Update the binary hardware database
-- Query hardware information using modalias
-- Perform strict updates with error checking
-- Update database in specific root paths
-- Manage hardware configurations through systemd
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update the binary hardware database
+  - Query hardware information using modalias
+  - Perform strict updates with error checking
+  - Update database in specific root paths
+  - Manage hardware configurations through systemd
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-hwdb

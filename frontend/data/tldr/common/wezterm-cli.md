@@ -1,29 +1,29 @@
 ---
-title: "Wezterm CLI - Control Wezterm Sessions | Online Free DevTools by Hexmos"
+title: 'Wezterm CLI - Control Wezterm Sessions | Online Free DevTools by Hexmos'
 name: wezterm-cli
-path: "/freedevtools/tldr/common/wezterm-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wezterm-cli/"
-description: "Control Wezterm terminal sessions with Wezterm CLI. Manage windows, panes, and tabs directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wezterm-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wezterm-cli/'
+description: 'Control Wezterm terminal sessions with Wezterm CLI. Manage windows, panes, and tabs directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- wezterm cli
-- wezterm command line
-- terminal multiplexer control
-- wezterm session manager
-- wezterm window management
-- wezterm pane control
-- wezterm tab management
-- linux terminal control
-- macos terminal control
-- cross platform terminal cli
+  - wezterm cli
+  - wezterm command line
+  - terminal multiplexer control
+  - wezterm session manager
+  - wezterm window management
+  - wezterm pane control
+  - wezterm tab management
+  - linux terminal control
+  - macos terminal control
+  - cross platform terminal cli
 features:
-- List active wezterm windows, tabs and panes.
-- Split panes within a wezterm window.
-- Activate a specific wezterm pane.
-- Kill a specific wezterm pane.
-- Automate terminal session management.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List active wezterm windows, tabs and panes.
+  - Split panes within a wezterm window.
+  - Activate a specific wezterm pane.
+  - Kill a specific wezterm pane.
+  - Automate terminal session management.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wezterm cli

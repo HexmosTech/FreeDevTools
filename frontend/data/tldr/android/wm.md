@@ -1,9 +1,9 @@
 ---
-title: "Android WM - Control Device Screen Info | Online Free DevTools by Hexmos"
+title: 'Android WM - Control Device Screen Info | Online Free DevTools by Hexmos'
 name: wm
-path: "/freedevtools/tldr/android/wm/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/wm/"
-description: "Control device screen information with Android WM. Manage display settings, determine screen density, and inspect resolutions using adb. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/wm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/wm/'
+description: 'Control device screen information with Android WM. Manage display settings, determine screen density, and inspect resolutions using adb. Free online tool, no registration required.'
 category: android
 keywords:
   - android display size
@@ -22,8 +22,8 @@ features:
   - retrieve display metrics
   - query display properties
   - inspect screen resolution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wm

@@ -1,29 +1,29 @@
 ---
-title: "Sync GitHub Labels - Control Repository Labels | Online Free DevTools by Hexmos"
+title: 'Sync GitHub Labels - Control Repository Labels | Online Free DevTools by Hexmos'
 name: github-label-sync
-path: "/freedevtools/tldr/git/github-label-sync/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/github-label-sync/"
-description: "Control GitHub repository labels efficiently with GitHub Label Sync. Synchronize labels, manage inconsistencies, and ensure organization. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/github-label-sync/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/github-label-sync/'
+description: 'Control GitHub repository labels efficiently with GitHub Label Sync. Synchronize labels, manage inconsistencies, and ensure organization. Free online tool, no registration required.'
 category: common
 keywords:
-- github label synchronization
-- repository label management
-- github label sync
-- github label updater
-- label sync json
-- github labels cli
-- github label automation
-- github repository configuration
-- github label tool
-- github label migration
+  - github label synchronization
+  - repository label management
+  - github label sync
+  - github label updater
+  - label sync json
+  - github labels cli
+  - github label automation
+  - github repository configuration
+  - github label tool
+  - github label migration
 features:
-- Synchronize GitHub labels from a JSON file
-- Perform dry runs to preview label changes
-- Allow added labels that aren't in the JSON file
-- Authenticate using an access token or environment variable
-- Manage repository labels automatically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize GitHub labels from a JSON file
+  - Perform dry runs to preview label changes
+  - Allow added labels that aren't in the JSON file
+  - Authenticate using an access token or environment variable
+  - Manage repository labels automatically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # github-label-sync

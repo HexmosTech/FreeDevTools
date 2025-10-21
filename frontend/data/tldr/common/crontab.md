@@ -1,29 +1,29 @@
 ---
-title: "Schedule Crontab Jobs - Manage Cron Tasks | Online Free DevTools by Hexmos"
+title: 'Schedule Crontab Jobs - Manage Cron Tasks | Online Free DevTools by Hexmos'
 name: crontab
-path: "/freedevtools/tldr/common/crontab/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/crontab/"
-description: "Schedule Cron jobs with crontab. Manage scheduled tasks, edit crontab files, and automate commands on Linux and Unix-like systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/crontab/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/crontab/'
+description: 'Schedule Cron jobs with crontab. Manage scheduled tasks, edit crontab files, and automate commands on Linux and Unix-like systems. Free online tool, no registration required.'
 category: common
 keywords:
-- crontab scheduler
-- cron job manager
-- linux task scheduler
-- unix cron utility
-- crontab file editor
-- schedule command linux
-- automate tasks linux
-- cron expression generator
-- crontab syntax
-- linux crontab
+  - crontab scheduler
+  - cron job manager
+  - linux task scheduler
+  - unix cron utility
+  - crontab file editor
+  - schedule command linux
+  - automate tasks linux
+  - cron expression generator
+  - crontab syntax
+  - linux crontab
 features:
-- Edit crontab files for user-specific schedules.
-- List existing cron jobs.
-- Remove scheduled cron tasks.
-- Define task execution times with cron syntax.
-- Automate repetitive tasks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Edit crontab files for user-specific schedules.
+  - List existing cron jobs.
+  - Remove scheduled cron tasks.
+  - Define task execution times with cron syntax.
+  - Automate repetitive tasks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crontab
@@ -51,7 +51,7 @@ twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
 
 `crontab -r`
 
-- Sample job which runs at 10:00 every day (* means any value):
+- Sample job which runs at 10:00 every day (\* means any value):
 
 `0 10 * * * {{command_to_execute}}`
 

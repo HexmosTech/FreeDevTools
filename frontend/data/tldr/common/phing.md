@@ -1,29 +1,29 @@
 ---
-title: "Phing - Build PHP Projects | Online Free DevTools by Hexmos"
+title: 'Phing - Build PHP Projects | Online Free DevTools by Hexmos'
 name: phing
-path: "/freedevtools/tldr/common/phing/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/phing/"
-description: "Build PHP projects efficiently with Phing, the PHP build tool. Automate tasks, manage dependencies, and streamline your development workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/phing/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/phing/'
+description: 'Build PHP projects efficiently with Phing, the PHP build tool. Automate tasks, manage dependencies, and streamline your development workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP build tool
-- Phing build automation
-- PHP project management
-- Ant build system
-- XML build configuration
-- Phing task execution
-- Continuous integration PHP
-- PHP dependency management
-- Cross-platform build tool
-- Phing deployment automation
+  - PHP build tool
+  - Phing build automation
+  - PHP project management
+  - Ant build system
+  - XML build configuration
+  - Phing task execution
+  - Continuous integration PHP
+  - PHP dependency management
+  - Cross-platform build tool
+  - Phing deployment automation
 features:
-- Execute default tasks defined in a build.xml file
-- Initialize new build files with custom paths
-- Run specific build tasks by name
-- Customize builds with properties and listeners
-- Log build output to a file for debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute default tasks defined in a build.xml file
+  - Initialize new build files with custom paths
+  - Run specific build tasks by name
+  - Customize builds with properties and listeners
+  - Log build output to a file for debugging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phing

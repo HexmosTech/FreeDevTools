@@ -1,29 +1,29 @@
 ---
-title: "Rustup Man - View Command Documentation | Online Free DevTools by Hexmos"
+title: 'Rustup Man - View Command Documentation | Online Free DevTools by Hexmos'
 name: rustup-man
-path: "/freedevtools/tldr/rustup/rustup-man/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-man/"
-description: "View Rust documentation with Rustup Man. Access command man pages for different toolchains and Rust versions directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-man/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-man/'
+description: 'View Rust documentation with Rustup Man. Access command man pages for different toolchains and Rust versions directly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- rust documentation
-- rustup man page
-- rust command reference
-- rust toolchain documentation
-- rust command-line help
-- rust std documentation
-- linux man pages
-- macos man pages
-- windows man pages
-- rustup documentation viewer
+  - rust documentation
+  - rustup man page
+  - rust command reference
+  - rust toolchain documentation
+  - rust command-line help
+  - rust std documentation
+  - linux man pages
+  - macos man pages
+  - windows man pages
+  - rustup documentation viewer
 features:
-- View man pages for rust commands
-- Access documentation for specific toolchains
-- Display rust command usage information
-- Integrate with terminal for easy access
-- Browse rust library documentation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View man pages for rust commands
+  - Access documentation for specific toolchains
+  - Display rust command usage information
+  - Integrate with terminal for easy access
+  - Browse rust library documentation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup man

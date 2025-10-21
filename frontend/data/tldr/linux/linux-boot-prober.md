@@ -1,9 +1,9 @@
 ---
-title: "Probe Linux Boot - Find OS with linux-boot-prober | Online Free DevTools by Hexmos"
+title: 'Probe Linux Boot - Find OS with linux-boot-prober | Online Free DevTools by Hexmos'
 name: linux-boot-prober
-path: "/freedevtools/tldr/linux/linux-boot-prober/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/linux-boot-prober/"
-description: "Probe bootable operating systems with linux-boot-prober. Quickly identify and locate installed Linux distributions on your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/linux-boot-prober/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/linux-boot-prober/'
+description: 'Probe bootable operating systems with linux-boot-prober. Quickly identify and locate installed Linux distributions on your system. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux boot prober
@@ -22,8 +22,8 @@ features:
   - Provides output suitable for use with boot loaders.
   - Works with various Linux file systems.
   - Supports command-line interaction for efficient use in scripts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # linux-boot-prober

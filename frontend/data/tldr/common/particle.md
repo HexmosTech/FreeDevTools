@@ -1,29 +1,29 @@
 ---
-title: "Particle Control - Interact with IoT Devices | Online Free DevTools by Hexmos"
+title: 'Particle Control - Interact with IoT Devices | Online Free DevTools by Hexmos'
 name: particle
-path: "/freedevtools/tldr/common/particle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/particle/"
-description: "Control Particle IoT devices effortlessly with Particle CLI. Compile projects, flash firmware, and execute functions remotely. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/particle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/particle/'
+description: 'Control Particle IoT devices effortlessly with Particle CLI. Compile projects, flash firmware, and execute functions remotely. Free online tool, no registration required.'
 category: common
 keywords:
-- particle cli control
-- iot device management
-- firmware flashing tool
-- particle project compiler
-- remote device update
-- device function execution
-- particle cloud interaction
-- iot command line interface
-- particle device list
-- particle setup tool
+  - particle cli control
+  - iot device management
+  - firmware flashing tool
+  - particle project compiler
+  - remote device update
+  - device function execution
+  - particle cloud interaction
+  - iot command line interface
+  - particle device list
+  - particle setup tool
 features:
-- Compile Particle IoT projects for various device types
-- Flash firmware to Particle devices remotely or via serial
-- Execute functions on connected Particle devices
-- List available Particle devices associated with an account
-- Create new Particle projects interactively from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Particle IoT projects for various device types
+  - Flash firmware to Particle devices remotely or via serial
+  - Execute functions on connected Particle devices
+  - List available Particle devices associated with an account
+  - Create new Particle projects interactively from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # particle

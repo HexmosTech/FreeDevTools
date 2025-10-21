@@ -1,29 +1,29 @@
 ---
-title: "Ethereum Geth - Connect to Ethereum Network | Online Free DevTools by Hexmos"
+title: 'Ethereum Geth - Connect to Ethereum Network | Online Free DevTools by Hexmos'
 name: geth
-path: "/freedevtools/tldr/get/geth/"
-canonical: "https://hexmos.com/freedevtools/tldr/get/geth/"
-description: "Connect to Ethereum networks with Geth, the go-ethereum command-line interface. Manage accounts, enable mining, and interact with the blockchain. Free online tool, no registration required."
+path: '/freedevtools/tldr/get/geth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/get/geth/'
+description: 'Connect to Ethereum networks with Geth, the go-ethereum command-line interface. Manage accounts, enable mining, and interact with the blockchain. Free online tool, no registration required.'
 category: common
 keywords:
-- Ethereum Geth
-- Geth Ethereum client
-- Geth command line
-- Ethereum network connection
-- Blockchain interaction
-- Ethereum account management
-- Geth mining
-- Ethereum command line interface
-- Geth node
-- Geth console
+  - Ethereum Geth
+  - Geth Ethereum client
+  - Geth command line
+  - Ethereum network connection
+  - Blockchain interaction
+  - Ethereum account management
+  - Geth mining
+  - Ethereum command line interface
+  - Geth node
+  - Geth console
 features:
-- Connect to main Ethereum network
-- Connect to Ethereum test networks
-- Create new Ethereum accounts
-- Enable mining on Ethereum network
-- Interact with the Ethereum blockchain
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to main Ethereum network
+  - Connect to Ethereum test networks
+  - Create new Ethereum accounts
+  - Enable mining on Ethereum network
+  - Interact with the Ethereum blockchain
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # geth

@@ -1,101 +1,101 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import LoremIpsumGeneratorSkeleton from "./_LoremIpsumGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import LoremIpsumGeneratorSkeleton from './_LoremIpsumGeneratorSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Lorem Ipsum word bank
 const words = [
-  "ad",
-  "adipisicing",
-  "aliqua",
-  "aliquip",
-  "amet",
-  "anim",
-  "aute",
-  "cillum",
-  "commodo",
-  "consectetur",
-  "consequat",
-  "culpa",
-  "cupidatat",
-  "deserunt",
-  "do",
-  "dolor",
-  "dolore",
-  "duis",
-  "ea",
-  "eiusmod",
-  "elit",
-  "enim",
-  "esse",
-  "est",
-  "et",
-  "eu",
-  "ex",
-  "excepteur",
-  "exercitation",
-  "fugiat",
-  "id",
-  "in",
-  "incididunt",
-  "ipsum",
-  "irure",
-  "labore",
-  "laboris",
-  "laborum",
-  "lorem",
-  "magna",
-  "minim",
-  "mollit",
-  "nisi",
-  "non",
-  "nostrud",
-  "nulla",
-  "occaecat",
-  "officia",
-  "pariatur",
-  "proident",
-  "qui",
-  "quis",
-  "reprehenderit",
-  "sint",
-  "sed",
-  "sit",
-  "sunt",
-  "tempor",
-  "ullamco",
-  "ut",
-  "velit",
-  "veniam",
-  "voluptate",
+  'ad',
+  'adipisicing',
+  'aliqua',
+  'aliquip',
+  'amet',
+  'anim',
+  'aute',
+  'cillum',
+  'commodo',
+  'consectetur',
+  'consequat',
+  'culpa',
+  'cupidatat',
+  'deserunt',
+  'do',
+  'dolor',
+  'dolore',
+  'duis',
+  'ea',
+  'eiusmod',
+  'elit',
+  'enim',
+  'esse',
+  'est',
+  'et',
+  'eu',
+  'ex',
+  'excepteur',
+  'exercitation',
+  'fugiat',
+  'id',
+  'in',
+  'incididunt',
+  'ipsum',
+  'irure',
+  'labore',
+  'laboris',
+  'laborum',
+  'lorem',
+  'magna',
+  'minim',
+  'mollit',
+  'nisi',
+  'non',
+  'nostrud',
+  'nulla',
+  'occaecat',
+  'officia',
+  'pariatur',
+  'proident',
+  'qui',
+  'quis',
+  'reprehenderit',
+  'sint',
+  'sed',
+  'sit',
+  'sunt',
+  'tempor',
+  'ullamco',
+  'ut',
+  'velit',
+  'veniam',
+  'voluptate',
 ];
 
 const standardSentence =
-  "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua";
+  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua';
 
-type GenerationUnit = "words" | "sentences" | "paragraphs";
+type GenerationUnit = 'words' | 'sentences' | 'paragraphs';
 
 interface GenerationOptions {
   generationUnit: GenerationUnit;
@@ -115,7 +115,7 @@ const getRandomWords = (amount: number): string =>
   Array.from(
     { length: amount },
     () => words[getRandomBetween(0, words.length - 1)]
-  ).join(" ");
+  ).join(' ');
 
 const generateSentence = (startWithStandard: boolean): string => {
   if (startWithStandard) {
@@ -133,7 +133,7 @@ const generateSentences = (
     generateSentence(false)
   );
   if (startWithStandard) sentences[0] = standardSentence;
-  return sentences.join(". ") + ".";
+  return sentences.join('. ') + '.';
 };
 
 const generateParagraphs = (
@@ -147,13 +147,13 @@ const generateParagraphs = (
       startWithStandard
     );
     return asHTML ? `<p>${paragraph}</p>` : paragraph;
-  }).join("\n\n");
+  }).join('\n\n');
 
 const generateLoremIpsum = (options: GenerationOptions): string => {
   const { generationUnit, inputAmount, startWithStandard, asHTML } = options;
 
   if (inputAmount <= 0 || inputAmount > 100) {
-    return "Invalid input: Please enter a number between 1 and 100.";
+    return 'Invalid input: Please enter a number between 1 and 100.';
   }
 
   const units: Record<GenerationUnit, () => string> = {
@@ -165,14 +165,14 @@ const generateLoremIpsum = (options: GenerationOptions): string => {
 
   const text = units[generationUnit]();
 
-  return asHTML && generationUnit !== "paragraphs" ? `<p>${text}</p>` : text;
+  return asHTML && generationUnit !== 'paragraphs' ? `<p>${text}</p>` : text;
 };
 
 const LoremIpsumGenerator: React.FC = () => {
   const [inputAmount, setInputAmount] = useState(3);
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = useState('');
   const [generationUnit, setGenerationUnit] =
-    useState<GenerationUnit>("paragraphs");
+    useState<GenerationUnit>('paragraphs');
   const [asHTML, setAsHTML] = useState(false);
   const [startWithStandard, setStartWithStandard] = useState(true);
   const [loaded, setLoaded] = useState(false);
@@ -195,7 +195,7 @@ const LoremIpsumGenerator: React.FC = () => {
       });
       setOutput(text);
     } catch (error) {
-      toast.error("Failed to generate Lorem Ipsum text");
+      toast.error('Failed to generate Lorem Ipsum text');
     }
   }, [inputAmount, generationUnit, asHTML, startWithStandard]);
 
@@ -213,11 +213,11 @@ const LoremIpsumGenerator: React.FC = () => {
 
   const handleClear = () => {
     setInputAmount(3);
-    setOutput("");
-    setGenerationUnit("paragraphs");
+    setOutput('');
+    setGenerationUnit('paragraphs');
     setAsHTML(false);
     setStartWithStandard(true);
-    toast.success("Settings reset to defaults");
+    toast.success('Settings reset to defaults');
   };
 
   const getWordCount = (text: string): number => {
@@ -235,24 +235,24 @@ const LoremIpsumGenerator: React.FC = () => {
   const copyToClipboard = () => {
     if (output) {
       navigator.clipboard.writeText(output);
-      toast.success("Lorem Ipsum text copied to clipboard!");
+      toast.success('Lorem Ipsum text copied to clipboard!');
     } else {
-      toast.error("No text to copy");
+      toast.error('No text to copy');
     }
   };
 
   const downloadAsFile = () => {
     if (!output) {
-      toast.error("No text to download");
+      toast.error('No text to download');
       return;
     }
 
-    const fileName = asHTML ? "lorem-ipsum.html" : "lorem-ipsum.txt";
-    const mimeType = asHTML ? "text/html" : "text/plain";
+    const fileName = asHTML ? 'lorem-ipsum.html' : 'lorem-ipsum.txt';
+    const mimeType = asHTML ? 'text/html' : 'text/plain';
     const blob = new Blob([output], { type: mimeType });
     const url = URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = fileName;
     document.body.appendChild(a);
@@ -273,7 +273,7 @@ const LoremIpsumGenerator: React.FC = () => {
     setInputAmount(preset.amount);
     setStartWithStandard(preset.standard);
     setAsHTML(preset.html);
-    toast.success("Preset applied successfully");
+    toast.success('Preset applied successfully');
   };
 
   return (
@@ -348,7 +348,7 @@ const LoremIpsumGenerator: React.FC = () => {
                           onCheckedChange={(checked) =>
                             setStartWithStandard(!!checked)
                           }
-                          disabled={generationUnit === "words"}
+                          disabled={generationUnit === 'words'}
                         />
                         <Label
                           htmlFor="start-standard"
@@ -383,7 +383,7 @@ const LoremIpsumGenerator: React.FC = () => {
                           size="sm"
                           onClick={() =>
                             handlePreset({
-                              unit: "paragraphs",
+                              unit: 'paragraphs',
                               amount: 3,
                               standard: true,
                               html: false,
@@ -397,7 +397,7 @@ const LoremIpsumGenerator: React.FC = () => {
                           size="sm"
                           onClick={() =>
                             handlePreset({
-                              unit: "sentences",
+                              unit: 'sentences',
                               amount: 5,
                               standard: true,
                               html: false,
@@ -411,7 +411,7 @@ const LoremIpsumGenerator: React.FC = () => {
                           size="sm"
                           onClick={() =>
                             handlePreset({
-                              unit: "words",
+                              unit: 'words',
                               amount: 50,
                               standard: false,
                               html: false,
@@ -425,7 +425,7 @@ const LoremIpsumGenerator: React.FC = () => {
                           size="sm"
                           onClick={() =>
                             handlePreset({
-                              unit: "paragraphs",
+                              unit: 'paragraphs',
                               amount: 2,
                               standard: true,
                               html: true,
@@ -462,7 +462,7 @@ const LoremIpsumGenerator: React.FC = () => {
                       </div>
                       <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg text-center">
                         <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                          {output.split(".").filter((s) => s.trim()).length}
+                          {output.split('.').filter((s) => s.trim()).length}
                         </div>
                         <div className="text-xs text-slate-600 dark:text-slate-400">
                           Sentences
@@ -487,7 +487,7 @@ const LoremIpsumGenerator: React.FC = () => {
                         <Badge variant="secondary">
                           {inputAmount} {generationUnit}
                         </Badge>
-                        {startWithStandard && generationUnit !== "words" && (
+                        {startWithStandard && generationUnit !== 'words' && (
                           <Badge variant="outline">Classic Start</Badge>
                         )}
                         {asHTML && <Badge variant="outline">HTML Format</Badge>}

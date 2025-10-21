@@ -1,29 +1,29 @@
 ---
-title: "Arduino IDE - Control Sketches & Upload Code | Online Free DevTools by Hexmos"
+title: 'Arduino IDE - Control Sketches & Upload Code | Online Free DevTools by Hexmos'
 name: arduino
-path: "/freedevtools/tldr/common/arduino/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/arduino/"
-description: "Control Arduino IDE sketches with this command-line interface. Build, upload, and manage your Arduino projects efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/arduino/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/arduino/'
+description: 'Control Arduino IDE sketches with this command-line interface. Build, upload, and manage your Arduino projects efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Arduino IDE control
-- Arduino sketch build
-- Arduino code upload
-- Arduino command line
-- Arduino CLI
-- AVR microcontroller
-- Arduino Nano
-- IoT development
-- Embedded programming
-- Firmware upload
+  - Arduino IDE control
+  - Arduino sketch build
+  - Arduino code upload
+  - Arduino command line
+  - Arduino CLI
+  - AVR microcontroller
+  - Arduino Nano
+  - IoT development
+  - Embedded programming
+  - Firmware upload
 features:
-- Build and verify Arduino sketches
-- Upload code to Arduino boards
-- Set and save Arduino IDE preferences
-- Install Arduino boards and libraries
-- Target specific boards and ports
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build and verify Arduino sketches
+  - Upload code to Arduino boards
+  - Set and save Arduino IDE preferences
+  - Install Arduino boards and libraries
+  - Target specific boards and ports
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arduino

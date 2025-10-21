@@ -1,29 +1,29 @@
 ---
-title: "Control Carthage Dependencies - Manage Cocoa Apps | Online Free DevTools by Hexmos"
+title: 'Control Carthage Dependencies - Manage Cocoa Apps | Online Free DevTools by Hexmos'
 name: carthage
-path: "/freedevtools/tldr/osx/carthage/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/carthage/"
-description: "Control Cocoa app dependencies with Carthage. Manage, update, and build dependencies for your iOS and macOS projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/carthage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/carthage/'
+description: 'Control Cocoa app dependencies with Carthage. Manage, update, and build dependencies for your iOS and macOS projects. Free online tool, no registration required.'
 category: osx
 keywords:
-- carthage dependency manager
-- cocoa dependency management
-- ios dependency management
-- osx dependency management
-- carthage update
-- carthage bootstrap
-- carthage build
-- carthage command line tool
-- carthage framework integration
-- carthage package management
+  - carthage dependency manager
+  - cocoa dependency management
+  - ios dependency management
+  - osx dependency management
+  - carthage update
+  - carthage bootstrap
+  - carthage build
+  - carthage command line tool
+  - carthage framework integration
+  - carthage package management
 features:
-- Update dependencies to latest versions
-- Build dependencies for specific platforms (iOS, macOS)
-- Rebuild specific dependencies individually
-- Bootstrap existing dependencies without updating
-- Download and build all dependencies defined in Cartfile
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update dependencies to latest versions
+  - Build dependencies for specific platforms (iOS, macOS)
+  - Rebuild specific dependencies individually
+  - Bootstrap existing dependencies without updating
+  - Download and build all dependencies defined in Cartfile
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # carthage

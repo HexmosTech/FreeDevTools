@@ -1,29 +1,29 @@
 ---
-title: "Extract Archive - Extract Files from Archives | Online Free DevTools by Hexmos"
+title: 'Extract Archive - Extract Files from Archives | Online Free DevTools by Hexmos'
 name: unar
-path: "/freedevtools/tldr/common/unar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/unar/"
-description: "Extract archive files quickly with unar. Manage and access the contents of compressed files with this command line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/unar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/unar/'
+description: 'Extract archive files quickly with unar. Manage and access the contents of compressed files with this command line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- archive extractor
-- unarchive files
-- file decompression
-- command line archive tool
-- archive utility
-- extract tar gz
-- extract zip
-- extract rar
-- extract 7z
-- linux unarchive
+  - archive extractor
+  - unarchive files
+  - file decompression
+  - command line archive tool
+  - archive utility
+  - extract tar gz
+  - extract zip
+  - extract rar
+  - extract 7z
+  - linux unarchive
 features:
-- Extract contents from various archive formats
-- Specify an output directory for extracted files
-- Force overwrite existing files during extraction
-- Force rename extracted files to avoid conflicts
-- Skip extraction of existing files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract contents from various archive formats
+  - Specify an output directory for extracted files
+  - Force overwrite existing files during extraction
+  - Force rename extracted files to avoid conflicts
+  - Skip extraction of existing files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # unar

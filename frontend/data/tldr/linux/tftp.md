@@ -1,9 +1,9 @@
 ---
-title: "TFTP Client - Transfer Files with TFTP | Online Free DevTools by Hexmos"
+title: 'TFTP Client - Transfer Files with TFTP | Online Free DevTools by Hexmos'
 name: tftp
-path: "/freedevtools/tldr/linux/tftp/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tftp/"
-description: "Transfer files efficiently with the TFTP client. Upload and download files to/from servers using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tftp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tftp/'
+description: 'Transfer files efficiently with the TFTP client. Upload and download files to/from servers using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - tftp client
@@ -22,8 +22,8 @@ features:
   - Specify server IP address and port.
   - Set transfer mode to binary or ASCII.
   - Use IPv6 for connection.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tftp

@@ -1,9 +1,9 @@
 ---
-title: "QM Disk - Manage Virtual Disks | Online Free DevTools by Hexmos"
+title: 'QM Disk - Manage Virtual Disks | Online Free DevTools by Hexmos'
 name: qm-disk
-path: "/freedevtools/tldr/linux/qm-disk/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-disk/"
-description: "Manage virtual disks with QM Disk. Resize, move, delete, and import disk images easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-disk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-disk/'
+description: 'Manage virtual disks with QM Disk. Resize, move, delete, and import disk images easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - Virtual Disk Manager
@@ -22,8 +22,8 @@ features:
   - Delete previous copies of moved virtual disks.
   - Import VMDK, qcow2, and raw disk images.
   - Specify storage name during disk import.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm disk

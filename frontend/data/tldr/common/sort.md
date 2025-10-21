@@ -1,29 +1,29 @@
 ---
-title: "Sort File - Order Text Lines | Online Free DevTools by Hexmos"
+title: 'Sort File - Order Text Lines | Online Free DevTools by Hexmos'
 name: sort
-path: "/freedevtools/tldr/common/sort/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sort/"
-description: "Order text lines with Sort File. Enhance data analysis and organization by sorting file content alphabetically or numerically. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sort/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sort/'
+description: 'Order text lines with Sort File. Enhance data analysis and organization by sorting file content alphabetically or numerically. Free online tool, no registration required.'
 category: common
 keywords:
-- sort file linux
-- sort text lines
-- command line sort
-- sort data alphabetically
-- sort numerically
-- sort file by column
-- unique line sort
-- coreutils sort
-- linux sort examples
-- unix sort command
+  - sort file linux
+  - sort text lines
+  - command line sort
+  - sort data alphabetically
+  - sort numerically
+  - sort file by column
+  - unique line sort
+  - coreutils sort
+  - linux sort examples
+  - unix sort command
 features:
-- Sort files in ascending or descending order
-- Sort files numerically or alphabetically
-- Sort files case-insensitively
-- Sort files based on specific fields
-- Output sorted content to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Sort files in ascending or descending order
+  - Sort files numerically or alphabetically
+  - Sort files case-insensitively
+  - Sort files based on specific fields
+  - Output sorted content to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sort

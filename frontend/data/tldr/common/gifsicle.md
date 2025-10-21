@@ -1,29 +1,29 @@
 ---
-title: "Gifsicle - Create and Edit GIFs | Online Free DevTools by Hexmos"
+title: 'Gifsicle - Create and Edit GIFs | Online Free DevTools by Hexmos'
 name: gifsicle
-path: "/freedevtools/tldr/common/gifsicle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gifsicle/"
-description: "Create and edit GIFs effortlessly with Gifsicle, a versatile GIF manipulation tool. Optimize animations, extract frames, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gifsicle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gifsicle/'
+description: 'Create and edit GIFs effortlessly with Gifsicle, a versatile GIF manipulation tool. Optimize animations, extract frames, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- gif editor
-- gif optimizer
-- gif animation maker
-- gif frame extractor
-- gif resizer
-- gif manipulation
-- command line gif tool
-- linux gif tool
-- macos gif tool
-- batch gif processing
+  - gif editor
+  - gif optimizer
+  - gif animation maker
+  - gif frame extractor
+  - gif resizer
+  - gif manipulation
+  - command line gif tool
+  - linux gif tool
+  - macos gif tool
+  - batch gif processing
 features:
-- Optimize GIFs for smaller file sizes.
-- Extract individual frames from GIF animations.
-- Create animated GIFs from multiple image files.
-- Modify GIF frames with cropping, scaling, and rotation.
-- Batch process multiple GIFs simultaneously.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Optimize GIFs for smaller file sizes.
+  - Extract individual frames from GIF animations.
+  - Create animated GIFs from multiple image files.
+  - Modify GIF frames with cropping, scaling, and rotation.
+  - Batch process multiple GIFs simultaneously.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gifsicle

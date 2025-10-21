@@ -1,29 +1,29 @@
 ---
-title: "Format LaTeX - Format LaTeX Source Code | Online Free DevTools by Hexmos"
+title: 'Format LaTeX - Format LaTeX Source Code | Online Free DevTools by Hexmos'
 name: tex-fmt
-path: "/freedevtools/tldr/common/tex-fmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tex-fmt/"
-description: "Format LaTeX documents efficiently with tex-fmt. Improve LaTeX code readability and maintainability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tex-fmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tex-fmt/'
+description: 'Format LaTeX documents efficiently with tex-fmt. Improve LaTeX code readability and maintainability. Free online tool, no registration required.'
 category: common
 keywords:
-- latex formatter
-- latex beautifier
-- latex code style
-- tex formatter
-- tex code beautifier
-- tex code style
-- latex editor linux
-- latex editor macos
-- tex editor linux
-- tex editor macos
+  - latex formatter
+  - latex beautifier
+  - latex code style
+  - tex formatter
+  - tex code beautifier
+  - tex code style
+  - latex editor linux
+  - latex editor macos
+  - tex editor linux
+  - tex editor macos
 features:
-- Format LaTeX files and overwrite originals
-- Check LaTeX files for correct formatting
-- Format LaTeX from stdin to stdout
-- Improve LaTeX code readability
-- Maintain consistent LaTeX code style
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format LaTeX files and overwrite originals
+  - Check LaTeX files for correct formatting
+  - Format LaTeX from stdin to stdout
+  - Improve LaTeX code readability
+  - Maintain consistent LaTeX code style
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tex-fmt

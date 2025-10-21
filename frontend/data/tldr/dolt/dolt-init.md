@@ -1,29 +1,29 @@
 ---
-title: "Create Dolt Repository - Initialize Data Repositories | Online Free DevTools by Hexmos"
+title: 'Create Dolt Repository - Initialize Data Repositories | Online Free DevTools by Hexmos'
 name: dolt-init
-path: "/freedevtools/tldr/dolt/dolt-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-init/"
-description: "Create Dolt repository with dolt-init. Initialize new repositories and manage data efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/dolt/dolt-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dolt/dolt-init/'
+description: 'Create Dolt repository with dolt-init. Initialize new repositories and manage data efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Dolt repository initialization
-- Dolt data version control
-- Git-like data management
-- Dolt database creation
-- Dolt init command
-- Data repository setup
-- Version controlled database
-- SQL data repository
-- Branch initialization
-- Dolt data management
+  - Dolt repository initialization
+  - Dolt data version control
+  - Git-like data management
+  - Dolt database creation
+  - Dolt init command
+  - Data repository setup
+  - Version controlled database
+  - SQL data repository
+  - Branch initialization
+  - Dolt data management
 features:
-- Initialize a new Dolt data repository
-- Create a repository with custom commit metadata
-- Specify author name for initial commit
-- Define author email for initial commit
-- Set the initial branch name
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new Dolt data repository
+  - Create a repository with custom commit metadata
+  - Specify author name for initial commit
+  - Define author email for initial commit
+  - Set the initial branch name
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dolt init

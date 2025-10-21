@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CssUnitsConverterSkeleton from "./_CssUnitsConverterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import CssUnitsConverterSkeleton from './_CssUnitsConverterSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // CSS Unit conversion utilities
 const pxToRem = (px: number, baseFontSize: number = 16): number => {
@@ -83,7 +83,7 @@ const vmaxToPx = (
 };
 
 // Type definitions
-type UnitType = "px" | "rem" | "vw" | "vh" | "vmin" | "vmax";
+type UnitType = 'px' | 'rem' | 'vw' | 'vh' | 'vmin' | 'vmax';
 
 interface ConversionParams {
   value: number;
@@ -111,19 +111,19 @@ const convertUnits = (params: ConversionParams): number => {
   let pixelValue = value;
 
   switch (fromUnit) {
-    case "rem":
+    case 'rem':
       pixelValue = remToPx(value, baseFontSize);
       break;
-    case "vw":
+    case 'vw':
       pixelValue = vwToPx(value, viewportWidth);
       break;
-    case "vh":
+    case 'vh':
       pixelValue = vhToPx(value, viewportHeight);
       break;
-    case "vmin":
+    case 'vmin':
       pixelValue = vminToPx(value, viewportWidth, viewportHeight);
       break;
-    case "vmax":
+    case 'vmax':
       pixelValue = vmaxToPx(value, viewportWidth, viewportHeight);
       break;
     default: // px
@@ -132,15 +132,15 @@ const convertUnits = (params: ConversionParams): number => {
 
   // Convert from pixels to target unit
   switch (toUnit) {
-    case "rem":
+    case 'rem':
       return pxToRem(pixelValue, baseFontSize);
-    case "vw":
+    case 'vw':
       return pxToVw(pixelValue, viewportWidth);
-    case "vh":
+    case 'vh':
       return pxToVh(pixelValue, viewportHeight);
-    case "vmin":
+    case 'vmin':
       return pxToVmin(pixelValue, viewportWidth, viewportHeight);
-    case "vmax":
+    case 'vmax':
       return pxToVmax(pixelValue, viewportWidth, viewportHeight);
     default: // px
       return pixelValue;
@@ -148,15 +148,15 @@ const convertUnits = (params: ConversionParams): number => {
 };
 
 const CssUnitsConverter: React.FC = () => {
-  const [inputValue, setInputValue] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [inputValue, setInputValue] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
-  const [fromUnit, setFromUnit] = useState<UnitType>("px");
-  const [toUnit, setToUnit] = useState<UnitType>("rem");
-  const [baseFontSize, setBaseFontSize] = useState("16");
-  const [viewportWidth, setViewportWidth] = useState("1920");
-  const [viewportHeight, setViewportHeight] = useState("1080");
+  const [fromUnit, setFromUnit] = useState<UnitType>('px');
+  const [toUnit, setToUnit] = useState<UnitType>('rem');
+  const [baseFontSize, setBaseFontSize] = useState('16');
+  const [viewportWidth, setViewportWidth] = useState('1920');
+  const [viewportHeight, setViewportHeight] = useState('1080');
 
   useEffect(() => {
     // Simulate loading time
@@ -167,12 +167,12 @@ const CssUnitsConverter: React.FC = () => {
   }, []);
 
   const handleConversion = useCallback(() => {
-    setError("");
+    setError('');
 
     const value = parseFloat(inputValue);
     if (isNaN(value)) {
-      setError("Please enter a valid number");
-      setOutput("");
+      setError('Please enter a valid number');
+      setOutput('');
       return;
     }
 
@@ -181,20 +181,20 @@ const CssUnitsConverter: React.FC = () => {
     const viewportHeightNum = parseFloat(viewportHeight);
 
     if (isNaN(baseFontSizeNum) || baseFontSizeNum <= 0) {
-      setError("Please enter a valid base font size");
-      setOutput("");
+      setError('Please enter a valid base font size');
+      setOutput('');
       return;
     }
 
     if (
-      (fromUnit.includes("v") || toUnit.includes("v")) &&
+      (fromUnit.includes('v') || toUnit.includes('v')) &&
       (isNaN(viewportWidthNum) ||
         isNaN(viewportHeightNum) ||
         viewportWidthNum <= 0 ||
         viewportHeightNum <= 0)
     ) {
-      setError("Please enter valid viewport dimensions");
-      setOutput("");
+      setError('Please enter valid viewport dimensions');
+      setOutput('');
       return;
     }
 
@@ -210,8 +210,8 @@ const CssUnitsConverter: React.FC = () => {
 
       setOutput(result.toFixed(4));
     } catch (err) {
-      setError("Conversion failed. Please check your inputs.");
-      setOutput("");
+      setError('Conversion failed. Please check your inputs.');
+      setOutput('');
     }
   }, [
     inputValue,
@@ -225,10 +225,10 @@ const CssUnitsConverter: React.FC = () => {
   const handleInputChange = useCallback(
     (value: string) => {
       setInputValue(value);
-      setError("");
+      setError('');
 
       if (!value.trim()) {
-        setOutput("");
+        setOutput('');
         return;
       }
 
@@ -243,7 +243,7 @@ const CssUnitsConverter: React.FC = () => {
           if (
             !isNaN(baseFontSizeNum) &&
             baseFontSizeNum > 0 &&
-            ((!fromUnit.includes("v") && !toUnit.includes("v")) ||
+            ((!fromUnit.includes('v') && !toUnit.includes('v')) ||
               (!isNaN(viewportWidthNum) &&
                 !isNaN(viewportHeightNum) &&
                 viewportWidthNum > 0 &&
@@ -281,13 +281,13 @@ const CssUnitsConverter: React.FC = () => {
   };
 
   const handleClear = () => {
-    setInputValue("");
-    setOutput("");
-    setError("");
+    setInputValue('');
+    setOutput('');
+    setError('');
   };
 
   const needsViewportDimensions =
-    fromUnit.includes("v") || toUnit.includes("v");
+    fromUnit.includes('v') || toUnit.includes('v');
 
   return (
     <ToolContainer>
@@ -765,7 +765,7 @@ const CssUnitsConverter: React.FC = () => {
                       <strong>💡 Pro Tip:</strong> Use CSS custom properties
                       (variables) to define your unit scales and base sizes.
                       This makes it easier to maintain consistency and update
-                      your design system. For example:{" "}
+                      your design system. For example:{' '}
                       <code className="bg-blue-100 dark:bg-blue-900/30 px-1 rounded">
                         --base-font-size: 1rem; --spacing-unit: 0.5rem;
                       </code>

@@ -1,9 +1,9 @@
 ---
-title: "Monitor Network Bandwidth - nethogs Usage | Online Free DevTools by Hexmos"
+title: 'Monitor Network Bandwidth - nethogs Usage | Online Free DevTools by Hexmos'
 name: nethogs
-path: "/freedevtools/tldr/linux/nethogs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nethogs/"
-description: "Monitor network bandwidth usage per process with nethogs.  Track bandwidth consumption in real-time and identify resource-intensive applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nethogs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nethogs/'
+description: 'Monitor network bandwidth usage per process with nethogs.  Track bandwidth consumption in real-time and identify resource-intensive applications. Free online tool, no registration required.'
 category: linux
 keywords:
   - network bandwidth monitor
@@ -22,8 +22,8 @@ features:
   - Allows monitoring multiple devices simultaneously.
   - Provides customizable refresh rate for continuous tracking.
   - Identifies bandwidth-intensive processes for optimization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nethogs

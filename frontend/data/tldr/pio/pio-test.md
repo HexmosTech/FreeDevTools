@@ -1,29 +1,29 @@
 ---
-title: "PlatformIO Test - Run Project Tests | Online Free DevTools by Hexmos"
+title: 'PlatformIO Test - Run Project Tests | Online Free DevTools by Hexmos'
 name: pio-test
-path: "/freedevtools/tldr/pio/pio-test/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-test/"
-description: "Run PlatformIO tests easily with PlatformIO Test command. Automate testing, debug firmware, and manage environments efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-test/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-test/'
+description: 'Run PlatformIO tests easily with PlatformIO Test command. Automate testing, debug firmware, and manage environments efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO test automation
-- PlatformIO firmware testing
-- PlatformIO environment testing
-- PlatformIO unit testing
-- PlatformIO CI/CD
-- PlatformIO build verification
-- PlatformIO command line testing
-- PlatformIO project validation
-- PlatformIO embedded testing
-- PlatformIO software testing
+  - PlatformIO test automation
+  - PlatformIO firmware testing
+  - PlatformIO environment testing
+  - PlatformIO unit testing
+  - PlatformIO CI/CD
+  - PlatformIO build verification
+  - PlatformIO command line testing
+  - PlatformIO project validation
+  - PlatformIO embedded testing
+  - PlatformIO software testing
 features:
-- Run tests across multiple PlatformIO environments.
-- Filter tests based on a name pattern for targeted testing.
-- Ignore tests based on a name pattern to exclude specific tests.
-- Specify a custom upload port for firmware uploading.
-- Use a custom configuration file for test execution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run tests across multiple PlatformIO environments.
+  - Filter tests based on a name pattern for targeted testing.
+  - Ignore tests based on a name pattern to exclude specific tests.
+  - Specify a custom upload port for firmware uploading.
+  - Use a custom configuration file for test execution.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio test

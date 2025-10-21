@@ -1,29 +1,29 @@
 ---
-title: "List Container Tags - gcrane ls | Online Free DevTools by Hexmos"
+title: 'List Container Tags - gcrane ls | Online Free DevTools by Hexmos'
 name: gcrane-ls
-path: "/freedevtools/tldr/gcrane/gcrane-ls/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcrane/gcrane-ls/"
-description: "List container registry tags with gcrane ls. Explore container images, filter repositories, and format output in JSON. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcrane/gcrane-ls/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcrane/gcrane-ls/'
+description: 'List container registry tags with gcrane ls. Explore container images, filter repositories, and format output in JSON. Free online tool, no registration required.'
 category: common
 keywords:
-- container registry tags
-- docker image tags
-- crane list repository
-- gcrane ls command
-- container image explorer
-- google container registry
-- crane tag enumeration
-- docker repository viewer
-- container image manifest
-- gcrane recursive list
+  - container registry tags
+  - docker image tags
+  - crane list repository
+  - gcrane ls command
+  - container image explorer
+  - google container registry
+  - crane tag enumeration
+  - docker repository viewer
+  - container image manifest
+  - gcrane recursive list
 features:
-- List tags in a container registry.
-- Format registry response as JSON.
-- Recursively list through repositories.
-- Display help information for gcrane ls.
-- Filter container images by repository.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List tags in a container registry.
+  - Format registry response as JSON.
+  - Recursively list through repositories.
+  - Display help information for gcrane ls.
+  - Filter container images by repository.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcrane ls

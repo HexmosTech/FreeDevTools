@@ -1,29 +1,29 @@
 ---
-title: "Format GitHub CLI - GH JSON Formatting | Online Free DevTools by Hexmos"
+title: 'Format GitHub CLI - GH JSON Formatting | Online Free DevTools by Hexmos'
 name: gh-formatting
-path: "/freedevtools/tldr/gh/gh-formatting/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-formatting/"
-description: "Format JSON data exported from GitHub CLI with GH Formatting. Streamline data transformation and manipulate JSON output using `jq`. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-formatting/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-formatting/'
+description: 'Format JSON data exported from GitHub CLI with GH Formatting. Streamline data transformation and manipulate JSON output using `jq`. Free online tool, no registration required.'
 category: common
 keywords:
-- github cli formatting
-- gh json formatting
-- json formatting tools
-- github cli jq
-- gh cli json output
-- github api formatting
-- command line json formatter
-- cli data manipulation
-- linux json formatting
-- macos json formatting
+  - github cli formatting
+  - gh json formatting
+  - json formatting tools
+  - github cli jq
+  - gh cli json output
+  - github api formatting
+  - command line json formatter
+  - cli data manipulation
+  - linux json formatting
+  - macos json formatting
 features:
-- Format JSON output from GitHub CLI
-- Pipe `gh` output to `jq`
-- Display help on formatting with `jq`
-- Transform JSON data from the command line
-- Simplify data extraction from GitHub API
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format JSON output from GitHub CLI
+  - Pipe `gh` output to `jq`
+  - Display help on formatting with `jq`
+  - Transform JSON data from the command line
+  - Simplify data extraction from GitHub API
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh formatting

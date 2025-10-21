@@ -1,9 +1,9 @@
 ---
-title: "Format Text - Fold Long Lines | Online Free DevTools by Hexmos"
+title: 'Format Text - Fold Long Lines | Online Free DevTools by Hexmos'
 name: fold
-path: "/freedevtools/tldr/linux/fold/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fold/"
-description: "Format text with the fold command to wrap long lines for fixed-width output.  Control line breaks and adjust width easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fold/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fold/'
+description: 'Format text with the fold command to wrap long lines for fixed-width output.  Control line breaks and adjust width easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - text formatter
@@ -22,8 +22,8 @@ features:
   - Allows breaking lines at the rightmost blank space.
   - Supports file input for batch processing.
   - Provides flexible control over line wrapping behavior.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fold

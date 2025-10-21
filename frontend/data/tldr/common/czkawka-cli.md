@@ -1,29 +1,29 @@
 ---
-title: "Find Duplicate Files - Czkawka CLI | Online Free DevTools by Hexmos"
+title: 'Find Duplicate Files - Czkawka CLI | Online Free DevTools by Hexmos'
 name: czkawka-cli
-path: "/freedevtools/tldr/common/czkawka-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/czkawka-cli/"
-description: "Find duplicate files with Czkawka CLI, a powerful command-line tool. Locate and delete unnecessary files to free up disk space efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/czkawka-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/czkawka-cli/'
+description: 'Find duplicate files with Czkawka CLI, a powerful command-line tool. Locate and delete unnecessary files to free up disk space efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- duplicate file finder
-- duplicate file remover
-- command line duplicate finder
-- czkawka cli linux
-- czkawka cli macos
-- czkawka duplicate cleaner
-- disk space optimizer
-- file deduplication tool
-- similar image finder
-- empty folder finder
+  - duplicate file finder
+  - duplicate file remover
+  - command line duplicate finder
+  - czkawka cli linux
+  - czkawka cli macos
+  - czkawka duplicate cleaner
+  - disk space optimizer
+  - file deduplication tool
+  - similar image finder
+  - empty folder finder
 features:
-- Find duplicate files in multiple directories.
-- Delete duplicate files using various methods (AEN, AEO, ON, OO, HARD, NONE).
-- Locate similar images based on visual similarity.
-- Identify and remove empty folders.
-- Operate via command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Find duplicate files in multiple directories.
+  - Delete duplicate files using various methods (AEN, AEO, ON, OO, HARD, NONE).
+  - Locate similar images based on visual similarity.
+  - Identify and remove empty folders.
+  - Operate via command-line interface.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # czkawka-cli

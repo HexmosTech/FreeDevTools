@@ -1,29 +1,29 @@
 ---
-title: "Secure AWS Credentials - Manage with aws-vault | Online Free DevTools by Hexmos"
+title: 'Secure AWS Credentials - Manage with aws-vault | Online Free DevTools by Hexmos'
 name: aws-vault
-path: "/freedevtools/tldr/aws/aws-vault/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-vault/"
-description: "Secure AWS credentials management with aws-vault. Store, access, and rotate AWS keys securely in development environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-vault/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-vault/'
+description: 'Secure AWS credentials management with aws-vault. Store, access, and rotate AWS keys securely in development environments. Free online tool, no registration required.'
 category: common
 keywords:
-- aws credentials management
-- aws vault secure storage
-- aws access keys manager
-- aws profile management
-- aws cli authentication
-- aws credential rotation
-- aws key management
-- aws session management
-- aws multi-factor authentication
-- aws development security
+  - aws credentials management
+  - aws vault secure storage
+  - aws access keys manager
+  - aws profile management
+  - aws cli authentication
+  - aws credential rotation
+  - aws key management
+  - aws session management
+  - aws multi-factor authentication
+  - aws development security
 features:
-- Securely store and access AWS credentials
-- Execute commands with temporary AWS credentials
-- Login to the AWS Console via the command line
-- Rotate AWS credentials for enhanced security
-- List and manage AWS profiles and sessions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely store and access AWS credentials
+  - Execute commands with temporary AWS credentials
+  - Login to the AWS Console via the command line
+  - Rotate AWS credentials for enhanced security
+  - List and manage AWS profiles and sessions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws-vault

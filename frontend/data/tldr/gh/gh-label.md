@@ -1,29 +1,29 @@
 ---
-title: "Create GitHub Labels - Manage repository labels | Online Free DevTools by Hexmos"
+title: 'Create GitHub Labels - Manage repository labels | Online Free DevTools by Hexmos'
 name: gh-label
-path: "/freedevtools/tldr/gh/gh-label/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-label/"
-description: "Create GitHub labels easily with gh-label. Manage repository labels, clone labels and apply consistent labeling for open source projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-label/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-label/'
+description: 'Create GitHub labels easily with gh-label. Manage repository labels, clone labels and apply consistent labeling for open source projects. Free online tool, no registration required.'
 category: common
 keywords:
-- github label management
-- gh label create
-- repository label tool
-- github label cli
-- github actions labels
-- github label clone
-- label bulk update
-- github label sync
-- github issue tracking labels
-- gh label automation
+  - github label management
+  - gh label create
+  - repository label tool
+  - github label cli
+  - github actions labels
+  - github label clone
+  - label bulk update
+  - github label sync
+  - github issue tracking labels
+  - gh label automation
 features:
-- List labels in a GitHub repository
-- Create new labels with description and color
-- Delete existing labels with confirmation
-- Update the name and description of labels
-- Clone labels from another repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List labels in a GitHub repository
+  - Create new labels with description and color
+  - Delete existing labels with confirmation
+  - Update the name and description of labels
+  - Clone labels from another repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh label

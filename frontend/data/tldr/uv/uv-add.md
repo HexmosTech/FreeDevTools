@@ -1,29 +1,29 @@
 ---
-title: "UV - Add Package Dependencies | Online Free DevTools by Hexmos"
+title: 'UV - Add Package Dependencies | Online Free DevTools by Hexmos'
 name: uv-add
-path: "/freedevtools/tldr/uv/uv-add/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-add/"
-description: "Add Python package dependencies with UV. Manage project dependencies efficiently using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-add/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-add/'
+description: 'Add Python package dependencies with UV. Manage project dependencies efficiently using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Python package adder
-- UV dependency manager
-- pyproject.toml editor
-- Python dependency resolver
-- PEP 508 dependency management
-- Python optional dependencies
-- Python development dependencies
-- Python editable installs
-- Python package extra features
-- UV package version control
+  - Python package adder
+  - UV dependency manager
+  - pyproject.toml editor
+  - Python dependency resolver
+  - PEP 508 dependency management
+  - Python optional dependencies
+  - Python development dependencies
+  - Python editable installs
+  - Python package extra features
+  - UV package version control
 features:
-- Add latest version of a package
-- Add multiple packages simultaneously
-- Add packages with version requirements
-- Add packages to optional dependency groups
-- Add packages as editable installs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add latest version of a package
+  - Add multiple packages simultaneously
+  - Add packages with version requirements
+  - Add packages to optional dependency groups
+  - Add packages as editable installs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv add

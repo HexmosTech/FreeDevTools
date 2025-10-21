@@ -1,29 +1,29 @@
 ---
-title: "Multipass - Manage Ubuntu VMs | Online Free DevTools by Hexmos"
+title: 'Multipass - Manage Ubuntu VMs | Online Free DevTools by Hexmos'
 name: multipass
-path: "/freedevtools/tldr/common/multipass/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/multipass/"
-description: "Manage Ubuntu virtual machines easily with Multipass. Create, start, and delete VMs on your local machine using native hypervisors. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/multipass/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/multipass/'
+description: 'Manage Ubuntu virtual machines easily with Multipass. Create, start, and delete VMs on your local machine using native hypervisors. Free online tool, no registration required.'
 category: common
 keywords:
-- Ubuntu VM manager
-- multipass ubuntu
-- linux virtual machine
-- create ubuntu vm
-- launch ubuntu instance
-- ubuntu multipass command
-- multipass cloud init
-- vm instance management
-- virtual machine linux
-- multipass delete instance
+  - Ubuntu VM manager
+  - multipass ubuntu
+  - linux virtual machine
+  - create ubuntu vm
+  - launch ubuntu instance
+  - ubuntu multipass command
+  - multipass cloud init
+  - vm instance management
+  - virtual machine linux
+  - multipass delete instance
 features:
-- Launch and manage Ubuntu virtual machines
-- Create instances with cloud-init configuration
-- List and inspect VM properties
-- Start, stop, and delete instances by name
-- Mount local directories into instances
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch and manage Ubuntu virtual machines
+  - Create instances with cloud-init configuration
+  - List and inspect VM properties
+  - Start, stop, and delete instances by name
+  - Mount local directories into instances
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # multipass

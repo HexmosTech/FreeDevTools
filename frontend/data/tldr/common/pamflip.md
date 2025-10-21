@@ -1,29 +1,29 @@
 ---
-title: "PAM Flip - Rotate and Flip Images | Online Free DevTools by Hexmos"
+title: 'PAM Flip - Rotate and Flip Images | Online Free DevTools by Hexmos'
 name: pamflip
-path: "/freedevtools/tldr/common/pamflip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamflip/"
-description: "Flip images with PAM Flip. Easily rotate and flip PAM and PNM images using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamflip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamflip/'
+description: 'Flip images with PAM Flip. Easily rotate and flip PAM and PNM images using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM image flip
-- PNM image flip
-- Image rotation tool
-- PAM image rotation
-- PNM image rotation
-- Netpbm image manipulation
-- Image transformation command line
-- Linux image tools
-- Image flip script
-- PAM PNM converter
+  - PAM image flip
+  - PNM image flip
+  - Image rotation tool
+  - PAM image rotation
+  - PNM image rotation
+  - Netpbm image manipulation
+  - Image transformation command line
+  - Linux image tools
+  - Image flip script
+  - PAM PNM converter
 features:
-- Rotate images by 90, 180, or 270 degrees.
-- Flip images horizontally (left to right).
-- Flip images vertically (top to bottom).
-- Transpose images along the main diagonal.
-- Transform Netpbm format images.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rotate images by 90, 180, or 270 degrees.
+  - Flip images horizontally (left to right).
+  - Flip images vertically (top to bottom).
+  - Transpose images along the main diagonal.
+  - Transform Netpbm format images.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamflip

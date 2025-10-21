@@ -1,29 +1,29 @@
 ---
-title: "SFDK Build Init - Initialize Build Directory | Online Free DevTools by Hexmos"
+title: 'SFDK Build Init - Initialize Build Directory | Online Free DevTools by Hexmos'
 name: sfdk-build-init
-path: "/freedevtools/tldr/sfdk/sfdk-build-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-init/"
-description: "Initialize build directories easily with SFDK Build Init. Quickly set up your Sailfish OS development environment for app creation. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-build-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-build-init/'
+description: 'Initialize build directories easily with SFDK Build Init. Quickly set up your Sailfish OS development environment for app creation. Free online tool, no registration required.'
 category: common
 keywords:
-- SailfishOS build initialization
-- SFDK build directory setup
-- Build environment configuration
-- Sailfish app development
-- Qt Creator build process
-- Linux build initialization tool
-- Command line build setup
-- SFDK development tools
-- Mobile app build config
-- Build script initializer
+  - SailfishOS build initialization
+  - SFDK build directory setup
+  - Build environment configuration
+  - Sailfish app development
+  - Qt Creator build process
+  - Linux build initialization tool
+  - Command line build setup
+  - SFDK development tools
+  - Mobile app build config
+  - Build script initializer
 features:
-- Initializes a build directory for Sailfish OS projects.
-- Simplifies build environment setup within Qt Creator.
-- Supports initializing the current or a specified directory.
-- Streamlines the development workflow for Sailfish OS applications.
-- Creates necessary build files and configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initializes a build directory for Sailfish OS projects.
+  - Simplifies build environment setup within Qt Creator.
+  - Supports initializing the current or a specified directory.
+  - Streamlines the development workflow for Sailfish OS applications.
+  - Creates necessary build files and configurations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk build-init

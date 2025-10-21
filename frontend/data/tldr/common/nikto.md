@@ -1,29 +1,29 @@
 ---
-title: "Nikto Scanner - Scan Web Servers | Online Free DevTools by Hexmos"
+title: 'Nikto Scanner - Scan Web Servers | Online Free DevTools by Hexmos'
 name: nikto
-path: "/freedevtools/tldr/common/nikto/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nikto/"
-description: "Scan web servers for vulnerabilities with Nikto Scanner. Perform comprehensive security audits and identify potential weaknesses. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nikto/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nikto/'
+description: 'Scan web servers for vulnerabilities with Nikto Scanner. Perform comprehensive security audits and identify potential weaknesses. Free online tool, no registration required.'
 category: common
 keywords:
-- nikto web server scanner
-- web vulnerability scanner
-- web security audit
-- nikto security scan
-- web server security
-- vulnerability assessment tool
-- penetration testing tool
-- command line scanner
-- web application security
-- perl nikto scanner
+  - nikto web server scanner
+  - web vulnerability scanner
+  - web security audit
+  - nikto security scan
+  - web server security
+  - vulnerability assessment tool
+  - penetration testing tool
+  - command line scanner
+  - web application security
+  - perl nikto scanner
 features:
-- Scan web servers for known vulnerabilities
-- Identify outdated software versions
-- Detect common misconfigurations
-- Check for insecure files and directories
-- Update plugins and databases for latest threats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan web servers for known vulnerabilities
+  - Identify outdated software versions
+  - Detect common misconfigurations
+  - Check for insecure files and directories
+  - Update plugins and databases for latest threats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nikto

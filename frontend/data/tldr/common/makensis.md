@@ -1,29 +1,29 @@
 ---
-title: "Create NSIS Installer - Compile Scripts | Online Free DevTools by Hexmos"
+title: 'Create NSIS Installer - Compile Scripts | Online Free DevTools by Hexmos'
 name: makensis
-path: "/freedevtools/tldr/common/makensis/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/makensis/"
-description: "Create Windows installers with NSIS using Makensis. Compile NSIS scripts into executable installers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/makensis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/makensis/'
+description: 'Create Windows installers with NSIS using Makensis. Compile NSIS scripts into executable installers. Free online tool, no registration required.'
 category: common
 keywords:
-- NSIS installer creation
-- Windows installer compiler
-- NSIS script compilation
-- Cross-platform installer builder
-- NSIS command line tool
-- Installer executable generator
-- Windows application installer
-- NSIS silent installer
-- Installer script validation
-- Makensis command options
+  - NSIS installer creation
+  - Windows installer compiler
+  - NSIS script compilation
+  - Cross-platform installer builder
+  - NSIS command line tool
+  - Installer executable generator
+  - Windows application installer
+  - NSIS silent installer
+  - Installer script validation
+  - Makensis command options
 features:
-- Compile NSIS scripts into Windows installers.
-- Enable strict mode to treat warnings as errors.
-- Display command-specific help information.
-- Generate cross-platform Windows installers.
-- Validate NSIS script syntax.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile NSIS scripts into Windows installers.
+  - Enable strict mode to treat warnings as errors.
+  - Display command-specific help information.
+  - Generate cross-platform Windows installers.
+  - Validate NSIS script syntax.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # makensis

@@ -1,29 +1,29 @@
 ---
-title: "Compile Go Programs - Cross-Compile with Gox | Online Free DevTools by Hexmos"
+title: 'Compile Go Programs - Cross-Compile with Gox | Online Free DevTools by Hexmos'
 name: gox
-path: "/freedevtools/tldr/common/gox/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gox/"
-description: "Cross-compile Go programs with Gox. Effortlessly build for multiple operating systems and architectures. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gox/'
+description: 'Cross-compile Go programs with Gox. Effortlessly build for multiple operating systems and architectures. Free online tool, no registration required.'
 category: common
 keywords:
-- go cross-compiler
-- go build tool
-- go multi-platform compile
-- go cross-platform build
-- go binary cross-compile
-- go linux build
-- go windows build
-- go macos build
-- go arm64 build
-- go amd64 build
+  - go cross-compiler
+  - go build tool
+  - go multi-platform compile
+  - go cross-platform build
+  - go binary cross-compile
+  - go linux build
+  - go windows build
+  - go macos build
+  - go arm64 build
+  - go amd64 build
 features:
-- Cross-compile Go programs for multiple OS/architecture combinations
-- Compile Go programs from remote URLs
-- Specify target operating system for compilation
-- Specify target operating system and architecture for compilation
-- Build Go binaries for different platforms from a single command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Cross-compile Go programs for multiple OS/architecture combinations
+  - Compile Go programs from remote URLs
+  - Specify target operating system for compilation
+  - Specify target operating system and architecture for compilation
+  - Build Go binaries for different platforms from a single command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gox

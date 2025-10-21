@@ -1,9 +1,9 @@
 ---
-title: "List SCSI Devices - Inspect Device Attributes | Online Free DevTools by Hexmos"
+title: 'List SCSI Devices - Inspect Device Attributes | Online Free DevTools by Hexmos'
 name: lsscsi
-path: "/freedevtools/tldr/linux/lsscsi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lsscsi/"
-description: "List SCSI devices quickly with lsscsi. Display device attributes and disk capacity. Free online tool, no registration required. Use it for disk management."
+path: '/freedevtools/tldr/linux/lsscsi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lsscsi/'
+description: 'List SCSI devices quickly with lsscsi. Display device attributes and disk capacity. Free online tool, no registration required. Use it for disk management.'
 category: linux
 keywords:
   - SCSI device list
@@ -22,8 +22,8 @@ features:
   - Show human-readable disk capacity
   - Identify SCSI hosts and targets
   - Provide storage device information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsscsi

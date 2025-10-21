@@ -1,9 +1,9 @@
 ---
-title: "qm agent - Manage Guest Commands | Online Free DevTools by Hexmos"
+title: 'qm agent - Manage Guest Commands | Online Free DevTools by Hexmos'
 name: qm-agent
-path: "/freedevtools/tldr/linux/qm-agent/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-agent/"
-description: "Manage guest commands efficiently with qm agent.  Execute commands within virtual machines seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-agent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-agent/'
+description: 'Manage guest commands efficiently with qm agent.  Execute commands within virtual machines seamlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - qm command management
@@ -22,8 +22,8 @@ features:
   - Interact with the guest operating system.
   - Simplify complex guest operations.
   - Provides a streamlined interface for guest command execution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm agent

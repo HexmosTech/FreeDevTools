@@ -1,9 +1,9 @@
 ---
-title: "Speaker-Test - Generate Audio Test Tones | Online Free DevTools by Hexmos"
+title: 'Speaker-Test - Generate Audio Test Tones | Online Free DevTools by Hexmos'
 name: speaker-test
-path: "/freedevtools/tldr/linux/speaker-test/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/speaker-test/"
-description: "Generate audio test tones with Speaker-Test. Verify audio output, troubleshoot sound issues and ensure proper speaker function. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/speaker-test/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/speaker-test/'
+description: 'Generate audio test tones with Speaker-Test. Verify audio output, troubleshoot sound issues and ensure proper speaker function. Free online tool, no registration required.'
 category: linux
 keywords:
   - audio test tone generator
@@ -22,8 +22,8 @@ features:
   - Play predefined WAV file test tones
   - Specify custom WAV file for testing
   - Test default audio output devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # speaker-test

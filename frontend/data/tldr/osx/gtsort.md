@@ -1,9 +1,9 @@
 ---
-title: "Sort Topological Order - Control File Dependencies | Online Free DevTools by Hexmos"
+title: 'Sort Topological Order - Control File Dependencies | Online Free DevTools by Hexmos'
 name: gtsort
-path: "/freedevtools/tldr/osx/gtsort/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/gtsort/"
-description: "Control topological order with GTSort, an alias for GNU tsort. Resolve file dependencies and maintain build order in your projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/gtsort/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/gtsort/'
+description: 'Control topological order with GTSort, an alias for GNU tsort. Resolve file dependencies and maintain build order in your projects. Free online tool, no registration required.'
 category: osx
 keywords:
   - topological sort
@@ -22,8 +22,8 @@ features:
   - Maintain proper build sequence
   - Identify circular dependencies
   - Generate a directed acyclic graph
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gtsort

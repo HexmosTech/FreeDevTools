@@ -1,29 +1,29 @@
 ---
-title: "Decrypt Text - Reveal Hidden Data with nms | Online Free DevTools by Hexmos"
+title: 'Decrypt Text - Reveal Hidden Data with nms | Online Free DevTools by Hexmos'
 name: nms
-path: "/freedevtools/tldr/common/nms/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nms/"
+path: '/freedevtools/tldr/common/nms/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nms/'
 description: "Decrypt text instantly with nms, a data decryption tool mimicking the 'Sneakers' effect. Reveal hidden messages from standard input. Free online tool, no registration required."
 category: common
 keywords:
-- data decryption
-- text decryption
-- sneakers effect
-- stdin decryption
-- command-line decryption
-- terminal decryption
-- nms decrypt
-- linux decryption
-- macos decryption
-- text scrambling
+  - data decryption
+  - text decryption
+  - sneakers effect
+  - stdin decryption
+  - command-line decryption
+  - terminal decryption
+  - nms decrypt
+  - linux decryption
+  - macos decryption
+  - text scrambling
 features:
-- Decrypts text from standard input
-- Provides instant decryption option
-- Allows customization of output color
-- Clears the screen before decryption
-- Recreates the 'Sneakers' decryption effect
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decrypts text from standard input
+  - Provides instant decryption option
+  - Allows customization of output color
+  - Clears the screen before decryption
+  - Recreates the 'Sneakers' decryption effect
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nms

@@ -1,9 +1,9 @@
 ---
-title: "Perf - Analyze Linux Performance | Online Free DevTools by Hexmos"
+title: 'Perf - Analyze Linux Performance | Online Free DevTools by Hexmos'
 name: perf
-path: "/freedevtools/tldr/linux/perf/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/perf/"
-description: "Analyze Linux performance with perf, a powerful command-line profiling tool. Collect metrics, diagnose bottlenecks, and optimize your applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/perf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/perf/'
+description: 'Analyze Linux performance with perf, a powerful command-line profiling tool. Collect metrics, diagnose bottlenecks, and optimize your applications. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux performance analysis
@@ -22,8 +22,8 @@ features:
   - Record command profiles for offline analysis
   - Record profiles of existing processes by PID
   - Report and analyze recorded performance data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # perf

@@ -1,29 +1,29 @@
 ---
-title: "Where-Object - Filter Objects | Online Free DevTools by Hexmos"
+title: 'Where-Object - Filter Objects | Online Free DevTools by Hexmos'
 name: where-object
-path: "/freedevtools/tldr/windows/where-object/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/where-object/"
-description: "Filter objects with Where-Object on Windows. Quickly select data based on properties. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/where-object/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/where-object/'
+description: 'Filter objects with Where-Object on Windows. Quickly select data based on properties. Free online tool, no registration required.'
 category: windows
 keywords:
-- powershell where-object
-- windows where-object
-- powershell object filter
-- windows object selection
-- powershell data selection
-- powershell pipeline filter
-- command line object filter
-- windows command selection
-- powershell object property
-- where-object command
+  - powershell where-object
+  - windows where-object
+  - powershell object filter
+  - windows object selection
+  - powershell data selection
+  - powershell pipeline filter
+  - command line object filter
+  - windows command selection
+  - powershell object property
+  - where-object command
 features:
-- Select objects based on property values
-- Filter aliases by name
-- List services based on status
-- Use multiple conditions for filtering
-- Utilize the $_ automatic variable
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Select objects based on property values
+  - Filter aliases by name
+  - List services based on status
+  - Use multiple conditions for filtering
+  - Utilize the $_ automatic variable
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Where-Object

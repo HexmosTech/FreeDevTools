@@ -1,29 +1,29 @@
 ---
-title: "AWS SSO - Manage AWS Credentials | Online Free DevTools by Hexmos"
+title: 'AWS SSO - Manage AWS Credentials | Online Free DevTools by Hexmos'
 name: aws-sso
-path: "/freedevtools/tldr/aws/aws-sso/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-sso/"
-description: "Manage AWS Single Sign-On credentials with AWS SSO. Secure access to AWS resources and simplify identity management. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-sso/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-sso/'
+description: 'Manage AWS Single Sign-On credentials with AWS SSO. Secure access to AWS resources and simplify identity management. Free online tool, no registration required.'
 category: common
 keywords:
-- aws sso
-- aws credentials
-- aws identity management
-- aws single sign-on
-- aws cli sso
-- aws access tokens
-- aws account management
-- aws role management
-- aws sso login
-- aws sso logout
+  - aws sso
+  - aws credentials
+  - aws identity management
+  - aws single sign-on
+  - aws cli sso
+  - aws access tokens
+  - aws account management
+  - aws role management
+  - aws sso login
+  - aws sso logout
 features:
-- Start and refresh AWS SSO access tokens
-- End AWS SSO session and clear cached tokens
-- List accessible AWS accounts
-- List roles for a specified AWS account
-- Retrieve short-term credentials for a specific account
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and refresh AWS SSO access tokens
+  - End AWS SSO session and clear cached tokens
+  - List accessible AWS accounts
+  - List roles for a specified AWS account
+  - Retrieve short-term credentials for a specific account
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws sso

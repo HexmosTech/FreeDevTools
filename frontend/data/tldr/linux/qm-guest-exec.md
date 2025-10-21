@@ -1,9 +1,9 @@
 ---
-title: "qm guest exec - Execute Guest Commands | Online Free DevTools by Hexmos"
+title: 'qm guest exec - Execute Guest Commands | Online Free DevTools by Hexmos'
 name: qm-guest-exec
-path: "/freedevtools/tldr/linux/qm-guest-exec/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-guest-exec/"
-description: "Execute commands within Proxmox VMs using qm guest exec.  Manage guest agents and control virtual machine processes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-guest-exec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-guest-exec/'
+description: 'Execute commands within Proxmox VMs using qm guest exec.  Manage guest agents and control virtual machine processes easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - proxmox command execution
@@ -22,8 +22,8 @@ features:
   - Set timeouts for command execution to prevent indefinite hangs.
   - Pass input from stdin to the guest agent for interactive commands.
   - Manage and control guest agents through a simple command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm guest exec

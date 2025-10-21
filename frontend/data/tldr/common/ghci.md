@@ -1,29 +1,29 @@
 ---
-title: "Haskell REPL - Create Interactive Haskell Sessions | Online Free DevTools by Hexmos"
+title: 'Haskell REPL - Create Interactive Haskell Sessions | Online Free DevTools by Hexmos'
 name: ghci
-path: "/freedevtools/tldr/common/ghci/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ghci/"
-description: "Create interactive Haskell sessions with ghci. Load source files, enable language options, and manage compiler warnings for efficient Haskell development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ghci/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ghci/'
+description: 'Create interactive Haskell sessions with ghci. Load source files, enable language options, and manage compiler warnings for efficient Haskell development. Free online tool, no registration required.'
 category: common
 keywords:
-- Haskell REPL
-- Haskell interactive shell
-- GHCi repl
-- GHCi haskell
-- Haskell compiler
-- Haskell language
-- Interactive Haskell programming
-- Haskell development
-- Haskell debugging
-- Glasgow Haskell Compiler
+  - Haskell REPL
+  - Haskell interactive shell
+  - GHCi repl
+  - GHCi haskell
+  - Haskell compiler
+  - Haskell language
+  - Interactive Haskell programming
+  - Haskell development
+  - Haskell debugging
+  - Glasgow Haskell Compiler
 features:
-- Start an interactive Haskell REPL session
-- Load and execute Haskell source files
-- Enable specific Haskell language extensions
-- Configure compiler warning levels
-- Specify include directories for source files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive Haskell REPL session
+  - Load and execute Haskell source files
+  - Enable specific Haskell language extensions
+  - Configure compiler warning levels
+  - Specify include directories for source files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ghci

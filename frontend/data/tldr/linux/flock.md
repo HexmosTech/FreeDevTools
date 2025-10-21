@@ -1,9 +1,9 @@
 ---
-title: "Flock - Manage File Locks from Shell | Online Free DevTools by Hexmos"
+title: 'Flock - Manage File Locks from Shell | Online Free DevTools by Hexmos'
 name: flock
-path: "/freedevtools/tldr/linux/flock/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/flock/"
-description: "Manage file locks easily with Flock. Ensure exclusive command execution and prevent conflicts in shell scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/flock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/flock/'
+description: 'Manage file locks easily with Flock. Ensure exclusive command execution and prevent conflicts in shell scripts. Free online tool, no registration required.'
 category: linux
 keywords:
   - file lock manager
@@ -22,8 +22,8 @@ features:
   - Supports non-blocking lock acquisition with conflict handling
   - Sets a timeout for waiting for a lock to become available
   - Provides a simple way to serialize access to shared resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flock

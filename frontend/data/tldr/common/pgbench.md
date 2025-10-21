@@ -1,29 +1,29 @@
 ---
-title: "Pgbench - Benchmark PostgreSQL Databases | Online Free DevTools by Hexmos"
+title: 'Pgbench - Benchmark PostgreSQL Databases | Online Free DevTools by Hexmos'
 name: pgbench
-path: "/freedevtools/tldr/common/pgbench/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pgbench/"
-description: "Benchmark PostgreSQL databases with pgbench. Analyze database performance, simulate client connections, and tune configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pgbench/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pgbench/'
+description: 'Benchmark PostgreSQL databases with pgbench. Analyze database performance, simulate client connections, and tune configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- postgresql benchmark
-- pgbench benchmark
-- database benchmarking tool
-- postgresql performance testing
-- sql benchmark
-- command line benchmark tool
-- database stress test
-- linux database benchmark
-- macos database benchmark
-- postgresql load testing
+  - postgresql benchmark
+  - pgbench benchmark
+  - database benchmarking tool
+  - postgresql performance testing
+  - sql benchmark
+  - command line benchmark tool
+  - database stress test
+  - linux database benchmark
+  - macos database benchmark
+  - postgresql load testing
 features:
-- Initialize PostgreSQL databases for benchmarking with custom scaling factors
-- Simulate multiple concurrent client connections to assess database load
-- Execute custom transaction scripts to mimic real-world workloads
-- Generate detailed performance reports with metrics such as transactions per second
-- Configure the number of worker threads to optimize benchmark execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize PostgreSQL databases for benchmarking with custom scaling factors
+  - Simulate multiple concurrent client connections to assess database load
+  - Execute custom transaction scripts to mimic real-world workloads
+  - Generate detailed performance reports with metrics such as transactions per second
+  - Configure the number of worker threads to optimize benchmark execution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pgbench

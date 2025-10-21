@@ -1,29 +1,29 @@
 ---
-title: "Compare Compressed Files - xzdiff | Online Free DevTools by Hexmos"
+title: 'Compare Compressed Files - xzdiff | Online Free DevTools by Hexmos'
 name: xzdiff
-path: "/freedevtools/tldr/common/xzdiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xzdiff/"
-description: "Compare compressed files with xzdiff. Analyze file differences and verify data integrity across various compression formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xzdiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xzdiff/'
+description: 'Compare compressed files with xzdiff. Analyze file differences and verify data integrity across various compression formats. Free online tool, no registration required.'
 category: common
 keywords:
-- compressed file comparison
-- xz file diff
-- gzip diff
-- bzip2 diff
-- lzop diff
-- zstd diff
-- linux file comparison
-- command line diff
-- data integrity check
-- compressed data analysis
+  - compressed file comparison
+  - xz file diff
+  - gzip diff
+  - bzip2 diff
+  - lzop diff
+  - zstd diff
+  - linux file comparison
+  - command line diff
+  - data integrity check
+  - compressed data analysis
 features:
-- Compare compressed files using various formats
-- Display differences side-by-side for easier analysis
-- Report only if files differ without detailed output
-- Indicate when compressed files are identical
-- Paginate results for large file comparisons
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare compressed files using various formats
+  - Display differences side-by-side for easier analysis
+  - Report only if files differ without detailed output
+  - Indicate when compressed files are identical
+  - Paginate results for large file comparisons
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xzdiff

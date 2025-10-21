@@ -1,29 +1,29 @@
 ---
-title: "Generate Gemini Server - Manage Gemini Network | Online Free DevTools by Hexmos"
+title: 'Generate Gemini Server - Manage Gemini Network | Online Free DevTools by Hexmos'
 name: agate
-path: "/freedevtools/tldr/common/agate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/agate/"
-description: "Generate Gemini server certificates with Agate, a simple server for the Gemini network protocol. Easily manage and deploy your Gemini capsule. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/agate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/agate/'
+description: 'Generate Gemini server certificates with Agate, a simple server for the Gemini network protocol. Easily manage and deploy your Gemini capsule. Free online tool, no registration required.'
 category: common
 keywords:
-- Gemini server generator
-- Gemini capsule manager
-- Gemini network deployment
-- agate Gemini server
-- Gemini certificate creation
-- Gemini protocol server
-- Command-line Gemini server
-- Gemini hosting solution
-- Gemini content server
-- Gemini server configuration
+  - Gemini server generator
+  - Gemini capsule manager
+  - Gemini network deployment
+  - agate Gemini server
+  - Gemini certificate creation
+  - Gemini protocol server
+  - Command-line Gemini server
+  - Gemini hosting solution
+  - Gemini content server
+  - Gemini server configuration
 features:
-- Generate private keys and certificates for Gemini servers.
-- Serve Gemini content from a specified directory.
-- Configure the server address and hostname.
-- Display help information for command usage.
-- Easily manage Gemini network deployment via the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate private keys and certificates for Gemini servers.
+  - Serve Gemini content from a specified directory.
+  - Configure the server address and hostname.
+  - Display help information for command usage.
+  - Easily manage Gemini network deployment via the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # agate

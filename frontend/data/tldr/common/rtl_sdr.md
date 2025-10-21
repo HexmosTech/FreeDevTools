@@ -1,29 +1,29 @@
 ---
-title: "RTL-SDR Recorder - Capture Raw I/Q Data | Online Free DevTools by Hexmos"
+title: 'RTL-SDR Recorder - Capture Raw I/Q Data | Online Free DevTools by Hexmos'
 name: rtl_sdr
-path: "/freedevtools/tldr/common/rtl_sdr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rtl_sdr/"
-description: "Record raw I/Q data with RTL-SDR Recorder, a powerful SDR sampling tool. Capture radio frequencies, analyze signals and demodulate with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rtl_sdr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rtl_sdr/'
+description: 'Record raw I/Q data with RTL-SDR Recorder, a powerful SDR sampling tool. Capture radio frequencies, analyze signals and demodulate with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- rtl-sdr recorder
-- iq data capture
-- software defined radio sampling
-- rtl-sdr frequency recording
-- rtl-sdr linux
-- rtl-sdr command line
-- rtl-sdr signal analysis
-- radio frequency sampling
-- rtl-sdr data streaming
-- raw iq data recorder
+  - rtl-sdr recorder
+  - iq data capture
+  - software defined radio sampling
+  - rtl-sdr frequency recording
+  - rtl-sdr linux
+  - rtl-sdr command line
+  - rtl-sdr signal analysis
+  - radio frequency sampling
+  - rtl-sdr data streaming
+  - raw iq data recorder
 features:
-- Capture raw I/Q data from RTL-SDR receivers
-- Record specific frequencies with adjustable sampling rates
-- Stream data to other applications via pipe
-- Control device gain and output block size
-- Synchronous output for precise data capture
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture raw I/Q data from RTL-SDR receivers
+  - Record specific frequencies with adjustable sampling rates
+  - Stream data to other applications via pipe
+  - Control device gain and output block size
+  - Synchronous output for precise data capture
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rtl_sdr

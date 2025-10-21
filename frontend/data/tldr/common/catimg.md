@@ -1,29 +1,29 @@
 ---
-title: "Display Images - Print Images in Terminal | Online Free DevTools by Hexmos"
+title: 'Display Images - Print Images in Terminal | Online Free DevTools by Hexmos'
 name: catimg
-path: "/freedevtools/tldr/common/catimg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/catimg/"
-description: "Print images instantly with catimg, a command-line image viewer. Display JPEGs, PNGs, and GIFs directly in your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/catimg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/catimg/'
+description: 'Print images instantly with catimg, a command-line image viewer. Display JPEGs, PNGs, and GIFs directly in your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal image viewer
-- command line image viewer
-- linux image viewer
-- png image printer
-- jpeg image printer
-- gif image printer
-- console image display
-- terminal graphics tool
-- image to ascii converter
-- catimg utility
+  - terminal image viewer
+  - command line image viewer
+  - linux image viewer
+  - png image printer
+  - jpeg image printer
+  - gif image printer
+  - console image display
+  - terminal graphics tool
+  - image to ascii converter
+  - catimg utility
 features:
-- Display JPEG images in the terminal
-- Render PNG images using command line
-- Output GIF images to the console
-- Adjust image resolution for terminal viewing
-- Disable 24-bit color for terminal compatibility
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display JPEG images in the terminal
+  - Render PNG images using command line
+  - Output GIF images to the console
+  - Adjust image resolution for terminal viewing
+  - Disable 24-bit color for terminal compatibility
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # catimg

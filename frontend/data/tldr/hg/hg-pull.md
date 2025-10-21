@@ -1,29 +1,29 @@
 ---
-title: "Hg Pull - Retrieve Remote Repository Changes | Online Free DevTools by Hexmos"
+title: 'Hg Pull - Retrieve Remote Repository Changes | Online Free DevTools by Hexmos'
 name: hg-pull
-path: "/freedevtools/tldr/hg/hg-pull/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-pull/"
-description: "Retrieve Mercurial repository changes with Hg Pull. Sync your local repository with remote branches and revisions. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-pull/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-pull/'
+description: 'Retrieve Mercurial repository changes with Hg Pull. Sync your local repository with remote branches and revisions. Free online tool, no registration required.'
 category: common
 keywords:
-- mercurial pull
-- hg pull command
-- pull mercurial repository
-- mercurial sync
-- hg update
-- hg branch
-- hg revision
-- version control
-- distributed version control
-- mercurial command line
+  - mercurial pull
+  - hg pull command
+  - pull mercurial repository
+  - mercurial sync
+  - hg update
+  - hg branch
+  - hg revision
+  - version control
+  - distributed version control
+  - mercurial command line
 features:
-- Pull changes from the default remote repository.
-- Specify a custom source repository for pulling.
-- Update the local repository to the latest remote head.
-- Force pulling changes from unrelated repositories.
-- Pull changes up to a specific revision changeset.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pull changes from the default remote repository.
+  - Specify a custom source repository for pulling.
+  - Update the local repository to the latest remote head.
+  - Force pulling changes from unrelated repositories.
+  - Pull changes up to a specific revision changeset.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg pull

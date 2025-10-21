@@ -1,9 +1,9 @@
 ---
-title: "chpasswd - Change Passwords Securely | Online Free DevTools by Hexmos"
+title: 'chpasswd - Change Passwords Securely | Online Free DevTools by Hexmos'
 name: chpasswd
-path: "/freedevtools/tldr/linux/chpasswd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chpasswd/"
-description: "Change multiple user passwords securely with chpasswd.  Manage user credentials efficiently via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/chpasswd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chpasswd/'
+description: 'Change multiple user passwords securely with chpasswd.  Manage user credentials efficiently via command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - chpasswd command
@@ -22,8 +22,8 @@ features:
   - Provide password in plain text or encrypted format.
   - Securely manage user credentials via the command line.
   - Supports individual and batch password updates.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chpasswd

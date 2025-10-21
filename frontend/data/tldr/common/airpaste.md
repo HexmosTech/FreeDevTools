@@ -1,29 +1,29 @@
 ---
-title: "Share Files - Send Files via Airpaste | Online Free DevTools by Hexmos"
+title: 'Share Files - Send Files via Airpaste | Online Free DevTools by Hexmos'
 name: airpaste
-path: "/freedevtools/tldr/common/airpaste/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/airpaste/"
-description: "Share files quickly with Airpaste. Transfer files and messages across a local network using mDNS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/airpaste/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/airpaste/'
+description: 'Share files quickly with Airpaste. Transfer files and messages across a local network using mDNS. Free online tool, no registration required.'
 category: common
 keywords:
-- local network file transfer
-- mDNS file sharing
-- command line file transfer
-- network message sharing
-- peer-to-peer file transfer
-- cross-platform file sharing
-- airpaste file transfer
-- airpaste message sharing
-- linux file transfer
-- macos file transfer
+  - local network file transfer
+  - mDNS file sharing
+  - command line file transfer
+  - network message sharing
+  - peer-to-peer file transfer
+  - cross-platform file sharing
+  - airpaste file transfer
+  - airpaste message sharing
+  - linux file transfer
+  - macos file transfer
 features:
-- Send text messages over a local network.
-- Transfer files to other devices on the same network.
-- Receive files sent via airpaste from another device.
-- Create named channels for targeted communication.
-- Share data directly from the command line using pipes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send text messages over a local network.
+  - Transfer files to other devices on the same network.
+  - Receive files sent via airpaste from another device.
+  - Create named channels for targeted communication.
+  - Share data directly from the command line using pipes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # airpaste

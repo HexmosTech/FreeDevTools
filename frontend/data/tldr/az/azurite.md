@@ -1,29 +1,29 @@
 ---
-title: "Azurite - Emulate Azure Storage APIs | Online Free DevTools by Hexmos"
+title: 'Azurite - Emulate Azure Storage APIs | Online Free DevTools by Hexmos'
 name: azurite
-path: "/freedevtools/tldr/az/azurite/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/azurite/"
-description: "Emulate Azure Storage APIs with Azurite, a local Azure Storage emulator. Test blob, queue, and table services without connecting to Azure. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/azurite/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/azurite/'
+description: 'Emulate Azure Storage APIs with Azurite, a local Azure Storage emulator. Test blob, queue, and table services without connecting to Azure. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure Storage emulator
-- Blob storage emulator
-- Queue storage emulator
-- Table storage emulator
-- Azurite local development
-- Azure Storage API testing
-- Blob service emulator
-- Queue service emulator
-- Table service emulator
-- Azurite command line
+  - Azure Storage emulator
+  - Blob storage emulator
+  - Queue storage emulator
+  - Table storage emulator
+  - Azurite local development
+  - Azure Storage API testing
+  - Blob service emulator
+  - Queue service emulator
+  - Table service emulator
+  - Azurite command line
 features:
-- Emulate Azure Blob Storage services locally
-- Emulate Azure Queue Storage services locally
-- Emulate Azure Table Storage services locally
-- Customize listening ports for each storage service
-- Enable debug logging for troubleshooting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Emulate Azure Blob Storage services locally
+  - Emulate Azure Queue Storage services locally
+  - Emulate Azure Table Storage services locally
+  - Customize listening ports for each storage service
+  - Enable debug logging for troubleshooting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # azurite

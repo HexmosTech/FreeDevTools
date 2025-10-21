@@ -1,9 +1,9 @@
 ---
-title: "Spectre Meltdown Checker - Detect Vulnerabilities | Online Free DevTools by Hexmos"
+title: 'Spectre Meltdown Checker - Detect Vulnerabilities | Online Free DevTools by Hexmos'
 name: spectre-meltdown-checker
-path: "/freedevtools/tldr/linux/spectre-meltdown-checker/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/spectre-meltdown-checker/"
-description: "Detect Spectre and Meltdown vulnerabilities with Spectre Meltdown Checker.  This Linux security checker provides detailed reports and mitigation guidance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/spectre-meltdown-checker/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/spectre-meltdown-checker/'
+description: 'Detect Spectre and Meltdown vulnerabilities with Spectre Meltdown Checker.  This Linux security checker provides detailed reports and mitigation guidance. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux security checker
@@ -22,8 +22,8 @@ features:
   - Supports checking specific vulnerability variants.
   - Offers multiple output formats (text, JSON, NRPE, Prometheus, short).
   - Allows checking of non-running kernels using a provided kernel file path.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # spectre-meltdown-checker

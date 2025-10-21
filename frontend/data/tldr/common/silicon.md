@@ -1,29 +1,29 @@
 ---
-title: "Silicon - Generate Code Images | Online Free DevTools by Hexmos"
+title: 'Silicon - Generate Code Images | Online Free DevTools by Hexmos'
 name: silicon
-path: "/freedevtools/tldr/common/silicon/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/silicon/"
-description: "Generate source code images instantly with Silicon. Create visually appealing code snippets for presentations and documentation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/silicon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/silicon/'
+description: 'Generate source code images instantly with Silicon. Create visually appealing code snippets for presentations and documentation. Free online tool, no registration required.'
 category: common
 keywords:
-- Source Code Image Generator
-- Code Snippet Creator
-- Syntax Highlighting Tool
-- Command Line Image Tool
-- Code to Image Converter
-- Silicon Image Creation
-- Markdown Image Generator
-- Terminal Image Generator
-- Code Screenshot Tool
-- Source Code to PNG
+  - Source Code Image Generator
+  - Code Snippet Creator
+  - Syntax Highlighting Tool
+  - Command Line Image Tool
+  - Code to Image Converter
+  - Silicon Image Creation
+  - Markdown Image Generator
+  - Terminal Image Generator
+  - Code Screenshot Tool
+  - Source Code to PNG
 features:
-- Generate images from source code files
-- Customize syntax highlighting based on language
-- Create images from standard input
-- Control output image path and filename
-- Generate visually appealing code snippets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate images from source code files
+  - Customize syntax highlighting based on language
+  - Create images from standard input
+  - Control output image path and filename
+  - Generate visually appealing code snippets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # silicon

@@ -1,29 +1,29 @@
 ---
-title: "Validate Cron Expression - Elasticsearch Cron Validation | Online Free DevTools by Hexmos"
+title: 'Validate Cron Expression - Elasticsearch Cron Validation | Online Free DevTools by Hexmos'
 name: elasticsearch-croneval
-path: "/freedevtools/tldr/elasticsearch/elasticsearch-croneval/"
-canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-croneval/"
-description: "Validate cron expressions with Elasticsearch Croneval. Verify Elasticsearch cron schedules and display trigger times, including future intervals. Free online tool, no registration required."
+path: '/freedevtools/tldr/elasticsearch/elasticsearch-croneval/'
+canonical: 'https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-croneval/'
+description: 'Validate cron expressions with Elasticsearch Croneval. Verify Elasticsearch cron schedules and display trigger times, including future intervals. Free online tool, no registration required.'
 category: common
 keywords:
-- Elasticsearch cron validator
-- Cron expression evaluator
-- Elasticsearch schedule tester
-- Cron syntax checker
-- Elasticsearch cron interval calculator
-- Linux cron validation
-- MacOS cron validation
-- Elasticsearch time based queries
-- Cron trigger time predictor
-- Elasticsearch scheduled tasks
+  - Elasticsearch cron validator
+  - Cron expression evaluator
+  - Elasticsearch schedule tester
+  - Cron syntax checker
+  - Elasticsearch cron interval calculator
+  - Linux cron validation
+  - MacOS cron validation
+  - Elasticsearch time based queries
+  - Cron trigger time predictor
+  - Elasticsearch scheduled tasks
 features:
-- Evaluate cron expressions for Elasticsearch compatibility
-- Display the next N trigger times based on a cron schedule
-- Identify invalid cron expressions with detailed error reporting
-- Suppress output for silent validation checks
-- Provide verbose output for debugging purposes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Evaluate cron expressions for Elasticsearch compatibility
+  - Display the next N trigger times based on a cron schedule
+  - Identify invalid cron expressions with detailed error reporting
+  - Suppress output for silent validation checks
+  - Provide verbose output for debugging purposes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # elasticsearch-croneval

@@ -1,29 +1,29 @@
 ---
-title: "Revert Changes - Apply Revisions with jj | Online Free DevTools by Hexmos"
+title: 'Revert Changes - Apply Revisions with jj | Online Free DevTools by Hexmos'
 name: jj-revert
-path: "/freedevtools/tldr/jj/jj-revert/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-revert/"
-description: "Apply revisions with jj-revert. Efficiently undo changesets and restore previous states in your repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-revert/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-revert/'
+description: 'Apply revisions with jj-revert. Efficiently undo changesets and restore previous states in your repository. Free online tool, no registration required.'
 category: common
 keywords:
-- jj revert changes
-- jj undo revisions
-- jj version control revert
-- jj revert commit
-- jj revert changeset
-- jj restore previous state
-- jj history manipulation
-- jj command line revert
-- jj revert git
-- jj-vcs revert
+  - jj revert changes
+  - jj undo revisions
+  - jj version control revert
+  - jj revert commit
+  - jj revert changeset
+  - jj restore previous state
+  - jj history manipulation
+  - jj command line revert
+  - jj revert git
+  - jj-vcs revert
 features:
-- Revert specific revisions or ranges of revisions
-- Apply reverts onto a destination revision
-- Insert reverts before or after existing revisions
-- Undo unwanted changes in your repository
-- Manipulate repository history with precision
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Revert specific revisions or ranges of revisions
+  - Apply reverts onto a destination revision
+  - Insert reverts before or after existing revisions
+  - Undo unwanted changes in your repository
+  - Manipulate repository history with precision
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj revert

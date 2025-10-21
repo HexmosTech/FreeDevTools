@@ -1,29 +1,29 @@
 ---
-title: "SOPS Secrets Manager - Encrypt and Decrypt Secrets | Online Free DevTools by Hexmos"
+title: 'SOPS Secrets Manager - Encrypt and Decrypt Secrets | Online Free DevTools by Hexmos'
 name: sops
-path: "/freedevtools/tldr/common/sops/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sops/"
-description: "Encrypt secrets with SOPS Secrets Manager. Securely manage sensitive data using encryption, decryption, and rotation keys. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sops/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sops/'
+description: 'Encrypt secrets with SOPS Secrets Manager. Securely manage sensitive data using encryption, decryption, and rotation keys. Free online tool, no registration required.'
 category: common
 keywords:
-- sops secrets manager
-- encrypt secrets
-- decrypt secrets
-- secrets management
-- data encryption
-- key rotation
-- yaml encryption
-- json encryption
-- linux sops
-- macos sops
+  - sops secrets manager
+  - encrypt secrets
+  - decrypt secrets
+  - secrets management
+  - data encryption
+  - key rotation
+  - yaml encryption
+  - json encryption
+  - linux sops
+  - macos sops
 features:
-- Encrypt data using various KMS and encryption formats.
-- Decrypt encrypted secrets to standard output.
-- Update keys in encrypted SOPS files for enhanced security.
-- Rotate data keys within SOPS files for improved protection.
-- Extract specific keys or array elements from encrypted data.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encrypt data using various KMS and encryption formats.
+  - Decrypt encrypted secrets to standard output.
+  - Update keys in encrypted SOPS files for enhanced security.
+  - Rotate data keys within SOPS files for improved protection.
+  - Extract specific keys or array elements from encrypted data.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sops

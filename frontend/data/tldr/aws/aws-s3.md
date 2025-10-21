@@ -1,29 +1,29 @@
 ---
-title: "AWS S3 Control - Manage Cloud Storage | Online Free DevTools by Hexmos"
+title: 'AWS S3 Control - Manage Cloud Storage | Online Free DevTools by Hexmos'
 name: aws-s3
-path: "/freedevtools/tldr/aws/aws-s3/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3/"
-description: "Control AWS S3 cloud storage with this command line interface. Manage files, sync directories, and administer cloud resources effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-s3/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-s3/'
+description: 'Control AWS S3 cloud storage with this command line interface. Manage files, sync directories, and administer cloud resources effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS S3 CLI
-- S3 bucket management
-- Cloud storage control
-- S3 sync tool
-- AWS command line
-- S3 file transfer
-- S3 directory sync
-- AWS S3 bucket operations
-- AWS cloud storage
-- S3 data management
+  - AWS S3 CLI
+  - S3 bucket management
+  - Cloud storage control
+  - S3 sync tool
+  - AWS command line
+  - S3 file transfer
+  - S3 directory sync
+  - AWS S3 bucket operations
+  - AWS cloud storage
+  - S3 data management
 features:
-- List files in S3 buckets.
-- Sync local files to S3 buckets.
-- Sync S3 buckets to local directories.
-- Exclude files during S3 synchronization.
-- Remove files from S3 buckets.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List files in S3 buckets.
+  - Sync local files to S3 buckets.
+  - Sync S3 buckets to local directories.
+  - Exclude files during S3 synchronization.
+  - Remove files from S3 buckets.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws s3

@@ -1,29 +1,29 @@
 ---
-title: "Link Checker - Validate Website Links | Online Free DevTools by Hexmos"
+title: 'Link Checker - Validate Website Links | Online Free DevTools by Hexmos'
 name: linkchecker
-path: "/freedevtools/tldr/common/linkchecker/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/linkchecker/"
-description: "Validate website links effortlessly with Link Checker. Identify broken links, external links, and improve website SEO with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/linkchecker/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/linkchecker/'
+description: 'Validate website links effortlessly with Link Checker. Identify broken links, external links, and improve website SEO with this free online tool, no registration required.'
 category: common
 keywords:
-- website link checker
-- broken link finder
-- html link validator
-- website seo checker
-- link checker command line
-- url validation tool
-- external link checker
-- common linkchecker
-- link crawler tool
-- dead link checker
+  - website link checker
+  - broken link finder
+  - html link validator
+  - website seo checker
+  - link checker command line
+  - url validation tool
+  - external link checker
+  - common linkchecker
+  - link crawler tool
+  - dead link checker
 features:
-- Checks for broken links on websites.
-- Validates external links for correctness.
-- Ignores specific URLs based on regular expressions.
-- Outputs results to a CSV file for analysis.
-- Recursively traverses websites to find all links.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checks for broken links on websites.
+  - Validates external links for correctness.
+  - Ignores specific URLs based on regular expressions.
+  - Outputs results to a CSV file for analysis.
+  - Recursively traverses websites to find all links.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # linkchecker

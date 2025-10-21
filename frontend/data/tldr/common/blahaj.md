@@ -1,29 +1,29 @@
 ---
-title: "Colorize Output - Format Text with BLAHAJ | Online Free DevTools by Hexmos"
+title: 'Colorize Output - Format Text with BLAHAJ | Online Free DevTools by Hexmos'
 name: blahaj
-path: "/freedevtools/tldr/common/blahaj/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/blahaj/"
-description: "Format text output with BLAHAJ, a command-line colorizer for flags and sharks. Add vibrant colors to your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/blahaj/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/blahaj/'
+description: 'Format text output with BLAHAJ, a command-line colorizer for flags and sharks. Add vibrant colors to your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal colorizer
-- output formatting
-- command line color
-- lolcat colorizer
-- flag colorizer
-- shark colorizer
-- text styling
-- command output
-- terminal styling
-- blahaj command
+  - terminal colorizer
+  - output formatting
+  - command line color
+  - lolcat colorizer
+  - flag colorizer
+  - shark colorizer
+  - text styling
+  - command output
+  - terminal styling
+  - blahaj command
 features:
-- Colorize terminal output based on character
-- Colorize terminal output based on word
-- Print flags with custom colors
-- Print sharks with trans colors
-- Apply colors to command output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Colorize terminal output based on character
+  - Colorize terminal output based on word
+  - Print flags with custom colors
+  - Print sharks with trans colors
+  - Apply colors to command output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blahaj

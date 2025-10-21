@@ -1,29 +1,29 @@
 ---
-title: "Write Message - Send User Messages on Terminal | Online Free DevTools by Hexmos"
+title: 'Write Message - Send User Messages on Terminal | Online Free DevTools by Hexmos'
 name: write
-path: "/freedevtools/tldr/common/write/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/write/"
-description: "Send messages with Write command to logged-in users on specific terminals. Communicate directly on Linux systems for real-time interaction. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/write/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/write/'
+description: 'Send messages with Write command to logged-in users on specific terminals. Communicate directly on Linux systems for real-time interaction. Free online tool, no registration required.'
 category: common
 keywords:
-- Linux message sending
-- Terminal communication tool
-- User message writing command
-- Write command line utility
-- System administrator messaging
-- Real-time user communication
-- TTY message sender
-- PTS message writer
-- Linux terminal interaction
-- User notification system
+  - Linux message sending
+  - Terminal communication tool
+  - User message writing command
+  - Write command line utility
+  - System administrator messaging
+  - Real-time user communication
+  - TTY message sender
+  - PTS message writer
+  - Linux terminal interaction
+  - User notification system
 features:
-- Send direct messages to logged-in users.
-- Target specific terminal IDs for message delivery.
-- Communicate across multiple terminal sessions.
-- Write messages in real-time on Linux systems.
-- Interactively send and receive messages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send direct messages to logged-in users.
+  - Target specific terminal IDs for message delivery.
+  - Communicate across multiple terminal sessions.
+  - Write messages in real-time on Linux systems.
+  - Interactively send and receive messages.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # write

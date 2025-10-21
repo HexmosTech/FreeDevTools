@@ -1,29 +1,29 @@
 ---
-title: "Control Qutebrowser - Keyboard-Driven Browser | Online Free DevTools by Hexmos"
+title: 'Control Qutebrowser - Keyboard-Driven Browser | Online Free DevTools by Hexmos'
 name: qutebrowser
-path: "/freedevtools/tldr/common/qutebrowser/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qutebrowser/"
-description: "Control browsing sessions with Qutebrowser, a keyboard-driven browser based on PyQt5. Manage profiles and restore sessions easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/qutebrowser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qutebrowser/'
+description: 'Control browsing sessions with Qutebrowser, a keyboard-driven browser based on PyQt5. Manage profiles and restore sessions easily. Free online tool, no registration required.'
 category: common
 keywords:
-- keyboard driven browser
-- vim like browser
-- pyqt5 browser
-- qutebrowser configuration
-- qutebrowser session management
-- qutebrowser profile management
-- qutebrowser command line
-- qutebrowser temporary session
-- qutebrowser restore session
-- qutebrowser browser settings
+  - keyboard driven browser
+  - vim like browser
+  - pyqt5 browser
+  - qutebrowser configuration
+  - qutebrowser session management
+  - qutebrowser profile management
+  - qutebrowser command line
+  - qutebrowser temporary session
+  - qutebrowser restore session
+  - qutebrowser browser settings
 features:
-- Open browser with specified storage directory
-- Launch temporary browser instances
-- Restore named browsing sessions
-- Open URLs using specified methods
-- Log browser output as JSON
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open browser with specified storage directory
+  - Launch temporary browser instances
+  - Restore named browsing sessions
+  - Open URLs using specified methods
+  - Log browser output as JSON
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qutebrowser

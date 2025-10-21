@@ -1,29 +1,29 @@
 ---
-title: "TSLint - Validate TypeScript Code | Online Free DevTools by Hexmos"
+title: 'TSLint - Validate TypeScript Code | Online Free DevTools by Hexmos'
 name: tslint
-path: "/freedevtools/tldr/common/tslint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tslint/"
-description: "Validate TypeScript code effectively with TSLint. Identify errors, enforce coding standards, and improve code quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tslint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tslint/'
+description: 'Validate TypeScript code effectively with TSLint. Identify errors, enforce coding standards, and improve code quality. Free online tool, no registration required.'
 category: common
 keywords:
-- TypeScript linter
-- JavaScript linter
-- Code style checker
-- Linting tool
-- TypeScript code analysis
-- JavaScript code analysis
-- TSLint configuration
-- Code quality tool
-- Static analysis tool
-- Command-line linter
+  - TypeScript linter
+  - JavaScript linter
+  - Code style checker
+  - Linting tool
+  - TypeScript code analysis
+  - JavaScript code analysis
+  - TSLint configuration
+  - Code quality tool
+  - Static analysis tool
+  - Command-line linter
 features:
-- Enforce TypeScript coding standards
-- Detect code errors and potential bugs
-- Integrate with build processes
-- Customize linting rulesets
-- Automate code style checking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enforce TypeScript coding standards
+  - Detect code errors and potential bugs
+  - Integrate with build processes
+  - Customize linting rulesets
+  - Automate code style checking
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tslint

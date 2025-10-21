@@ -1,29 +1,29 @@
 ---
-title: "Convert Images - Magick Convert Image Formats | Online Free DevTools by Hexmos"
+title: 'Convert Images - Magick Convert Image Formats | Online Free DevTools by Hexmos'
 name: magick-convert
-path: "/freedevtools/tldr/magick/magick-convert/"
-canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-convert/"
-description: "Convert images with Magick Convert. Scale, join, and create images between various formats quickly and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/magick/magick-convert/'
+canonical: 'https://hexmos.com/freedevtools/tldr/magick/magick-convert/'
+description: 'Convert images with Magick Convert. Scale, join, and create images between various formats quickly and easily. Free online tool, no registration required.'
 category: common
 keywords:
-- image format converter
-- image scaler
-- batch image processing
-- image manipulation command line
-- convert jpg to png
-- resize image
-- magick command
-- imagemagick convert
-- image editor command line
-- create animated gif
+  - image format converter
+  - image scaler
+  - batch image processing
+  - image manipulation command line
+  - convert jpg to png
+  - resize image
+  - magick command
+  - imagemagick convert
+  - image editor command line
+  - create animated gif
 features:
-- Convert between multiple image formats.
-- Scale images while preserving aspect ratio.
-- Join images vertically or horizontally with transparency.
-- Create animated GIFs from image sequences.
-- Generate images with solid color backgrounds.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between multiple image formats.
+  - Scale images while preserving aspect ratio.
+  - Join images vertically or horizontally with transparency.
+  - Create animated GIFs from image sequences.
+  - Generate images with solid color backgrounds.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # magick convert

@@ -1,29 +1,29 @@
 ---
-title: "Convert PBM to ESC/P2 - Generate Printer Files | Online Free DevTools by Hexmos"
+title: 'Convert PBM to ESC/P2 - Generate Printer Files | Online Free DevTools by Hexmos'
 name: pbmtoescp2
-path: "/freedevtools/tldr/common/pbmtoescp2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoescp2/"
-description: "Convert PBM image to ESC/P2 printer files with pbmtoescp2. Control output compression and resolution for optimal printing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmtoescp2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmtoescp2/'
+description: 'Convert PBM image to ESC/P2 printer files with pbmtoescp2. Control output compression and resolution for optimal printing. Free online tool, no registration required.'
 category: common
 keywords:
-- PBM to ESC/P2 converter
-- image to printer file
-- pbmtoescp2 linux
-- pbmtoescp2 command
-- Netpbm image conversion
-- PBM image processing
-- ESC/P2 printer command
-- bitmap to printer file
-- image format conversion
-- raster image printing
+  - PBM to ESC/P2 converter
+  - image to printer file
+  - pbmtoescp2 linux
+  - pbmtoescp2 command
+  - Netpbm image conversion
+  - PBM image processing
+  - ESC/P2 printer command
+  - bitmap to printer file
+  - image format conversion
+  - raster image printing
 features:
-- Convert PBM images to ESC/P2 printer files
-- Specify output compression level
-- Define horizontal and vertical resolution in DPI
-- Add a formfeed command to the end of the output
-- Control printer output from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PBM images to ESC/P2 printer files
+  - Specify output compression level
+  - Define horizontal and vertical resolution in DPI
+  - Add a formfeed command to the end of the output
+  - Control printer output from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmtoescp2

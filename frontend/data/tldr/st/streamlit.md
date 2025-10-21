@@ -1,29 +1,29 @@
 ---
-title: "Streamlit App Builder - Create Web Apps in Python | Online Free DevTools by Hexmos"
+title: 'Streamlit App Builder - Create Web Apps in Python | Online Free DevTools by Hexmos'
 name: streamlit
-path: "/freedevtools/tldr/st/streamlit/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/streamlit/"
-description: "Create interactive data-driven web applications with Streamlit App Builder. Rapidly prototype and deploy Python web apps. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/streamlit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/streamlit/'
+description: 'Create interactive data-driven web applications with Streamlit App Builder. Rapidly prototype and deploy Python web apps. Free online tool, no registration required.'
 category: common
 keywords:
-- Streamlit web app
-- Python web framework
-- interactive web app builder
-- data driven application
-- Streamlit deployment
-- Python web app development
-- Streamlit app runner
-- Streamlit command line
-- Streamlit installation
-- Streamlit help
+  - Streamlit web app
+  - Python web framework
+  - interactive web app builder
+  - data driven application
+  - Streamlit deployment
+  - Python web app development
+  - Streamlit app runner
+  - Streamlit command line
+  - Streamlit installation
+  - Streamlit help
 features:
-- Run Streamlit applications from the command line
-- Display Streamlit version information
-- Check for Streamlit installation
-- Generate Streamlit documentation
-- Launch Streamlit web apps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run Streamlit applications from the command line
+  - Display Streamlit version information
+  - Check for Streamlit installation
+  - Generate Streamlit documentation
+  - Launch Streamlit web apps
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # streamlit

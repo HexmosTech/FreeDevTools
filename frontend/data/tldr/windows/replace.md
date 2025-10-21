@@ -1,29 +1,29 @@
 ---
-title: "Replace Files - Manage File Replacement | Online Free DevTools by Hexmos"
+title: 'Replace Files - Manage File Replacement | Online Free DevTools by Hexmos'
 name: replace
-path: "/freedevtools/tldr/windows/replace/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/replace/"
-description: "Manage file replacement with Replace Files, allowing you to efficiently update or add files in directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/replace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/replace/'
+description: 'Manage file replacement with Replace Files, allowing you to efficiently update or add files in directories. Free online tool, no registration required.'
 category: windows
 keywords:
-- file replacement command
-- windows file replace
-- replace files windows
-- command line file management
-- batch file replace
-- windows directory update
-- file update utility
-- command line replace tool
-- windows replace command examples
-- file replace automation
+  - file replacement command
+  - windows file replace
+  - replace files windows
+  - command line file management
+  - batch file replace
+  - windows directory update
+  - file update utility
+  - command line replace tool
+  - windows replace command examples
+  - file replace automation
 features:
-- Replace files in a destination directory with source files
-- Add new files to a directory without replacing existing ones
-- Interactively prompt before replacing files
-- Force replace read-only files
-- Replace files in subdirectories recursively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Replace files in a destination directory with source files
+  - Add new files to a directory without replacing existing ones
+  - Interactively prompt before replacing files
+  - Force replace read-only files
+  - Replace files in subdirectories recursively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # replace

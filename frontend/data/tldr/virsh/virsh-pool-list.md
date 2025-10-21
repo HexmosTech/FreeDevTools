@@ -1,29 +1,29 @@
 ---
-title: "Virsh Pool List - Manage Storage Pools | Online Free DevTools by Hexmos"
+title: 'Virsh Pool List - Manage Storage Pools | Online Free DevTools by Hexmos'
 name: virsh-pool-list
-path: "/freedevtools/tldr/virsh/virsh-pool-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-list/"
-description: "Manage virtual machine storage pools with Virsh Pool List. Quickly view, filter, and detail storage pool information on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/virsh/virsh-pool-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-list/'
+description: 'Manage virtual machine storage pools with Virsh Pool List. Quickly view, filter, and detail storage pool information on Linux. Free online tool, no registration required.'
 category: common
 keywords:
-- virsh pool list
-- linux storage pool management
-- virsh storage pools
-- KVM storage management
-- libvirt storage
-- virtual machine storage
-- virsh pool list details
-- linux virsh command
-- storage pool status
-- virsh pool autostart
+  - virsh pool list
+  - linux storage pool management
+  - virsh storage pools
+  - KVM storage management
+  - libvirt storage
+  - virtual machine storage
+  - virsh pool list details
+  - linux virsh command
+  - storage pool status
+  - virsh pool autostart
 features:
-- List active and inactive storage pools
-- Display pool details (persistence, capacity, allocation)
-- Filter pools by autostart status
-- Filter pools by persistence type
-- Show pool name and UUID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List active and inactive storage pools
+  - Display pool details (persistence, capacity, allocation)
+  - Filter pools by autostart status
+  - Filter pools by persistence type
+  - Show pool name and UUID
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virsh pool-list

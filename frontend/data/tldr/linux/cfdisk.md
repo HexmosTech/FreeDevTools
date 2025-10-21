@@ -1,9 +1,9 @@
 ---
-title: "cfdisk - Manage Partitions | Online Free DevTools by Hexmos"
+title: 'cfdisk - Manage Partitions | Online Free DevTools by Hexmos'
 name: cfdisk
-path: "/freedevtools/tldr/linux/cfdisk/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cfdisk/"
-description: "Manage disk partitions with cfdisk, a powerful command-line utility. Create, delete, and resize partitions easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cfdisk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cfdisk/'
+description: 'Manage disk partitions with cfdisk, a powerful command-line utility. Create, delete, and resize partitions easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - partition management command
@@ -22,8 +22,8 @@ features:
   - Resize existing partitions
   - Change partition types
   - Write changes to the disk
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cfdisk

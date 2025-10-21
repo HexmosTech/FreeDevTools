@@ -1,29 +1,29 @@
 ---
-title: "Nettacker - Automate Vulnerability Scans | Online Free DevTools by Hexmos"
+title: 'Nettacker - Automate Vulnerability Scans | Online Free DevTools by Hexmos'
 name: nettacker
-path: "/freedevtools/tldr/common/nettacker/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nettacker/"
-description: "Automate vulnerability scanning with Nettacker. Perform port scanning and information gathering on targets. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nettacker/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nettacker/'
+description: 'Automate vulnerability scanning with Nettacker. Perform port scanning and information gathering on targets. Free online tool, no registration required.'
 category: common
 keywords:
-- vulnerability scanner automation
-- network scanning tool
-- information gathering scanner
-- port scan command line
-- web application vulnerability scan
-- linux vulnerability scanner
-- penetration testing automation
-- target vulnerability assessment
-- security audit tool
-- nettacker command
+  - vulnerability scanner automation
+  - network scanning tool
+  - information gathering scanner
+  - port scan command line
+  - web application vulnerability scan
+  - linux vulnerability scanner
+  - penetration testing automation
+  - target vulnerability assessment
+  - security audit tool
+  - nettacker command
 features:
-- Automate network vulnerability scans
-- Gather information about target systems
-- Run port scans on specified targets and ports
-- Test for vulnerabilities on web applications
-- Generate reports of scan results
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automate network vulnerability scans
+  - Gather information about target systems
+  - Run port scans on specified targets and ports
+  - Test for vulnerabilities on web applications
+  - Generate reports of scan results
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nettacker

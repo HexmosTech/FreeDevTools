@@ -1,9 +1,9 @@
 ---
-title: "nmcli Connection - Manage Network Connections | Online Free DevTools by Hexmos"
+title: 'nmcli Connection - Manage Network Connections | Online Free DevTools by Hexmos'
 name: nmcli-connection
-path: "/freedevtools/tldr/linux/nmcli-connection/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-connection/"
-description: "Manage network connections with nmcli Connection, a powerful command-line tool. Easily activate, deactivate, and create network profiles. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nmcli-connection/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nmcli-connection/'
+description: 'Manage network connections with nmcli Connection, a powerful command-line tool. Easily activate, deactivate, and create network profiles. Free online tool, no registration required.'
 category: linux
 keywords:
   - network connection manager
@@ -22,8 +22,8 @@ features:
   - Create auto-configured dual-stack connections
   - Configure static IPv4 or IPv6 network connections
   - Import OpenVPN configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nmcli connection

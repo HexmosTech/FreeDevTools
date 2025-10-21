@@ -1,29 +1,29 @@
 ---
-title: "Dolt Branch - Manage Database Branches | Online Free DevTools by Hexmos"
+title: 'Dolt Branch - Manage Database Branches | Online Free DevTools by Hexmos'
 name: dolt-branch
-path: "/freedevtools/tldr/dolt/dolt-branch/"
-canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-branch/"
-description: "Manage database branches with Dolt Branch. Create, rename, and delete branches with ease, improving database version control workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/dolt/dolt-branch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dolt/dolt-branch/'
+description: 'Manage database branches with Dolt Branch. Create, rename, and delete branches with ease, improving database version control workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- dolt branch management
-- database branch tool
-- dolt version control
-- dolt database branching
-- command line branch tool
-- dolt cli branch
-- sql database branch
-- dolt branch rename
-- dolt branch delete
-- dolt branch create
+  - dolt branch management
+  - database branch tool
+  - dolt version control
+  - dolt database branching
+  - command line branch tool
+  - dolt cli branch
+  - sql database branch
+  - dolt branch rename
+  - dolt branch delete
+  - dolt branch create
 features:
-- List all local and remote Dolt branches
-- Create new Dolt branches from current commit
-- Rename existing Dolt branches efficiently
-- Delete unwanted Dolt branches quickly
-- Display the current active Dolt branch
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all local and remote Dolt branches
+  - Create new Dolt branches from current commit
+  - Rename existing Dolt branches efficiently
+  - Delete unwanted Dolt branches quickly
+  - Display the current active Dolt branch
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dolt branch

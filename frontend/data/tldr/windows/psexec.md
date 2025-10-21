@@ -1,29 +1,29 @@
 ---
-title: "Execute Remote Commands - Control PCs with PsExec | Online Free DevTools by Hexmos"
+title: 'Execute Remote Commands - Control PCs with PsExec | Online Free DevTools by Hexmos'
 name: psexec
-path: "/freedevtools/tldr/windows/psexec/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/psexec/"
-description: "Execute remote commands with PsExec. Control remote Windows PCs, manage processes, and access network resources securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/psexec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/psexec/'
+description: 'Execute remote commands with PsExec. Control remote Windows PCs, manage processes, and access network resources securely. Free online tool, no registration required.'
 category: windows
 keywords:
-- psexec windows command
-- windows remote execution
-- remote process control
-- psexec command line
-- windows sysinternals psexec
-- remote command execution
-- windows remote administration
-- network process management
-- remote system control
-- windows remote shell
+  - psexec windows command
+  - windows remote execution
+  - remote process control
+  - psexec command line
+  - windows sysinternals psexec
+  - remote command execution
+  - windows remote administration
+  - network process management
+  - remote system control
+  - windows remote shell
 features:
-- Execute commands on remote Windows systems.
-- Authenticate with user credentials for secure access.
-- Redirect output to files for logging and analysis.
-- Interact with users via remotely executed programs.
-- Display remote system configuration information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands on remote Windows systems.
+  - Authenticate with user credentials for secure access.
+  - Redirect output to files for logging and analysis.
+  - Interact with users via remotely executed programs.
+  - Display remote system configuration information.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # psexec

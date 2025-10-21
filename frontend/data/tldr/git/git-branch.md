@@ -1,29 +1,29 @@
 ---
-title: "Git Branch - Manage Branches in Git | Online Free DevTools by Hexmos"
+title: 'Git Branch - Manage Branches in Git | Online Free DevTools by Hexmos'
 name: git-branch
-path: "/freedevtools/tldr/git/git-branch/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-branch/"
-description: "Manage Git branches efficiently with Git Branch command. Create, rename, delete and list branches locally and remotely. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-branch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-branch/'
+description: 'Manage Git branches efficiently with Git Branch command. Create, rename, delete and list branches locally and remotely. Free online tool, no registration required.'
 category: common
 keywords:
-- git branch management
-- git remote branch
-- create git branch
-- delete git branch
-- rename git branch
-- list git branches
-- git branch contains
-- git current branch
-- git branch commands
-- git command line
+  - git branch management
+  - git remote branch
+  - create git branch
+  - delete git branch
+  - rename git branch
+  - list git branches
+  - git branch contains
+  - git current branch
+  - git branch commands
+  - git command line
 features:
-- List local and remote Git branches
-- Create new Git branches from commits
-- Rename existing Git branches
-- Delete local and remote Git branches
-- Show the current active Git branch
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List local and remote Git branches
+  - Create new Git branches from commits
+  - Rename existing Git branches
+  - Delete local and remote Git branches
+  - Show the current active Git branch
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git branch

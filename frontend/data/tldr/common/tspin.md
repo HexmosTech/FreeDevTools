@@ -1,29 +1,29 @@
 ---
-title: "Highlight Log Files - Control Log Output with tspin | Online Free DevTools by Hexmos"
+title: 'Highlight Log Files - Control Log Output with tspin | Online Free DevTools by Hexmos'
 name: tspin
-path: "/freedevtools/tldr/common/tspin/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tspin/"
-description: "Control log output with tspin, a log file highlighter. Analyze, filter, and debug logs efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tspin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tspin/'
+description: 'Control log output with tspin, a log file highlighter. Analyze, filter, and debug logs efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- log highlighter
-- log file viewer
-- less pager
-- command line log viewer
-- tailspin log
-- ansi color log
-- linux log viewer
-- macos log viewer
-- windows log viewer
-- real-time log analysis
+  - log highlighter
+  - log file viewer
+  - less pager
+  - command line log viewer
+  - tailspin log
+  - ansi color log
+  - linux log viewer
+  - macos log viewer
+  - windows log viewer
+  - real-time log analysis
 features:
-- Highlight log files for easy analysis
-- Filter log output using less-like navigation
-- Pipe logs from other commands for real-time monitoring
-- Read log files from stdin
-- Print highlighted log output to stdout
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Highlight log files for easy analysis
+  - Filter log output using less-like navigation
+  - Pipe logs from other commands for real-time monitoring
+  - Read log files from stdin
+  - Print highlighted log output to stdout
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tspin

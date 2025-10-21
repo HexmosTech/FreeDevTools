@@ -1,29 +1,29 @@
 ---
-title: "Fastboot Commands - Control Android Bootloader | Online Free DevTools by Hexmos"
+title: 'Fastboot Commands - Control Android Bootloader | Online Free DevTools by Hexmos'
 name: fastboot
-path: "/freedevtools/tldr/common/fastboot/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fastboot/"
-description: "Control Android devices in bootloader mode with Fastboot Commands. Unlock, flash, and reboot devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fastboot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fastboot/'
+description: 'Control Android devices in bootloader mode with Fastboot Commands. Unlock, flash, and reboot devices. Free online tool, no registration required.'
 category: common
 keywords:
-- android bootloader control
-- fastboot unlock bootloader
-- flash android image
-- fastboot device list
-- android fastboot commands
-- fastboot oem lock
-- linux fastboot tool
-- macos fastboot utility
-- android debugging fastboot
-- fastboot getvar all
+  - android bootloader control
+  - fastboot unlock bootloader
+  - flash android image
+  - fastboot device list
+  - android fastboot commands
+  - fastboot oem lock
+  - linux fastboot tool
+  - macos fastboot utility
+  - android debugging fastboot
+  - fastboot getvar all
 features:
-- Unlock or relock the Android bootloader
-- Flash images to specific partitions
-- Reboot device into bootloader mode
-- List connected Android devices
-- Retrieve device information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Unlock or relock the Android bootloader
+  - Flash images to specific partitions
+  - Reboot device into bootloader mode
+  - List connected Android devices
+  - Retrieve device information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fastboot

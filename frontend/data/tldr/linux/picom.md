@@ -1,9 +1,9 @@
 ---
-title: "Picom Compositor - Manage Xorg Windowing | Online Free DevTools by Hexmos"
+title: 'Picom Compositor - Manage Xorg Windowing | Online Free DevTools by Hexmos'
 name: picom
-path: "/freedevtools/tldr/linux/picom/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/picom/"
-description: "Manage Xorg windowing with Picom compositor.  Control window effects and enhance your desktop experience with this lightweight and efficient tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/picom/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/picom/'
+description: 'Manage Xorg windowing with Picom compositor.  Control window effects and enhance your desktop experience with this lightweight and efficient tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - xorg compositor
@@ -22,8 +22,8 @@ features:
   - Offers various window effects and animations.
   - Runs as a background process for seamless integration.
   - Supports command-line arguments for flexible control.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # picom

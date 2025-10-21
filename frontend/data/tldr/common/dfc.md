@@ -1,29 +1,29 @@
 ---
-title: "Display Disk Usage - Monitor Filesystem Space | Online Free DevTools by Hexmos"
+title: 'Display Disk Usage - Monitor Filesystem Space | Online Free DevTools by Hexmos'
 name: dfc
-path: "/freedevtools/tldr/common/dfc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dfc/"
-description: "Display disk usage information with DFC. Monitor filesystem space and analyze disk space efficiently using command-line tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dfc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dfc/'
+description: 'Display disk usage information with DFC. Monitor filesystem space and analyze disk space efficiently using command-line tools. Free online tool, no registration required.'
 category: common
 keywords:
-- disk usage monitor
-- filesystem space analysis
-- command line disk tool
-- dfc disk utility
-- linux disk space
-- macos disk space
-- disk space visualization
-- command line disk analysis
-- dfc command
-- terminal disk report
+  - disk usage monitor
+  - filesystem space analysis
+  - command line disk tool
+  - dfc disk utility
+  - linux disk space
+  - macos disk space
+  - disk space visualization
+  - command line disk analysis
+  - dfc command
+  - terminal disk report
 features:
-- Display disk usage with colors and graphs
-- Show all filesystems including pseudo filesystems
-- Suppress color output for plain text reports
-- Filter filesystems by type
-- Provide human-readable output of disk space
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display disk usage with colors and graphs
+  - Show all filesystems including pseudo filesystems
+  - Suppress color output for plain text reports
+  - Filter filesystems by type
+  - Provide human-readable output of disk space
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dfc

@@ -1,42 +1,42 @@
-import { toast } from "@/components/ToastProvider";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CopyButton from "@/components/ui/copy-button";
-import { Label } from "@/components/ui/label";
-import { jsonrepair } from "jsonrepair";
-import React, { useEffect, useRef, useState } from "react";
-import JsonPrettifierSkeleton from "./_JsonPrettifierSkeleton";
+import { toast } from '@/components/ToastProvider';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolHead from '@/components/tool/ToolHead';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CopyButton from '@/components/ui/copy-button';
+import { Label } from '@/components/ui/label';
+import { jsonrepair } from 'jsonrepair';
+import React, { useEffect, useRef, useState } from 'react';
+import JsonPrettifierSkeleton from './_JsonPrettifierSkeleton';
 
 // Ace editor
-import { getToolByKey, type Tool } from "@/config/tools";
-import ace from "ace-builds/src-noconflict/ace";
-import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/theme-textmate";
-import "ace-builds/src-noconflict/theme-vibrant_ink";
-import workerJsonUrl from "ace-builds/src-noconflict/worker-json?url";
-import AdBanner from "../../../components/banner/AdBanner";
-ace.config.setModuleUrl("ace/mode/json_worker", workerJsonUrl);
+import { getToolByKey, type Tool } from '@/config/tools';
+import ace from 'ace-builds/src-noconflict/ace';
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/theme-textmate';
+import 'ace-builds/src-noconflict/theme-vibrant_ink';
+import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url';
+import AdBanner from '../../../components/banner/AdBanner';
+ace.config.setModuleUrl('ace/mode/json_worker', workerJsonUrl);
 
-const LIGHT_THEME = "ace/theme/textmate";
-const DARK_THEME = "ace/theme/vibrant_ink";
+const LIGHT_THEME = 'ace/theme/textmate';
+const DARK_THEME = 'ace/theme/vibrant_ink';
 
 interface JsonPrettifierProps {
   tool: string; // from Astro param
 }
 
-
 const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
-  const toolConfig: Tool = getToolByKey(tool) || getToolByKey('json-prettifier');
+  const toolConfig: Tool =
+    getToolByKey(tool) || getToolByKey('json-prettifier');
   const [indentSize, setIndentSize] = useState(2);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("light");
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
 
   // Theme detection without context
 
@@ -47,7 +47,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
 
   // Get current theme based on light/dark mode
   const getCurrentTheme = () => {
-    return currentTheme === "dark" ? DARK_THEME : LIGHT_THEME;
+    return currentTheme === 'dark' ? DARK_THEME : LIGHT_THEME;
   };
 
   useEffect(() => {
@@ -56,9 +56,9 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
 
   // Update theme based on document class
   useEffect(() => {
-    if (typeof document !== "undefined") {
-      const isDark = document.documentElement.classList.contains("dark");
-      setCurrentTheme(isDark ? "dark" : "light");
+    if (typeof document !== 'undefined') {
+      const isDark = document.documentElement.classList.contains('dark');
+      setCurrentTheme(isDark ? 'dark' : 'light');
     }
   }, []);
 
@@ -69,18 +69,18 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "class"
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'class'
         ) {
-          const isDark = document.documentElement.classList.contains("dark");
-          setCurrentTheme(isDark ? "dark" : "light");
+          const isDark = document.documentElement.classList.contains('dark');
+          setCurrentTheme(isDark ? 'dark' : 'light');
         }
       });
     });
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ['class'],
     });
 
     return () => observer.disconnect();
@@ -92,16 +92,16 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
 
     const initEditors = async () => {
       try {
-        const JSONEditor = (await import("jsoneditor")).default;
+        const JSONEditor = (await import('jsoneditor')).default;
 
-        await import("../../../assets/jsoneditor.min.css");
+        await import('../../../assets/jsoneditor.min.css');
 
         // Initialize input editor (code mode for user input)
         if (!inputEditorRef.current) return;
         inputEditorInstanceRef.current = new JSONEditor(
           inputEditorRef.current,
           {
-            mode: "code",
+            mode: 'code',
             statusBar: false,
             mainMenuBar: false,
             theme: getCurrentTheme(),
@@ -109,17 +109,17 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
               handleInputChange(jsonString);
             },
             onError: (err: any) => {
-              setError(err.message || "Invalid JSON");
+              setError(err.message || 'Invalid JSON');
               setIsValid(false);
-              toast.error("Invalid JSON format");
+              toast.error('Invalid JSON format');
             },
             onValidationError: (errors: readonly any[]) => {
               if (errors.length > 0) {
-                setError(errors[0].message || "Validation error");
+                setError(errors[0].message || 'Validation error');
                 setIsValid(false);
-                toast.error("JSON validation error");
+                toast.error('JSON validation error');
               } else {
-                setError("");
+                setError('');
                 setIsValid(true);
               }
             },
@@ -130,7 +130,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
         outputEditorInstanceRef.current = new JSONEditor(
           outputEditorRef.current,
           {
-            mode: "code",
+            mode: 'code',
             enableSort: false,
             enableTransform: false,
             mainMenuBar: false,
@@ -143,21 +143,21 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
         // Set initial sample JSON
         const sampleJson = {
           menu: {
-            id: "file",
-            value: "File",
+            id: 'file',
+            value: 'File',
             popup: {
               menuitem: [
                 {
-                  value: "New",
-                  onclick: "CreateNewDoc()",
+                  value: 'New',
+                  onclick: 'CreateNewDoc()',
                 },
                 {
-                  value: "Open",
-                  onclick: "OpenDoc()",
+                  value: 'Open',
+                  onclick: 'OpenDoc()',
                 },
                 {
-                  value: "Close",
-                  onclick: "CloseDoc()",
+                  value: 'Close',
+                  onclick: 'CloseDoc()',
                 },
               ],
             },
@@ -167,8 +167,8 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
         inputEditorInstanceRef.current.set(sampleJson);
         formatAndDisplayJson(sampleJson);
       } catch (err) {
-        console.error("Failed to initialize JSONEditor:", err);
-        toast.error("Failed to initialize JSON editor");
+        console.error('Failed to initialize JSONEditor:', err);
+        toast.error('Failed to initialize JSON editor');
       }
     };
 
@@ -194,10 +194,10 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
 
   const handleInputChange = (jsonString: string) => {
     if (!jsonString.trim()) {
-      setError("");
+      setError('');
       setIsValid(null);
       if (outputEditorInstanceRef.current) {
-        outputEditorInstanceRef.current.setText("");
+        outputEditorInstanceRef.current.setText('');
       }
       return;
     }
@@ -205,13 +205,13 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
     try {
       const parsed = JSON.parse(jsonString);
       setIsValid(true);
-      setError("");
+      setError('');
       formatAndDisplayJson(parsed);
     } catch (err: any) {
-      setError(err.message || "Invalid JSON");
+      setError(err.message || 'Invalid JSON');
       setIsValid(false);
       if (outputEditorInstanceRef.current) {
-        outputEditorInstanceRef.current.setText("");
+        outputEditorInstanceRef.current.setText('');
       }
     }
   };
@@ -248,11 +248,11 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
       inputEditorInstanceRef.current.set({});
     }
     if (outputEditorInstanceRef.current) {
-      outputEditorInstanceRef.current.setText("");
+      outputEditorInstanceRef.current.setText('');
     }
-    setError("");
+    setError('');
     setIsValid(null);
-    toast.info("JSON editor cleared");
+    toast.info('JSON editor cleared');
   };
 
   const handleRepair = () => {
@@ -264,9 +264,9 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
       inputEditorInstanceRef.current.setText(repaired);
       // Trigger validation and formatting
       handleInputChange(repaired);
-      toast.success("JSON repaired");
+      toast.success('JSON repaired');
     } catch (err: any) {
-      toast.error(err?.message || "Failed to repair JSON");
+      toast.error(err?.message || 'Failed to repair JSON');
     }
   };
 
@@ -283,9 +283,9 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
             if (outputEditorInstanceRef.current) {
               outputEditorInstanceRef.current.setText(formatted);
             }
-            toast.success("JSON formatted");
+            toast.success('JSON formatted');
           } catch (err) {
-            toast.error("Failed to format JSON");
+            toast.error('Failed to format JSON');
           }
         }
       }
@@ -297,7 +297,9 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
         if (activeElement === inputEditorRef.current) {
           e.preventDefault();
           // Focus first control button
-          const firstButton = document.querySelector('[aria-label="Clear JSON input"]') as HTMLElement;
+          const firstButton = document.querySelector(
+            '[aria-label="Clear JSON input"]'
+          ) as HTMLElement;
           firstButton?.focus();
         }
       }
@@ -312,10 +314,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
       <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
-      <ToolHead
-        name={toolConfig.name}
-        description={toolConfig.description}
-      />
+      <ToolHead name={toolConfig.name} description={toolConfig.description} />
       {!isClient ? (
         <JsonPrettifierSkeleton />
       ) : (
@@ -342,10 +341,10 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         ref={inputEditorRef}
                         className="border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden"
                         style={{
-                          height: "600px",
-                          minHeight: "600px",
-                          maxHeight: "80vh",
-                          outline: "none",
+                          height: '600px',
+                          minHeight: '600px',
+                          maxHeight: '80vh',
+                          outline: 'none',
                         }}
                         role="textbox"
                         aria-label="JSON input editor"
@@ -353,7 +352,12 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         tabIndex={0}
                       />
                       {isValid !== null && (
-                        <div className="mt-2" id="input-validation-status" role="status" aria-live="polite">
+                        <div
+                          className="mt-2"
+                          id="input-validation-status"
+                          role="status"
+                          aria-live="polite"
+                        >
                           {isValid ? (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                               <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
@@ -389,15 +393,23 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                             <CopyButton
                               text={(() => {
                                 try {
-                                  if (inputEditorInstanceRef.current && isValid) {
-                                    const currentJson = inputEditorInstanceRef.current.get();
+                                  if (
+                                    inputEditorInstanceRef.current &&
+                                    isValid
+                                  ) {
+                                    const currentJson =
+                                      inputEditorInstanceRef.current.get();
                                     if (currentJson) {
-                                      return JSON.stringify(currentJson, null, indentSize);
+                                      return JSON.stringify(
+                                        currentJson,
+                                        null,
+                                        indentSize
+                                      );
                                     }
                                   }
-                                  return "";
+                                  return '';
                                 } catch (err) {
-                                  return "";
+                                  return '';
                                 }
                               })()}
                               disabled={!isValid}
@@ -418,7 +430,10 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                               -
                             </Button>
                             <span className="text-xs md:text-sm font-medium text-slate-700 dark:text-slate-200">
-                              Indent: <span className="font-mono text-slate-900 dark:text-slate-100">{indentSize}</span>
+                              Indent:{' '}
+                              <span className="font-mono text-slate-900 dark:text-slate-100">
+                                {indentSize}
+                              </span>
                             </span>
                             <Button
                               onClick={() => handleIndentChange(true)}
@@ -460,7 +475,11 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         Formatted Output
                       </Label>
                       {error && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" role="status" aria-live="assertive">
+                        <span
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                          role="status"
+                          aria-live="assertive"
+                        >
                           <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
                           Error detected
                         </span>
@@ -472,9 +491,9 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         ref={outputEditorRef}
                         className="border border-slate-300 rounded-lg dark:border-slate-600 resize-y overflow-hidden"
                         style={{
-                          height: "600px",
-                          minHeight: "600px",
-                          maxHeight: "80vh",
+                          height: '600px',
+                          minHeight: '600px',
+                          maxHeight: '80vh',
                         }}
                         role="textbox"
                         aria-label="JSON formatted output"
@@ -484,7 +503,10 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                     </div>
 
                     {error && (
-                      <Card className="mt-3 border-red-200 dark:border-red-800" role="alert">
+                      <Card
+                        className="mt-3 border-red-200 dark:border-red-800"
+                        role="alert"
+                      >
                         <CardContent className="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
                           <div className="font-medium mb-1">JSON Error:</div>
                           <div>{error}</div>
@@ -499,7 +521,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
 
           {/* Content Cards Group */}
           <ToolContentCardWrapper>
-            <Card >
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
                   {/* <span className="w-2 h-2 bg-primary rounded-full mr-3"></span> */}
@@ -674,7 +696,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                       Code Editor
                     </p>
                     <p className="text-slate-600 dark:text-slate-400 mb-3">
-                      The code editor is powered by{" "}
+                      The code editor is powered by{' '}
                       <a
                         href="http://ace.c9.io/"
                         target="_blank"
@@ -683,7 +705,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                       >
                         Ace Editor
                       </a>
-                      . This editor's shortcut keys are described{" "}
+                      . This editor's shortcut keys are described{' '}
                       <a
                         href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts"
                         target="_blank"
@@ -744,10 +766,11 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
               <CardContent className="px-2 md:px-6">
                 <div className="text-slate-600 dark:text-slate-400 space-y-2">
                   <p>
-                    This enhanced <strong>{toolConfig.name}</strong> provides real-time
-                    formatting and validation using the powerful JSONEditor library. It is
-                    designed for developers who want to easily format, validate, and debug
-                    JSON data with accuracy and efficiency. Features include:
+                    This enhanced <strong>{toolConfig.name}</strong> provides
+                    real-time formatting and validation using the powerful
+                    JSONEditor library. It is designed for developers who want
+                    to easily format, validate, and debug JSON data with
+                    accuracy and efficiency. Features include:
                   </p>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Real-time JSON validation as you type</li>
@@ -757,11 +780,11 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                     <li>Copy formatted JSON to clipboard</li>
                     <li>Dynamic indent control (1-8 spaces)</li>
                     <li>Resizable editors for better workflow</li>
-                    <li>Repair JSON feature, to get the faulty JSONs repaired</li>
+                    <li>
+                      Repair JSON feature, to get the faulty JSONs repaired
+                    </li>
                   </ul>
-                  <p className="pt-2">
-                    Learn more about JSON:
-                  </p>
+                  <p className="pt-2">Learn more about JSON:</p>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>
                       <a
@@ -771,7 +794,7 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                         className="text-blue-600 dark:text-blue-400 underline"
                       >
                         JSON.org
-                      </a>{" "}
+                      </a>{' '}
                       Official JSON specification
                     </li>
                     <li>
@@ -797,19 +820,24 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
               <CardContent className="px-2 md:px-6">
                 <div className="text-slate-600 dark:text-slate-400 space-y-3">
                   <p>
-                    <strong>JSON (JavaScript Object Notation)</strong> is a lightweight data
-                    format used worldwide for data exchange between servers, web
-                    applications, and APIs. It is easy to read and write for humans and
-                    simple to parse for machines. However, raw JSON data can quickly become
-                    difficult to interpret without proper formatting.
+                    <strong>JSON (JavaScript Object Notation)</strong> is a
+                    lightweight data format used worldwide for data exchange
+                    between servers, web applications, and APIs. It is easy to
+                    read and write for humans and simple to parse for machines.
+                    However, raw JSON data can quickly become difficult to
+                    interpret without proper formatting.
                   </p>
 
-                  <h3 className="text-lg font-semibold">Why Formatting Matters</h3>
+                  <h3 className="text-lg font-semibold">
+                    Why Formatting Matters
+                  </h3>
                   <p>
-                    Properly formatted JSON improves readability, reduces errors, and makes
-                    debugging much faster. For developers working with complex datasets,
-                    a <strong>JSON prettifier</strong> transforms compact or minified JSON
-                    into a structured, indented, and visually clear format.
+                    Properly formatted JSON improves readability, reduces
+                    errors, and makes debugging much faster. For developers
+                    working with complex datasets, a{' '}
+                    <strong>JSON prettifier</strong> transforms compact or
+                    minified JSON into a structured, indented, and visually
+                    clear format.
                   </p>
 
                   <h3 className="text-lg font-semibold">Common Use Cases</h3>
@@ -818,10 +846,14 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                     <li>Cleaning and validating JSON configurations</li>
                     <li>Formatting JSON before sharing or storing data</li>
                     <li>Analyzing nested objects and arrays for errors</li>
-                    <li>Improving collaboration by making JSON human-readable</li>
+                    <li>
+                      Improving collaboration by making JSON human-readable
+                    </li>
                   </ul>
 
-                  <h3 className="text-lg font-semibold">Benefits of Proper JSON Formatting</h3>
+                  <h3 className="text-lg font-semibold">
+                    Benefits of Proper JSON Formatting
+                  </h3>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Increases clarity and reduces mistakes</li>
                     <li>Ensures consistency across projects and teams</li>
@@ -830,9 +862,11 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                     <li>Improves data quality for long-term storage</li>
                   </ul>
 
-                  <h3 className="text-lg font-semibold">JSON Best Practices and Standards</h3>
+                  <h3 className="text-lg font-semibold">
+                    JSON Best Practices and Standards
+                  </h3>
                   <p>
-                    Following recognized standards such as{" "}
+                    Following recognized standards such as{' '}
                     <a
                       href="https://tools.ietf.org/html/rfc7159"
                       target="_blank"
@@ -840,8 +874,8 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                       className="text-blue-600 dark:text-blue-400 underline"
                     >
                       RFC 7159
-                    </a>{" "}
-                    and{" "}
+                    </a>{' '}
+                    and{' '}
                     <a
                       href="https://json-schema.org"
                       target="_blank"
@@ -849,15 +883,15 @@ const JsonPrettifier: React.FC<JsonPrettifierProps> = ({ tool }) => {
                       className="text-blue-600 dark:text-blue-400 underline"
                     >
                       JSON Schema
-                    </a>{" "}
-                    helps maintain high-quality JSON data. Always use consistent indentation
-                    (2 or 4 spaces), validate against schemas when possible, and avoid
-                    unnecessary nesting to keep your JSON lightweight and efficient.
+                    </a>{' '}
+                    helps maintain high-quality JSON data. Always use consistent
+                    indentation (2 or 4 spaces), validate against schemas when
+                    possible, and avoid unnecessary nesting to keep your JSON
+                    lightweight and efficient.
                   </p>
                 </div>
               </CardContent>
             </Card>
-
           </ToolContentCardWrapper>
         </ToolBody>
       )}

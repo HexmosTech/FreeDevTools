@@ -1,29 +1,29 @@
 ---
-title: "List Tar Archives - Inspect Compressed Files | Online Free DevTools by Hexmos"
+title: 'List Tar Archives - Inspect Compressed Files | Online Free DevTools by Hexmos'
 name: lz
-path: "/freedevtools/tldr/linux/lz/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lz/"
-description: "List compressed files with lz. Inspect contents of tar.gz archives easily. Lightweight and efficient. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lz/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lz/'
+description: 'List compressed files with lz. Inspect contents of tar.gz archives easily. Lightweight and efficient. Free online tool, no registration required.'
 category: linux
 keywords:
-- tar.gz archive list
-- compressed file inspector
-- linux archive utility
-- lz command linux
-- tar archive contents
-- gzip file viewer
-- command line archive tool
-- list files in tarball
-- inspect compressed data
-- linux file management
+  - tar.gz archive list
+  - compressed file inspector
+  - linux archive utility
+  - lz command linux
+  - tar archive contents
+  - gzip file viewer
+  - command line archive tool
+  - list files in tarball
+  - inspect compressed data
+  - linux file management
 features:
-- List files within tar.gz archives.
-- Display the contents of compressed files.
-- Support for .tar.gz file format.
-- Provide command-line access to archive inspection.
-- Quickly view archive contents without extraction.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List files within tar.gz archives.
+  - Display the contents of compressed files.
+  - Support for .tar.gz file format.
+  - Provide command-line access to archive inspection.
+  - Quickly view archive contents without extraction.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lz

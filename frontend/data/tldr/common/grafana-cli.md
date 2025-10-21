@@ -1,29 +1,29 @@
 ---
-title: "Grafana CLI - Control Grafana Plugins | Online Free DevTools by Hexmos"
+title: 'Grafana CLI - Control Grafana Plugins | Online Free DevTools by Hexmos'
 name: grafana-cli
-path: "/freedevtools/tldr/common/grafana-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/grafana-cli/"
-description: "Control Grafana plugins with Grafana CLI. Install, update, and remove plugins from the command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/grafana-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/grafana-cli/'
+description: 'Control Grafana plugins with Grafana CLI. Install, update, and remove plugins from the command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- grafana plugin manager
-- grafana command line
-- grafana cli plugins
-- grafana plugins install
-- grafana plugins update
-- grafana plugins remove
-- grafana plugin list
-- grafana plugin management
-- cli plugin controller
-- grafana cli tool
+  - grafana plugin manager
+  - grafana command line
+  - grafana cli plugins
+  - grafana plugins install
+  - grafana plugins update
+  - grafana plugins remove
+  - grafana plugin list
+  - grafana plugin management
+  - cli plugin controller
+  - grafana cli tool
 features:
-- Install Grafana plugins via command line
-- Update existing Grafana plugins
-- Remove Grafana plugins via CLI
-- List all installed Grafana plugins
-- Manage Grafana plugins efficiently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Grafana plugins via command line
+  - Update existing Grafana plugins
+  - Remove Grafana plugins via CLI
+  - List all installed Grafana plugins
+  - Manage Grafana plugins efficiently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grafana-cli

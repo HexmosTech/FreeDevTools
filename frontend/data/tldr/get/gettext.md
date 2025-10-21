@@ -1,29 +1,29 @@
 ---
-title: "Gettext - Translate Strings with Domain Files | Online Free DevTools by Hexmos"
+title: 'Gettext - Translate Strings with Domain Files | Online Free DevTools by Hexmos'
 name: gettext
-path: "/freedevtools/tldr/get/gettext/"
-canonical: "https://hexmos.com/freedevtools/tldr/get/gettext/"
-description: "Translate strings easily with Gettext, using compiled .mo files. Localize software and applications for different languages. Free online tool, no registration required."
+path: '/freedevtools/tldr/get/gettext/'
+canonical: 'https://hexmos.com/freedevtools/tldr/get/gettext/'
+description: 'Translate strings easily with Gettext, using compiled .mo files. Localize software and applications for different languages. Free online tool, no registration required.'
 category: common
 keywords:
-- gettext string translation
-- compiled mo file localization
-- internationalization gettext
-- linux gettext command
-- macos gettext command
-- domain file translation
-- locale specific translation
-- message catalog translation
-- multilingual software support
-- software localization gettext
+  - gettext string translation
+  - compiled mo file localization
+  - internationalization gettext
+  - linux gettext command
+  - macos gettext command
+  - domain file translation
+  - locale specific translation
+  - message catalog translation
+  - multilingual software support
+  - software localization gettext
 features:
-- Translate strings based on domain files
-- Utilize compiled .mo files for translations
-- Support multiple locales for internationalization
-- Fallback to msgid if translation is not found
-- Display gettext version and help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Translate strings based on domain files
+  - Utilize compiled .mo files for translations
+  - Support multiple locales for internationalization
+  - Fallback to msgid if translation is not found
+  - Display gettext version and help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gettext

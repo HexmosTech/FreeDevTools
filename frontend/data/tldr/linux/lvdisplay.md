@@ -1,9 +1,9 @@
 ---
-title: "lvdisplay - Display LVM Logical Volumes Information | Online Free DevTools by Hexmos"
+title: 'lvdisplay - Display LVM Logical Volumes Information | Online Free DevTools by Hexmos'
 name: lvdisplay
-path: "/freedevtools/tldr/linux/lvdisplay/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lvdisplay/"
-description: "Display LVM logical volume information instantly with lvdisplay. View details of logical volumes and volume groups using command line tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lvdisplay/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lvdisplay/'
+description: 'Display LVM logical volume information instantly with lvdisplay. View details of logical volumes and volume groups using command line tools. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux LVM display
@@ -22,8 +22,8 @@ features:
   - Display volumes belonging to a specific volume group.
   - Show detailed info for a specific logical volume.
   - Provide a quick overview of LVM logical volumes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lvdisplay

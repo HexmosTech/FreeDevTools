@@ -1,29 +1,29 @@
 ---
-title: "Xmake Build Tool - Create C/C++ Projects | Online Free DevTools by Hexmos"
+title: 'Xmake Build Tool - Create C/C++ Projects | Online Free DevTools by Hexmos'
 name: xmake
-path: "/freedevtools/tldr/common/xmake/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xmake/"
-description: "Create C/C++ projects easily with Xmake Build Tool. Manage dependencies, configure build targets and compile across platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xmake/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xmake/'
+description: 'Create C/C++ projects easily with Xmake Build Tool. Manage dependencies, configure build targets and compile across platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- xmake build tool
-- C/C++ build system
-- cross-platform build
-- xmake project generator
-- lua build tool
-- xmake configuration
-- xmake install
-- makefile alternative
-- C++ project management
-- C build automation
+  - xmake build tool
+  - C/C++ build system
+  - cross-platform build
+  - xmake project generator
+  - lua build tool
+  - xmake configuration
+  - xmake install
+  - makefile alternative
+  - C++ project management
+  - C build automation
 features:
-- Generate C/C++ projects with xmake.lua configuration.
-- Build and run projects with a single command.
-- Configure build targets for different platforms and architectures.
-- Install compiled targets to specific directories.
-- Manage dependencies and automate build processes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate C/C++ projects with xmake.lua configuration.
+  - Build and run projects with a single command.
+  - Configure build targets for different platforms and architectures.
+  - Install compiled targets to specific directories.
+  - Manage dependencies and automate build processes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xmake

@@ -1,29 +1,29 @@
 ---
-title: "SSH Password Provider - Automate SSH Logins | Online Free DevTools by Hexmos"
+title: 'SSH Password Provider - Automate SSH Logins | Online Free DevTools by Hexmos'
 name: sshpass
-path: "/freedevtools/tldr/ssh/sshpass/"
-canonical: "https://hexmos.com/freedevtools/tldr/ssh/sshpass/"
-description: "Automate SSH logins with SSH Password Provider. Securely provide passwords and connect to remote servers from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/ssh/sshpass/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ssh/sshpass/'
+description: 'Automate SSH logins with SSH Password Provider. Securely provide passwords and connect to remote servers from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- ssh password automation
-- ssh login automation
-- ssh command line password
-- ssh password script
-- linux sshpass utility
-- macos sshpass tool
-- ssh automated login
-- ssh password provider
-- password input ssh
-- ssh non-interactive login
+  - ssh password automation
+  - ssh login automation
+  - ssh command line password
+  - ssh password script
+  - linux sshpass utility
+  - macos sshpass tool
+  - ssh automated login
+  - ssh password provider
+  - password input ssh
+  - ssh non-interactive login
 features:
-- Provide passwords to SSH sessions non-interactively
-- Automate SSH login using command line arguments
-- Read SSH passwords from files
-- Bypass interactive password prompts in SSH scripts
-- Execute commands on remote servers with password-based authentication
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Provide passwords to SSH sessions non-interactively
+  - Automate SSH login using command line arguments
+  - Read SSH passwords from files
+  - Bypass interactive password prompts in SSH scripts
+  - Execute commands on remote servers with password-based authentication
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sshpass

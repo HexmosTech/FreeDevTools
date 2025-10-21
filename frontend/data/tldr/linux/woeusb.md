@@ -1,29 +1,29 @@
 ---
-title: "Format USB - Create Windows Bootable Drive with WoeUSB | Online Free DevTools by Hexmos"
+title: 'Format USB - Create Windows Bootable Drive with WoeUSB | Online Free DevTools by Hexmos'
 name: woeusb
-path: "/freedevtools/tldr/linux/woeusb/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/woeusb/"
-description: "Format USB drives to create bootable Windows installation media with WoeUSB. A powerful Linux tool for creating Windows USB drives. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/woeusb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/woeusb/'
+description: 'Format USB drives to create bootable Windows installation media with WoeUSB. A powerful Linux tool for creating Windows USB drives. Free online tool, no registration required.'
 category: linux
 keywords:
-- Windows bootable USB
-- Linux Windows installer
-- USB format tool
-- ISO to USB converter
-- Windows installation media
-- Bootable drive creator
-- WoeUSB Linux
-- Windows USB creator
-- Linux USB formatting
-- Windows ISO burner
+  - Windows bootable USB
+  - Linux Windows installer
+  - USB format tool
+  - ISO to USB converter
+  - Windows installation media
+  - Bootable drive creator
+  - WoeUSB Linux
+  - Windows USB creator
+  - Linux USB formatting
+  - Windows ISO burner
 features:
-- Create bootable Windows USB drives from ISO images
-- Format USB drives for Windows installation
-- Copy Windows files to USB partitions
-- Make existing USB partitions bootable
-- Support for various Windows versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create bootable Windows USB drives from ISO images
+  - Format USB drives for Windows installation
+  - Copy Windows files to USB partitions
+  - Make existing USB partitions bootable
+  - Support for various Windows versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # woeusb

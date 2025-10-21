@@ -1,29 +1,29 @@
 ---
-title: "Rebase Image - Modify Container Images | Online Free DevTools by Hexmos"
+title: 'Rebase Image - Modify Container Images | Online Free DevTools by Hexmos'
 name: crane-rebase
-path: "/freedevtools/tldr/crane/crane-rebase/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-rebase/"
-description: "Rebase container images with Crane. Modify image layers and change base images, enhancing security and efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-rebase/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-rebase/'
+description: 'Rebase container images with Crane. Modify image layers and change base images, enhancing security and efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- container image rebase
-- image layer modification
-- crane image tool
-- docker image rebase
-- oci image manipulation
-- image base layer swap
-- container registry rebase
-- crane cli tool
-- go-containerregistry rebase
-- image manifest editing
+  - container image rebase
+  - image layer modification
+  - crane image tool
+  - docker image rebase
+  - oci image manipulation
+  - image base layer swap
+  - container registry rebase
+  - crane cli tool
+  - go-containerregistry rebase
+  - image manifest editing
 features:
-- Change the base image of a container
-- Modify image layers in container images
-- Tag rebased images for easy identification
-- Remove old base images from container images
-- Rebase images from container registries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Change the base image of a container
+  - Modify image layers in container images
+  - Tag rebased images for easy identification
+  - Remove old base images from container images
+  - Rebase images from container registries
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane rebase

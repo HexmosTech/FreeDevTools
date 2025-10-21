@@ -1,9 +1,9 @@
 ---
-title: "Control Signal Trapping - Execute Commands on Events | Online Free DevTools by Hexmos"
+title: 'Control Signal Trapping - Execute Commands on Events | Online Free DevTools by Hexmos'
 name: trap
-path: "/freedevtools/tldr/linux/trap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/trap/"
-description: "Control Signal Trapping with the Trap command. Manage process signals and execute specific commands on different events. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/trap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/trap/'
+description: 'Control Signal Trapping with the Trap command. Manage process signals and execute specific commands on different events. Free online tool, no registration required.'
 category: linux
 keywords:
   - Signal Trapping
@@ -22,8 +22,8 @@ features:
   - Remove commands associated with signals
   - Ignore specific signals to prevent interruption
   - Define custom signal handlers in shell scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trap

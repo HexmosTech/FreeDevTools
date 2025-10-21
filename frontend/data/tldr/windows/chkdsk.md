@@ -1,29 +1,29 @@
 ---
-title: "Check Disk - Control File System Errors | Online Free DevTools by Hexmos"
+title: 'Check Disk - Control File System Errors | Online Free DevTools by Hexmos'
 name: chkdsk
-path: "/freedevtools/tldr/windows/chkdsk/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/chkdsk/"
-description: "Check disk errors and repair file system corruption with CHKDSK. Analyze volume metadata and fix disk issues on Windows. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/chkdsk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/chkdsk/'
+description: 'Check disk errors and repair file system corruption with CHKDSK. Analyze volume metadata and fix disk issues on Windows. Free online tool, no registration required.'
 category: windows
 keywords:
-- disk check
-- file system check
-- volume repair
-- windows disk repair
-- chkdsk command
-- ntfs repair
-- disk error correction
-- windows file system
-- disk integrity check
-- command line disk utility
+  - disk check
+  - file system check
+  - volume repair
+  - windows disk repair
+  - chkdsk command
+  - ntfs repair
+  - disk error correction
+  - windows file system
+  - disk integrity check
+  - command line disk utility
 features:
-- Scan disks for errors in file system metadata
-- Repair file system errors on specified volumes
-- Dismount a volume prior to checking it
-- Change the NTFS log file size
-- Report disk health and identify potential issues
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan disks for errors in file system metadata
+  - Repair file system errors on specified volumes
+  - Dismount a volume prior to checking it
+  - Change the NTFS log file size
+  - Report disk health and identify potential issues
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chkdsk

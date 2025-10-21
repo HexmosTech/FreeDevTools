@@ -1,29 +1,29 @@
 ---
-title: "Control VirtualBox - Control VM State | Online Free DevTools by Hexmos"
+title: 'Control VirtualBox - Control VM State | Online Free DevTools by Hexmos'
 name: vboxmanage-controlvm
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-controlvm/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-controlvm/"
-description: "Control VirtualBox virtual machine state with VBoxManage controlvm. Manage power, pausing, resuming and save current VM state. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-controlvm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-controlvm/'
+description: 'Control VirtualBox virtual machine state with VBoxManage controlvm. Manage power, pausing, resuming and save current VM state. Free online tool, no registration required.'
 category: common
 keywords:
-- virtualbox control vm
-- vm control power
-- vboxmanage poweroff
-- vm savestate
-- virtual machine reset
-- vboxmanage acpipowerbutton
-- vboxmanage reboot
-- virtualbox shutdown
-- vboxmanage pause vm
-- vboxmanage resume vm
+  - virtualbox control vm
+  - vm control power
+  - vboxmanage poweroff
+  - vm savestate
+  - virtual machine reset
+  - vboxmanage acpipowerbutton
+  - vboxmanage reboot
+  - virtualbox shutdown
+  - vboxmanage pause vm
+  - vboxmanage resume vm
 features:
-- Pause a running virtual machine.
-- Resume a paused virtual machine.
-- Perform a cold reset on a virtual machine.
-- Power off a virtual machine immediately.
-- Save the current state of a virtual machine.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pause a running virtual machine.
+  - Resume a paused virtual machine.
+  - Perform a cold reset on a virtual machine.
+  - Power off a virtual machine immediately.
+  - Save the current state of a virtual machine.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage controlvm

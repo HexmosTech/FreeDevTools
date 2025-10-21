@@ -1,29 +1,29 @@
 ---
-title: "Print Text - Echo Command | Online Free DevTools by Hexmos"
+title: 'Print Text - Echo Command | Online Free DevTools by Hexmos'
 name: echo
-path: "/freedevtools/tldr/common/echo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/echo/"
-description: "Print text instantly with the Echo command. Manipulate strings and display environment variables directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/echo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/echo/'
+description: 'Print text instantly with the Echo command. Manipulate strings and display environment variables directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- echo command
-- print text linux
-- shell script echo
-- bash echo command
-- command line print
-- string manipulation bash
-- environment variables shell
-- standard output command
-- linux terminal echo
-- echo escape characters
+  - echo command
+  - print text linux
+  - shell script echo
+  - bash echo command
+  - command line print
+  - string manipulation bash
+  - environment variables shell
+  - standard output command
+  - linux terminal echo
+  - echo escape characters
 features:
-- Print text to the console
-- Display environment variables
-- Suppress trailing newline characters
-- Append output to a file
-- Interpret backslash escape sequences
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print text to the console
+  - Display environment variables
+  - Suppress trailing newline characters
+  - Append output to a file
+  - Interpret backslash escape sequences
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # echo

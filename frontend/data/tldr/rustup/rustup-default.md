@@ -1,29 +1,29 @@
 ---
-title: "Rust Toolchain - Control Rust Versions with Rustup | Online Free DevTools by Hexmos"
+title: 'Rust Toolchain - Control Rust Versions with Rustup | Online Free DevTools by Hexmos'
 name: rustup-default
-path: "/freedevtools/tldr/rustup/rustup-default/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-default/"
-description: "Control Rust versions easily with Rustup Toolchain Manager. Set default Rust version and manage multiple toolchains with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-default/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-default/'
+description: 'Control Rust versions easily with Rustup Toolchain Manager. Set default Rust version and manage multiple toolchains with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- rust version manager
-- rustup toolchain
-- rust toolchain manager
-- rust toolchain selector
-- rust development environment
-- rust version control
-- rust environment manager
-- rust toolchain switcher
-- rust cli
-- rust cross compilation
+  - rust version manager
+  - rustup toolchain
+  - rust toolchain manager
+  - rust toolchain selector
+  - rust development environment
+  - rust version control
+  - rust environment manager
+  - rust toolchain switcher
+  - rust cli
+  - rust cross compilation
 features:
-- Set the default Rust toolchain for your environment
-- Switch between different Rust versions seamlessly
-- Manage multiple Rust toolchains concurrently
-- Simplify Rust version management for projects
-- Configure Rust development environment quickly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set the default Rust toolchain for your environment
+  - Switch between different Rust versions seamlessly
+  - Manage multiple Rust toolchains concurrently
+  - Simplify Rust version management for projects
+  - Configure Rust development environment quickly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup default

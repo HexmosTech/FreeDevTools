@@ -1,29 +1,29 @@
 ---
-title: "vcluster - Create Virtual Kubernetes Clusters | Online Free DevTools by Hexmos"
+title: 'vcluster - Create Virtual Kubernetes Clusters | Online Free DevTools by Hexmos'
 name: vcluster
-path: "/freedevtools/tldr/common/vcluster/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vcluster/"
-description: "Create lightweight Kubernetes clusters with vcluster. Manage isolated development environments and improve resource utilization using namespaces. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vcluster/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vcluster/'
+description: 'Create lightweight Kubernetes clusters with vcluster. Manage isolated development environments and improve resource utilization using namespaces. Free online tool, no registration required.'
 category: common
 keywords:
-- vcluster Kubernetes
-- Kubernetes cluster creation
-- Virtual Kubernetes namespace
-- vcluster command line
-- Lightweight Kubernetes
-- Container orchestration
-- Kubernetes development environment
-- vcluster management
-- Kubernetes CLI tool
-- vcluster platform
+  - vcluster Kubernetes
+  - Kubernetes cluster creation
+  - Virtual Kubernetes namespace
+  - vcluster command line
+  - Lightweight Kubernetes
+  - Container orchestration
+  - Kubernetes development environment
+  - vcluster management
+  - Kubernetes CLI tool
+  - vcluster platform
 features:
-- Create lightweight virtual Kubernetes clusters in namespaces
-- Connect to virtual clusters via local port forwarding
-- List existing virtual Kubernetes clusters
-- Delete virtual Kubernetes clusters
-- Manage platform-managed virtual Kubernetes clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create lightweight virtual Kubernetes clusters in namespaces
+  - Connect to virtual clusters via local port forwarding
+  - List existing virtual Kubernetes clusters
+  - Delete virtual Kubernetes clusters
+  - Manage platform-managed virtual Kubernetes clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vcluster

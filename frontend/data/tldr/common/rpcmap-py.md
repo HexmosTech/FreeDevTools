@@ -1,29 +1,29 @@
 ---
-title: "Lookup MSRPC Interfaces - Control RPC Connections | Online Free DevTools by Hexmos"
+title: 'Lookup MSRPC Interfaces - Control RPC Connections | Online Free DevTools by Hexmos'
 name: rpcmap.py
-path: "/freedevtools/tldr/common/rpcmap-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/rpcmap-py/"
-description: "Lookup MSRPC interfaces with rpcmap.py. Discover listening RPC endpoints and brute-force UUIDs for penetration testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rpcmap-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/rpcmap-py/'
+description: 'Lookup MSRPC interfaces with rpcmap.py. Discover listening RPC endpoints and brute-force UUIDs for penetration testing. Free online tool, no registration required.'
 category: common
 keywords:
-- MSRPC interface lookup
-- RPC connection discovery
-- Windows RPC enumeration
-- Impacket rpcmap.py tool
-- Network service discovery
-- Penetration testing tool
-- MSRPC endpoint mapper
-- RPC authentication bypass
-- RPC UUID brute force
-- ncacn_ip_tcp scanning
+  - MSRPC interface lookup
+  - RPC connection discovery
+  - Windows RPC enumeration
+  - Impacket rpcmap.py tool
+  - Network service discovery
+  - Penetration testing tool
+  - MSRPC endpoint mapper
+  - RPC authentication bypass
+  - RPC UUID brute force
+  - ncacn_ip_tcp scanning
 features:
-- Discover listening MSRPC interfaces using string bindings
-- Bruteforce UUIDs even with available MGMT interface
-- Bruteforce operation numbers for discovered UUIDs
-- Bruteforce major versions of found UUIDs
-- Authenticate to RPC interfaces using usernames, passwords, or NTLM hashes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Discover listening MSRPC interfaces using string bindings
+  - Bruteforce UUIDs even with available MGMT interface
+  - Bruteforce operation numbers for discovered UUIDs
+  - Bruteforce major versions of found UUIDs
+  - Authenticate to RPC interfaces using usernames, passwords, or NTLM hashes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpcmap.py

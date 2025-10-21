@@ -1,29 +1,29 @@
 ---
-title: "UV Sync - Update Project Dependencies | Online Free DevTools by Hexmos"
+title: 'UV Sync - Update Project Dependencies | Online Free DevTools by Hexmos'
 name: uv-sync
-path: "/freedevtools/tldr/uv/uv-sync/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-sync/"
-description: "Sync dependencies effortlessly with UV. Update your project environment to match the lockfile, resolving conflicts quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-sync/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-sync/'
+description: 'Sync dependencies effortlessly with UV. Update your project environment to match the lockfile, resolving conflicts quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- uv sync dependencies
-- uv package manager
-- python environment sync
-- lockfile synchronization
-- python dependency management
-- uv project update
-- venv synchronization
-- uv optional dependencies
-- uv dependency groups
-- uv sync check
+  - uv sync dependencies
+  - uv package manager
+  - python environment sync
+  - lockfile synchronization
+  - python dependency management
+  - uv project update
+  - venv synchronization
+  - uv optional dependencies
+  - uv dependency groups
+  - uv sync check
 features:
-- Synchronizes project environment with the lockfile.
-- Includes all optional dependencies with a single command.
-- Syncs specific dependency groups.
-- Checks environment synchronization without making changes.
-- Previews changes before applying them.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronizes project environment with the lockfile.
+  - Includes all optional dependencies with a single command.
+  - Syncs specific dependency groups.
+  - Checks environment synchronization without making changes.
+  - Previews changes before applying them.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv sync

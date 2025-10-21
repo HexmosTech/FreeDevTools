@@ -1,29 +1,29 @@
 ---
-title: "Latexdiff - Determine LaTeX Differences | Online Free DevTools by Hexmos"
+title: 'Latexdiff - Determine LaTeX Differences | Online Free DevTools by Hexmos'
 name: latexdiff
-path: "/freedevtools/tldr/common/latexdiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/latexdiff/"
-description: "Determine LaTeX differences with Latexdiff. Compare LaTeX files, highlight changes, and generate diff documents effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/latexdiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/latexdiff/'
+description: 'Determine LaTeX differences with Latexdiff. Compare LaTeX files, highlight changes, and generate diff documents effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- latex diff tool
-- latexdiff command
-- tex difference finder
-- compare latex files
-- latex change tracker
-- latex version control
-- latexdiff linux
-- latexdiff macos
-- latexdiff windows
-- latex equation diff
+  - latex diff tool
+  - latexdiff command
+  - tex difference finder
+  - compare latex files
+  - latex change tracker
+  - latex version control
+  - latexdiff linux
+  - latexdiff macos
+  - latexdiff windows
+  - latex equation diff
 features:
-- Highlight differences between LaTeX files
-- Generate diff documents with underlines
-- Support boldface highlighting for changes
-- Compare equations with markup options
-- Display added and deleted graphics in diffs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Highlight differences between LaTeX files
+  - Generate diff documents with underlines
+  - Support boldface highlighting for changes
+  - Compare equations with markup options
+  - Display added and deleted graphics in diffs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # latexdiff

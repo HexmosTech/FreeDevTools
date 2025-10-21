@@ -1,29 +1,29 @@
 ---
-title: "Bless - Set Startup Disk Options | Online Free DevTools by Hexmos"
+title: 'Bless - Set Startup Disk Options | Online Free DevTools by Hexmos'
 name: bless
-path: "/freedevtools/tldr/osx/bless/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/bless/"
-description: "Set startup disk options with Bless, a powerful macOS command line tool. Easily configure boot volumes and network boot settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/bless/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/bless/'
+description: 'Set startup disk options with Bless, a powerful macOS command line tool. Easily configure boot volumes and network boot settings. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS boot volume configuration
-- Bless command line options
-- OSX startup disk selector
-- NetBoot server configuration
-- Darwin bootloader management
-- System startup volume selection
-- Apple boot options utility
-- Bootable volume settings
-- BSDP server setup
-- System boot information retrieval
+  - macOS boot volume configuration
+  - Bless command line options
+  - OSX startup disk selector
+  - NetBoot server configuration
+  - Darwin bootloader management
+  - System startup volume selection
+  - Apple boot options utility
+  - Bootable volume settings
+  - BSDP server setup
+  - System boot information retrieval
 features:
-- Set the bootable volume for macOS
-- Configure network booting options
-- Retrieve boot information as a Property List
-- Create BootX and boot.efi files as needed
-- Set a volume containing Mac OS 9 and Mac OS X to be the active volume
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set the bootable volume for macOS
+  - Configure network booting options
+  - Retrieve boot information as a Property List
+  - Create BootX and boot.efi files as needed
+  - Set a volume containing Mac OS 9 and Mac OS X to be the active volume
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bless

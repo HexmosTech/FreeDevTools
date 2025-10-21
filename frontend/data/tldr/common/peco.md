@@ -1,29 +1,29 @@
 ---
-title: "Filter Files - Interactive Filtering with Peco | Online Free DevTools by Hexmos"
+title: 'Filter Files - Interactive Filtering with Peco | Online Free DevTools by Hexmos'
 name: peco
-path: "/freedevtools/tldr/common/peco/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/peco/"
-description: "Filter files interactively with Peco. Quickly find and select files and processes using command-line filtering. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/peco/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/peco/'
+description: 'Filter files interactively with Peco. Quickly find and select files and processes using command-line filtering. Free online tool, no registration required.'
 category: common
 keywords:
-- interactive filtering
-- command line filter
-- file filtering
-- process filtering
-- peco filter
-- fuzzy finder
-- terminal filter
-- linux filter
-- macos filter
-- interactive search
+  - interactive filtering
+  - command line filter
+  - file filtering
+  - process filtering
+  - peco filter
+  - fuzzy finder
+  - terminal filter
+  - linux filter
+  - macos filter
+  - interactive search
 features:
-- Filter files from a directory using `find` command
-- Filter running processes using `ps` command
-- Start peco with a pre-defined query
-- Interactively search through command output
-- Select files and processes directly from the terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Filter files from a directory using `find` command
+  - Filter running processes using `ps` command
+  - Start peco with a pre-defined query
+  - Interactively search through command output
+  - Select files and processes directly from the terminal
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # peco

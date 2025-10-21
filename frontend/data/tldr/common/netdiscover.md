@@ -1,29 +1,29 @@
 ---
-title: "Network Scanner - Discover Live Hosts with Netdiscover | Online Free DevTools by Hexmos"
+title: 'Network Scanner - Discover Live Hosts with Netdiscover | Online Free DevTools by Hexmos'
 name: netdiscover
-path: "/freedevtools/tldr/common/netdiscover/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/netdiscover/"
-description: "Discover live hosts on your network with Netdiscover, a powerful network scanner. Identify active devices and troubleshoot network issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/netdiscover/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/netdiscover/'
+description: 'Discover live hosts on your network with Netdiscover, a powerful network scanner. Identify active devices and troubleshoot network issues. Free online tool, no registration required.'
 category: common
 keywords:
-- network scanner linux
-- live host discovery
-- network discovery tool
-- network troubleshooting
-- active host scanner
-- subnet scanner
-- network interface scanner
-- arp scanner
-- lan network scanner
-- common network scanner
+  - network scanner linux
+  - live host discovery
+  - network discovery tool
+  - network troubleshooting
+  - active host scanner
+  - subnet scanner
+  - network interface scanner
+  - arp scanner
+  - lan network scanner
+  - common network scanner
 features:
-- Scan specified IP ranges for active hosts
-- Discover devices using ARP requests
-- Identify network interface for scanning
-- Display MAC addresses of discovered hosts
-- Monitor network activity for new hosts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan specified IP ranges for active hosts
+  - Discover devices using ARP requests
+  - Identify network interface for scanning
+  - Display MAC addresses of discovered hosts
+  - Monitor network activity for new hosts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # netdiscover

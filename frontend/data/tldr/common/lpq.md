@@ -1,29 +1,29 @@
 ---
-title: "LPQ - Control Printer Queue Status | Online Free DevTools by Hexmos"
+title: 'LPQ - Control Printer Queue Status | Online Free DevTools by Hexmos'
 name: lpq
-path: "/freedevtools/tldr/common/lpq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lpq/"
-description: "Control printer queue status with LPQ. Monitor print jobs and manage printer destinations using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lpq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lpq/'
+description: 'Control printer queue status with LPQ. Monitor print jobs and manage printer destinations using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- printer queue status
-- lpq command
-- print job management
-- linux printing
-- cups printing system
-- printer queue monitor
-- lpq printer status
-- lpq destination control
-- lpq encryption status
-- command line printing
+  - printer queue status
+  - lpq command
+  - print job management
+  - linux printing
+  - cups printing system
+  - printer queue monitor
+  - lpq printer status
+  - lpq destination control
+  - lpq encryption status
+  - command line printing
 features:
-- Display the status of print jobs in the queue
-- Monitor print queues for all printers
-- Show print queue details in a long format
-- Control print jobs for a specific printer
-- Continuously monitor print queue status at intervals
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the status of print jobs in the queue
+  - Monitor print queues for all printers
+  - Show print queue details in a long format
+  - Control print jobs for a specific printer
+  - Continuously monitor print queue status at intervals
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lpq

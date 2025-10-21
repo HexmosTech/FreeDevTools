@@ -1,29 +1,29 @@
 ---
-title: "Remove Files - Delete Files & Directories | Online Free DevTools by Hexmos"
+title: 'Remove Files - Delete Files & Directories | Online Free DevTools by Hexmos'
 name: rm
-path: "/freedevtools/tldr/common/rm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rm/"
-description: "Remove files with rm. Safely delete files and directories using the command line. Free online tool, no registration required. Also supports recursive directory removal."
+path: '/freedevtools/tldr/common/rm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rm/'
+description: 'Remove files with rm. Safely delete files and directories using the command line. Free online tool, no registration required. Also supports recursive directory removal.'
 category: common
 keywords:
-- file removal command
-- delete file linux
-- remove directory linux
-- rm command linux
-- remove files recursively
-- linux file deletion
-- macos file removal
-- command line file deletion
-- shell rm command
-- linux rm directory
+  - file removal command
+  - delete file linux
+  - remove directory linux
+  - rm command linux
+  - remove files recursively
+  - linux file deletion
+  - macos file removal
+  - command line file deletion
+  - shell rm command
+  - linux rm directory
 features:
-- Remove files and directories
-- Forcefully remove files, ignoring nonexistent ones
-- Interactively prompt before removing each file
-- Recursively remove directories and their contents
-- Remove empty directories using the `-d` option
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove files and directories
+  - Forcefully remove files, ignoring nonexistent ones
+  - Interactively prompt before removing each file
+  - Recursively remove directories and their contents
+  - Remove empty directories using the `-d` option
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rm

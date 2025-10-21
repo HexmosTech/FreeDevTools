@@ -1,29 +1,29 @@
 ---
-title: "Podman List - Control Podman Containers | Online Free DevTools by Hexmos"
+title: 'Podman List - Control Podman Containers | Online Free DevTools by Hexmos'
 name: podman-ps
-path: "/freedevtools/tldr/podman/podman-ps/"
-canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-ps/"
-description: "Control Podman containers instantly with Podman List. Filter, manage, and view running and stopped containers using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/podman/podman-ps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/podman/podman-ps/'
+description: 'Control Podman containers instantly with Podman List. Filter, manage, and view running and stopped containers using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- podman container list
-- container management
-- docker alternative
-- linux containers
-- podman ps command
-- container filtering
-- image ancestor
-- container status
-- volume mounting
-- command line container tools
+  - podman container list
+  - container management
+  - docker alternative
+  - linux containers
+  - podman ps command
+  - container filtering
+  - image ancestor
+  - container status
+  - volume mounting
+  - command line container tools
 features:
-- List running Podman containers
-- Filter containers by name, image, or status
-- Display all containers, including stopped ones
-- Filter containers by exit code
-- Show containers mounting a specific volume
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List running Podman containers
+  - Filter containers by name, image, or status
+  - Display all containers, including stopped ones
+  - Filter containers by exit code
+  - Show containers mounting a specific volume
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # podman ps

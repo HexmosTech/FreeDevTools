@@ -1,29 +1,29 @@
 ---
-title: "GDAL Info - Analyze Raster Data | Online Free DevTools by Hexmos"
+title: 'GDAL Info - Analyze Raster Data | Online Free DevTools by Hexmos'
 name: gdalinfo
-path: "/freedevtools/tldr/common/gdalinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdalinfo/"
-description: "Analyze raster data with GDAL Info, revealing metadata and properties. Extract histograms, format details, and WMS information effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gdalinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gdalinfo/'
+description: 'Analyze raster data with GDAL Info, revealing metadata and properties. Extract histograms, format details, and WMS information effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- GDAL raster analysis
-- geospatial data inspection
-- raster format metadata
-- WMS service information
-- GDAL command-line utility
-- image data properties
-- raster histogram extraction
-- geospatial data analysis linux
-- raster data processing common
-- GDAL info tool
+  - GDAL raster analysis
+  - geospatial data inspection
+  - raster format metadata
+  - WMS service information
+  - GDAL command-line utility
+  - image data properties
+  - raster histogram extraction
+  - geospatial data analysis linux
+  - raster data processing common
+  - GDAL info tool
 features:
-- Display comprehensive raster dataset information
-- Extract and visualize raster histogram values
-- List supported GDAL raster formats
-- Retrieve metadata in JSON format
-- Analyze Web Map Service (WMS) datasets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display comprehensive raster dataset information
+  - Extract and visualize raster histogram values
+  - List supported GDAL raster formats
+  - Retrieve metadata in JSON format
+  - Analyze Web Map Service (WMS) datasets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdalinfo

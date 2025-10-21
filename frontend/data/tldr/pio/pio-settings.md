@@ -1,29 +1,29 @@
 ---
-title: "PIO Settings - Control PlatformIO Configuration | Online Free DevTools by Hexmos"
+title: 'PIO Settings - Control PlatformIO Configuration | Online Free DevTools by Hexmos'
 name: pio-settings
-path: "/freedevtools/tldr/pio/pio-settings/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-settings/"
-description: "Control PlatformIO settings with PIO Settings. Manage PlatformIO configuration, display settings, and reset defaults using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-settings/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-settings/'
+description: 'Control PlatformIO settings with PIO Settings. Manage PlatformIO configuration, display settings, and reset defaults using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO settings
-- PIO configuration management
-- PlatformIO command line
-- PIO settings get
-- PIO settings set
-- PIO settings reset
-- PlatformIO environment variables
-- PIO ini file settings
-- PIO project configuration
-- PlatformIO build options
+  - PlatformIO settings
+  - PIO configuration management
+  - PlatformIO command line
+  - PIO settings get
+  - PIO settings set
+  - PIO settings reset
+  - PlatformIO environment variables
+  - PIO ini file settings
+  - PIO project configuration
+  - PlatformIO build options
 features:
-- Display the values of all PlatformIO settings
-- Get the value of a specific PlatformIO setting
-- Set the value of a specific PlatformIO setting
-- Reset all modified settings to factory defaults
-- Manage PlatformIO project configuration from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the values of all PlatformIO settings
+  - Get the value of a specific PlatformIO setting
+  - Set the value of a specific PlatformIO setting
+  - Reset all modified settings to factory defaults
+  - Manage PlatformIO project configuration from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio settings

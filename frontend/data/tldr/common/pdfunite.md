@@ -1,29 +1,29 @@
 ---
-title: "PDF Merger - Create Combined PDFs | Online Free DevTools by Hexmos"
+title: 'PDF Merger - Create Combined PDFs | Online Free DevTools by Hexmos'
 name: pdfunite
-path: "/freedevtools/tldr/common/pdfunite/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pdfunite/"
-description: "Create combined PDFs with pdfunite. Easily merge multiple PDF documents into a single file with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pdfunite/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pdfunite/'
+description: 'Create combined PDFs with pdfunite. Easily merge multiple PDF documents into a single file with this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF merger
-- Merge PDF files
-- Combine PDF documents
-- Command line PDF merger
-- PDF concatenation
-- PDF file processing
-- Linux PDF tools
-- macOS PDF tools
-- PDF toolkit
-- PDF command line
+  - PDF merger
+  - Merge PDF files
+  - Combine PDF documents
+  - Command line PDF merger
+  - PDF concatenation
+  - PDF file processing
+  - Linux PDF tools
+  - macOS PDF tools
+  - PDF toolkit
+  - PDF command line
 features:
-- Merge multiple PDF files into one
-- Combine PDFs from a directory
-- Create a single PDF output
-- Process PDFs via command line
-- Supports wildcard directory merging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Merge multiple PDF files into one
+  - Combine PDFs from a directory
+  - Create a single PDF output
+  - Process PDFs via command line
+  - Supports wildcard directory merging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdfunite

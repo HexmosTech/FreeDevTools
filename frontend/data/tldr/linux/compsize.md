@@ -1,9 +1,9 @@
 ---
-title: "Calculate Compression Ratio - compsize Command | Online Free DevTools by Hexmos"
+title: 'Calculate Compression Ratio - compsize Command | Online Free DevTools by Hexmos'
 name: compsize
-path: "/freedevtools/tldr/linux/compsize/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/compsize/"
-description: "Calculate compression ratios with the compsize command.  Analyze file and directory compression on btrfs filesystems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/compsize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/compsize/'
+description: 'Calculate compression ratios with the compsize command.  Analyze file and directory compression on btrfs filesystems. Free online tool, no registration required.'
 category: linux
 keywords:
   - btrfs compression ratio
@@ -22,8 +22,8 @@ features:
   - Provides both human-readable and raw byte counts.
   - Option to avoid traversing filesystem boundaries.
   - Offers command-line interface for easy integration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # compsize

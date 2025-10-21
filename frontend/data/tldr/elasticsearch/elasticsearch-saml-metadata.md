@@ -1,29 +1,29 @@
 ---
-title: "Generate Elasticsearch SAML Metadata - Configure IDP | Online Free DevTools by Hexmos"
+title: 'Generate Elasticsearch SAML Metadata - Configure IDP | Online Free DevTools by Hexmos'
 name: elasticsearch-saml-metadata
-path: "/freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata/"
-canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata/"
-description: "Generate Elasticsearch SAML metadata with elasticsearch-saml-metadata. Create SP metadata for configuring a SAML Identity Provider. Free online tool, no registration required."
+path: '/freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata/'
+canonical: 'https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-saml-metadata/'
+description: 'Generate Elasticsearch SAML metadata with elasticsearch-saml-metadata. Create SP metadata for configuring a SAML Identity Provider. Free online tool, no registration required.'
 category: common
 keywords:
-- elasticsearch saml metadata
-- saml service provider metadata
-- elasticsearch idp configuration
-- saml identity provider
-- elasticsearch security realm
-- saml metadata generation
-- elasticsearch realm configuration
-- sp metadata generator
-- security assertion markup language
-- elasticsearch authentication
+  - elasticsearch saml metadata
+  - saml service provider metadata
+  - elasticsearch idp configuration
+  - saml identity provider
+  - elasticsearch security realm
+  - saml metadata generation
+  - elasticsearch realm configuration
+  - sp metadata generator
+  - security assertion markup language
+  - elasticsearch authentication
 features:
-- Generate SAML metadata for a specified realm.
-- Output SAML metadata to standard output (stdout).
-- Save generated SAML metadata to a file.
-- Support configuring SAML Identity Providers via command line.
-- Display help information about command options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate SAML metadata for a specified realm.
+  - Output SAML metadata to standard output (stdout).
+  - Save generated SAML metadata to a file.
+  - Support configuring SAML Identity Providers via command line.
+  - Display help information about command options.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # elasticsearch-saml-metadata

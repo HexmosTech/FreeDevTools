@@ -1,9 +1,9 @@
 ---
-title: "Mountpoint Checker - Validate Filesystem Mounts | Online Free DevTools by Hexmos"
+title: 'Mountpoint Checker - Validate Filesystem Mounts | Online Free DevTools by Hexmos'
 name: mountpoint
-path: "/freedevtools/tldr/linux/mountpoint/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mountpoint/"
-description: "Validate filesystem mounts with Mountpoint Checker.  Quickly verify mount points and identify filesystem details. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mountpoint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mountpoint/'
+description: 'Validate filesystem mounts with Mountpoint Checker.  Quickly verify mount points and identify filesystem details. Free online tool, no registration required.'
 category: linux
 keywords:
   - mountpoint checker
@@ -22,8 +22,8 @@ features:
   - Displays major/minor numbers of a mountpoint's filesystem.
   - Provides quick and accurate mount point validation.
   - Supports various operating systems with a single command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mountpoint

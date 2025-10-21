@@ -1,29 +1,29 @@
 ---
-title: "Go Env - Manage Go Environment Variables | Online Free DevTools by Hexmos"
+title: 'Go Env - Manage Go Environment Variables | Online Free DevTools by Hexmos'
 name: go-env
-path: "/freedevtools/tldr/go/go-env/"
-canonical: "https://hexmos.com/freedevtools/tldr/go/go-env/"
-description: "Manage Go environment variables easily with Go Env. Configure GOPATH, GOBIN, and other settings for Go development. Free online tool, no registration required."
+path: '/freedevtools/tldr/go/go-env/'
+canonical: 'https://hexmos.com/freedevtools/tldr/go/go-env/'
+description: 'Manage Go environment variables easily with Go Env. Configure GOPATH, GOBIN, and other settings for Go development. Free online tool, no registration required.'
 category: common
 keywords:
-- go environment variables
-- go env command
-- go path configuration
-- go bin directory
-- go gopath
-- go environment management
-- go development environment
-- go toolchain
-- go command line
-- go build environment
+  - go environment variables
+  - go env command
+  - go path configuration
+  - go bin directory
+  - go gopath
+  - go environment management
+  - go development environment
+  - go toolchain
+  - go command line
+  - go build environment
 features:
-- Display all Go environment variables
-- Show the value of a specific environment variable
-- Set a Go environment variable
-- Unset a Go environment variable
-- Configure the Go development environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all Go environment variables
+  - Show the value of a specific environment variable
+  - Set a Go environment variable
+  - Unset a Go environment variable
+  - Configure the Go development environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go env

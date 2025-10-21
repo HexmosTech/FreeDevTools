@@ -1,9 +1,9 @@
 ---
-title: "MangoHud - Control Game Overlay Display | Online Free DevTools by Hexmos"
+title: 'MangoHud - Control Game Overlay Display | Online Free DevTools by Hexmos'
 name: mangohud
-path: "/freedevtools/tldr/linux/mangohud/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mangohud/"
-description: "Control game overlay display with MangoHud. Monitor performance metrics, adjust verbosity, and toggle visibility in Vulkan and OpenGL applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mangohud/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mangohud/'
+description: 'Control game overlay display with MangoHud. Monitor performance metrics, adjust verbosity, and toggle visibility in Vulkan and OpenGL applications. Free online tool, no registration required.'
 category: linux
 keywords:
   - game overlay
@@ -22,8 +22,8 @@ features:
   - Adjust overlay verbosity levels
   - Customize overlay position on screen
   - Monitor FPS in Vulkan and OpenGL applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mangohud

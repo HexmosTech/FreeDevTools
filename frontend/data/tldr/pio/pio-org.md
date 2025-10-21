@@ -1,29 +1,29 @@
 ---
-title: "Create PlatformIO Organizations - Manage Users | Online Free DevTools by Hexmos"
+title: 'Create PlatformIO Organizations - Manage Users | Online Free DevTools by Hexmos'
 name: pio-org
-path: "/freedevtools/tldr/pio/pio-org/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-org/"
-description: "Create and manage PlatformIO organizations with pio org. Control user access, list organizations, and update organization details. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-org/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-org/'
+description: 'Create and manage PlatformIO organizations with pio org. Control user access, list organizations, and update organization details. Free online tool, no registration required.'
 category: common
 keywords:
-- platformio organization management
-- pio org create
-- pio org add user
-- pio organization list
-- platformio user management
-- pio organization delete
-- platformio organization update
-- platformio cli organization
-- pio user access control
-- platformio organization owner
+  - platformio organization management
+  - pio org create
+  - pio org add user
+  - pio organization list
+  - platformio user management
+  - pio organization delete
+  - platformio organization update
+  - platformio cli organization
+  - pio user access control
+  - platformio organization owner
 features:
-- Create new PlatformIO organizations
-- Add and remove users from organizations
-- List organizations the user belongs to
-- Delete existing PlatformIO organizations
-- Update organization details like name and email
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new PlatformIO organizations
+  - Add and remove users from organizations
+  - List organizations the user belongs to
+  - Delete existing PlatformIO organizations
+  - Update organization details like name and email
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio org

@@ -1,29 +1,29 @@
 ---
-title: "KubeTail - Tail Kubernetes Logs | Online Free DevTools by Hexmos"
+title: 'KubeTail - Tail Kubernetes Logs | Online Free DevTools by Hexmos'
 name: kubetail
-path: "/freedevtools/tldr/kube/kubetail/"
-canonical: "https://hexmos.com/freedevtools/tldr/kube/kubetail/"
-description: "Tail Kubernetes pod logs with KubeTail. Monitor multiple containers simultaneously and troubleshoot issues quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/kube/kubetail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kube/kubetail/'
+description: 'Tail Kubernetes pod logs with KubeTail. Monitor multiple containers simultaneously and troubleshoot issues quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes logs
-- kubernetes tail
-- pod logs
-- container logs
-- kubernetes debugging
-- kubectl logs
-- kubernetes monitoring
-- kubernetes troubleshooting
-- kubernetes cluster
-- kubernetes cli
+  - kubernetes logs
+  - kubernetes tail
+  - pod logs
+  - container logs
+  - kubernetes debugging
+  - kubectl logs
+  - kubernetes monitoring
+  - kubernetes troubleshooting
+  - kubernetes cluster
+  - kubernetes cli
 features:
-- Tail logs from multiple Kubernetes pods simultaneously
-- Monitor logs of specific containers within pods
-- Filter logs from multiple applications at the same time
-- Output logs in real-time for immediate debugging
-- Simplify Kubernetes log monitoring
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Tail logs from multiple Kubernetes pods simultaneously
+  - Monitor logs of specific containers within pods
+  - Filter logs from multiple applications at the same time
+  - Output logs in real-time for immediate debugging
+  - Simplify Kubernetes log monitoring
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubetail

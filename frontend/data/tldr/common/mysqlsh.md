@@ -1,29 +1,29 @@
 ---
-title: "MySQL Shell - Control MySQL Databases | Online Free DevTools by Hexmos"
+title: 'MySQL Shell - Control MySQL Databases | Online Free DevTools by Hexmos'
 name: mysqlsh
-path: "/freedevtools/tldr/common/mysqlsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mysqlsh/"
-description: "Control MySQL databases with MySQL Shell. Connect, query, and manage your MySQL servers from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mysqlsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mysqlsh/'
+description: 'Control MySQL databases with MySQL Shell. Connect, query, and manage your MySQL servers from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- mysql shell
-- mysql client
-- mysql command line
-- mysql javascript
-- mysql python
-- mysql database administration
-- mysql schema management
-- mysql innodb cluster
-- mysql document store
-- mysql json import
+  - mysql shell
+  - mysql client
+  - mysql command line
+  - mysql javascript
+  - mysql python
+  - mysql database administration
+  - mysql schema management
+  - mysql innodb cluster
+  - mysql document store
+  - mysql json import
 features:
-- Connect to MySQL servers using different protocols
-- Execute SQL statements and scripts
-- Manage InnoDB clusters
-- Import JSON documents into MySQL collections
-- Interact with MySQL databases in JavaScript or Python
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to MySQL servers using different protocols
+  - Execute SQL statements and scripts
+  - Manage InnoDB clusters
+  - Import JSON documents into MySQL collections
+  - Interact with MySQL databases in JavaScript or Python
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mysqlsh

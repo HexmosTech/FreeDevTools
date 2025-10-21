@@ -1,29 +1,29 @@
 ---
-title: "Read Input - Retrieve Data from STDIN | Online Free DevTools by Hexmos"
+title: 'Read Input - Retrieve Data from STDIN | Online Free DevTools by Hexmos'
 name: read
-path: "/freedevtools/tldr/common/read/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/read/"
-description: "Retrieve data easily with Read Input command. Extract shell input, create arrays, and manage stdin streams with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/read/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/read/'
+description: 'Retrieve data easily with Read Input command. Extract shell input, create arrays, and manage stdin streams with this free online tool, no registration required.'
 category: common
 keywords:
-- shell read input
-- stdin data retrieval
-- bash input command
-- command line read
-- shell script input
-- bash stdin reader
-- linux read command
-- macos read input
-- terminal input capture
-- variable assignment bash
+  - shell read input
+  - stdin data retrieval
+  - bash input command
+  - command line read
+  - shell script input
+  - bash stdin reader
+  - linux read command
+  - macos read input
+  - terminal input capture
+  - variable assignment bash
 features:
-- Read data from standard input (stdin)
-- Store input as variables in shell scripts
-- Read and assign multiple values from stdin
-- Control maximum characters read from stdin
-- Silently read input without echoing to screen
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Read data from standard input (stdin)
+  - Store input as variables in shell scripts
+  - Read and assign multiple values from stdin
+  - Control maximum characters read from stdin
+  - Silently read input without echoing to screen
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # read

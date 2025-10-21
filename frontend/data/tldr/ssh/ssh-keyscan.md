@@ -1,29 +1,29 @@
 ---
-title: "SSH Keyscan - Get Public Keys | Online Free DevTools by Hexmos"
+title: 'SSH Keyscan - Get Public Keys | Online Free DevTools by Hexmos'
 name: ssh-keyscan
-path: "/freedevtools/tldr/ssh/ssh-keyscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-keyscan/"
-description: "Get public SSH keys instantly with SSH Keyscan. Securely manage remote host authentication with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/ssh/ssh-keyscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ssh/ssh-keyscan/'
+description: 'Get public SSH keys instantly with SSH Keyscan. Securely manage remote host authentication with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- ssh keyscan
-- ssh public key retrieval
-- remote host key verification
-- ssh fingerprint generator
-- linux ssh keyscan
-- macos ssh keyscan
-- network security keyscan
-- command line ssh keyscan
-- ssh known_hosts update
-- secure shell keyscan
+  - ssh keyscan
+  - ssh public key retrieval
+  - remote host key verification
+  - ssh fingerprint generator
+  - linux ssh keyscan
+  - macos ssh keyscan
+  - network security keyscan
+  - command line ssh keyscan
+  - ssh known_hosts update
+  - secure shell keyscan
 features:
-- Retrieve SSH keys from remote hosts
-- Specify port for SSH key retrieval
-- Filter by specific SSH key types
-- Update known_hosts file with host fingerprint
-- Automate remote host authentication
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve SSH keys from remote hosts
+  - Specify port for SSH key retrieval
+  - Filter by specific SSH key types
+  - Update known_hosts file with host fingerprint
+  - Automate remote host authentication
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ssh-keyscan

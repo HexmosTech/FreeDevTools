@@ -1,29 +1,29 @@
 ---
-title: "Control Polybar - Manage Bar Instances | Online Free DevTools by Hexmos"
+title: 'Control Polybar - Manage Bar Instances | Online Free DevTools by Hexmos'
 name: polybar-msg
-path: "/freedevtools/tldr/common/polybar-msg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/polybar-msg/"
-description: "Control Polybar using inter-process-messaging (IPC). Manage bar instances and toggle visibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/polybar-msg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/polybar-msg/'
+description: 'Control Polybar using inter-process-messaging (IPC). Manage bar instances and toggle visibility. Free online tool, no registration required.'
 category: common
 keywords:
-- polybar control
-- polybar ipc
-- linux bar manager
-- linux system tray
-- polybar message
-- polybar instance control
-- linux window manager
-- command line polybar
-- desktop environment customization
-- inter-process communication linux
+  - polybar control
+  - polybar ipc
+  - linux bar manager
+  - linux system tray
+  - polybar message
+  - polybar instance control
+  - linux window manager
+  - command line polybar
+  - desktop environment customization
+  - inter-process communication linux
 features:
-- Quit running Polybar instances
-- Restart Polybar bar configurations
-- Toggle bar visibility on demand
-- Execute module actions with custom data
-- Send commands to specific Polybar instances
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Quit running Polybar instances
+  - Restart Polybar bar configurations
+  - Toggle bar visibility on demand
+  - Execute module actions with custom data
+  - Send commands to specific Polybar instances
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # polybar-msg

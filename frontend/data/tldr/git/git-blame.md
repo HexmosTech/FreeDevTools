@@ -1,29 +1,29 @@
 ---
-title: "Git Blame - Track Code Authorship | Online Free DevTools by Hexmos"
+title: 'Git Blame - Track Code Authorship | Online Free DevTools by Hexmos'
 name: git-blame
-path: "/freedevtools/tldr/git/git-blame/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-blame/"
-description: "Track code authorship with Git Blame. Identify commit hash and last author of each line in a file. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-blame/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-blame/'
+description: 'Track code authorship with Git Blame. Identify commit hash and last author of each line in a file. Free online tool, no registration required.'
 category: common
 keywords:
-- git blame
-- git authorship tracking
-- blame commit history
-- git code analysis
-- file change history
-- git version control
-- command line blame
-- git blame command
-- git commit attribution
-- code origin tracking
+  - git blame
+  - git authorship tracking
+  - blame commit history
+  - git code analysis
+  - file change history
+  - git version control
+  - command line blame
+  - git blame command
+  - git commit attribution
+  - code origin tracking
 features:
-- Display commit hash for each line
-- Show the author of each line in a file
-- Blame specific commit versions
-- Ignore whitespace changes
-- Track changes across moved code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display commit hash for each line
+  - Show the author of each line in a file
+  - Blame specific commit versions
+  - Ignore whitespace changes
+  - Track changes across moved code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git blame

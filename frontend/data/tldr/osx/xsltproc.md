@@ -1,29 +1,29 @@
 ---
-title: "Transform XML - Control with xsltproc | Online Free DevTools by Hexmos"
+title: 'Transform XML - Control with xsltproc | Online Free DevTools by Hexmos'
 name: xsltproc
-path: "/freedevtools/tldr/osx/xsltproc/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xsltproc/"
-description: "Transform XML files effortlessly with xsltproc. Apply XSLT stylesheets to create HTML or XML output. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xsltproc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xsltproc/'
+description: 'Transform XML files effortlessly with xsltproc. Apply XSLT stylesheets to create HTML or XML output. Free online tool, no registration required.'
 category: osx
 keywords:
-- XML transformation
-- XSLT processor
-- XSLT transformation
-- XML to HTML conversion
-- XSLT stylesheet application
-- OSX XML tools
-- Command line XML transformation
-- XML xsltproc
-- xsltproc command
-- macOS XML processing
+  - XML transformation
+  - XSLT processor
+  - XSLT transformation
+  - XML to HTML conversion
+  - XSLT stylesheet application
+  - OSX XML tools
+  - Command line XML transformation
+  - XML xsltproc
+  - xsltproc command
+  - macOS XML processing
 features:
-- Transform XML using XSLT stylesheets
-- Output transformed XML to HTML or XML formats
-- Pass parameters to XSLT stylesheets
-- Process XML documents from the command line
-- Apply XSLT transformations on macOS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Transform XML using XSLT stylesheets
+  - Output transformed XML to HTML or XML formats
+  - Pass parameters to XSLT stylesheets
+  - Process XML documents from the command line
+  - Apply XSLT transformations on macOS
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xsltproc

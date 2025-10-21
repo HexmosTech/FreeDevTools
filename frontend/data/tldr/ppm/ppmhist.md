@@ -1,29 +1,29 @@
 ---
-title: "Generate PPM Histogram - Analyze Image Colors | Online Free DevTools by Hexmos"
+title: 'Generate PPM Histogram - Analyze Image Colors | Online Free DevTools by Hexmos'
 name: ppmhist
-path: "/freedevtools/tldr/ppm/ppmhist/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmhist/"
-description: "Analyze image colors with PPM Histogram. Create PPM color maps and generate color distribution reports from PPM images. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmhist/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmhist/'
+description: 'Analyze image colors with PPM Histogram. Create PPM color maps and generate color distribution reports from PPM images. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM color histogram
-- PPM image analysis
-- image color distribution
-- Netpbm ppmhist
-- image histogram generator
-- PPM colormap generator
-- linux image tools
-- command line histogram
-- image color analyzer
-- PPM color statistics
+  - PPM color histogram
+  - PPM image analysis
+  - image color distribution
+  - Netpbm ppmhist
+  - image histogram generator
+  - PPM colormap generator
+  - linux image tools
+  - command line histogram
+  - image color analyzer
+  - PPM color statistics
 features:
-- Generates a human-readable color histogram from PPM images
-- Creates a PPM file representing the image's color map
-- Outputs color distribution as comments in a PPM file
-- Supports generating histograms with or without colormaps
-- Displays the version of the ppmhist tool
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generates a human-readable color histogram from PPM images
+  - Creates a PPM file representing the image's color map
+  - Outputs color distribution as comments in a PPM file
+  - Supports generating histograms with or without colormaps
+  - Displays the version of the ppmhist tool
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmhist

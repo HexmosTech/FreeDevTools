@@ -1,29 +1,29 @@
 ---
-title: "List Directory - Verbose Listing with vdir | Online Free DevTools by Hexmos"
+title: 'List Directory - Verbose Listing with vdir | Online Free DevTools by Hexmos'
 name: vdir
-path: "/freedevtools/tldr/common/vdir/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vdir/"
-description: "List directory contents with vdir for detailed file information. Quickly analyze file sizes and modification times on Linux, macOS, and Unix. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vdir/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vdir/'
+description: 'List directory contents with vdir for detailed file information. Quickly analyze file sizes and modification times on Linux, macOS, and Unix. Free online tool, no registration required.'
 category: common
 keywords:
-- verbose directory listing
-- directory content analyzer
-- linux file listing
-- macOS directory command
-- unix vdir command
-- file size analysis
-- modification time sort
-- hidden files listing
-- recursive directory listing
-- directory grouping command
+  - verbose directory listing
+  - directory content analyzer
+  - linux file listing
+  - macOS directory command
+  - unix vdir command
+  - file size analysis
+  - modification time sort
+  - hidden files listing
+  - recursive directory listing
+  - directory grouping command
 features:
-- Display verbose directory information
-- Sort files by size or modification time
-- List hidden files and directories
-- Recursively list directory contents
-- Group directories before files in output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display verbose directory information
+  - Sort files by size or modification time
+  - List hidden files and directories
+  - Recursively list directory contents
+  - Group directories before files in output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vdir

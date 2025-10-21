@@ -1,29 +1,29 @@
 ---
-title: "Launch Browser - Control Dillo Lightweight Browser | Online Free DevTools by Hexmos"
+title: 'Launch Browser - Control Dillo Lightweight Browser | Online Free DevTools by Hexmos'
 name: dillo
-path: "/freedevtools/tldr/common/dillo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dillo/"
-description: "Launch browser sessions with Dillo, a lightweight web browser perfect for slow computers. Open URLs, files, and directories with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dillo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dillo/'
+description: 'Launch browser sessions with Dillo, a lightweight web browser perfect for slow computers. Open URLs, files, and directories with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- lightweight browser
-- dillo browser linux
-- dillo browser windows
-- dillo browser macos
-- command line browser
-- terminal browser
-- low resource browser
-- embedded browser
-- fast browser
-- dillo command
+  - lightweight browser
+  - dillo browser linux
+  - dillo browser windows
+  - dillo browser macos
+  - command line browser
+  - terminal browser
+  - low resource browser
+  - embedded browser
+  - fast browser
+  - dillo command
 features:
-- Launch Dillo web browser from the command line
-- Specify window size and screen location
-- Open specific URLs, files, or directories
-- Launch Dillo in full-screen mode
-- Display Dillo version and help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch Dillo web browser from the command line
+  - Specify window size and screen location
+  - Open specific URLs, files, or directories
+  - Launch Dillo in full-screen mode
+  - Display Dillo version and help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dillo

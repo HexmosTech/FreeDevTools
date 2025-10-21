@@ -1,29 +1,29 @@
 ---
-title: "Edit Text - Control Text with Mate Editor | Online Free DevTools by Hexmos"
+title: 'Edit Text - Control Text with Mate Editor | Online Free DevTools by Hexmos'
 name: mate
-path: "/freedevtools/tldr/osx/mate/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/mate/"
-description: "Edit Text with Mate Editor on macOS. Open, modify, and save files using the command line. Supports file type specification and line/column navigation. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/mate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/mate/'
+description: 'Edit Text with Mate Editor on macOS. Open, modify, and save files using the command line. Supports file type specification and line/column navigation. Free online tool, no registration required.'
 category: osx
 keywords:
-- text editor osx
-- mate text editor
-- macOS text editor command line
-- file editor macOS
-- text editing tool macOS
-- command line text editor mac
-- mate editor command
-- osx text editor cli
-- specify file type mate
-- open file line number mate
+  - text editor osx
+  - mate text editor
+  - macOS text editor command line
+  - file editor macOS
+  - text editing tool macOS
+  - command line text editor mac
+  - mate editor command
+  - osx text editor cli
+  - specify file type mate
+  - open file line number mate
 features:
-- Open and edit files from the command line
-- Specify the file type for proper syntax highlighting
-- Open files at a specific line and column
-- Wait for file editing to complete before continuing
-- Edit multiple files simultaneously
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit files from the command line
+  - Specify the file type for proper syntax highlighting
+  - Open files at a specific line and column
+  - Wait for file editing to complete before continuing
+  - Edit multiple files simultaneously
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mate

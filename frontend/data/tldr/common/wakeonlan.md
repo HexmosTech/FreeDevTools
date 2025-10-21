@@ -1,29 +1,29 @@
 ---
-title: "Wake-on-LAN - Send WOL Packets | Online Free DevTools by Hexmos"
+title: 'Wake-on-LAN - Send WOL Packets | Online Free DevTools by Hexmos'
 name: wakeonlan
-path: "/freedevtools/tldr/common/wakeonlan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wakeonlan/"
-description: "Send Wake-on-LAN packets with Wakeonlan. Remotely power on computers over a network. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wakeonlan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wakeonlan/'
+description: 'Send Wake-on-LAN packets with Wakeonlan. Remotely power on computers over a network. Free online tool, no registration required.'
 category: common
 keywords:
-- wakeonlan packet sender
-- wol packet generator
-- wake on lan mac address
-- remotely power on pc
-- wake on lan command line
-- lan wake up tool
-- network wake up pc
-- wakeonlan linux
-- wakeonlan windows
-- wakeonlan macos
+  - wakeonlan packet sender
+  - wol packet generator
+  - wake on lan mac address
+  - remotely power on pc
+  - wake on lan command line
+  - lan wake up tool
+  - network wake up pc
+  - wakeonlan linux
+  - wakeonlan windows
+  - wakeonlan macos
 features:
-- Send WOL packets to a specified MAC address.
-- Specify the IP address for sending WOL packets.
-- Perform a dry-run to preview commands without executing.
-- Execute the command in quiet mode to suppress output.
-- Wake up computers on a local network remotely.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send WOL packets to a specified MAC address.
+  - Specify the IP address for sending WOL packets.
+  - Perform a dry-run to preview commands without executing.
+  - Execute the command in quiet mode to suppress output.
+  - Wake up computers on a local network remotely.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wakeonlan

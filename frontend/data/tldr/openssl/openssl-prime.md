@@ -1,29 +1,29 @@
 ---
-title: "OpenSSL Prime - Generate Prime Numbers | Online Free DevTools by Hexmos"
+title: 'OpenSSL Prime - Generate Prime Numbers | Online Free DevTools by Hexmos'
 name: openssl-prime
-path: "/freedevtools/tldr/openssl/openssl-prime/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-prime/"
-description: "Generate prime numbers with OpenSSL Prime. Validate prime numbers using various algorithms. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-prime/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-prime/'
+description: 'Generate prime numbers with OpenSSL Prime. Validate prime numbers using various algorithms. Free online tool, no registration required.'
 category: common
 keywords:
-- openssl prime number
-- prime number generator
-- prime number validator
-- openssl prime check
-- cryptographic prime generation
-- command line prime tools
-- linux prime utility
-- openssl prime command
-- hexadecimal prime number
-- bit prime generator
+  - openssl prime number
+  - prime number generator
+  - prime number validator
+  - openssl prime check
+  - cryptographic prime generation
+  - command line prime tools
+  - linux prime utility
+  - openssl prime command
+  - hexadecimal prime number
+  - bit prime generator
 features:
-- Generate prime numbers of specified bit lengths.
-- Validate if a given number is prime.
-- Output prime numbers in hexadecimal format.
-- Utilize command-line interface for prime number operations.
-- Support prime number generation and validation using OpenSSL library.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate prime numbers of specified bit lengths.
+  - Validate if a given number is prime.
+  - Output prime numbers in hexadecimal format.
+  - Utilize command-line interface for prime number operations.
+  - Support prime number generation and validation using OpenSSL library.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl prime

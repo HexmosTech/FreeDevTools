@@ -1,9 +1,9 @@
 ---
-title: "Eselect Profile - Manage System Profile | Online Free DevTools by Hexmos"
+title: 'Eselect Profile - Manage System Profile | Online Free DevTools by Hexmos'
 name: eselect-profile
-path: "/freedevtools/tldr/linux/eselect-profile/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-profile/"
-description: "Manage your Gentoo system profile using eselect profile. Control make.profile symlink settings, list available profiles, and view your current profile. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eselect-profile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eselect-profile/'
+description: 'Manage your Gentoo system profile using eselect profile. Control make.profile symlink settings, list available profiles, and view your current profile. Free online tool, no registration required.'
 category: linux
 keywords:
   - gentoo profile management
@@ -22,8 +22,8 @@ features:
   - Display the current system profile in use.
   - Manage the /etc/portage/make.profile symlink.
   - Control Gentoo's system profile through the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eselect profile

@@ -1,29 +1,29 @@
 ---
-title: "Launch Steam - Control Gaming Platform | Online Free DevTools by Hexmos"
+title: 'Launch Steam - Control Gaming Platform | Online Free DevTools by Hexmos'
 name: steam
-path: "/freedevtools/tldr/st/steam/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/steam/"
-description: "Launch Steam and manage your games with Steam Command Line. Control application debugging, login credentials, and start in Big Picture Mode. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/steam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/steam/'
+description: 'Launch Steam and manage your games with Steam Command Line. Control application debugging, login credentials, and start in Big Picture Mode. Free online tool, no registration required.'
 category: common
 keywords:
-- steam command line
-- steam console commands
-- steam debugging tools
-- steam big picture mode
-- steam login credentials
-- steam game launcher
-- steam platform control
-- valve steam commands
-- windows steam control
-- linux steam commands
+  - steam command line
+  - steam console commands
+  - steam debugging tools
+  - steam big picture mode
+  - steam login credentials
+  - steam game launcher
+  - steam platform control
+  - valve steam commands
+  - windows steam control
+  - linux steam commands
 features:
-- Launch Steam with debug output
-- Enable and open the in-app Steam console
-- Log into Steam with username and password
-- Start Steam in Big Picture Mode
-- Shut down a running Steam instance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch Steam with debug output
+  - Enable and open the in-app Steam console
+  - Log into Steam with username and password
+  - Start Steam in Big Picture Mode
+  - Shut down a running Steam instance
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # steam

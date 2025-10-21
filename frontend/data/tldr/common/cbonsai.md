@@ -1,29 +1,29 @@
 ---
-title: "Generate Bonsai Trees - Beautiful ASCII Art with cbonsai | Online Free DevTools by Hexmos"
+title: 'Generate Bonsai Trees - Beautiful ASCII Art with cbonsai | Online Free DevTools by Hexmos'
 name: cbonsai
-path: "/freedevtools/tldr/common/cbonsai/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cbonsai/"
-description: "Generate Bonsai trees with cbonsai, a command-line ASCII art generator. Create unique and beautiful random trees on Linux or macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cbonsai/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cbonsai/'
+description: 'Generate Bonsai trees with cbonsai, a command-line ASCII art generator. Create unique and beautiful random trees on Linux or macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- bonsai generator
-- ascii art bonsai
-- command line bonsai
-- cbonsai linux
-- cbonsai macos
-- terminal tree generator
-- random art generator
-- ascii graphics
-- terminal customization
-- generative art
+  - bonsai generator
+  - ascii art bonsai
+  - command line bonsai
+  - cbonsai linux
+  - cbonsai macos
+  - terminal tree generator
+  - random art generator
+  - ascii graphics
+  - terminal customization
+  - generative art
 features:
-- Generate bonsai trees in live mode
-- Create bonsai trees in infinite mode
-- Customize tree growth factor
-- Adjust the branching multiplier
-- Display verbose information about the bonsai
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate bonsai trees in live mode
+  - Create bonsai trees in infinite mode
+  - Customize tree growth factor
+  - Adjust the branching multiplier
+  - Display verbose information about the bonsai
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cbonsai

@@ -1,29 +1,29 @@
 ---
-title: "FTP Client - Control File Transfers via Command Line | Online Free DevTools by Hexmos"
+title: 'FTP Client - Control File Transfers via Command Line | Online Free DevTools by Hexmos'
 name: ftp
-path: "/freedevtools/tldr/common/ftp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ftp/"
-description: "Control file transfers with FTP Client. Connect, upload, and download files securely via command line protocol. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ftp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ftp/'
+description: 'Control file transfers with FTP Client. Connect, upload, and download files securely via command line protocol. Free online tool, no registration required.'
 category: common
 keywords:
-- ftp client
-- file transfer protocol
-- command line ftp
-- ftp upload
-- ftp download
-- ftp batch transfer
-- ftp rename file
-- ftp delete files
-- linux ftp
-- macos ftp
+  - ftp client
+  - file transfer protocol
+  - command line ftp
+  - ftp upload
+  - ftp download
+  - ftp batch transfer
+  - ftp rename file
+  - ftp delete files
+  - linux ftp
+  - macos ftp
 features:
-- Connect to FTP servers using hostname or IP address and port.
-- Switch between binary and ASCII transfer modes for different file types.
-- Transfer multiple files using globbing expressions with `mget` and `mput`.
-- Disable prompting to automate file transfers for efficiency.
-- Rename files on remote servers directly via the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to FTP servers using hostname or IP address and port.
+  - Switch between binary and ASCII transfer modes for different file types.
+  - Transfer multiple files using globbing expressions with `mget` and `mput`.
+  - Disable prompting to automate file transfers for efficiency.
+  - Rename files on remote servers directly via the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ftp

@@ -1,29 +1,29 @@
 ---
-title: "Compress Files - Control pbzip2 Compression | Online Free DevTools by Hexmos"
+title: 'Compress Files - Control pbzip2 Compression | Online Free DevTools by Hexmos'
 name: pbzip2
-path: "/freedevtools/tldr/common/pbzip2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbzip2/"
-description: "Compress files efficiently with pbzip2, a parallel bzip2 implementation. Achieve faster compression rates with multi-core support. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbzip2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbzip2/'
+description: 'Compress files efficiently with pbzip2, a parallel bzip2 implementation. Achieve faster compression rates with multi-core support. Free online tool, no registration required.'
 category: common
 keywords:
-- parallel bzip2 compression
-- multi-core compression
-- bzip2 file compressor
-- linux file compression
-- command line compression
-- pbzip2 command usage
-- bzip2 tar archive
-- compressed file decompression
-- parallel file compression
-- bzip2 archive manager
+  - parallel bzip2 compression
+  - multi-core compression
+  - bzip2 file compressor
+  - linux file compression
+  - command line compression
+  - pbzip2 command usage
+  - bzip2 tar archive
+  - compressed file decompression
+  - parallel file compression
+  - bzip2 archive manager
 features:
-- Compress files in parallel using multiple processors.
-- Decompress bzip2 archives quickly.
-- Integrate with tar for compressed archives.
-- Specify the number of processors to use.
-- Display help information for command usage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files in parallel using multiple processors.
+  - Decompress bzip2 archives quickly.
+  - Integrate with tar for compressed archives.
+  - Specify the number of processors to use.
+  - Display help information for command usage.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbzip2

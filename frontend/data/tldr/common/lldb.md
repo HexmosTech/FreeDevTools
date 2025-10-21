@@ -1,9 +1,9 @@
 ---
-title: "LLDB Debugger - Debug Executables | Online Free DevTools by Hexmos"
+title: 'LLDB Debugger - Debug Executables | Online Free DevTools by Hexmos'
 name: lldb
-path: "/freedevtools/tldr/common/lldb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lldb/"
-description: "Debug executables with the LLDB debugger.  Attach to running processes, debug applications, and inspect variables using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lldb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lldb/'
+description: 'Debug executables with the LLDB debugger.  Attach to running processes, debug applications, and inspect variables using command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
   - lldb debugger
@@ -22,8 +22,8 @@ features:
   - Attach to processes by name after launch.
   - Set breakpoints and step through code.
   - Inspect variables and memory during debugging.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lldb

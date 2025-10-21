@@ -1,9 +1,9 @@
 ---
-title: "Pacman Query - Search Packages | Online Free DevTools by Hexmos"
+title: 'Pacman Query - Search Packages | Online Free DevTools by Hexmos'
 name: pacman-q
-path: "/freedevtools/tldr/linux/pacman-q/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-q/"
-description: "Search packages with Pacman Query. Find package information, dependencies, and installed versions easily using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacman-q/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacman-q/'
+description: 'Search packages with Pacman Query. Find package information, dependencies, and installed versions easily using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - pacman query
@@ -22,8 +22,8 @@ features:
   - Search the pacman database
   - Check installed package versions
   - Query local and remote repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacman -Q

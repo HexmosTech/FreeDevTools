@@ -1,9 +1,9 @@
 ---
-title: "PipeWire Daemon - Control Audio/Video Streaming | Online Free DevTools by Hexmos"
+title: 'PipeWire Daemon - Control Audio/Video Streaming | Online Free DevTools by Hexmos'
 name: pipewire
-path: "/freedevtools/tldr/linux/pipewire/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pipewire/"
-description: "Control audio and video streaming with PipeWire daemon. Manage configurations, adjust verbosity, and troubleshoot issues using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pipewire/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pipewire/'
+description: 'Control audio and video streaming with PipeWire daemon. Manage configurations, adjust verbosity, and troubleshoot issues using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - pipewire daemon control
@@ -22,8 +22,8 @@ features:
   - Adjust the daemon's verbosity level for debugging.
   - Access detailed help information via command-line options.
   - Troubleshoot and resolve PipeWire related issues.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pipewire

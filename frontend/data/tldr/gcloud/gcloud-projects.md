@@ -1,29 +1,29 @@
 ---
-title: "GCloud Projects - Manage Cloud Resources | Online Free DevTools by Hexmos"
+title: 'GCloud Projects - Manage Cloud Resources | Online Free DevTools by Hexmos'
 name: gcloud-projects
-path: "/freedevtools/tldr/gcloud/gcloud-projects/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-projects/"
-description: "Manage Google Cloud projects easily with GCloud Projects. Control access policies, create, delete, and list projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-projects/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-projects/'
+description: 'Manage Google Cloud projects easily with GCloud Projects. Control access policies, create, delete, and list projects. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud projects management
-- google cloud project control
-- gcloud create project
-- gcloud delete project
-- gcloud list projects
-- gcloud iam policy binding
-- gcloud project describe
-- cloud resource management
-- gcp project access
-- google cloud cli tools
+  - gcloud projects management
+  - google cloud project control
+  - gcloud create project
+  - gcloud delete project
+  - gcloud list projects
+  - gcloud iam policy binding
+  - gcloud project describe
+  - cloud resource management
+  - gcp project access
+  - google cloud cli tools
 features:
-- Create new Google Cloud projects
-- List all active Google Cloud projects
-- Display metadata for a specific project
-- Delete existing Google Cloud projects
-- Add IAM policy bindings to control access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Google Cloud projects
+  - List all active Google Cloud projects
+  - Display metadata for a specific project
+  - Delete existing Google Cloud projects
+  - Add IAM policy bindings to control access
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud projects

@@ -1,29 +1,29 @@
 ---
-title: "Base64 Encode/Decode - Convert Files Online | Online Free DevTools by Hexmos"
+title: 'Base64 Encode/Decode - Convert Files Online | Online Free DevTools by Hexmos'
 name: base64
-path: "/freedevtools/tldr/osx/base64/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/base64/"
-description: "Base64 encode and decode files with Base64. Easily convert data to and from Base64 format for secure data transfer. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/base64/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/base64/'
+description: 'Base64 encode and decode files with Base64. Easily convert data to and from Base64 format for secure data transfer. Free online tool, no registration required.'
 category: osx
 keywords:
-- Base64 encoder
-- Base64 decoder
-- File Base64 conversion
-- Data encoding
-- Data decoding
-- macOS Base64 command
-- Base64 string conversion
-- Base64 file utility
-- Encode to Base64
-- Decode from Base64
+  - Base64 encoder
+  - Base64 decoder
+  - File Base64 conversion
+  - Data encoding
+  - Data decoding
+  - macOS Base64 command
+  - Base64 string conversion
+  - Base64 file utility
+  - Encode to Base64
+  - Decode from Base64
 features:
-- Encode files to Base64 format
-- Decode Base64-encoded files
-- Specify output file for encoded/decoded data
-- Wrap encoded output at a specific width
-- Encode/decode from standard input/output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encode files to Base64 format
+  - Decode Base64-encoded files
+  - Specify output file for encoded/decoded data
+  - Wrap encoded output at a specific width
+  - Encode/decode from standard input/output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # base64

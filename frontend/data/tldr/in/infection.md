@@ -1,29 +1,29 @@
 ---
-title: "Mutation Testing - Analyze PHP Code with Infection | Online Free DevTools by Hexmos"
+title: 'Mutation Testing - Analyze PHP Code with Infection | Online Free DevTools by Hexmos'
 name: infection
-path: "/freedevtools/tldr/in/infection/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/infection/"
-description: "Analyze PHP code for mutation testing with Infection, a PHP mutation testing framework. Improve code quality and detect weaknesses. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/infection/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/infection/'
+description: 'Analyze PHP code for mutation testing with Infection, a PHP mutation testing framework. Improve code quality and detect weaknesses. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP mutation testing
-- Infection PHP framework
-- mutation testing tool
-- PHP code analysis
-- software testing PHP
-- code coverage analysis
-- PHP quality assurance
-- PHP testing framework
-- command line testing
-- mutation score indicator
+  - PHP mutation testing
+  - Infection PHP framework
+  - mutation testing tool
+  - PHP code analysis
+  - software testing PHP
+  - code coverage analysis
+  - PHP quality assurance
+  - PHP testing framework
+  - command line testing
+  - mutation score indicator
 features:
-- Analyze PHP code for mutations
-- Specify a minimum Mutation Score Indicator (MSI)
-- Define covered code MSI threshold
-- Use specific test frameworks like PHPUnit or PHPSpec
-- Display the applied mutation code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze PHP code for mutations
+  - Specify a minimum Mutation Score Indicator (MSI)
+  - Define covered code MSI threshold
+  - Use specific test frameworks like PHPUnit or PHPSpec
+  - Display the applied mutation code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # infection

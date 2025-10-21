@@ -1,9 +1,9 @@
 ---
-title: "Uname26 Command - System Info Retrieval | Online Free DevTools by Hexmos"
+title: 'Uname26 Command - System Info Retrieval | Online Free DevTools by Hexmos'
 name: uname26
-path: "/freedevtools/tldr/linux/uname26/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/uname26/"
-description: "Retrieve system information quickly with the uname26 command.  Access kernel and system details efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/uname26/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/uname26/'
+description: 'Retrieve system information quickly with the uname26 command.  Access kernel and system details efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - system information retrieval command
@@ -22,8 +22,8 @@ features:
   - Provides operating system information.
   - Outputs hostname details.
   - Retrieves hardware platform information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uname26

@@ -1,29 +1,29 @@
 ---
-title: "Rust Component Manager - Control Toolchain Components | Online Free DevTools by Hexmos"
+title: 'Rust Component Manager - Control Toolchain Components | Online Free DevTools by Hexmos'
 name: rustup-component
-path: "/freedevtools/tldr/rustup/rustup-component/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-component/"
-description: "Control Rust toolchain components with Rustup Component Manager. Add, remove, and list components for specific toolchains. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-component/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-component/'
+description: 'Control Rust toolchain components with Rustup Component Manager. Add, remove, and list components for specific toolchains. Free online tool, no registration required.'
 category: common
 keywords:
-- rust component manager
-- rustup component add
-- rustup component remove
-- rustup component list
-- rust toolchain management
-- rust development environment
-- rust programming language
-- rust dependency management
-- rust compiler components
-- rust standard library components
+  - rust component manager
+  - rustup component add
+  - rustup component remove
+  - rustup component list
+  - rust toolchain management
+  - rust development environment
+  - rust programming language
+  - rust dependency management
+  - rust compiler components
+  - rust standard library components
 features:
-- Add components to a specified Rust toolchain
-- Remove components from a specified Rust toolchain
-- List installed and available components for a toolchain
-- List only installed components for a toolchain
-- Manage the Rust development environment through component modification
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add components to a specified Rust toolchain
+  - Remove components from a specified Rust toolchain
+  - List installed and available components for a toolchain
+  - List only installed components for a toolchain
+  - Manage the Rust development environment through component modification
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup component

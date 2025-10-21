@@ -1,29 +1,29 @@
 ---
-title: "GitHub CLI MinTTY - Display Help | Online Free DevTools by Hexmos"
+title: 'GitHub CLI MinTTY - Display Help | Online Free DevTools by Hexmos'
 name: gh-mintty
-path: "/freedevtools/tldr/gh/gh-mintty/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-mintty/"
-description: "Display GitHub CLI with MinTTY integration help. Configure command line interface for seamless terminal integration. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-mintty/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-mintty/'
+description: 'Display GitHub CLI with MinTTY integration help. Configure command line interface for seamless terminal integration. Free online tool, no registration required.'
 category: common
 keywords:
-- github cli mintty help
-- cli mintty integration
-- command line configuration
-- github terminal integration
-- mintty terminal setup
-- windows terminal customization
-- github cli windows
-- gh cli mintty
-- cli configuration help
-- github cli documentation
+  - github cli mintty help
+  - cli mintty integration
+  - command line configuration
+  - github terminal integration
+  - mintty terminal setup
+  - windows terminal customization
+  - github cli windows
+  - gh cli mintty
+  - cli configuration help
+  - github cli documentation
 features:
-- Display MinTTY help for GitHub CLI.
-- Provide guidance on using 'gh' with MinTTY.
-- Integrate GitHub CLI seamlessly with MinTTY.
-- Simplify command-line terminal setup for GitHub.
-- Offer clear documentation for CLI configuration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display MinTTY help for GitHub CLI.
+  - Provide guidance on using 'gh' with MinTTY.
+  - Integrate GitHub CLI seamlessly with MinTTY.
+  - Simplify command-line terminal setup for GitHub.
+  - Offer clear documentation for CLI configuration.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh mintty

@@ -1,29 +1,29 @@
 ---
-title: "Git Show-Branch - Show Branch Commits | Online Free DevTools by Hexmos"
+title: 'Git Show-Branch - Show Branch Commits | Online Free DevTools by Hexmos'
 name: git-show-branch
-path: "/freedevtools/tldr/git/git-show-branch/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-show-branch/"
-description: "Show branch commits with Git Show-Branch. Compare branch history, identify divergent points, and visualize commit relationships. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-show-branch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-show-branch/'
+description: 'Show branch commits with Git Show-Branch. Compare branch history, identify divergent points, and visualize commit relationships. Free online tool, no registration required.'
 category: common
 keywords:
-- git branch commits
-- git compare branches
-- git show branches
-- git commit history
-- git remote branches
-- git local branches
-- git branch comparison
-- git commit visualization
-- git ancestry commits
-- git common ancestor
+  - git branch commits
+  - git compare branches
+  - git show branches
+  - git commit history
+  - git remote branches
+  - git local branches
+  - git branch comparison
+  - git commit visualization
+  - git ancestry commits
+  - git common ancestor
 features:
-- Display a summary of the latest commit on a branch.
-- Compare commit history between multiple branches.
-- Compare all remote tracking branches.
-- Compare both local and remote tracking branches.
-- Display commit names instead of relative names.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display a summary of the latest commit on a branch.
+  - Compare commit history between multiple branches.
+  - Compare all remote tracking branches.
+  - Compare both local and remote tracking branches.
+  - Display commit names instead of relative names.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git show-branch

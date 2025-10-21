@@ -1,29 +1,29 @@
 ---
-title: "Sed - Edit Text Scriptably | Online Free DevTools by Hexmos"
+title: 'Sed - Edit Text Scriptably | Online Free DevTools by Hexmos'
 name: sed
-path: "/freedevtools/tldr/osx/sed/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/sed/"
-description: "Edit text scriptably with Sed. Streamline text transformations and automate repetitive tasks using command-line scripting. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/sed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/sed/'
+description: 'Edit text scriptably with Sed. Streamline text transformations and automate repetitive tasks using command-line scripting. Free online tool, no registration required.'
 category: osx
 keywords:
-- text editor scriptable
-- stream editor linux
-- sed command osx
-- sed regex replace
-- sed text manipulation
-- sed find and replace
-- sed pattern matching
-- sed text processing
-- sed scripting automation
-- sed command line text editor
+  - text editor scriptable
+  - stream editor linux
+  - sed command osx
+  - sed regex replace
+  - sed text manipulation
+  - sed find and replace
+  - sed pattern matching
+  - sed text processing
+  - sed scripting automation
+  - sed command line text editor
 features:
-- Perform find and replace operations on text streams
-- Execute complex text transformations using regular expressions
-- Automate text editing tasks with scripting
-- Filter and manipulate text based on specific patterns
-- Edit files in-place with backup options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform find and replace operations on text streams
+  - Execute complex text transformations using regular expressions
+  - Automate text editing tasks with scripting
+  - Filter and manipulate text based on specific patterns
+  - Edit files in-place with backup options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sed

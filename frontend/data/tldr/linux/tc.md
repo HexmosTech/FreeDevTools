@@ -1,9 +1,9 @@
 ---
-title: "Control Network Traffic with tc | Online Free DevTools by Hexmos"
+title: 'Control Network Traffic with tc | Online Free DevTools by Hexmos'
 name: tc
-path: "/freedevtools/tldr/linux/tc/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tc/"
-description: "Control and manipulate network traffic with the tc command.  Manage network delay, bandwidth, and packet loss. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tc/'
+description: 'Control and manipulate network traffic with the tc command.  Manage network delay, bandwidth, and packet loss. Free online tool, no registration required.'
 category: linux
 keywords:
   - network traffic control
@@ -22,8 +22,8 @@ features:
   - Limit bandwidth, burst rate, and maximum latency.
   - Display active traffic control policies.
   - Delete all traffic control rules.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tc

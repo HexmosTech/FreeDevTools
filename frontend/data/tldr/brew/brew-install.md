@@ -1,29 +1,29 @@
 ---
-title: "Brew Install - Install Packages on macOS | Online Free DevTools by Hexmos"
+title: 'Brew Install - Install Packages on macOS | Online Free DevTools by Hexmos'
 name: brew-install
-path: "/freedevtools/tldr/brew/brew-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-install/"
-description: "Install packages with Brew Install on macOS. Effortlessly manage software dependencies and install applications using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/brew/brew-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/brew/brew-install/'
+description: 'Install packages with Brew Install on macOS. Effortlessly manage software dependencies and install applications using command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- brew install macOS
-- macOS package manager
-- homebrew install
-- brew cask install
-- brew formula install
-- command line package install
-- macOS software installation
-- terminal package install
-- brew install command
-- macOS developer tools
+  - brew install macOS
+  - macOS package manager
+  - homebrew install
+  - brew cask install
+  - brew formula install
+  - command line package install
+  - macOS software installation
+  - terminal package install
+  - brew install command
+  - macOS developer tools
 features:
-- Installs Homebrew formulas
-- Installs Homebrew casks
-- Builds formulas from source
-- Performs dry-run installations
-- Downloads manifest files for installation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Installs Homebrew formulas
+  - Installs Homebrew casks
+  - Builds formulas from source
+  - Performs dry-run installations
+  - Downloads manifest files for installation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brew install

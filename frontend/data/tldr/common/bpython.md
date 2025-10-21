@@ -1,29 +1,29 @@
 ---
-title: "Bpython Interpreter - Enhance Python REPL | Online Free DevTools by Hexmos"
+title: 'Bpython Interpreter - Enhance Python REPL | Online Free DevTools by Hexmos'
 name: bpython
-path: "/freedevtools/tldr/common/bpython/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bpython/"
-description: "Enhance your Python REPL with Bpython Interpreter. Improve productivity with syntax highlighting and auto-completion in interactive Python sessions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bpython/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bpython/'
+description: 'Enhance your Python REPL with Bpython Interpreter. Improve productivity with syntax highlighting and auto-completion in interactive Python sessions. Free online tool, no registration required.'
 category: common
 keywords:
-- Python interpreter
-- interactive Python shell
-- bpython REPL
-- enhanced Python REPL
-- Python syntax highlighting
-- Python auto-completion
-- Python interactive mode
-- command-line Python
-- REPL environment
-- bpython configuration
+  - Python interpreter
+  - interactive Python shell
+  - bpython REPL
+  - enhanced Python REPL
+  - Python syntax highlighting
+  - Python auto-completion
+  - Python interactive mode
+  - command-line Python
+  - REPL environment
+  - bpython configuration
 features:
-- Start an interactive Python shell with advanced features.
-- Execute Python files directly from the command line.
-- Load and use custom configuration files.
-- Enable interactive mode after executing a Python file.
-- Provide syntax highlighting and auto-completion during REPL sessions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive Python shell with advanced features.
+  - Execute Python files directly from the command line.
+  - Load and use custom configuration files.
+  - Enable interactive mode after executing a Python file.
+  - Provide syntax highlighting and auto-completion during REPL sessions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bpython

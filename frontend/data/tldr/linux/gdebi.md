@@ -1,29 +1,29 @@
 ---
-title: "Gdebi - Install Deb Packages Easily | Online Free DevTools by Hexmos"
+title: 'Gdebi - Install Deb Packages Easily | Online Free DevTools by Hexmos'
 name: gdebi
-path: "/freedevtools/tldr/linux/gdebi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gdebi/"
-description: "Install deb packages simply with Gdebi. Resolve dependencies and install .deb files effortlessly on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gdebi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gdebi/'
+description: 'Install deb packages simply with Gdebi. Resolve dependencies and install .deb files effortlessly on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- deb package installer
-- linux package installer
-- gdebi debian
-- deb dependency resolver
-- deb package manager
-- install deb linux
-- gdebi command
-- debian package installation
-- apt dependency resolver
-- local deb installer
+  - deb package installer
+  - linux package installer
+  - gdebi debian
+  - deb dependency resolver
+  - deb package manager
+  - install deb linux
+  - gdebi command
+  - debian package installation
+  - apt dependency resolver
+  - local deb installer
 features:
-- Install local .deb packages
-- Resolve and install package dependencies
-- Suppress progress information during installation
-- Set APT configuration options
-- Use an alternative root directory for installation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install local .deb packages
+  - Resolve and install package dependencies
+  - Suppress progress information during installation
+  - Set APT configuration options
+  - Use an alternative root directory for installation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdebi

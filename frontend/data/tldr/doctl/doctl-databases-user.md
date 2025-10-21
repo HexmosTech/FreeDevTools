@@ -1,29 +1,29 @@
 ---
-title: "Control Databases User - Manage Users with doctl | Online Free DevTools by Hexmos"
+title: 'Control Databases User - Manage Users with doctl | Online Free DevTools by Hexmos'
 name: doctl-databases-user
-path: "/freedevtools/tldr/doctl/doctl-databases-user/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-user/"
-description: "Manage database users with doctl. Create, list, reset passwords, and delete database users easily. Streamline your DigitalOcean database management. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-databases-user/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-user/'
+description: 'Manage database users with doctl. Create, list, reset passwords, and delete database users easily. Streamline your DigitalOcean database management. Free online tool, no registration required.'
 category: common
 keywords:
-- DigitalOcean databases user control
-- doctl database user management
-- database user password reset
-- doctl create database user
-- list database users DigitalOcean
-- DigitalOcean CLI databases user
-- database user access control
-- doctl delete database user
-- mysql user management doctl
-- postgres user management doctl
+  - DigitalOcean databases user control
+  - doctl database user management
+  - database user password reset
+  - doctl create database user
+  - list database users DigitalOcean
+  - DigitalOcean CLI databases user
+  - database user access control
+  - doctl delete database user
+  - mysql user management doctl
+  - postgres user management doctl
 features:
-- Create new database users
-- List existing database users
-- Reset user authentication passwords
-- Delete database users
-- Manage MySQL authentication plugins
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new database users
+  - List existing database users
+  - Reset user authentication passwords
+  - Delete database users
+  - Manage MySQL authentication plugins
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl databases user

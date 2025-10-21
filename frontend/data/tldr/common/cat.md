@@ -1,29 +1,29 @@
 ---
-title: "Cat Command - Print Files | Online Free DevTools by Hexmos"
+title: 'Cat Command - Print Files | Online Free DevTools by Hexmos'
 name: cat
-path: "/freedevtools/tldr/common/cat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cat/"
-description: "Print files easily with Cat Command. Concatenate and display file contents directly in your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cat/'
+description: 'Print files easily with Cat Command. Concatenate and display file contents directly in your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- file concatenation
-- print file content
-- linux cat command
-- macos cat command
-- unix cat command
-- display text file
-- file append command
-- command line file viewer
-- text file utility
-- stream file output
+  - file concatenation
+  - print file content
+  - linux cat command
+  - macos cat command
+  - unix cat command
+  - display text file
+  - file append command
+  - command line file viewer
+  - text file utility
+  - stream file output
 features:
-- Display contents of a single file
-- Concatenate multiple files into a single stream
-- Append file content to an existing file
-- Copy file content without buffering
-- Write standard input to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display contents of a single file
+  - Concatenate multiple files into a single stream
+  - Append file content to an existing file
+  - Copy file content without buffering
+  - Write standard input to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cat

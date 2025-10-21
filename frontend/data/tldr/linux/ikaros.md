@@ -1,9 +1,9 @@
 ---
-title: "Ikaros - Manage Device Drivers | Online Free DevTools by Hexmos"
+title: 'Ikaros - Manage Device Drivers | Online Free DevTools by Hexmos'
 name: ikaros
-path: "/freedevtools/tldr/linux/ikaros/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ikaros/"
-description: "Manage device drivers with Ikaros, the Vanilla OS driver management tool. Easily install, update, and list device drivers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ikaros/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ikaros/'
+description: 'Manage device drivers with Ikaros, the Vanilla OS driver management tool. Easily install, update, and list device drivers. Free online tool, no registration required.'
 category: linux
 keywords:
   - device driver management
@@ -22,8 +22,8 @@ features:
   - List connected devices and their drivers
   - Manage drivers through command line
   - Simplify driver management on Vanilla OS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ikaros

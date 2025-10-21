@@ -1,29 +1,29 @@
 ---
-title: "Compress PNG Images - Optimize Images | Online Free DevTools by Hexmos"
+title: 'Compress PNG Images - Optimize Images | Online Free DevTools by Hexmos'
 name: pngquant
-path: "/freedevtools/tldr/common/pngquant/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pngquant/"
-description: "Compress PNG images efficiently with pngquant. Reduce PNG file sizes using lossy compression and optimize images for the web. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pngquant/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pngquant/'
+description: 'Compress PNG images efficiently with pngquant. Reduce PNG file sizes using lossy compression and optimize images for the web. Free online tool, no registration required.'
 category: common
 keywords:
-- PNG image compression
-- Lossy PNG compression
-- PNG file size reduction
-- PNG image optimization
-- Command line image compressor
-- Linux PNG compressor
-- macOS PNG compressor
-- Image optimization tool
-- Compress PNG for web
-- Batch PNG compression
+  - PNG image compression
+  - Lossy PNG compression
+  - PNG file size reduction
+  - PNG image optimization
+  - Command line image compressor
+  - Linux PNG compressor
+  - macOS PNG compressor
+  - Image optimization tool
+  - Compress PNG for web
+  - Batch PNG compression
 features:
-- Compress PNG images to reduce file size
-- Control image quality with custom settings
-- Strip metadata from PNG files
-- Skip compression if file size increases
-- Batch process multiple PNG files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress PNG images to reduce file size
+  - Control image quality with custom settings
+  - Strip metadata from PNG files
+  - Skip compression if file size increases
+  - Batch process multiple PNG files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pngquant

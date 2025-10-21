@@ -1,29 +1,29 @@
 ---
-title: "QuickLook Manager - Generate File Previews | Online Free DevTools by Hexmos"
+title: 'QuickLook Manager - Generate File Previews | Online Free DevTools by Hexmos'
 name: qlmanage
-path: "/freedevtools/tldr/osx/qlmanage/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/qlmanage/"
-description: "Generate file previews with QuickLook Manager. View file contents and create thumbnails using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/qlmanage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/qlmanage/'
+description: 'Generate file previews with QuickLook Manager. View file contents and create thumbnails using this command-line tool. Free online tool, no registration required.'
 category: osx
 keywords:
-- file preview generator
-- quicklook thumbnail creator
-- osx quicklook management
-- command line file viewer
-- file content display tool
-- macos file inspector
-- quicklook reset command
-- jpeg thumbnail generator
-- quicklook file examination
-- command-line preview tool
+  - file preview generator
+  - quicklook thumbnail creator
+  - osx quicklook management
+  - command line file viewer
+  - file content display tool
+  - macos file inspector
+  - quicklook reset command
+  - jpeg thumbnail generator
+  - quicklook file examination
+  - command-line preview tool
 features:
-- Display QuickLook previews for multiple files
-- Generate thumbnails of image files
-- Reset the QuickLook server
-- Customize thumbnail sizes
-- Preview file contents directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display QuickLook previews for multiple files
+  - Generate thumbnails of image files
+  - Reset the QuickLook server
+  - Customize thumbnail sizes
+  - Preview file contents directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qlmanage

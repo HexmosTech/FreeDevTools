@@ -1,29 +1,29 @@
 ---
-title: "XMLStarlet - Format XML Documents | Online Free DevTools by Hexmos"
+title: 'XMLStarlet - Format XML Documents | Online Free DevTools by Hexmos'
 name: xmlstarlet
-path: "/freedevtools/tldr/xml/xmlstarlet/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xmlstarlet/"
-description: "Format XML with XMLStarlet. Edit, select, and transform XML documents via command-line, offering powerful XSLT capabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xmlstarlet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xmlstarlet/'
+description: 'Format XML with XMLStarlet. Edit, select, and transform XML documents via command-line, offering powerful XSLT capabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- xml format
-- xml edit
-- xml xpath
-- xml xslt
-- xml transform
-- xml command line
-- xml validator
-- xml formatter
-- linux xml
-- macos xml
+  - xml format
+  - xml edit
+  - xml xpath
+  - xml xslt
+  - xml transform
+  - xml command line
+  - xml validator
+  - xml formatter
+  - linux xml
+  - macos xml
 features:
-- Format and print XML documents
-- Select nodes based on XPath expressions
-- Insert attributes into XML nodes
-- Update values in XML nodes using XPath
-- Delete XML nodes using XPath
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format and print XML documents
+  - Select nodes based on XPath expressions
+  - Insert attributes into XML nodes
+  - Update values in XML nodes using XPath
+  - Delete XML nodes using XPath
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xmlstarlet

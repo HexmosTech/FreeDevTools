@@ -1,29 +1,29 @@
 ---
-title: "Disable AppArmor - Control Security Policies | Online Free DevTools by Hexmos"
+title: 'Disable AppArmor - Control Security Policies | Online Free DevTools by Hexmos'
 name: aa-disable
-path: "/freedevtools/tldr/linux/aa-disable/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-disable/"
-description: "Disable AppArmor security policies with aa-disable.  Control application security profiles on Linux systems with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aa-disable/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aa-disable/'
+description: 'Disable AppArmor security policies with aa-disable.  Control application security profiles on Linux systems with ease. Free online tool, no registration required.'
 category: linux
 keywords:
-- AppArmor policy disable
-- Linux security control
-- AppArmor profile management
-- aa-disable command
-- Disable Linux AppArmor
-- Security policy removal
-- Linux application security
-- AppArmor configuration
-- Profile disabling Linux
-- Disable AppArmor profiles
+  - AppArmor policy disable
+  - Linux security control
+  - AppArmor profile management
+  - aa-disable command
+  - Disable Linux AppArmor
+  - Security policy removal
+  - Linux application security
+  - AppArmor configuration
+  - Profile disabling Linux
+  - Disable AppArmor profiles
 features:
-- Disable specified AppArmor profiles
-- Disable AppArmor profiles in a directory
-- Control application security policies
-- Quickly remove AppArmor restrictions
-- Manage security profiles via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Disable specified AppArmor profiles
+  - Disable AppArmor profiles in a directory
+  - Control application security policies
+  - Quickly remove AppArmor restrictions
+  - Manage security profiles via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aa-disable

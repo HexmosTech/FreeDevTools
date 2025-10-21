@@ -1,29 +1,29 @@
 ---
-title: "Chainctl - Control Chainguard Platform | Online Free DevTools by Hexmos"
+title: 'Chainctl - Control Chainguard Platform | Online Free DevTools by Hexmos'
 name: chainctl
-path: "/freedevtools/tldr/common/chainctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chainctl/"
-description: "Control the Chainguard platform with chainctl. Manage images, packages, and authentication. Authenticate and manage access. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chainctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chainctl/'
+description: 'Control the Chainguard platform with chainctl. Manage images, packages, and authentication. Authenticate and manage access. Free online tool, no registration required.'
 category: common
 keywords:
-- chainctl command
-- chainguard cli
-- container image management
-- package version management
-- platform authentication
-- cli authentication
-- image repository list
-- package version list
-- command line interface
-- security platform
+  - chainctl command
+  - chainguard cli
+  - container image management
+  - package version management
+  - platform authentication
+  - cli authentication
+  - image repository list
+  - package version list
+  - command line interface
+  - security platform
 features:
-- Authenticate to Chainguard platform
-- List available container images
-- List image repositories
-- Examine image tag history
-- List package version data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate to Chainguard platform
+  - List available container images
+  - List image repositories
+  - Examine image tag history
+  - List package version data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chainctl

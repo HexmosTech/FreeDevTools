@@ -1,29 +1,29 @@
 ---
-title: "Create Azure Image - Manage VM Images with CLI | Online Free DevTools by Hexmos"
+title: 'Create Azure Image - Manage VM Images with CLI | Online Free DevTools by Hexmos'
 name: az-image
-path: "/freedevtools/tldr/az/az-image/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-image/"
-description: "Create custom Azure images easily with az image. Manage, list, delete, and update Virtual Machine images in Azure CLI. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-image/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-image/'
+description: 'Create custom Azure images easily with az image. Manage, list, delete, and update Virtual Machine images in Azure CLI. Free online tool, no registration required.'
 category: common
 keywords:
-- azure image management
-- azure cli image
-- virtual machine image azure
-- create azure vm image
-- azure image list
-- azure image delete
-- az image command
-- azure linux image
-- azure windows image
-- azure custom image
+  - azure image management
+  - azure cli image
+  - virtual machine image azure
+  - create azure vm image
+  - azure image list
+  - azure image delete
+  - az image command
+  - azure linux image
+  - azure windows image
+  - azure custom image
 features:
-- List custom images in a resource group
-- Create images from managed disks or snapshots
-- Delete custom images by name
-- Show detailed information about an image
-- Update image properties like tags
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List custom images in a resource group
+  - Create images from managed disks or snapshots
+  - Delete custom images by name
+  - Show detailed information about an image
+  - Update image properties like tags
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az image

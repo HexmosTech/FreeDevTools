@@ -1,29 +1,29 @@
 ---
-title: "TeX Live Update - Manage Packages | Online Free DevTools by Hexmos"
+title: 'TeX Live Update - Manage Packages | Online Free DevTools by Hexmos'
 name: tlmgr-update
-path: "/freedevtools/tldr/tlmgr/tlmgr-update/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-update/"
-description: "Manage TeX Live packages with tlmgr update. Update packages, exclude specific packages, and create backups effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-update/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-update/'
+description: 'Manage TeX Live packages with tlmgr update. Update packages, exclude specific packages, and create backups effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX Live package manager
-- TeX Live update command
-- TeX Live package update
-- tlmgr update all
-- tlmgr update exclude
-- TeX Live package backup
-- LaTeX package update
-- TeX package manager
-- TeX Live command line
-- Linux TeX Live update
+  - TeX Live package manager
+  - TeX Live update command
+  - TeX Live package update
+  - tlmgr update all
+  - tlmgr update exclude
+  - TeX Live package backup
+  - LaTeX package update
+  - TeX package manager
+  - TeX Live command line
+  - Linux TeX Live update
 features:
-- Update all TeX Live packages
-- Update tlmgr itself
-- Exclude specific packages from updates
-- Create backups before updating
-- Simulate updates with a dry run
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update all TeX Live packages
+  - Update tlmgr itself
+  - Exclude specific packages from updates
+  - Create backups before updating
+  - Simulate updates with a dry run
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr update

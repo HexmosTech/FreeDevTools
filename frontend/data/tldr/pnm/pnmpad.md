@@ -1,29 +1,29 @@
 ---
-title: "Pad PNM Image - Add Borders | Online Free DevTools by Hexmos"
+title: 'Pad PNM Image - Add Borders | Online Free DevTools by Hexmos'
 name: pnmpad
-path: "/freedevtools/tldr/pnm/pnmpad/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmpad/"
-description: "Add borders to PNM image with pnmpad. Pad images to specified dimensions and control border colors for image editing. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmpad/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmpad/'
+description: 'Add borders to PNM image with pnmpad. Pad images to specified dimensions and control border colors for image editing. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image padding
-- Image border tool
-- PNM editor command
-- Netpbm utilities
-- Image manipulation linux
-- Command line image tool
-- Image resizing tool
-- PNM margin editor
-- Image format conversion
-- Color border adder
+  - PNM image padding
+  - Image border tool
+  - PNM editor command
+  - Netpbm utilities
+  - Image manipulation linux
+  - Command line image tool
+  - Image resizing tool
+  - PNM margin editor
+  - Image format conversion
+  - Color border adder
 features:
-- Add borders of specific sizes to PNM images
-- Pad PNM images to a defined width and height
-- Control the ratio of left and right padding
-- Specify border color using names or hex codes
-- Resize images while maintaining aspect ratio
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add borders of specific sizes to PNM images
+  - Pad PNM images to a defined width and height
+  - Control the ratio of left and right padding
+  - Specify border color using names or hex codes
+  - Resize images while maintaining aspect ratio
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmpad

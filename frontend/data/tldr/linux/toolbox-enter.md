@@ -1,9 +1,9 @@
 ---
-title: "Toolbox Enter - Enter Containers Interactively | Online Free DevTools by Hexmos"
+title: 'Toolbox Enter - Enter Containers Interactively | Online Free DevTools by Hexmos'
 name: toolbox-enter
-path: "/freedevtools/tldr/linux/toolbox-enter/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-enter/"
-description: "Enter Linux containers interactively with Toolbox Enter. Access different distributions and releases with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/toolbox-enter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/toolbox-enter/'
+description: 'Enter Linux containers interactively with Toolbox Enter. Access different distributions and releases with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux container enter
@@ -22,8 +22,8 @@ features:
   - Enter a container with default settings.
   - Execute commands interactively inside a container.
   - Manage development environments using containers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # toolbox enter

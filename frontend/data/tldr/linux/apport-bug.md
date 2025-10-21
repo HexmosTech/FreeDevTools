@@ -1,9 +1,9 @@
 ---
-title: "Report Ubuntu Bugs - File Apport Bug Reports | Online Free DevTools by Hexmos"
+title: 'Report Ubuntu Bugs - File Apport Bug Reports | Online Free DevTools by Hexmos'
 name: apport-bug
-path: "/freedevtools/tldr/linux/apport-bug/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apport-bug/"
-description: "Report Ubuntu bugs easily with Apport-Bug. Collect system information and package details for effective bug reporting. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apport-bug/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apport-bug/'
+description: 'Report Ubuntu bugs easily with Apport-Bug. Collect system information and package details for effective bug reporting. Free online tool, no registration required.'
 category: linux
 keywords:
   - Ubuntu bug report
@@ -22,8 +22,8 @@ features:
   - Report bugs against a particular executable.
   - Report bugs based on a process ID.
   - Automatically collect relevant system and package information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apport-bug

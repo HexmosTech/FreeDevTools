@@ -1,9 +1,9 @@
 ---
-title: "htpdate - Synchronize Time via HTTP | Online Free DevTools by Hexmos"
+title: 'htpdate - Synchronize Time via HTTP | Online Free DevTools by Hexmos'
 name: htpdate
-path: "/freedevtools/tldr/linux/htpdate/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/htpdate/"
-description: "Synchronize your system time with htpdate using HTTP headers.  This command-line tool offers precise time synchronization and handles clock drift. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/htpdate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/htpdate/'
+description: 'Synchronize your system time with htpdate using HTTP headers.  This command-line tool offers precise time synchronization and handles clock drift. Free online tool, no registration required.'
 category: linux
 keywords:
   - time synchronization command
@@ -22,8 +22,8 @@ features:
   - Compensates for systematic clock drift for enhanced accuracy.
   - Allows setting time immediately after synchronization.
   - Provides a reliable and simple method for time synchronization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # htpdate

@@ -1,29 +1,29 @@
 ---
-title: "Git Effort - Track File Activity | Online Free DevTools by Hexmos"
+title: 'Git Effort - Track File Activity | Online Free DevTools by Hexmos'
 name: git-effort
-path: "/freedevtools/tldr/git/git-effort/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-effort/"
-description: "Track file activity with Git Effort. Analyze commits per file and identify active days. Improve code understanding and collaboration. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-effort/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-effort/'
+description: 'Track file activity with Git Effort. Analyze commits per file and identify active days. Improve code understanding and collaboration. Free online tool, no registration required.'
 category: common
 keywords:
-- git file activity
-- git commit history
-- git active days
-- git file analysis
-- git code ownership
-- git repository analysis
-- git contribution analysis
-- command line git analysis
-- git effort command
-- git file statistics
+  - git file activity
+  - git commit history
+  - git active days
+  - git file analysis
+  - git code ownership
+  - git repository analysis
+  - git contribution analysis
+  - command line git analysis
+  - git effort command
+  - git file statistics
 features:
-- Display commits per file in a Git repository
-- Calculate the number of active days for each file
-- Filter results based on a minimum number of commits
-- Filter results based on a specific author
-- Filter results based on a specific time/date
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display commits per file in a Git repository
+  - Calculate the number of active days for each file
+  - Filter results based on a minimum number of commits
+  - Filter results based on a specific author
+  - Filter results based on a specific time/date
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git effort

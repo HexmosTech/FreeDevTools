@@ -1,29 +1,29 @@
 ---
-title: "Create PDF N-up Layouts - pdfxup | Online Free DevTools by Hexmos"
+title: 'Create PDF N-up Layouts - pdfxup | Online Free DevTools by Hexmos'
 name: pdfxup
-path: "/freedevtools/tldr/linux/pdfxup/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfxup/"
-description: "Create PDF n-up layouts with pdfxup. Arrange multiple PDF pages onto a single page for printing or presentation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pdfxup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pdfxup/'
+description: 'Create PDF n-up layouts with pdfxup. Arrange multiple PDF pages onto a single page for printing or presentation. Free online tool, no registration required.'
 category: linux
 keywords:
-- pdf n-up layout
-- pdf page arranger
-- linux pdf tools
-- pdf booklet maker
-- pdf page scaling
-- pdf page rotation
-- command line pdf
-- pdf grid layout
-- pdf multi-page layout
-- pdf printing tool
+  - pdf n-up layout
+  - pdf page arranger
+  - linux pdf tools
+  - pdf booklet maker
+  - pdf page scaling
+  - pdf page rotation
+  - command line pdf
+  - pdf grid layout
+  - pdf multi-page layout
+  - pdf printing tool
 features:
-- Create 2-up or N-up PDF layouts
-- Arrange pages in booklet mode for printing
-- Specify number of columns and rows in the grid
-- Scale and rotate pages to fit the layout
-- Output to a new PDF file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create 2-up or N-up PDF layouts
+  - Arrange pages in booklet mode for printing
+  - Specify number of columns and rows in the grid
+  - Scale and rotate pages to fit the layout
+  - Output to a new PDF file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdfxup

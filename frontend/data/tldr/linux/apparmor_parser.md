@@ -1,29 +1,29 @@
 ---
-title: "AppArmor Parser - Manage Security Profiles | Online Free DevTools by Hexmos"
+title: 'AppArmor Parser - Manage Security Profiles | Online Free DevTools by Hexmos'
 name: apparmor_parser
-path: "/freedevtools/tldr/linux/apparmor_parser/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apparmor_parser/"
-description: "Manage security profiles with AppArmor Parser. Control profile loading, replacement, and removal for enhanced system security on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apparmor_parser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apparmor_parser/'
+description: 'Manage security profiles with AppArmor Parser. Control profile loading, replacement, and removal for enhanced system security on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- AppArmor security profiles
-- Linux security management
-- AppArmor profile parser
-- Security profile compiler
-- AppArmor profile loader
-- Linux app security
-- AppArmor complain mode
-- Security policy enforcement
-- AppArmor profile preprocessing
-- Kernel security modules
+  - AppArmor security profiles
+  - Linux security management
+  - AppArmor profile parser
+  - Security profile compiler
+  - AppArmor profile loader
+  - Linux app security
+  - AppArmor complain mode
+  - Security policy enforcement
+  - AppArmor profile preprocessing
+  - Kernel security modules
 features:
-- Load AppArmor profiles into the kernel
-- Replace existing AppArmor security profiles
-- Remove AppArmor profiles from the kernel
-- Preprocess AppArmor profiles for compilation
-- Manage AppArmor profiles in complain mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Load AppArmor profiles into the kernel
+  - Replace existing AppArmor security profiles
+  - Remove AppArmor profiles from the kernel
+  - Preprocess AppArmor profiles for compilation
+  - Manage AppArmor profiles in complain mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apparmor_parser

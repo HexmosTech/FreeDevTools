@@ -1,9 +1,9 @@
 ---
-title: "OSTree Control - Version Files Like Git | Online Free DevTools by Hexmos"
+title: 'OSTree Control - Version Files Like Git | Online Free DevTools by Hexmos'
 name: ostree
-path: "/freedevtools/tldr/linux/ostree/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ostree/"
-description: "Control versioned files with OSTree, a Git-like tool for OS root filesystems. Manage snapshots and track changes efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ostree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ostree/'
+description: 'Control versioned files with OSTree, a Git-like tool for OS root filesystems. Manage snapshots and track changes efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - OSTree version control
@@ -22,8 +22,8 @@ features:
   - Display files within a specific commit.
   - Show metadata associated with a commit.
   - List commit history for a branch.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ostree

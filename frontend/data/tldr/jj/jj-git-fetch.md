@@ -1,29 +1,29 @@
 ---
-title: "Fetch Git Changes - Control Remote Repositories | Online Free DevTools by Hexmos"
+title: 'Fetch Git Changes - Control Remote Repositories | Online Free DevTools by Hexmos'
 name: jj-git-fetch
-path: "/freedevtools/tldr/jj/jj-git-fetch/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-fetch/"
-description: "Fetch Git changes instantly with jj-git-fetch. Manage remote repositories, download objects, and update refs with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-git-fetch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-git-fetch/'
+description: 'Fetch Git changes instantly with jj-git-fetch. Manage remote repositories, download objects, and update refs with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- git fetch command
-- jj git fetch
-- git remote fetch
-- git download objects
-- git update refs
-- jj vcs
-- jj command line
-- git branch fetch
-- git all remote
-- jj git repository
+  - git fetch command
+  - jj git fetch
+  - git remote fetch
+  - git download objects
+  - git update refs
+  - jj vcs
+  - jj command line
+  - git branch fetch
+  - git all remote
+  - jj git repository
 features:
-- Fetch changes from default remote
-- Fetch changes from specified remote
-- Fetch changes from specific branches
-- Fetch changes from all remotes
-- Download objects and refs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fetch changes from default remote
+  - Fetch changes from specified remote
+  - Fetch changes from specific branches
+  - Fetch changes from all remotes
+  - Download objects and refs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj git fetch

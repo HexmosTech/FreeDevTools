@@ -1,29 +1,29 @@
 ---
-title: "VMStat - Monitor Virtual Memory Statistics | Online Free DevTools by Hexmos"
+title: 'VMStat - Monitor Virtual Memory Statistics | Online Free DevTools by Hexmos'
 name: vm_stat
-path: "/freedevtools/tldr/osx/vm_stat/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/vm_stat/"
-description: "Monitor virtual memory with VMStat. Analyze memory usage, identify bottlenecks, and optimize performance using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/vm_stat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/vm_stat/'
+description: 'Monitor virtual memory with VMStat. Analyze memory usage, identify bottlenecks, and optimize performance using command-line. Free online tool, no registration required.'
 category: osx
 keywords:
-- virtual memory statistics
-- osx vmstat
-- macos memory monitoring
-- vmstat command
-- memory usage analysis
-- virtual memory reporting
-- system performance monitoring
-- memory bottleneck detection
-- osx system analysis
-- command-line memory tool
+  - virtual memory statistics
+  - osx vmstat
+  - macos memory monitoring
+  - vmstat command
+  - memory usage analysis
+  - virtual memory reporting
+  - system performance monitoring
+  - memory bottleneck detection
+  - osx system analysis
+  - command-line memory tool
 features:
-- Display detailed virtual memory statistics
-- Report active, inactive, wired, and free memory
-- Monitor page faults and memory swaps
-- Provide periodic memory usage reports
-- Identify potential memory bottlenecks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display detailed virtual memory statistics
+  - Report active, inactive, wired, and free memory
+  - Monitor page faults and memory swaps
+  - Provide periodic memory usage reports
+  - Identify potential memory bottlenecks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vm_stat

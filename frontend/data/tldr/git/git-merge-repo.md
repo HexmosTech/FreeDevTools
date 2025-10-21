@@ -1,29 +1,29 @@
 ---
-title: "Merge Git Repository - Combine Histories | Online Free DevTools by Hexmos"
+title: 'Merge Git Repository - Combine Histories | Online Free DevTools by Hexmos'
 name: git-merge-repo
-path: "/freedevtools/tldr/git/git-merge-repo/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-merge-repo/"
-description: "Merge Git repository histories with git-merge-repo. Integrate branches and manage repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-merge-repo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-merge-repo/'
+description: 'Merge Git repository histories with git-merge-repo. Integrate branches and manage repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- git merge repository
-- git history merge
-- git branch integration
-- git combine repositories
-- git merge tool
-- git repository management
-- git merge-repo command
-- git extras merge
-- git version control
-- linux git merge
+  - git merge repository
+  - git history merge
+  - git branch integration
+  - git combine repositories
+  - git merge tool
+  - git repository management
+  - git merge-repo command
+  - git extras merge
+  - git version control
+  - linux git merge
 features:
-- Merge repository branches into a directory.
-- Integrate remote repository branches.
-- Combine histories from multiple repositories.
-- Merge branches without preserving full history.
-- Streamline repository integration workflows.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Merge repository branches into a directory.
+  - Integrate remote repository branches.
+  - Combine histories from multiple repositories.
+  - Merge branches without preserving full history.
+  - Streamline repository integration workflows.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git merge-repo

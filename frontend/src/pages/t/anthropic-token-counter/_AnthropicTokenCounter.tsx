@@ -1,84 +1,84 @@
-import { toast } from "@/components/ToastProvider";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { toast } from '@/components/ToastProvider';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolVideo from '@/components/tool/ToolVideo';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import React, { useEffect, useRef, useState } from "react";
-import AdBanner from "../../../components/banner/AdBanner";
-import AnthropicTokenCounterSkeleton from "./_AnthropicTokenCounterSkeleton";
+} from '@/components/ui/select';
+import React, { useEffect, useRef, useState } from 'react';
+import AdBanner from '../../../components/banner/AdBanner';
+import AnthropicTokenCounterSkeleton from './_AnthropicTokenCounterSkeleton';
 
 // Anthropic Models Configuration
 const ANTHROPIC_MODELS = {
-  "claude-opus-4": {
-    name: "Claude Opus 4",
+  'claude-opus-4': {
+    name: 'Claude Opus 4',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-sonnet-4": {
-    name: "Claude Sonnet 4",
+  'claude-sonnet-4': {
+    name: 'Claude Sonnet 4',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-3.7-sonnet": {
-    name: "Claude 3.7 Sonnet",
+  'claude-3.7-sonnet': {
+    name: 'Claude 3.7 Sonnet',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-3.5-sonnet": {
-    name: "Claude 3.5 Sonnet",
+  'claude-3.5-sonnet': {
+    name: 'Claude 3.5 Sonnet',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-3.5-haiku": {
-    name: "Claude 3.5 Haiku",
+  'claude-3.5-haiku': {
+    name: 'Claude 3.5 Haiku',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-3-opus": {
-    name: "Claude 3 Opus",
+  'claude-3-opus': {
+    name: 'Claude 3 Opus',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-3-sonnet": {
-    name: "Claude 3 Sonnet",
+  'claude-3-sonnet': {
+    name: 'Claude 3 Sonnet',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-3-haiku": {
-    name: "Claude 3 Haiku",
+  'claude-3-haiku': {
+    name: 'Claude 3 Haiku',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-2.1": {
-    name: "Claude 2.1",
+  'claude-2.1': {
+    name: 'Claude 2.1',
     context: 200000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-2.0": {
-    name: "Claude 2.0",
+  'claude-2.0': {
+    name: 'Claude 2.0',
     context: 100000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
-  "claude-instant-1.2": {
-    name: "Claude Instant 1.2",
+  'claude-instant-1.2': {
+    name: 'Claude Instant 1.2',
     context: 100000,
-    hub: "Xenova/claude-tokenizer",
+    hub: 'Xenova/claude-tokenizer',
   },
 };
 
@@ -95,8 +95,8 @@ const useDebouncedCallback = (
 };
 
 const AnthropicTokenCounter: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState("claude-3.5-sonnet");
+  const [input, setInput] = useState('');
+  const [selectedModel, setSelectedModel] = useState('claude-3.5-sonnet');
   const [tokens, setTokens] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [tokenizerLoading, setTokenizerLoading] = useState(false);
@@ -115,7 +115,7 @@ const AnthropicTokenCounter: React.FC = () => {
     const initTokenizer = async () => {
       setTokenizerLoading(true);
       try {
-        const { AutoTokenizer } = await import("@huggingface/transformers");
+        const { AutoTokenizer } = await import('@huggingface/transformers');
         const modelConfig =
           ANTHROPIC_MODELS[selectedModel as keyof typeof ANTHROPIC_MODELS];
 
@@ -131,8 +131,8 @@ const AnthropicTokenCounter: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error("Failed to load Anthropic tokenizer:", error);
-        toast.error("Failed to load Anthropic tokenizer. Please try again.");
+        console.error('Failed to load Anthropic tokenizer:', error);
+        toast.error('Failed to load Anthropic tokenizer. Please try again.');
         tokenizerRef.current = undefined;
       }
       setTokenizerLoading(false);
@@ -154,7 +154,7 @@ const AnthropicTokenCounter: React.FC = () => {
           const encoding = tokenizerRef.current.encode(input);
           setTokens(encoding.length);
         } catch (error) {
-          console.error("Tokenization error:", error);
+          console.error('Tokenization error:', error);
           setTokens(0);
         }
       }
@@ -164,9 +164,9 @@ const AnthropicTokenCounter: React.FC = () => {
   );
 
   const handleClear = () => {
-    setInput("");
+    setInput('');
     setTokens(0);
-    toast.success("Cleared input text");
+    toast.success('Cleared input text');
   };
 
   const copyTokenCount = () => {
@@ -181,7 +181,7 @@ Text Length: ${input.length} characters
 Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
 
     navigator.clipboard.writeText(results);
-    toast.success("Token count copied to clipboard!");
+    toast.success('Token count copied to clipboard!');
   };
 
   return (
@@ -211,7 +211,7 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
                         Text Input
                       </label>
                       <div className="text-sm text-slate-500 dark:text-slate-400">
-                        {input.length} characters •{" "}
+                        {input.length} characters •{' '}
                         {input.trim() ? input.split(/\s+/).length : 0} words
                       </div>
                     </div>
@@ -294,10 +294,10 @@ Try pasting:
                           }
                         </div>
                         <div className="text-xs text-slate-700 dark:text-slate-400 mb-1">
-                          Max context:{" "}
+                          Max context:{' '}
                           {ANTHROPIC_MODELS[
                             selectedModel as keyof typeof ANTHROPIC_MODELS
-                          ]?.context.toLocaleString()}{" "}
+                          ]?.context.toLocaleString()}{' '}
                           tokens
                         </div>
                         {tokens > 0 && (
@@ -347,7 +347,7 @@ Try pasting:
                 <div className="text-slate-800 dark:text-slate-400 space-y-4">
                   <p>
                     Anthropic's Claude models use a sophisticated tokenization
-                    process to break down text into manageable units called{" "}
+                    process to break down text into manageable units called{' '}
                     <strong>tokens</strong>. Unlike simple word-based splitting,
                     tokens can represent complete words, parts of words,
                     punctuation marks, or even special characters.
@@ -357,8 +357,8 @@ Try pasting:
                     Claude's tokenizer is designed to efficiently handle diverse
                     content types, from natural language conversations to
                     complex code snippets. Each token serves as a fundamental
-                    unit that the model processes, influencing both{" "}
-                    <strong>API costs</strong> and{" "}
+                    unit that the model processes, influencing both{' '}
+                    <strong>API costs</strong> and{' '}
                     <strong>context limitations</strong>.
                   </p>
 

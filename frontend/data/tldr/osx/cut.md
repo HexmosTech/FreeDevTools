@@ -1,29 +1,29 @@
 ---
-title: "Cut - Extract Text Fields | Online Free DevTools by Hexmos"
+title: 'Cut - Extract Text Fields | Online Free DevTools by Hexmos'
 name: cut
-path: "/freedevtools/tldr/osx/cut/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/cut/"
-description: "Extract text fields with Cut. Effortlessly manipulate text by specifying delimiters and field ranges. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/cut/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/cut/'
+description: 'Extract text fields with Cut. Effortlessly manipulate text by specifying delimiters and field ranges. Free online tool, no registration required.'
 category: osx
 keywords:
-- text extraction
-- text field extraction
-- cut command line
-- cut osx
-- cut macos
-- text delimiter
-- field separator
-- character range extraction
-- cut text files
-- cut stdin
+  - text extraction
+  - text field extraction
+  - cut command line
+  - cut osx
+  - cut macos
+  - text delimiter
+  - field separator
+  - character range extraction
+  - cut text files
+  - cut stdin
 features:
-- Extract specific character ranges from lines
-- Extract fields based on a delimiter
-- Process standard input (stdin)
-- Work directly with files
-- Define custom field delimiters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific character ranges from lines
+  - Extract fields based on a delimiter
+  - Process standard input (stdin)
+  - Work directly with files
+  - Define custom field delimiters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cut

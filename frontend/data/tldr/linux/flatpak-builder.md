@@ -1,9 +1,9 @@
 ---
-title: "Flatpak Builder - Build App Dependencies | Online Free DevTools by Hexmos"
+title: 'Flatpak Builder - Build App Dependencies | Online Free DevTools by Hexmos'
 name: flatpak-builder
-path: "/freedevtools/tldr/linux/flatpak-builder/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak-builder/"
-description: "Build application dependencies with Flatpak Builder. Create and manage Flatpak packages, streamlining app distribution. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/flatpak-builder/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/flatpak-builder/'
+description: 'Build application dependencies with Flatpak Builder. Create and manage Flatpak packages, streamlining app distribution. Free online tool, no registration required.'
 category: linux
 keywords:
   - flatpak builder
@@ -22,8 +22,8 @@ features:
   - Install Flatpaks locally
   - Sign Flatpaks with GPG keys
   - Run a shell inside a Flatpak sandbox
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flatpak-builder

@@ -1,9 +1,9 @@
 ---
-title: "Control LXI Instruments - SCPI Commands | Online Free DevTools by Hexmos"
+title: 'Control LXI Instruments - SCPI Commands | Online Free DevTools by Hexmos'
 name: lxi
-path: "/freedevtools/tldr/linux/lxi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lxi/"
-description: "Control LXI compatible instruments using SCPI commands with the lxi tool. Discover devices, capture screenshots, and benchmark performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lxi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lxi/'
+description: 'Control LXI compatible instruments using SCPI commands with the lxi tool. Discover devices, capture screenshots, and benchmark performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - lxi control
@@ -22,8 +22,8 @@ features:
   - Capture screenshots from instruments.
   - Benchmark request and response times for performance analysis.
   - Utilize various plugins for extended instrument control.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lxi

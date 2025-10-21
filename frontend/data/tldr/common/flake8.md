@@ -1,29 +1,29 @@
 ---
-title: "Validate Python Code - Flake8 Code Linter | Online Free DevTools by Hexmos"
+title: 'Validate Python Code - Flake8 Code Linter | Online Free DevTools by Hexmos'
 name: flake8
-path: "/freedevtools/tldr/common/flake8/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flake8/"
-description: "Validate Python code style with Flake8. Ensure code quality and consistency effortlessly using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flake8/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flake8/'
+description: 'Validate Python code style with Flake8. Ensure code quality and consistency effortlessly using command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- python code linter
-- flake8 code quality
-- python style checker
-- code linting python
-- flake8 rules
-- python code validation
-- flake8 linting tool
-- python static analysis
-- command line linting
-- python coding standards
+  - python code linter
+  - flake8 code quality
+  - python style checker
+  - code linting python
+  - flake8 rules
+  - python code validation
+  - flake8 linting tool
+  - python static analysis
+  - command line linting
+  - python coding standards
 features:
-- Lint Python files and directories recursively
-- Show the exact line where errors occur
-- Ignore specific linting rules
-- Exclude files based on globs or substrings
-- Check code against PEP 8 standards
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lint Python files and directories recursively
+  - Show the exact line where errors occur
+  - Ignore specific linting rules
+  - Exclude files based on globs or substrings
+  - Check code against PEP 8 standards
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flake8

@@ -1,29 +1,29 @@
 ---
-title: "JWT Tool - Create and Decode JSON Web Tokens | Online Free DevTools by Hexmos"
+title: 'JWT Tool - Create and Decode JSON Web Tokens | Online Free DevTools by Hexmos'
 name: jwt
-path: "/freedevtools/tldr/common/jwt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jwt/"
-description: "Create and decode JSON Web Tokens (JWT) with JWT Tool. Verify authenticity and integrity of your data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jwt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jwt/'
+description: 'Create and decode JSON Web Tokens (JWT) with JWT Tool. Verify authenticity and integrity of your data. Free online tool, no registration required.'
 category: common
 keywords:
-- jwt encoder
-- jwt decoder
-- json web token creator
-- json web token decoder
-- jwt signature validator
-- hs256 jwt
-- rs256 jwt
-- jwt cli
-- command line jwt tool
-- linux jwt
+  - jwt encoder
+  - jwt decoder
+  - json web token creator
+  - json web token decoder
+  - jwt signature validator
+  - hs256 jwt
+  - rs256 jwt
+  - jwt cli
+  - command line jwt tool
+  - linux jwt
 features:
-- Decode JSON Web Tokens
-- Encode JSON to JWT
-- Support various encryption algorithms (HS256, RS256, etc.)
-- Verify JWT signature
-- Encode key-value pairs to JWT
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decode JSON Web Tokens
+  - Encode JSON to JWT
+  - Support various encryption algorithms (HS256, RS256, etc.)
+  - Verify JWT signature
+  - Encode key-value pairs to JWT
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jwt

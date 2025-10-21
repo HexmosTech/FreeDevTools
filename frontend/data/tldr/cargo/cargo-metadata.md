@@ -1,29 +1,29 @@
 ---
-title: "Generate Cargo Metadata - Inspect Rust Packages | Online Free DevTools by Hexmos"
+title: 'Generate Cargo Metadata - Inspect Rust Packages | Online Free DevTools by Hexmos'
 name: cargo-metadata
-path: "/freedevtools/tldr/cargo/cargo-metadata/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-metadata/"
-description: "Generate Cargo metadata to inspect Rust packages and dependencies. Analyze workspace members, resolve dependencies, and customize output formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-metadata/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-metadata/'
+description: 'Generate Cargo metadata to inspect Rust packages and dependencies. Analyze workspace members, resolve dependencies, and customize output formats. Free online tool, no registration required.'
 category: common
 keywords:
-- cargo metadata generator
-- rust package analyzer
-- dependency resolver online
-- cargo workspace inspector
-- rust project metadata
-- cargo metadata json
-- rust build system information
-- cargo dependency graph
-- rust package dependency tree
-- cargo project analyzer
+  - cargo metadata generator
+  - rust package analyzer
+  - dependency resolver online
+  - cargo workspace inspector
+  - rust project metadata
+  - cargo metadata json
+  - rust build system information
+  - cargo dependency graph
+  - rust package dependency tree
+  - cargo project analyzer
 features:
-- Output workspace members in JSON format
-- Resolve and list package dependencies
-- Customize output format based on version
-- Filter dependencies by target platform
-- Inspect Rust package metadata
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Output workspace members in JSON format
+  - Resolve and list package dependencies
+  - Customize output format based on version
+  - Filter dependencies by target platform
+  - Inspect Rust package metadata
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo metadata

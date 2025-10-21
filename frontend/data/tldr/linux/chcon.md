@@ -1,29 +1,29 @@
 ---
-title: "Chcon - Control File Context on Linux | Online Free DevTools by Hexmos"
+title: 'Chcon - Control File Context on Linux | Online Free DevTools by Hexmos'
 name: chcon
-path: "/freedevtools/tldr/linux/chcon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chcon/"
-description: "Control file context with Chcon, the Linux command-line tool. Manage SELinux security contexts to enhance system security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/chcon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chcon/'
+description: 'Control file context with Chcon, the Linux command-line tool. Manage SELinux security contexts to enhance system security. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux file context
-- change selinux context
-- chcon command
-- linux security
-- selinux management
-- file permissions linux
-- context modification
-- linux file security
-- selinux configuration
-- security context tool
+  - linux file context
+  - change selinux context
+  - chcon command
+  - linux security
+  - selinux management
+  - file permissions linux
+  - context modification
+  - linux file security
+  - selinux configuration
+  - security context tool
 features:
-- Modify SELinux user identity
-- Alter SELinux role assignment
-- Change SELinux type enforcement
-- Update SELinux range/level attributes
-- Apply context from a reference file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Modify SELinux user identity
+  - Alter SELinux role assignment
+  - Change SELinux type enforcement
+  - Update SELinux range/level attributes
+  - Apply context from a reference file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chcon

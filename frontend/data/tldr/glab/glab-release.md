@@ -1,29 +1,29 @@
 ---
-title: "GLab Release - Manage GitLab Releases | Online Free DevTools by Hexmos"
+title: 'GLab Release - Manage GitLab Releases | Online Free DevTools by Hexmos'
 name: glab-release
-path: "/freedevtools/tldr/glab/glab-release/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-release/"
-description: "Manage GitLab releases effortlessly with GLab Release. Automate your release process, upload assets and control releases from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-release/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-release/'
+description: 'Manage GitLab releases effortlessly with GLab Release. Automate your release process, upload assets and control releases from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- gitlab release manager
-- glab release tool
-- gitlab cli release
-- release automation glab
-- gitlab release command line
-- glab release upload
-- glab release download
-- gitlab release delete
-- glab release create
-- gitlab release list
+  - gitlab release manager
+  - glab release tool
+  - gitlab cli release
+  - release automation glab
+  - gitlab release command line
+  - glab release upload
+  - glab release download
+  - gitlab release delete
+  - glab release create
+  - gitlab release list
 features:
-- List GitLab releases from the command line
-- View detailed information about specific releases
-- Create new GitLab releases with custom tags
-- Delete existing GitLab releases by tag
-- Upload and download assets associated with releases
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List GitLab releases from the command line
+  - View detailed information about specific releases
+  - Create new GitLab releases with custom tags
+  - Delete existing GitLab releases by tag
+  - Upload and download assets associated with releases
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab release

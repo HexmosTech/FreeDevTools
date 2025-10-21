@@ -1,29 +1,29 @@
 ---
-title: "Convert Video - FFmpeg Video Converter | Online Free DevTools by Hexmos"
+title: 'Convert Video - FFmpeg Video Converter | Online Free DevTools by Hexmos'
 name: ffmpeg
-path: "/freedevtools/tldr/common/ffmpeg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ffmpeg/"
-description: "Convert video formats easily with FFmpeg Video Converter. Transcode, trim, and remux video files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ffmpeg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ffmpeg/'
+description: 'Convert video formats easily with FFmpeg Video Converter. Transcode, trim, and remux video files. Free online tool, no registration required.'
 category: common
 keywords:
-- video conversion
-- ffmpeg convert
-- audio extraction
-- video transcoding
-- avi to mp4
-- mkv to mp4
-- mp4 to webm
-- video trimming
-- image to video
-- ffmpeg command line
+  - video conversion
+  - ffmpeg convert
+  - audio extraction
+  - video transcoding
+  - avi to mp4
+  - mkv to mp4
+  - mp4 to webm
+  - video trimming
+  - image to video
+  - ffmpeg command line
 features:
-- Convert video files between various formats
-- Extract audio from video files
-- Trim video clips by specifying start and end times
-- Combine numbered images into a video or GIF
-- Remux video files without re-encoding
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert video files between various formats
+  - Extract audio from video files
+  - Trim video clips by specifying start and end times
+  - Combine numbered images into a video or GIF
+  - Remux video files without re-encoding
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ffmpeg

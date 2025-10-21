@@ -1,29 +1,29 @@
 ---
-title: "Sort Object - Control Data Output | Online Free DevTools by Hexmos"
+title: 'Sort Object - Control Data Output | Online Free DevTools by Hexmos'
 name: sort-object
-path: "/freedevtools/tldr/windows/sort-object/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/sort-object/"
-description: "Control data output with Sort-Object, a powerful PowerShell command. Order objects by properties and remove duplicates easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/sort-object/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/sort-object/'
+description: 'Control data output with Sort-Object, a powerful PowerShell command. Order objects by properties and remove duplicates easily. Free online tool, no registration required.'
 category: windows
 keywords:
-- powershell sort object
-- windows sort object
-- sort data by property
-- sort data powershell
-- powershell sort unique
-- powershell object sorting
-- command line sort
-- powershell sort ascending descending
-- powershell sort by name
-- powershell sort by length
+  - powershell sort object
+  - windows sort object
+  - sort data by property
+  - sort data powershell
+  - powershell sort unique
+  - powershell object sorting
+  - command line sort
+  - powershell sort ascending descending
+  - powershell sort by name
+  - powershell sort by length
 features:
-- Sort objects by specified property values
-- Remove duplicate entries during sorting
-- Sort in ascending or descending order
-- Sort output based on file length
-- Sort processes based on memory usage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Sort objects by specified property values
+  - Remove duplicate entries during sorting
+  - Sort in ascending or descending order
+  - Sort output based on file length
+  - Sort processes based on memory usage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Sort-Object

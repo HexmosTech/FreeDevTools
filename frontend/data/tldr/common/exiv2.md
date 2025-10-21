@@ -1,29 +1,29 @@
 ---
-title: "Exiv2 Metadata Editor - Control Image Metadata | Online Free DevTools by Hexmos"
+title: 'Exiv2 Metadata Editor - Control Image Metadata | Online Free DevTools by Hexmos'
 name: exiv2
-path: "/freedevtools/tldr/common/exiv2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/exiv2/"
-description: "Control image metadata with Exiv2 Metadata Editor. Extract, modify, and delete Exif, IPTC, and XMP data effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/exiv2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/exiv2/'
+description: 'Control image metadata with Exiv2 Metadata Editor. Extract, modify, and delete Exif, IPTC, and XMP data effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Image Metadata Editor
-- Exif Data Manipulation
-- IPTC Metadata Editor
-- XMP Metadata Editor
-- Image Metadata Remover
-- Command Line Image Tools
-- Image Metadata Viewer
-- Linux Image Metadata
-- MacOS Image Metadata
-- Exiv2 Metadata Tool
+  - Image Metadata Editor
+  - Exif Data Manipulation
+  - IPTC Metadata Editor
+  - XMP Metadata Editor
+  - Image Metadata Remover
+  - Command Line Image Tools
+  - Image Metadata Viewer
+  - Linux Image Metadata
+  - MacOS Image Metadata
+  - Exiv2 Metadata Tool
 features:
-- Extract image metadata in various formats (Exif, IPTC, XMP)
-- Delete all metadata from image files
-- Rename files based on embedded date and time
-- Print image metadata in interpreted or raw format
-- Preserve file timestamps when deleting metadata
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract image metadata in various formats (Exif, IPTC, XMP)
+  - Delete all metadata from image files
+  - Rename files based on embedded date and time
+  - Print image metadata in interpreted or raw format
+  - Preserve file timestamps when deleting metadata
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exiv2

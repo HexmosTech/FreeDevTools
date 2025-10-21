@@ -1,29 +1,29 @@
 ---
-title: "Phive - Securely Install PHP Packages | Online Free DevTools by Hexmos"
+title: 'Phive - Securely Install PHP Packages | Online Free DevTools by Hexmos'
 name: phive
-path: "/freedevtools/tldr/common/phive/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/phive/"
-description: "Securely install PHP packages with Phive, the Phar Installation and Verification Environment. Manage dependencies and ensure secure PHP application deployment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/phive/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/phive/'
+description: 'Securely install PHP packages with Phive, the Phar Installation and Verification Environment. Manage dependencies and ensure secure PHP application deployment. Free online tool, no registration required.'
 category: common
 keywords:
-- phar installation
-- php package manager
-- phive install
-- secure php deployment
-- phar verification
-- php dependency management
-- global phar installation
-- phar update
-- command-line php
-- phar alias
+  - phar installation
+  - php package manager
+  - phive install
+  - secure php deployment
+  - phar verification
+  - php dependency management
+  - global phar installation
+  - phar update
+  - command-line php
+  - phar alias
 features:
-- Install PHP Phar packages securely.
-- Verify the integrity of PHP Phar packages.
-- Globally install PHP applications via Phar archives.
-- Update existing Phar installations to the latest versions.
-- Remove unused or outdated Phar packages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install PHP Phar packages securely.
+  - Verify the integrity of PHP Phar packages.
+  - Globally install PHP applications via Phar archives.
+  - Update existing Phar installations to the latest versions.
+  - Remove unused or outdated Phar packages.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phive

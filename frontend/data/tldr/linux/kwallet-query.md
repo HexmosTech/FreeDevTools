@@ -1,9 +1,9 @@
 ---
-title: "KWallet Query - Manage KDE Wallet Entries | Online Free DevTools by Hexmos"
+title: 'KWallet Query - Manage KDE Wallet Entries | Online Free DevTools by Hexmos'
 name: kwallet-query
-path: "/freedevtools/tldr/linux/kwallet-query/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kwallet-query/"
-description: "Manage KDE wallet entries with KWallet Query. List entries, folders, and interact with your KDE wallet data efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kwallet-query/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kwallet-query/'
+description: 'Manage KDE wallet entries with KWallet Query. List entries, folders, and interact with your KDE wallet data efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - kwallet query command
@@ -22,8 +22,8 @@ features:
   - Display all available folders within the KDE wallet.
   - Provide help information on using the kwallet-query command.
   - Read and write to the KDE Wallet using command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kwallet-query

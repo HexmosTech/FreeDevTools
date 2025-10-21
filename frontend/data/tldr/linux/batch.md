@@ -1,9 +1,9 @@
 ---
-title: "Batch Scheduler - Execute Commands Later | Online Free DevTools by Hexmos"
+title: 'Batch Scheduler - Execute Commands Later | Online Free DevTools by Hexmos'
 name: batch
-path: "/freedevtools/tldr/linux/batch/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/batch/"
-description: "Schedule commands with Batch, executing them when system load is low. Automate tasks and manage system resources efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/batch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/batch/'
+description: 'Schedule commands with Batch, executing them when system load is low. Automate tasks and manage system resources efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - batch scheduler
@@ -22,8 +22,8 @@ features:
   - Integrate with the system's mail system for result notification
   - Utilize the `atd` daemon for command execution
   - Defer non-critical tasks to optimize system performance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # batch

@@ -1,29 +1,29 @@
 ---
-title: "Render Manim Animation - Create Explanatory Math Videos | Online Free DevTools by Hexmos"
+title: 'Render Manim Animation - Create Explanatory Math Videos | Online Free DevTools by Hexmos'
 name: manim
-path: "/freedevtools/tldr/common/manim/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/manim/"
-description: "Render animations with Manim, the powerful animation engine for creating explanatory math videos. Generate high-quality educational content easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/manim/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/manim/'
+description: 'Render animations with Manim, the powerful animation engine for creating explanatory math videos. Generate high-quality educational content easily. Free online tool, no registration required.'
 category: common
 keywords:
-- manim animation rendering
-- python animation engine
-- math video generator
-- educational animation tool
-- scene rendering manim
-- manim tutorial
-- manim documentation
-- manim examples
-- manim command line
-- manim configuration
+  - manim animation rendering
+  - python animation engine
+  - math video generator
+  - educational animation tool
+  - scene rendering manim
+  - manim tutorial
+  - manim documentation
+  - manim examples
+  - manim command line
+  - manim configuration
 features:
-- Render scenes from Python scripts with default settings
-- Preview renderings with different quality levels
-- Customize output file names for rendered videos
-- Render videos with specific resolutions and frame rates
-- List available scenes in a Python file without rendering
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render scenes from Python scripts with default settings
+  - Preview renderings with different quality levels
+  - Customize output file names for rendered videos
+  - Render videos with specific resolutions and frame rates
+  - List available scenes in a Python file without rendering
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # manim

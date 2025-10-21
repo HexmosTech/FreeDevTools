@@ -1,29 +1,29 @@
 ---
-title: "GHCup - Manage Haskell Toolchains | Online Free DevTools by Hexmos"
+title: 'GHCup - Manage Haskell Toolchains | Online Free DevTools by Hexmos'
 name: ghcup
-path: "/freedevtools/tldr/common/ghcup/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ghcup/"
-description: "Manage Haskell toolchains effortlessly with GHCup. Install, update, and switch between GHC versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ghcup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ghcup/'
+description: 'Manage Haskell toolchains effortlessly with GHCup. Install, update, and switch between GHC versions. Free online tool, no registration required.'
 category: common
 keywords:
-- haskell toolchain manager
-- ghc version manager
-- cabal install manager
-- ghcup install ghc
-- haskell environment setup
-- ghc toolchain installer
-- ghcup upgrade
-- haskell development tools
-- ghcup tui
-- ghc version switcher
+  - haskell toolchain manager
+  - ghc version manager
+  - cabal install manager
+  - ghcup install ghc
+  - haskell environment setup
+  - ghc toolchain installer
+  - ghcup upgrade
+  - haskell development tools
+  - ghcup tui
+  - ghc version switcher
 features:
-- Install specific GHC versions
-- Activate specific GHC versions
-- Install cabal-install
-- Update ghcup itself
-- List available GHC/Cabal versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific GHC versions
+  - Activate specific GHC versions
+  - Install cabal-install
+  - Update ghcup itself
+  - List available GHC/Cabal versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ghcup

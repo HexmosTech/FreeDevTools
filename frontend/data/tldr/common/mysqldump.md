@@ -1,29 +1,29 @@
 ---
-title: "MySQL Backup - Create Database Backups | Online Free DevTools by Hexmos"
+title: 'MySQL Backup - Create Database Backups | Online Free DevTools by Hexmos'
 name: mysqldump
-path: "/freedevtools/tldr/common/mysqldump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mysqldump/"
-description: "Create MySQL backups with mysqldump. Easily backup databases, tables, and entire servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mysqldump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mysqldump/'
+description: 'Create MySQL backups with mysqldump. Easily backup databases, tables, and entire servers. Free online tool, no registration required.'
 category: common
 keywords:
-- mysql database backup
-- mysql dump command
-- database backup script
-- mysql backup linux
-- mysql export database
-- mysql data extraction
-- mysql command line backup
-- mysql server backup
-- mysql database dump
-- mysql database export
+  - mysql database backup
+  - mysql dump command
+  - database backup script
+  - mysql backup linux
+  - mysql export database
+  - mysql data extraction
+  - mysql command line backup
+  - mysql server backup
+  - mysql database dump
+  - mysql database export
 features:
-- Create full database backups
-- Backup specific tables
-- Backup all databases on a server
-- Backup databases from remote hosts
-- Redirect backup output to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create full database backups
+  - Backup specific tables
+  - Backup all databases on a server
+  - Backup databases from remote hosts
+  - Redirect backup output to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mysqldump

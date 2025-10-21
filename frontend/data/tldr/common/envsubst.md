@@ -1,29 +1,29 @@
 ---
-title: "Envsubst - Substitute Variables | Online Free DevTools by Hexmos"
+title: 'Envsubst - Substitute Variables | Online Free DevTools by Hexmos'
 name: envsubst
-path: "/freedevtools/tldr/common/envsubst/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/envsubst/"
-description: "Substitute environment variables with Envsubst. Replace variables in strings and files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/envsubst/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/envsubst/'
+description: 'Substitute environment variables with Envsubst. Replace variables in strings and files. Free online tool, no registration required.'
 category: common
 keywords:
-- envsubst variable replacement
-- substitute environment variables
-- shell variable substitution
-- envsubst command line
-- linux variable substitution
-- bash variable substitution
-- gettext envsubst
-- env variable expander
-- environment string substitution
-- shell script variable
+  - envsubst variable replacement
+  - substitute environment variables
+  - shell variable substitution
+  - envsubst command line
+  - linux variable substitution
+  - bash variable substitution
+  - gettext envsubst
+  - env variable expander
+  - environment string substitution
+  - shell script variable
 features:
-- Substitute environment variables in stdin to stdout
-- Replace variables in an input file
-- Output substitutions to a file
-- Substitute variables from a defined list
-- Perform variable substitution within shell scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Substitute environment variables in stdin to stdout
+  - Replace variables in an input file
+  - Output substitutions to a file
+  - Substitute variables from a defined list
+  - Perform variable substitution within shell scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # envsubst

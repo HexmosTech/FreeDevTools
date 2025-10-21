@@ -1,29 +1,29 @@
 ---
-title: "Projucer - Manage JUCE Projects | Online Free DevTools by Hexmos"
+title: 'Projucer - Manage JUCE Projects | Online Free DevTools by Hexmos'
 name: projucer
-path: "/freedevtools/tldr/common/projucer/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/projucer/"
-description: "Manage JUCE projects easily with Projucer. Resave files, update versions, and generate new projects from PIP files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/projucer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/projucer/'
+description: 'Manage JUCE projects easily with Projucer. Resave files, update versions, and generate new projects from PIP files. Free online tool, no registration required.'
 category: common
 keywords:
-- JUCE project manager
-- Projucer command line
-- JUCE framework
-- PIP project generator
-- JUCE project resaver
-- JUCE version updater
-- C++ project tool
-- JUCE comment remover
-- Audio plugin development
-- Cross-platform project tool
+  - JUCE project manager
+  - Projucer command line
+  - JUCE framework
+  - PIP project generator
+  - JUCE project resaver
+  - JUCE version updater
+  - C++ project tool
+  - JUCE comment remover
+  - Audio plugin development
+  - Cross-platform project tool
 features:
-- Resaves all files and resources in a JUCE project
-- Updates the version number within a project file
-- Generates a JUCE project from a PIP file
-- Removes JUCE-style comments from a specified folder
-- Displays detailed information about a given JUCE project
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Resaves all files and resources in a JUCE project
+  - Updates the version number within a project file
+  - Generates a JUCE project from a PIP file
+  - Removes JUCE-style comments from a specified folder
+  - Displays detailed information about a given JUCE project
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Projucer

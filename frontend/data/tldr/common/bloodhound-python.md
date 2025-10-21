@@ -1,29 +1,29 @@
 ---
-title: "BloodHound Ingestor - Enumerate AD Relationships | Online Free DevTools by Hexmos"
+title: 'BloodHound Ingestor - Enumerate AD Relationships | Online Free DevTools by Hexmos'
 name: bloodhound-python
-path: "/freedevtools/tldr/common/bloodhound-python/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bloodhound-python/"
-description: "Enumerate Active Directory relationships with BloodHound Ingestor. Collect group memberships, sessions, and trusts for comprehensive security assessments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bloodhound-python/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bloodhound-python/'
+description: 'Enumerate Active Directory relationships with BloodHound Ingestor. Collect group memberships, sessions, and trusts for comprehensive security assessments. Free online tool, no registration required.'
 category: common
 keywords:
-- Active Directory Enumeration
-- BloodHound AD Ingestor
-- BloodHound Python
-- AD Relationship Analyzer
-- Domain Security Assessment
-- Network Vulnerability Scanner
-- Active Directory Attack Path
-- Group Membership Enumeration
-- Session Data Collector
-- Trust Relationship Mapping
+  - Active Directory Enumeration
+  - BloodHound AD Ingestor
+  - BloodHound Python
+  - AD Relationship Analyzer
+  - Domain Security Assessment
+  - Network Vulnerability Scanner
+  - Active Directory Attack Path
+  - Group Membership Enumeration
+  - Session Data Collector
+  - Trust Relationship Mapping
 features:
-- Collect Active Directory group memberships
-- Enumerate Active Directory sessions
-- Map Active Directory trust relationships
-- Authenticate using Kerberos
-- Authenticate using NTLM hashes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Collect Active Directory group memberships
+  - Enumerate Active Directory sessions
+  - Map Active Directory trust relationships
+  - Authenticate using Kerberos
+  - Authenticate using NTLM hashes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bloodhound-python

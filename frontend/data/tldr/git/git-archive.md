@@ -1,29 +1,29 @@
 ---
-title: "Git Archive - Create File Archives from Git Repositories | Online Free DevTools by Hexmos"
+title: 'Git Archive - Create File Archives from Git Repositories | Online Free DevTools by Hexmos'
 name: git-archive
-path: "/freedevtools/tldr/git/git-archive/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-archive/"
-description: "Create file archives with Git Archive. Generate tarballs and zip files from Git repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-archive/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-archive/'
+description: 'Create file archives with Git Archive. Generate tarballs and zip files from Git repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- git archive command
-- git archive tarball
-- git archive zip
-- git archive repository
-- git archive export
-- git archive linux
-- git archive windows
-- git archive macos
-- git archive gitlab
-- git archive github
+  - git archive command
+  - git archive tarball
+  - git archive zip
+  - git archive repository
+  - git archive export
+  - git archive linux
+  - git archive windows
+  - git archive macos
+  - git archive gitlab
+  - git archive github
 features:
-- Create tar archives from Git repositories
-- Create zip archives from Git repositories
-- Output archives to a specific file
-- Archive specific branches or commits
-- Prepend a path to archived files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create tar archives from Git repositories
+  - Create zip archives from Git repositories
+  - Output archives to a specific file
+  - Archive specific branches or commits
+  - Prepend a path to archived files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git archive

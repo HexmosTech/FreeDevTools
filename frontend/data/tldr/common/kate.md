@@ -1,29 +1,29 @@
 ---
-title: "Kate - Edit Text Files | Online Free DevTools by Hexmos"
+title: 'Kate - Edit Text Files | Online Free DevTools by Hexmos'
 name: kate
-path: "/freedevtools/tldr/common/kate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kate/"
-description: "Edit text files effortlessly with Kate, the advanced KDE text editor. Open, create, and modify files with ease using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kate/'
+description: 'Edit text files effortlessly with Kate, the advanced KDE text editor. Open, create, and modify files with ease using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- text file editor
-- KDE text editor
-- command line text editor
-- linux text editor
-- edit text files online
-- open remote files
-- create new editor instance
-- specify line number
-- read from stdin
-- kate editor
+  - text file editor
+  - KDE text editor
+  - command line text editor
+  - linux text editor
+  - edit text files online
+  - open remote files
+  - create new editor instance
+  - specify line number
+  - read from stdin
+  - kate editor
 features:
-- Open and edit local files
-- Open and edit remote files using URLs
-- Create new editor instances
-- Open files at a specific line and column
-- Create files by piping data from stdin
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit local files
+  - Open and edit remote files using URLs
+  - Create new editor instances
+  - Open files at a specific line and column
+  - Create files by piping data from stdin
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kate

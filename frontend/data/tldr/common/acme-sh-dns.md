@@ -1,29 +1,29 @@
 ---
-title: "ACME.sh DNS - Issue TLS Certificates | Online Free DevTools by Hexmos"
+title: 'ACME.sh DNS - Issue TLS Certificates | Online Free DevTools by Hexmos'
 name: acme.sh-dns
-path: "/freedevtools/tldr/common/acme-sh-dns/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/acme-sh-dns/"
-description: "Issue TLS certificates with ACME.sh DNS-01 challenge. Automate certificate generation and renewal using DNS APIs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/acme-sh-dns/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/acme-sh-dns/'
+description: 'Issue TLS certificates with ACME.sh DNS-01 challenge. Automate certificate generation and renewal using DNS APIs. Free online tool, no registration required.'
 category: common
 keywords:
-- TLS certificate ACME.sh
-- ACME.sh DNS challenge
-- DNS-01 certificate
-- Automatic certificate issue
-- Wildcard certificate issue
-- Certificate renewal
-- DNS API certificate
-- Linux ACME.sh
-- Certificate manager
-- Domain validation
+  - TLS certificate ACME.sh
+  - ACME.sh DNS challenge
+  - DNS-01 certificate
+  - Automatic certificate issue
+  - Wildcard certificate issue
+  - Certificate renewal
+  - DNS API certificate
+  - Linux ACME.sh
+  - Certificate manager
+  - Domain validation
 features:
-- Automate TLS certificate issuance using DNS challenges
-- Support wildcard certificates for multiple subdomains
-- Integrate with various DNS providers via API
-- Allow manual DNS record verification
-- Customize DNS propagation wait time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automate TLS certificate issuance using DNS challenges
+  - Support wildcard certificates for multiple subdomains
+  - Integrate with various DNS providers via API
+  - Allow manual DNS record verification
+  - Customize DNS propagation wait time
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # acme.sh --dns

@@ -1,29 +1,29 @@
 ---
-title: "Hg Clone - Create Repository Copies | Online Free DevTools by Hexmos"
+title: 'Hg Clone - Create Repository Copies | Online Free DevTools by Hexmos'
 name: hg-clone
-path: "/freedevtools/tldr/hg/hg-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-clone/"
-description: "Create repository copies with Hg Clone. Quickly clone Mercurial repositories locally or from remote sources. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-clone/'
+description: 'Create repository copies with Hg Clone. Quickly clone Mercurial repositories locally or from remote sources. Free online tool, no registration required.'
 category: common
 keywords:
-- mercurial clone
-- hg clone repository
-- repository cloning
-- mercurial repository
-- version control clone
-- hg branch clone
-- hg revision clone
-- hg noupdate clone
-- mercurial command
-- distributed version control
+  - mercurial clone
+  - hg clone repository
+  - repository cloning
+  - mercurial repository
+  - version control clone
+  - hg branch clone
+  - hg revision clone
+  - hg noupdate clone
+  - mercurial command
+  - distributed version control
 features:
-- Clone a repository to a specified directory
-- Clone a repository to a specific branch
-- Clone a repository without checking out files
-- Clone a repository to a specific revision, tag or branch
-- Clone a repository up to a specific revision
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone a repository to a specified directory
+  - Clone a repository to a specific branch
+  - Clone a repository without checking out files
+  - Clone a repository to a specific revision, tag or branch
+  - Clone a repository up to a specific revision
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg clone

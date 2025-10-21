@@ -1,29 +1,29 @@
 ---
-title: "Build Debian Package - Create Chroot Environments | Online Free DevTools by Hexmos"
+title: 'Build Debian Package - Create Chroot Environments | Online Free DevTools by Hexmos'
 name: sbuild
-path: "/freedevtools/tldr/common/sbuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sbuild/"
-description: "Build Debian packages with sbuild, creating isolated chroot environments for clean and reproducible builds.  Ensure package integrity and compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sbuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sbuild/'
+description: 'Build Debian packages with sbuild, creating isolated chroot environments for clean and reproducible builds.  Ensure package integrity and compatibility. Free online tool, no registration required.'
 category: common
 keywords:
-- debian package builder
-- sbuild chroot environment
-- build debian binary
-- clean build environment
-- reproducible builds
-- debian package management
-- linux package builder
-- command line build tool
-- build environment isolation
-- debian package creation
+  - debian package builder
+  - sbuild chroot environment
+  - build debian binary
+  - clean build environment
+  - reproducible builds
+  - debian package management
+  - linux package builder
+  - command line build tool
+  - build environment isolation
+  - debian package creation
 features:
-- Build Debian packages in a clean chroot environment.
-- Build packages for specific Debian distributions.
-- Utilize custom dependencies for package building.
-- Inspect build failures with an interactive shell.
-- Cross-build packages for various architectures.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Debian packages in a clean chroot environment.
+  - Build packages for specific Debian distributions.
+  - Utilize custom dependencies for package building.
+  - Inspect build failures with an interactive shell.
+  - Cross-build packages for various architectures.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sbuild

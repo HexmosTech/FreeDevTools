@@ -1,9 +1,9 @@
 ---
-title: "Yay - Manage Arch Packages | Online Free DevTools by Hexmos"
+title: 'Yay - Manage Arch Packages | Online Free DevTools by Hexmos'
 name: yay
-path: "/freedevtools/tldr/linux/yay/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/yay/"
-description: "Manage Arch Linux packages efficiently with Yay.  Install, update, and remove packages from the AUR and repositories easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/yay/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/yay/'
+description: 'Manage Arch Linux packages efficiently with Yay.  Install, update, and remove packages from the AUR and repositories easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - Arch Linux package manager
@@ -22,8 +22,8 @@ features:
   - Remove packages and their dependencies.
   - Search for packages using keywords.
   - Clean pacman and yay caches.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yay

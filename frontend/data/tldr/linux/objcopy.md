@@ -1,9 +1,9 @@
 ---
-title: "Objcopy - Copy Object Files | Online Free DevTools by Hexmos"
+title: 'Objcopy - Copy Object Files | Online Free DevTools by Hexmos'
 name: objcopy
-path: "/freedevtools/tldr/linux/objcopy/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/objcopy/"
-description: "Copy and transform object files with objcopy.  Manage sections, strip debugging info, and convert between formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/objcopy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/objcopy/'
+description: 'Copy and transform object files with objcopy.  Manage sections, strip debugging info, and convert between formats. Free online tool, no registration required.'
 category: linux
 keywords:
   - object file copy
@@ -22,8 +22,8 @@ features:
   - Remove all symbol information from object files.
   - Strip debugging information from object files for smaller sizes.
   - Copy only specific sections from a source object file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # objcopy

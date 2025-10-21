@@ -1,29 +1,29 @@
 ---
-title: "SMB Client - Interact with SMB Servers | Online Free DevTools by Hexmos"
+title: 'SMB Client - Interact with SMB Servers | Online Free DevTools by Hexmos'
 name: smbclient.py
-path: "/freedevtools/tldr/common/smbclient-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/smbclient-py/"
-description: "Interact with SMB servers using SMB Client. Perform authentication, file transfer, and command execution. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/smbclient-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/smbclient-py/'
+description: 'Interact with SMB servers using SMB Client. Perform authentication, file transfer, and command execution. Free online tool, no registration required.'
 category: common
 keywords:
-- SMB client interaction
-- SMB server communication
-- Python SMB client
-- Network file sharing
-- Windows file access
-- SMB authentication bypass
-- SMB command execution
-- Impacket SMB client
-- Linux SMB client
-- Command-line SMB client
+  - SMB client interaction
+  - SMB server communication
+  - Python SMB client
+  - Network file sharing
+  - Windows file access
+  - SMB authentication bypass
+  - SMB command execution
+  - Impacket SMB client
+  - Linux SMB client
+  - Command-line SMB client
 features:
-- Authenticate to SMB servers using username/password
-- Utilize NTLM hashes for authentication
-- Connect using Kerberos authentication protocol
-- Specify a domain controller IP for targeted connections
-- Execute commands from an input file within the SMB shell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate to SMB servers using username/password
+  - Utilize NTLM hashes for authentication
+  - Connect using Kerberos authentication protocol
+  - Specify a domain controller IP for targeted connections
+  - Execute commands from an input file within the SMB shell
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smbclient.py

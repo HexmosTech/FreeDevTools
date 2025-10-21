@@ -1,29 +1,29 @@
 ---
-title: "Zrun - Execute Commands with Uncompressed Arguments | Online Free DevTools by Hexmos"
+title: 'Zrun - Execute Commands with Uncompressed Arguments | Online Free DevTools by Hexmos'
 name: zrun
-path: "/freedevtools/tldr/common/zrun/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zrun/"
-description: "Execute commands with Zrun, automatically uncompressing compressed arguments. Streamline your workflow and manage files efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zrun/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zrun/'
+description: 'Execute commands with Zrun, automatically uncompressing compressed arguments. Streamline your workflow and manage files efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- compressed file execution
-- zrun command line
-- command argument uncompression
-- gzip bzip2 execution
-- transparent file handling
-- linux command execution
-- macos command execution
-- argument decompression tool
-- shell script execution
-- command line automation
+  - compressed file execution
+  - zrun command line
+  - command argument uncompression
+  - gzip bzip2 execution
+  - transparent file handling
+  - linux command execution
+  - macos command execution
+  - argument decompression tool
+  - shell script execution
+  - command line automation
 features:
-- Automatically uncompress arguments to a command.
-- Supports gzip and bzip2 compressed files.
-- Executes commands with uncompressed versions of files.
-- Simplifies command line workflows.
-- Enables transparent handling of compressed data.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically uncompress arguments to a command.
+  - Supports gzip and bzip2 compressed files.
+  - Executes commands with uncompressed versions of files.
+  - Simplifies command line workflows.
+  - Enables transparent handling of compressed data.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zrun

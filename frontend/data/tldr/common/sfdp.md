@@ -1,29 +1,29 @@
 ---
-title: "SFDP Graph Renderer - Generate Network Images | Online Free DevTools by Hexmos"
+title: 'SFDP Graph Renderer - Generate Network Images | Online Free DevTools by Hexmos'
 name: sfdp
-path: "/freedevtools/tldr/common/sfdp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sfdp/"
-description: "Generate network graph images with SFDP Graph Renderer. Visualize complex data structures and layouts with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sfdp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sfdp/'
+description: 'Generate network graph images with SFDP Graph Renderer. Visualize complex data structures and layouts with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- graphviz sfdp
-- network graph renderer
-- force-directed layout
-- graph image generation
-- graph drawing tool
-- layout engine
-- dot graph generator
-- graphviz alternative
-- image converter
-- graph visualization
+  - graphviz sfdp
+  - network graph renderer
+  - force-directed layout
+  - graph image generation
+  - graph drawing tool
+  - layout engine
+  - dot graph generator
+  - graphviz alternative
+  - image converter
+  - graph visualization
 features:
-- Render network graphs from Graphviz files
-- Support multiple output formats including PNG, SVG, and PDF
-- Customize layouts using dot, neato, twopi, circo, fdp, osage, and patchwork
-- Generate images from standard input and output
-- Visualize data structures and relationships
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render network graphs from Graphviz files
+  - Support multiple output formats including PNG, SVG, and PDF
+  - Customize layouts using dot, neato, twopi, circo, fdp, osage, and patchwork
+  - Generate images from standard input and output
+  - Visualize data structures and relationships
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdp

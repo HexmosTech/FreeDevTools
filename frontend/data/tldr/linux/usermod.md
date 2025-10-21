@@ -1,9 +1,9 @@
 ---
-title: "Usermod Command - Manage Linux Users | Online Free DevTools by Hexmos"
+title: 'Usermod Command - Manage Linux Users | Online Free DevTools by Hexmos'
 name: usermod
-path: "/freedevtools/tldr/linux/usermod/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/usermod/"
-description: "Manage Linux user accounts with the usermod command. Modify usernames, UIDs, groups, home directories, and account status. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/usermod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/usermod/'
+description: 'Manage Linux user accounts with the usermod command. Modify usernames, UIDs, groups, home directories, and account status. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux user management
@@ -22,8 +22,8 @@ features:
   - Manage user groups (add or remove)
   - Update user home directories
   - Lock and unlock user accounts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # usermod

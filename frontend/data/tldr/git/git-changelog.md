@@ -1,29 +1,29 @@
 ---
-title: "Generate Git Changelog - Track Repository Changes | Online Free DevTools by Hexmos"
+title: 'Generate Git Changelog - Track Repository Changes | Online Free DevTools by Hexmos'
 name: git-changelog
-path: "/freedevtools/tldr/git/git-changelog/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-changelog/"
-description: "Generate Git changelog files easily with git-changelog. Track repository commits and tags for release notes creation. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-changelog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-changelog/'
+description: 'Generate Git changelog files easily with git-changelog. Track repository commits and tags for release notes creation. Free online tool, no registration required.'
 category: common
 keywords:
-- git changelog generator
-- git commit history
-- changelog markdown
-- git tag release notes
-- git commit analyzer
-- repository change tracker
-- git commit report
-- git version history
-- linux git changelog
-- macos git changelog
+  - git changelog generator
+  - git commit history
+  - changelog markdown
+  - git tag release notes
+  - git commit analyzer
+  - repository change tracker
+  - git commit report
+  - git version history
+  - linux git changelog
+  - macos git changelog
 features:
-- Generate changelog from git commits and tags
-- Update or create History.md file
-- List commits from current or specified versions
-- Specify custom output file for changelog
-- Replace contents of current changelog file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate changelog from git commits and tags
+  - Update or create History.md file
+  - List commits from current or specified versions
+  - Specify custom output file for changelog
+  - Replace contents of current changelog file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git changelog

@@ -1,29 +1,29 @@
 ---
-title: "GetFileInfo - Display File Information on macOS | Online Free DevTools by Hexmos"
+title: 'GetFileInfo - Display File Information on macOS | Online Free DevTools by Hexmos'
 name: getfileinfo
-path: "/freedevtools/tldr/osx/getfileinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/getfileinfo/"
-description: "Display file information with GetFileInfo on macOS. Retrieve creation date, modification date, and creator information using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/getfileinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/getfileinfo/'
+description: 'Display file information with GetFileInfo on macOS. Retrieve creation date, modification date, and creator information using this command-line tool. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS file metadata
-- HFS+ file information
-- GetFileInfo command-line
-- OSX file attributes
-- File creation date mac
-- File modification date osx
-- File creator identifier
-- Apple file system info
-- Command-line file reader
-- macOS developer tool
+  - macOS file metadata
+  - HFS+ file information
+  - GetFileInfo command-line
+  - OSX file attributes
+  - File creation date mac
+  - File modification date osx
+  - File creator identifier
+  - Apple file system info
+  - Command-line file reader
+  - macOS developer tool
 features:
-- Display file creation timestamp
-- Display file modification timestamp
-- Retrieve file creator ID
-- Access HFS+ file metadata
-- Get file information on macOS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display file creation timestamp
+  - Display file modification timestamp
+  - Retrieve file creator ID
+  - Access HFS+ file metadata
+  - Get file information on macOS
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # GetFileInfo

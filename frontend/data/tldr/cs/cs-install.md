@@ -1,29 +1,29 @@
 ---
-title: "Coursier Install - Install Applications | Online Free DevTools by Hexmos"
+title: 'Coursier Install - Install Applications | Online Free DevTools by Hexmos'
 name: cs-install
-path: "/freedevtools/tldr/cs/cs-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-install/"
-description: "Install applications easily with Coursier Install. Manage dependencies and streamline software installation process. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/cs-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/cs-install/'
+description: 'Install applications easily with Coursier Install. Manage dependencies and streamline software installation process. Free online tool, no registration required.'
 category: common
 keywords:
-- coursier install
-- application installer
-- dependency management
-- software installation
-- coursier package manager
-- java application install
-- scala application install
-- coursier cli
-- command-line installer
-- package dependency resolver
+  - coursier install
+  - application installer
+  - dependency management
+  - software installation
+  - coursier package manager
+  - java application install
+  - scala application install
+  - coursier cli
+  - command-line installer
+  - package dependency resolver
 features:
-- Install applications from the command line
-- Manage application versions with Coursier Install
-- Update installed applications efficiently
-- Uninstall specific applications seamlessly
-- List installed applications with detailed information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install applications from the command line
+  - Manage application versions with Coursier Install
+  - Update installed applications efficiently
+  - Uninstall specific applications seamlessly
+  - List installed applications with detailed information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cs install

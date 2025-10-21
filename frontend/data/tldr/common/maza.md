@@ -1,29 +1,29 @@
 ---
-title: "Control Ad Blocking - Maza Local Ad Blocker | Online Free DevTools by Hexmos"
+title: 'Control Ad Blocking - Maza Local Ad Blocker | Online Free DevTools by Hexmos'
 name: maza
-path: "/freedevtools/tldr/common/maza/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/maza/"
-description: "Control ad blocking with Maza, a local ad blocker utilizing your operating system, similar to Pi-hole. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/maza/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/maza/'
+description: 'Control ad blocking with Maza, a local ad blocker utilizing your operating system, similar to Pi-hole. Free online tool, no registration required.'
 category: common
 keywords:
-- local ad blocker
-- system-wide ad blocking
-- maza ad blocking
-- command line ad blocker
-- network ad blocker
-- linux ad blocker
-- macos ad blocker
-- windows ad blocker
-- dns ad blocker
-- maza update
+  - local ad blocker
+  - system-wide ad blocking
+  - maza ad blocking
+  - command line ad blocker
+  - network ad blocker
+  - linux ad blocker
+  - macos ad blocker
+  - windows ad blocker
+  - dns ad blocker
+  - maza update
 features:
-- Update the local ad blocking database
-- Start the Maza ad blocker service
-- Stop the Maza ad blocker service
-- Check the current status of Maza
-- Block ads system-wide
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update the local ad blocking database
+  - Start the Maza ad blocker service
+  - Stop the Maza ad blocker service
+  - Check the current status of Maza
+  - Block ads system-wide
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # maza

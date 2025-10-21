@@ -1,29 +1,29 @@
 ---
-title: "Cypher Query - Run Queries on Neo4j | Online Free DevTools by Hexmos"
+title: 'Cypher Query - Run Queries on Neo4j | Online Free DevTools by Hexmos'
 name: cypher-shell
-path: "/freedevtools/tldr/common/cypher-shell/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cypher-shell/"
-description: "Run Cypher queries with cypher-shell. Connect to Neo4j instances, execute Cypher statements and manage your database. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cypher-shell/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cypher-shell/'
+description: 'Run Cypher queries with cypher-shell. Connect to Neo4j instances, execute Cypher statements and manage your database. Free online tool, no registration required.'
 category: common
 keywords:
-- Neo4j Cypher query
-- graph database query
-- Cypher shell command
-- Neo4j command line
-- database query tool
-- graph query language
-- Neo4j query execution
-- database management tool
-- cypher-shell Neo4j
-- graph database shell
+  - Neo4j Cypher query
+  - graph database query
+  - Cypher shell command
+  - Neo4j command line
+  - database query tool
+  - graph query language
+  - Neo4j query execution
+  - database management tool
+  - cypher-shell Neo4j
+  - graph database shell
 features:
-- Connect to local or remote Neo4j instances
-- Execute Cypher queries from files
-- Authenticate with usernames and passwords
-- Specify a target database for queries
-- Log command output to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to local or remote Neo4j instances
+  - Execute Cypher queries from files
+  - Authenticate with usernames and passwords
+  - Specify a target database for queries
+  - Log command output to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cypher-shell

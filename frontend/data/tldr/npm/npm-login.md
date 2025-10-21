@@ -1,29 +1,29 @@
 ---
-title: "NPM Login - Manage User Accounts | Online Free DevTools by Hexmos"
+title: 'NPM Login - Manage User Accounts | Online Free DevTools by Hexmos'
 name: npm-login
-path: "/freedevtools/tldr/npm/npm-login/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-login/"
-description: "Manage NPM user accounts with NPM Login. Authenticate to registries and securely store credentials. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-login/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-login/'
+description: 'Manage NPM user accounts with NPM Login. Authenticate to registries and securely store credentials. Free online tool, no registration required.'
 category: common
 keywords:
-- npm login
-- npm registry login
-- node package manager login
-- javascript package login
-- npm authentication
-- npm credentials management
-- npm login command line
-- npm login online
-- npm user account
-- npm security
+  - npm login
+  - npm registry login
+  - node package manager login
+  - javascript package login
+  - npm authentication
+  - npm credentials management
+  - npm login command line
+  - npm login online
+  - npm user account
+  - npm security
 features:
-- Authenticate to NPM registries.
-- Securely store credentials in the .npmrc file.
-- Log in using a custom registry URL.
-- Support legacy and web authentication strategies.
-- Manage user accounts via the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate to NPM registries.
+  - Securely store credentials in the .npmrc file.
+  - Log in using a custom registry URL.
+  - Support legacy and web authentication strategies.
+  - Manage user accounts via the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm login

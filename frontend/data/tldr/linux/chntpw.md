@@ -1,9 +1,9 @@
 ---
-title: "chntpw - Reset Windows Passwords | Online Free DevTools by Hexmos"
+title: 'chntpw - Reset Windows Passwords | Online Free DevTools by Hexmos'
 name: chntpw
-path: "/freedevtools/tldr/linux/chntpw/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chntpw/"
-description: "Reset Windows passwords easily with chntpw.  Manage user accounts and elevate privileges using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/chntpw/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chntpw/'
+description: 'Reset Windows passwords easily with chntpw.  Manage user accounts and elevate privileges using command-line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - windows password reset
@@ -22,8 +22,8 @@ features:
   - Reset or change user passwords.
   - Promote users to administrators.
   - Modify the Windows Security Account Manager (SAM).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chntpw

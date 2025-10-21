@@ -1,29 +1,29 @@
 ---
-title: "Redirect Input - Control Input Streams | Online Free DevTools by Hexmos"
+title: 'Redirect Input - Control Input Streams | Online Free DevTools by Hexmos'
 name: less-than
-path: "/freedevtools/tldr/less/less-than/"
-canonical: "https://hexmos.com/freedevtools/tldr/less/less-than/"
-description: "Control input streams with Redirect Input (<). Manipulate stdin with files, here documents, and here strings. Free online tool, no registration required."
+path: '/freedevtools/tldr/less/less-than/'
+canonical: 'https://hexmos.com/freedevtools/tldr/less/less-than/'
+description: 'Control input streams with Redirect Input (<). Manipulate stdin with files, here documents, and here strings. Free online tool, no registration required.'
 category: common
 keywords:
-- stdin redirection
-- bash input redirection
-- command line input
-- here document
-- here string
-- file redirection
-- process substitution
-- file descriptor redirection
-- linux input stream
-- input stream control
+  - stdin redirection
+  - bash input redirection
+  - command line input
+  - here document
+  - here string
+  - file redirection
+  - process substitution
+  - file descriptor redirection
+  - linux input stream
+  - input stream control
 features:
-- Redirect file content to stdin
-- Pass multiline text to stdin using here documents
-- Pass strings to stdin using here strings
-- Redirect command output to a file descriptor
-- Disregard leading tabs in here documents
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Redirect file content to stdin
+  - Pass multiline text to stdin using here documents
+  - Pass strings to stdin using here strings
+  - Redirect command output to a file descriptor
+  - Disregard leading tabs in here documents
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # <

@@ -1,29 +1,29 @@
 ---
-title: "Zip Archive - Package and Compress Files | Online Free DevTools by Hexmos"
+title: 'Zip Archive - Package and Compress Files | Online Free DevTools by Hexmos'
 name: zip
-path: "/freedevtools/tldr/common/zip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zip/"
-description: "Package and compress files with Zip Archive. Create, update, and manage zip files easily using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zip/'
+description: 'Package and compress files with Zip Archive. Create, update, and manage zip files easily using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- "zip archive creation"
-- "file compression"
-- "zip file management"
-- "linux zip command"
-- "macos zip utility"
-- "archive management command"
-- "compressed file packaging"
-- "zip file encryption"
-- "split zip archive"
-- "zip file extraction"
+  - 'zip archive creation'
+  - 'file compression'
+  - 'zip file management'
+  - 'linux zip command'
+  - 'macos zip utility'
+  - 'archive management command'
+  - 'compressed file packaging'
+  - 'zip file encryption'
+  - 'split zip archive'
+  - 'zip file extraction'
 features:
-- "Add files and directories to a zip archive."
-- "Remove files and directories from a zip archive."
-- "Exclude specific files and directories from an archive."
-- "Create zip archives with specific compression levels."
-- "Create encrypted zip archives with password protection."
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - 'Add files and directories to a zip archive.'
+  - 'Remove files and directories from a zip archive.'
+  - 'Exclude specific files and directories from an archive.'
+  - 'Create zip archives with specific compression levels.'
+  - 'Create encrypted zip archives with password protection.'
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zip

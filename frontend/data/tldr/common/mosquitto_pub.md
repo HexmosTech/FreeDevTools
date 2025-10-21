@@ -1,29 +1,29 @@
 ---
-title: "Publish MQTT Messages - Control IoT Devices | Online Free DevTools by Hexmos"
+title: 'Publish MQTT Messages - Control IoT Devices | Online Free DevTools by Hexmos'
 name: mosquitto_pub
-path: "/freedevtools/tldr/common/mosquitto_pub/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mosquitto_pub/"
-description: "Publish MQTT messages with Mosquitto Pub, enabling seamless control of IoT devices. Send data to topics, manage QoS, and retain messages for reliable communication. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mosquitto_pub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mosquitto_pub/'
+description: 'Publish MQTT messages with Mosquitto Pub, enabling seamless control of IoT devices. Send data to topics, manage QoS, and retain messages for reliable communication. Free online tool, no registration required.'
 category: common
 keywords:
-- MQTT message publisher
-- IoT device control
-- Mosquitto publish command
-- MQTT client command
-- MQTT topic publisher
-- Command-line MQTT tool
-- MQTT message sending
-- MQTT QoS control
-- MQTT retain message
-- Linux MQTT publish
+  - MQTT message publisher
+  - IoT device control
+  - Mosquitto publish command
+  - MQTT client command
+  - MQTT topic publisher
+  - Command-line MQTT tool
+  - MQTT message sending
+  - MQTT QoS control
+  - MQTT retain message
+  - Linux MQTT publish
 features:
-- Publish messages to MQTT topics
-- Control Quality of Service (QoS) levels
-- Retain messages for persistent storage
-- Send messages from files or standard input
-- Connect to MQTT brokers on specified ports
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Publish messages to MQTT topics
+  - Control Quality of Service (QoS) levels
+  - Retain messages for persistent storage
+  - Send messages from files or standard input
+  - Connect to MQTT brokers on specified ports
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mosquitto_pub

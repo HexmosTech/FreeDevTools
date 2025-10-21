@@ -1,9 +1,9 @@
 ---
-title: "Ping Network Host - Test Network Connectivity | Online Free DevTools by Hexmos"
+title: 'Ping Network Host - Test Network Connectivity | Online Free DevTools by Hexmos'
 name: ping
-path: "/freedevtools/tldr/common/ping/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ping/"
-description: "Test network connectivity with Ping Network Host.  Check network latency and packet loss using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ping/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ping/'
+description: 'Test network connectivity with Ping Network Host.  Check network latency and packet loss using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
   - network connectivity testing
@@ -22,8 +22,8 @@ features:
   - Identify network packet loss.
   - Determine host reachability.
   - Control the number of pings sent and the interval between requests.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ping

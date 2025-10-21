@@ -1,29 +1,29 @@
 ---
-title: "ChatGPT - Generate Text & Images | Online Free DevTools by Hexmos"
+title: 'ChatGPT - Generate Text & Images | Online Free DevTools by Hexmos'
 name: chatgpt
-path: "/freedevtools/tldr/common/chatgpt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chatgpt/"
-description: "Generate text and images with ChatGPT command line tool. Use AI models like GPT-4 for natural language tasks and DALL-E for image creation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chatgpt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chatgpt/'
+description: 'Generate text and images with ChatGPT command line tool. Use AI models like GPT-4 for natural language tasks and DALL-E for image creation. Free online tool, no registration required.'
 category: common
 keywords:
-- ChatGPT shell script
-- command line ChatGPT
-- GPT-3.5 Turbo CLI
-- GPT-4 terminal
-- DALL-E image generation
-- AI prompt engineering
-- terminal chatbot
-- Linux ChatGPT
-- macOS ChatGPT
-- OpenAI command line
+  - ChatGPT shell script
+  - command line ChatGPT
+  - GPT-3.5 Turbo CLI
+  - GPT-4 terminal
+  - DALL-E image generation
+  - AI prompt engineering
+  - terminal chatbot
+  - Linux ChatGPT
+  - macOS ChatGPT
+  - OpenAI command line
 features:
-- Generate text-based responses from prompts.
-- Create images using DALL-E directly from the terminal.
-- Initiate interactive chat sessions with different GPT models.
-- Pipe command output as input for generating contextual responses.
-- Customize chatbot behavior with initial prompts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate text-based responses from prompts.
+  - Create images using DALL-E directly from the terminal.
+  - Initiate interactive chat sessions with different GPT models.
+  - Pipe command output as input for generating contextual responses.
+  - Customize chatbot behavior with initial prompts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chatgpt

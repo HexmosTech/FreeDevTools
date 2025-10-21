@@ -1,29 +1,29 @@
 ---
-title: "Generate Static Sites - Control Site Building with Hugo | Online Free DevTools by Hexmos"
+title: 'Generate Static Sites - Control Site Building with Hugo | Online Free DevTools by Hexmos'
 name: hugo
-path: "/freedevtools/tldr/common/hugo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hugo/"
-description: "Generate static sites quickly and easily with Hugo. Build and manage websites using themes, templates, and components. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hugo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hugo/'
+description: 'Generate static sites quickly and easily with Hugo. Build and manage websites using themes, templates, and components. Free online tool, no registration required.'
 category: common
 keywords:
-- static site generator
-- hugo static site
-- hugo theme builder
-- hugo module management
-- website deployment
-- website builder
-- static website generator
-- gohugo commands
-- hugo server
-- hugo build
+  - static site generator
+  - hugo static site
+  - hugo theme builder
+  - hugo module management
+  - website deployment
+  - website builder
+  - static website generator
+  - gohugo commands
+  - hugo server
+  - hugo build
 features:
-- Generate new Hugo sites
-- Create custom Hugo themes
-- Build websites from markdown content
-- Automatically reload on page edits
-- Build sites with draft content included
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate new Hugo sites
+  - Create custom Hugo themes
+  - Build websites from markdown content
+  - Automatically reload on page edits
+  - Build sites with draft content included
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hugo

@@ -1,29 +1,29 @@
 ---
-title: "Execute Command as User - Control Privileges with doas | Online Free DevTools by Hexmos"
+title: 'Execute Command as User - Control Privileges with doas | Online Free DevTools by Hexmos'
 name: doas
-path: "/freedevtools/tldr/common/doas/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/doas/"
-description: "Execute commands as user with doas. Control user privileges and manage system access with this versatile command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/doas/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/doas/'
+description: 'Execute commands as user with doas. Control user privileges and manage system access with this versatile command. Free online tool, no registration required.'
 category: common
 keywords:
-- command execution as user
-- doas privilege escalation
-- execute command as root
-- linux command execution
-- openbsd doas command
-- user privilege management
-- doas configuration file parsing
-- command line privilege control
-- su alternative
-- sudo alternative
+  - command execution as user
+  - doas privilege escalation
+  - execute command as root
+  - linux command execution
+  - openbsd doas command
+  - user privilege management
+  - doas configuration file parsing
+  - command line privilege control
+  - su alternative
+  - sudo alternative
 features:
-- Execute commands as root or another user.
-- Launch the default shell with elevated privileges.
-- Parse configuration files to check command execution permissions.
-- Request password authentication for enhanced security.
-- Manage user access with granular control.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands as root or another user.
+  - Launch the default shell with elevated privileges.
+  - Parse configuration files to check command execution permissions.
+  - Request password authentication for enhanced security.
+  - Manage user access with granular control.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doas

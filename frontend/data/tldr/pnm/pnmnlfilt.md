@@ -1,29 +1,29 @@
 ---
-title: "Filter PNM Image - Apply Non-Linear Filters | Online Free DevTools by Hexmos"
+title: 'Filter PNM Image - Apply Non-Linear Filters | Online Free DevTools by Hexmos'
 name: pnmnlfilt
-path: "/freedevtools/tldr/pnm/pnmnlfilt/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmnlfilt/"
-description: "Filter PNM images with pnmnlfilt. Apply alpha trimmed mean, optimal smoothing, and edge enhancement filters. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmnlfilt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmnlfilt/'
+description: 'Filter PNM images with pnmnlfilt. Apply alpha trimmed mean, optimal smoothing, and edge enhancement filters. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image filter
-- Non-linear filter PNM
-- Image smoothing tool
-- PNM image enhancement
-- Netpbm image processing
-- Alpha trimmed mean filter
-- Optimal estimation smoothing
-- Edge enhancement filter
-- PNM image manipulation
-- Command line image filter
+  - PNM image filter
+  - Non-linear filter PNM
+  - Image smoothing tool
+  - PNM image enhancement
+  - Netpbm image processing
+  - Alpha trimmed mean filter
+  - Optimal estimation smoothing
+  - Edge enhancement filter
+  - PNM image manipulation
+  - Command line image filter
 features:
-- Apply alpha trimmed mean filter to PNM images
-- Apply optimal estimation smoothing filter to PNM images
-- Apply edge enhancement filter to PNM images
-- Manipulate PNM image pixel values
-- Process PNM images from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Apply alpha trimmed mean filter to PNM images
+  - Apply optimal estimation smoothing filter to PNM images
+  - Apply edge enhancement filter to PNM images
+  - Manipulate PNM image pixel values
+  - Process PNM images from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmnlfilt

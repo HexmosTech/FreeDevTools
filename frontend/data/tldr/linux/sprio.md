@@ -1,29 +1,29 @@
 ---
-title: "SPRIO - View Job Scheduling Priority | Online Free DevTools by Hexmos"
+title: 'SPRIO - View Job Scheduling Priority | Online Free DevTools by Hexmos'
 name: sprio
-path: "/freedevtools/tldr/linux/sprio/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sprio/"
-description: "View job scheduling priority with SPRIO. Analyze factors influencing job prioritization in Slurm. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sprio/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sprio/'
+description: 'View job scheduling priority with SPRIO. Analyze factors influencing job prioritization in Slurm. Free online tool, no registration required.'
 category: linux
 keywords:
-- Slurm job priority
-- SPRIO scheduling factors
-- Linux job management
-- SPRIO command line
-- Slurm workload manager
-- Linux scheduling priority
-- Job prioritization analysis
-- SPRIO job weights
-- Linux user jobs
-- Slurm job diagnostics
+  - Slurm job priority
+  - SPRIO scheduling factors
+  - Linux job management
+  - SPRIO command line
+  - Slurm workload manager
+  - Linux scheduling priority
+  - Job prioritization analysis
+  - SPRIO job weights
+  - Linux user jobs
+  - Slurm job diagnostics
 features:
-- View factors determining job scheduling priority
-- Analyze job prioritization in Slurm
-- Output additional job scheduling information
-- View information for jobs of specified users
-- Print weights for job scheduling factors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View factors determining job scheduling priority
+  - Analyze job prioritization in Slurm
+  - Output additional job scheduling information
+  - View information for jobs of specified users
+  - Print weights for job scheduling factors
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sprio

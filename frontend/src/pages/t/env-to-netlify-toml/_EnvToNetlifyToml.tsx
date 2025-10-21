@@ -1,42 +1,42 @@
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CopyButton from "@/components/ui/copy-button";
-import { Label } from "@/components/ui/label";
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolVideo from '@/components/tool/ToolVideo';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CopyButton from '@/components/ui/copy-button';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import React, { useCallback, useEffect, useState } from "react";
-import AdBanner from "../../../components/banner/AdBanner";
-import EnvToNetlifyTomlSkeleton from "./_EnvToNetlifyTomlSkeleton";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import React, { useCallback, useEffect, useState } from 'react';
+import AdBanner from '../../../components/banner/AdBanner';
+import EnvToNetlifyTomlSkeleton from './_EnvToNetlifyTomlSkeleton';
 
 // Environment context types for Netlify
-type ContextType = "production" | "deploy-preview" | "branch-deploy" | "dev";
+type ContextType = 'production' | 'deploy-preview' | 'branch-deploy' | 'dev';
 
 // Utility function to convert .env to netlify.toml format
 const convertEnvToNetlifyToml = (
   envContent: string,
-  context: ContextType = "production"
+  context: ContextType = 'production'
 ): string => {
-  if (!envContent.trim()) return "";
+  if (!envContent.trim()) return '';
 
   try {
-    const lines = envContent.split("\n");
+    const lines = envContent.split('\n');
     const variables: Record<string, string> = {};
 
     for (const line of lines) {
       // Skip empty lines and comments
-      if (!line.trim() || line.trim().startsWith("#")) continue;
+      if (!line.trim() || line.trim().startsWith('#')) continue;
 
       // Parse KEY=VALUE format
       const match = line.match(/^([^=]+)=(.*)$/);
@@ -57,7 +57,7 @@ const convertEnvToNetlifyToml = (
     }
 
     if (Object.keys(variables).length === 0) {
-      return "# No valid environment variables found";
+      return '# No valid environment variables found';
     }
 
     // Generate netlify.toml content
@@ -76,17 +76,17 @@ const convertEnvToNetlifyToml = (
     return tomlContent;
   } catch (error) {
     throw new Error(
-      "Failed to parse environment variables. Please check your .env format."
+      'Failed to parse environment variables. Please check your .env format.'
     );
   }
 };
 
 const EnvToNetlifyToml: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
-  const [context, setContext] = useState<ContextType>("production");
+  const [context, setContext] = useState<ContextType>('production');
 
   useEffect(() => {
     // Simulate loading time
@@ -99,10 +99,10 @@ const EnvToNetlifyToml: React.FC = () => {
   const handleInputChange = useCallback(
     (value: string) => {
       setInput(value);
-      setError("");
+      setError('');
 
       if (!value.trim()) {
-        setOutput("");
+        setOutput('');
         return;
       }
 
@@ -113,9 +113,9 @@ const EnvToNetlifyToml: React.FC = () => {
         const errorMessage =
           err instanceof Error
             ? err.message
-            : "Failed to convert environment variables";
+            : 'Failed to convert environment variables';
         setError(errorMessage);
-        setOutput("");
+        setOutput('');
       }
     },
     [context]
@@ -132,9 +132,9 @@ const EnvToNetlifyToml: React.FC = () => {
   );
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   const sampleEnv = `# Database configuration
@@ -230,14 +230,14 @@ DEBUG_MODE=false`;
                     </SelectContent>
                   </Select>
                   <div className="text-xs text-slate-500 dark:text-slate-400">
-                    {context === "production" &&
-                      "Variables for production deployments (main branch)"}
-                    {context === "deploy-preview" &&
-                      "Variables for deploy preview builds (pull requests)"}
-                    {context === "branch-deploy" &&
-                      "Variables for branch deployments"}
-                    {context === "dev" &&
-                      "Variables for local development environment"}
+                    {context === 'production' &&
+                      'Variables for production deployments (main branch)'}
+                    {context === 'deploy-preview' &&
+                      'Variables for deploy preview builds (pull requests)'}
+                    {context === 'branch-deploy' &&
+                      'Variables for branch deployments'}
+                    {context === 'dev' &&
+                      'Variables for local development environment'}
                   </div>
                 </div>
 

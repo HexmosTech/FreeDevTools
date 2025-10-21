@@ -1,9 +1,9 @@
 ---
-title: "Disk Space Usage - Analyze Filesystem with df | Online Free DevTools by Hexmos"
+title: 'Disk Space Usage - Analyze Filesystem with df | Online Free DevTools by Hexmos'
 name: df
-path: "/freedevtools/tldr/netbsd/df/"
-canonical: "https://hexmos.com/freedevtools/tldr/netbsd/df/"
-description: "Analyze disk space usage with df, a NetBSD command line tool. Monitor filesystem utilization and storage capacity reporting. Free online tool, no registration required."
+path: '/freedevtools/tldr/netbsd/df/'
+canonical: 'https://hexmos.com/freedevtools/tldr/netbsd/df/'
+description: 'Analyze disk space usage with df, a NetBSD command line tool. Monitor filesystem utilization and storage capacity reporting. Free online tool, no registration required.'
 category: netbsd
 keywords:
   - disk space usage analysis
@@ -22,8 +22,8 @@ features:
   - report inode usage statistics on netbsd
   - display all filesystem information details
   - report disk space usage in different unit sizes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # df

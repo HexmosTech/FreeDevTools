@@ -1,9 +1,9 @@
 ---
-title: "Manage Packages - Control Apt with apt-mark | Online Free DevTools by Hexmos"
+title: 'Manage Packages - Control Apt with apt-mark | Online Free DevTools by Hexmos'
 name: apt-mark
-path: "/freedevtools/tldr/linux/apt-mark/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-mark/"
-description: "Control package installations with apt-mark.  Manage updates, hold packages, and view installation status efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apt-mark/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apt-mark/'
+description: 'Control package installations with apt-mark.  Manage updates, hold packages, and view installation status efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package management
@@ -22,8 +22,8 @@ features:
   - Allow updates for previously held packages (unhold).
   - List manually installed packages.
   - Display packages currently held from updates.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apt-mark

@@ -1,29 +1,29 @@
 ---
-title: "Nix Repl - Evaluate Nix Expressions | Online Free DevTools by Hexmos"
+title: 'Nix Repl - Evaluate Nix Expressions | Online Free DevTools by Hexmos'
 name: nix-repl
-path: "/freedevtools/tldr/nix/nix-repl/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-repl/"
-description: "Evaluate Nix expressions effortlessly with Nix Repl. Start interactive Nix environments to build packages and manage dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-repl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-repl/'
+description: 'Evaluate Nix expressions effortlessly with Nix Repl. Start interactive Nix environments to build packages and manage dependencies. Free online tool, no registration required.'
 category: common
 keywords:
-- nix expression evaluation
-- nix repl environment
-- nix package building
-- nix dependency management
-- nix interactive shell
-- nixos repl
-- linux nix repl
-- macos nix repl
-- nix flake packages
-- nix expression language
+  - nix expression evaluation
+  - nix repl environment
+  - nix package building
+  - nix dependency management
+  - nix interactive shell
+  - nixos repl
+  - linux nix repl
+  - macos nix repl
+  - nix flake packages
+  - nix expression language
 features:
-- Evaluate Nix expressions interactively
-- Load packages from a Nix flake
-- Build packages from Nix expressions
-- Start shells with available packages
-- Start shells with package dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Evaluate Nix expressions interactively
+  - Load packages from a Nix flake
+  - Build packages from Nix expressions
+  - Start shells with available packages
+  - Start shells with package dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix repl

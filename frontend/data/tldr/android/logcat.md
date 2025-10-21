@@ -1,9 +1,9 @@
 ---
-title: "Android Logcat - Monitor System Logs | Online Free DevTools by Hexmos"
+title: 'Android Logcat - Monitor System Logs | Online Free DevTools by Hexmos'
 name: logcat
-path: "/freedevtools/tldr/android/logcat/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/logcat/"
-description: "Monitor Android system logs with Logcat. Analyze application errors and system events in real-time for faster debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/logcat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/logcat/'
+description: 'Monitor Android system logs with Logcat. Analyze application errors and system events in real-time for faster debugging. Free online tool, no registration required.'
 category: android
 keywords:
   - android system logs
@@ -22,8 +22,8 @@ features:
   - filter logs using regular expressions
   - display logs for a specific process ID
   - display logs for a specific package
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # logcat

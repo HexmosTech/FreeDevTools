@@ -1,29 +1,29 @@
 ---
-title: "Search Linux Packages - Find Files with pkgfile | Online Free DevTools by Hexmos"
+title: 'Search Linux Packages - Find Files with pkgfile | Online Free DevTools by Hexmos'
 name: pkgfile
-path: "/freedevtools/tldr/linux/pkgfile/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgfile/"
-description: "Search for files within Linux packages using pkgfile. Easily identify the package containing a specific file. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pkgfile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pkgfile/'
+description: 'Search for files within Linux packages using pkgfile. Easily identify the package containing a specific file. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux package search
-- find file in package
-- arch linux package manager
-- pkgfile file lookup
-- locate linux file owner
-- resolve package dependency
-- arch package database
-- linux command line tools
-- package version lookup
-- linux file system search
+  - linux package search
+  - find file in package
+  - arch linux package manager
+  - pkgfile file lookup
+  - locate linux file owner
+  - resolve package dependency
+  - arch package database
+  - linux command line tools
+  - package version lookup
+  - linux file system search
 features:
-- Search for packages owning a specific file
-- List all files provided by a package
-- Locate executables provided by a package
-- Perform case-insensitive file searches
-- Search for files within specific repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for packages owning a specific file
+  - List all files provided by a package
+  - Locate executables provided by a package
+  - Perform case-insensitive file searches
+  - Search for files within specific repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkgfile

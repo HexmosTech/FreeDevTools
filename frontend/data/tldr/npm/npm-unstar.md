@@ -1,29 +1,29 @@
 ---
-title: "Unstar NPM Package - Remove Package Stars | Online Free DevTools by Hexmos"
+title: 'Unstar NPM Package - Remove Package Stars | Online Free DevTools by Hexmos'
 name: npm-unstar
-path: "/freedevtools/tldr/npm/npm-unstar/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-unstar/"
-description: "Unstar NPM packages effortlessly with NPM Unstar. Remove starred packages from your NPM registry and manage your favorite packages easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-unstar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-unstar/'
+description: 'Unstar NPM packages effortlessly with NPM Unstar. Remove starred packages from your NPM registry and manage your favorite packages easily. Free online tool, no registration required.'
 category: common
 keywords:
-- npm unstar
-- npm remove star
-- npm package manager
-- javascript package management
-- node package unstar
-- command line tools
-- npm cli
-- npm registry management
-- package unstarring
-- npm package removal
+  - npm unstar
+  - npm remove star
+  - npm package manager
+  - javascript package management
+  - node package unstar
+  - command line tools
+  - npm cli
+  - npm registry management
+  - package unstarring
+  - npm package removal
 features:
-- Remove a package from your starred list.
-- Unstar packages from specific NPM registries.
-- Support for authentication when unstarring private packages.
-- Utilize OTP for two-factor authentication.
-- Control logging level during the unstarring process.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove a package from your starred list.
+  - Unstar packages from specific NPM registries.
+  - Support for authentication when unstarring private packages.
+  - Utilize OTP for two-factor authentication.
+  - Control logging level during the unstarring process.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm unstar

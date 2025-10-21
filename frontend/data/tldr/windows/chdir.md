@@ -1,29 +1,29 @@
 ---
-title: "Change Directory - Control File Paths on Windows | Online Free DevTools by Hexmos"
+title: 'Change Directory - Control File Paths on Windows | Online Free DevTools by Hexmos'
 name: chdir
-path: "/freedevtools/tldr/windows/chdir/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/chdir/"
-description: "Control file paths instantly with Change Directory on Windows. Quickly navigate directories and manage file system paths using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/chdir/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/chdir/'
+description: 'Control file paths instantly with Change Directory on Windows. Quickly navigate directories and manage file system paths using the command line. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows change directory
-- windows cd command
-- windows chdir command
-- command prompt change directory
-- powershell change directory
-- directory navigation windows
-- path manipulation windows
-- file system control windows
-- command line file path
-- windows directory traversal
+  - windows change directory
+  - windows cd command
+  - windows chdir command
+  - command prompt change directory
+  - powershell change directory
+  - directory navigation windows
+  - path manipulation windows
+  - file system control windows
+  - command line file path
+  - windows directory traversal
 features:
-- Navigate to specified directories
-- Change current working directory
-- Support relative and absolute paths
-- Seamlessly switch between drives
-- Compatible with Command Prompt and PowerShell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Navigate to specified directories
+  - Change current working directory
+  - Support relative and absolute paths
+  - Seamlessly switch between drives
+  - Compatible with Command Prompt and PowerShell
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chdir

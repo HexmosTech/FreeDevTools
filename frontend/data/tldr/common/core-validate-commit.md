@@ -1,29 +1,29 @@
 ---
-title: "Validate Commit - Validate Node.js Commits | Online Free DevTools by Hexmos"
+title: 'Validate Commit - Validate Node.js Commits | Online Free DevTools by Hexmos'
 name: core-validate-commit
-path: "/freedevtools/tldr/common/core-validate-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/core-validate-commit/"
-description: "Validate commit messages with core-validate-commit for Node.js. Ensure code quality with commit validation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/core-validate-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/core-validate-commit/'
+description: 'Validate commit messages with core-validate-commit for Node.js. Ensure code quality with commit validation. Free online tool, no registration required.'
 category: common
 keywords:
-- Node.js commit validation
-- Commit message validator
-- Core validate commit
-- Git commit message linting
-- Node.js contribution guidelines
-- Command line commit validation
-- Validate git commits
-- Node.js commit checker
-- Commit style guide enforcement
-- Node.js core contribution
+  - Node.js commit validation
+  - Commit message validator
+  - Core validate commit
+  - Git commit message linting
+  - Node.js contribution guidelines
+  - Command line commit validation
+  - Validate git commits
+  - Node.js commit checker
+  - Commit style guide enforcement
+  - Node.js core contribution
 features:
-- Validate commit messages against Node.js core guidelines
-- Check for correct commit formatting
-- List available validation rules
-- Verify Node.js subsystem declarations
-- Generate tap format output for CI integration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validate commit messages against Node.js core guidelines
+  - Check for correct commit formatting
+  - List available validation rules
+  - Verify Node.js subsystem declarations
+  - Generate tap format output for CI integration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # core-validate-commit

@@ -1,9 +1,9 @@
 ---
-title: "Vkpurge - Remove Old Kernels | Online Free DevTools by Hexmos"
+title: 'Vkpurge - Remove Old Kernels | Online Free DevTools by Hexmos'
 name: vkpurge
-path: "/freedevtools/tldr/linux/vkpurge/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/vkpurge/"
-description: "Remove old kernel versions with Vkpurge, reclaiming disk space and ensuring system stability. Manage kernel versions effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/vkpurge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/vkpurge/'
+description: 'Remove old kernel versions with Vkpurge, reclaiming disk space and ensuring system stability. Manage kernel versions effectively. Free online tool, no registration required.'
 category: linux
 keywords:
   - kernel cleanup
@@ -22,8 +22,8 @@ features:
   - Remove all unused kernel versions
   - Reclaim disk space by deleting old kernels
   - Simplify kernel management on Void Linux systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vkpurge

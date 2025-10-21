@@ -1,29 +1,29 @@
 ---
-title: "Query CloudWatch Logs - Analyze AWS Logs with awslogs | Online Free DevTools by Hexmos"
+title: 'Query CloudWatch Logs - Analyze AWS Logs with awslogs | Online Free DevTools by Hexmos'
 name: awslogs
-path: "/freedevtools/tldr/aws/awslogs/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/awslogs/"
-description: "Analyze AWS CloudWatch logs efficiently with awslogs. Query log groups, streams, and events to troubleshoot issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/awslogs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/awslogs/'
+description: 'Analyze AWS CloudWatch logs efficiently with awslogs. Query log groups, streams, and events to troubleshoot issues. Free online tool, no registration required.'
 category: common
 keywords:
-- cloudwatch logs query
-- aws logs analysis
-- awslogs command line
-- cloudwatch logs filter
-- aws logs monitoring
-- cloudwatch log stream
-- aws cloudwatch logs search
-- linux awslogs
-- macos awslogs
-- cloudwatch logs events
+  - cloudwatch logs query
+  - aws logs analysis
+  - awslogs command line
+  - cloudwatch logs filter
+  - aws logs monitoring
+  - cloudwatch log stream
+  - aws cloudwatch logs search
+  - linux awslogs
+  - macos awslogs
+  - cloudwatch logs events
 features:
-- Query CloudWatch log groups
-- List available log streams
-- Retrieve logs based on time range
-- Filter logs using patterns
-- Watch logs in real-time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Query CloudWatch log groups
+  - List available log streams
+  - Retrieve logs based on time range
+  - Filter logs using patterns
+  - Watch logs in real-time
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # awslogs

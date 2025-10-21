@@ -1,9 +1,9 @@
 ---
-title: "Journalctl - Query Systemd Logs | Online Free DevTools by Hexmos"
+title: 'Journalctl - Query Systemd Logs | Online Free DevTools by Hexmos'
 name: journalctl
-path: "/freedevtools/tldr/linux/journalctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/journalctl/"
-description: "Query and manage systemd journal logs with journalctl. Filter, view, and delete logs efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/journalctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/journalctl/'
+description: 'Query and manage systemd journal logs with journalctl. Filter, view, and delete logs efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd log query
@@ -22,8 +22,8 @@ features:
   - Delete old logs to free up disk space.
   - Follow new log messages in real-time.
   - Analyze logs from specific systemd units or processes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # journalctl

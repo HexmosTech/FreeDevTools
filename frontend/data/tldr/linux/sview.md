@@ -1,9 +1,9 @@
 ---
-title: "Slurm View - Control Slurm State with GUI | Online Free DevTools by Hexmos"
+title: 'Slurm View - Control Slurm State with GUI | Online Free DevTools by Hexmos'
 name: sview
-path: "/freedevtools/tldr/linux/sview/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sview/"
-description: "Control Slurm cluster state efficiently with Slurm View (sview). Monitor jobs, manage partitions, and diagnose issues via a graphical interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sview/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sview/'
+description: 'Control Slurm cluster state efficiently with Slurm View (sview). Monitor jobs, manage partitions, and diagnose issues via a graphical interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - Slurm GUI
@@ -22,8 +22,8 @@ features:
   - Manage Slurm partitions and nodes interactively
   - Monitor and diagnose Slurm job performance
   - View Slurm job queues and resource allocation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sview

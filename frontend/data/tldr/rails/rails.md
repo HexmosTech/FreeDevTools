@@ -1,29 +1,29 @@
 ---
-title: "Create Rails Projects - MVC Framework | Online Free DevTools by Hexmos"
+title: 'Create Rails Projects - MVC Framework | Online Free DevTools by Hexmos'
 name: rails
-path: "/freedevtools/tldr/rails/rails/"
-canonical: "https://hexmos.com/freedevtools/tldr/rails/rails/"
-description: "Create projects instantly with Rails, the server-side MVC framework. Generate scaffolds, run migrations, and start servers easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/rails/rails/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rails/rails/'
+description: 'Create projects instantly with Rails, the server-side MVC framework. Generate scaffolds, run migrations, and start servers easily. Free online tool, no registration required.'
 category: common
 keywords:
-- rails framework
-- ruby on rails
-- rails command line
-- rails generate scaffold
-- rails db migrate
-- rails server
-- rails console
-- rails routes
-- mvc framework
-- ruby framework
+  - rails framework
+  - ruby on rails
+  - rails command line
+  - rails generate scaffold
+  - rails db migrate
+  - rails server
+  - rails console
+  - rails routes
+  - mvc framework
+  - ruby framework
 features:
-- Generate new Rails projects
-- Scaffold models with predefined attributes
-- Run database migrations
-- List available routes
-- Start a local server for development
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate new Rails projects
+  - Scaffold models with predefined attributes
+  - Run database migrations
+  - List available routes
+  - Start a local server for development
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rails

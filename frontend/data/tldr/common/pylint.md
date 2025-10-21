@@ -1,29 +1,29 @@
 ---
-title: "Validate Python Code - Pylint Code Linter | Online Free DevTools by Hexmos"
+title: 'Validate Python Code - Pylint Code Linter | Online Free DevTools by Hexmos'
 name: pylint
-path: "/freedevtools/tldr/common/pylint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pylint/"
-description: "Validate Python code with Pylint, a powerful code linter. Improve code quality and catch errors early. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pylint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pylint/'
+description: 'Validate Python code with Pylint, a powerful code linter. Improve code quality and catch errors early. Free online tool, no registration required.'
 category: common
 keywords:
-- Python code linting
-- Python static analysis
-- Python code style check
-- Python code quality
-- Python error detection
-- Python bug finder
-- Pylint configuration
-- Pylint command line
-- Pylint disable errors
-- Pylint code metrics
+  - Python code linting
+  - Python static analysis
+  - Python code style check
+  - Python code quality
+  - Python error detection
+  - Python bug finder
+  - Pylint configuration
+  - Pylint command line
+  - Pylint disable errors
+  - Pylint code metrics
 features:
-- Check Python code for errors and potential problems
-- Enforce coding style standards
-- Disable specific error codes
-- Use custom configuration files
-- Analyze code quality metrics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check Python code for errors and potential problems
+  - Enforce coding style standards
+  - Disable specific error codes
+  - Use custom configuration files
+  - Analyze code quality metrics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pylint

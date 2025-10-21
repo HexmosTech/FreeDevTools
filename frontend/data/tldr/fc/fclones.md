@@ -1,29 +1,29 @@
 ---
-title: "Find Duplicate Files - fclones | Online Free DevTools by Hexmos"
+title: 'Find Duplicate Files - fclones | Online Free DevTools by Hexmos'
 name: fclones
-path: "/freedevtools/tldr/fc/fclones/"
-canonical: "https://hexmos.com/freedevtools/tldr/fc/fclones/"
-description: "Find duplicate files with fclones, an efficient file comparison tool. Quickly identify and manage redundant files on your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/fc/fclones/'
+canonical: 'https://hexmos.com/freedevtools/tldr/fc/fclones/'
+description: 'Find duplicate files with fclones, an efficient file comparison tool. Quickly identify and manage redundant files on your system. Free online tool, no registration required.'
 category: common
 keywords:
-- duplicate file finder
-- file duplicate remover
-- duplicate file comparison
-- find duplicate files Linux
-- find duplicate files MacOS
-- fclones command line
-- file deduplication
-- disk space analyzer
-- file integrity checker
-- remove duplicate files
+  - duplicate file finder
+  - file duplicate remover
+  - duplicate file comparison
+  - find duplicate files Linux
+  - find duplicate files MacOS
+  - fclones command line
+  - file deduplication
+  - disk space analyzer
+  - file integrity checker
+  - remove duplicate files
 features:
-- Group duplicate files based on content
-- Move or delete duplicate files
-- Create hard or soft links to deduplicate files
-- Transform files before comparison (e.g., remove EXIF data)
-- Cache file hashes for faster subsequent searches
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Group duplicate files based on content
+  - Move or delete duplicate files
+  - Create hard or soft links to deduplicate files
+  - Transform files before comparison (e.g., remove EXIF data)
+  - Cache file hashes for faster subsequent searches
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fclones

@@ -1,29 +1,29 @@
 ---
-title: "Rust Toolchain Manager - Manage Rust Versions | Online Free DevTools by Hexmos"
+title: 'Rust Toolchain Manager - Manage Rust Versions | Online Free DevTools by Hexmos'
 name: rustup
-path: "/freedevtools/tldr/rustup/rustup/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup/"
-description: "Manage Rust toolchains with Rustup. Install, update, and switch between different Rust versions for your projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup/'
+description: 'Manage Rust toolchains with Rustup. Install, update, and switch between different Rust versions for your projects. Free online tool, no registration required.'
 category: common
 keywords:
-- rust toolchain manager
-- rust version manager
-- rust compiler manager
-- rust nightly install
-- rust stable install
-- rust update toolchain
-- rust multi-version
-- rust environment manager
-- rust cross-compilation
-- rust project toolchain
+  - rust toolchain manager
+  - rust version manager
+  - rust compiler manager
+  - rust nightly install
+  - rust stable install
+  - rust update toolchain
+  - rust multi-version
+  - rust environment manager
+  - rust cross-compilation
+  - rust project toolchain
 features:
-- Install specific Rust toolchains (stable, beta, nightly)
-- Update installed Rust toolchains to the latest versions
-- Switch the default Rust toolchain for global use
-- Override the default Rust toolchain for specific projects
-- Run commands with a specified Rust toolchain version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Rust toolchains (stable, beta, nightly)
+  - Update installed Rust toolchains to the latest versions
+  - Switch the default Rust toolchain for global use
+  - Override the default Rust toolchain for specific projects
+  - Run commands with a specified Rust toolchain version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup

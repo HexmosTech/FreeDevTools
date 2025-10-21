@@ -1,29 +1,29 @@
 ---
-title: "Create Block Storage - Manage Exoscale Volumes | Online Free DevTools by Hexmos"
+title: 'Create Block Storage - Manage Exoscale Volumes | Online Free DevTools by Hexmos'
 name: exo-compute-block-storage
-path: "/freedevtools/tldr/exo/exo-compute-block-storage/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute-block-storage/"
-description: "Create Block Storage volumes with Exoscale. Easily manage, attach, detach, and snapshot block storage. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo-compute-block-storage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo-compute-block-storage/'
+description: 'Create Block Storage volumes with Exoscale. Easily manage, attach, detach, and snapshot block storage. Free online tool, no registration required.'
 category: common
 keywords:
-- Exoscale block storage
-- block storage manager
-- volume management
-- cloud storage CLI
-- data storage commands
-- storage volume creation
-- storage volume snapshot
-- exoscale volume attach
-- exoscale volume detach
-- exoscale block storage CLI
+  - Exoscale block storage
+  - block storage manager
+  - volume management
+  - cloud storage CLI
+  - data storage commands
+  - storage volume creation
+  - storage volume snapshot
+  - exoscale volume attach
+  - exoscale volume detach
+  - exoscale block storage CLI
 features:
-- Create Exoscale block storage volumes
-- List available block storage volumes
-- Attach volumes to compute instances
-- Detach volumes from compute instances
-- Create snapshots of block storage volumes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Exoscale block storage volumes
+  - List available block storage volumes
+  - Attach volumes to compute instances
+  - Detach volumes from compute instances
+  - Create snapshots of block storage volumes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo compute block-storage

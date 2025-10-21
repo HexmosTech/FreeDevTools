@@ -1,29 +1,29 @@
 ---
-title: "Format XML to PYX - Convert XML Documents | Online Free DevTools by Hexmos"
+title: 'Format XML to PYX - Convert XML Documents | Online Free DevTools by Hexmos'
 name: xml-pyx
-path: "/freedevtools/tldr/xml/xml-pyx/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-pyx/"
-description: "Format XML with xml-pyx, converting documents to PYX (ESIS) format. Efficiently transform XML data using this free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xml-pyx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xml-pyx/'
+description: 'Format XML with xml-pyx, converting documents to PYX (ESIS) format. Efficiently transform XML data using this free online tool, no registration required.'
 category: common
 keywords:
-- XML to PYX converter
-- PYX format generator
-- XML ESIS conversion
-- XML processing tool
-- Command line XML utility
-- XML transformation tool
-- Linux XML tool
-- macOS XML tool
-- Common XML converter
-- XML formatter
+  - XML to PYX converter
+  - PYX format generator
+  - XML ESIS conversion
+  - XML processing tool
+  - Command line XML utility
+  - XML transformation tool
+  - Linux XML tool
+  - macOS XML tool
+  - Common XML converter
+  - XML formatter
 features:
-- Convert XML documents to PYX format
-- Process XML from stdin
-- Output PYX data to a file
-- Support XMLStarlet transformation
-- Display command help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert XML documents to PYX format
+  - Process XML from stdin
+  - Output PYX data to a file
+  - Support XMLStarlet transformation
+  - Display command help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml pyx

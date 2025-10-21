@@ -1,29 +1,29 @@
 ---
-title: "Ping - Test Network Connectivity on OSX | Online Free DevTools by Hexmos"
+title: 'Ping - Test Network Connectivity on OSX | Online Free DevTools by Hexmos'
 name: ping
-path: "/freedevtools/tldr/osx/ping/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/ping/"
-description: "Test network connectivity with Ping on OSX. Diagnose network issues and verify host reachability using ICMP packets. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/ping/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/ping/'
+description: 'Test network connectivity with Ping on OSX. Diagnose network issues and verify host reachability using ICMP packets. Free online tool, no registration required.'
 category: osx
 keywords:
-- ICMP Echo Request OSX
-- Network Connectivity Tester
-- OSX Ping Command
-- Diagnose Network Issues
-- Verify Host Reachability
-- Command Line Ping
-- OSX Network Tools
-- Network Troubleshooting OSX
-- Ping Statistics
-- Ping Latency Measurement
+  - ICMP Echo Request OSX
+  - Network Connectivity Tester
+  - OSX Ping Command
+  - Diagnose Network Issues
+  - Verify Host Reachability
+  - Command Line Ping
+  - OSX Network Tools
+  - Network Troubleshooting OSX
+  - Ping Statistics
+  - Ping Latency Measurement
 features:
-- Test network connectivity to a specified host
-- Specify the number of ICMP packets to send
-- Define the interval between ping requests
-- Suppress reverse DNS lookup for faster results
-- Print timestamps for received packets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Test network connectivity to a specified host
+  - Specify the number of ICMP packets to send
+  - Define the interval between ping requests
+  - Suppress reverse DNS lookup for faster results
+  - Print timestamps for received packets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ping

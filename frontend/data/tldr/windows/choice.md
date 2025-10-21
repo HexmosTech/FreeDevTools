@@ -1,29 +1,29 @@
 ---
-title: "Control Choice Prompts - Windows Command | Online Free DevTools by Hexmos"
+title: 'Control Choice Prompts - Windows Command | Online Free DevTools by Hexmos'
 name: choice
-path: "/freedevtools/tldr/windows/choice/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/choice/"
-description: "Control user choice prompts with the Windows Choice command. Customize prompts, set default options, and automate interactions. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/choice/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/choice/'
+description: 'Control user choice prompts with the Windows Choice command. Customize prompts, set default options, and automate interactions. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows choice command
-- command-line choice utility
-- interactive prompt tool
-- batch script choice
-- user input prompt
-- console selection tool
-- windows command prompt
-- automated task control
-- default choice selection
-- windows scripting tool
+  - windows choice command
+  - command-line choice utility
+  - interactive prompt tool
+  - batch script choice
+  - user input prompt
+  - console selection tool
+  - windows command prompt
+  - automated task control
+  - default choice selection
+  - windows scripting tool
 features:
-- Customize prompt messages for user interaction
-- Define acceptable choice values for input validation
-- Set default choices for unattended execution
-- Control the timeout for automatic selection
-- Handle case-sensitive choice inputs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Customize prompt messages for user interaction
+  - Define acceptable choice values for input validation
+  - Set default choices for unattended execution
+  - Control the timeout for automatic selection
+  - Handle case-sensitive choice inputs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # choice

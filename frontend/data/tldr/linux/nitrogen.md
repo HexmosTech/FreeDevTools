@@ -1,29 +1,29 @@
 ---
-title: "Control Wallpaper - Set Linux Backgrounds | Online Free DevTools by Hexmos"
+title: 'Control Wallpaper - Set Linux Backgrounds | Online Free DevTools by Hexmos'
 name: nitrogen
-path: "/freedevtools/tldr/linux/nitrogen/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nitrogen/"
-description: "Control your desktop wallpaper with Nitrogen. Effortlessly set Linux backgrounds and manage image directories for a personalized experience. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nitrogen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nitrogen/'
+description: 'Control your desktop wallpaper with Nitrogen. Effortlessly set Linux backgrounds and manage image directories for a personalized experience. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux wallpaper setter
-- set desktop background linux
-- nitrogen wallpaper manager
-- linux image directory browser
-- x window wallpaper control
-- background image tool linux
-- wallpaper configuration linux
-- nitrogen command line
-- linux display manager wallpaper
-- restore wallpaper linux
+  - linux wallpaper setter
+  - set desktop background linux
+  - nitrogen wallpaper manager
+  - linux image directory browser
+  - x window wallpaper control
+  - background image tool linux
+  - wallpaper configuration linux
+  - nitrogen command line
+  - linux display manager wallpaper
+  - restore wallpaper linux
 features:
-- Set wallpapers from a specified directory.
-- Automatically adjust wallpaper size settings.
-- Restore previously set wallpapers.
-- Manage X Window desktop backgrounds.
-- Configure wallpaper using command-line arguments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set wallpapers from a specified directory.
+  - Automatically adjust wallpaper size settings.
+  - Restore previously set wallpapers.
+  - Manage X Window desktop backgrounds.
+  - Configure wallpaper using command-line arguments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nitrogen

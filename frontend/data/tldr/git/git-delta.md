@@ -1,29 +1,29 @@
 ---
-title: "Git Delta - List File Differences | Online Free DevTools by Hexmos"
+title: 'Git Delta - List File Differences | Online Free DevTools by Hexmos'
 name: git-delta
-path: "/freedevtools/tldr/git/git-delta/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-delta/"
-description: "List file differences with Git Delta. Compare files across branches and identify modifications easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-delta/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-delta/'
+description: 'List file differences with Git Delta. Compare files across branches and identify modifications easily. Free online tool, no registration required.'
 category: common
 keywords:
-- git delta command
-- git diff branch
-- file difference analyzer
-- git compare files
-- git file comparison
-- git-extras delta
-- linux git command
-- macos git command
-- command line diff
-- branch difference checker
+  - git delta command
+  - git diff branch
+  - file difference analyzer
+  - git compare files
+  - git file comparison
+  - git-extras delta
+  - linux git command
+  - macos git command
+  - command line diff
+  - branch difference checker
 features:
-- List files that differ between branches
-- Compare files from the current branch to a specified branch
-- Identify modifications between two specific branches
-- Support for multiple git workflows
-- Show file differences using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List files that differ between branches
+  - Compare files from the current branch to a specified branch
+  - Identify modifications between two specific branches
+  - Support for multiple git workflows
+  - Show file differences using command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git delta

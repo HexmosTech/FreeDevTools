@@ -1,8 +1,8 @@
 ---
-title: "Change User Shell - Control Login Shell | Online Free DevTools by Hexmos"
+title: 'Change User Shell - Control Login Shell | Online Free DevTools by Hexmos'
 name: chsh
-path: "/freedevtools/tldr/linux/chsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chsh/"
+path: '/freedevtools/tldr/linux/chsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chsh/'
 description: "Change user's shell with chsh. Modify login shell configurations securely and easily. Free online tool, no registration required."
 category: linux
 keywords:
@@ -22,8 +22,8 @@ features:
   - Set a specific login shell for the current user
   - Modify the login shell for a specific user using sudo
   - Configure user shell settings from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chsh

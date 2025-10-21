@@ -1,29 +1,29 @@
 ---
-title: "Poetry Env - Manage Python Virtualenvs | Online Free DevTools by Hexmos"
+title: 'Poetry Env - Manage Python Virtualenvs | Online Free DevTools by Hexmos'
 name: poetry-env
-path: "/freedevtools/tldr/common/poetry-env/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/poetry-env/"
-description: "Manage Python virtual environments with Poetry Env. Activate, list, and remove virtualenvs associated with Poetry projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/poetry-env/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/poetry-env/'
+description: 'Manage Python virtual environments with Poetry Env. Activate, list, and remove virtualenvs associated with Poetry projects. Free online tool, no registration required.'
 category: common
 keywords:
-- poetry environment manager
-- python virtualenv control
-- poetry venv management
-- python environment activation
-- poetry environment list
-- python environment removal
-- poetry environment use
-- poetry virtual environment path
-- poetry environment info
-- python project environment
+  - poetry environment manager
+  - python virtualenv control
+  - poetry venv management
+  - python environment activation
+  - poetry environment list
+  - python environment removal
+  - poetry environment use
+  - poetry virtual environment path
+  - poetry environment info
+  - python project environment
 features:
-- Activate Poetry virtual environments
-- Display information about Poetry environments
-- List Poetry virtual environments with full paths
-- Remove specific or all Poetry environments
-- Use a specific Python executable for a Poetry environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Activate Poetry virtual environments
+  - Display information about Poetry environments
+  - List Poetry virtual environments with full paths
+  - Remove specific or all Poetry environments
+  - Use a specific Python executable for a Poetry environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # poetry-env

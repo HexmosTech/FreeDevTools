@@ -1,29 +1,29 @@
 ---
-title: "Entr - Control File Change Actions | Online Free DevTools by Hexmos"
+title: 'Entr - Control File Change Actions | Online Free DevTools by Hexmos'
 name: entr
-path: "/freedevtools/tldr/common/entr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/entr/"
-description: "Control actions on file changes with Entr. Execute commands automatically when files are modified. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/entr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/entr/'
+description: 'Control actions on file changes with Entr. Execute commands automatically when files are modified. Free online tool, no registration required.'
 category: common
 keywords:
-- file change trigger
-- file modification monitor
-- automatic command execution
-- entr command runner
-- file system events
-- linux file watcher
-- macOS file watcher
-- command line automation
-- process automation
-- real-time build trigger
+  - file change trigger
+  - file modification monitor
+  - automatic command execution
+  - entr command runner
+  - file system events
+  - linux file watcher
+  - macOS file watcher
+  - command line automation
+  - process automation
+  - real-time build trigger
 features:
-- Trigger commands on file changes
-- Monitor entire directory trees
-- Send signals to running processes
-- Execute commands with changed file path
-- Clear the screen before executing commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trigger commands on file changes
+  - Monitor entire directory trees
+  - Send signals to running processes
+  - Execute commands with changed file path
+  - Clear the screen before executing commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # entr

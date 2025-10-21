@@ -1,29 +1,29 @@
 ---
-title: "Security Checker - Validate PHP Dependencies | Online Free DevTools by Hexmos"
+title: 'Security Checker - Validate PHP Dependencies | Online Free DevTools by Hexmos'
 name: security-checker
-path: "/freedevtools/tldr/common/security-checker/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/security-checker/"
-description: "Validate PHP dependencies with Security Checker to find vulnerabilities. Analyze composer.lock files and identify security risks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/security-checker/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/security-checker/'
+description: 'Validate PHP dependencies with Security Checker to find vulnerabilities. Analyze composer.lock files and identify security risks. Free online tool, no registration required.'
 category: common
 keywords:
-- php security checker
-- composer lock validator
-- dependency vulnerability scanner
-- php dependency security analysis
-- security risk assessment php
-- security checker sensiolabs
-- php security audit
-- composer security analysis
-- php vulnerability scan
-- command line php security
+  - php security checker
+  - composer lock validator
+  - dependency vulnerability scanner
+  - php dependency security analysis
+  - security risk assessment php
+  - security checker sensiolabs
+  - php security audit
+  - composer security analysis
+  - php vulnerability scan
+  - command line php security
 features:
-- Check project dependencies for security vulnerabilities
-- Validate composer.lock file integrity
-- Output results in JSON format
-- Identify vulnerable php packages
-- Analyze dependency security risks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check project dependencies for security vulnerabilities
+  - Validate composer.lock file integrity
+  - Output results in JSON format
+  - Identify vulnerable php packages
+  - Analyze dependency security risks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # security-checker

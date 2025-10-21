@@ -1,29 +1,29 @@
 ---
-title: "Jalali Calendar - Display Persian Calendar | Online Free DevTools by Hexmos"
+title: 'Jalali Calendar - Display Persian Calendar | Online Free DevTools by Hexmos'
 name: jcal
-path: "/freedevtools/tldr/common/jcal/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jcal/"
-description: "Display Persian Calendar with jcal. View Jalali calendar for specific months and years in the terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jcal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jcal/'
+description: 'Display Persian Calendar with jcal. View Jalali calendar for specific months and years in the terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- Jalali calendar display
-- Persian calendar generator
-- jcal command line
-- Jalali date conversion
-- Persian date display
-- Linux calendar tools
-- Unix calendar command
-- Jalali calendar for Linux
-- jcal date formatter
-- Terminal calendar display
+  - Jalali calendar display
+  - Persian calendar generator
+  - jcal command line
+  - Jalali date conversion
+  - Persian date display
+  - Linux calendar tools
+  - Unix calendar command
+  - Jalali calendar for Linux
+  - jcal date formatter
+  - Terminal calendar display
 features:
-- Display current month Jalali calendar
-- Show previous, current, and next months
-- Display a calendar for a specific year
-- Display a calendar for a specific month and year
-- Highlight the current day
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current month Jalali calendar
+  - Show previous, current, and next months
+  - Display a calendar for a specific year
+  - Display a calendar for a specific month and year
+  - Highlight the current day
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jcal

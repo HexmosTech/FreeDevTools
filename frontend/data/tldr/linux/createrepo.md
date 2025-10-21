@@ -1,29 +1,29 @@
 ---
-title: "Create RPM Repository - Initialize Packages on Linux | Online Free DevTools by Hexmos"
+title: 'Create RPM Repository - Initialize Packages on Linux | Online Free DevTools by Hexmos'
 name: createrepo
-path: "/freedevtools/tldr/linux/createrepo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/createrepo/"
-description: "Create RPM repository with createrepo. Quickly initialize package metadata for your Linux distributions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/createrepo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/createrepo/'
+description: 'Create RPM repository with createrepo. Quickly initialize package metadata for your Linux distributions. Free online tool, no registration required.'
 category: linux
 keywords:
-- rpm repository creator
-- linux package manager
-- yum repository tool
-- rpm metadata generator
-- create rpm database
-- rpm package index
-- linux repo management
-- rpm repository builder
-- createrepo linux
-- update rpm metadata
+  - rpm repository creator
+  - linux package manager
+  - yum repository tool
+  - rpm metadata generator
+  - create rpm database
+  - rpm package index
+  - linux repo management
+  - rpm repository builder
+  - createrepo linux
+  - update rpm metadata
 features:
-- Initialize RPM repositories
-- Generate package metadata XML
-- Create SQLite database for RPMs
-- Exclude specific RPM packages
-- Specify checksum algorithms
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize RPM repositories
+  - Generate package metadata XML
+  - Create SQLite database for RPMs
+  - Exclude specific RPM packages
+  - Specify checksum algorithms
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # createrepo

@@ -1,29 +1,29 @@
 ---
-title: "Clip-view - Render CLI Pages | Online Free DevTools by Hexmos"
+title: 'Clip-view - Render CLI Pages | Online Free DevTools by Hexmos'
 name: clip-view
-path: "/freedevtools/tldr/common/clip-view/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/clip-view/"
-description: "Render CLI pages easily with clip-view. Display tldr-like documentation, customize themes, and clear caches effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/clip-view/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/clip-view/'
+description: 'Render CLI pages easily with clip-view. Display tldr-like documentation, customize themes, and clear caches effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- CLI pages render
-- command line interface pages
-- tldr render
-- documentation render
-- terminal pages render
-- clip-view documentation
-- command line help pages
-- cli documentation viewer
-- render local clip pages
-- render remote clip pages
+  - CLI pages render
+  - command line interface pages
+  - tldr render
+  - documentation render
+  - terminal pages render
+  - clip-view documentation
+  - command line help pages
+  - cli documentation viewer
+  - render local clip pages
+  - render remote clip pages
 features:
-- Render CLI pages in various formats
-- Customize render themes for CLI pages
-- Clear page and theme caches
-- Display help information
-- Show the tool version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render CLI pages in various formats
+  - Customize render themes for CLI pages
+  - Clear page and theme caches
+  - Display help information
+  - Show the tool version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clip-view

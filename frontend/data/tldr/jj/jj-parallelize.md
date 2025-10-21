@@ -1,29 +1,29 @@
 ---
-title: "Parallelize Revisions - Control JJ Branches | Online Free DevTools by Hexmos"
+title: 'Parallelize Revisions - Control JJ Branches | Online Free DevTools by Hexmos'
 name: jj-parallelize
-path: "/freedevtools/tldr/jj/jj-parallelize/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-parallelize/"
-description: "Control JJ branches by parallelizing revisions instantly with JJ Parallelize. Create siblings and manage repositories with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-parallelize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-parallelize/'
+description: 'Control JJ branches by parallelizing revisions instantly with JJ Parallelize. Create siblings and manage repositories with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- jj parallelize revisions
-- jj version control
-- jj branch management
-- jj repository manipulation
-- jj dag editing
-- jj commit history
-- jj command line tool
-- jj workflow automation
-- jj linux
-- jj macos
+  - jj parallelize revisions
+  - jj version control
+  - jj branch management
+  - jj repository manipulation
+  - jj dag editing
+  - jj commit history
+  - jj command line tool
+  - jj workflow automation
+  - jj linux
+  - jj macos
 features:
-- Parallelize selected revisions in JJ
-- Create sibling revisions for parallel development
-- Simplify branch management in JJ repositories
-- Manipulate commit history for DAG editing
-- Automate parallelization tasks in JJ workflows
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Parallelize selected revisions in JJ
+  - Create sibling revisions for parallel development
+  - Simplify branch management in JJ repositories
+  - Manipulate commit history for DAG editing
+  - Automate parallelization tasks in JJ workflows
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj parallelize

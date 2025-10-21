@@ -1,29 +1,29 @@
 ---
-title: "Generate OpenPGP Key Archive - Paperkey | Online Free DevTools by Hexmos"
+title: 'Generate OpenPGP Key Archive - Paperkey | Online Free DevTools by Hexmos'
 name: paperkey
-path: "/freedevtools/tldr/common/paperkey/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/paperkey/"
-description: "Generate OpenPGP key archives with Paperkey. Securely export and reconstruct secret keys for backup and recovery. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/paperkey/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/paperkey/'
+description: 'Generate OpenPGP key archives with Paperkey. Securely export and reconstruct secret keys for backup and recovery. Free online tool, no registration required.'
 category: common
 keywords:
-- OpenPGP key archive
-- Secret key backup
-- Key reconstruction tool
-- GPG key export
-- OpenPGP data recovery
-- Secret key management
-- Command line key archiver
-- Paperkey archive generator
-- Linux key backup
-- GPG secret key text format
+  - OpenPGP key archive
+  - Secret key backup
+  - Key reconstruction tool
+  - GPG key export
+  - OpenPGP data recovery
+  - Secret key management
+  - Command line key archiver
+  - Paperkey archive generator
+  - Linux key backup
+  - GPG secret key text format
 features:
-- Generate a text file containing OpenPGP secret key data
-- Reconstruct a secret key from text data and a public key
-- Export a secret key from GPG and archive it to a text file
-- Securely store OpenPGP key data in a human-readable format
-- Backup and recover OpenPGP keys using text-based archives
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate a text file containing OpenPGP secret key data
+  - Reconstruct a secret key from text data and a public key
+  - Export a secret key from GPG and archive it to a text file
+  - Securely store OpenPGP key data in a human-readable format
+  - Backup and recover OpenPGP keys using text-based archives
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # paperkey

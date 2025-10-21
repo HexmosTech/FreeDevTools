@@ -1,9 +1,9 @@
 ---
-title: "obabel Converter - Translate Chemistry Data | Online Free DevTools by Hexmos"
+title: 'obabel Converter - Translate Chemistry Data | Online Free DevTools by Hexmos'
 name: obabel
-path: "/freedevtools/tldr/linux/obabel/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/obabel/"
-description: "Translate chemistry data with obabel, converting between various formats like .mol, SMILES, and XYZ coordinates. Generate images and 3D models. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/obabel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/obabel/'
+description: 'Translate chemistry data with obabel, converting between various formats like .mol, SMILES, and XYZ coordinates. Generate images and 3D models. Free online tool, no registration required.'
 category: linux
 keywords:
   - mol file converter
@@ -22,8 +22,8 @@ features:
   - Generate 3D .mol files from SMILES strings.
   - Create images from multiple chemical file inputs.
   - Translate between various chemistry data formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # obabel

@@ -1,9 +1,9 @@
 ---
-title: "Route Command - Manage Network Routes | Online Free DevTools by Hexmos"
+title: 'Route Command - Manage Network Routes | Online Free DevTools by Hexmos'
 name: route
-path: "/freedevtools/tldr/common/route/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/route/"
-description: "Manage network routes efficiently with the Route command.  View, add, and delete routing table entries with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/route/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/route/'
+description: 'Manage network routes efficiently with the Route command.  View, add, and delete routing table entries with ease. Free online tool, no registration required.'
 category: common
 keywords:
   - network route management
@@ -22,8 +22,8 @@ features:
   - Delete existing routes from the network.
   - Modify existing route entries.
   - Manage network connectivity through route manipulation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # route

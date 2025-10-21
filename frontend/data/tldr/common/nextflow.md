@@ -1,29 +1,29 @@
 ---
-title: "Run Nextflow Pipelines - Execute Bioinformatics Workflows | Online Free DevTools by Hexmos"
+title: 'Run Nextflow Pipelines - Execute Bioinformatics Workflows | Online Free DevTools by Hexmos'
 name: nextflow
-path: "/freedevtools/tldr/common/nextflow/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nextflow/"
-description: "Execute computational pipelines with Nextflow. Run bioinformatics workflows, manage dependencies, and track results efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nextflow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nextflow/'
+description: 'Execute computational pipelines with Nextflow. Run bioinformatics workflows, manage dependencies, and track results efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- nextflow pipeline
-- bioinformatics workflow
-- computational pipeline execution
-- nextflow DSL2
-- workflow management system
-- data processing pipeline
-- nextflow resume
-- nextflow containerization
-- nextflow command-line
-- scientific workflow automation
+  - nextflow pipeline
+  - bioinformatics workflow
+  - computational pipeline execution
+  - nextflow DSL2
+  - workflow management system
+  - data processing pipeline
+  - nextflow resume
+  - nextflow containerization
+  - nextflow command-line
+  - scientific workflow automation
 features:
-- Execute computational pipelines using a domain-specific language (DSL).
-- Manage dependencies and track provenance for reproducible research.
-- Resume interrupted pipelines and reuse cached results.
-- Integrate with container technologies like Docker and Singularity.
-- Automate scientific workflows for genomics, proteomics, and more.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute computational pipelines using a domain-specific language (DSL).
+  - Manage dependencies and track provenance for reproducible research.
+  - Resume interrupted pipelines and reuse cached results.
+  - Integrate with container technologies like Docker and Singularity.
+  - Automate scientific workflows for genomics, proteomics, and more.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nextflow

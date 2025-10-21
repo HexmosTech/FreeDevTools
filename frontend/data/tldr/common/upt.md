@@ -1,29 +1,29 @@
 ---
-title: "Manage Packages - Upt Package Manager | Online Free DevTools by Hexmos"
+title: 'Manage Packages - Upt Package Manager | Online Free DevTools by Hexmos'
 name: upt
-path: "/freedevtools/tldr/common/upt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/upt/"
-description: "Manage packages easily with Upt Package Manager, a unified interface for various operating systems. Install, update, and remove packages effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/upt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/upt/'
+description: 'Manage packages easily with Upt Package Manager, a unified interface for various operating systems. Install, update, and remove packages effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- package manager
-- upt package manager
-- linux package manager
-- macos package manager
-- windows package manager
-- freebsd package manager
-- haiku package manager
-- apt package manager
-- dnf package manager
-- cross platform package management
+  - package manager
+  - upt package manager
+  - linux package manager
+  - macos package manager
+  - windows package manager
+  - freebsd package manager
+  - haiku package manager
+  - apt package manager
+  - dnf package manager
+  - cross platform package management
 features:
-- Install packages across multiple operating systems.
-- Update package lists and installed packages.
-- Search for packages in available repositories.
-- Show detailed information about specific packages.
-- Remove or uninstall packages from the system.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages across multiple operating systems.
+  - Update package lists and installed packages.
+  - Search for packages in available repositories.
+  - Show detailed information about specific packages.
+  - Remove or uninstall packages from the system.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # upt

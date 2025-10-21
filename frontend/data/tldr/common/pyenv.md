@@ -1,29 +1,29 @@
 ---
-title: "Python Version Control - Manage Python Versions | Online Free DevTools by Hexmos"
+title: 'Python Version Control - Manage Python Versions | Online Free DevTools by Hexmos'
 name: pyenv
-path: "/freedevtools/tldr/common/pyenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pyenv/"
-description: "Manage Python versions effectively with Pyenv. Seamlessly switch between multiple Python environments and control your project dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pyenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pyenv/'
+description: 'Manage Python versions effectively with Pyenv. Seamlessly switch between multiple Python environments and control your project dependencies. Free online tool, no registration required.'
 category: common
 keywords:
-- Python version manager
-- pyenv version control
-- Python environment management
-- Python version switcher
-- Linux pyenv
-- MacOS pyenv
-- Python version installation
-- pyenv commands
-- pyenv global
-- pyenv local
+  - Python version manager
+  - pyenv version control
+  - Python environment management
+  - Python version switcher
+  - Linux pyenv
+  - MacOS pyenv
+  - Python version installation
+  - pyenv commands
+  - pyenv global
+  - pyenv local
 features:
-- Install specific Python versions
-- Uninstall unwanted Python versions
-- Set global Python version for the system
-- Configure local Python version for a directory
-- List available and installed Python versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Python versions
+  - Uninstall unwanted Python versions
+  - Set global Python version for the system
+  - Configure local Python version for a directory
+  - List available and installed Python versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pyenv

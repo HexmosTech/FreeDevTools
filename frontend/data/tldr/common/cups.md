@@ -1,29 +1,29 @@
 ---
-title: "Manage CUPS Printing - Open Source Print System | Online Free DevTools by Hexmos"
+title: 'Manage CUPS Printing - Open Source Print System | Online Free DevTools by Hexmos'
 name: cups
-path: "/freedevtools/tldr/common/cups/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cups/"
-description: "Manage CUPS printing with this open-source print system. Control print jobs, configure printers, and view status information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cups/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cups/'
+description: 'Manage CUPS printing with this open-source print system. Control print jobs, configure printers, and view status information. Free online tool, no registration required.'
 category: common
 keywords:
-- CUPS printing
-- CUPS print system
-- Linux printing
-- macOS printing
-- CUPS printer management
-- CUPS print job control
-- CUPS printer configuration
-- CUPS print status
-- CUPS print queue
-- CUPS command line
+  - CUPS printing
+  - CUPS print system
+  - Linux printing
+  - macOS printing
+  - CUPS printer management
+  - CUPS print job control
+  - CUPS printer configuration
+  - CUPS print status
+  - CUPS print queue
+  - CUPS command line
 features:
-- Manage printers using the `lpadmin` command.
-- Print files using the `lp` command.
-- Check status information about classes, jobs, and printers using the `lpstat` command.
-- Cancel print jobs using the `lprm` command.
-- View documentation for running the CUPS daemon.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage printers using the `lpadmin` command.
+  - Print files using the `lp` command.
+  - Check status information about classes, jobs, and printers using the `lpstat` command.
+  - Cancel print jobs using the `lprm` command.
+  - View documentation for running the CUPS daemon.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # CUPS

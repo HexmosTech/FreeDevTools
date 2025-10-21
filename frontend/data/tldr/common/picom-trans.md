@@ -1,29 +1,29 @@
 ---
-title: "Picom Opacity Control - Manage Window Transparency | Online Free DevTools by Hexmos"
+title: 'Picom Opacity Control - Manage Window Transparency | Online Free DevTools by Hexmos'
 name: picom-trans
-path: "/freedevtools/tldr/common/picom-trans/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/picom-trans/"
-description: "Manage window opacity with Picom Opacity Control. Easily adjust transparency, toggle visibility, and customize desktop appearance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/picom-trans/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/picom-trans/'
+description: 'Manage window opacity with Picom Opacity Control. Easily adjust transparency, toggle visibility, and customize desktop appearance. Free online tool, no registration required.'
 category: common
 keywords:
-- picom opacity control
-- window transparency manager
-- desktop compositor settings
-- picom window manager
-- linux window opacity
-- opacity configuration tool
-- picom configuration
-- xorg window transparency
-- window transparency toggle
-- desktop customization
+  - picom opacity control
+  - window transparency manager
+  - desktop compositor settings
+  - picom window manager
+  - linux window opacity
+  - opacity configuration tool
+  - picom configuration
+  - xorg window transparency
+  - window transparency toggle
+  - desktop customization
 features:
-- Set opacity for focused windows
-- Set opacity for windows by name
-- Select window for opacity adjustment using mouse
-- Toggle window opacity on and off
-- Adjust window transparency percentage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set opacity for focused windows
+  - Set opacity for windows by name
+  - Select window for opacity adjustment using mouse
+  - Toggle window opacity on and off
+  - Adjust window transparency percentage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # picom-trans

@@ -1,9 +1,9 @@
 ---
-title: "Generate gcrane Completion Scripts | Online Free DevTools by Hexmos"
+title: 'Generate gcrane Completion Scripts | Online Free DevTools by Hexmos'
 name: gcrane-completion
-path: "/freedevtools/tldr/linux/gcrane-completion/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gcrane-completion/"
-description: "Generate shell completion scripts with gcrane. Simplify command-line interactions and improve productivity using autocompletion. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gcrane-completion/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gcrane-completion/'
+description: 'Generate shell completion scripts with gcrane. Simplify command-line interactions and improve productivity using autocompletion. Free online tool, no registration required.'
 category: linux
 keywords:
   - gcrane completion bash
@@ -22,8 +22,8 @@ features:
   - Generate autocompletion scripts for fish
   - Generate autocompletion scripts for powershell
   - Disable completion descriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcrane completion

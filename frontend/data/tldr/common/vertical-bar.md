@@ -1,29 +1,29 @@
 ---
-title: "Pipe Command - Connect Programs with Vertical Bar | Online Free DevTools by Hexmos"
+title: 'Pipe Command - Connect Programs with Vertical Bar | Online Free DevTools by Hexmos'
 name: vertical-bar
-path: "/freedevtools/tldr/common/vertical-bar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vertical-bar/"
-description: "Connect programs with the Pipe Command. Chain commands together, redirecting output and error streams. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vertical-bar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vertical-bar/'
+description: 'Connect programs with the Pipe Command. Chain commands together, redirecting output and error streams. Free online tool, no registration required.'
 category: common
 keywords:
-- data piping
-- command chaining
-- stdout redirection
-- stdin input
-- stderr redirection
-- bash pipe
-- shell pipeline
-- linux pipe command
-- macos pipe command
-- vertical bar operator
+  - data piping
+  - command chaining
+  - stdout redirection
+  - stdin input
+  - stderr redirection
+  - bash pipe
+  - shell pipeline
+  - linux pipe command
+  - macos pipe command
+  - vertical bar operator
 features:
-- Connect stdout of one command to stdin of another
-- Redirect stderr along with stdout
-- Create complex data processing workflows
-- Chain multiple commands together seamlessly
-- Simplify data transformations in command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect stdout of one command to stdin of another
+  - Redirect stderr along with stdout
+  - Create complex data processing workflows
+  - Chain multiple commands together seamlessly
+  - Simplify data transformations in command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # |

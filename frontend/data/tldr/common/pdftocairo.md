@@ -1,29 +1,29 @@
 ---
-title: "Convert PDF to Image - Using pdftocairo | Online Free DevTools by Hexmos"
+title: 'Convert PDF to Image - Using pdftocairo | Online Free DevTools by Hexmos'
 name: pdftocairo
-path: "/freedevtools/tldr/common/pdftocairo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pdftocairo/"
-description: "Convert PDF files with pdftocairo, a powerful PDF converter tool. Change PDF to JPEG, PNG, SVG and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pdftocairo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pdftocairo/'
+description: 'Convert PDF files with pdftocairo, a powerful PDF converter tool. Change PDF to JPEG, PNG, SVG and more. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF to JPEG converter
-- PDF to PNG converter
-- PDF to SVG converter
-- PDF file converter
-- PDF to image conversion
-- Command line PDF tool
-- PDF conversion utility
-- Linux PDF converter
-- macOS PDF converter
-- Convert PDF to TIFF
+  - PDF to JPEG converter
+  - PDF to PNG converter
+  - PDF to SVG converter
+  - PDF file converter
+  - PDF to image conversion
+  - Command line PDF tool
+  - PDF conversion utility
+  - Linux PDF converter
+  - macOS PDF converter
+  - Convert PDF to TIFF
 features:
-- Convert PDF to various image formats (PNG, JPEG, TIFF, SVG)
-- Specify page range for conversion
-- Control output resolution (DPI)
-- Set paper size for PDF conversion
-- Crop output images by specifying x and y coordinates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PDF to various image formats (PNG, JPEG, TIFF, SVG)
+  - Specify page range for conversion
+  - Control output resolution (DPI)
+  - Set paper size for PDF conversion
+  - Crop output images by specifying x and y coordinates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdftocairo

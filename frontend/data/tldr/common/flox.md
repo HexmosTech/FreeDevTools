@@ -1,29 +1,29 @@
 ---
-title: "Manage Nix Packages - Control Environments with Flox | Online Free DevTools by Hexmos"
+title: 'Manage Nix Packages - Control Environments with Flox | Online Free DevTools by Hexmos'
 name: flox
-path: "/freedevtools/tldr/common/flox/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flox/"
-description: "Control Nix package environments easily with Flox. Manage dependencies, install packages, and share environments with others. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flox/'
+description: 'Control Nix package environments easily with Flox. Manage dependencies, install packages, and share environments with others. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- flox environment management
-- nix dependency management
-- flox package installation
-- share nix environments
-- nix environment creation
-- nix package search
-- nix environment activation
-- floxhub environment sharing
-- declarative package management
+  - nix package manager
+  - flox environment management
+  - nix dependency management
+  - flox package installation
+  - share nix environments
+  - nix environment creation
+  - nix package search
+  - nix environment activation
+  - floxhub environment sharing
+  - declarative package management
 features:
-- Create and manage isolated Nix environments.
-- Install and uninstall packages within environments.
-- Share environments with others via FloxHub.
-- Search for packages within the FloxHub catalog.
-- Activate and deactivate environments for project isolation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage isolated Nix environments.
+  - Install and uninstall packages within environments.
+  - Share environments with others via FloxHub.
+  - Search for packages within the FloxHub catalog.
+  - Activate and deactivate environments for project isolation.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flox

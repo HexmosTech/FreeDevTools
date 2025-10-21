@@ -1,29 +1,29 @@
 ---
-title: "Control Parallel Ports - tunelp Configuration | Online Free DevTools by Hexmos"
+title: 'Control Parallel Ports - tunelp Configuration | Online Free DevTools by Hexmos'
 name: tunelp
-path: "/freedevtools/tldr/linux/tunelp/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tunelp/"
-description: "Control parallel port devices with tunelp. Optimize device performance, troubleshoot issues, and manage IRQ settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tunelp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tunelp/'
+description: 'Control parallel port devices with tunelp. Optimize device performance, troubleshoot issues, and manage IRQ settings. Free online tool, no registration required.'
 category: linux
 keywords:
-- parallel port control
-- tunelp configuration
-- linux device management
-- printer port settings
-- parallel port troubleshooting
-- IRQ configuration linux
-- device parameter setting
-- lp device status
-- parallel port reset
-- util-linux tunelp
+  - parallel port control
+  - tunelp configuration
+  - linux device management
+  - printer port settings
+  - parallel port troubleshooting
+  - IRQ configuration linux
+  - device parameter setting
+  - lp device status
+  - parallel port reset
+  - util-linux tunelp
 features:
-- Check the status of parallel port devices
-- Reset specified parallel port devices
-- Configure IRQ settings for devices
-- Control output attempts and sleep time
-- Enable/disable abort on error functionality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check the status of parallel port devices
+  - Reset specified parallel port devices
+  - Configure IRQ settings for devices
+  - Control output attempts and sleep time
+  - Enable/disable abort on error functionality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tunelp

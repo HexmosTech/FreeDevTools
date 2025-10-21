@@ -1,29 +1,29 @@
 ---
-title: "Find Files - Query Files with SQL-like Syntax | Online Free DevTools by Hexmos"
+title: 'Find Files - Query Files with SQL-like Syntax | Online Free DevTools by Hexmos'
 name: fselect
-path: "/freedevtools/tldr/common/fselect/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fselect/"
-description: "Find files easily with fselect using SQL-like queries. Search files based on various attributes such as name, size, and metadata. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fselect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fselect/'
+description: 'Find files easily with fselect using SQL-like queries. Search files based on various attributes such as name, size, and metadata. Free online tool, no registration required.'
 category: common
 keywords:
-- file finder
-- sql file query
-- file search tool
-- directory search
-- linux file search
-- macos file search
-- windows file search
-- file size query
-- metadata file query
-- command line file search
+  - file finder
+  - sql file query
+  - file search tool
+  - directory search
+  - linux file search
+  - macos file search
+  - windows file search
+  - file size query
+  - metadata file query
+  - command line file search
 features:
-- Find files using SQL-like syntax for precise queries
-- Filter files based on various attributes like name, size, and metadata
-- Output results in different formats such as JSON
-- Utilize aggregate functions like MIN, MAX, AVG for directory analysis
-- Limit the number of results returned for faster processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Find files using SQL-like syntax for precise queries
+  - Filter files based on various attributes like name, size, and metadata
+  - Output results in different formats such as JSON
+  - Utilize aggregate functions like MIN, MAX, AVG for directory analysis
+  - Limit the number of results returned for faster processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fselect

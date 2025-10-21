@@ -1,29 +1,29 @@
 ---
-title: "Phpspec BDD - Create PHP Specifications | Online Free DevTools by Hexmos"
+title: 'Phpspec BDD - Create PHP Specifications | Online Free DevTools by Hexmos'
 name: phpspec
-path: "/freedevtools/tldr/php/phpspec/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpspec/"
-description: "Generate PHP specifications with Phpspec BDD. Define behavior-driven tests and ensure code quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpspec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpspec/'
+description: 'Generate PHP specifications with Phpspec BDD. Define behavior-driven tests and ensure code quality. Free online tool, no registration required.'
 category: common
 keywords:
-- php specification
-- php bdd
-- behaviour driven development php
-- phpspec testing
-- phpspec run
-- phpspec describe
-- php test driven development
-- php testing framework
-- php unit testing
-- phpspec configuration
+  - php specification
+  - php bdd
+  - behaviour driven development php
+  - phpspec testing
+  - phpspec run
+  - phpspec describe
+  - php test driven development
+  - php testing framework
+  - php unit testing
+  - phpspec configuration
 features:
-- Generate specifications for PHP classes
-- Run all specifications in a project directory
-- Run a specific specification file
-- Use custom configuration files for specification runs
-- Disable code generation prompts for faster testing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate specifications for PHP classes
+  - Run all specifications in a project directory
+  - Run a specific specification file
+  - Use custom configuration files for specification runs
+  - Disable code generation prompts for faster testing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpspec

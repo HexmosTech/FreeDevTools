@@ -1,9 +1,9 @@
 ---
-title: "Toolbox Help - Access Command Information | Online Free DevTools by Hexmos"
+title: 'Toolbox Help - Access Command Information | Online Free DevTools by Hexmos'
 name: toolbox-help
-path: "/freedevtools/tldr/linux/toolbox-help/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/toolbox-help/"
-description: "Access command information instantly with Toolbox Help.  View detailed instructions and usage examples for various subcommands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/toolbox-help/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/toolbox-help/'
+description: 'Access command information instantly with Toolbox Help.  View detailed instructions and usage examples for various subcommands. Free online tool, no registration required.'
 category: linux
 keywords:
   - command line help
@@ -22,8 +22,8 @@ features:
   - Offers examples to illustrate the proper syntax of each command.
   - Allows users to quickly access specific subcommand help.
   - Simplifies the process of learning and utilizing the toolbox.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # toolbox help

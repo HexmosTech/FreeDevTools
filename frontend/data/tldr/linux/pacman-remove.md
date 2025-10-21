@@ -1,29 +1,29 @@
 ---
-title: "Pacman Remove - Remove Packages on Linux | Online Free DevTools by Hexmos"
+title: 'Pacman Remove - Remove Packages on Linux | Online Free DevTools by Hexmos'
 name: pacman-remove
-path: "/freedevtools/tldr/linux/pacman-remove/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-remove/"
-description: "Remove Linux packages easily with Pacman Remove. Manage dependencies, delete orphan packages, and cascade removals effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacman-remove/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacman-remove/'
+description: 'Remove Linux packages easily with Pacman Remove. Manage dependencies, delete orphan packages, and cascade removals effectively. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux package removal
-- pacman remove command
-- arch linux package manager
-- delete linux packages
-- pacman dependency removal
-- remove orphan packages linux
-- arch linux command
-- pacman remove recursive
-- linux pacman utility
-- package management linux
+  - linux package removal
+  - pacman remove command
+  - arch linux package manager
+  - delete linux packages
+  - pacman dependency removal
+  - remove orphan packages linux
+  - arch linux command
+  - pacman remove recursive
+  - linux pacman utility
+  - package management linux
 features:
-- Recursively remove packages and dependencies
-- Force package removal without confirmation
-- Remove packages without saving configuration backups
-- Delete orphan packages not required by other packages
-- Cascade removal to dependent packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively remove packages and dependencies
+  - Force package removal without confirmation
+  - Remove packages without saving configuration backups
+  - Delete orphan packages not required by other packages
+  - Cascade removal to dependent packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacman --remove

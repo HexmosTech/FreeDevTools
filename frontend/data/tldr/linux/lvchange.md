@@ -1,29 +1,29 @@
 ---
-title: "LVChange - Control Logical Volumes | Online Free DevTools by Hexmos"
+title: 'LVChange - Control Logical Volumes | Online Free DevTools by Hexmos'
 name: lvchange
-path: "/freedevtools/tldr/linux/lvchange/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lvchange/"
-description: "Control logical volumes with LVChange, enabling activation, deactivation, and permission management. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lvchange/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lvchange/'
+description: 'Control logical volumes with LVChange, enabling activation, deactivation, and permission management. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux lvchange command
-- logical volume manager
-- lvm control panel
-- activate logical volume
-- deactivate logical volume
-- set lvm permissions
-- linux disk management
-- volume group management
-- lvm configuration tool
-- lvchange automation
+  - linux lvchange command
+  - logical volume manager
+  - lvm control panel
+  - activate logical volume
+  - deactivate logical volume
+  - set lvm permissions
+  - linux disk management
+  - volume group management
+  - lvm configuration tool
+  - lvchange automation
 features:
-- Activate or deactivate logical volumes
-- Set read-only or read-write permissions
-- Enable or disable autoactivation
-- Skip activation during system startup
-- Refresh logical volume metadata
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Activate or deactivate logical volumes
+  - Set read-only or read-write permissions
+  - Enable or disable autoactivation
+  - Skip activation during system startup
+  - Refresh logical volume metadata
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lvchange

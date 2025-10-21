@@ -1,29 +1,29 @@
 ---
-title: "Create Vagrant Environments - Manage VMs | Online Free DevTools by Hexmos"
+title: 'Create Vagrant Environments - Manage VMs | Online Free DevTools by Hexmos'
 name: vagrant
-path: "/freedevtools/tldr/vagrant/vagrant/"
-canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant/"
-description: "Create and manage virtual machines with Vagrant. Define, configure, and reproduce development environments using code. Free online tool, no registration required."
+path: '/freedevtools/tldr/vagrant/vagrant/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vagrant/vagrant/'
+description: 'Create and manage virtual machines with Vagrant. Define, configure, and reproduce development environments using code. Free online tool, no registration required.'
 category: common
 keywords:
-- vagrant environment
-- virtual machine management
-- vagrant box
-- development environment
-- vagrant configuration
-- vm provisioning
-- cross platform vm
-- reproducible environment
-- portable vm
-- vagrant ssh
+  - vagrant environment
+  - virtual machine management
+  - vagrant box
+  - development environment
+  - vagrant configuration
+  - vm provisioning
+  - cross platform vm
+  - reproducible environment
+  - portable vm
+  - vagrant ssh
 features:
-- Create and configure virtual machines.
-- Manage development environments with code.
-- Provision VMs using various providers (VirtualBox, VMware, etc.).
-- Connect to virtual machines via SSH.
-- Package and distribute development environments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and configure virtual machines.
+  - Manage development environments with code.
+  - Provision VMs using various providers (VirtualBox, VMware, etc.).
+  - Connect to virtual machines via SSH.
+  - Package and distribute development environments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vagrant

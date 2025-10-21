@@ -1,29 +1,29 @@
 ---
-title: "Control Terminal - Set Options | Online Free DevTools by Hexmos"
+title: 'Control Terminal - Set Options | Online Free DevTools by Hexmos'
 name: stty
-path: "/freedevtools/tldr/st/stty/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/stty/"
-description: "Control terminal settings with stty. Set terminal size, echoing, and modes, instantly using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/stty/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/stty/'
+description: 'Control terminal settings with stty. Set terminal size, echoing, and modes, instantly using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal settings
-- stty command
-- linux terminal control
-- macos terminal settings
-- unix terminal configuration
-- terminal size adjustment
-- character echo management
-- raw mode control
-- cooked mode control
-- terminal speed configuration
+  - terminal settings
+  - stty command
+  - linux terminal control
+  - macos terminal settings
+  - unix terminal configuration
+  - terminal size adjustment
+  - character echo management
+  - raw mode control
+  - cooked mode control
+  - terminal speed configuration
 features:
-- Display current terminal size
-- Set number of rows and columns
-- Get device transfer speed
-- Reset terminal to sane defaults
-- Control character echoing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current terminal size
+  - Set number of rows and columns
+  - Get device transfer speed
+  - Reset terminal to sane defaults
+  - Control character echoing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # stty

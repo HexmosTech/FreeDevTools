@@ -1,29 +1,29 @@
 ---
-title: "RHash - Generate Message Digests | Online Free DevTools by Hexmos"
+title: 'RHash - Generate Message Digests | Online Free DevTools by Hexmos'
 name: rhash
-path: "/freedevtools/tldr/common/rhash/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rhash/"
-description: "Generate message digests with RHash. Calculate CRC32, SHA1, SHA3 checksums for files and messages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rhash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rhash/'
+description: 'Generate message digests with RHash. Calculate CRC32, SHA1, SHA3 checksums for files and messages. Free online tool, no registration required.'
 category: common
 keywords:
-- message digests generator
-- checksum calculator
-- rhash checksum
-- crc32 generator
-- sha1 hash
-- sha3 digest
-- sfv file generator
-- integrity checker
-- file checksum linux
-- rhash command line
+  - message digests generator
+  - checksum calculator
+  - rhash checksum
+  - crc32 generator
+  - sha1 hash
+  - sha3 digest
+  - sfv file generator
+  - integrity checker
+  - file checksum linux
+  - rhash command line
 features:
-- Calculate various message digests (CRC32, SHA1, SHA3)
-- Verify file integrity using SFV files
-- Process directories recursively
-- Output digests in multiple formats (base64, BSD)
-- Customize output using printf templates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate various message digests (CRC32, SHA1, SHA3)
+  - Verify file integrity using SFV files
+  - Process directories recursively
+  - Output digests in multiple formats (base64, BSD)
+  - Customize output using printf templates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rhash

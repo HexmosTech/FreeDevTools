@@ -1,29 +1,29 @@
 ---
-title: "Control Uptime - Monitor System Uptime | Online Free DevTools by Hexmos"
+title: 'Control Uptime - Monitor System Uptime | Online Free DevTools by Hexmos'
 name: uptime
-path: "/freedevtools/tldr/common/uptime/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/uptime/"
-description: "Control system uptime with Uptime. Monitor system boot time, logged-in users, and average load. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/uptime/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/uptime/'
+description: 'Control system uptime with Uptime. Monitor system boot time, logged-in users, and average load. Free online tool, no registration required.'
 category: common
 keywords:
-- uptime monitor
-- system uptime
-- server uptime
-- linux uptime
-- macos uptime
-- uptime command
-- system boot time
-- logged in users
-- system load
-- uptime statistics
+  - uptime monitor
+  - system uptime
+  - server uptime
+  - linux uptime
+  - macos uptime
+  - uptime command
+  - system boot time
+  - logged in users
+  - system load
+  - uptime statistics
 features:
-- Display system uptime in a human-readable format.
-- Report the number of currently logged-in users.
-- Show system load averages for the past 1, 5, and 15 minutes.
-- Print the date and time when the system was last booted.
-- Provide a simplified uptime output showing only time elapsed since boot.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display system uptime in a human-readable format.
+  - Report the number of currently logged-in users.
+  - Show system load averages for the past 1, 5, and 15 minutes.
+  - Print the date and time when the system was last booted.
+  - Provide a simplified uptime output showing only time elapsed since boot.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uptime

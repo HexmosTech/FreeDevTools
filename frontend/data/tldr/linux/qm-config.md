@@ -1,29 +1,29 @@
 ---
-title: "QM Config - Control VM Configuration | Online Free DevTools by Hexmos"
+title: 'QM Config - Control VM Configuration | Online Free DevTools by Hexmos'
 name: qm-config
-path: "/freedevtools/tldr/linux/qm-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-config/"
-description: "Control VM configuration with QM Config, a powerful command-line tool for managing Proxmox virtual machines. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-config/'
+description: 'Control VM configuration with QM Config, a powerful command-line tool for managing Proxmox virtual machines. Free online tool, no registration required.'
 category: linux
 keywords:
-- Proxmox VM configuration
-- QM configuration management
-- Linux virtual machine config
-- VM snapshot configuration
-- Proxmox CLI config
-- Qm config current values
-- VM pending changes
-- proxmox vm config linux
-- vm id config linux
-- qm config snapshot
+  - Proxmox VM configuration
+  - QM configuration management
+  - Linux virtual machine config
+  - VM snapshot configuration
+  - Proxmox CLI config
+  - Qm config current values
+  - VM pending changes
+  - proxmox vm config linux
+  - vm id config linux
+  - qm config snapshot
 features:
-- Display the virtual machine configuration
-- Show pending configuration changes
-- Display current configuration values
-- Fetch configuration from a snapshot
-- Manage Proxmox VM configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the virtual machine configuration
+  - Show pending configuration changes
+  - Display current configuration values
+  - Fetch configuration from a snapshot
+  - Manage Proxmox VM configuration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm config

@@ -1,29 +1,29 @@
 ---
-title: "Publish .NET - Deploy Applications with Dotnet Publish | Online Free DevTools by Hexmos"
+title: 'Publish .NET - Deploy Applications with Dotnet Publish | Online Free DevTools by Hexmos'
 name: dotnet-publish
-path: "/freedevtools/tldr/dotnet/dotnet-publish/"
-canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-publish/"
-description: "Publish .NET applications easily with Dotnet Publish. Create deployment packages, control runtime environments, and optimize for size. Free online tool, no registration required."
+path: '/freedevtools/tldr/dotnet/dotnet-publish/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dotnet/dotnet-publish/'
+description: 'Publish .NET applications easily with Dotnet Publish. Create deployment packages, control runtime environments, and optimize for size. Free online tool, no registration required.'
 category: common
 keywords:
-- .NET Application Publish
-- Dotnet Deploy
-- .NET Core Runtime
-- Cross-Platform Compilation
-- Single-File Executable
-- .NET Project Deployment
-- Trimmed Application Publish
-- Release Mode Compilation
-- Runtime Identifier Specification
-- Dotnet Publish Command
+  - .NET Application Publish
+  - Dotnet Deploy
+  - .NET Core Runtime
+  - Cross-Platform Compilation
+  - Single-File Executable
+  - .NET Project Deployment
+  - Trimmed Application Publish
+  - Release Mode Compilation
+  - Runtime Identifier Specification
+  - Dotnet Publish Command
 features:
-- Compiles .NET projects in release or debug mode.
-- Publishes applications with or without the .NET Core runtime.
-- Creates platform-specific single-file executables.
-- Reduces application size by trimming unused libraries.
-- Supports specifying custom output directories for published files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compiles .NET projects in release or debug mode.
+  - Publishes applications with or without the .NET Core runtime.
+  - Creates platform-specific single-file executables.
+  - Reduces application size by trimming unused libraries.
+  - Supports specifying custom output directories for published files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotnet publish

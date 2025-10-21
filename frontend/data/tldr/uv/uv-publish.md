@@ -1,29 +1,29 @@
 ---
-title: "uv - Publish Python Packages | Online Free DevTools by Hexmos"
+title: 'uv - Publish Python Packages | Online Free DevTools by Hexmos'
 name: uv-publish
-path: "/freedevtools/tldr/uv/uv-publish/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-publish/"
-description: "Publish Python packages easily with uv. Distribute your Python projects to PyPI or other package indexes. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-publish/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-publish/'
+description: 'Publish Python packages easily with uv. Distribute your Python projects to PyPI or other package indexes. Free online tool, no registration required.'
 category: common
 keywords:
-- uv publish package
-- Python package publisher
-- PyPI uploader
-- uv distribute package
-- Python wheel publisher
-- Python sdist publisher
-- uv package index
-- uv TestPyPI
-- uv API token
-- uv upload
+  - uv publish package
+  - Python package publisher
+  - PyPI uploader
+  - uv distribute package
+  - Python wheel publisher
+  - Python sdist publisher
+  - uv package index
+  - uv TestPyPI
+  - uv API token
+  - uv upload
 features:
-- Publish Python packages to PyPI
-- Publish Python packages to custom index URLs
-- Authenticate using username and password
-- Authenticate using API tokens
-- Publish specific distribution files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Publish Python packages to PyPI
+  - Publish Python packages to custom index URLs
+  - Authenticate using username and password
+  - Authenticate using API tokens
+  - Publish specific distribution files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv publish

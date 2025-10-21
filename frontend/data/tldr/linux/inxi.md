@@ -1,29 +1,29 @@
 ---
-title: "Generate System Info - inxi Command | Online Free DevTools by Hexmos"
+title: 'Generate System Info - inxi Command | Online Free DevTools by Hexmos'
 name: inxi
-path: "/freedevtools/tldr/linux/inxi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/inxi/"
-description: "Generate system information with inxi command. Quickly debug hardware and software issues on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/inxi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/inxi/'
+description: 'Generate system information with inxi command. Quickly debug hardware and software issues on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux system information
-- system hardware information
-- system debugging tool
-- inxi command line tool
-- inxi system summary
-- linux hardware details
-- linux system resources
-- system performance analysis
-- system diagnostic tool
-- linux system information tool
+  - linux system information
+  - system hardware information
+  - system debugging tool
+  - inxi command line tool
+  - inxi system summary
+  - linux hardware details
+  - linux system resources
+  - system performance analysis
+  - system diagnostic tool
+  - linux system information tool
 features:
-- Display a comprehensive summary of system hardware components
-- Show detailed CPU, memory, and disk information
-- Filter sensitive user information for privacy
-- Print audio and graphics card details
-- List distribution repository information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display a comprehensive summary of system hardware components
+  - Show detailed CPU, memory, and disk information
+  - Filter sensitive user information for privacy
+  - Print audio and graphics card details
+  - List distribution repository information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # inxi

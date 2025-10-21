@@ -1,29 +1,29 @@
 ---
-title: "Jest Tests - Run JavaScript Tests | Online Free DevTools by Hexmos"
+title: 'Jest Tests - Run JavaScript Tests | Online Free DevTools by Hexmos'
 name: jest
-path: "/freedevtools/tldr/common/jest/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jest/"
-description: "Run JavaScript tests with Jest testing framework. Execute test suites, find related tests and watch for changes with this CLI tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jest/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jest/'
+description: 'Run JavaScript tests with Jest testing framework. Execute test suites, find related tests and watch for changes with this CLI tool. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript testing framework
-- jest test runner
-- javascript unit testing
-- react testing
-- jest watch mode
-- jest command line
-- nodejs testing
-- zero config testing
-- jest regex test selection
-- jest related tests
+  - javascript testing framework
+  - jest test runner
+  - javascript unit testing
+  - react testing
+  - jest watch mode
+  - jest command line
+  - nodejs testing
+  - zero config testing
+  - jest regex test selection
+  - jest related tests
 features:
-- Execute all available JavaScript tests.
-- Run specific test suites from file paths.
-- Filter test suites by matching file paths against regular expressions.
-- Execute tests whose names match a provided regular expression.
-- Run test suites related to a specified source file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute all available JavaScript tests.
+  - Run specific test suites from file paths.
+  - Filter test suites by matching file paths against regular expressions.
+  - Execute tests whose names match a provided regular expression.
+  - Run test suites related to a specified source file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jest

@@ -62,9 +62,9 @@ export interface EmojiData {
 
 export interface EmojiImageVariants {
   '3d'?: string;
-  'color'?: string;
-  'flat'?: string;
-  'high_contrast'?: string;
+  color?: string;
+  flat?: string;
+  high_contrast?: string;
 }
 
 let emojiCache: EmojiData[] | null = null;
@@ -78,7 +78,7 @@ export function getAllEmojis(): EmojiData[] {
   const emojiDataPath = join(process.cwd(), 'public/emoji_data');
   const emojis: EmojiData[] = [];
   const slugMap: Record<string, string> = {};
-  
+
   try {
     if (!existsSync(emojiDataPath)) {
       console.warn('Emoji data directory does not exist:', emojiDataPath);
@@ -133,10 +133,15 @@ export function getAllEmojis(): EmojiData[] {
               emojis.push(emojiData);
               slugMap[emojiData.slug] = `${entry}/${slugFolder}`;
             } else {
-              console.warn(`Skipping emoji with invalid slug: ${slugFolder} in category ${entry}`);
+              console.warn(
+                `Skipping emoji with invalid slug: ${slugFolder} in category ${entry}`
+              );
             }
           } catch (error) {
-            console.warn(`Failed to read emoji data for ${slugFolder} in ${entry}:`, error);
+            console.warn(
+              `Failed to read emoji data for ${slugFolder} in ${entry}:`,
+              error
+            );
           }
         }
       } catch (error) {
@@ -146,21 +151,29 @@ export function getAllEmojis(): EmojiData[] {
   } catch (error) {
     console.error('Failed to read emoji data directory:', error);
   }
-  
+
   // Sort emojis: base emojis first, then skin tone variants
   emojis.sort((a, b) => {
-    const aIsSkinTone = a.slug.includes('-skin-tone') || a.slug.includes('light-skin-tone') || a.slug.includes('medium-skin-tone') || a.slug.includes('dark-skin-tone');
-    const bIsSkinTone = b.slug.includes('-skin-tone') || b.slug.includes('light-skin-tone') || b.slug.includes('medium-skin-tone') || b.slug.includes('dark-skin-tone');
-    
+    const aIsSkinTone =
+      a.slug.includes('-skin-tone') ||
+      a.slug.includes('light-skin-tone') ||
+      a.slug.includes('medium-skin-tone') ||
+      a.slug.includes('dark-skin-tone');
+    const bIsSkinTone =
+      b.slug.includes('-skin-tone') ||
+      b.slug.includes('light-skin-tone') ||
+      b.slug.includes('medium-skin-tone') ||
+      b.slug.includes('dark-skin-tone');
+
     if (aIsSkinTone && !bIsSkinTone) return 1;
     if (!aIsSkinTone && bIsSkinTone) return -1;
-    
+
     // Within same type, sort by title
     const titleA = a.title || a.fluentui_metadata?.cldr || a.slug || '';
     const titleB = b.title || b.fluentui_metadata?.cldr || b.slug || '';
     return titleA.localeCompare(titleB);
   });
-  
+
   emojiCache = emojis;
   slugToFolderPath = slugMap;
   return emojis;
@@ -168,7 +181,7 @@ export function getAllEmojis(): EmojiData[] {
 
 export function getEmojiBySlug(slug: string): EmojiData | null {
   const all = getAllEmojis();
-  const found = all.find(e => e.slug === slug);
+  const found = all.find((e) => e.slug === slug);
   if (found) return found;
 
   // Fallback to filesystem direct (legacy flat layout)
@@ -187,19 +200,19 @@ export function getEmojiBySlug(slug: string): EmojiData | null {
 
 export function getEmojiImages(slug: string): EmojiImageVariants {
   const all = getAllEmojis();
-  const match = all.find(e => e.slug === slug);
+  const match = all.find((e) => e.slug === slug);
   const baseRelativePath = match?.folderPath || slug;
   const emojiDataPath = join(process.cwd(), 'public/emoji_data');
   const folderPath = join(emojiDataPath, baseRelativePath);
   const images: EmojiImageVariants = {};
-  
+
   if (!existsSync(folderPath)) {
     return images;
   }
-  
+
   try {
     const files = readdirSync(folderPath);
-    
+
     for (const file of files) {
       if (file.endsWith('.png') || file.endsWith('.svg')) {
         const baseName = file.replace(/\.(png|svg)$/, '');
@@ -228,7 +241,7 @@ export function getEmojiImages(slug: string): EmojiImageVariants {
   } catch (error) {
     console.warn(`Failed to read emoji images for ${slug}:`, error);
   }
-  
+
   return images;
 }
 

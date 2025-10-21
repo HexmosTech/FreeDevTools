@@ -1,29 +1,29 @@
 ---
-title: "Manage Database Maintenance Windows with doctl | Online Free DevTools by Hexmos"
+title: 'Manage Database Maintenance Windows with doctl | Online Free DevTools by Hexmos'
 name: doctl-databases-maintenance-window
-path: "/freedevtools/tldr/doctl/doctl-databases-maintenance-window/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-maintenance-window/"
-description: "Manage database maintenance windows with doctl. Schedule updates, retrieve schedules and ensure optimal database performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-databases-maintenance-window/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-maintenance-window/'
+description: 'Manage database maintenance windows with doctl. Schedule updates, retrieve schedules and ensure optimal database performance. Free online tool, no registration required.'
 category: common
 keywords:
-- database maintenance window
-- doctl database schedule
-- digitalocean database management
-- database maintenance schedule
-- doctl database update
-- database cluster maintenance
-- cloud database maintenance
-- doctl command line tool
-- digitalocean api
-- database administration
+  - database maintenance window
+  - doctl database schedule
+  - digitalocean database management
+  - database maintenance schedule
+  - doctl database update
+  - database cluster maintenance
+  - cloud database maintenance
+  - doctl command line tool
+  - digitalocean api
+  - database administration
 features:
-- Schedule maintenance windows for database clusters
-- Retrieve details of existing maintenance windows
-- Update the maintenance window schedule
-- Manage database maintenance via command line
-- Automate database maintenance scheduling
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Schedule maintenance windows for database clusters
+  - Retrieve details of existing maintenance windows
+  - Update the maintenance window schedule
+  - Manage database maintenance via command line
+  - Automate database maintenance scheduling
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl databases maintenance-window

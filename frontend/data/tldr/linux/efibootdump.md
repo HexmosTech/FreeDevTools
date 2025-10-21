@@ -1,9 +1,9 @@
 ---
-title: "Dump Boot Entries - EFI Boot Dump Utility | Online Free DevTools by Hexmos"
+title: 'Dump Boot Entries - EFI Boot Dump Utility | Online Free DevTools by Hexmos'
 name: efibootdump
-path: "/freedevtools/tldr/linux/efibootdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/efibootdump/"
-description: "Dump EFI boot entries with efibootdump.  View and analyze boot information from EFI variables or files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/efibootdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/efibootdump/'
+description: 'Dump EFI boot entries with efibootdump.  View and analyze boot information from EFI variables or files. Free online tool, no registration required.'
 category: linux
 keywords:
   - efi boot dump command
@@ -22,8 +22,8 @@ features:
   - Provides detailed information about each boot entry.
   - Aids in troubleshooting boot-related issues.
   - Useful for system administrators and developers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # efibootdump

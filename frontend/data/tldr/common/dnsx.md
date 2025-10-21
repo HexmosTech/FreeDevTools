@@ -1,29 +1,29 @@
 ---
-title: "DNS Lookup - Perform DNS Queries with dnsx | Online Free DevTools by Hexmos"
+title: 'DNS Lookup - Perform DNS Queries with dnsx | Online Free DevTools by Hexmos'
 name: dnsx
-path: "/freedevtools/tldr/common/dnsx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dnsx/"
-description: "Perform DNS lookup quickly with dnsx, a versatile DNS toolkit. Resolve domains, extract records, and debug DNS configurations easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dnsx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dnsx/'
+description: 'Perform DNS lookup quickly with dnsx, a versatile DNS toolkit. Resolve domains, extract records, and debug DNS configurations easily. Free online tool, no registration required.'
 category: common
 keywords:
-- DNS lookup tool
-- DNS query resolver
-- DNS record extraction
-- Domain name resolution
-- Subdomain enumeration
-- DNS brute forcing
-- DNS troubleshooting
-- Linux DNS tools
-- macOS DNS tools
-- Command-line DNS utility
+  - DNS lookup tool
+  - DNS query resolver
+  - DNS record extraction
+  - Domain name resolution
+  - Subdomain enumeration
+  - DNS brute forcing
+  - DNS troubleshooting
+  - Linux DNS tools
+  - macOS DNS tools
+  - Command-line DNS utility
 features:
-- Perform various DNS queries like A, AAAA, CNAME, TXT, MX
-- Brute force DNS records using wordlists
-- Extract specific DNS records from a list of subdomains
-- Display raw DNS response with specified resolvers and retry attempts
-- Output DNS response only, omitting queried domain or subdomain
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform various DNS queries like A, AAAA, CNAME, TXT, MX
+  - Brute force DNS records using wordlists
+  - Extract specific DNS records from a list of subdomains
+  - Display raw DNS response with specified resolvers and retry attempts
+  - Output DNS response only, omitting queried domain or subdomain
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnsx

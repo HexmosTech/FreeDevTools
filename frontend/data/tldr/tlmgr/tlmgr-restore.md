@@ -1,29 +1,29 @@
 ---
-title: "TLMGR Restore - Manage TeX Live Backups | Online Free DevTools by Hexmos"
+title: 'TLMGR Restore - Manage TeX Live Backups | Online Free DevTools by Hexmos'
 name: tlmgr-restore
-path: "/freedevtools/tldr/tlmgr/tlmgr-restore/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-restore/"
-description: "Manage TeX Live backups with TLMGR Restore. Effortlessly recover package versions and configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-restore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-restore/'
+description: 'Manage TeX Live backups with TLMGR Restore. Effortlessly recover package versions and configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX Live restore
-- TLMGR backup restore
-- TeX package recovery
-- LaTeX backup manager
-- TeX Live version control
-- TLMGR revision restore
-- command line TeX restore
-- TeX distribution backup
-- TeX Live configuration restore
-- TLMGR backup directory
+  - TeX Live restore
+  - TLMGR backup restore
+  - TeX package recovery
+  - LaTeX backup manager
+  - TeX Live version control
+  - TLMGR revision restore
+  - command line TeX restore
+  - TeX distribution backup
+  - TeX Live configuration restore
+  - TLMGR backup directory
 features:
-- Restore specific package revisions
-- Restore all backed-up packages
-- Restore from a custom backup directory
-- List available backup revisions
-- Perform dry-run restores to preview actions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restore specific package revisions
+  - Restore all backed-up packages
+  - Restore from a custom backup directory
+  - List available backup revisions
+  - Perform dry-run restores to preview actions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr restore

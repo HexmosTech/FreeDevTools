@@ -1,29 +1,29 @@
 ---
-title: "CBT - Read Bigtable Data | Online Free DevTools by Hexmos"
+title: 'CBT - Read Bigtable Data | Online Free DevTools by Hexmos'
 name: cbt
-path: "/freedevtools/tldr/common/cbt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cbt/"
-description: "Read Bigtable data efficiently with CBT. Retrieve rows, count records, and filter columns from Google Cloud Bigtable. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cbt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cbt/'
+description: 'Read Bigtable data efficiently with CBT. Retrieve rows, count records, and filter columns from Google Cloud Bigtable. Free online tool, no registration required.'
 category: common
 keywords:
-- Bigtable data reader
-- CBT data retrieval
-- Google Cloud Bigtable command
-- Bigtable row lookup
-- Bigtable data filtering
-- Bigtable table listing
-- Bigtable row counting
-- gcloud bigtable cbt
-- cbt linux
-- cbt command line
+  - Bigtable data reader
+  - CBT data retrieval
+  - Google Cloud Bigtable command
+  - Bigtable row lookup
+  - Bigtable data filtering
+  - Bigtable table listing
+  - Bigtable row counting
+  - gcloud bigtable cbt
+  - cbt linux
+  - cbt command line
 features:
-- List Bigtable tables in a project
-- Count rows in a specific Bigtable table
-- Display a single Bigtable row with cell revisions
-- Retrieve specific columns from a Bigtable row
-- Search and print rows by a specific regex pattern
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List Bigtable tables in a project
+  - Count rows in a specific Bigtable table
+  - Display a single Bigtable row with cell revisions
+  - Retrieve specific columns from a Bigtable row
+  - Search and print rows by a specific regex pattern
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cbt

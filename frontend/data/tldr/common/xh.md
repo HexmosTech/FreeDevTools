@@ -1,9 +1,9 @@
 ---
-title: "Send HTTP Requests with XH - Fast CLI Tool | Online Free DevTools by Hexmos"
+title: 'Send HTTP Requests with XH - Fast CLI Tool | Online Free DevTools by Hexmos'
 name: xh
-path: "/freedevtools/tldr/common/xh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xh/"
-description: "Send HTTP requests with XH, a fast and friendly command-line tool written in Rust. Simplify API testing and interaction. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xh/'
+description: 'Send HTTP requests with XH, a fast and friendly command-line tool written in Rust. Simplify API testing and interaction. Free online tool, no registration required.'
 category: common
 keywords:
   - HTTP request command line
@@ -22,8 +22,8 @@ features:
   - Specify custom headers for HTTP requests
   - Save the response body to a file
   - Show equivalent curl command for easy migration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xh

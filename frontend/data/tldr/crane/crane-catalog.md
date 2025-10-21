@@ -1,29 +1,29 @@
 ---
-title: "List Repositories - Crane Catalog | Online Free DevTools by Hexmos"
+title: 'List Repositories - Crane Catalog | Online Free DevTools by Hexmos'
 name: crane-catalog
-path: "/freedevtools/tldr/crane/crane-catalog/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-catalog/"
-description: "List repositories with Crane Catalog. Explore container registry contents and manage image references easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-catalog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-catalog/'
+description: 'List repositories with Crane Catalog. Explore container registry contents and manage image references easily. Free online tool, no registration required.'
 category: common
 keywords:
-- container registry list
-- image repository catalog
-- crane catalog tool
-- docker registry explorer
-- container image listing
-- registry repository names
-- container management tool
-- go-containerregistry command
-- oci registry catalog
-- container image analysis
+  - container registry list
+  - image repository catalog
+  - crane catalog tool
+  - docker registry explorer
+  - container image listing
+  - registry repository names
+  - container management tool
+  - go-containerregistry command
+  - oci registry catalog
+  - container image analysis
 features:
-- List repositories in a container registry
-- Print the full image reference of repositories
-- Support for OCI compliant registries
-- Display help and usage information
-- Explore contents of remote image repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List repositories in a container registry
+  - Print the full image reference of repositories
+  - Support for OCI compliant registries
+  - Display help and usage information
+  - Explore contents of remote image repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane catalog

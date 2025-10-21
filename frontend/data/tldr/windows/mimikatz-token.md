@@ -1,29 +1,29 @@
 ---
-title: "Mimikatz Token - Control Security Tokens | Online Free DevTools by Hexmos"
+title: 'Mimikatz Token - Control Security Tokens | Online Free DevTools by Hexmos'
 name: mimikatz-token
-path: "/freedevtools/tldr/windows/mimikatz-token/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/mimikatz-token/"
-description: "Control security tokens with Mimikatz Token. Elevate privileges, list tokens, and revert to original tokens. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/mimikatz-token/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/mimikatz-token/'
+description: 'Control security tokens with Mimikatz Token. Elevate privileges, list tokens, and revert to original tokens. Free online tool, no registration required.'
 category: windows
 keywords:
-- security token manager
-- mimikatz token manipulation
-- windows token enumeration
-- token impersonation windows
-- windows privilege escalation
-- mimikatz elevate privileges
-- mimikatz revert token
-- security token list
-- windows credential theft
-- windows security tools
+  - security token manager
+  - mimikatz token manipulation
+  - windows token enumeration
+  - token impersonation windows
+  - windows privilege escalation
+  - mimikatz elevate privileges
+  - mimikatz revert token
+  - security token list
+  - windows credential theft
+  - windows security tools
 features:
-- List available security tokens
-- Impersonate a security token for privilege escalation
-- Revert to the original security token
-- Manage security token access
-- Elevate user privileges
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available security tokens
+  - Impersonate a security token for privilege escalation
+  - Revert to the original security token
+  - Manage security token access
+  - Elevate user privileges
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mimikatz token

@@ -1,29 +1,29 @@
 ---
-title: "Runuser - Execute Commands as Different User | Online Free DevTools by Hexmos"
+title: 'Runuser - Execute Commands as Different User | Online Free DevTools by Hexmos'
 name: runuser
-path: "/freedevtools/tldr/linux/runuser/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/runuser/"
-description: "Execute commands with runuser as another user. Manage user permissions and execute specific commands using different user accounts. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/runuser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/runuser/'
+description: 'Execute commands with runuser as another user. Manage user permissions and execute specific commands using different user accounts. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux runuser command
-- execute commands as user linux
-- linux su alternative
-- linux user context switch
-- linux privilege escalation
-- linux command execution as other user
-- runuser without password
-- run commands as different group linux
-- linux user impersonation tool
-- linux root user management
+  - linux runuser command
+  - execute commands as user linux
+  - linux su alternative
+  - linux user context switch
+  - linux privilege escalation
+  - linux command execution as other user
+  - runuser without password
+  - run commands as different group linux
+  - linux user impersonation tool
+  - linux root user management
 features:
-- Execute commands as a specified user
-- Switch user and group context for command execution
-- Start a login shell as a specific user
-- Preserve environment variables during user switch
-- Specify a custom shell for command execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands as a specified user
+  - Switch user and group context for command execution
+  - Start a login shell as a specific user
+  - Preserve environment variables during user switch
+  - Specify a custom shell for command execution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # runuser

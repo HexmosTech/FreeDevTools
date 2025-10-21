@@ -1,29 +1,29 @@
 ---
-title: "Ruff Linter - Check Python Code | Online Free DevTools by Hexmos"
+title: 'Ruff Linter - Check Python Code | Online Free DevTools by Hexmos'
 name: ruff-check
-path: "/freedevtools/tldr/ruff/ruff-check/"
-canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff-check/"
-description: "Lint Python code efficiently with Ruff Linter. Find and fix errors to improve code quality using a fast, modern tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/ruff/ruff-check/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ruff/ruff-check/'
+description: 'Lint Python code efficiently with Ruff Linter. Find and fix errors to improve code quality using a fast, modern tool. Free online tool, no registration required.'
 category: common
 keywords:
-- Python linter
-- Ruff linter
-- Python code checker
-- Python code analysis
-- Python static analysis
-- Python error detection
-- Python code formatting
-- Python code quality
-- Python style guide
-- Python rule enforcement
+  - Python linter
+  - Ruff linter
+  - Python code checker
+  - Python code analysis
+  - Python static analysis
+  - Python error detection
+  - Python code formatting
+  - Python code quality
+  - Python style guide
+  - Python rule enforcement
 features:
-- Lint Python files and directories for errors.
-- Apply suggested fixes automatically to correct code.
-- Watch files for changes and re-lint continuously.
-- Enable or disable specific linting rules.
-- Add `# noqa` directives to ignore existing rule violations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lint Python files and directories for errors.
+  - Apply suggested fixes automatically to correct code.
+  - Watch files for changes and re-lint continuously.
+  - Enable or disable specific linting rules.
+  - Add `# noqa` directives to ignore existing rule violations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ruff check

@@ -1,29 +1,29 @@
 ---
-title: "DEX Dump - Analyze Android DEX Files | Online Free DevTools by Hexmos"
+title: 'DEX Dump - Analyze Android DEX Files | Online Free DevTools by Hexmos'
 name: dexdump
-path: "/freedevtools/tldr/common/dexdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dexdump/"
-description: "Analyze Android DEX files with DEX Dump. Extract classes, display headers, and disassemble executable sections. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dexdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dexdump/'
+description: 'Analyze Android DEX files with DEX Dump. Extract classes, display headers, and disassemble executable sections. Free online tool, no registration required.'
 category: common
 keywords:
-- android dex analyzer
-- dex file dump
-- apk decompiler
-- android reverse engineering
-- dexdump linux
-- dexdump macos
-- dexdump android
-- dex bytecode analysis
-- dex file extraction
-- apk analysis tool
+  - android dex analyzer
+  - dex file dump
+  - apk decompiler
+  - android reverse engineering
+  - dexdump linux
+  - dexdump macos
+  - dexdump android
+  - dex bytecode analysis
+  - dex file extraction
+  - apk analysis tool
 features:
-- Extract classes and methods from APK files
-- Display header information of DEX files
-- Disassemble executable sections of DEX files
-- Output results to a file
-- Analyze DEX file structure
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract classes and methods from APK files
+  - Display header information of DEX files
+  - Disassemble executable sections of DEX files
+  - Output results to a file
+  - Analyze DEX file structure
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dexdump

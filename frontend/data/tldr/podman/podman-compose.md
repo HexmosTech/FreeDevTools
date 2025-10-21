@@ -1,29 +1,29 @@
 ---
-title: "Compose Control - Manage Containers with Podman-Compose | Online Free DevTools by Hexmos"
+title: 'Compose Control - Manage Containers with Podman-Compose | Online Free DevTools by Hexmos'
 name: podman-compose
-path: "/freedevtools/tldr/podman/podman-compose/"
-canonical: "https://hexmos.com/freedevtools/tldr/podman/podman-compose/"
-description: "Control container definitions easily with Podman-Compose. Manage and orchestrate multi-container applications using Compose specification. Free online tool, no registration required."
+path: '/freedevtools/tldr/podman/podman-compose/'
+canonical: 'https://hexmos.com/freedevtools/tldr/podman/podman-compose/'
+description: 'Control container definitions easily with Podman-Compose. Manage and orchestrate multi-container applications using Compose specification. Free online tool, no registration required.'
 category: common
 keywords:
-- Compose container management
-- Podman compose specification
-- Container orchestration tool
-- Docker compose alternative
-- YAML container definition
-- Linux container manager
-- Podman container commands
-- Container networking tool
-- Compose file execution
-- Multi-container deployment
+  - Compose container management
+  - Podman compose specification
+  - Container orchestration tool
+  - Docker compose alternative
+  - YAML container definition
+  - Linux container manager
+  - Podman container commands
+  - Container networking tool
+  - Compose file execution
+  - Multi-container deployment
 features:
-- Define and run multi-container applications using Compose specification
-- Manage container lifecycle with start, stop, and down commands
-- Build images and start containers in a single command
-- View container logs for debugging and monitoring
-- Execute one-time commands within container services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define and run multi-container applications using Compose specification
+  - Manage container lifecycle with start, stop, and down commands
+  - Build images and start containers in a single command
+  - View container logs for debugging and monitoring
+  - Execute one-time commands within container services
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # podman-compose

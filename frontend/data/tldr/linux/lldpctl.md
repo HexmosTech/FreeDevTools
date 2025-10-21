@@ -1,9 +1,9 @@
 ---
-title: "LLDP Control - Inspect Network Neighbors | Online Free DevTools by Hexmos"
+title: 'LLDP Control - Inspect Network Neighbors | Online Free DevTools by Hexmos'
 name: lldpctl
-path: "/freedevtools/tldr/linux/lldpctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lldpctl/"
-description: "Control Link Layer Discovery Protocol with lldpctl. Inspect network neighbor data, manage lldpd daemon, and troubleshoot network connectivity. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lldpctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lldpctl/'
+description: 'Control Link Layer Discovery Protocol with lldpctl. Inspect network neighbor data, manage lldpd daemon, and troubleshoot network connectivity. Free online tool, no registration required.'
 category: linux
 keywords:
   - lldp data control
@@ -22,8 +22,8 @@ features:
   - Inspect link layer protocol information
   - Troubleshoot network connectivity issues
   - Analyze network topology
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lldpctl

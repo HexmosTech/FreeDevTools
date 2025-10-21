@@ -1,29 +1,29 @@
 ---
-title: "Scrcpy - Control Android Device on Desktop | Online Free DevTools by Hexmos"
+title: 'Scrcpy - Control Android Device on Desktop | Online Free DevTools by Hexmos'
 name: scrcpy
-path: "/freedevtools/tldr/common/scrcpy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/scrcpy/"
-description: "Control your Android device with Scrcpy. Mirror your screen and interact with your phone via desktop, using ADB for seamless connectivity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/scrcpy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/scrcpy/'
+description: 'Control your Android device with Scrcpy. Mirror your screen and interact with your phone via desktop, using ADB for seamless connectivity. Free online tool, no registration required.'
 category: common
 keywords:
-- android mirroring tool
-- desktop android control
-- adb screen mirroring
-- scrcpy linux
-- scrcpy windows
-- scrcpy macos
-- android remote control
-- usb android mirror
-- wireless android control
-- screen recording android
+  - android mirroring tool
+  - desktop android control
+  - adb screen mirroring
+  - scrcpy linux
+  - scrcpy windows
+  - scrcpy macos
+  - android remote control
+  - usb android mirror
+  - wireless android control
+  - screen recording android
 features:
-- Mirror Android device screen on desktop
-- Control Android device using keyboard and mouse
-- Record Android screen to video file
-- Push files to Android device via drag and drop
-- Support for wired and wireless connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Mirror Android device screen on desktop
+  - Control Android device using keyboard and mouse
+  - Record Android screen to video file
+  - Push files to Android device via drag and drop
+  - Support for wired and wireless connections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scrcpy

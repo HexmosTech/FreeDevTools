@@ -1,29 +1,29 @@
 ---
-title: "Generate SHA512 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Generate SHA512 Checksums - Verify File Integrity | Online Free DevTools by Hexmos'
 name: sha512sum
-path: "/freedevtools/tldr/common/sha512sum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sha512sum/"
-description: "Generate SHA512 checksums with sha512sum for file integrity verification. Secure your data with cryptographic hashing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sha512sum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sha512sum/'
+description: 'Generate SHA512 checksums with sha512sum for file integrity verification. Secure your data with cryptographic hashing. Free online tool, no registration required.'
 category: common
 keywords:
-- SHA512 checksum generation
-- File integrity verification
-- Cryptographic hash calculation
-- SHA512 hash value generator
-- Linux checksum command
-- macOS checksum utility
-- SHA512 file validation
-- Data integrity verification
-- Checksum file comparison
-- Hash algorithm analysis
+  - SHA512 checksum generation
+  - File integrity verification
+  - Cryptographic hash calculation
+  - SHA512 hash value generator
+  - Linux checksum command
+  - macOS checksum utility
+  - SHA512 file validation
+  - Data integrity verification
+  - Checksum file comparison
+  - Hash algorithm analysis
 features:
-- Calculate SHA512 checksums for files
-- Verify file integrity using SHA512 checksums
-- Generate checksums from standard input
-- Check against existing checksum files
-- Ignore missing files during verification
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate SHA512 checksums for files
+  - Verify file integrity using SHA512 checksums
+  - Generate checksums from standard input
+  - Check against existing checksum files
+  - Ignore missing files during verification
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sha512sum

@@ -1,29 +1,29 @@
 ---
-title: "Stat - Display File Information | Online Free DevTools by Hexmos"
+title: 'Stat - Display File Information | Online Free DevTools by Hexmos'
 name: stat
-path: "/freedevtools/tldr/st/stat/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/stat/"
-description: "Display file information with Stat command. Inspect file size, permissions, and access dates with this powerful utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/stat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/stat/'
+description: 'Display file information with Stat command. Inspect file size, permissions, and access dates with this powerful utility. Free online tool, no registration required.'
 category: common
 keywords:
-- file information viewer
-- file metadata display
-- file system statistics
-- linux stat command
-- macos stat command
-- display file size
-- display file permissions
-- display file access dates
-- file attribute inspector
-- coreutils stat
+  - file information viewer
+  - file metadata display
+  - file system statistics
+  - linux stat command
+  - macos stat command
+  - display file size
+  - display file permissions
+  - display file access dates
+  - file attribute inspector
+  - coreutils stat
 features:
-- Display file size in bytes
-- Show file permissions in octal format
-- Display file owner and group
-- Display filesystem information
-- Display terse file information without labels
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display file size in bytes
+  - Show file permissions in octal format
+  - Display file owner and group
+  - Display filesystem information
+  - Display terse file information without labels
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # stat

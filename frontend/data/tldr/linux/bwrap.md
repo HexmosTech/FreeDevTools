@@ -1,9 +1,9 @@
 ---
-title: "bwrap Sandbox - Run Programs Securely | Online Free DevTools by Hexmos"
+title: 'bwrap Sandbox - Run Programs Securely | Online Free DevTools by Hexmos'
 name: bwrap
-path: "/freedevtools/tldr/linux/bwrap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bwrap/"
-description: "Run programs securely with bwrap, a lightweight sandbox. Isolate processes, control resource access, and enhance security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bwrap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bwrap/'
+description: 'Run programs securely with bwrap, a lightweight sandbox. Isolate processes, control resource access, and enhance security. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux sandbox
@@ -22,8 +22,8 @@ features:
   - Restrict access to devices and network resources.
   - Manage process capabilities and privileges.
   - Use tmpfs for temporary files and enhanced security.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bwrap

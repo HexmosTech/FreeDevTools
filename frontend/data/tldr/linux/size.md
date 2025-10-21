@@ -1,9 +1,9 @@
 ---
-title: "Size - Display Binary File Sections | Online Free DevTools by Hexmos"
+title: 'Size - Display Binary File Sections | Online Free DevTools by Hexmos'
 name: size
-path: "/freedevtools/tldr/linux/size/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/size/"
-description: "Display binary file section sizes with Size. Analyze object and executable files to determine memory layout. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/size/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/size/'
+description: 'Display binary file section sizes with Size. Analyze object and executable files to determine memory layout. Free online tool, no registration required.'
 category: linux
 keywords:
   - binary size analyzer
@@ -22,8 +22,8 @@ features:
   - Output sizes in octal, decimal, or hexadecimal
   - Provide a breakdown of file sections
   - Support various binary formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # size

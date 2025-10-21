@@ -1,29 +1,29 @@
 ---
-title: "Enumerate Subdomains - Amass Enum | Online Free DevTools by Hexmos"
+title: 'Enumerate Subdomains - Amass Enum | Online Free DevTools by Hexmos'
 name: amass-enum
-path: "/freedevtools/tldr/amass/amass-enum/"
-canonical: "https://hexmos.com/freedevtools/tldr/amass/amass-enum/"
-description: "Enumerate subdomains quickly with Amass Enum. Discover subdomains, verify them actively and perform brute-force searches. Free online tool, no registration required."
+path: '/freedevtools/tldr/amass/amass-enum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/amass/amass-enum/'
+description: 'Enumerate subdomains quickly with Amass Enum. Discover subdomains, verify them actively and perform brute-force searches. Free online tool, no registration required.'
 category: common
 keywords:
-- subdomain enumeration
-- amass subdomain finder
-- domain subdomain discovery
-- amass enum command
-- network reconnaissance tool
-- open source intelligence
-- osint subdomain enumeration
-- amass dns enumeration
-- linux subdomain finder
-- amass subdomain brute force
+  - subdomain enumeration
+  - amass subdomain finder
+  - domain subdomain discovery
+  - amass enum command
+  - network reconnaissance tool
+  - open source intelligence
+  - osint subdomain enumeration
+  - amass dns enumeration
+  - linux subdomain finder
+  - amass subdomain brute force
 features:
-- Discover subdomains for a given domain
-- Actively verify found subdomains by resolving them
-- Perform brute-force subdomain discovery
-- Save enumeration results to a text file
-- Output detailed results to a specified directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Discover subdomains for a given domain
+  - Actively verify found subdomains by resolving them
+  - Perform brute-force subdomain discovery
+  - Save enumeration results to a text file
+  - Output detailed results to a specified directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # amass enum

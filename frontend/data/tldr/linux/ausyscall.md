@@ -1,9 +1,9 @@
 ---
-title: "Map Syscalls - Find System Call Numbers and Names | Online Free DevTools by Hexmos"
+title: 'Map Syscalls - Find System Call Numbers and Names | Online Free DevTools by Hexmos'
 name: ausyscall
-path: "/freedevtools/tldr/linux/ausyscall/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ausyscall/"
-description: "Quickly map system call numbers and names with ausyscall.  Lookup syscall numbers or names easily using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ausyscall/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ausyscall/'
+description: 'Quickly map system call numbers and names with ausyscall.  Lookup syscall numbers or names easily using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - syscall number lookup
@@ -22,8 +22,8 @@ features:
   - Provides a comprehensive list of all system calls for a specified architecture.
   - Supports various architectures (specify with --dump flag).
   - Offers a simple and efficient command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ausyscall

@@ -1,29 +1,29 @@
 ---
-title: "Compile LaTeX Files - Tectonic Engine | Online Free DevTools by Hexmos"
+title: 'Compile LaTeX Files - Tectonic Engine | Online Free DevTools by Hexmos'
 name: tectonic
-path: "/freedevtools/tldr/common/tectonic/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tectonic/"
-description: "Compile LaTeX documents quickly with Tectonic Engine. Generate PDFs from TeX files using this modern self-contained TeX distribution. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tectonic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tectonic/'
+description: 'Compile LaTeX documents quickly with Tectonic Engine. Generate PDFs from TeX files using this modern self-contained TeX distribution. Free online tool, no registration required.'
 category: common
 keywords:
-- LaTeX compiler
-- TeX typesetting
-- PDF generator
-- Tectonic LaTeX engine
-- Command-line LaTeX
-- Cross-platform LaTeX
-- TeX document build
-- LaTeX project manager
-- Synctex support
-- LaTeX build automation
+  - LaTeX compiler
+  - TeX typesetting
+  - PDF generator
+  - Tectonic LaTeX engine
+  - Command-line LaTeX
+  - Cross-platform LaTeX
+  - TeX document build
+  - LaTeX project manager
+  - Synctex support
+  - LaTeX build automation
 features:
-- Compile TeX/LaTeX files into PDF documents
-- Generate synctex data for source-PDF synchronization
-- Initialize a new Tectonic project
-- Build existing Tectonic projects
-- Watch for changes and automatically rebuild projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile TeX/LaTeX files into PDF documents
+  - Generate synctex data for source-PDF synchronization
+  - Initialize a new Tectonic project
+  - Build existing Tectonic projects
+  - Watch for changes and automatically rebuild projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tectonic

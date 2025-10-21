@@ -1,29 +1,29 @@
 ---
-title: "Octave Script Execution - Run Scientific Programs | Online Free DevTools by Hexmos"
+title: 'Octave Script Execution - Run Scientific Programs | Online Free DevTools by Hexmos'
 name: octave
-path: "/freedevtools/tldr/common/octave/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/octave/"
-description: "Execute Octave scripts efficiently with Octave. Run scientific programs and perform numerical computations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/octave/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/octave/'
+description: 'Execute Octave scripts efficiently with Octave. Run scientific programs and perform numerical computations. Free online tool, no registration required.'
 category: common
 keywords:
-- octave script execution
-- scientific computing octave
-- numerical analysis octave
-- octave programming language
-- octave command line
-- octave script arguments
-- octave GUI interface
-- octave version check
-- octave help documentation
-- octave interactive session
+  - octave script execution
+  - scientific computing octave
+  - numerical analysis octave
+  - octave programming language
+  - octave command line
+  - octave script arguments
+  - octave GUI interface
+  - octave version check
+  - octave help documentation
+  - octave interactive session
 features:
-- Execute Octave scripts from the command line
-- Start an interactive Octave session
-- Run Octave scripts with custom arguments
-- Launch Octave with a graphical user interface
-- Display Octave version and help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Octave scripts from the command line
+  - Start an interactive Octave session
+  - Run Octave scripts with custom arguments
+  - Launch Octave with a graphical user interface
+  - Display Octave version and help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # octave

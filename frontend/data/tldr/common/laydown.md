@@ -1,29 +1,29 @@
 ---
-title: "Standup Preparation - Manage Daily Tasks | Online Free DevTools by Hexmos"
+title: 'Standup Preparation - Manage Daily Tasks | Online Free DevTools by Hexmos'
 name: laydown
-path: "/freedevtools/tldr/common/laydown/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/laydown/"
+path: '/freedevtools/tldr/common/laydown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/laydown/'
 description: "Prepare for your daily standup with Laydown. Track your 'did' and 'doing' items efficiently using this command-line tool. Free online tool, no registration required."
 category: common
 keywords:
-- daily standup preparation
-- command line standup
-- terminal daily log
-- standup task manager
-- daily report generator
-- laydown task tracking
-- command line task
-- daily progress log
-- git standup tool
-- developer standup tool
+  - daily standup preparation
+  - command line standup
+  - terminal daily log
+  - standup task manager
+  - daily report generator
+  - laydown task tracking
+  - command line task
+  - daily progress log
+  - git standup tool
+  - developer standup tool
 features:
-- Add items to 'DID' section
-- Add items to 'DOING' section
-- Clear all current items
-- Edit current data in an editor
-- Archive and clear current data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add items to 'DID' section
+  - Add items to 'DOING' section
+  - Clear all current items
+  - Edit current data in an editor
+  - Archive and clear current data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # laydown

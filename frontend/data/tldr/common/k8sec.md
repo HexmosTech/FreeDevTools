@@ -1,29 +1,29 @@
 ---
-title: "Manage Kubernetes Secrets - Control K8s Secrets | Online Free DevTools by Hexmos"
+title: 'Manage Kubernetes Secrets - Control K8s Secrets | Online Free DevTools by Hexmos'
 name: k8sec
-path: "/freedevtools/tldr/common/k8sec/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/k8sec/"
-description: "Control Kubernetes secrets effortlessly with k8sec. Securely manage, list, and set secret values in your Kubernetes clusters. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/k8sec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/k8sec/'
+description: 'Control Kubernetes secrets effortlessly with k8sec. Securely manage, list, and set secret values in your Kubernetes clusters. Free online tool, no registration required.'
 category: common
 keywords:
-- Kubernetes secrets management
-- K8s secrets CLI
-- Kubernetes secrets controller
-- K8sec secret values
-- Kubernetes base64 secrets
-- K8s secrets editor
-- Kubernetes secrets file import
-- K8s secrets export
-- Kubernetes secret unset
-- K8s secrets dump
+  - Kubernetes secrets management
+  - K8s secrets CLI
+  - Kubernetes secrets controller
+  - K8sec secret values
+  - Kubernetes base64 secrets
+  - K8s secrets editor
+  - Kubernetes secrets file import
+  - K8s secrets export
+  - Kubernetes secret unset
+  - K8s secrets dump
 features:
-- List all Kubernetes secrets in a cluster.
-- Encode and decode Kubernetes secret values.
-- Set Kubernetes secret values via the command line.
-- Import and export Kubernetes secrets from/to files.
-- Unset or remove specific Kubernetes secrets.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all Kubernetes secrets in a cluster.
+  - Encode and decode Kubernetes secret values.
+  - Set Kubernetes secret values via the command line.
+  - Import and export Kubernetes secrets from/to files.
+  - Unset or remove specific Kubernetes secrets.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # k8sec

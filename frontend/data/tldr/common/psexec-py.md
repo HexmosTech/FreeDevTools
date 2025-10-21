@@ -1,29 +1,29 @@
 ---
-title: "PsExec Execute - Control Remote Windows Processes | Online Free DevTools by Hexmos"
+title: 'PsExec Execute - Control Remote Windows Processes | Online Free DevTools by Hexmos'
 name: psexec.py
-path: "/freedevtools/tldr/common/psexec-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/psexec-py/"
-description: "Execute remote commands with PsExec, a powerful tool to manage Windows processes remotely using RemComSvc. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/psexec-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/psexec-py/'
+description: 'Execute remote commands with PsExec, a powerful tool to manage Windows processes remotely using RemComSvc. Free online tool, no registration required.'
 category: common
 keywords:
-- Windows remote execution
-- PsExec remote commands
-- RemComSvc command execution
-- SMB remote access
-- Windows pass-the-hash
-- Kerberos authentication Windows
-- Impacket psexec command
-- Windows lateral movement
-- Domain controller command execution
-- Windows system administration
+  - Windows remote execution
+  - PsExec remote commands
+  - RemComSvc command execution
+  - SMB remote access
+  - Windows pass-the-hash
+  - Kerberos authentication Windows
+  - Impacket psexec command
+  - Windows lateral movement
+  - Domain controller command execution
+  - Windows system administration
 features:
-- Execute commands on remote Windows systems
-- Spawn interactive shells remotely
-- Support pass-the-hash authentication
-- Utilize Kerberos authentication for secure access
-- Specify a remote execution path
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands on remote Windows systems
+  - Spawn interactive shells remotely
+  - Support pass-the-hash authentication
+  - Utilize Kerberos authentication for secure access
+  - Specify a remote execution path
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # psexec.py

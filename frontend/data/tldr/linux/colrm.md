@@ -1,9 +1,9 @@
 ---
-title: "Remove Columns - Control Text Columns with colrm | Online Free DevTools by Hexmos"
+title: 'Remove Columns - Control Text Columns with colrm | Online Free DevTools by Hexmos'
 name: colrm
-path: "/freedevtools/tldr/linux/colrm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/colrm/"
-description: "Control text columns with colrm. Effortlessly remove and manipulate columns in text streams. Free online tool, no registration required. Manipulate text streams."
+path: '/freedevtools/tldr/linux/colrm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/colrm/'
+description: 'Control text columns with colrm. Effortlessly remove and manipulate columns in text streams. Free online tool, no registration required. Manipulate text streams.'
 category: linux
 keywords:
   - text column remover
@@ -22,8 +22,8 @@ features:
   - Process column removal on standard input
   - Operate from command line interface
   - Filter and modify text column data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # colrm

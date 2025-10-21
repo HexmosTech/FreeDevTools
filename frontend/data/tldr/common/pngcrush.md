@@ -1,29 +1,29 @@
 ---
-title: "Compress PNG - Optimize Images with Pngcrush | Online Free DevTools by Hexmos"
+title: 'Compress PNG - Optimize Images with Pngcrush | Online Free DevTools by Hexmos'
 name: pngcrush
-path: "/freedevtools/tldr/common/pngcrush/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pngcrush/"
-description: "Compress PNG files with Pngcrush for optimal web performance. Reduce image size and improve website loading speed. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pngcrush/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pngcrush/'
+description: 'Compress PNG files with Pngcrush for optimal web performance. Reduce image size and improve website loading speed. Free online tool, no registration required.'
 category: common
 keywords:
-- png compression
-- image optimization
-- pngcrush command
-- lossless compression
-- png optimizer
-- image compressor
-- png file size reduction
-- linux png compress
-- macos png compress
-- command line png tool
+  - png compression
+  - image optimization
+  - pngcrush command
+  - lossless compression
+  - png optimizer
+  - image compressor
+  - png file size reduction
+  - linux png compress
+  - macos png compress
+  - command line png tool
 features:
-- Compresses PNG images to reduce file size
-- Optimizes PNGs using multiple compression algorithms
-- Outputs compressed PNGs to a specified directory
-- Supports brute-force compression for maximum optimization
-- Reduces PNG file size with lossless compression
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compresses PNG images to reduce file size
+  - Optimizes PNGs using multiple compression algorithms
+  - Outputs compressed PNGs to a specified directory
+  - Supports brute-force compression for maximum optimization
+  - Reduces PNG file size with lossless compression
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pngcrush

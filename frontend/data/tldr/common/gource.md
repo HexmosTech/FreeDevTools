@@ -1,29 +1,29 @@
 ---
-title: "Generate Animated Tree Diagrams with Gource | Online Free DevTools by Hexmos"
+title: 'Generate Animated Tree Diagrams with Gource | Online Free DevTools by Hexmos'
 name: gource
-path: "/freedevtools/tldr/common/gource/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gource/"
-description: "Generate animated tree diagrams with Gource for Git repositories, visualizing code evolution. Track commits and file changes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gource/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gource/'
+description: 'Generate animated tree diagrams with Gource for Git repositories, visualizing code evolution. Track commits and file changes easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Git visualization
-- Repository animation
-- Code evolution tracker
-- Version control visualization
-- Git history explorer
-- Command line Git visualization
-- Software project history
-- Gource animation tool
-- Git log animation
-- Commit history visualization
+  - Git visualization
+  - Repository animation
+  - Code evolution tracker
+  - Version control visualization
+  - Git history explorer
+  - Command line Git visualization
+  - Software project history
+  - Gource animation tool
+  - Git log animation
+  - Commit history visualization
 features:
-- Visualize Git, SVN, Mercurial, and Bazaar repositories
-- Animate file and directory creation, modification, and removal
-- Customize animation speed and resolution
-- Control background color and display title
-- Pause and adjust simulation speed during playback
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Visualize Git, SVN, Mercurial, and Bazaar repositories
+  - Animate file and directory creation, modification, and removal
+  - Customize animation speed and resolution
+  - Control background color and display title
+  - Pause and adjust simulation speed during playback
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gource

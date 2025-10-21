@@ -1,29 +1,29 @@
 ---
-title: "Sngrep Capture - Display SIP Flows | Online Free DevTools by Hexmos"
+title: 'Sngrep Capture - Display SIP Flows | Online Free DevTools by Hexmos'
 name: sngrep
-path: "/freedevtools/tldr/common/sngrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sngrep/"
-description: "Capture SIP message flows with Sngrep. Analyze VoIP traffic and debug SIP communications with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sngrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sngrep/'
+description: 'Capture SIP message flows with Sngrep. Analyze VoIP traffic and debug SIP communications with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- SIP capture
-- VoIP traffic analysis
-- Sngrep SIP analyzer
-- PCAP SIP capture
-- SIP call flow visualization
-- Linux SIP capture
-- Command line SIP tool
-- SIP debugging
-- Real-time SIP monitoring
-- SIP message decoder
+  - SIP capture
+  - VoIP traffic analysis
+  - Sngrep SIP analyzer
+  - PCAP SIP capture
+  - SIP call flow visualization
+  - Linux SIP capture
+  - Command line SIP tool
+  - SIP debugging
+  - Real-time SIP monitoring
+  - SIP message decoder
 features:
-- Visualize SIP packets from PCAP files.
-- Filter and display SIP dialogs based on INVITE packets.
-- Monitor real-time SIP traffic on a specific network interface.
-- Capture SIP packets to a file without displaying them on the interface.
-- Analyze RTP packets within SIP communications.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Visualize SIP packets from PCAP files.
+  - Filter and display SIP dialogs based on INVITE packets.
+  - Monitor real-time SIP traffic on a specific network interface.
+  - Capture SIP packets to a file without displaying them on the interface.
+  - Analyze RTP packets within SIP communications.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sngrep

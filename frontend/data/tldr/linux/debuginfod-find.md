@@ -1,9 +1,9 @@
 ---
-title: "Find Debuginfo - Request Debug Data | Online Free DevTools by Hexmos"
+title: 'Find Debuginfo - Request Debug Data | Online Free DevTools by Hexmos'
 name: debuginfod-find
-path: "/freedevtools/tldr/linux/debuginfod-find/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/debuginfod-find/"
-description: "Request debuginfo data with debuginfod-find.  Find and retrieve debugging information efficiently using build IDs. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/debuginfod-find/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/debuginfod-find/'
+description: 'Request debuginfo data with debuginfod-find.  Find and retrieve debugging information efficiently using build IDs. Free online tool, no registration required.'
 category: linux
 keywords:
   - debuginfo request tool
@@ -22,8 +22,8 @@ features:
   - Facilitates efficient debugging data retrieval.
   - Enables streamlined debugging workflows.
   - Simplifies the process of finding necessary debug information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # debuginfod-find

@@ -1,29 +1,29 @@
 ---
-title: "CPU Frequency Control - Monitor CPU Speed | Online Free DevTools by Hexmos"
+title: 'CPU Frequency Control - Monitor CPU Speed | Online Free DevTools by Hexmos'
 name: cpufreq-aperf
-path: "/freedevtools/tldr/linux/cpufreq-aperf/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cpufreq-aperf/"
-description: "Control CPU frequency with cpufreq-aperf on Linux. Monitor CPU speed and performance to optimize system resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cpufreq-aperf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cpufreq-aperf/'
+description: 'Control CPU frequency with cpufreq-aperf on Linux. Monitor CPU speed and performance to optimize system resources. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux cpu frequency monitor
-- cpu performance analysis
-- average cpu speed
-- cpufreq aperf command
-- cpu throttling linux
-- system performance tuning
-- cpu usage analysis
-- linux performance monitoring
-- cpu scaling frequency
-- linux command line tools
+  - linux cpu frequency monitor
+  - cpu performance analysis
+  - average cpu speed
+  - cpufreq aperf command
+  - cpu throttling linux
+  - system performance tuning
+  - cpu usage analysis
+  - linux performance monitoring
+  - cpu scaling frequency
+  - linux command line tools
 features:
-- Monitor average CPU frequency over time
-- Calculate CPU speed for specific cores
-- Set custom refresh intervals for monitoring
-- Execute CPU frequency calculations once
-- Optimize CPU performance on Linux systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Monitor average CPU frequency over time
+  - Calculate CPU speed for specific cores
+  - Set custom refresh intervals for monitoring
+  - Execute CPU frequency calculations once
+  - Optimize CPU performance on Linux systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cpufreq-aperf

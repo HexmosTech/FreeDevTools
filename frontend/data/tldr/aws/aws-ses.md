@@ -1,29 +1,29 @@
 ---
-title: "AWS SES - Control Cloud Emails | Online Free DevTools by Hexmos"
+title: 'AWS SES - Control Cloud Emails | Online Free DevTools by Hexmos'
 name: aws-ses
-path: "/freedevtools/tldr/aws/aws-ses/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ses/"
-description: "Control cloud emails easily with AWS SES CLI. Manage email sending, receiving, and configurations through the command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-ses/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-ses/'
+description: 'Control cloud emails easily with AWS SES CLI. Manage email sending, receiving, and configurations through the command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS SES CLI
-- AWS Simple Email Service command line
-- SES email management
-- Cloud email control
-- AWS SES automation
-- SES receipt rule configuration
-- SES email sending tool
-- AWS SES Linux
-- AWS SES macOS
-- SES email automation tool
+  - AWS SES CLI
+  - AWS Simple Email Service command line
+  - SES email management
+  - Cloud email control
+  - AWS SES automation
+  - SES receipt rule configuration
+  - SES email sending tool
+  - AWS SES Linux
+  - AWS SES macOS
+  - SES email automation tool
 features:
-- Create and manage SES receipt rule sets
-- Send emails directly from the command line
-- Describe and list existing SES configurations
-- Delete SES receipt rules and rule sets
-- Display help for specific SES subcommands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage SES receipt rule sets
+  - Send emails directly from the command line
+  - Describe and list existing SES configurations
+  - Delete SES receipt rules and rule sets
+  - Display help for specific SES subcommands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws ses

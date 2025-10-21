@@ -1,9 +1,9 @@
 ---
-title: "Run Mailcap - Execute Mail Programs | Online Free DevTools by Hexmos"
+title: 'Run Mailcap - Execute Mail Programs | Online Free DevTools by Hexmos'
 name: run-mailcap
-path: "/freedevtools/tldr/linux/run-mailcap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/run-mailcap/"
-description: "Execute mailcap programs with run-mailcap.  Control mail actions like view, edit, and compose using command-line arguments. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/run-mailcap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/run-mailcap/'
+description: 'Execute mailcap programs with run-mailcap.  Control mail actions like view, edit, and compose using command-line arguments. Free online tool, no registration required.'
 category: linux
 keywords:
   - mailcap program execution
@@ -22,8 +22,8 @@ features:
   - Debug mailcap program execution with verbose output.
   - Suppress pager output for cleaner console output.
   - Preview the command to be executed without running it.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # run-mailcap

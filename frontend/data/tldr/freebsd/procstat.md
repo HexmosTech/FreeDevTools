@@ -1,9 +1,9 @@
 ---
-title: "Procstat - Analyze FreeBSD Processes | Online Free DevTools by Hexmos"
+title: 'Procstat - Analyze FreeBSD Processes | Online Free DevTools by Hexmos'
 name: procstat
-path: "/freedevtools/tldr/freebsd/procstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/freebsd/procstat/"
-description: "Analyze processes on FreeBSD with Procstat. Inspect file descriptors, virtual memory mappings, and resource limits. Free online tool, no registration required."
+path: '/freedevtools/tldr/freebsd/procstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/freebsd/procstat/'
+description: 'Analyze processes on FreeBSD with Procstat. Inspect file descriptors, virtual memory mappings, and resource limits. Free online tool, no registration required.'
 category: freebsd
 keywords:
   - freebsd process analysis
@@ -22,8 +22,8 @@ features:
   - display command line arguments of freebsd processes
   - show resource limits for freebsd processes
   - analyze detailed process information on freebsd
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # procstat

@@ -1,9 +1,9 @@
 ---
-title: "fsck - Check Filesystem Integrity | Online Free DevTools by Hexmos"
+title: 'fsck - Check Filesystem Integrity | Online Free DevTools by Hexmos'
 name: fsck
-path: "/freedevtools/tldr/linux/fsck/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fsck/"
-description: "Validate filesystem integrity with fsck.  Repair damaged blocks and ensure data consistency using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fsck/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fsck/'
+description: 'Validate filesystem integrity with fsck.  Repair damaged blocks and ensure data consistency using command-line options. Free online tool, no registration required.'
 category: linux
 keywords:
   - filesystem checker
@@ -22,8 +22,8 @@ features:
   - Verify filesystem consistency.
   - Ensure data integrity.
   - Works on various filesystem types (requires appropriate options).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fsck

@@ -1,9 +1,9 @@
 ---
-title: "Control Yum Config - Manage Repos | Online Free DevTools by Hexmos"
+title: 'Control Yum Config - Manage Repos | Online Free DevTools by Hexmos'
 name: yum-config-manager
-path: "/freedevtools/tldr/linux/yum-config-manager/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/yum-config-manager/"
-description: "Control Yum Config with Yum Config Manager. Manage repository configurations, add, enable, and disable repositories easily on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/yum-config-manager/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/yum-config-manager/'
+description: 'Control Yum Config with Yum Config Manager. Manage repository configurations, add, enable, and disable repositories easily on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
   - yum config manager
@@ -22,8 +22,8 @@ features:
   - Modify existing Yum repository configurations.
   - Manage software sources for package installations.
   - View and manage the Yum configuration files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yum config-manager

@@ -1,9 +1,9 @@
 ---
-title: "Jhead - Control Image EXIF Data | Online Free DevTools by Hexmos"
+title: 'Jhead - Control Image EXIF Data | Online Free DevTools by Hexmos'
 name: jhead
-path: "/freedevtools/tldr/linux/jhead/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/jhead/"
-description: "Control image EXIF data with Jhead. Modify timestamps, rotate images losslessly, and remove EXIF data. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/jhead/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/jhead/'
+description: 'Control image EXIF data with Jhead. Modify timestamps, rotate images losslessly, and remove EXIF data. Free online tool, no registration required.'
 category: linux
 keywords:
   - image EXIF data control
@@ -22,8 +22,8 @@ features:
   - Rename JPEG files based on EXIF creation date.
   - Rotate JPEG images losslessly based on EXIF orientation.
   - Remove all EXIF data from an image.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jhead

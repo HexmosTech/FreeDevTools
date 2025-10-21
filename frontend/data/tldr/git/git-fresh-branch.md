@@ -1,29 +1,29 @@
 ---
-title: "Create Git Branch - Empty Local Branch | Online Free DevTools by Hexmos"
+title: 'Create Git Branch - Empty Local Branch | Online Free DevTools by Hexmos'
 name: git-fresh-branch
-path: "/freedevtools/tldr/git/git-fresh-branch/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-fresh-branch/"
-description: "Create Git branch with the git fresh-branch command. Initialize empty local branches for clean development workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-fresh-branch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-fresh-branch/'
+description: 'Create Git branch with the git fresh-branch command. Initialize empty local branches for clean development workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- git fresh branch
-- git local branch
-- git empty branch
-- git clean branch
-- git branch creator
-- git branch initializer
-- git development branch
-- git extras branch
-- git branch command
-- git repository branch
+  - git fresh branch
+  - git local branch
+  - git empty branch
+  - git clean branch
+  - git branch creator
+  - git branch initializer
+  - git development branch
+  - git extras branch
+  - git branch command
+  - git repository branch
 features:
-- Creates an empty local Git branch
-- Initializes a branch without any commits
-- Supports clean development workflows
-- Uses the `git fresh-branch` command
-- Simplifies branch initialization in Git repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Creates an empty local Git branch
+  - Initializes a branch without any commits
+  - Supports clean development workflows
+  - Uses the `git fresh-branch` command
+  - Simplifies branch initialization in Git repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git fresh-branch

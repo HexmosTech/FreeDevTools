@@ -1,9 +1,9 @@
 ---
-title: "Locate Files - Find Files Quickly | Online Free DevTools by Hexmos"
+title: 'Locate Files - Find Files Quickly | Online Free DevTools by Hexmos'
 name: locate
-path: "/freedevtools/tldr/linux/locate/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/locate/"
-description: "Find files quickly with Locate. Efficiently search for filenames using the Locate command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/locate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/locate/'
+description: 'Find files quickly with Locate. Efficiently search for filenames using the Locate command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - filename search
@@ -22,8 +22,8 @@ features:
   - Recompute the locate database using updatedb
   - Find recently added files
   - Quickly locate files in the filesystem
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # locate

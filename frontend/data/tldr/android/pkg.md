@@ -1,9 +1,9 @@
 ---
-title: "Manage Packages - Control Termux Packages | Online Free DevTools by Hexmos"
+title: 'Manage Packages - Control Termux Packages | Online Free DevTools by Hexmos'
 name: pkg
-path: "/freedevtools/tldr/android/pkg/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/pkg/"
-description: "Manage Termux packages effortlessly with Pkg. Install, uninstall, and upgrade packages on your Android device using this powerful command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/pkg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/pkg/'
+description: 'Manage Termux packages effortlessly with Pkg. Install, uninstall, and upgrade packages on your Android device using this powerful command-line interface. Free online tool, no registration required.'
 category: android
 keywords:
   - termux package manager
@@ -22,8 +22,8 @@ features:
   - Uninstall existing packages from Termux
   - Reinstall damaged or corrupted packages
   - Search for available packages in the Termux repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkg

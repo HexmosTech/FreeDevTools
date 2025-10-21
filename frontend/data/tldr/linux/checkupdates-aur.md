@@ -1,9 +1,9 @@
 ---
-title: "Check AUR Updates - List Pending AUR Updates | Online Free DevTools by Hexmos"
+title: 'Check AUR Updates - List Pending AUR Updates | Online Free DevTools by Hexmos'
 name: checkupdates-aur
-path: "/freedevtools/tldr/linux/checkupdates-aur/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/checkupdates-aur/"
-description: "List pending AUR updates with checkupdates-aur. Manage your Arch User Repository packages and keep them up-to-date. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/checkupdates-aur/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/checkupdates-aur/'
+description: 'List pending AUR updates with checkupdates-aur. Manage your Arch User Repository packages and keep them up-to-date. Free online tool, no registration required.'
 category: linux
 keywords:
   - AUR updates check
@@ -22,8 +22,8 @@ features:
   - Execute in debug mode for detailed output
   - Check for available AUR package upgrades
   - Manage Arch Linux package updates via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # checkupdates-aur

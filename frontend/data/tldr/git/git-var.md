@@ -1,29 +1,29 @@
 ---
-title: "Git Variable - Print Git Values | Online Free DevTools by Hexmos"
+title: 'Git Variable - Print Git Values | Online Free DevTools by Hexmos'
 name: git-var
-path: "/freedevtools/tldr/git/git-var/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-var/"
-description: "Print Git variables instantly with Git Var. Retrieve configuration values and list available variables easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-var/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-var/'
+description: 'Print Git variables instantly with Git Var. Retrieve configuration values and list available variables easily. Free online tool, no registration required.'
 category: common
 keywords:
-- git variable printer
-- git configuration value
-- git environment variables
-- git repository information
-- git logical variable
-- git config value retrieval
-- git command line tool
-- git bash variables
-- git environment settings
-- git custom variables
+  - git variable printer
+  - git configuration value
+  - git environment variables
+  - git repository information
+  - git logical variable
+  - git config value retrieval
+  - git command line tool
+  - git bash variables
+  - git environment settings
+  - git custom variables
 features:
-- Print the value of specified Git variables
-- List all available Git logical variables
-- Retrieve Git configuration information
-- Access Git environment settings
-- Display custom defined variables in Git
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print the value of specified Git variables
+  - List all available Git logical variables
+  - Retrieve Git configuration information
+  - Access Git environment settings
+  - Display custom defined variables in Git
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git var

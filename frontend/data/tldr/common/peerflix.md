@@ -1,29 +1,29 @@
 ---
-title: "Stream Torrents - Peerflix Stream Media | Online Free DevTools by Hexmos"
+title: 'Stream Torrents - Peerflix Stream Media | Online Free DevTools by Hexmos'
 name: peerflix
-path: "/freedevtools/tldr/common/peerflix/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/peerflix/"
-description: "Stream torrent files directly with Peerflix, eliminating downloads. Play video and audio torrents online using media players. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/peerflix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/peerflix/'
+description: 'Stream torrent files directly with Peerflix, eliminating downloads. Play video and audio torrents online using media players. Free online tool, no registration required.'
 category: common
 keywords:
-- torrent streaming
-- online video streaming
-- peerflix command
-- media torrent player
-- torrent file player
-- stream magnet links
-- torrent file streaming
-- vlc torrent streaming
-- mplayer torrent streaming
-- airplay torrents
+  - torrent streaming
+  - online video streaming
+  - peerflix command
+  - media torrent player
+  - torrent file player
+  - stream magnet links
+  - torrent file streaming
+  - vlc torrent streaming
+  - mplayer torrent streaming
+  - airplay torrents
 features:
-- Stream torrents directly to media players like VLC and MPlayer.
-- List all streamable files within a torrent by its magnet link.
-- Play torrents on Airplay-enabled devices.
-- Support for subtitles when streaming to MPlayer.
-- Stream audio and video torrents.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Stream torrents directly to media players like VLC and MPlayer.
+  - List all streamable files within a torrent by its magnet link.
+  - Play torrents on Airplay-enabled devices.
+  - Support for subtitles when streaming to MPlayer.
+  - Stream audio and video torrents.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # peerflix

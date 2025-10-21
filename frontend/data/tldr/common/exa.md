@@ -1,29 +1,29 @@
 ---
-title: "Exa - List Directory Contents | Online Free DevTools by Hexmos"
+title: 'Exa - List Directory Contents | Online Free DevTools by Hexmos'
 name: exa
-path: "/freedevtools/tldr/common/exa/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/exa/"
-description: "List directory contents with Exa, a modern replacement for `ls`.  Easily view file permissions, sizes, and modification dates. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/exa/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/exa/'
+description: 'List directory contents with Exa, a modern replacement for `ls`.  Easily view file permissions, sizes, and modification dates. Free online tool, no registration required.'
 category: common
 keywords:
-- list directory contents
-- exa command line tool
-- ls alternative linux
-- file listing command
-- modern ls replacement
-- terminal file browser
-- directory tree viewer
-- file sorting command
-- git aware file listing
-- linux file manager
+  - list directory contents
+  - exa command line tool
+  - ls alternative linux
+  - file listing command
+  - modern ls replacement
+  - terminal file browser
+  - directory tree viewer
+  - file sorting command
+  - git aware file listing
+  - linux file manager
 features:
-- Display directory contents in a grid or long format.
-- Show hidden files and directories.
-- Sort files by name, size, or modification date.
-- Visualize directory structure as a tree.
-- Integrate with Git to display file status.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display directory contents in a grid or long format.
+  - Show hidden files and directories.
+  - Sort files by name, size, or modification date.
+  - Visualize directory structure as a tree.
+  - Integrate with Git to display file status.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exa

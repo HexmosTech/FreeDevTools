@@ -1,29 +1,29 @@
 ---
-title: "Verify Git Commit - Check GPG Signatures | Online Free DevTools by Hexmos"
+title: 'Verify Git Commit - Check GPG Signatures | Online Free DevTools by Hexmos'
 name: git-verify-commit
-path: "/freedevtools/tldr/git/git-verify-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-verify-commit/"
-description: "Verify Git commits with git-verify-commit. Check GPG signatures and ensure commit integrity. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-verify-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-verify-commit/'
+description: 'Verify Git commits with git-verify-commit. Check GPG signatures and ensure commit integrity. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit signature verification
-- gpg signature check git
-- verify git history integrity
-- git commit authenticity check
-- git commit security
-- git commit trust verification
-- linux git commit
-- macos git commit
-- verify commit gpg
-- git commit verify command
+  - git commit signature verification
+  - gpg signature check git
+  - verify git history integrity
+  - git commit authenticity check
+  - git commit security
+  - git commit trust verification
+  - linux git commit
+  - macos git commit
+  - verify commit gpg
+  - git commit verify command
 features:
-- Checks commits for GPG signatures
-- Verifies the authenticity of Git commits
-- Displays detailed information about signed commits
-- Prints raw details of verified commits
-- Supports verification of multiple commits at once
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checks commits for GPG signatures
+  - Verifies the authenticity of Git commits
+  - Displays detailed information about signed commits
+  - Prints raw details of verified commits
+  - Supports verification of multiple commits at once
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git verify-commit

@@ -1,9 +1,9 @@
 ---
-title: "Manage Partitions - Control Disk Space with systemd-repart | Online Free DevTools by Hexmos"
+title: 'Manage Partitions - Control Disk Space with systemd-repart | Online Free DevTools by Hexmos'
 name: systemd-repart
-path: "/freedevtools/tldr/linux/systemd-repart/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-repart/"
-description: "Control disk space and partition sizes with systemd-repart.  Resize and manage partitions easily from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-repart/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-repart/'
+description: 'Control disk space and partition sizes with systemd-repart.  Resize and manage partitions easily from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux partition management
@@ -22,8 +22,8 @@ features:
   - Provides a dry-run option to preview changes before applying.
   - Supports growing the root partition to fill available space.
   - Manages partition resizing through the systemd service.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-repart

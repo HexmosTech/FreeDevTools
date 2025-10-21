@@ -1,29 +1,29 @@
 ---
-title: "PGM Edge Detection - Find Image Edges | Online Free DevTools by Hexmos"
+title: 'PGM Edge Detection - Find Image Edges | Online Free DevTools by Hexmos'
 name: pgmedge
-path: "/freedevtools/tldr/common/pgmedge/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pgmedge/"
-description: "Detect image edges with PGM Edge Detection. Analyze grayscale image gradients and identify boundaries. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pgmedge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pgmedge/'
+description: 'Detect image edges with PGM Edge Detection. Analyze grayscale image gradients and identify boundaries. Free online tool, no registration required.'
 category: common
 keywords:
-- PGM image edge detection
-- Grayscale image edge finder
-- Netpbm image analysis
-- Image gradient analysis
-- Edge detection algorithm
-- PGM file processing
-- Common image tools
-- Image border detection
-- Edge highlighting tool
-- PGM edge extraction
+  - PGM image edge detection
+  - Grayscale image edge finder
+  - Netpbm image analysis
+  - Image gradient analysis
+  - Edge detection algorithm
+  - PGM file processing
+  - Common image tools
+  - Image border detection
+  - Edge highlighting tool
+  - PGM edge extraction
 features:
-- Identify edges in PGM images
-- Analyze grayscale image gradients
-- Highlight image boundaries
-- Extract edge data from PGM files
-- Process Netpbm PGM image format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify edges in PGM images
+  - Analyze grayscale image gradients
+  - Highlight image boundaries
+  - Extract edge data from PGM files
+  - Process Netpbm PGM image format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pgmedge

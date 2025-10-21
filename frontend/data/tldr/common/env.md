@@ -1,29 +1,29 @@
 ---
-title: "Environment Variables - Control Env Settings | Online Free DevTools by Hexmos"
+title: 'Environment Variables - Control Env Settings | Online Free DevTools by Hexmos'
 name: env
-path: "/freedevtools/tldr/common/env/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/env/"
-description: "Control environment variables with env. Easily manage and modify environment settings for programs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/env/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/env/'
+description: 'Control environment variables with env. Easily manage and modify environment settings for programs. Free online tool, no registration required.'
 category: common
 keywords:
-- environment variables control
-- env variable management
-- linux environment variables
-- macos environment variables
-- shell environment configuration
-- program environment setup
-- cli environment manager
-- command line environment
-- unset environment variable
-- set environment variable
+  - environment variables control
+  - env variable management
+  - linux environment variables
+  - macos environment variables
+  - shell environment configuration
+  - program environment setup
+  - cli environment manager
+  - command line environment
+  - unset environment variable
+  - set environment variable
 features:
-- Display current environment variables
-- Run a program with a modified environment
-- Clear the environment before execution
-- Remove specific variables from the environment
-- Set variables for a specific program execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current environment variables
+  - Run a program with a modified environment
+  - Clear the environment before execution
+  - Remove specific variables from the environment
+  - Set variables for a specific program execution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # env

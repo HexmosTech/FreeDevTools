@@ -1,29 +1,29 @@
 ---
-title: "Fetch System Info - Control System Details | Online Free DevTools by Hexmos"
+title: 'Fetch System Info - Control System Details | Online Free DevTools by Hexmos'
 name: rfetch
-path: "/freedevtools/tldr/common/rfetch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rfetch/"
-description: "Fetch system information easily with rfetch. Display OS details and system uptime using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rfetch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rfetch/'
+description: 'Fetch system information easily with rfetch. Display OS details and system uptime using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- system information fetch
-- system details command
-- os details viewer
-- uptime monitor linux
-- kernel information tool
-- cpu information fetcher
-- linux distro identifier
-- desktop environment viewer
-- system architecture viewer
-- rfetch system info
+  - system information fetch
+  - system details command
+  - os details viewer
+  - uptime monitor linux
+  - kernel information tool
+  - cpu information fetcher
+  - linux distro identifier
+  - desktop environment viewer
+  - system architecture viewer
+  - rfetch system info
 features:
-- Display operating system information
-- Output system architecture details
-- Show system uptime information
-- Fetch kernel version details
-- Display CPU information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display operating system information
+  - Output system architecture details
+  - Show system uptime information
+  - Fetch kernel version details
+  - Display CPU information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rfetch

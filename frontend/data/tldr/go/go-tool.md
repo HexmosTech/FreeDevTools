@@ -1,29 +1,29 @@
 ---
-title: "Run Go Tool - Execute Go Programs | Online Free DevTools by Hexmos"
+title: 'Run Go Tool - Execute Go Programs | Online Free DevTools by Hexmos'
 name: go-tool
-path: "/freedevtools/tldr/go/go-tool/"
-canonical: "https://hexmos.com/freedevtools/tldr/go/go-tool/"
-description: "Execute Go programs with Go Tool, a powerful debugging and execution tool. Easily test and debug Go code with this free online tool, no registration required."
+path: '/freedevtools/tldr/go/go-tool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/go/go-tool/'
+description: 'Execute Go programs with Go Tool, a powerful debugging and execution tool. Easily test and debug Go code with this free online tool, no registration required.'
 category: common
 keywords:
-- go program execution
-- go command execution
-- go debugging tool
-- go linker
-- go dist list
-- go cross compilation
-- go toolchain
-- go tool command
-- linux go tool
-- macos go tool
+  - go program execution
+  - go command execution
+  - go debugging tool
+  - go linker
+  - go dist list
+  - go cross compilation
+  - go toolchain
+  - go tool command
+  - linux go tool
+  - macos go tool
 features:
-- Execute Go commands as standalone binaries
-- List available Go tools
-- Link Go object files
-- Display execution command without running
-- View documentation for specific Go tools
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Go commands as standalone binaries
+  - List available Go tools
+  - Link Go object files
+  - Display execution command without running
+  - View documentation for specific Go tools
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go tool

@@ -1,29 +1,29 @@
 ---
-title: "Arch-Chroot - Control Root Environment on Linux | Online Free DevTools by Hexmos"
+title: 'Arch-Chroot - Control Root Environment on Linux | Online Free DevTools by Hexmos'
 name: arch-chroot
-path: "/freedevtools/tldr/linux/arch-chroot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/arch-chroot/"
-description: "Control root environment with Arch-Chroot. Easily create and manage a chrooted environment for Arch Linux system administration. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/arch-chroot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/arch-chroot/'
+description: 'Control root environment with Arch-Chroot. Easily create and manage a chrooted environment for Arch Linux system administration. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux chroot
-- arch linux chroot
-- chroot command linux
-- change root directory linux
-- arch chroot environment
-- linux root environment control
-- arch linux installation chroot
-- arch linux system administration
-- linux command line tools
-- linux shell environment
+  - linux chroot
+  - arch linux chroot
+  - chroot command linux
+  - change root directory linux
+  - arch chroot environment
+  - linux root environment control
+  - arch linux installation chroot
+  - arch linux system administration
+  - linux command line tools
+  - linux shell environment
 features:
-- Create an isolated root environment
-- Execute commands within the chrooted environment
-- Specify a user to run commands as
-- Start an interactive shell within the new root
-- Use a custom command instead of the default shell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create an isolated root environment
+  - Execute commands within the chrooted environment
+  - Specify a user to run commands as
+  - Start an interactive shell within the new root
+  - Use a custom command instead of the default shell
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arch-chroot

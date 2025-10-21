@@ -1,29 +1,29 @@
 ---
-title: "Azure Config - Manage CLI Configuration | Online Free DevTools by Hexmos"
+title: 'Azure Config - Manage CLI Configuration | Online Free DevTools by Hexmos'
 name: az-config
-path: "/freedevtools/tldr/az/az-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-config/"
-description: "Manage Azure CLI configurations with Az Config. Set, get, and unset configurations to customize your Azure CLI environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-config/'
+description: 'Manage Azure CLI configurations with Az Config. Set, get, and unset configurations to customize your Azure CLI environment. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure CLI Configuration
-- Azure Config Manager
-- CLI Configuration Settings
-- Azure CLI Environment
-- az config get
-- az config set
-- az config unset
-- Command Line Interface
-- Cloud Configuration
-- Azure Configuration
+  - Azure CLI Configuration
+  - Azure Config Manager
+  - CLI Configuration Settings
+  - Azure CLI Environment
+  - az config get
+  - az config set
+  - az config unset
+  - Command Line Interface
+  - Cloud Configuration
+  - Azure Configuration
 features:
-- Get existing Azure CLI configurations
-- Set specific Azure CLI configurations
-- Unset Azure CLI configurations
-- Manage configurations by section
-- Customize Azure CLI environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Get existing Azure CLI configurations
+  - Set specific Azure CLI configurations
+  - Unset Azure CLI configurations
+  - Manage configurations by section
+  - Customize Azure CLI environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az config

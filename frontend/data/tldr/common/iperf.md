@@ -1,29 +1,29 @@
 ---
-title: "Iperf - Measure Network Bandwidth | Online Free DevTools by Hexmos"
+title: 'Iperf - Measure Network Bandwidth | Online Free DevTools by Hexmos'
 name: iperf
-path: "/freedevtools/tldr/common/iperf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/iperf/"
-description: "Measure network bandwidth with Iperf, a powerful network performance measurement tool. Analyze TCP and UDP throughput. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/iperf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/iperf/'
+description: 'Measure network bandwidth with Iperf, a powerful network performance measurement tool. Analyze TCP and UDP throughput. Free online tool, no registration required.'
 category: common
 keywords:
-- network bandwidth measurement
-- iperf network speed test
-- TCP bandwidth test
-- UDP bandwidth test
-- iperf command line
-- network performance analysis
-- network throughput measurement
-- linux network testing
-- macos network testing
-- iperf server client
+  - network bandwidth measurement
+  - iperf network speed test
+  - TCP bandwidth test
+  - UDP bandwidth test
+  - iperf command line
+  - network performance analysis
+  - network throughput measurement
+  - linux network testing
+  - macos network testing
+  - iperf server client
 features:
-- Measure network bandwidth between two hosts
-- Perform TCP and UDP throughput tests
-- Run iperf in server or client mode
-- Specify server port for listening
-- Configure parallel streams for increased load
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure network bandwidth between two hosts
+  - Perform TCP and UDP throughput tests
+  - Run iperf in server or client mode
+  - Specify server port for listening
+  - Configure parallel streams for increased load
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iperf

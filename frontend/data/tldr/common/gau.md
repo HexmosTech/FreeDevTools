@@ -1,29 +1,29 @@
 ---
-title: "Fetch URLs - Discover Website URLs with Gau | Online Free DevTools by Hexmos"
+title: 'Fetch URLs - Discover Website URLs with Gau | Online Free DevTools by Hexmos'
 name: gau
-path: "/freedevtools/tldr/common/gau/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gau/"
-description: "Fetch website URLs with Gau, discovering endpoints from multiple sources including Wayback Machine and Common Crawl. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gau/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gau/'
+description: 'Fetch website URLs with Gau, discovering endpoints from multiple sources including Wayback Machine and Common Crawl. Free online tool, no registration required.'
 category: common
 keywords:
-- URL discovery
-- website URL scraper
-- gau command
-- find URLs
-- web scraping tool
-- common crawl URL extraction
-- wayback machine url crawler
-- open threat exchange URL retrieval
-- domain URL enumeration
-- website endpoint discovery
+  - URL discovery
+  - website URL scraper
+  - gau command
+  - find URLs
+  - web scraping tool
+  - common crawl URL extraction
+  - wayback machine url crawler
+  - open threat exchange URL retrieval
+  - domain URL enumeration
+  - website endpoint discovery
 features:
-- Fetch URLs from AlienVault's Open Threat Exchange
-- Extract URLs from the Wayback Machine archives
-- Discover URLs from Common Crawl datasets
-- Search URLs from specific providers like Wayback or OTX
-- Filter URL results within a specified date range
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fetch URLs from AlienVault's Open Threat Exchange
+  - Extract URLs from the Wayback Machine archives
+  - Discover URLs from Common Crawl datasets
+  - Search URLs from specific providers like Wayback or OTX
+  - Filter URL results within a specified date range
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gau

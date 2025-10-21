@@ -1,29 +1,29 @@
 ---
-title: "Download APK - Fetch Apps from Stores | Online Free DevTools by Hexmos"
+title: 'Download APK - Fetch Apps from Stores | Online Free DevTools by Hexmos'
 name: apkeep
-path: "/freedevtools/tldr/common/apkeep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/apkeep/"
-description: "Download APK files easily with apkeep. Fetch Android applications from various online sources directly to your machine. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/apkeep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/apkeep/'
+description: 'Download APK files easily with apkeep. Fetch Android applications from various online sources directly to your machine. Free online tool, no registration required.'
 category: common
 keywords:
-- apk download
-- android package download
-- download android apps
-- apk fetcher
-- google play downloader
-- f-droid downloader
-- huawei app gallery downloader
-- android apk downloader
-- command line apk download
-- apk downloader linux
+  - apk download
+  - android package download
+  - download android apps
+  - apk fetcher
+  - google play downloader
+  - f-droid downloader
+  - huawei app gallery downloader
+  - android apk downloader
+  - command line apk download
+  - apk downloader linux
 features:
-- Download APK files from specified sources
-- List available versions of an application
-- Specify download source (Google Play, F-Droid, etc.)
-- Save APK files to a specified directory
-- Download specific versions of Android applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download APK files from specified sources
+  - List available versions of an application
+  - Specify download source (Google Play, F-Droid, etc.)
+  - Save APK files to a specified directory
+  - Download specific versions of Android applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apkeep

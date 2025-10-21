@@ -1,29 +1,29 @@
 ---
-title: "Dolt Commit - Save Changes in Dolt Repositories | Online Free DevTools by Hexmos"
+title: 'Dolt Commit - Save Changes in Dolt Repositories | Online Free DevTools by Hexmos'
 name: dolt-commit
-path: "/freedevtools/tldr/dolt/dolt-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-commit/"
-description: "Commit changes with Dolt using the dolt commit command. Easily save staged changes, specify authors, and manage database versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/dolt/dolt-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dolt/dolt-commit/'
+description: 'Commit changes with Dolt using the dolt commit command. Easily save staged changes, specify authors, and manage database versions. Free online tool, no registration required.'
 category: common
 keywords:
-- Dolt commit
-- Dolt version control
-- Dolt database commit
-- Commit Dolt tables
-- Dolt commit message
-- Dolt commit author
-- Dolt commit date
-- Dolt SQL commit
-- Dolt data versioning
-- Dolt repository save
+  - Dolt commit
+  - Dolt version control
+  - Dolt database commit
+  - Commit Dolt tables
+  - Dolt commit message
+  - Dolt commit author
+  - Dolt commit date
+  - Dolt SQL commit
+  - Dolt data versioning
+  - Dolt repository save
 features:
-- Commit staged changes to a Dolt repository.
-- Specify a commit message for a Dolt commit.
-- Commit all unstaged changes in Dolt.
-- Set a specific date for a Dolt commit.
-- Define the author of a Dolt commit.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Commit staged changes to a Dolt repository.
+  - Specify a commit message for a Dolt commit.
+  - Commit all unstaged changes in Dolt.
+  - Set a specific date for a Dolt commit.
+  - Define the author of a Dolt commit.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dolt commit

@@ -1,9 +1,9 @@
 ---
-title: "Query XBPS Packages - Manage Packages with xbps-query | Online Free DevTools by Hexmos"
+title: 'Query XBPS Packages - Manage Packages with xbps-query | Online Free DevTools by Hexmos'
 name: xbps-query
-path: "/freedevtools/tldr/linux/xbps-query/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xbps-query/"
-description: "Manage XBPS packages efficiently with xbps-query. Search, list, and show information about installed and remote packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xbps-query/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xbps-query/'
+description: 'Manage XBPS packages efficiently with xbps-query. Search, list, and show information about installed and remote packages. Free online tool, no registration required.'
 category: linux
 keywords:
   - xbps package query
@@ -22,8 +22,8 @@ features:
   - Retrieve information on packages from remote repositories.
   - List all packages registered in the package database.
   - List explicitly installed packages (excluding dependencies).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xbps-query

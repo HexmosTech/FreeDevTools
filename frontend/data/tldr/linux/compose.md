@@ -1,9 +1,9 @@
 ---
-title: "Compose Email - Create Emails with Mailcap | Online Free DevTools by Hexmos"
+title: 'Compose Email - Create Emails with Mailcap | Online Free DevTools by Hexmos'
 name: compose
-path: "/freedevtools/tldr/linux/compose/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/compose/"
-description: "Create emails effortlessly with the Compose command and mailcap.  Manage email composition through the command line for quick and efficient email creation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/compose/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/compose/'
+description: 'Create emails effortlessly with the Compose command and mailcap.  Manage email composition through the command line for quick and efficient email creation. Free online tool, no registration required.'
 category: linux
 keywords:
   - email compose command
@@ -22,8 +22,8 @@ features:
   - Open existing files for email composition.
   - Leverage mime-type handling for email content.
   - Integrate with `run-mailcap` for advanced functionality.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # compose

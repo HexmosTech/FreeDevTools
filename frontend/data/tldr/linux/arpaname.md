@@ -1,9 +1,9 @@
 ---
-title: "Generate ARPA Name - Translate IP Addresses | Online Free DevTools by Hexmos"
+title: 'Generate ARPA Name - Translate IP Addresses | Online Free DevTools by Hexmos'
 name: arpaname
-path: "/freedevtools/tldr/linux/arpaname/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/arpaname/"
-description: "Generate ARPA name with arpaname for IP address translation. Easily convert IPv4 and IPv6 addresses to their corresponding ARPA names. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/arpaname/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/arpaname/'
+description: 'Generate ARPA name with arpaname for IP address translation. Easily convert IPv4 and IPv6 addresses to their corresponding ARPA names. Free online tool, no registration required.'
 category: linux
 keywords:
   - ARPA name generator
@@ -22,8 +22,8 @@ features:
   - Perform reverse DNS lookups
   - Resolve IP addresses to domain names
   - Determine the ARPA zone for a given IP address
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arpaname

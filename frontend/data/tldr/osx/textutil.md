@@ -1,29 +1,29 @@
 ---
-title: "Textutil - Format Text Files on macOS | Online Free DevTools by Hexmos"
+title: 'Textutil - Format Text Files on macOS | Online Free DevTools by Hexmos'
 name: textutil
-path: "/freedevtools/tldr/osx/textutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/textutil/"
-description: "Format text files with Textutil on macOS. Convert between RTF, TXT, and HTML formats, and control font settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/textutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/textutil/'
+description: 'Format text files with Textutil on macOS. Convert between RTF, TXT, and HTML formats, and control font settings. Free online tool, no registration required.'
 category: osx
 keywords:
-- rtf converter
-- textutil macos
-- text file formatter
-- html converter
-- text to html
-- rtf to text
-- osx text manipulation
-- command line text formatting
-- rich text converter
-- text formatting utilities
+  - rtf converter
+  - textutil macos
+  - text file formatter
+  - html converter
+  - text to html
+  - rtf to text
+  - osx text manipulation
+  - command line text formatting
+  - rich text converter
+  - text formatting utilities
 features:
-- Convert between RTF, TXT, and HTML file formats.
-- Display information about text files.
-- Concatenate multiple RTF files into a single output.
-- Control font and font size during conversion.
-- Set HTML title when converting to HTML format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between RTF, TXT, and HTML file formats.
+  - Display information about text files.
+  - Concatenate multiple RTF files into a single output.
+  - Control font and font size during conversion.
+  - Set HTML title when converting to HTML format.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # textutil

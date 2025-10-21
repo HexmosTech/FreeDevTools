@@ -1,29 +1,29 @@
 ---
-title: "Resolvconf - Manage Nameserver Info | Online Free DevTools by Hexmos"
+title: 'Resolvconf - Manage Nameserver Info | Online Free DevTools by Hexmos'
 name: resolvconf
-path: "/freedevtools/tldr/common/resolvconf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/resolvconf/"
-description: "Manage nameserver information with resolvconf. Control DNS resolution and update configurations automatically using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/resolvconf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/resolvconf/'
+description: 'Manage nameserver information with resolvconf. Control DNS resolution and update configurations automatically using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- resolvconf manager
-- nameserver configuration
-- dns resolution linux
-- linux resolvconf
-- resolv.conf editor
-- dns update tool
-- resolvconf ubuntu
-- resolvconf debian
-- network configuration
-- dns settings manager
+  - resolvconf manager
+  - nameserver configuration
+  - dns resolution linux
+  - linux resolvconf
+  - resolv.conf editor
+  - dns update tool
+  - resolvconf ubuntu
+  - resolvconf debian
+  - network configuration
+  - dns settings manager
 features:
-- Add nameserver records to resolv.conf
-- Delete nameserver records from resolv.conf
-- Update nameserver configurations automatically
-- Enable or disable automatic updates
-- Check update status for resolvconf
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add nameserver records to resolv.conf
+  - Delete nameserver records from resolv.conf
+  - Update nameserver configurations automatically
+  - Enable or disable automatic updates
+  - Check update status for resolvconf
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # resolvconf

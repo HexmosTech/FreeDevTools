@@ -1,29 +1,29 @@
 ---
-title: "Xwininfo - Display Window Information | Online Free DevTools by Hexmos"
+title: 'Xwininfo - Display Window Information | Online Free DevTools by Hexmos'
 name: xwininfo
-path: "/freedevtools/tldr/common/xwininfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xwininfo/"
-description: "Display window information with Xwininfo. Quickly inspect window attributes, geometry, and hierarchy on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xwininfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xwininfo/'
+description: 'Display window information with Xwininfo. Quickly inspect window attributes, geometry, and hierarchy on Linux systems. Free online tool, no registration required.'
 category: common
 keywords:
-- window information
-- x window information
-- linux window manager
-- window attributes
-- window geometry
-- x server info
-- window ID
-- window name
-- xorg utility
-- window hierarchy
+  - window information
+  - x window information
+  - linux window manager
+  - window attributes
+  - window geometry
+  - x server info
+  - window ID
+  - window name
+  - xorg utility
+  - window hierarchy
 features:
-- Display window ID and name
-- Show window size and position
-- Visualize the window tree hierarchy
-- Query window attributes via ID or name
-- Inspect window properties on X server
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display window ID and name
+  - Show window size and position
+  - Visualize the window tree hierarchy
+  - Query window attributes via ID or name
+  - Inspect window properties on X server
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xwininfo

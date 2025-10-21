@@ -1,29 +1,29 @@
 ---
-title: "Systemd-tmpfiles - Create Temp Files | Online Free DevTools by Hexmos"
+title: 'Systemd-tmpfiles - Create Temp Files | Online Free DevTools by Hexmos'
 name: systemd-tmpfiles
-path: "/freedevtools/tldr/linux/systemd-tmpfiles/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-tmpfiles/"
-description: "Create temporary files and directories with Systemd-tmpfiles configuration on Linux. Manage volatile files and directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-tmpfiles/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-tmpfiles/'
+description: 'Create temporary files and directories with Systemd-tmpfiles configuration on Linux. Manage volatile files and directories. Free online tool, no registration required.'
 category: linux
 keywords:
-- systemd-tmpfiles create files
-- systemd-tmpfiles clean directories
-- systemd-tmpfiles remove files
-- systemd-tmpfiles linux configuration
-- systemd-tmpfiles volatile data
-- systemd-tmpfiles temporary files
-- systemd-tmpfiles systemd service
-- systemd-tmpfiles boot process
-- systemd-tmpfiles user configuration
-- linux systemd-tmpfiles management
+  - systemd-tmpfiles create files
+  - systemd-tmpfiles clean directories
+  - systemd-tmpfiles remove files
+  - systemd-tmpfiles linux configuration
+  - systemd-tmpfiles volatile data
+  - systemd-tmpfiles temporary files
+  - systemd-tmpfiles systemd service
+  - systemd-tmpfiles boot process
+  - systemd-tmpfiles user configuration
+  - linux systemd-tmpfiles management
 features:
-- Create temporary files and directories based on configuration.
-- Clean up files and directories using age parameters.
-- Remove files and directories as specified in the configuration.
-- Apply operations for user-specific systemd-tmpfiles configurations.
-- Execute lines marked for early boot configuration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create temporary files and directories based on configuration.
+  - Clean up files and directories using age parameters.
+  - Remove files and directories as specified in the configuration.
+  - Apply operations for user-specific systemd-tmpfiles configurations.
+  - Execute lines marked for early boot configuration.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-tmpfiles

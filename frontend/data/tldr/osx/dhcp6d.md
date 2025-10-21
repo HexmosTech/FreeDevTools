@@ -1,29 +1,29 @@
 ---
-title: "DHCPv6 Daemon - Control Network Configuration | Online Free DevTools by Hexmos"
+title: 'DHCPv6 Daemon - Control Network Configuration | Online Free DevTools by Hexmos'
 name: dhcp6d
-path: "/freedevtools/tldr/osx/dhcp6d/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/dhcp6d/"
-description: "Control network configuration with DHCPv6 Daemon. Manage IPv6 addresses and server parameters on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/dhcp6d/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/dhcp6d/'
+description: 'Control network configuration with DHCPv6 Daemon. Manage IPv6 addresses and server parameters on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- dhcpv6 daemon
-- dhcpv6 server
-- ipv6 configuration
-- osx network configuration
-- macos network settings
-- dhcpv6 stateless
-- network address assignment
-- dhcpv6 parameters
-- dhcp6d osx
-- network configuration osx
+  - dhcpv6 daemon
+  - dhcpv6 server
+  - ipv6 configuration
+  - osx network configuration
+  - macos network settings
+  - dhcpv6 stateless
+  - network address assignment
+  - dhcpv6 parameters
+  - dhcp6d osx
+  - network configuration osx
 features:
-- Start the DHCPv6 daemon process
-- Use a custom configuration file
-- Manage IPv6 address assignments
-- Configure network parameters
-- Operate in stateless DHCPv6 mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the DHCPv6 daemon process
+  - Use a custom configuration file
+  - Manage IPv6 address assignments
+  - Configure network parameters
+  - Operate in stateless DHCPv6 mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dhcp6d

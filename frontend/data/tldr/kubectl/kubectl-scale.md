@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Scale - Control Deployment Size | Online Free DevTools by Hexmos"
+title: 'Kubectl Scale - Control Deployment Size | Online Free DevTools by Hexmos'
 name: kubectl-scale
-path: "/freedevtools/tldr/kubectl/kubectl-scale/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-scale/"
-description: "Control deployment size with Kubectl Scale. Easily adjust the number of replicas for deployments, replica sets, and stateful sets. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-scale/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-scale/'
+description: 'Control deployment size with Kubectl Scale. Easily adjust the number of replicas for deployments, replica sets, and stateful sets. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes scale deployment
-- kubectl scale replica set
-- kubectl deployment scaling
-- kubectl scale command
-- kubernetes replica management
-- kubectl stateful set scaling
-- kubectl horizontal scaling
-- kubectl replica controller
-- kubernetes cli scale
-- kubectl scale replicas
+  - kubernetes scale deployment
+  - kubectl scale replica set
+  - kubectl deployment scaling
+  - kubectl scale command
+  - kubernetes replica management
+  - kubectl stateful set scaling
+  - kubectl horizontal scaling
+  - kubectl replica controller
+  - kubernetes cli scale
+  - kubectl scale replicas
 features:
-- Scale deployments to a specified number of replicas
-- Adjust replica counts for replica sets
-- Modify the size of stateful sets
-- Scale resources defined in YAML files
-- Control deployment size based on current replica count
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scale deployments to a specified number of replicas
+  - Adjust replica counts for replica sets
+  - Modify the size of stateful sets
+  - Scale resources defined in YAML files
+  - Control deployment size based on current replica count
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl scale

@@ -1,29 +1,29 @@
 ---
-title: "Process MySQL Binlog - Analyze Database Logs | Online Free DevTools by Hexmos"
+title: 'Process MySQL Binlog - Analyze Database Logs | Online Free DevTools by Hexmos'
 name: mysqlbinlog
-path: "/freedevtools/tldr/common/mysqlbinlog/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mysqlbinlog/"
-description: "Analyze MySQL database logs with mysqlbinlog. Extract events, filter by date, position, or database. Free online tool, no registration required. Powerful data processing!"
+path: '/freedevtools/tldr/common/mysqlbinlog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mysqlbinlog/'
+description: 'Analyze MySQL database logs with mysqlbinlog. Extract events, filter by date, position, or database. Free online tool, no registration required. Powerful data processing!'
 category: common
 keywords:
-- mysql binlog analyzer
-- database log parser
-- mysql event viewer
-- binlog data extraction
-- mysql log analysis
-- command line binlog tool
-- mysql binlog reader
-- database event tracking
-- mysql recovery tool
-- binlog date filter
+  - mysql binlog analyzer
+  - database log parser
+  - mysql event viewer
+  - binlog data extraction
+  - mysql log analysis
+  - command line binlog tool
+  - mysql binlog reader
+  - database event tracking
+  - mysql recovery tool
+  - binlog date filter
 features:
-- Extract events from MySQL binary log files.
-- Filter binary log entries by database name.
-- Show events between specific date and time ranges.
-- Display events between specific positions in the log.
-- Read binary logs directly from a MySQL server.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract events from MySQL binary log files.
+  - Filter binary log entries by database name.
+  - Show events between specific date and time ranges.
+  - Display events between specific positions in the log.
+  - Read binary logs directly from a MySQL server.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mysqlbinlog

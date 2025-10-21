@@ -1,9 +1,9 @@
 ---
-title: "Create Linux Swap - Set Up Swap Space | Online Free DevTools by Hexmos"
+title: 'Create Linux Swap - Set Up Swap Space | Online Free DevTools by Hexmos'
 name: mkswap
-path: "/freedevtools/tldr/linux/mkswap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mkswap/"
-description: "Create Linux swap partitions quickly with mkswap. Format drives and enable memory management on your Linux system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkswap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mkswap/'
+description: 'Create Linux swap partitions quickly with mkswap. Format drives and enable memory management on your Linux system. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux swap partition
@@ -22,8 +22,8 @@ features:
   - Specify a label for the swap partition.
   - Set a specific UUID for the swap partition.
   - Create a swap file of a specified size.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkswap

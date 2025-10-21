@@ -1,29 +1,29 @@
 ---
-title: "Freeze DVC Stages - Control Pipeline Execution | Online Free DevTools by Hexmos"
+title: 'Freeze DVC Stages - Control Pipeline Execution | Online Free DevTools by Hexmos'
 name: dvc-freeze
-path: "/freedevtools/tldr/dvc/dvc-freeze/"
-canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-freeze/"
-description: "Control DVC pipeline execution by freezing stages with DVC Freeze. Prevent unwanted re-execution and manage dependencies effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/dvc/dvc-freeze/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dvc/dvc-freeze/'
+description: 'Control DVC pipeline execution by freezing stages with DVC Freeze. Prevent unwanted re-execution and manage dependencies effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- DVC pipeline freeze
-- DVC stage control
-- Data version control freeze
-- Pipeline execution management
-- Dependency tracking prevention
-- DVC workflow automation
-- DVC command line interface
-- Freeze DVC stages linux
-- Freeze DVC stages macos
-- Freeze DVC stages windows
+  - DVC pipeline freeze
+  - DVC stage control
+  - Data version control freeze
+  - Pipeline execution management
+  - Dependency tracking prevention
+  - DVC workflow automation
+  - DVC command line interface
+  - Freeze DVC stages linux
+  - Freeze DVC stages macos
+  - Freeze DVC stages windows
 features:
-- Prevent re-execution of DVC stages
-- Control DVC pipeline dependencies
-- Freeze multiple DVC stages simultaneously
-- Simplify DVC workflow management
-- Isolate DVC pipeline components
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Prevent re-execution of DVC stages
+  - Control DVC pipeline dependencies
+  - Freeze multiple DVC stages simultaneously
+  - Simplify DVC workflow management
+  - Isolate DVC pipeline components
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dvc freeze

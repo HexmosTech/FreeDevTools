@@ -1,29 +1,29 @@
 ---
-title: "Fabric Deploy - Automate Hyperledger Fabric Networks | Online Free DevTools by Hexmos"
+title: 'Fabric Deploy - Automate Hyperledger Fabric Networks | Online Free DevTools by Hexmos'
 name: minifab
-path: "/freedevtools/tldr/common/minifab/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/minifab/"
-description: "Automate Hyperledger Fabric deployments with minifab. Quickly set up, manage, and interact with blockchain networks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/minifab/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/minifab/'
+description: 'Automate Hyperledger Fabric deployments with minifab. Quickly set up, manage, and interact with blockchain networks. Free online tool, no registration required.'
 category: common
 keywords:
-- Hyperledger Fabric deployment
-- blockchain network setup
-- Fabric chaincode installation
-- Fabric chaincode management
-- Fabric ledger query
-- minifab command-line tool
-- blockchain development automation
-- Hyperledger Fabric automation
-- Fabric network administration
-- Fabric application deployment
+  - Hyperledger Fabric deployment
+  - blockchain network setup
+  - Fabric chaincode installation
+  - Fabric chaincode management
+  - Fabric ledger query
+  - minifab command-line tool
+  - blockchain development automation
+  - Hyperledger Fabric automation
+  - Fabric network administration
+  - Fabric application deployment
 features:
-- Automates Hyperledger Fabric network setup.
-- Installs and manages chaincode on Fabric networks.
-- Enables ledger querying for blockchain data retrieval.
-- Allows invocation of chaincode methods with specific arguments.
-- Simplifies application deployment on Fabric networks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automates Hyperledger Fabric network setup.
+  - Installs and manages chaincode on Fabric networks.
+  - Enables ledger querying for blockchain data retrieval.
+  - Allows invocation of chaincode methods with specific arguments.
+  - Simplifies application deployment on Fabric networks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # minifab

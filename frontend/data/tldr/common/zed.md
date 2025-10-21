@@ -1,29 +1,29 @@
 ---
-title: "Zed Editor - Open Files and Directories | Online Free DevTools by Hexmos"
+title: 'Zed Editor - Open Files and Directories | Online Free DevTools by Hexmos'
 name: zed
-path: "/freedevtools/tldr/common/zed/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zed/"
-description: "Open and edit files with Zed Editor, a fast and efficient text editor. Quickly navigate directories and manage code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zed/'
+description: 'Open and edit files with Zed Editor, a fast and efficient text editor. Quickly navigate directories and manage code. Free online tool, no registration required.'
 category: common
 keywords:
-- text editor
-- code editor
-- file editor
-- directory navigator
-- zed editor linux
-- zed editor macos
-- zed editor windows
-- open files zed
-- edit code zed
-- diff tool zed
+  - text editor
+  - code editor
+  - file editor
+  - directory navigator
+  - zed editor linux
+  - zed editor macos
+  - zed editor windows
+  - open files zed
+  - edit code zed
+  - diff tool zed
 features:
-- Open files and directories in Zed
-- Open files at specific line and column
-- Compare file versions using diff mode
-- Open files in foreground with logs
-- Open paths in new Zed window
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open files and directories in Zed
+  - Open files at specific line and column
+  - Compare file versions using diff mode
+  - Open files in foreground with logs
+  - Open paths in new Zed window
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zed

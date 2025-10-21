@@ -1,29 +1,29 @@
 ---
-title: "PHP Code Style Fixer - Format PHP Code | Online Free DevTools by Hexmos"
+title: 'PHP Code Style Fixer - Format PHP Code | Online Free DevTools by Hexmos'
 name: php-cs-fixer
-path: "/freedevtools/tldr/php/php-cs-fixer/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/php-cs-fixer/"
-description: "Format PHP code automatically with php-cs-fixer. Enforce coding standards, improve code readability and maintainability. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/php-cs-fixer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/php-cs-fixer/'
+description: 'Format PHP code automatically with php-cs-fixer. Enforce coding standards, improve code readability and maintainability. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP code formatting
-- PHP code style fixer
-- PHP coding standards
-- PHP linter
-- Command-line code formatter
-- PHP code beautifier
-- PHP code cleanup
-- PHP code analysis
-- PHP static analysis
-- PHP code quality
+  - PHP code formatting
+  - PHP code style fixer
+  - PHP coding standards
+  - PHP linter
+  - Command-line code formatter
+  - PHP code beautifier
+  - PHP code cleanup
+  - PHP code analysis
+  - PHP static analysis
+  - PHP code quality
 features:
-- Automatically fix PHP code style issues.
-- Enforce specific coding rules.
-- Lint code without applying changes using dry-run.
-- Output results in various formats (txt, json, xml).
-- List files that require code style fixing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically fix PHP code style issues.
+  - Enforce specific coding rules.
+  - Lint code without applying changes using dry-run.
+  - Output results in various formats (txt, json, xml).
+  - List files that require code style fixing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # php-cs-fixer

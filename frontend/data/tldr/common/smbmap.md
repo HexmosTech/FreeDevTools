@@ -1,29 +1,29 @@
 ---
-title: "Enumerate Samba Shares - Scan SMB Drives | Online Free DevTools by Hexmos"
+title: 'Enumerate Samba Shares - Scan SMB Drives | Online Free DevTools by Hexmos'
 name: smbmap
-path: "/freedevtools/tldr/common/smbmap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/smbmap/"
-description: "Scan Samba shares with smbmap. Enumerate SMB drives, identify open shares, and check file permissions across networks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/smbmap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/smbmap/'
+description: 'Scan Samba shares with smbmap. Enumerate SMB drives, identify open shares, and check file permissions across networks. Free online tool, no registration required.'
 category: common
 keywords:
-- samba share enumeration
-- smb network scanner
-- windows share scanner
-- smb file permission checker
-- smb share discovery
-- enumerate windows shares
-- smbmap command line
-- smb enumeration tool
-- network share auditing
-- samba security scanning
+  - samba share enumeration
+  - smb network scanner
+  - windows share scanner
+  - smb file permission checker
+  - smb share discovery
+  - enumerate windows shares
+  - smbmap command line
+  - smb enumeration tool
+  - network share auditing
+  - samba security scanning
 features:
-- Enumerate hosts with NULL sessions enabled
-- Display SMB shares and permissions with password prompt
-- Execute shell commands on remote systems via SMB
-- Recursively locate and download files from SMB shares
-- Upload files to SMB shares using credentials
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate hosts with NULL sessions enabled
+  - Display SMB shares and permissions with password prompt
+  - Execute shell commands on remote systems via SMB
+  - Recursively locate and download files from SMB shares
+  - Upload files to SMB shares using credentials
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smbmap

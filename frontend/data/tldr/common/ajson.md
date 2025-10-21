@@ -1,29 +1,29 @@
 ---
-title: "Execute JSONPath - Query JSON with AJSON | Online Free DevTools by Hexmos"
+title: 'Execute JSONPath - Query JSON with AJSON | Online Free DevTools by Hexmos'
 name: ajson
-path: "/freedevtools/tldr/common/ajson/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ajson/"
-description: "Execute JSONPath queries with AJSON, a command-line JSON processor. Extract, transform, and filter JSON data effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ajson/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ajson/'
+description: 'Execute JSONPath queries with AJSON, a command-line JSON processor. Extract, transform, and filter JSON data effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- JSONPath executor
-- JSON query tool
-- command line JSON
-- JSON filter
-- JSON transformer
-- AJSON command
-- JSON data extraction
-- CLI JSON parser
-- linux JSON
-- macos JSON
+  - JSONPath executor
+  - JSON query tool
+  - command line JSON
+  - JSON filter
+  - JSON transformer
+  - AJSON command
+  - JSON data extraction
+  - CLI JSON parser
+  - linux JSON
+  - macos JSON
 features:
-- Execute JSONPath expressions on JSON data from files.
-- Process JSON data piped from standard input.
-- Query JSON data fetched directly from URLs.
-- Perform calculations within JSONPath expressions.
-- Filter and extract specific data points from JSON objects.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute JSONPath expressions on JSON data from files.
+  - Process JSON data piped from standard input.
+  - Query JSON data fetched directly from URLs.
+  - Perform calculations within JSONPath expressions.
+  - Filter and extract specific data points from JSON objects.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ajson

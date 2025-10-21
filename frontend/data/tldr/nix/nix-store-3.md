@@ -1,29 +1,29 @@
 ---
-title: "Nix Store - Manage Package Store Paths | Online Free DevTools by Hexmos"
+title: 'Nix Store - Manage Package Store Paths | Online Free DevTools by Hexmos'
 name: nix-store.3
-path: "/freedevtools/tldr/nix/nix-store-3/"
-canonical: "https://hexmos-com/freedevtools/tldr/nix/nix-store-3/"
-description: "Manage package store paths with Nix Store. Delete unused paths, optimize store, and compare versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-store-3/'
+canonical: 'https://hexmos-com/freedevtools/tldr/nix/nix-store-3/'
+description: 'Manage package store paths with Nix Store. Delete unused paths, optimize store, and compare versions. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- nix store paths
-- nix garbage collection
-- nix store optimization
-- nix store delete path
-- nix store list contents
-- nix store diff closures
-- nix package management
-- linux package manager
-- nixos package manager
+  - nix package manager
+  - nix store paths
+  - nix garbage collection
+  - nix store optimization
+  - nix store delete path
+  - nix store list contents
+  - nix store diff closures
+  - nix package management
+  - linux package manager
+  - nixos package manager
 features:
-- Collect garbage from the nix store to free up disk space
-- Hard-link identical files in the nix store to reduce space usage
-- Delete specific, unused store paths
-- List the contents of a store path, including remote stores
-- Show the differences in package versions between two store paths
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Collect garbage from the nix store to free up disk space
+  - Hard-link identical files in the nix store to reduce space usage
+  - Delete specific, unused store paths
+  - List the contents of a store path, including remote stores
+  - Show the differences in package versions between two store paths
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix store

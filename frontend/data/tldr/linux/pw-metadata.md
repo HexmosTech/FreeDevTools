@@ -1,9 +1,9 @@
 ---
-title: "PipeWire Metadata - Manage Metadata with pw-metadata | Online Free DevTools by Hexmos"
+title: 'PipeWire Metadata - Manage Metadata with pw-metadata | Online Free DevTools by Hexmos'
 name: pw-metadata
-path: "/freedevtools/tldr/linux/pw-metadata/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-metadata/"
-description: "Manage PipeWire metadata efficiently with pw-metadata. Monitor, set, and delete metadata on PipeWire objects easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pw-metadata/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pw-metadata/'
+description: 'Manage PipeWire metadata efficiently with pw-metadata. Monitor, set, and delete metadata on PipeWire objects easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - PipeWire metadata manager
@@ -22,8 +22,8 @@ features:
   - Delete metadata from PipeWire objects.
   - List all available metadata objects.
   - Provide detailed help and usage instructions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pw-metadata

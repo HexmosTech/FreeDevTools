@@ -1,29 +1,29 @@
 ---
-title: "Salloc - Allocate Nodes | Online Free DevTools by Hexmos"
+title: 'Salloc - Allocate Nodes | Online Free DevTools by Hexmos'
 name: salloc
-path: "/freedevtools/tldr/linux/salloc/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/salloc/"
-description: "Allocate nodes on a Linux cluster with Salloc. Manage resources and execute commands on allocated nodes seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/salloc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/salloc/'
+description: 'Allocate nodes on a Linux cluster with Salloc. Manage resources and execute commands on allocated nodes seamlessly. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux salloc
-- cluster node allocation
-- interactive shell session
-- slurm salloc
-- node resource management
-- command execution linux
-- cluster computing linux
-- resource scheduling linux
-- constraint-based allocation
-- distributed computing linux
+  - linux salloc
+  - cluster node allocation
+  - interactive shell session
+  - slurm salloc
+  - node resource management
+  - command execution linux
+  - cluster computing linux
+  - resource scheduling linux
+  - constraint-based allocation
+  - distributed computing linux
 features:
-- Allocate nodes in a Slurm cluster
-- Start interactive shell sessions on cluster nodes
-- Execute commands on allocated nodes
-- Allocate nodes based on specified constraints
-- Manage cluster resources efficiently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Allocate nodes in a Slurm cluster
+  - Start interactive shell sessions on cluster nodes
+  - Execute commands on allocated nodes
+  - Allocate nodes based on specified constraints
+  - Manage cluster resources efficiently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # salloc

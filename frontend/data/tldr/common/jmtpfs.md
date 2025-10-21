@@ -1,29 +1,29 @@
 ---
-title: "Mount MTP - Access MTP Devices | Online Free DevTools by Hexmos"
+title: 'Mount MTP - Access MTP Devices | Online Free DevTools by Hexmos'
 name: jmtpfs
-path: "/freedevtools/tldr/common/jmtpfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jmtpfs/"
-description: "Mount MTP devices with jmtpfs and access files on your Android phone or digital camera. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jmtpfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jmtpfs/'
+description: 'Mount MTP devices with jmtpfs and access files on your Android phone or digital camera. Free online tool, no registration required.'
 category: common
 keywords:
-- MTP mount
-- MTP file access
-- MTP filesystem
-- Android file transfer
-- Fuse filesystem
-- Linux MTP
-- Mount Android device
-- Access camera files
-- jmtpfs mount options
-- jmtpfs device list
+  - MTP mount
+  - MTP file access
+  - MTP filesystem
+  - Android file transfer
+  - Fuse filesystem
+  - Linux MTP
+  - Mount Android device
+  - Access camera files
+  - jmtpfs mount options
+  - jmtpfs device list
 features:
-- Mount MTP devices to a specified directory
-- Set custom mount options for enhanced control
-- List available MTP devices for easy selection
-- Mount specific devices when multiple are present
-- Unmount MTP devices using fusermount
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Mount MTP devices to a specified directory
+  - Set custom mount options for enhanced control
+  - List available MTP devices for easy selection
+  - Mount specific devices when multiple are present
+  - Unmount MTP devices using fusermount
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jmtpfs

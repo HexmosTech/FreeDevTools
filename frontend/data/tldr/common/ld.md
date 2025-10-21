@@ -1,29 +1,29 @@
 ---
-title: "Link Objects - Create Executables with ld | Online Free DevTools by Hexmos"
+title: 'Link Objects - Create Executables with ld | Online Free DevTools by Hexmos'
 name: ld
-path: "/freedevtools/tldr/common/ld/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ld/"
-description: "Link objects instantly with ld, creating executables from object files. Use this linker to combine code and libraries effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ld/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ld/'
+description: 'Link objects instantly with ld, creating executables from object files. Use this linker to combine code and libraries effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- object linker
-- executable creator
-- ld linker
-- ELF linker
-- linux linker
-- dynamic linking
-- static linking
-- linker flags
-- linking libraries
-- object file merger
+  - object linker
+  - executable creator
+  - ld linker
+  - ELF linker
+  - linux linker
+  - dynamic linking
+  - static linking
+  - linker flags
+  - linking libraries
+  - object file merger
 features:
-- Link object files into executables
-- Create dynamic and static libraries
-- Resolve symbol dependencies
-- Control linking order
-- Specify dynamic linker path
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Link object files into executables
+  - Create dynamic and static libraries
+  - Resolve symbol dependencies
+  - Control linking order
+  - Specify dynamic linker path
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ld

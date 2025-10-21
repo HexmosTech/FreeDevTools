@@ -1,29 +1,29 @@
 ---
-title: "PlatformIO Remote - Manage Remote Agents | Online Free DevTools by Hexmos"
+title: 'PlatformIO Remote - Manage Remote Agents | Online Free DevTools by Hexmos'
 name: pio-remote
-path: "/freedevtools/tldr/pio/pio-remote/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-remote/"
-description: "Manage PlatformIO Remote Agents with pio-remote. List agents, start new ones, connect to remote devices, and run tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-remote/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-remote/'
+description: 'Manage PlatformIO Remote Agents with pio-remote. List agents, start new ones, connect to remote devices, and run tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO remote agent management
-- PlatformIO remote development
-- remote device access
-- remote build execution
-- PlatformIO core update remote
-- PlatformIO remote testing
-- PlatformIO agent serial monitor
-- pio remote command line
-- PlatformIO distributed development
-- PlatformIO cross-platform remote build
+  - PlatformIO remote agent management
+  - PlatformIO remote development
+  - remote device access
+  - remote build execution
+  - PlatformIO core update remote
+  - PlatformIO remote testing
+  - PlatformIO agent serial monitor
+  - pio remote command line
+  - PlatformIO distributed development
+  - PlatformIO cross-platform remote build
 features:
-- List available PlatformIO Remote Agents.
-- Start and share new PlatformIO Remote Agents.
-- Connect to serial ports of remote devices.
-- Execute builds and tests on remote agents.
-- Update PlatformIO core and libraries on remote agents.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available PlatformIO Remote Agents.
+  - Start and share new PlatformIO Remote Agents.
+  - Connect to serial ports of remote devices.
+  - Execute builds and tests on remote agents.
+  - Update PlatformIO core and libraries on remote agents.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio remote

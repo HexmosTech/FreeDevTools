@@ -1,9 +1,9 @@
 ---
-title: "Control SSH Servers - mssh | Online Free DevTools by Hexmos"
+title: 'Control SSH Servers - mssh | Online Free DevTools by Hexmos'
 name: mssh
-path: "/freedevtools/tldr/linux/mssh/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mssh/"
-description: "Control multiple SSH servers with mssh. Manage connections, execute commands across multiple hosts. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mssh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mssh/'
+description: 'Control multiple SSH servers with mssh. Manage connections, execute commands across multiple hosts. Free online tool, no registration required.'
 category: linux
 keywords:
   - multi SSH client
@@ -22,8 +22,8 @@ features:
   - Execute commands on multiple servers at once
   - Connect to predefined server groups using aliases
   - Organize servers in ~/.mssh_clusters for easy access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mssh

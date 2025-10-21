@@ -1,9 +1,9 @@
 ---
-title: "Memory Monitor - Display System Memory Usage | Online Free DevTools by Hexmos"
+title: 'Memory Monitor - Display System Memory Usage | Online Free DevTools by Hexmos'
 name: free
-path: "/freedevtools/tldr/linux/free/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/free/"
-description: "Monitor system memory usage with the free command.  View free and used RAM,  easily check memory statistics in various units. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/free/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/free/'
+description: 'Monitor system memory usage with the free command.  View free and used RAM,  easily check memory statistics in various units. Free online tool, no registration required.'
 category: linux
 keywords:
   - memory monitor command
@@ -22,8 +22,8 @@ features:
   - Provides human-readable output for easy understanding.
   - Offers real-time monitoring with the -s option.
   - Supports various operating systems including Linux and Unix-like systems.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # free

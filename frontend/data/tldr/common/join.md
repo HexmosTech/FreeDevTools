@@ -1,29 +1,29 @@
 ---
-title: "Join Files - Merge Data with Common Fields | Online Free DevTools by Hexmos"
+title: 'Join Files - Merge Data with Common Fields | Online Free DevTools by Hexmos'
 name: join
-path: "/freedevtools/tldr/common/join/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/join/"
-description: "Merge data with Join command using common fields. Combine information from multiple files based on shared data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/join/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/join/'
+description: 'Merge data with Join command using common fields. Combine information from multiple files based on shared data. Free online tool, no registration required.'
 category: common
 keywords:
-- Join files linux
-- Merge data command
-- Combine text files
-- Join data sets
-- Linux file join
-- Join text files
-- Join data fields
-- Linux join command
-- Join files on common field
-- Coreutils join
+  - Join files linux
+  - Merge data command
+  - Combine text files
+  - Join data sets
+  - Linux file join
+  - Join text files
+  - Join data fields
+  - Linux join command
+  - Join files on common field
+  - Coreutils join
 features:
-- Join two files based on the first field
-- Specify a custom field separator
-- Join specific fields from each file
-- Produce lines for unpairable lines in the first file
-- Join a file directly from standard input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Join two files based on the first field
+  - Specify a custom field separator
+  - Join specific fields from each file
+  - Produce lines for unpairable lines in the first file
+  - Join a file directly from standard input
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # join

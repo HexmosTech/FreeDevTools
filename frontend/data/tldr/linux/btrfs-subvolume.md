@@ -1,9 +1,9 @@
 ---
-title: "Btrfs Subvolume - Manage Snapshots | Online Free DevTools by Hexmos"
+title: 'Btrfs Subvolume - Manage Snapshots | Online Free DevTools by Hexmos'
 name: btrfs-subvolume
-path: "/freedevtools/tldr/linux/btrfs-subvolume/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-subvolume/"
-description: "Manage Btrfs subvolumes with Btrfs Subvolume command. Create snapshots, list existing subvolumes, and delete subvolumes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/btrfs-subvolume/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/btrfs-subvolume/'
+description: 'Manage Btrfs subvolumes with Btrfs Subvolume command. Create snapshots, list existing subvolumes, and delete subvolumes. Free online tool, no registration required.'
 category: linux
 keywords:
   - btrfs subvolume manager
@@ -22,8 +22,8 @@ features:
   - Delete specified Btrfs subvolumes
   - Create read-only snapshots of subvolumes
   - Display detailed information about a subvolume
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btrfs subvolume

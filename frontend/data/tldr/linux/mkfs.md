@@ -1,9 +1,9 @@
 ---
-title: "Create Filesystem - Format Partitions with mkfs | Online Free DevTools by Hexmos"
+title: 'Create Filesystem - Format Partitions with mkfs | Online Free DevTools by Hexmos'
 name: mkfs
-path: "/freedevtools/tldr/linux/mkfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mkfs/"
-description: "Create filesystem structures with mkfs. Format disk partitions to various types like ext4 or ntfs, checking for bad blocks. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mkfs/'
+description: 'Create filesystem structures with mkfs. Format disk partitions to various types like ext4 or ntfs, checking for bad blocks. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux filesystem format
@@ -22,8 +22,8 @@ features:
   - Check for bad blocks during filesystem creation
   - Specify the filesystem type using command-line options
   - Build filesystems on block devices using mkfs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfs

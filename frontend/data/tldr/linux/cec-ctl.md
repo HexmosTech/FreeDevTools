@@ -1,9 +1,9 @@
 ---
-title: "Control CEC Devices with cec-ctl | Online Free DevTools by Hexmos"
+title: 'Control CEC Devices with cec-ctl | Online Free DevTools by Hexmos'
 name: cec-ctl
-path: "/freedevtools/tldr/linux/cec-ctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cec-ctl/"
-description: "Control kernel CEC devices with cec-ctl. Monitor CEC traffic, list devices, and show CEC topology. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cec-ctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cec-ctl/'
+description: 'Control kernel CEC devices with cec-ctl. Monitor CEC traffic, list devices, and show CEC topology. Free online tool, no registration required.'
 category: linux
 keywords:
   - cec control linux
@@ -22,8 +22,8 @@ features:
   - Display the CEC device topology
   - Control CEC devices via command line
   - Troubleshoot CEC connectivity issues
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cec-ctl

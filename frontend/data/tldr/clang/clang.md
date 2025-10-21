@@ -1,29 +1,29 @@
 ---
-title: "Compile C/C++ Code - Clang Compiler | Online Free DevTools by Hexmos"
+title: 'Compile C/C++ Code - Clang Compiler | Online Free DevTools by Hexmos'
 name: clang
-path: "/freedevtools/tldr/clang/clang/"
-canonical: "https://hexmos.com/freedevtools/tldr/clang/clang/"
-description: "Compile C/C++ code with Clang compiler. Optimize, debug, and generate LLVM IR from C/C++ source files. Free online tool, no registration required."
+path: '/freedevtools/tldr/clang/clang/'
+canonical: 'https://hexmos.com/freedevtools/tldr/clang/clang/'
+description: 'Compile C/C++ code with Clang compiler. Optimize, debug, and generate LLVM IR from C/C++ source files. Free online tool, no registration required.'
 category: common
 keywords:
-- c compiler
-- c++ compiler
-- clang compiler
-- llvm compiler
-- compile c code
-- compile c++ code
-- c++ development
-- c programming
-- objective-c compiler
-- compile objective-c
+  - c compiler
+  - c++ compiler
+  - clang compiler
+  - llvm compiler
+  - compile c code
+  - compile c++ code
+  - c++ development
+  - c programming
+  - objective-c compiler
+  - compile objective-c
 features:
-- Compile C, C++, and Objective-C source files into executables.
-- Generate LLVM Intermediate Representation (IR) from source code.
-- Optimize compiled programs for performance.
-- Compile source code into object files.
-- Include libraries from different paths during compilation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile C, C++, and Objective-C source files into executables.
+  - Generate LLVM Intermediate Representation (IR) from source code.
+  - Optimize compiled programs for performance.
+  - Compile source code into object files.
+  - Include libraries from different paths during compilation.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clang

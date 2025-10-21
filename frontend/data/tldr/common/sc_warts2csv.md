@@ -1,29 +1,29 @@
 ---
-title: "Warts to CSV - Format Traceroute Data | Online Free DevTools by Hexmos"
+title: 'Warts to CSV - Format Traceroute Data | Online Free DevTools by Hexmos'
 name: sc_warts2csv
-path: "/freedevtools/tldr/common/sc_warts2csv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sc_warts2csv/"
-description: "Format warts traceroute data to CSV with sc_warts2csv. Convert scamper traceroutes for analysis and reporting. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sc_warts2csv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sc_warts2csv/'
+description: 'Format warts traceroute data to CSV with sc_warts2csv. Convert scamper traceroutes for analysis and reporting. Free online tool, no registration required.'
 category: common
 keywords:
-- warts to csv
-- traceroute to csv
-- scamper data to csv
-- network data conversion
-- traceroute analysis
-- warts file converter
-- network diagnostics
-- scamper traceroute
-- linux network tools
-- network data format
+  - warts to csv
+  - traceroute to csv
+  - scamper data to csv
+  - network data conversion
+  - traceroute analysis
+  - warts file converter
+  - network diagnostics
+  - scamper traceroute
+  - linux network tools
+  - network data format
 features:
-- Convert warts traceroute data to CSV format
-- Process multiple warts files in a single command
-- Output CSV data for network analysis
-- Transform scamper traceroute data
-- Facilitate network performance monitoring
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert warts traceroute data to CSV format
+  - Process multiple warts files in a single command
+  - Output CSV data for network analysis
+  - Transform scamper traceroute data
+  - Facilitate network performance monitoring
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sc_warts2csv

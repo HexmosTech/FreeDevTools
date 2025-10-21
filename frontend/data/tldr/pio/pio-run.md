@@ -1,29 +1,29 @@
 ---
-title: "Run PlatformIO - Build Project Targets | Online Free DevTools by Hexmos"
+title: 'Run PlatformIO - Build Project Targets | Online Free DevTools by Hexmos'
 name: pio-run
-path: "/freedevtools/tldr/pio/pio-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-run/"
-description: "Build project targets instantly with PlatformIO Run. Compile, link, and upload firmware to various embedded platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-run/'
+description: 'Build project targets instantly with PlatformIO Run. Compile, link, and upload firmware to various embedded platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO build tool
-- PlatformIO project targets
-- PlatformIO compile firmware
-- PlatformIO upload firmware
-- embedded system build
-- IoT device programming
-- PlatformIO environment configuration
-- platformio.ini configuration
-- PlatformIO target selection
-- PlatformIO automated testing
+  - PlatformIO build tool
+  - PlatformIO project targets
+  - PlatformIO compile firmware
+  - PlatformIO upload firmware
+  - embedded system build
+  - IoT device programming
+  - PlatformIO environment configuration
+  - platformio.ini configuration
+  - PlatformIO target selection
+  - PlatformIO automated testing
 features:
-- Compile and link code for multiple embedded platforms
-- Specify target environments for builds
-- List available project targets for inspection
-- Execute specific targets within a project
-- Utilize custom configuration files for project settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile and link code for multiple embedded platforms
+  - Specify target environments for builds
+  - List available project targets for inspection
+  - Execute specific targets within a project
+  - Utilize custom configuration files for project settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio run

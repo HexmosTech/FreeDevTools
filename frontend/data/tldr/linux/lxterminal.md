@@ -1,9 +1,9 @@
 ---
-title: "Control Linux Terminal - Open LXTerminal Windows | Online Free DevTools by Hexmos"
+title: 'Control Linux Terminal - Open LXTerminal Windows | Online Free DevTools by Hexmos'
 name: lxterminal
-path: "/freedevtools/tldr/linux/lxterminal/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lxterminal/"
-description: "Control Linux terminal windows with LXTerminal. Open multiple tabs, set custom titles, and specify working directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lxterminal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lxterminal/'
+description: 'Control Linux terminal windows with LXTerminal. Open multiple tabs, set custom titles, and specify working directories. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux terminal emulator
@@ -22,8 +22,8 @@ features:
   - Open multiple tabs within a single window
   - Set a custom title for the terminal window
   - Specify a working directory for the terminal session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lxterminal

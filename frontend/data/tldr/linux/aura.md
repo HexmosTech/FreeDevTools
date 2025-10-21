@@ -1,9 +1,9 @@
 ---
-title: "Aura Package Manager - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
+title: 'Aura Package Manager - Manage Arch Linux Packages | Online Free DevTools by Hexmos'
 name: aura
-path: "/freedevtools/tldr/linux/aura/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aura/"
-description: "Manage Arch Linux packages efficiently with Aura Package Manager.  Search, install, update, and remove packages from both the official repositories and AUR. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aura/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aura/'
+description: 'Manage Arch Linux packages efficiently with Aura Package Manager.  Search, install, update, and remove packages from both the official repositories and AUR. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package manager
@@ -22,8 +22,8 @@ features:
   - Manage package dependencies, including removing orphans.
   - Downgrade packages using the local cache.
   - Remove packages and their dependencies recursively.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aura

@@ -1,29 +1,29 @@
 ---
-title: "Invoke-Item - Open Files | Online Free DevTools by Hexmos"
+title: 'Invoke-Item - Open Files | Online Free DevTools by Hexmos'
 name: invoke-item
-path: "/freedevtools/tldr/windows/invoke-item/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/invoke-item/"
-description: "Open files with Invoke-Item, effortlessly accessing files using PowerShell commands. Open multiple files or specific file types quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/invoke-item/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/invoke-item/'
+description: 'Open files with Invoke-Item, effortlessly accessing files using PowerShell commands. Open multiple files or specific file types quickly. Free online tool, no registration required.'
 category: windows
 keywords:
-- PowerShell invoke-item
-- Windows file opener
-- command line file launch
-- open file from PowerShell
-- PowerShell wildcard file open
-- open PNG files PowerShell
-- exclude files PowerShell
-- PowerShell file explorer
-- PowerShell open files
-- invoke-item PowerShell
+  - PowerShell invoke-item
+  - Windows file opener
+  - command line file launch
+  - open file from PowerShell
+  - PowerShell wildcard file open
+  - open PNG files PowerShell
+  - exclude files PowerShell
+  - PowerShell file explorer
+  - PowerShell open files
+  - invoke-item PowerShell
 features:
-- Open files with default programs
-- Open multiple files using wildcards
-- Open specific file types (e.g., PNG, TXT)
-- Exclude files based on keywords
-- Perform dry runs to preview actions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open files with default programs
+  - Open multiple files using wildcards
+  - Open specific file types (e.g., PNG, TXT)
+  - Exclude files based on keywords
+  - Perform dry runs to preview actions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Invoke-Item

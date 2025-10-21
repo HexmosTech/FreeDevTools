@@ -1,9 +1,9 @@
 ---
-title: "Expand - Uncompress Cabinet Files | Online Free DevTools by Hexmos"
+title: 'Expand - Uncompress Cabinet Files | Online Free DevTools by Hexmos'
 name: expand
-path: "/freedevtools/tldr/windows/expand/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/expand/"
-description: "Uncompress Cabinet (CAB) files with Expand. Extract individual files, list contents, or unpack entire archives easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/expand/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/expand/'
+description: 'Uncompress Cabinet (CAB) files with Expand. Extract individual files, list contents, or unpack entire archives easily. Free online tool, no registration required.'
 category: windows
 keywords:
   - cabinet file uncompress
@@ -22,8 +22,8 @@ features:
   - Extract all files from a Cabinet archive
   - Extract specific files from a Cabinet archive
   - Ignore directory structure during uncompression
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # expand

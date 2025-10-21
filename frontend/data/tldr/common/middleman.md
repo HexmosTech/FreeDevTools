@@ -1,29 +1,29 @@
 ---
-title: "Generate Static Sites - Middleman Generator | Online Free DevTools by Hexmos"
+title: 'Generate Static Sites - Middleman Generator | Online Free DevTools by Hexmos'
 name: middleman
-path: "/freedevtools/tldr/common/middleman/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/middleman/"
-description: "Generate static websites with Middleman, the Ruby static site generator. Build, deploy, and manage your site effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/middleman/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/middleman/'
+description: 'Generate static websites with Middleman, the Ruby static site generator. Build, deploy, and manage your site effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- static site generator
-- ruby static site generator
-- middleman static site
-- middleman deploy
-- middleman build
-- middleman server
-- website generator
-- static website development
-- ruby website generator
-- middleman command line
+  - static site generator
+  - ruby static site generator
+  - middleman static site
+  - middleman deploy
+  - middleman build
+  - middleman server
+  - website generator
+  - static website development
+  - ruby website generator
+  - middleman command line
 features:
-- Create new Middleman projects with ease.
-- Start a local server for testing and development.
-- Build projects for deployment to production.
-- Deploy Middleman projects to remote servers.
-- Customize server ports for flexible development environments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Middleman projects with ease.
+  - Start a local server for testing and development.
+  - Build projects for deployment to production.
+  - Deploy Middleman projects to remote servers.
+  - Customize server ports for flexible development environments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # middleman

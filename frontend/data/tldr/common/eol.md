@@ -1,29 +1,29 @@
 ---
-title: "Show End-of-Life Dates - Check Product EOL Status | Online Free DevTools by Hexmos"
+title: 'Show End-of-Life Dates - Check Product EOL Status | Online Free DevTools by Hexmos'
 name: eol
-path: "/freedevtools/tldr/common/eol/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/eol/"
-description: "Check product End-of-Life (EOL) dates with eol. Get EOL status and product lifecycle information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/eol/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/eol/'
+description: 'Check product End-of-Life (EOL) dates with eol. Get EOL status and product lifecycle information. Free online tool, no registration required.'
 category: common
 keywords:
-- product eol dates
-- software lifecycle
-- end of life checker
-- eol status lookup
-- product support timeline
-- hardware eol dates
-- check product lifecycle
-- common command eol
-- norwegianblue eol
-- product obsolescence
+  - product eol dates
+  - software lifecycle
+  - end of life checker
+  - eol status lookup
+  - product support timeline
+  - hardware eol dates
+  - check product lifecycle
+  - common command eol
+  - norwegianblue eol
+  - product obsolescence
 features:
-- Display end-of-life dates for various products
-- Retrieve EOL information in multiple formats (HTML, JSON, Markdown, etc.)
-- Open the product's webpage directly
-- Generate markdown reports of EOL data
-- List all available products for EOL checks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display end-of-life dates for various products
+  - Retrieve EOL information in multiple formats (HTML, JSON, Markdown, etc.)
+  - Open the product's webpage directly
+  - Generate markdown reports of EOL data
+  - List all available products for EOL checks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eol

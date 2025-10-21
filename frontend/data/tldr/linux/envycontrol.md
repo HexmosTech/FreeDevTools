@@ -1,9 +1,9 @@
 ---
-title: "GPU Control - Manage Nvidia Optimus with envycontrol | Online Free DevTools by Hexmos"
+title: 'GPU Control - Manage Nvidia Optimus with envycontrol | Online Free DevTools by Hexmos'
 name: envycontrol
-path: "/freedevtools/tldr/linux/envycontrol/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/envycontrol/"
-description: "Control Nvidia Optimus GPU switching with envycontrol.  Easily switch between integrated and discrete graphics modes for optimal performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/envycontrol/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/envycontrol/'
+description: 'Control Nvidia Optimus GPU switching with envycontrol.  Easily switch between integrated and discrete graphics modes for optimal performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - gpu switching command
@@ -22,8 +22,8 @@ features:
   - Query the current GPU mode.
   - Reset envycontrol settings to defaults.
   - Display help and version information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # envycontrol

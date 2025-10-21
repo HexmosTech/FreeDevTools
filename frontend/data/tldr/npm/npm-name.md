@@ -1,29 +1,29 @@
 ---
-title: "Check npm Name - Verify Package Availability | Online Free DevTools by Hexmos"
+title: 'Check npm Name - Verify Package Availability | Online Free DevTools by Hexmos'
 name: npm-name
-path: "/freedevtools/tldr/npm/npm-name/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-name/"
-description: "Check npm package availability instantly with npm-name. Verify if a package name is taken or find similar names. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-name/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-name/'
+description: 'Check npm package availability instantly with npm-name. Verify if a package name is taken or find similar names. Free online tool, no registration required.'
 category: common
 keywords:
-- npm package checker
-- npm name availability
-- npm package name validator
-- npm package search
-- javascript package name
-- node package name
-- find npm package
-- npm registry checker
-- npm similar packages
-- command-line npm tool
+  - npm package checker
+  - npm name availability
+  - npm package name validator
+  - npm package search
+  - javascript package name
+  - node package name
+  - find npm package
+  - npm registry checker
+  - npm similar packages
+  - command-line npm tool
 features:
-- Check the availability of an npm package name.
-- Suggest similar package names if the original is unavailable.
-- Use directly from the command line.
-- Quickly determine if an organization name is available.
-- Streamline npm package publishing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check the availability of an npm package name.
+  - Suggest similar package names if the original is unavailable.
+  - Use directly from the command line.
+  - Quickly determine if an organization name is available.
+  - Streamline npm package publishing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm-name

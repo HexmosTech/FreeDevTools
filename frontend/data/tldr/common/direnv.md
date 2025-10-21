@@ -1,29 +1,29 @@
 ---
-title: "Control Environment Variables - With direnv | Online Free DevTools by Hexmos"
+title: 'Control Environment Variables - With direnv | Online Free DevTools by Hexmos'
 name: direnv
-path: "/freedevtools/tldr/common/direnv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/direnv/"
-description: "Control environment variables easily with direnv. Manage directory-specific environment settings and automate environment loading/unloading. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/direnv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/direnv/'
+description: 'Control environment variables easily with direnv. Manage directory-specific environment settings and automate environment loading/unloading. Free online tool, no registration required.'
 category: common
 keywords:
-- environment variables control
-- directory environment manager
-- direnv environment loader
-- linux environment variables
-- macos environment variables
-- shell environment automation
-- .envrc file management
-- environment variable configuration
-- environment variable isolation
-- command line environment tools
+  - environment variables control
+  - directory environment manager
+  - direnv environment loader
+  - linux environment variables
+  - macos environment variables
+  - shell environment automation
+  - .envrc file management
+  - environment variable configuration
+  - environment variable isolation
+  - command line environment tools
 features:
-- Load environment variables based on current directory
-- Unload environment variables when leaving a directory
-- Allow or deny loading of .envrc files
-- Edit and reload environment configuration files
-- Display environment status and debug information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Load environment variables based on current directory
+  - Unload environment variables when leaving a directory
+  - Allow or deny loading of .envrc files
+  - Edit and reload environment configuration files
+  - Display environment status and debug information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # direnv

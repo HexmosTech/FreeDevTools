@@ -1,29 +1,29 @@
 ---
-title: "Arthas Watch - Observe Method Data | Online Free DevTools by Hexmos"
+title: 'Arthas Watch - Observe Method Data | Online Free DevTools by Hexmos'
 name: arthas-watch
-path: "/freedevtools/tldr/arthas/arthas-watch/"
-canonical: "https://hexmos.com/freedevtools/tldr/arthas/arthas-watch/"
-description: "Observe method invoke data with Arthas Watch. Inspect parameters, return values, and exceptions in real-time for deeper code insights. Free online tool, no registration required."
+path: '/freedevtools/tldr/arthas/arthas-watch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/arthas/arthas-watch/'
+description: 'Observe method invoke data with Arthas Watch. Inspect parameters, return values, and exceptions in real-time for deeper code insights. Free online tool, no registration required.'
 category: common
 keywords:
-- arthas watch data
-- arthas method observation
-- arthas invoke monitoring
-- java method tracing
-- arthas parameter analysis
-- arthas return value inspection
-- arthas exception tracking
-- arthas dynamic instrumentation
-- java code debugging
-- java method profiling
+  - arthas watch data
+  - arthas method observation
+  - arthas invoke monitoring
+  - java method tracing
+  - arthas parameter analysis
+  - arthas return value inspection
+  - arthas exception tracking
+  - arthas dynamic instrumentation
+  - java code debugging
+  - java method profiling
 features:
-- Observe method parameters and return values dynamically
-- Expand nested object attributes to specified levels
-- Filter observations based on parameter values
-- Track method execution and exception occurrences
-- Inspect object properties at runtime
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Observe method parameters and return values dynamically
+  - Expand nested object attributes to specified levels
+  - Filter observations based on parameter values
+  - Track method execution and exception occurrences
+  - Inspect object properties at runtime
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arthas-watch

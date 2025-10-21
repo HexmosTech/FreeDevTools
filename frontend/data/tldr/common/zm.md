@@ -1,9 +1,9 @@
 ---
-title: "Manage Articles - zm Newspaper and Blog Tool | Online Free DevTools by Hexmos"
+title: 'Manage Articles - zm Newspaper and Blog Tool | Online Free DevTools by Hexmos'
 name: zm
-path: "/freedevtools/tldr/common/zm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zm/"
-description: "Manage articles with zm, a command-line tool for newspapers and blogs. Create, edit, and publish articles with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zm/'
+description: 'Manage articles with zm, a command-line tool for newspapers and blogs. Create, edit, and publish articles with ease. Free online tool, no registration required.'
 category: common
 keywords:
   - article manager
@@ -22,8 +22,8 @@ features:
   - Publish articles directly from the command line
   - Commit published articles with git
   - Manage articles for newspapers and blogs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zm

@@ -1,9 +1,9 @@
 ---
-title: "setsid Command - Control Process Sessions | Online Free DevTools by Hexmos"
+title: 'setsid Command - Control Process Sessions | Online Free DevTools by Hexmos'
 name: setsid
-path: "/freedevtools/tldr/linux/setsid/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/setsid/"
-description: "Control process sessions with the setsid command.  Run programs in new sessions, manage process groups, and control terminal behavior. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/setsid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/setsid/'
+description: 'Control process sessions with the setsid command.  Run programs in new sessions, manage process groups, and control terminal behavior. Free online tool, no registration required.'
 category: linux
 keywords:
   - setsid command
@@ -22,8 +22,8 @@ features:
   - Creates a new process group.
   - Allows waiting for the child process to exit and return its exit code.
   - Optionally sets the controlling terminal for the new session.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # setsid

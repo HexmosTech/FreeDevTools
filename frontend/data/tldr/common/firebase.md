@@ -1,29 +1,29 @@
 ---
-title: "Firebase Manager - Control Firebase Projects | Online Free DevTools by Hexmos"
+title: 'Firebase Manager - Control Firebase Projects | Online Free DevTools by Hexmos'
 name: firebase
-path: "/freedevtools/tldr/common/firebase/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/firebase/"
-description: "Control Firebase projects easily with Firebase Manager. Deploy assets, manage projects, and serve your application locally. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/firebase/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/firebase/'
+description: 'Control Firebase projects easily with Firebase Manager. Deploy assets, manage projects, and serve your application locally. Free online tool, no registration required.'
 category: common
 keywords:
-- firebase manager
-- firebase deploy
-- firebase init
-- firebase projects list
-- firebase serve
-- firebase login
-- firebase project management
-- firebase hosting
-- firebase cli
-- firebase tools
+  - firebase manager
+  - firebase deploy
+  - firebase init
+  - firebase projects list
+  - firebase serve
+  - firebase login
+  - firebase project management
+  - firebase hosting
+  - firebase cli
+  - firebase tools
 features:
-- Deploy code and assets to Firebase projects.
-- List existing Firebase projects.
-- Create Firebase projects interactively.
-- Start a local server to host Firebase assets.
-- Open Firebase project links in a web browser.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy code and assets to Firebase projects.
+  - List existing Firebase projects.
+  - Create Firebase projects interactively.
+  - Start a local server to host Firebase assets.
+  - Open Firebase project links in a web browser.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # firebase

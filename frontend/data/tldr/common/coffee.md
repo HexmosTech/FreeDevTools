@@ -1,29 +1,29 @@
 ---
-title: "Compile CoffeeScript - Convert to JavaScript | Online Free DevTools by Hexmos"
+title: 'Compile CoffeeScript - Convert to JavaScript | Online Free DevTools by Hexmos'
 name: coffee
-path: "/freedevtools/tldr/common/coffee/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/coffee/"
-description: "Convert CoffeeScript to JavaScript with Coffee. Compile CoffeeScript files directly to JavaScript for seamless integration. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/coffee/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/coffee/'
+description: 'Convert CoffeeScript to JavaScript with Coffee. Compile CoffeeScript files directly to JavaScript for seamless integration. Free online tool, no registration required.'
 category: common
 keywords:
-- coffeescript compiler
-- javascript code generator
-- compile coffeescript to js
-- coffeescript to javascript
-- coffeescript syntax
-- command line coffeescript
-- coffeescript repl
-- coffeescript watch mode
-- coffeescript build tool
-- coffeescript transpiler
+  - coffeescript compiler
+  - javascript code generator
+  - compile coffeescript to js
+  - coffeescript to javascript
+  - coffeescript syntax
+  - command line coffeescript
+  - coffeescript repl
+  - coffeescript watch mode
+  - coffeescript build tool
+  - coffeescript transpiler
 features:
-- Compile CoffeeScript files to JavaScript files
-- Execute CoffeeScript code directly from the command line
-- Start an interactive CoffeeScript REPL session
-- Watch for changes in CoffeeScript files and recompile automatically
-- Specify an output file for compiled JavaScript code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile CoffeeScript files to JavaScript files
+  - Execute CoffeeScript code directly from the command line
+  - Start an interactive CoffeeScript REPL session
+  - Watch for changes in CoffeeScript files and recompile automatically
+  - Specify an output file for compiled JavaScript code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # coffee

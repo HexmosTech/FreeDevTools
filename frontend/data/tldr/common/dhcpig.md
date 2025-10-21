@@ -1,29 +1,29 @@
 ---
-title: "DHCP Exhaustion - Initiate DHCP Attacks | Online Free DevTools by Hexmos"
+title: 'DHCP Exhaustion - Initiate DHCP Attacks | Online Free DevTools by Hexmos'
 name: dhcpig
-path: "/freedevtools/tldr/common/dhcpig/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dhcpig/"
-description: "Initiate DHCP exhaustion attacks with DHCPig. Stress test networks and identify vulnerabilities using advanced DHCP techniques. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dhcpig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dhcpig/'
+description: 'Initiate DHCP exhaustion attacks with DHCPig. Stress test networks and identify vulnerabilities using advanced DHCP techniques. Free online tool, no registration required.'
 category: common
 keywords:
-- DHCP exhaustion attack
-- DHCP stress test
-- DHCP network attack
-- DHCP starvation attack
-- DHCP flooding tool
-- DHCP network testing
-- Linux DHCP attack tool
-- Network vulnerability scanner
-- Network stress testing tool
-- DHCPig network scanner
+  - DHCP exhaustion attack
+  - DHCP stress test
+  - DHCP network attack
+  - DHCP starvation attack
+  - DHCP flooding tool
+  - DHCP network testing
+  - Linux DHCP attack tool
+  - Network vulnerability scanner
+  - Network stress testing tool
+  - DHCPig network scanner
 features:
-- Exhaust available DHCP addresses
-- Initiate IPv6 DHCP exhaustion
-- Send fuzzed DHCP data packets
-- Scan network for neighboring devices using ARP
-- Release all neighbor IP addresses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Exhaust available DHCP addresses
+  - Initiate IPv6 DHCP exhaustion
+  - Send fuzzed DHCP data packets
+  - Scan network for neighboring devices using ARP
+  - Release all neighbor IP addresses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dhcpig

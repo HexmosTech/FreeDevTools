@@ -1,29 +1,29 @@
 ---
-title: "Print Formatter - Format Files for Printing | Online Free DevTools by Hexmos"
+title: 'Print Formatter - Format Files for Printing | Online Free DevTools by Hexmos'
 name: pr
-path: "/freedevtools/tldr/common/pr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pr/"
-description: "Format files with Print Formatter (pr) for printing. Control layout, add headers/footers, and paginate documents using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pr/'
+description: 'Format files with Print Formatter (pr) for printing. Control layout, add headers/footers, and paginate documents using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- print formatter
-- file pagination
-- command line printing
-- format files for printing
-- pr command
-- linux print formatting
-- gnu coreutils pr
-- text formatting tool
-- printing utility
-- document formatting
+  - print formatter
+  - file pagination
+  - command line printing
+  - format files for printing
+  - pr command
+  - linux print formatting
+  - gnu coreutils pr
+  - text formatting tool
+  - printing utility
+  - document formatting
 features:
-- Paginate files with customizable headers and footers.
-- Number lines for easy reference in printed output.
-- Merge multiple files into columns for side-by-side printing.
-- Set custom page lengths and widths for precise control.
-- Add line offsets for improved readability.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Paginate files with customizable headers and footers.
+  - Number lines for easy reference in printed output.
+  - Merge multiple files into columns for side-by-side printing.
+  - Set custom page lengths and widths for precise control.
+  - Add line offsets for improved readability.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pr

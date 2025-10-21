@@ -1,9 +1,9 @@
 ---
-title: "Assemble GNU Code - Assemble Files with as | Online Free DevTools by Hexmos"
+title: 'Assemble GNU Code - Assemble Files with as | Online Free DevTools by Hexmos'
 name: as
-path: "/freedevtools/tldr/osx/as/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/as/"
-description: "Assemble GNU assembly code with as. Create executable files from assembly source code with this portable GNU assembler. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/as/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/as/'
+description: 'Assemble GNU assembly code with as. Create executable files from assembly source code with this portable GNU assembler. Free online tool, no registration required.'
 category: osx
 keywords:
   - GNU assembler
@@ -22,8 +22,8 @@ features:
   - Skip whitespace and comment preprocessing for faster assembly
   - Include specified directories in the search path for include files
   - Create object files ready for linking with ld
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # as

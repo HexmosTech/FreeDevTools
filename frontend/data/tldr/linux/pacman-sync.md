@@ -1,9 +1,9 @@
 ---
-title: "Pacman Sync - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
+title: 'Pacman Sync - Manage Arch Linux Packages | Online Free DevTools by Hexmos'
 name: pacman-sync
-path: "/freedevtools/tldr/linux/pacman-sync/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-sync/"
-description: "Manage Arch Linux packages efficiently with Pacman Sync. Update, install, and search for packages with ease on Arch Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacman-sync/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacman-sync/'
+description: 'Manage Arch Linux packages efficiently with Pacman Sync. Update, install, and search for packages with ease on Arch Linux. Free online tool, no registration required.'
 category: linux
 keywords:
   - arch linux package manager
@@ -22,8 +22,8 @@ features:
   - Search package databases for specific terms
   - Display detailed information about packages
   - Clean package cache and remove unused repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacman --sync

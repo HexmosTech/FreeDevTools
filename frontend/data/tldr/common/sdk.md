@@ -1,29 +1,29 @@
 ---
-title: "SDK Manager - Manage Multiple SDK Versions | Online Free DevTools by Hexmos"
+title: 'SDK Manager - Manage Multiple SDK Versions | Online Free DevTools by Hexmos'
 name: sdk
-path: "/freedevtools/tldr/common/sdk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sdk/"
-description: "Manage SDK versions easily with SDK Manager. Install, use, upgrade, and uninstall multiple SDKs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sdk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sdk/'
+description: 'Manage SDK versions easily with SDK Manager. Install, use, upgrade, and uninstall multiple SDKs. Free online tool, no registration required.'
 category: common
 keywords:
-- SDK version manager
-- Java SDK management
-- Groovy SDK management
-- Scala SDK management
-- Kotlin SDK management
-- Gradle SDK management
-- Maven SDK management
-- Vert.x SDK management
-- Software Development Kit manager
-- Command line SDK tools
+  - SDK version manager
+  - Java SDK management
+  - Groovy SDK management
+  - Scala SDK management
+  - Kotlin SDK management
+  - Gradle SDK management
+  - Maven SDK management
+  - Vert.x SDK management
+  - Software Development Kit manager
+  - Command line SDK tools
 features:
-- Install specific versions of SDKs
-- Use specific SDK versions for current session
-- Show the stable version of available SDKs
-- Upgrade SDKs to the latest stable versions
-- Uninstall specific versions of SDKs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific versions of SDKs
+  - Use specific SDK versions for current session
+  - Show the stable version of available SDKs
+  - Upgrade SDKs to the latest stable versions
+  - Uninstall specific versions of SDKs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sdk

@@ -1,29 +1,29 @@
 ---
-title: "Gcloud Config - Manage Configurations | Online Free DevTools by Hexmos"
+title: 'Gcloud Config - Manage Configurations | Online Free DevTools by Hexmos'
 name: gcloud-config
-path: "/freedevtools/tldr/gcloud/gcloud-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-config/"
-description: "Manage Google Cloud SDK configurations with Gcloud Config. Quickly switch between environments and set properties with this free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-config/'
+description: 'Manage Google Cloud SDK configurations with Gcloud Config. Quickly switch between environments and set properties with this free online tool, no registration required.'
 category: common
 keywords:
-- gcloud config manager
-- gcloud configuration tool
-- google cloud configuration
-- gcloud sdk config
-- gcloud config properties
-- gcloud linux config
-- gcloud windows config
-- gcloud macos config
-- gcloud environment config
-- gcloud project configuration
+  - gcloud config manager
+  - gcloud configuration tool
+  - google cloud configuration
+  - gcloud sdk config
+  - gcloud config properties
+  - gcloud linux config
+  - gcloud windows config
+  - gcloud macos config
+  - gcloud environment config
+  - gcloud project configuration
 features:
-- Define gcloud properties for current configuration
-- Fetch gcloud property values
-- Display all properties for a configuration
-- Create new gcloud configurations
-- Activate existing gcloud configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define gcloud properties for current configuration
+  - Fetch gcloud property values
+  - Display all properties for a configuration
+  - Create new gcloud configurations
+  - Activate existing gcloud configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud config

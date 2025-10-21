@@ -1,29 +1,29 @@
 ---
-title: "Distribute C Compilation - Accelerate Builds with distcc | Online Free DevTools by Hexmos"
+title: 'Distribute C Compilation - Accelerate Builds with distcc | Online Free DevTools by Hexmos'
 name: distcc
-path: "/freedevtools/tldr/common/distcc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/distcc/"
-description: "Accelerate C/C++ builds with distcc, a distributed compilation client. Share compilation load across multiple machines for faster development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/distcc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/distcc/'
+description: 'Accelerate C/C++ builds with distcc, a distributed compilation client. Share compilation load across multiple machines for faster development. Free online tool, no registration required.'
 category: common
 keywords:
-- Distributed C Compilation
-- C++ Compiler Distcc
-- Remote Code Build
-- Fast C Compilation
-- Linux Distcc
-- MacOS Distcc
-- Cluster Compilation
-- Parallel C Builds
-- Code Optimization
-- Distcc Host Management
+  - Distributed C Compilation
+  - C++ Compiler Distcc
+  - Remote Code Build
+  - Fast C Compilation
+  - Linux Distcc
+  - MacOS Distcc
+  - Cluster Compilation
+  - Parallel C Builds
+  - Code Optimization
+  - Distcc Host Management
 features:
-- Distribute C/C++ compilation across multiple hosts.
-- Accelerate build times by leveraging network resources.
-- Manage remote hosts for distributed compilation.
-- Integrate with make and other build systems.
-- Display compilation host information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Distribute C/C++ compilation across multiple hosts.
+  - Accelerate build times by leveraging network resources.
+  - Manage remote hosts for distributed compilation.
+  - Integrate with make and other build systems.
+  - Display compilation host information.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # distcc

@@ -1,29 +1,29 @@
 ---
-title: "Format Code - Uncrustify Code | Online Free DevTools by Hexmos"
+title: 'Format Code - Uncrustify Code | Online Free DevTools by Hexmos'
 name: uncrustify
-path: "/freedevtools/tldr/common/uncrustify/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/uncrustify/"
-description: "Format code with Uncrustify, a powerful source code formatter supporting C, C++, C#, D, Java, and Pawn.  Enhance code readability instantly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/uncrustify/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/uncrustify/'
+description: 'Format code with Uncrustify, a powerful source code formatter supporting C, C++, C#, D, Java, and Pawn.  Enhance code readability instantly. Free online tool, no registration required.'
 category: common
 keywords:
-- code formatter
-- source code formatting
-- c++ formatter
-- java formatter
-- c# formatter
-- uncrustify configuration
-- code style guide
-- clang format
-- code beautifier
-- indent code
+  - code formatter
+  - source code formatting
+  - c++ formatter
+  - java formatter
+  - c# formatter
+  - uncrustify configuration
+  - code style guide
+  - clang format
+  - code beautifier
+  - indent code
 features:
-- Format code files automatically
-- Support multiple programming languages (C, C++, C#, D, Java, Pawn)
-- Utilize custom configuration files for flexible formatting
-- Generate new configuration files for personalized settings
-- Backup original files before formatting to prevent data loss
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format code files automatically
+  - Support multiple programming languages (C, C++, C#, D, Java, Pawn)
+  - Utilize custom configuration files for flexible formatting
+  - Generate new configuration files for personalized settings
+  - Backup original files before formatting to prevent data loss
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uncrustify

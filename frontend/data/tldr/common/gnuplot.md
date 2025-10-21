@@ -1,29 +1,29 @@
 ---
-title: "Gnuplot - Generate Graphs in Multiple Formats | Online Free DevTools by Hexmos"
+title: 'Gnuplot - Generate Graphs in Multiple Formats | Online Free DevTools by Hexmos'
 name: gnuplot
-path: "/freedevtools/tldr/common/gnuplot/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gnuplot/"
-description: "Generate plots with Gnuplot, a versatile graphing tool capable of outputting various formats. Create visualizations with this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gnuplot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gnuplot/'
+description: 'Generate plots with Gnuplot, a versatile graphing tool capable of outputting various formats. Create visualizations with this command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- graph plotting tool
-- command-line graph plotter
-- gnuplot script execution
-- data visualization
-- plot generation
-- graph definition file
-- png graph output
-- interactive plotting shell
-- linux gnuplot
-- macos gnuplot
+  - graph plotting tool
+  - command-line graph plotter
+  - gnuplot script execution
+  - data visualization
+  - plot generation
+  - graph definition file
+  - png graph output
+  - interactive plotting shell
+  - linux gnuplot
+  - macos gnuplot
 features:
-- Start an interactive graph plotting session.
-- Plot graphs from a specified definition file.
-- Set the output format and size before plotting.
-- Persist the plot preview window after exiting.
-- Generate graphs in multiple image and data formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive graph plotting session.
+  - Plot graphs from a specified definition file.
+  - Set the output format and size before plotting.
+  - Persist the plot preview window after exiting.
+  - Generate graphs in multiple image and data formats.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnuplot

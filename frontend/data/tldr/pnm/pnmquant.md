@@ -1,29 +1,29 @@
 ---
-title: "Quantize PNM Colors - Generate PNM Color Palettes | Online Free DevTools by Hexmos"
+title: 'Quantize PNM Colors - Generate PNM Color Palettes | Online Free DevTools by Hexmos'
 name: pnmquant
-path: "/freedevtools/tldr/pnm/pnmquant/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmquant/"
-description: "Quantize images with Pnmquant. Generate PNM color palettes and reduce the number of colors in PNM images. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmquant/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmquant/'
+description: 'Quantize images with Pnmquant. Generate PNM color palettes and reduce the number of colors in PNM images. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM color quantization
-- PNM image palette generator
-- Reduce PNM colors
-- Netpbm image processing
-- Color palette optimization
-- PNM image manipulation
-- PNM color reduction
-- Linux image quantization
-- Image color mapping
-- PNM image conversion
+  - PNM color quantization
+  - PNM image palette generator
+  - Reduce PNM colors
+  - Netpbm image processing
+  - Color palette optimization
+  - PNM image manipulation
+  - PNM color reduction
+  - Linux image quantization
+  - Image color mapping
+  - PNM image conversion
 features:
-- Generate PNM images with a limited number of colors
-- Reduce the color palette of a PNM image
-- Approximate colors in a PNM image using a smaller palette
-- Create optimized color palettes for PNM images
-- Quantize PNM images directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate PNM images with a limited number of colors
+  - Reduce the color palette of a PNM image
+  - Approximate colors in a PNM image using a smaller palette
+  - Create optimized color palettes for PNM images
+  - Quantize PNM images directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmquant

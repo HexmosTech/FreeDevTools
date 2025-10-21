@@ -1,29 +1,29 @@
 ---
-title: "Tmt - Test Management | Online Free DevTools by Hexmos"
+title: 'Tmt - Test Management | Online Free DevTools by Hexmos'
 name: tmt
-path: "/freedevtools/tldr/linux/tmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tmt/"
-description: "Manage tests efficiently with Tmt, the Test Management Tool for Linux. Create, run, and debug tests with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tmt/'
+description: 'Manage tests efficiently with Tmt, the Test Management Tool for Linux. Create, run, and debug tests with ease. Free online tool, no registration required.'
 category: linux
 keywords:
-- test management linux
-- linux test management
-- tmt test tool
-- tmt command line
-- test automation linux
-- beakerlib test creation
-- linux test metadata
-- tmt lint validation
-- tmt filter tests
-- linux test debugging
+  - test management linux
+  - linux test management
+  - tmt test tool
+  - tmt command line
+  - test automation linux
+  - beakerlib test creation
+  - linux test metadata
+  - tmt lint validation
+  - tmt filter tests
+  - linux test debugging
 features:
-- Initialize test project structures
-- Create tests from templates with links
-- List available tests, plans, and stories
-- Show detailed test metadata
-- Validate Tmt files against specification
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize test project structures
+  - Create tests from templates with links
+  - List available tests, plans, and stories
+  - Show detailed test metadata
+  - Validate Tmt files against specification
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tmt

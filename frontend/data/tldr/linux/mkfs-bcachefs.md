@@ -1,9 +1,9 @@
 ---
-title: "Create Bcachefs Filesystem - Format Disks | Online Free DevTools by Hexmos"
+title: 'Create Bcachefs Filesystem - Format Disks | Online Free DevTools by Hexmos'
 name: mkfs.bcachefs
-path: "/freedevtools/tldr/linux/mkfs-bcachefs/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mkfs-bcachefs/"
-description: "Create bcachefs filesystem partitions instantly with mkfs.bcachefs. Format disks and define volume labels using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkfs-bcachefs/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mkfs-bcachefs/'
+description: 'Create bcachefs filesystem partitions instantly with mkfs.bcachefs. Format disks and define volume labels using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - bcachefs filesystem creation
@@ -22,8 +22,8 @@ features:
   - Creates bcachefs file system on a specified device
   - Provides command-line interface for disk formatting
   - Enables quick creation of bcachefs file systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfs.bcachefs

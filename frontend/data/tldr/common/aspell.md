@@ -1,29 +1,29 @@
 ---
-title: "Spell Check Text - Correct Spelling with Aspell | Online Free DevTools by Hexmos"
+title: 'Spell Check Text - Correct Spelling with Aspell | Online Free DevTools by Hexmos'
 name: aspell
-path: "/freedevtools/tldr/common/aspell/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/aspell/"
-description: "Spell check text with Aspell, an interactive spell checker. Identify and correct misspelled words instantly from command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/aspell/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/aspell/'
+description: 'Spell check text with Aspell, an interactive spell checker. Identify and correct misspelled words instantly from command line. Free online tool, no registration required.'
 category: common
 keywords:
-- spell check text
-- aspell spell checker
-- command line spell check
-- linux spell check
-- macos spell check
-- text editor spell check
-- dictionary language check
-- interactive spell checker
-- personal word list aspell
-- aspell command examples
+  - spell check text
+  - aspell spell checker
+  - command line spell check
+  - linux spell check
+  - macos spell check
+  - text editor spell check
+  - dictionary language check
+  - interactive spell checker
+  - personal word list aspell
+  - aspell command examples
 features:
-- Spell check text files from the command line
-- List misspelled words from stdin
-- Show available dictionary languages
-- Run spell check with a specified language
-- Ignore words from a personal word list
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Spell check text files from the command line
+  - List misspelled words from stdin
+  - Show available dictionary languages
+  - Run spell check with a specified language
+  - Ignore words from a personal word list
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aspell

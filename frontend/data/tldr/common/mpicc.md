@@ -1,29 +1,29 @@
 ---
-title: "MPI Compile - Create MPI Executables | Online Free DevTools by Hexmos"
+title: 'MPI Compile - Create MPI Executables | Online Free DevTools by Hexmos'
 name: mpicc
-path: "/freedevtools/tldr/common/mpicc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mpicc/"
-description: "Create MPI executables effortlessly with mpicc, the Open MPI C wrapper compiler. Compile C code and link object files for parallel computing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mpicc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mpicc/'
+description: 'Create MPI executables effortlessly with mpicc, the Open MPI C wrapper compiler. Compile C code and link object files for parallel computing. Free online tool, no registration required.'
 category: common
 keywords:
-- MPI C compiler
-- Open MPI compile
-- Parallel C code compilation
-- C code to executable
-- Linux MPI compiler
-- macOS MPI compiler
-- HPC C compiler
-- MPI object file linking
-- C wrapper compiler
-- MPI C development
+  - MPI C compiler
+  - Open MPI compile
+  - Parallel C code compilation
+  - C code to executable
+  - Linux MPI compiler
+  - macOS MPI compiler
+  - HPC C compiler
+  - MPI object file linking
+  - C wrapper compiler
+  - MPI C development
 features:
-- Compile C source code into object files
-- Link object files to create MPI executables
-- Simplify MPI program development
-- Provide a C wrapper for MPI functions
-- Build parallel applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile C source code into object files
+  - Link object files to create MPI executables
+  - Simplify MPI program development
+  - Provide a C wrapper for MPI functions
+  - Build parallel applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mpicc

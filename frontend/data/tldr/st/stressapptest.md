@@ -1,29 +1,29 @@
 ---
-title: "Stressapptest - Memory and IO Test | Online Free DevTools by Hexmos"
+title: 'Stressapptest - Memory and IO Test | Online Free DevTools by Hexmos'
 name: stressapptest
-path: "/freedevtools/tldr/st/stressapptest/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/stressapptest/"
+path: '/freedevtools/tldr/st/stressapptest/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/stressapptest/'
 description: "Run memory and I/O tests with Stressapptest. Stress test your system's memory and identify hardware issues effectively. Free online tool, no registration required."
 category: common
 keywords:
-- memory stress test
-- IO stress test
-- system stability test
-- hardware diagnostics
-- linux memory test
-- command line memory tester
-- stressapptest linux
-- memory test tool
-- detect memory errors
-- system benchmark
+  - memory stress test
+  - IO stress test
+  - system stability test
+  - hardware diagnostics
+  - linux memory test
+  - command line memory tester
+  - stressapptest linux
+  - memory test tool
+  - detect memory errors
+  - system benchmark
 features:
-- Test memory allocation and deallocation
-- Simulate high memory load
-- Perform I/O operations to test storage
-- Allow specifying verbosity levels for detailed output
-- Identify system instability issues under stress
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Test memory allocation and deallocation
+  - Simulate high memory load
+  - Perform I/O operations to test storage
+  - Allow specifying verbosity levels for detailed output
+  - Identify system instability issues under stress
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # stressapptest

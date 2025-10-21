@@ -1,29 +1,29 @@
 ---
-title: "Ansible-Doc - Display Ansible Module Info | Online Free DevTools by Hexmos"
+title: 'Ansible-Doc - Display Ansible Module Info | Online Free DevTools by Hexmos'
 name: ansible-doc
-path: "/freedevtools/tldr/ansible/ansible-doc/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-doc/"
-description: "Display Ansible module information with ansible-doc. Explore module details, examples, and playbook snippets. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible-doc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible-doc/'
+description: 'Display Ansible module information with ansible-doc. Explore module details, examples, and playbook snippets. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible module documentation
-- ansible plugin listing
-- ansible module information
-- ansible playbook snippet
-- ansible module details
-- ansible plugin type
-- ansible command line
-- ansible modules linux
-- ansible modules windows
-- ansible module usage
+  - ansible module documentation
+  - ansible plugin listing
+  - ansible module information
+  - ansible playbook snippet
+  - ansible module details
+  - ansible plugin type
+  - ansible command line
+  - ansible modules linux
+  - ansible modules windows
+  - ansible module usage
 features:
-- Display module documentation
-- List available Ansible plugins
-- Show playbook snippets for modules
-- Show module information as JSON
-- Filter plugins by type
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display module documentation
+  - List available Ansible plugins
+  - Show playbook snippets for modules
+  - Show module information as JSON
+  - Filter plugins by type
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible-doc

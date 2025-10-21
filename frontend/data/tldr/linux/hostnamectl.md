@@ -1,29 +1,29 @@
 ---
-title: "Hostname Control - Manage Hostnames on Linux | Online Free DevTools by Hexmos"
+title: 'Hostname Control - Manage Hostnames on Linux | Online Free DevTools by Hexmos'
 name: hostnamectl
-path: "/freedevtools/tldr/linux/hostnamectl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hostnamectl/"
-description: "Control hostnames on Linux with hostnamectl. Manage system hostnames and pretty hostnames efficiently using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hostnamectl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hostnamectl/'
+description: 'Control hostnames on Linux with hostnamectl. Manage system hostnames and pretty hostnames efficiently using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux hostname control
-- hostnamectl command
-- set linux hostname
-- change hostname linux
-- linux system hostname
-- pretty hostname linux
-- ubuntu hostname
-- debian hostname
-- hostname configuration
-- hostname management
+  - linux hostname control
+  - hostnamectl command
+  - set linux hostname
+  - change hostname linux
+  - linux system hostname
+  - pretty hostname linux
+  - ubuntu hostname
+  - debian hostname
+  - hostname configuration
+  - hostname management
 features:
-- Get current hostname information
-- Set static system hostname
-- Set transient hostname
-- Set pretty hostname for display
-- Reset hostname to default value
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Get current hostname information
+  - Set static system hostname
+  - Set transient hostname
+  - Set pretty hostname for display
+  - Reset hostname to default value
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hostnamectl

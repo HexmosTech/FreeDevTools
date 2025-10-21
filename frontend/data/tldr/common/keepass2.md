@@ -1,29 +1,29 @@
 ---
-title: "Manage Passwords - Control KeePass2 Databases | Online Free DevTools by Hexmos"
+title: 'Manage Passwords - Control KeePass2 Databases | Online Free DevTools by Hexmos'
 name: keepass2
-path: "/freedevtools/tldr/common/keepass2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/keepass2/"
-description: "Manage passwords effectively with KeePass2. Securely access, open, and control your password databases via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/keepass2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/keepass2/'
+description: 'Manage passwords effectively with KeePass2. Securely access, open, and control your password databases via command line. Free online tool, no registration required.'
 category: common
 keywords:
-- KeePass2 password manager
-- password database management
-- command line password tool
-- kdbx file access
-- password encryption
-- key file authentication
-- cross-platform password manager
-- password security
-- secure password storage
-- KeePass2 cli
+  - KeePass2 password manager
+  - password database management
+  - command line password tool
+  - kdbx file access
+  - password encryption
+  - key file authentication
+  - cross-platform password manager
+  - password security
+  - secure password storage
+  - KeePass2 cli
 features:
-- Open KeePass2 password databases from the command line
-- Specify a database file to open
-- Authenticate with a key file
-- Access recently opened password databases
-- Securely manage password databases
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open KeePass2 password databases from the command line
+  - Specify a database file to open
+  - Authenticate with a key file
+  - Access recently opened password databases
+  - Securely manage password databases
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # keepass2

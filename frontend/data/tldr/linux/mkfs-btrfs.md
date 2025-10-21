@@ -1,29 +1,29 @@
 ---
-title: "Create BTRFS Filesystem - Format Partitions | Online Free DevTools by Hexmos"
+title: 'Create BTRFS Filesystem - Format Partitions | Online Free DevTools by Hexmos'
 name: mkfs.btrfs
-path: "/freedevtools/tldr/linux/mkfs-btrfs/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mkfs-btrfs/"
-description: "Create BTRFS filesystem with mkfs.btrfs. Format partitions and manage storage efficiently on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkfs-btrfs/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mkfs-btrfs/'
+description: 'Create BTRFS filesystem with mkfs.btrfs. Format partitions and manage storage efficiently on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- btrfs filesystem creation
-- linux partition formatting
-- mkfs.btrfs command
-- btrfs raid configuration
-- linux storage management
-- btrfs filesystem label
-- btrfs force format
-- linux disk partitioning
-- btrfs single device filesystem
-- btrfs multiple device filesystem
+  - btrfs filesystem creation
+  - linux partition formatting
+  - mkfs.btrfs command
+  - btrfs raid configuration
+  - linux storage management
+  - btrfs filesystem label
+  - btrfs force format
+  - linux disk partitioning
+  - btrfs single device filesystem
+  - btrfs multiple device filesystem
 features:
-- Create BTRFS filesystems on empty partitions
-- Format single-device BTRFS filesystems
-- Format multi-device BTRFS filesystems with RAID1
-- Set filesystem labels for easy identification
-- Force overwrite existing filesystems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create BTRFS filesystems on empty partitions
+  - Format single-device BTRFS filesystems
+  - Format multi-device BTRFS filesystems with RAID1
+  - Set filesystem labels for easy identification
+  - Force overwrite existing filesystems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfs.btrfs

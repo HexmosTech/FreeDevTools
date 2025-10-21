@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import MacAddressLookupSkeleton from "./_MacAddressLookupSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import MacAddressLookupSkeleton from './_MacAddressLookupSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Real-time MAC address vendor lookup using public APIs
 interface LookupResult {
@@ -31,84 +31,84 @@ const FALLBACK_DATABASE: Record<
   string,
   { vendor: string; organization: string; country?: string }
 > = {
-  "00:50:56": {
-    vendor: "VMware, Inc.",
-    organization: "VMware Virtual Platform",
-    country: "US",
+  '00:50:56': {
+    vendor: 'VMware, Inc.',
+    organization: 'VMware Virtual Platform',
+    country: 'US',
   },
-  "08:00:27": {
-    vendor: "PCS Systemtechnik GmbH",
-    organization: "VirtualBox",
-    country: "DE",
+  '08:00:27': {
+    vendor: 'PCS Systemtechnik GmbH',
+    organization: 'VirtualBox',
+    country: 'DE',
   },
-  "52:54:00": {
-    vendor: "Red Hat, Inc.",
-    organization: "QEMU Virtual Machine",
-    country: "US",
+  '52:54:00': {
+    vendor: 'Red Hat, Inc.',
+    organization: 'QEMU Virtual Machine',
+    country: 'US',
   },
-  "00:0C:29": {
-    vendor: "VMware, Inc.",
-    organization: "VMware ESX Server",
-    country: "US",
+  '00:0C:29': {
+    vendor: 'VMware, Inc.',
+    organization: 'VMware ESX Server',
+    country: 'US',
   },
-  "00:1B:21": {
-    vendor: "Intel Corporation",
-    organization: "Intel Wireless",
-    country: "US",
+  '00:1B:21': {
+    vendor: 'Intel Corporation',
+    organization: 'Intel Wireless',
+    country: 'US',
   },
-  "3C:07:54": {
-    vendor: "Liteon Technology Corporation",
-    organization: "Liteon WiFi",
-    country: "TW",
+  '3C:07:54': {
+    vendor: 'Liteon Technology Corporation',
+    organization: 'Liteon WiFi',
+    country: 'TW',
   },
-  "B8:27:EB": {
-    vendor: "Raspberry Pi Foundation",
-    organization: "Raspberry Pi",
-    country: "GB",
+  'B8:27:EB': {
+    vendor: 'Raspberry Pi Foundation',
+    organization: 'Raspberry Pi',
+    country: 'GB',
   },
-  "DC:A6:32": {
-    vendor: "Raspberry Pi Trading Ltd",
-    organization: "Raspberry Pi 4",
-    country: "GB",
+  'DC:A6:32': {
+    vendor: 'Raspberry Pi Trading Ltd',
+    organization: 'Raspberry Pi 4',
+    country: 'GB',
   },
-  "00:16:EA": {
-    vendor: "Intel Corporation",
-    organization: "Intel Ethernet",
-    country: "US",
+  '00:16:EA': {
+    vendor: 'Intel Corporation',
+    organization: 'Intel Ethernet',
+    country: 'US',
   },
-  "00:90:7F": {
-    vendor: "Logitech, Inc.",
-    organization: "Logitech Mouse/Keyboard",
-    country: "CH",
+  '00:90:7F': {
+    vendor: 'Logitech, Inc.',
+    organization: 'Logitech Mouse/Keyboard',
+    country: 'CH',
   },
-  "AC:DE:48": {
-    vendor: "Apple, Inc.",
-    organization: "Apple iPhone/iPad",
-    country: "US",
+  'AC:DE:48': {
+    vendor: 'Apple, Inc.',
+    organization: 'Apple iPhone/iPad',
+    country: 'US',
   },
-  "F0:18:98": {
-    vendor: "Apple, Inc.",
-    organization: "Apple MacBook",
-    country: "US",
+  'F0:18:98': {
+    vendor: 'Apple, Inc.',
+    organization: 'Apple MacBook',
+    country: 'US',
   },
-  "00:1A:92": {
-    vendor: "ASUSTek Computer Inc.",
-    organization: "ASUS Router",
-    country: "TW",
+  '00:1A:92': {
+    vendor: 'ASUSTek Computer Inc.',
+    organization: 'ASUS Router',
+    country: 'TW',
   },
-  "00:24:D7": {
-    vendor: "Espressif Inc.",
-    organization: "ESP32/ESP8266",
-    country: "CN",
+  '00:24:D7': {
+    vendor: 'Espressif Inc.',
+    organization: 'ESP32/ESP8266',
+    country: 'CN',
   },
 };
 
 function normalizeMacAddress(mac: string): string {
   // Remove all separators and convert to uppercase
-  return mac.replace(/[^a-fA-F0-9]/g, "").toUpperCase();
+  return mac.replace(/[^a-fA-F0-9]/g, '').toUpperCase();
 }
 
-function formatMacAddress(mac: string, separator: string = ":"): string {
+function formatMacAddress(mac: string, separator: string = ':'): string {
   const normalized = normalizeMacAddress(mac);
   const chunks = [];
   for (let i = 0; i < normalized.length; i += 2) {
@@ -129,14 +129,14 @@ async function lookupMacAddressOnline(mac: string): Promise<LookupResult> {
     return {
       isValid: false,
       error:
-        "MAC address must be at least 6 characters (3 octets) for OUI lookup",
+        'MAC address must be at least 6 characters (3 octets) for OUI lookup',
     };
   }
 
   if (!/^[A-F0-9]+$/.test(normalized)) {
     return {
       isValid: false,
-      error: "Invalid MAC address format. Use hexadecimal characters only.",
+      error: 'Invalid MAC address format. Use hexadecimal characters only.',
     };
   }
 
@@ -146,9 +146,9 @@ async function lookupMacAddressOnline(mac: string): Promise<LookupResult> {
   try {
     // Try MacVendors.com API first (free, no API key required)
     const response = await fetch(`https://api.macvendors.com/${oui}`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Accept: "text/plain",
+        Accept: 'text/plain',
       },
     });
 
@@ -177,20 +177,20 @@ async function lookupMacAddressOnline(mac: string): Promise<LookupResult> {
         isValid: true,
         oui: oui,
         error:
-          "Vendor not found in database. This might be a private or unregistered OUI.",
+          'Vendor not found in database. This might be a private or unregistered OUI.',
       };
     } else {
       throw new Error(`API request failed with status ${response.status}`);
     }
   } catch (error) {
     // Fallback to local database if API fails
-    console.warn("Online lookup failed, using fallback database:", error);
+    console.warn('Online lookup failed, using fallback database:', error);
 
     const fallbackInfo = FALLBACK_DATABASE[oui];
     if (fallbackInfo) {
       return {
         isValid: true,
-        vendor: fallbackInfo.vendor + " (offline)",
+        vendor: fallbackInfo.vendor + ' (offline)',
         organization: fallbackInfo.organization,
         country: fallbackInfo.country,
         oui: oui,
@@ -201,13 +201,13 @@ async function lookupMacAddressOnline(mac: string): Promise<LookupResult> {
       isValid: true,
       oui: oui,
       error:
-        "Unable to connect to vendor database. Please check your internet connection.",
+        'Unable to connect to vendor database. Please check your internet connection.',
     };
   }
 }
 
 const MacAddressLookup: React.FC = () => {
-  const [macAddress, setMacAddress] = useState("");
+  const [macAddress, setMacAddress] = useState('');
   const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -218,35 +218,35 @@ const MacAddressLookup: React.FC = () => {
 
   const handleLookup = async () => {
     if (!macAddress.trim()) {
-      toast.error("Please enter a MAC address");
+      toast.error('Please enter a MAC address');
       return;
     }
 
     setLookupResult({ isValid: true, isLoading: true });
-    toast.info("Looking up vendor information...");
+    toast.info('Looking up vendor information...');
 
     try {
       const result = await lookupMacAddressOnline(macAddress.trim());
       setLookupResult(result);
 
       if (result.isValid && result.vendor) {
-        toast.success("Vendor information found!");
+        toast.success('Vendor information found!');
       } else if (result.isValid && result.error) {
-        toast.info("MAC address is valid but vendor not found");
+        toast.info('MAC address is valid but vendor not found');
       } else {
-        toast.error(result.error || "Invalid MAC address");
+        toast.error(result.error || 'Invalid MAC address');
       }
     } catch (err) {
-      toast.error("An error occurred during lookup");
+      toast.error('An error occurred during lookup');
       setLookupResult({
         isValid: false,
-        error: "Lookup failed",
+        error: 'Lookup failed',
       });
     }
   };
 
   const handleClear = () => {
-    setMacAddress("");
+    setMacAddress('');
     setLookupResult(null);
   };
 
@@ -260,14 +260,14 @@ const MacAddressLookup: React.FC = () => {
     } catch (err) {
       setLookupResult({
         isValid: false,
-        error: "Lookup failed",
+        error: 'Lookup failed',
       });
     }
   };
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -309,8 +309,8 @@ const MacAddressLookup: React.FC = () => {
                       }
                     >
                       {lookupResult?.isLoading
-                        ? "Looking up..."
-                        : "Lookup Vendor"}
+                        ? 'Looking up...'
+                        : 'Lookup Vendor'}
                     </Button>
                     <Button onClick={handleClear} variant="outline">
                       Clear
@@ -327,7 +327,7 @@ const MacAddressLookup: React.FC = () => {
                       .map(([oui, info]) => (
                         <button
                           key={oui}
-                          onClick={() => handleExampleMac(oui + ":XX:XX:XX")}
+                          onClick={() => handleExampleMac(oui + ':XX:XX:XX')}
                           className="text-left p-2 border rounded-lg hover:bg-muted/50 transition-colors text-sm"
                         >
                           <div className="font-mono text-xs text-muted-foreground">
@@ -407,7 +407,7 @@ const MacAddressLookup: React.FC = () => {
 
                         <div className="flex justify-center">
                           <CopyButton
-                            text={`Vendor: ${lookupResult.vendor}\nOrganization: ${lookupResult.organization}\nOUI: ${lookupResult.oui}${lookupResult.country ? `\nCountry: ${lookupResult.country}` : ""}`}
+                            text={`Vendor: ${lookupResult.vendor}\nOrganization: ${lookupResult.organization}\nOUI: ${lookupResult.oui}${lookupResult.country ? `\nCountry: ${lookupResult.country}` : ''}`}
                           />
                         </div>
                       </div>

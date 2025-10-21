@@ -1,29 +1,29 @@
 ---
-title: "Raco Tool - Manage Racket Packages | Online Free DevTools by Hexmos"
+title: 'Raco Tool - Manage Racket Packages | Online Free DevTools by Hexmos'
 name: raco
-path: "/freedevtools/tldr/common/raco/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/raco/"
-description: "Manage Racket packages efficiently with Raco tool. Install, build, and test Racket projects using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/raco/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/raco/'
+description: 'Manage Racket packages efficiently with Raco tool. Install, build, and test Racket projects using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- racket package manager
-- racket build tool
-- racket test runner
-- racket documentation search
-- racket setup tool
-- racket bytecode compiler
-- racket executable builder
-- racket metadata indexer
-- racket dependency installer
-- racket command line tools
+  - racket package manager
+  - racket build tool
+  - racket test runner
+  - racket documentation search
+  - racket setup tool
+  - racket bytecode compiler
+  - racket executable builder
+  - racket metadata indexer
+  - racket dependency installer
+  - racket command line tools
 features:
-- Install Racket packages with automatic dependency resolution.
-- Build bytecode, documentation, and executables for Racket collections.
-- Run tests within Racket source files.
-- Search local Racket documentation effectively.
-- Install current directory as a Racket package.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Racket packages with automatic dependency resolution.
+  - Build bytecode, documentation, and executables for Racket collections.
+  - Run tests within Racket source files.
+  - Search local Racket documentation effectively.
+  - Install current directory as a Racket package.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # raco

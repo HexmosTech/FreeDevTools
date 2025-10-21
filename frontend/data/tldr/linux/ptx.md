@@ -1,9 +1,9 @@
 ---
-title: "Generate Permuted Index - ptx Command | Online Free DevTools by Hexmos"
+title: 'Generate Permuted Index - ptx Command | Online Free DevTools by Hexmos'
 name: ptx
-path: "/freedevtools/tldr/linux/ptx/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ptx/"
-description: "Generate a permuted index with ptx. Extract keywords and create context-aware indexes from text files with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ptx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ptx/'
+description: 'Generate a permuted index with ptx. Extract keywords and create context-aware indexes from text files with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - permuted index generator
@@ -22,8 +22,8 @@ features:
   - Filter words to refine index generation.
   - Add automatically generated index references.
   - Supports SYSV-style behaviors.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ptx

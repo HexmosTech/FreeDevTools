@@ -1,29 +1,29 @@
 ---
-title: "CSRUtil - Control System Integrity Protection | Online Free DevTools by Hexmos"
+title: 'CSRUtil - Control System Integrity Protection | Online Free DevTools by Hexmos'
 name: csrutil
-path: "/freedevtools/tldr/osx/csrutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/csrutil/"
-description: "Control System Integrity Protection with CSRUtil on macOS. Enable, disable, check status, and manage NetBoot settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/csrutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/csrutil/'
+description: 'Control System Integrity Protection with CSRUtil on macOS. Enable, disable, check status, and manage NetBoot settings. Free online tool, no registration required.'
 category: osx
 keywords:
-- system integrity protection macOS
-- sip configuration macOS
-- csrutil command
-- macOS security settings
-- disable system integrity protection
-- enable system integrity protection
-- netboot configuration macOS
-- csrutil netboot
-- macOS csrutil disable
-- macOS csrutil enable
+  - system integrity protection macOS
+  - sip configuration macOS
+  - csrutil command
+  - macOS security settings
+  - disable system integrity protection
+  - enable system integrity protection
+  - netboot configuration macOS
+  - csrutil netboot
+  - macOS csrutil disable
+  - macOS csrutil enable
 features:
-- Check System Integrity Protection status
-- Disable System Integrity Protection on macOS
-- Enable System Integrity Protection on macOS
-- Manage allowed NetBoot sources
-- Reset System Integrity Protection configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check System Integrity Protection status
+  - Disable System Integrity Protection on macOS
+  - Enable System Integrity Protection on macOS
+  - Manage allowed NetBoot sources
+  - Reset System Integrity Protection configuration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csrutil

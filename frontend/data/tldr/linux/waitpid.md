@@ -1,9 +1,9 @@
 ---
-title: "Waitpid - Control Process Termination | Online Free DevTools by Hexmos"
+title: 'Waitpid - Control Process Termination | Online Free DevTools by Hexmos'
 name: waitpid
-path: "/freedevtools/tldr/linux/waitpid/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/waitpid/"
-description: "Control process termination with Waitpid. Monitor, manage, and debug processes by waiting for their completion. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/waitpid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/waitpid/'
+description: 'Control process termination with Waitpid. Monitor, manage, and debug processes by waiting for their completion. Free online tool, no registration required.'
 category: linux
 keywords:
   - process termination control
@@ -22,8 +22,8 @@ features:
   - Ignore errors if processes have already exited
   - Wait until a specific number of processes have exited
   - Display help information for the command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # waitpid

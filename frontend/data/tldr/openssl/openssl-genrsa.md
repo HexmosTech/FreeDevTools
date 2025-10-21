@@ -1,29 +1,29 @@
 ---
-title: "Generate RSA Private Keys with OpenSSL | Online Free DevTools by Hexmos"
+title: 'Generate RSA Private Keys with OpenSSL | Online Free DevTools by Hexmos'
 name: openssl-genrsa
-path: "/freedevtools/tldr/openssl/openssl-genrsa/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-genrsa/"
-description: "Generate RSA private keys securely with OpenSSL. Manage key sizes and encryption using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-genrsa/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-genrsa/'
+description: 'Generate RSA private keys securely with OpenSSL. Manage key sizes and encryption using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- RSA private key generator
-- OpenSSL RSA key
-- Generate private key
-- Command line RSA key
-- Encryption key generation
-- OpenSSL command
-- RSA key management
-- Linux key generation
-- MacOS key generation
-- OpenSSL RSA encryption
+  - RSA private key generator
+  - OpenSSL RSA key
+  - Generate private key
+  - Command line RSA key
+  - Encryption key generation
+  - OpenSSL command
+  - RSA key management
+  - Linux key generation
+  - MacOS key generation
+  - OpenSSL RSA encryption
 features:
-- Generate RSA keys of variable bit lengths
-- Output RSA keys to a specified file
-- Encrypt RSA keys using AES256
-- Create private keys from command line
-- Support for password protected key generation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate RSA keys of variable bit lengths
+  - Output RSA keys to a specified file
+  - Encrypt RSA keys using AES256
+  - Create private keys from command line
+  - Support for password protected key generation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl genrsa

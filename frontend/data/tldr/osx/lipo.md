@@ -1,29 +1,29 @@
 ---
-title: "Lipo Create Universal Binaries - Manage Mach-O | Online Free DevTools by Hexmos"
+title: 'Lipo Create Universal Binaries - Manage Mach-O | Online Free DevTools by Hexmos'
 name: lipo
-path: "/freedevtools/tldr/osx/lipo/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/lipo/"
-description: "Create universal binaries with Lipo.  Manage Mach-O architecture slices and combine binaries. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/lipo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/lipo/'
+description: 'Create universal binaries with Lipo.  Manage Mach-O architecture slices and combine binaries. Free online tool, no registration required.'
 category: osx
 keywords:
-- mach-o universal binary
-- lipo binary creator
-- osx binary manager
-- combine architectures macos
-- fat binary utility
-- arm64 binary tool
-- x86_64 binary tool
-- apple silicon binary
-- lipo command line
-- architecture extractor
+  - mach-o universal binary
+  - lipo binary creator
+  - osx binary manager
+  - combine architectures macos
+  - fat binary utility
+  - arm64 binary tool
+  - x86_64 binary tool
+  - apple silicon binary
+  - lipo command line
+  - architecture extractor
 features:
-- Create universal binaries from multiple architectures
-- List architectures within a universal binary
-- Display detailed information about Mach-O files
-- Extract specific architectures from universal binaries
-- Thin universal binaries for single architecture deployment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create universal binaries from multiple architectures
+  - List architectures within a universal binary
+  - Display detailed information about Mach-O files
+  - Extract specific architectures from universal binaries
+  - Thin universal binaries for single architecture deployment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lipo

@@ -1,29 +1,29 @@
 ---
-title: "NTP Query - Control NTP Daemon | Online Free DevTools by Hexmos"
+title: 'NTP Query - Control NTP Daemon | Online Free DevTools by Hexmos'
 name: ntpq
-path: "/freedevtools/tldr/linux/ntpq/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ntpq/"
-description: "Control NTP daemon with NTP Query. Inspect NTP peers, system variables, and debug network time protocol issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ntpq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ntpq/'
+description: 'Control NTP daemon with NTP Query. Inspect NTP peers, system variables, and debug network time protocol issues. Free online tool, no registration required.'
 category: linux
 keywords:
-- ntp query
-- ntp daemon control
-- linux ntp
-- network time protocol query
-- ntp peer list
-- ntp system variables
-- ntp debugging
-- linux network troubleshooting
-- ntp server status
-- command line ntp
+  - ntp query
+  - ntp daemon control
+  - linux ntp
+  - network time protocol query
+  - ntp peer list
+  - ntp system variables
+  - ntp debugging
+  - linux network troubleshooting
+  - ntp server status
+  - command line ntp
 features:
-- Query NTP server status and synchronization
-- List and monitor NTP peers
-- Inspect NTP system variables values
-- Display network time protocol statistics
-- Debug NTP daemon issues using debug mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Query NTP server status and synchronization
+  - List and monitor NTP peers
+  - Inspect NTP system variables values
+  - Display network time protocol statistics
+  - Debug NTP daemon issues using debug mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ntpq

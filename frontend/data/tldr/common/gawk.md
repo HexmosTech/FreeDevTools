@@ -1,29 +1,29 @@
 ---
-title: "GAWK - Process Files with GNU AWK | Online Free DevTools by Hexmos"
+title: 'GAWK - Process Files with GNU AWK | Online Free DevTools by Hexmos'
 name: gawk
-path: "/freedevtools/tldr/common/gawk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gawk/"
-description: "Process files easily with GAWK, the GNU version of AWK. Filter, format, and manipulate text data with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gawk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gawk/'
+description: 'Process files easily with GAWK, the GNU version of AWK. Filter, format, and manipulate text data with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- gawk file processing
-- gawk text manipulation
-- gawk command-line tool
-- gnu awk linux
-- awk script interpreter
-- awk pattern matching
-- awk data extraction
-- awk report generation
-- awk text filtering
-- awk data transformation
+  - gawk file processing
+  - gawk text manipulation
+  - gawk command-line tool
+  - gnu awk linux
+  - awk script interpreter
+  - awk pattern matching
+  - awk data extraction
+  - awk report generation
+  - awk text filtering
+  - awk data transformation
 features:
-- Extract specific columns from text files
-- Filter lines based on regular expressions
-- Perform arithmetic operations on file data
-- Format output with custom field separators
-- Execute conditional statements based on field values
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific columns from text files
+  - Filter lines based on regular expressions
+  - Perform arithmetic operations on file data
+  - Format output with custom field separators
+  - Execute conditional statements based on field values
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gawk

@@ -1,9 +1,9 @@
 ---
-title: "Gpasswd - Manage Unix Groups | Online Free DevTools by Hexmos"
+title: 'Gpasswd - Manage Unix Groups | Online Free DevTools by Hexmos'
 name: gpasswd
-path: "/freedevtools/tldr/linux/gpasswd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gpasswd/"
-description: "Manage Unix user groups with Gpasswd. Add, remove, and administer group members efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gpasswd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gpasswd/'
+description: 'Manage Unix user groups with Gpasswd. Add, remove, and administer group members efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - Unix group management
@@ -22,8 +22,8 @@ features:
   - Create group passwords
   - Add users to groups
   - Remove users from groups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gpasswd

@@ -1,29 +1,29 @@
 ---
-title: "Manage Azure Pipelines - Control CI/CD Flows | Online Free DevTools by Hexmos"
+title: 'Manage Azure Pipelines - Control CI/CD Flows | Online Free DevTools by Hexmos'
 name: az-pipelines
-path: "/freedevtools/tldr/az/az-pipelines/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-pipelines/"
-description: "Manage Azure Pipelines to control CI/CD flows with az-pipelines. Automate deployments and manage agent pools using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-pipelines/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-pipelines/'
+description: 'Manage Azure Pipelines to control CI/CD flows with az-pipelines. Automate deployments and manage agent pools using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- azure pipelines management
-- ci/cd pipeline control
-- azure devops pipelines
-- az pipelines command
-- azure cli pipelines
-- pipeline automation tool
-- agent pool management
-- azure release pipeline
-- azure pipeline deployment
-- command line ci/cd
+  - azure pipelines management
+  - ci/cd pipeline control
+  - azure devops pipelines
+  - az pipelines command
+  - azure cli pipelines
+  - pipeline automation tool
+  - agent pool management
+  - azure release pipeline
+  - azure pipeline deployment
+  - command line ci/cd
 features:
-- Create and manage Azure CI/CD pipelines
-- Automate pipeline deployments
-- Manage Azure DevOps agent pools
-- Control pipeline execution
-- Update existing pipeline configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage Azure CI/CD pipelines
+  - Automate pipeline deployments
+  - Manage Azure DevOps agent pools
+  - Control pipeline execution
+  - Update existing pipeline configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az pipelines

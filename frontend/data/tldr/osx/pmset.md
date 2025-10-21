@@ -1,29 +1,29 @@
 ---
-title: "Pmset - Control macOS Power Management | Online Free DevTools by Hexmos"
+title: 'Pmset - Control macOS Power Management | Online Free DevTools by Hexmos'
 name: pmset
-path: "/freedevtools/tldr/osx/pmset/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/pmset/"
-description: "Control macOS power management settings with pmset. Optimize battery life, schedule wake-ups, and manage display sleep options. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/pmset/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/pmset/'
+description: 'Control macOS power management settings with pmset. Optimize battery life, schedule wake-ups, and manage display sleep options. Free online tool, no registration required.'
 category: osx
 keywords:
-- macos power management
-- pmset command line
-- osx energy saver
-- mac sleep settings
-- battery optimization mac
-- schedule wake up mac
-- display sleep macos
-- system power settings mac
-- mac power configuration
-- mac power management terminal
+  - macos power management
+  - pmset command line
+  - osx energy saver
+  - mac sleep settings
+  - battery optimization mac
+  - schedule wake up mac
+  - display sleep macos
+  - system power settings mac
+  - mac power configuration
+  - mac power management terminal
 features:
-- Configure display sleep settings
-- Manage system sleep schedule
-- Control battery usage options
-- Schedule automatic wake-up times
-- Restore default power settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure display sleep settings
+  - Manage system sleep schedule
+  - Control battery usage options
+  - Schedule automatic wake-up times
+  - Restore default power settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pmset

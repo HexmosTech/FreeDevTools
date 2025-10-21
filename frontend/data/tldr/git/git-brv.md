@@ -1,29 +1,29 @@
 ---
-title: "Generate Git Branches View - Sort Branches by Date | Online Free DevTools by Hexmos"
+title: 'Generate Git Branches View - Sort Branches by Date | Online Free DevTools by Hexmos'
 name: git-brv
-path: "/freedevtools/tldr/git/git-brv/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-brv/"
-description: "Generate a Git branches view with git-brv, sorted by last commit date. Improve branch management and track activity across your repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-brv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-brv/'
+description: 'Generate a Git branches view with git-brv, sorted by last commit date. Improve branch management and track activity across your repository. Free online tool, no registration required.'
 category: common
 keywords:
-- git branches view
-- git sort branches
-- git branch last commit date
-- git branch history
-- git branch management
-- command line git tools
-- git extras
-- linux git commands
-- macos git commands
-- cross platform git
+  - git branches view
+  - git sort branches
+  - git branch last commit date
+  - git branch history
+  - git branch management
+  - command line git tools
+  - git extras
+  - linux git commands
+  - macos git commands
+  - cross platform git
 features:
-- Display branches sorted by last commit date
-- Show the latest commit hash for each branch
-- Include the last commit message in the output
-- Quickly identify recently active branches
-- Facilitate branch maintenance and cleanup
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display branches sorted by last commit date
+  - Show the latest commit hash for each branch
+  - Include the last commit message in the output
+  - Quickly identify recently active branches
+  - Facilitate branch maintenance and cleanup
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git brv

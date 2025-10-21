@@ -1,29 +1,29 @@
 ---
-title: "Create Named Pipe - Make FIFOs on Linux | Online Free DevTools by Hexmos"
+title: 'Create Named Pipe - Make FIFOs on Linux | Online Free DevTools by Hexmos'
 name: mkfifo
-path: "/freedevtools/tldr/common/mkfifo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mkfifo/"
-description: "Create named pipes (FIFOs) with mkfifo on Linux and other systems. Establish inter-process communication using command line tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mkfifo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mkfifo/'
+description: 'Create named pipes (FIFOs) with mkfifo on Linux and other systems. Establish inter-process communication using command line tools. Free online tool, no registration required.'
 category: common
 keywords:
-- named pipe creation
-- linux fifo creation
-- mkfifo command
-- inter-process communication linux
-- command line fifo
-- fifo creation linux
-- posix fifo
-- linux pipe
-- named pipe example
-- shell fifo creation
+  - named pipe creation
+  - linux fifo creation
+  - mkfifo command
+  - inter-process communication linux
+  - command line fifo
+  - fifo creation linux
+  - posix fifo
+  - linux pipe
+  - named pipe example
+  - shell fifo creation
 features:
-- Create named pipes for inter-process communication
-- Send data through named pipes
-- Receive data through named pipes
-- Share terminal sessions in real-time
-- Create FIFOs at a specified path
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create named pipes for inter-process communication
+  - Send data through named pipes
+  - Receive data through named pipes
+  - Share terminal sessions in real-time
+  - Create FIFOs at a specified path
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfifo

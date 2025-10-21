@@ -1,29 +1,29 @@
 ---
-title: "Interpret Command Type - Check Command Path | Online Free DevTools by Hexmos"
+title: 'Interpret Command Type - Check Command Path | Online Free DevTools by Hexmos'
 name: whence
-path: "/freedevtools/tldr/common/whence/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/whence/"
-description: "Interpret command type with whence. Determine location of commands, search command path and show function content. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/whence/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/whence/'
+description: 'Interpret command type with whence. Determine location of commands, search command path and show function content. Free online tool, no registration required.'
 category: common
 keywords:
-- command type indicator
-- zsh command path
-- shell command location
-- find command origin
-- shell function content
-- zsh builtin command
-- linux command lookup
-- macos command type
-- shell command interpreter
-- command resolution
+  - command type indicator
+  - zsh command path
+  - shell command location
+  - find command origin
+  - shell function content
+  - zsh builtin command
+  - linux command lookup
+  - macos command type
+  - shell command interpreter
+  - command resolution
 features:
-- Determine command type (alias, builtin, function, file)
-- Locate commands on the command path
-- Display shell function content
-- Search the PATH environment variable
-- List all occurrences of a command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Determine command type (alias, builtin, function, file)
+  - Locate commands on the command path
+  - Display shell function content
+  - Search the PATH environment variable
+  - List all occurrences of a command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # whence

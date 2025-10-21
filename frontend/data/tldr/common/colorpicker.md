@@ -1,29 +1,29 @@
 ---
-title: "Control Colorpicker - Select Colors on Linux | Online Free DevTools by Hexmos"
+title: 'Control Colorpicker - Select Colors on Linux | Online Free DevTools by Hexmos'
 name: colorpicker
-path: "/freedevtools/tldr/common/colorpicker/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/colorpicker/"
-description: "Control colors with Colorpicker, a minimalist X11 tool. Quickly grab hexadecimal and RGB values from any pixel on your screen. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/colorpicker/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/colorpicker/'
+description: 'Control colors with Colorpicker, a minimalist X11 tool. Quickly grab hexadecimal and RGB values from any pixel on your screen. Free online tool, no registration required.'
 category: common
 keywords:
-- X11 color picker
-- Linux color picker
-- RGB color code
-- Hexadecimal color code
-- Desktop color picker
-- Pixel color grabber
-- Screen color picker
-- Color selection tool
-- Color identification tool
-- Color extraction tool
+  - X11 color picker
+  - Linux color picker
+  - RGB color code
+  - Hexadecimal color code
+  - Desktop color picker
+  - Pixel color grabber
+  - Screen color picker
+  - Color selection tool
+  - Color identification tool
+  - Color extraction tool
 features:
-- Print hexadecimal and RGB values of clicked pixels
-- Capture color from a single pixel
-- Exit on keypress after printing colors
-- Output only RGB value
-- Output only hexadecimal value
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print hexadecimal and RGB values of clicked pixels
+  - Capture color from a single pixel
+  - Exit on keypress after printing colors
+  - Output only RGB value
+  - Output only hexadecimal value
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # colorpicker

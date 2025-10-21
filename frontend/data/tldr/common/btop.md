@@ -1,29 +1,29 @@
 ---
-title: "Monitor Resources with Btop - System Monitoring | Online Free DevTools by Hexmos"
+title: 'Monitor Resources with Btop - System Monitoring | Online Free DevTools by Hexmos'
 name: btop
-path: "/freedevtools/tldr/common/btop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/btop/"
-description: "Monitor system resources instantly with Btop. Track CPU, memory, disk, and network usage using a command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/btop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/btop/'
+description: 'Monitor system resources instantly with Btop. Track CPU, memory, disk, and network usage using a command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- system resource monitor
-- command line resource monitor
-- linux system monitor
-- process monitoring tool
-- cpu usage monitor
-- memory usage monitor
-- disk i/o monitor
-- network traffic monitor
-- terminal resource monitor
-- btop linux
+  - system resource monitor
+  - command line resource monitor
+  - linux system monitor
+  - process monitoring tool
+  - cpu usage monitor
+  - memory usage monitor
+  - disk i/o monitor
+  - network traffic monitor
+  - terminal resource monitor
+  - btop linux
 features:
-- Display CPU, memory, disk, and network information
-- Monitor processes and their resource usage
-- Start with a specified settings preset
-- Run in TTY mode with limited color support
-- Customize update rate for real-time monitoring
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display CPU, memory, disk, and network information
+  - Monitor processes and their resource usage
+  - Start with a specified settings preset
+  - Run in TTY mode with limited color support
+  - Customize update rate for real-time monitoring
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btop

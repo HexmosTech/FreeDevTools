@@ -1,29 +1,29 @@
 ---
-title: "Create PDF from Images - img2pdf Converter | Online Free DevTools by Hexmos"
+title: 'Create PDF from Images - img2pdf Converter | Online Free DevTools by Hexmos'
 name: img2pdf
-path: "/freedevtools/tldr/common/img2pdf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/img2pdf/"
-description: "Create PDFs from raster images with img2pdf. Convert various image formats losslessly to PDF. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/img2pdf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/img2pdf/'
+description: 'Create PDFs from raster images with img2pdf. Convert various image formats losslessly to PDF. Free online tool, no registration required.'
 category: common
 keywords:
-- image to PDF converter
-- raster image to PDF
-- GIF to PDF
-- JPEG to PDF
-- PNG to PDF
-- TIFF to PDF
-- PDF file converter
-- lossless PDF conversion
-- command line PDF tool
-- image processing command
+  - image to PDF converter
+  - raster image to PDF
+  - GIF to PDF
+  - JPEG to PDF
+  - PNG to PDF
+  - TIFF to PDF
+  - PDF file converter
+  - lossless PDF conversion
+  - command line PDF tool
+  - image processing command
 features:
-- Convert multiple images to a single PDF file
-- Preserve image quality with lossless conversion
-- Auto-orient images for optimal display
-- Set custom page sizes and borders
-- Add metadata like title, author, and keywords
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert multiple images to a single PDF file
+  - Preserve image quality with lossless conversion
+  - Auto-orient images for optimal display
+  - Set custom page sizes and borders
+  - Add metadata like title, author, and keywords
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # img2pdf

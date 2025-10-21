@@ -1,29 +1,29 @@
 ---
-title: "IMAP Sync - Migrate Email Mailboxes | Online Free DevTools by Hexmos"
+title: 'IMAP Sync - Migrate Email Mailboxes | Online Free DevTools by Hexmos'
 name: imapsync
-path: "/freedevtools/tldr/common/imapsync/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/imapsync/"
-description: "Synchronize email mailboxes with IMAP Sync. Copy, migrate, and backup email data between IMAP servers, preventing duplicates. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/imapsync/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/imapsync/'
+description: 'Synchronize email mailboxes with IMAP Sync. Copy, migrate, and backup email data between IMAP servers, preventing duplicates. Free online tool, no registration required.'
 category: common
 keywords:
-- IMAP sync
-- email migration tool
-- mailbox synchronization
-- IMAP backup
-- email server migration
-- imapsync linux
-- imapsync macos
-- imapsync windows
-- email account transfer
-- IMAP account cloning
+  - IMAP sync
+  - email migration tool
+  - mailbox synchronization
+  - IMAP backup
+  - email server migration
+  - imapsync linux
+  - imapsync macos
+  - imapsync windows
+  - email account transfer
+  - IMAP account cloning
 features:
-- Synchronize email mailboxes between two IMAP servers
-- Copy email data from one IMAP server to another
-- Migrate entire email accounts to a new server
-- Prevent duplicate emails during synchronization
-- Authenticate using passwords for secure access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize email mailboxes between two IMAP servers
+  - Copy email data from one IMAP server to another
+  - Migrate entire email accounts to a new server
+  - Prevent duplicate emails during synchronization
+  - Authenticate using passwords for secure access
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # imapsync

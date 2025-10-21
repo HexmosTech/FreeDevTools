@@ -1,29 +1,29 @@
 ---
-title: "PSPing - Measure Network Latency | Online Free DevTools by Hexmos"
+title: 'PSPing - Measure Network Latency | Online Free DevTools by Hexmos'
 name: psping
-path: "/freedevtools/tldr/windows/psping/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/psping/"
-description: "Measure network latency with PSPing, a versatile command-line tool for TCP ping, bandwidth tests, and ICMP pinging on Windows. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/psping/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/psping/'
+description: 'Measure network latency with PSPing, a versatile command-line tool for TCP ping, bandwidth tests, and ICMP pinging on Windows. Free online tool, no registration required.'
 category: windows
 keywords:
-- Network Latency Meter
-- TCP Ping Tool
-- Windows Network Monitor
-- ICMP Ping Command
-- Bandwidth Measurement Tool
-- PSPing Windows
-- Network Diagnostics Windows
-- Command Line Ping
-- Network Performance Analyzer
-- Windows Network Tester
+  - Network Latency Meter
+  - TCP Ping Tool
+  - Windows Network Monitor
+  - ICMP Ping Command
+  - Bandwidth Measurement Tool
+  - PSPing Windows
+  - Network Diagnostics Windows
+  - Command Line Ping
+  - Network Performance Analyzer
+  - Windows Network Tester
 features:
-- Measure network latency using ICMP
-- Test TCP port connectivity
-- Conduct bandwidth measurements
-- Generate ping result histograms
-- Execute silent ping tests
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure network latency using ICMP
+  - Test TCP port connectivity
+  - Conduct bandwidth measurements
+  - Generate ping result histograms
+  - Execute silent ping tests
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # psping

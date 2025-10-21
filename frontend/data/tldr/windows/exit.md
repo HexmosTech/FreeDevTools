@@ -1,9 +1,9 @@
 ---
-title: "Exit Command - Quit CMD Instances | Online Free DevTools by Hexmos"
+title: 'Exit Command - Quit CMD Instances | Online Free DevTools by Hexmos'
 name: exit
-path: "/freedevtools/tldr/windows/exit/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/exit/"
-description: "Quit CMD instances with Exit Command. Terminate batch scripts and specify exit codes for precise control. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/exit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/exit/'
+description: 'Quit CMD instances with Exit Command. Terminate batch scripts and specify exit codes for precise control. Free online tool, no registration required.'
 category: windows
 keywords:
   - cmd exit command
@@ -22,8 +22,8 @@ features:
   - Specify a custom exit code
   - Control CMD process termination
   - Force immediate script termination
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exit

@@ -1,29 +1,29 @@
 ---
-title: "Control Java JVM - Install and Run JVMs | Online Free DevTools by Hexmos"
+title: 'Control Java JVM - Install and Run JVMs | Online Free DevTools by Hexmos'
 name: cs-java
-path: "/freedevtools/tldr/cs/cs-java/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-java/"
-description: "Control Java JVMs with cs-java. Install, manage, and run specific JVM versions with custom properties. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/cs-java/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/cs-java/'
+description: 'Control Java JVMs with cs-java. Install, manage, and run specific JVM versions with custom properties. Free online tool, no registration required.'
 category: common
 keywords:
-- Java JVM manager
-- JVM installation tool
-- JVM version control
-- Coursier Java runtime
-- Cross-platform Java
-- JVM environment setup
-- Java command-line tool
-- Java version switcher
-- JVM property configuration
-- Java development environment
+  - Java JVM manager
+  - JVM installation tool
+  - JVM version control
+  - Coursier Java runtime
+  - Cross-platform Java
+  - JVM environment setup
+  - Java command-line tool
+  - Java version switcher
+  - JVM property configuration
+  - Java development environment
 features:
-- Install and manage multiple JVM versions.
-- Run specific Java versions with custom properties.
-- List available and installed JVMs.
-- Set a default JVM for the shell instance or system.
-- Revert default JVM settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and manage multiple JVM versions.
+  - Run specific Java versions with custom properties.
+  - List available and installed JVMs.
+  - Set a default JVM for the shell instance or system.
+  - Revert default JVM settings.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cs java

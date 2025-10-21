@@ -1,29 +1,29 @@
 ---
-title: "xgettext - Extract Text Strings | Online Free DevTools by Hexmos"
+title: 'xgettext - Extract Text Strings | Online Free DevTools by Hexmos'
 name: xgettext
-path: "/freedevtools/tldr/common/xgettext/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xgettext/"
-description: "Extract text strings with xgettext for internationalization. Create translation files from source code effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xgettext/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xgettext/'
+description: 'Extract text strings with xgettext for internationalization. Create translation files from source code effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- gettext string extraction
-- po file generation
-- internationalization tool
-- text domain creation
-- translation file parser
-- multilingual software development
-- i18n support
-- gnu gettext
-- message catalog creation
-- common
+  - gettext string extraction
+  - po file generation
+  - internationalization tool
+  - text domain creation
+  - translation file parser
+  - multilingual software development
+  - i18n support
+  - gnu gettext
+  - message catalog creation
+  - common
 features:
-- Extract translatable strings from source code.
-- Generate .po files for translations.
-- Append new strings to existing translation files.
-- Omit metadata header in output files.
-- Support multiple input file formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract translatable strings from source code.
+  - Generate .po files for translations.
+  - Append new strings to existing translation files.
+  - Omit metadata header in output files.
+  - Support multiple input file formats.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xgettext

@@ -1,29 +1,29 @@
 ---
-title: "Lbu - Manage APK Overlays on Linux | Online Free DevTools by Hexmos"
+title: 'Lbu - Manage APK Overlays on Linux | Online Free DevTools by Hexmos'
 name: lbu
-path: "/freedevtools/tldr/linux/lbu/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lbu/"
-description: "Manage apk overlays with lbu, a Linux utility for Alpine systems. Commit changes, revert to backups and control file inclusion and exclusion. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lbu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lbu/'
+description: 'Manage apk overlays with lbu, a Linux utility for Alpine systems. Commit changes, revert to backups and control file inclusion and exclusion. Free online tool, no registration required.'
 category: linux
 keywords:
-- apk overlay manager
-- alpine linux backup
-- lbu commit changes
-- linux overlay control
-- alpine package management
-- etc directory backup
-- diskless system backup
-- linux file exclusion
-- alpine system revert
-- backup overlay manager
+  - apk overlay manager
+  - alpine linux backup
+  - lbu commit changes
+  - linux overlay control
+  - alpine package management
+  - etc directory backup
+  - diskless system backup
+  - linux file exclusion
+  - alpine system revert
+  - backup overlay manager
 features:
-- Commit changes to persistent storage in Alpine Linux.
-- List files tracked for backup with lbu status.
-- Include or exclude specific files or directories.
-- List available backups for system reversion.
-- Revert to a specific backup overlay file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Commit changes to persistent storage in Alpine Linux.
+  - List files tracked for backup with lbu status.
+  - Include or exclude specific files or directories.
+  - List available backups for system reversion.
+  - Revert to a specific backup overlay file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lbu

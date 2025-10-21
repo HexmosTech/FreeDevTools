@@ -1,9 +1,9 @@
 ---
-title: "Read Line Input - Command Line Input Reader | Online Free DevTools by Hexmos"
+title: 'Read Line Input - Command Line Input Reader | Online Free DevTools by Hexmos'
 name: line
-path: "/freedevtools/tldr/linux/line/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/line/"
-description: "Read single line input with the line command.  This simple command-line tool efficiently handles text input. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/line/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/line/'
+description: 'Read single line input with the line command.  This simple command-line tool efficiently handles text input. Free online tool, no registration required.'
 category: linux
 keywords:
   - command line input reader
@@ -22,8 +22,8 @@ features:
   - Provides a simple interface for text input.
   - Enables efficient data processing in scripts.
   - Integrates seamlessly with other command-line tools.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # line

@@ -1,29 +1,29 @@
 ---
-title: "RBTools Post - Manage Review Board Submissions | Online Free DevTools by Hexmos"
+title: 'RBTools Post - Manage Review Board Submissions | Online Free DevTools by Hexmos'
 name: rbt
-path: "/freedevtools/tldr/common/rbt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rbt/"
-description: "Manage Review Board submissions with RBTools Post. Submit changes, view diffs, and patch code easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rbt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rbt/'
+description: 'Manage Review Board submissions with RBTools Post. Submit changes, view diffs, and patch code easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Review Board submission
-- RBTools command line
-- RBTools post changes
-- code review automation
-- diff generation
-- patch application
-- repository setup
-- RBCommons integration
-- pre-commit hooks
-- code review process
+  - Review Board submission
+  - RBTools command line
+  - RBTools post changes
+  - code review automation
+  - diff generation
+  - patch application
+  - repository setup
+  - RBCommons integration
+  - pre-commit hooks
+  - code review process
 features:
-- Post changes to Review Board for review.
-- Display the diff that will be sent to Review Board.
-- Land code changes into a local branch.
-- Patch your local tree with a change from a review request.
-- Set up RBTools to work with a repository.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Post changes to Review Board for review.
+  - Display the diff that will be sent to Review Board.
+  - Land code changes into a local branch.
+  - Patch your local tree with a change from a review request.
+  - Set up RBTools to work with a repository.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rbt

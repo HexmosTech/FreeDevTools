@@ -1,29 +1,29 @@
 ---
-title: "Tart - Manage macOS VMs on Apple Silicon | Online Free DevTools by Hexmos"
+title: 'Tart - Manage macOS VMs on Apple Silicon | Online Free DevTools by Hexmos'
 name: tart
-path: "/freedevtools/tldr/osx/tart/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/tart/"
-description: "Manage macOS and Linux virtual machines with Tart on Apple Silicon. Streamline VM creation, cloning, and execution with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/tart/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/tart/'
+description: 'Manage macOS and Linux virtual machines with Tart on Apple Silicon. Streamline VM creation, cloning, and execution with ease. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS virtual machine manager
-- Apple Silicon VM tart
-- Linux VM on macOS
-- Tart command line tool
-- VM image pull tool
-- Virtual machine cloning utility
-- macOS ipsw VM creation
-- tart list VMs command
-- tart set display resolution
-- Apple Silicon virtualization
+  - macOS virtual machine manager
+  - Apple Silicon VM tart
+  - Linux VM on macOS
+  - Tart command line tool
+  - VM image pull tool
+  - Virtual machine cloning utility
+  - macOS ipsw VM creation
+  - tart list VMs command
+  - tart set display resolution
+  - Apple Silicon virtualization
 features:
-- Pull remote virtual machine images
-- Clone VMs from local or remote sources
-- Create Mac VMs from specific ipsw files
-- List available virtual machines
-- Set VM display resolution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pull remote virtual machine images
+  - Clone VMs from local or remote sources
+  - Create Mac VMs from specific ipsw files
+  - List available virtual machines
+  - Set VM display resolution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tart

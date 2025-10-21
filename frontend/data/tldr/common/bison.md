@@ -1,29 +1,29 @@
 ---
-title: "Bison - Generate Parsers from Grammar Files | Online Free DevTools by Hexmos"
+title: 'Bison - Generate Parsers from Grammar Files | Online Free DevTools by Hexmos'
 name: bison
-path: "/freedevtools/tldr/common/bison/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bison/"
-description: "Generate parsers quickly with Bison from grammar files, ensuring code correctness and efficient syntax analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bison/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bison/'
+description: 'Generate parsers quickly with Bison from grammar files, ensuring code correctness and efficient syntax analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- Bison parser generator
-- grammar file parser
-- syntax analyzer
-- parser generator tool
-- compiler construction tool
-- Yacc alternative
-- code generation tool
-- parser compiler
-- Bison Linux
-- Bison MacOS
+  - Bison parser generator
+  - grammar file parser
+  - syntax analyzer
+  - parser generator tool
+  - compiler construction tool
+  - Yacc alternative
+  - code generation tool
+  - parser compiler
+  - Bison Linux
+  - Bison MacOS
 features:
-- Generate parsers from grammar specifications
-- Define output filename for generated code
-- Compile in debug mode for parser diagnostics
-- Enable verbose compilation for detailed output
-- Support flexible grammar definitions for various languages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate parsers from grammar specifications
+  - Define output filename for generated code
+  - Compile in debug mode for parser diagnostics
+  - Enable verbose compilation for detailed output
+  - Support flexible grammar definitions for various languages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bison

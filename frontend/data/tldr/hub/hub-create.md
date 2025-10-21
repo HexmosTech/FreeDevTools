@@ -1,29 +1,29 @@
 ---
-title: "Hub Create - Create GitHub Repositories | Online Free DevTools by Hexmos"
+title: 'Hub Create - Create GitHub Repositories | Online Free DevTools by Hexmos'
 name: hub-create
-path: "/freedevtools/tldr/hub/hub-create/"
-canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-create/"
-description: "Create GitHub repositories instantly with Hub Create. Quickly initialize new projects, set visibility, and push local repositories online. Free online tool, no registration required."
+path: '/freedevtools/tldr/hub/hub-create/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hub/hub-create/'
+description: 'Create GitHub repositories instantly with Hub Create. Quickly initialize new projects, set visibility, and push local repositories online. Free online tool, no registration required.'
 category: common
 keywords:
-- github repository creation
-- hub create github
-- git repository manager
-- github command line
-- public repository github
-- private repository github
-- git create repository
-- github cli create
-- git remote management
-- github bash script
+  - github repository creation
+  - hub create github
+  - git repository manager
+  - github command line
+  - public repository github
+  - private repository github
+  - git create repository
+  - github cli create
+  - git remote management
+  - github bash script
 features:
-- Create public or private GitHub repositories
-- Push local repositories to GitHub
-- Open the new repository in a web browser
-- Manage GitHub repositories from the command line
-- Simplify GitHub repository initialization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create public or private GitHub repositories
+  - Push local repositories to GitHub
+  - Open the new repository in a web browser
+  - Manage GitHub repositories from the command line
+  - Simplify GitHub repository initialization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hub create

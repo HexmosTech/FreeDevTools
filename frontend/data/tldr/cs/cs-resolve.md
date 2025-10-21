@@ -1,29 +1,29 @@
 ---
-title: "Resolve Dependencies - List Transitive Deps with Coursier | Online Free DevTools by Hexmos"
+title: 'Resolve Dependencies - List Transitive Deps with Coursier | Online Free DevTools by Hexmos'
 name: cs-resolve
-path: "/freedevtools/tldr/cs/cs-resolve/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-resolve/"
-description: "Resolve dependencies effortlessly with Coursier. List transitive dependencies and pinpoint conflicts in your Java/Scala projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/cs-resolve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/cs-resolve/'
+description: 'Resolve dependencies effortlessly with Coursier. List transitive dependencies and pinpoint conflicts in your Java/Scala projects. Free online tool, no registration required.'
 category: common
 keywords:
-- coursier dependency resolution
-- scala transitive dependencies
-- java dependency tree
-- coursier resolve conflicts
-- dependency management coursier
-- coursier graph dependencies
-- coursier package resolution
-- coursier maven dependencies
-- coursier gradle dependencies
-- coursier artifact resolution
+  - coursier dependency resolution
+  - scala transitive dependencies
+  - java dependency tree
+  - coursier resolve conflicts
+  - dependency management coursier
+  - coursier graph dependencies
+  - coursier package resolution
+  - coursier maven dependencies
+  - coursier gradle dependencies
+  - coursier artifact resolution
 features:
-- List transitive dependencies of artifacts
-- Generate dependency tree for specified artifact
-- Display reverse dependency tree
-- Identify libraries that depend on a specific library
-- Detect and report dependency conflicts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List transitive dependencies of artifacts
+  - Generate dependency tree for specified artifact
+  - Display reverse dependency tree
+  - Identify libraries that depend on a specific library
+  - Detect and report dependency conflicts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cs resolve

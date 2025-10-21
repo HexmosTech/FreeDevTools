@@ -1,9 +1,9 @@
 ---
-title: "Pidstat - Control System Resource Usage | Online Free DevTools by Hexmos"
+title: 'Pidstat - Control System Resource Usage | Online Free DevTools by Hexmos'
 name: pidstat
-path: "/freedevtools/tldr/linux/pidstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pidstat/"
-description: "Control system resource usage with Pidstat. Monitor CPU, memory, and I/O statistics for processes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pidstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pidstat/'
+description: 'Control system resource usage with Pidstat. Monitor CPU, memory, and I/O statistics for processes. Free online tool, no registration required.'
 category: linux
 keywords:
   - system resource monitoring
@@ -22,8 +22,8 @@ features:
   - Report input/output activity per process
   - Filter information by process ID
   - Monitor processes by command name
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pidstat

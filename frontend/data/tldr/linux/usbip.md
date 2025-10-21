@@ -1,9 +1,9 @@
 ---
-title: "USBIP - Control USB Devices Remotely | Online Free DevTools by Hexmos"
+title: 'USBIP - Control USB Devices Remotely | Online Free DevTools by Hexmos'
 name: usbip
-path: "/freedevtools/tldr/linux/usbip/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/usbip/"
-description: "Control USB devices remotely with usbip. Manage and share USB devices across networks using command-line instructions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/usbip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/usbip/'
+description: 'Control USB devices remotely with usbip. Manage and share USB devices across networks using command-line instructions. Free online tool, no registration required.'
 category: linux
 keywords:
   - usb device control
@@ -22,8 +22,8 @@ features:
   - Bind USB devices to the usbip daemon.
   - Attach to remote USB devices from a client machine.
   - Detach and unbind USB devices from the usbip system.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # usbip

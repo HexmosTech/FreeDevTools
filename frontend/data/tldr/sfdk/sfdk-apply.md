@@ -1,29 +1,29 @@
 ---
-title: "SFDK Apply - Apply Patches Easily | Online Free DevTools by Hexmos"
+title: 'SFDK Apply - Apply Patches Easily | Online Free DevTools by Hexmos'
 name: sfdk-apply
-path: "/freedevtools/tldr/sfdk/sfdk-apply/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-apply/"
-description: "Apply RPM patches with SFDK Apply. Effortlessly manage software updates and reverse patch applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-apply/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-apply/'
+description: 'Apply RPM patches with SFDK Apply. Effortlessly manage software updates and reverse patch applications. Free online tool, no registration required.'
 category: common
 keywords:
-- RPM Patch Apply
-- SFDK Patch Management
-- SailfishOS Patch
-- SPEC File Patching
-- Linux Patch Tool
-- Software Patch Apply
-- Package Patching
-- Command Line Patching
-- Patch Reversal
-- SFDK Tool
+  - RPM Patch Apply
+  - SFDK Patch Management
+  - SailfishOS Patch
+  - SPEC File Patching
+  - Linux Patch Tool
+  - Software Patch Apply
+  - Package Patching
+  - Command Line Patching
+  - Patch Reversal
+  - SFDK Tool
 features:
-- Apply patches from RPM SPEC file
-- Reverse patch applications
-- Manage software updates
-- Streamline patch application process
-- Support SailfishOS patch management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Apply patches from RPM SPEC file
+  - Reverse patch applications
+  - Manage software updates
+  - Streamline patch application process
+  - Support SailfishOS patch management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk apply

@@ -1,29 +1,29 @@
 ---
-title: "Brute Force Passwords - Control Access with Patator | Online Free DevTools by Hexmos"
+title: 'Brute Force Passwords - Control Access with Patator | Online Free DevTools by Hexmos'
 name: patator
-path: "/freedevtools/tldr/common/patator/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/patator/"
-description: "Brute force passwords with Patator, a versatile and modular brute-forcing tool. Automate password cracking and security testing for various protocols. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/patator/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/patator/'
+description: 'Brute force passwords with Patator, a versatile and modular brute-forcing tool. Automate password cracking and security testing for various protocols. Free online tool, no registration required.'
 category: common
 keywords:
-- password brute forcing
-- dictionary attack tool
-- security testing tool
-- penetration testing tool
-- SSH brute force
-- FTP brute force
-- HTTP basic auth brute force
-- zip password cracker
-- network security tool
-- credential stuffing tool
+  - password brute forcing
+  - dictionary attack tool
+  - security testing tool
+  - penetration testing tool
+  - SSH brute force
+  - FTP brute force
+  - HTTP basic auth brute force
+  - zip password cracker
+  - network security tool
+  - credential stuffing tool
 features:
-- Brute force SSH login with rate limiting and timeout control.
-- Crack passwords for encrypted zip files.
-- Automate HTTP basic authentication cracking.
-- Perform FTP/FTPS login brute-force attacks.
-- Enumerate available Patator modules and their options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute force SSH login with rate limiting and timeout control.
+  - Crack passwords for encrypted zip files.
+  - Automate HTTP basic authentication cracking.
+  - Perform FTP/FTPS login brute-force attacks.
+  - Enumerate available Patator modules and their options.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # patator

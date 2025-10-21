@@ -1,29 +1,29 @@
 ---
-title: "Magento Manager - Control PHP Framework | Online Free DevTools by Hexmos"
+title: 'Magento Manager - Control PHP Framework | Online Free DevTools by Hexmos'
 name: magento
-path: "/freedevtools/tldr/common/magento/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/magento/"
-description: "Manage Magento PHP framework configurations with Magento Manager. Enable/disable modules, upgrade database and deploy static content with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/magento/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/magento/'
+description: 'Manage Magento PHP framework configurations with Magento Manager. Enable/disable modules, upgrade database and deploy static content with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- magento framework manager
-- magento module management
-- magento database upgrade
-- magento static content deploy
-- magento command line interface
-- php magento configuration
-- magento module enable disable
-- magento maintenance mode
-- linux magento management
-- macos magento management
+  - magento framework manager
+  - magento module management
+  - magento database upgrade
+  - magento static content deploy
+  - magento command line interface
+  - php magento configuration
+  - magento module enable disable
+  - magento maintenance mode
+  - linux magento management
+  - macos magento management
 features:
-- Enable and disable Magento modules
-- Upgrade Magento database schema
-- Deploy Magento static assets
-- Enable and disable Magento maintenance mode
-- List all available Magento commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enable and disable Magento modules
+  - Upgrade Magento database schema
+  - Deploy Magento static assets
+  - Enable and disable Magento maintenance mode
+  - List all available Magento commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # magento

@@ -1,29 +1,29 @@
 ---
-title: "Generate PGM Noise - Create White Noise Images | Online Free DevTools by Hexmos"
+title: 'Generate PGM Noise - Create White Noise Images | Online Free DevTools by Hexmos'
 name: pgmnoise
-path: "/freedevtools/tldr/common/pgmnoise/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pgmnoise/"
-description: "Generate PGM images with pgmnoise. Create white noise patterns with custom width, height, and seed. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pgmnoise/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pgmnoise/'
+description: 'Generate PGM images with pgmnoise. Create white noise patterns with custom width, height, and seed. Free online tool, no registration required.'
 category: common
 keywords:
-- PGM noise generation
-- White noise image generator
-- PGM image creation
-- Image noise tool
-- Linux image manipulation
-- Command-line image generator
-- PGM file creation
-- Random noise generation
-- Image processing tool
-- Netpbm tools
+  - PGM noise generation
+  - White noise image generator
+  - PGM image creation
+  - Image noise tool
+  - Linux image manipulation
+  - Command-line image generator
+  - PGM file creation
+  - Random noise generation
+  - Image processing tool
+  - Netpbm tools
 features:
-- Generate PGM images with white noise
-- Specify image width and height
-- Control the random seed for noise generation
-- Create portable graymap images
-- Produce random patterns via the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate PGM images with white noise
+  - Specify image width and height
+  - Control the random seed for noise generation
+  - Create portable graymap images
+  - Produce random patterns via the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pgmnoise

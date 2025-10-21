@@ -1,29 +1,29 @@
 ---
-title: "Metadata Removal - Anonymize Files with mat2 | Online Free DevTools by Hexmos"
+title: 'Metadata Removal - Anonymize Files with mat2 | Online Free DevTools by Hexmos'
 name: mat2
-path: "/freedevtools/tldr/common/mat2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mat2/"
-description: "Anonymize files with mat2. Remove metadata from various file formats to protect privacy. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mat2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mat2/'
+description: 'Anonymize files with mat2. Remove metadata from various file formats to protect privacy. Free online tool, no registration required.'
 category: common
 keywords:
-- file metadata removal
-- mat2 metadata cleaner
-- metadata anonymization tool
-- file privacy protection
-- remove exif data
-- metadata scrubbing
-- command line metadata tool
-- linux metadata removal
-- macos metadata removal
-- file format anonymizer
+  - file metadata removal
+  - mat2 metadata cleaner
+  - metadata anonymization tool
+  - file privacy protection
+  - remove exif data
+  - metadata scrubbing
+  - command line metadata tool
+  - linux metadata removal
+  - macos metadata removal
+  - file format anonymizer
 features:
-- List supported file formats
-- Remove metadata from files
-- Display detailed output of metadata removal
-- Show file metadata without removing
-- Remove metadata in place without backup
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List supported file formats
+  - Remove metadata from files
+  - Display detailed output of metadata removal
+  - Show file metadata without removing
+  - Remove metadata in place without backup
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mat2

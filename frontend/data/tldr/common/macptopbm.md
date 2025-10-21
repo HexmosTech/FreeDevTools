@@ -1,29 +1,29 @@
 ---
-title: "Convert MacPaint to PBM - Generate PBM Images | Online Free DevTools by Hexmos"
+title: 'Convert MacPaint to PBM - Generate PBM Images | Online Free DevTools by Hexmos'
 name: macptopbm
-path: "/freedevtools/tldr/common/macptopbm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/macptopbm/"
-description: "Convert MacPaint files to PBM images with macptopbm. Control image format conversion and generate PBM image outputs with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/macptopbm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/macptopbm/'
+description: 'Convert MacPaint files to PBM images with macptopbm. Control image format conversion and generate PBM image outputs with this free online tool, no registration required.'
 category: common
 keywords:
-- MacPaint to PBM conversion
-- PBM image generation
-- Image format converter
-- MacPaint file conversion
-- PBM image creation
-- MacOS image tools
-- Netpbm tools
-- Image manipulation tools
-- Bitmap image converter
-- MacPaint image processing
+  - MacPaint to PBM conversion
+  - PBM image generation
+  - Image format converter
+  - MacPaint file conversion
+  - PBM image creation
+  - MacOS image tools
+  - Netpbm tools
+  - Image manipulation tools
+  - Bitmap image converter
+  - MacPaint image processing
 features:
-- Convert MacPaint (.macp) files to PBM image format.
-- Skip bytes during MacPaint file processing.
-- Suppress informational messages during conversion.
-- Display version information for macptopbm.
-- Create PBM images from MacPaint source files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert MacPaint (.macp) files to PBM image format.
+  - Skip bytes during MacPaint file processing.
+  - Suppress informational messages during conversion.
+  - Display version information for macptopbm.
+  - Create PBM images from MacPaint source files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # macptopbm

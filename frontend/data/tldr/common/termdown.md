@@ -1,29 +1,29 @@
 ---
-title: "Countdown Timer - Control Terminal Timers | Online Free DevTools by Hexmos"
+title: 'Countdown Timer - Control Terminal Timers | Online Free DevTools by Hexmos'
 name: termdown
-path: "/freedevtools/tldr/common/termdown/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/termdown/"
-description: "Control terminal timers with termdown, a versatile countdown timer and stopwatch. Monitor elapsed time and set alarms directly from your command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/termdown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/termdown/'
+description: 'Control terminal timers with termdown, a versatile countdown timer and stopwatch. Monitor elapsed time and set alarms directly from your command line. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal countdown timer
-- command line stopwatch
-- linux timer utility
-- macos timer command
-- terminal alarm clock
-- time management tool
-- shell script timer
-- countdown script
-- timer with blink
-- stopwatch with title
+  - terminal countdown timer
+  - command line stopwatch
+  - linux timer utility
+  - macos timer command
+  - terminal alarm clock
+  - time management tool
+  - shell script timer
+  - countdown script
+  - timer with blink
+  - stopwatch with title
 features:
-- Start a countdown timer with a specified duration
-- Initiate a stopwatch to measure elapsed time
-- Configure the terminal to blink upon timer completion
-- Display a title above the countdown for context
-- Display current system time in the terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a countdown timer with a specified duration
+  - Initiate a stopwatch to measure elapsed time
+  - Configure the terminal to blink upon timer completion
+  - Display a title above the countdown for context
+  - Display current system time in the terminal
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # termdown

@@ -1,29 +1,29 @@
 ---
-title: "Track Termination - Control Notifications with ntfyme | Online Free DevTools by Hexmos"
+title: 'Track Termination - Control Notifications with ntfyme | Online Free DevTools by Hexmos'
 name: ntfyme
-path: "/freedevtools/tldr/common/ntfyme/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ntfyme/"
-description: "Control command execution with Ntfyme. Get success/error notifications via Gmail or Telegram for long-running processes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ntfyme/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ntfyme/'
+description: 'Control command execution with Ntfyme. Get success/error notifications via Gmail or Telegram for long-running processes. Free online tool, no registration required.'
 category: common
 keywords:
-- Command Execution Notification
-- Process Completion Alerts
-- Gmail Notification Tool
-- Telegram Notification Tool
-- Termination Process Tracker
-- Background Process Monitor
-- Linux Command Notifications
-- MacOS Command Notifications
-- Shell Script Notification
-- Batch Job Notification
+  - Command Execution Notification
+  - Process Completion Alerts
+  - Gmail Notification Tool
+  - Telegram Notification Tool
+  - Termination Process Tracker
+  - Background Process Monitor
+  - Linux Command Notifications
+  - MacOS Command Notifications
+  - Shell Script Notification
+  - Batch Job Notification
 features:
-- Send notifications upon command completion (success or error)
-- Integrate with Gmail for email notifications
-- Integrate with Telegram for instant messaging notifications
-- Track and terminate processes after a specified time
-- Interactively configure notification settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send notifications upon command completion (success or error)
+  - Integrate with Gmail for email notifications
+  - Integrate with Telegram for instant messaging notifications
+  - Track and terminate processes after a specified time
+  - Interactively configure notification settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ntfyme

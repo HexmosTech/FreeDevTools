@@ -1,29 +1,29 @@
 ---
-title: "DVC Diff - Show DVC Changes | Online Free DevTools by Hexmos"
+title: 'DVC Diff - Show DVC Changes | Online Free DevTools by Hexmos'
 name: dvc-diff
-path: "/freedevtools/tldr/dvc/dvc-diff/"
-canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-diff/"
-description: "Show DVC changes with DVC Diff. Compare tracked files across commits, tags, and branches with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/dvc/dvc-diff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dvc/dvc-diff/'
+description: 'Show DVC changes with DVC Diff. Compare tracked files across commits, tags, and branches with this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- dvc diff
-- dvc compare
-- data version control diff
-- git dvc diff
-- compare dvc tracked files
-- dvc data diff
-- dvc project diff
-- dvc file difference
-- dvc revision compare
-- command line dvc diff
+  - dvc diff
+  - dvc compare
+  - data version control diff
+  - git dvc diff
+  - compare dvc tracked files
+  - dvc data diff
+  - dvc project diff
+  - dvc file difference
+  - dvc revision compare
+  - command line dvc diff
 features:
-- Compare DVC tracked files between Git commits
-- Show changes in DVC tracked directories
-- Display DVC diff output as JSON
-- Display DVC diff output as Markdown
-- Show the latest hash of DVC tracked files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare DVC tracked files between Git commits
+  - Show changes in DVC tracked directories
+  - Display DVC diff output as JSON
+  - Display DVC diff output as Markdown
+  - Show the latest hash of DVC tracked files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dvc diff

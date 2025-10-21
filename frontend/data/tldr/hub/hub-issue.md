@@ -1,29 +1,29 @@
 ---
-title: "Manage GitHub Issues - Control Issues with Hub | Online Free DevTools by Hexmos"
+title: 'Manage GitHub Issues - Control Issues with Hub | Online Free DevTools by Hexmos'
 name: hub-issue
-path: "/freedevtools/tldr/hub/hub-issue/"
-canonical: "https://hexmos.com/freedevtools/tldr/hub/hub-issue/"
-description: "Manage GitHub issues efficiently with Hub Issue Manager. List, display, and filter issues directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/hub/hub-issue/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hub/hub-issue/'
+description: 'Manage GitHub issues efficiently with Hub Issue Manager. List, display, and filter issues directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- github issue manager
-- hub issue command
-- github command line
-- issue tracker cli
-- github issue list
-- github issue filter
-- github issue assignee
-- github issue closed
-- git issue management
-- command line issue tracking
+  - github issue manager
+  - hub issue command
+  - github command line
+  - issue tracker cli
+  - github issue list
+  - github issue filter
+  - github issue assignee
+  - github issue closed
+  - git issue management
+  - command line issue tracking
 features:
-- List issues with specific labels
-- Display a specific issue by its number
-- Filter issues by state (open or closed)
-- Assign issues to specific users
-- Limit the number of issues displayed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List issues with specific labels
+  - Display a specific issue by its number
+  - Filter issues by state (open or closed)
+  - Assign issues to specific users
+  - Limit the number of issues displayed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hub issue

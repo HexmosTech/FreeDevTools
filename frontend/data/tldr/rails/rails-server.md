@@ -1,29 +1,29 @@
 ---
-title: "Control Rails Server - Run App with Puma | Online Free DevTools by Hexmos"
+title: 'Control Rails Server - Run App with Puma | Online Free DevTools by Hexmos'
 name: rails-server
-path: "/freedevtools/tldr/rails/rails-server/"
-canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-server/"
-description: "Control Rails server instances with this command. Easily manage ports and environments for development or testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/rails/rails-server/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rails/rails-server/'
+description: 'Control Rails server instances with this command. Easily manage ports and environments for development or testing. Free online tool, no registration required.'
 category: common
 keywords:
-- rails server control
-- rails puma server
-- rails web server
-- rails development server
-- rails server port
-- rails server environment
-- ruby rails server
-- rails server binding
-- rails server configuration
-- rails server options
+  - rails server control
+  - rails puma server
+  - rails web server
+  - rails development server
+  - rails server port
+  - rails server environment
+  - ruby rails server
+  - rails server binding
+  - rails server configuration
+  - rails server options
 features:
-- Start a Rails application server.
-- Specify the port for the Rails server.
-- Set the binding IP address for the server.
-- Define the environment to run the server in.
-- Display available server options and help information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a Rails application server.
+  - Specify the port for the Rails server.
+  - Set the binding IP address for the server.
+  - Define the environment to run the server in.
+  - Display available server options and help information.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rails server

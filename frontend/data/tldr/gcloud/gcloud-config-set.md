@@ -1,29 +1,29 @@
 ---
-title: "Gcloud Config Set - Control CLI Properties | Online Free DevTools by Hexmos"
+title: 'Gcloud Config Set - Control CLI Properties | Online Free DevTools by Hexmos'
 name: gcloud-config-set
-path: "/freedevtools/tldr/gcloud/gcloud-config-set/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-config-set/"
-description: "Control Google Cloud CLI properties with Gcloud Config Set. Manage projects, compute zones, and disable prompts for scripting. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-config-set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-config-set/'
+description: 'Control Google Cloud CLI properties with Gcloud Config Set. Manage projects, compute zones, and disable prompts for scripting. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud config set
-- gcloud cli configuration
-- gcloud properties management
-- gcloud project configuration
-- gcloud compute zone
-- gcloud disable prompts
-- gcloud configuration profiles
-- gcloud config list
-- gcloud config unset
-- google cloud sdk
+  - gcloud config set
+  - gcloud cli configuration
+  - gcloud properties management
+  - gcloud project configuration
+  - gcloud compute zone
+  - gcloud disable prompts
+  - gcloud configuration profiles
+  - gcloud config list
+  - gcloud config unset
+  - google cloud sdk
 features:
-- Set project property for Google Cloud CLI
-- Configure compute zone for future operations
-- Disable prompts for scripting automation
-- List current configuration properties
-- Unset previously defined CLI properties
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set project property for Google Cloud CLI
+  - Configure compute zone for future operations
+  - Disable prompts for scripting automation
+  - List current configuration properties
+  - Unset previously defined CLI properties
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud config set

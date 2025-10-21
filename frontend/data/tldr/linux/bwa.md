@@ -1,29 +1,29 @@
 ---
-title: "BWA Alignment - Map DNA Sequences | Online Free DevTools by Hexmos"
+title: 'BWA Alignment - Map DNA Sequences | Online Free DevTools by Hexmos'
 name: bwa
-path: "/freedevtools/tldr/linux/bwa/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bwa/"
-description: "Map DNA sequences with BWA Alignment Tool. Align short, low-divergent reads against large reference genomes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bwa/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bwa/'
+description: 'Map DNA sequences with BWA Alignment Tool. Align short, low-divergent reads against large reference genomes. Free online tool, no registration required.'
 category: linux
 keywords:
-- DNA sequence alignment
-- BWA alignment
-- Burrows-Wheeler Aligner
-- Genome mapping
-- Sequence mapper
-- SAM file generation
-- FASTQ to SAM conversion
-- Linux alignment tool
-- Bioinformatics command line
-- Reference genome indexing
+  - DNA sequence alignment
+  - BWA alignment
+  - Burrows-Wheeler Aligner
+  - Genome mapping
+  - Sequence mapper
+  - SAM file generation
+  - FASTQ to SAM conversion
+  - Linux alignment tool
+  - Bioinformatics command line
+  - Reference genome indexing
 features:
-- Index reference genomes for alignment
-- Align single-end and pair-end reads
-- Compress alignment results to save space
-- Mark shorter split hits as secondary
-- Append FASTA/Q comments to output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Index reference genomes for alignment
+  - Align single-end and pair-end reads
+  - Compress alignment results to save space
+  - Mark shorter split hits as secondary
+  - Append FASTA/Q comments to output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bwa

@@ -1,29 +1,29 @@
 ---
-title: "Parallel Command - Run Commands Simultaneously | Online Free DevTools by Hexmos"
+title: 'Parallel Command - Run Commands Simultaneously | Online Free DevTools by Hexmos'
 name: parallel
-path: "/freedevtools/tldr/common/parallel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/parallel/"
-description: "Execute commands in parallel with Parallel Command. Accelerate workflows by running tasks on multiple cores. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/parallel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/parallel/'
+description: 'Execute commands in parallel with Parallel Command. Accelerate workflows by running tasks on multiple cores. Free online tool, no registration required.'
 category: common
 keywords:
-- parallel command execution
-- parallel processing linux
-- multi core command runner
-- parallel task management
-- parallel shell scripting
-- linux parallel execution
-- parallel command line tool
-- parallel job scheduler
-- gnu parallel commands
-- distributed command execution
+  - parallel command execution
+  - parallel processing linux
+  - multi core command runner
+  - parallel task management
+  - parallel shell scripting
+  - linux parallel execution
+  - parallel command line tool
+  - parallel job scheduler
+  - gnu parallel commands
+  - distributed command execution
 features:
-- Execute commands on multiple CPU cores simultaneously
-- Read arguments from standard input for dynamic command generation
-- Support replacement strings for flexible command customization
-- Distribute tasks across multiple machines via SSH
-- Manage job execution on large datasets with block processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands on multiple CPU cores simultaneously
+  - Read arguments from standard input for dynamic command generation
+  - Support replacement strings for flexible command customization
+  - Distribute tasks across multiple machines via SSH
+  - Manage job execution on large datasets with block processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # parallel

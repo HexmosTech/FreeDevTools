@@ -1,9 +1,9 @@
 ---
-title: "pdfattach - Add PDF Attachments | Online Free DevTools by Hexmos"
+title: 'pdfattach - Add PDF Attachments | Online Free DevTools by Hexmos'
 name: pdfattach
-path: "/freedevtools/tldr/linux/pdfattach/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pdfattach/"
-description: "Add PDF attachments easily with pdfattach. Embed files, replace existing attachments, and manage PDF content effectively. This free online tool requires no registration."
+path: '/freedevtools/tldr/linux/pdfattach/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pdfattach/'
+description: 'Add PDF attachments easily with pdfattach. Embed files, replace existing attachments, and manage PDF content effectively. This free online tool requires no registration.'
 category: linux
 keywords:
   - pdf attachment command
@@ -22,8 +22,8 @@ features:
   - Specify input PDF file and attachment file.
   - Generate output PDF file with attachments.
   - Display help and version information for pdfattach.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdfattach

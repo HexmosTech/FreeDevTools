@@ -1,29 +1,29 @@
 ---
-title: "Create IP Aggregate Stats - Analyze Network Traffic | Online Free DevTools by Hexmos"
+title: 'Create IP Aggregate Stats - Analyze Network Traffic | Online Free DevTools by Hexmos'
 name: ipaggcreate
-path: "/freedevtools/tldr/common/ipaggcreate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ipaggcreate/"
-description: "Create IP aggregate statistics with ipaggcreate. Analyze network traffic from PCAP files and network interfaces using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ipaggcreate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ipaggcreate/'
+description: 'Create IP aggregate statistics with ipaggcreate. Analyze network traffic from PCAP files and network interfaces using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- pcap analyzer
-- network traffic analysis
-- ip statistics generator
-- packet counter linux
-- tcpdump aggregate
-- network flow analysis
-- bandwidth usage monitor
-- ip address statistics
-- traffic pattern identification
-- linux network analysis
+  - pcap analyzer
+  - network traffic analysis
+  - ip statistics generator
+  - packet counter linux
+  - tcpdump aggregate
+  - network flow analysis
+  - bandwidth usage monitor
+  - ip address statistics
+  - traffic pattern identification
+  - linux network analysis
 features:
-- Analyze network traffic from PCAP files
-- Aggregate IP packet statistics by various criteria
-- Count packets by source address
-- Group packets by IP packet length
-- Count bytes sent between address pairs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze network traffic from PCAP files
+  - Aggregate IP packet statistics by various criteria
+  - Count packets by source address
+  - Group packets by IP packet length
+  - Count bytes sent between address pairs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipaggcreate

@@ -1,29 +1,29 @@
 ---
-title: "Control Puppet Agent - Apply Configurations | Online Free DevTools by Hexmos"
+title: 'Control Puppet Agent - Apply Configurations | Online Free DevTools by Hexmos'
 name: puppet-agent
-path: "/freedevtools/tldr/puppet/puppet-agent/"
-canonical: "https://hexmos.com/freedevtools/tldr/puppet/puppet-agent/"
-description: "Control Puppet agent configurations with this free online tool. Manage node registrations, apply catalogs, and run agents in dry-mode. Free online tool, no registration required."
+path: '/freedevtools/tldr/puppet/puppet-agent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/puppet/puppet-agent/'
+description: 'Control Puppet agent configurations with this free online tool. Manage node registrations, apply catalogs, and run agents in dry-mode. Free online tool, no registration required.'
 category: common
 keywords:
-- puppet agent configuration
-- puppet automation tool
-- puppet server agent
-- puppet agent management
-- puppet catalog application
-- puppet agent dry run
-- linux puppet agent
-- puppet agent disable
-- puppet infrastructure automation
-- puppet resource evaluation
+  - puppet agent configuration
+  - puppet automation tool
+  - puppet server agent
+  - puppet agent management
+  - puppet catalog application
+  - puppet agent dry run
+  - linux puppet agent
+  - puppet agent disable
+  - puppet infrastructure automation
+  - puppet resource evaluation
 features:
-- Apply configurations from a Puppet server to a local host.
-- Register a node with a Puppet server and apply the catalog.
-- Run the Puppet agent in foreground or background.
-- Simulate configuration changes using dry-run mode.
-- Enable or disable the Puppet agent with custom messages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Apply configurations from a Puppet server to a local host.
+  - Register a node with a Puppet server and apply the catalog.
+  - Run the Puppet agent in foreground or background.
+  - Simulate configuration changes using dry-run mode.
+  - Enable or disable the Puppet agent with custom messages.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # puppet agent

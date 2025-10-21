@@ -1,29 +1,29 @@
 ---
-title: "Colorize Graph Edges - Clarify Graph Layouts | Online Free DevTools by Hexmos"
+title: 'Colorize Graph Edges - Clarify Graph Layouts | Online Free DevTools by Hexmos'
 name: edgepaint
-path: "/freedevtools/tldr/common/edgepaint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/edgepaint/"
-description: "Clarify graph layouts with Edgepaint. Colorize graph edges to enhance visualization and understand crossing edges. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/edgepaint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/edgepaint/'
+description: 'Clarify graph layouts with Edgepaint. Colorize graph edges to enhance visualization and understand crossing edges. Free online tool, no registration required.'
 category: common
 keywords:
-- graph edge colorization
-- graph layout clarification
-- graphviz edgepaint
-- crossing edge visualization
-- graph coloring tool
-- graph edge styling
-- acyclic graph processing
-- dot graph processing
-- command-line graph tools
-- graph data processing
+  - graph edge colorization
+  - graph layout clarification
+  - graphviz edgepaint
+  - crossing edge visualization
+  - graph coloring tool
+  - graph edge styling
+  - acyclic graph processing
+  - dot graph processing
+  - command-line graph tools
+  - graph data processing
 features:
-- Colorize graph edges for enhanced clarity
-- Process multiple graph layout files simultaneously
-- Apply customizable color schemes to edges
-- Integrate with dot for graph layout generation
-- Simplify complex graph structures by visually distinguishing edges
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Colorize graph edges for enhanced clarity
+  - Process multiple graph layout files simultaneously
+  - Apply customizable color schemes to edges
+  - Integrate with dot for graph layout generation
+  - Simplify complex graph structures by visually distinguishing edges
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # edgepaint

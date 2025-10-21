@@ -1,29 +1,29 @@
 ---
-title: "Create Torrent Files - Transmission-Create | Online Free DevTools by Hexmos"
+title: 'Create Torrent Files - Transmission-Create | Online Free DevTools by Hexmos'
 name: transmission-create
-path: "/freedevtools/tldr/transmission/transmission-create/"
-canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-create/"
-description: "Create torrent files with Transmission-Create, a powerful BitTorrent client. Generate .torrent files with specific piece sizes and trackers. Free online tool, no registration required."
+path: '/freedevtools/tldr/transmission/transmission-create/'
+canonical: 'https://hexmos.com/freedevtools/tldr/transmission/transmission-create/'
+description: 'Create torrent files with Transmission-Create, a powerful BitTorrent client. Generate .torrent files with specific piece sizes and trackers. Free online tool, no registration required.'
 category: common
 keywords:
-- torrent file creation
-- BitTorrent creator
-- transmission-create tool
-- .torrent generator
-- torrent metadata
-- tracker announce URL
-- piece size configuration
-- private torrent creation
-- command-line torrent
-- torrent file editor
+  - torrent file creation
+  - BitTorrent creator
+  - transmission-create tool
+  - .torrent generator
+  - torrent metadata
+  - tracker announce URL
+  - piece size configuration
+  - private torrent creation
+  - command-line torrent
+  - torrent file editor
 features:
-- Create .torrent files with custom piece sizes.
-- Add multiple trackers to torrent files.
-- Generate private torrents.
-- Include comments in torrent metadata.
-- Display help page for command options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create .torrent files with custom piece sizes.
+  - Add multiple trackers to torrent files.
+  - Generate private torrents.
+  - Include comments in torrent metadata.
+  - Display help page for command options.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transmission-create

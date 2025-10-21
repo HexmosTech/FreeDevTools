@@ -1,9 +1,9 @@
 ---
-title: "Create PHP Archives - Manage PHAR Files | Online Free DevTools by Hexmos"
+title: 'Create PHP Archives - Manage PHAR Files | Online Free DevTools by Hexmos'
 name: phar
-path: "/freedevtools/tldr/linux/phar/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/phar/"
-description: "Create and manage PHP archives with PHAR command. Package, compress, and sign PHP applications for easy distribution. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/phar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/phar/'
+description: 'Create and manage PHP archives with PHAR command. Package, compress, and sign PHP applications for easy distribution. Free online tool, no registration required.'
 category: linux
 keywords:
   - php archive creation
@@ -22,8 +22,8 @@ features:
   - Delete files or directories from a PHAR archive.
   - Compress or uncompress files within a PHAR archive.
   - Sign a PHAR archive with a hash algorithm or OpenSSL key.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phar

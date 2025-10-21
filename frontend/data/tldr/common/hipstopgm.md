@@ -1,29 +1,29 @@
 ---
-title: "Convert HIPS to PGM - Generate PGM Images | Online Free DevTools by Hexmos"
+title: 'Convert HIPS to PGM - Generate PGM Images | Online Free DevTools by Hexmos'
 name: hipstopgm
-path: "/freedevtools/tldr/common/hipstopgm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hipstopgm/"
-description: "Convert HIPS to PGM with hipstopgm. Generate PGM image files from HIPS image data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hipstopgm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hipstopgm/'
+description: 'Convert HIPS to PGM with hipstopgm. Generate PGM image files from HIPS image data. Free online tool, no registration required.'
 category: common
 keywords:
-- HIPS to PGM converter
-- PGM image generator
-- HIPS image processing
-- Image format conversion
-- Netpbm tools
-- Command line image converter
-- HIPS image to PGM image
-- HIPS file conversion
-- PGM image creation
-- Raster image conversion
+  - HIPS to PGM converter
+  - PGM image generator
+  - HIPS image processing
+  - Image format conversion
+  - Netpbm tools
+  - Command line image converter
+  - HIPS image to PGM image
+  - HIPS file conversion
+  - PGM image creation
+  - Raster image conversion
 features:
-- Convert HIPS images to PGM images
-- Concatenate multiple HIPS frames vertically
-- Suppress informational messages during conversion
-- Display the version of the hipstopgm tool
-- Process HIPS image data from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert HIPS images to PGM images
+  - Concatenate multiple HIPS frames vertically
+  - Suppress informational messages during conversion
+  - Display the version of the hipstopgm tool
+  - Process HIPS image data from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hipstopgm

@@ -1,9 +1,9 @@
 ---
-title: "Create Users - adduser Command | Online Free DevTools by Hexmos"
+title: 'Create Users - adduser Command | Online Free DevTools by Hexmos'
 name: adduser
-path: "/freedevtools/tldr/linux/adduser/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/adduser/"
-description: "Create new users with the adduser command. Manage user accounts, home directories, and group memberships efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/adduser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/adduser/'
+description: 'Create new users with the adduser command. Manage user accounts, home directories, and group memberships efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - user account creation
@@ -22,8 +22,8 @@ features:
   - Add users to specific groups.
   - Create users without home directories.
   - Set user passwords during account creation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # adduser

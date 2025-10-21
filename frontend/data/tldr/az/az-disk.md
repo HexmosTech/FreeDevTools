@@ -1,29 +1,29 @@
 ---
-title: "Create Azure Disk - Manage Virtual Disks | Online Free DevTools by Hexmos"
+title: 'Create Azure Disk - Manage Virtual Disks | Online Free DevTools by Hexmos'
 name: az-disk
-path: "/freedevtools/tldr/az/az-disk/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-disk/"
-description: "Create and manage Azure disks with az-disk. Control virtual disk size, grant access, and list existing disks. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-disk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-disk/'
+description: 'Create and manage Azure disks with az-disk. Control virtual disk size, grant access, and list existing disks. Free online tool, no registration required.'
 category: common
 keywords:
-- azure disk management
-- azure managed disks
-- az disk command
-- cloud disk creation
-- azure disk list
-- virtual disk control
-- azure cli disk
-- az disk update
-- azure disk access
-- azure disk deletion
+  - azure disk management
+  - azure managed disks
+  - az disk command
+  - cloud disk creation
+  - azure disk list
+  - virtual disk control
+  - azure cli disk
+  - az disk update
+  - azure disk access
+  - azure disk deletion
 features:
-- Create new Azure managed disks
-- List existing disks within a resource group
-- Delete unwanted managed disks
-- Grant read/write access for data export
-- Update the size of an existing managed disk
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Azure managed disks
+  - List existing disks within a resource group
+  - Delete unwanted managed disks
+  - Grant read/write access for data export
+  - Update the size of an existing managed disk
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az disk

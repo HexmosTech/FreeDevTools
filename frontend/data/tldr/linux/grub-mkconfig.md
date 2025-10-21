@@ -1,9 +1,9 @@
 ---
-title: "GRUB Configuration - Generate GRUB Config Files | Online Free DevTools by Hexmos"
+title: 'GRUB Configuration - Generate GRUB Config Files | Online Free DevTools by Hexmos'
 name: grub-mkconfig
-path: "/freedevtools/tldr/linux/grub-mkconfig/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-mkconfig/"
-description: "Generate GRUB configuration files with grub-mkconfig. Customize boot options and manage kernel parameters easily using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/grub-mkconfig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/grub-mkconfig/'
+description: 'Generate GRUB configuration files with grub-mkconfig. Customize boot options and manage kernel parameters easily using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - GRUB configuration generator
@@ -22,8 +22,8 @@ features:
   - Reads system information to create a valid configuration
   - Outputs configuration to standard output for review
   - Writes configuration to specified file path
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grub-mkconfig

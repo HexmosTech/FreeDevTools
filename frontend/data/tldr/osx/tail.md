@@ -1,9 +1,9 @@
 ---
-title: "Tail - Display Last Lines of Files | Online Free DevTools by Hexmos"
+title: 'Tail - Display Last Lines of Files | Online Free DevTools by Hexmos'
 name: tail
-path: "/freedevtools/tldr/osx/tail/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/tail/"
-description: "Display last part of files with Tail. Analyze log files, monitor changes, and extract specific data from end of text. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/tail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/tail/'
+description: 'Display last part of files with Tail. Analyze log files, monitor changes, and extract specific data from end of text. Free online tool, no registration required.'
 category: osx
 keywords:
   - tail file viewer
@@ -22,8 +22,8 @@ features:
   - Print a file from a specific line number
   - Print a specific number of bytes from the end of a file
   - Re-attempt access to a file even if inaccessible
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tail

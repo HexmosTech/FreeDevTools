@@ -1,29 +1,29 @@
 ---
-title: "Profile Analyzer - Visualize Profiling Data | Online Free DevTools by Hexmos"
+title: 'Profile Analyzer - Visualize Profiling Data | Online Free DevTools by Hexmos'
 name: pprof
-path: "/freedevtools/tldr/common/pprof/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pprof/"
-description: "Visualize profiling data with pprof. Analyze CPU usage, memory allocation, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pprof/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pprof/'
+description: 'Visualize profiling data with pprof. Analyze CPU usage, memory allocation, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- profiling data analyzer
-- performance profile viewer
-- cpu profile analysis
-- memory profile analysis
-- heap profile visualization
-- go profiling tools
-- pprof report generator
-- pprof web interface
-- performance bottleneck detection
-- profiling data visualization
+  - profiling data analyzer
+  - performance profile viewer
+  - cpu profile analysis
+  - memory profile analysis
+  - heap profile visualization
+  - go profiling tools
+  - pprof report generator
+  - pprof web interface
+  - performance bottleneck detection
+  - profiling data visualization
 features:
-- Generate text reports from profiling data
-- Create SVG graphs to visualize profiling results
-- Launch an interactive pprof session for manual analysis
-- Run a web server for a web-based pprof interface
-- Fetch profiles from HTTP servers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate text reports from profiling data
+  - Create SVG graphs to visualize profiling results
+  - Launch an interactive pprof session for manual analysis
+  - Run a web server for a web-based pprof interface
+  - Fetch profiles from HTTP servers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pprof

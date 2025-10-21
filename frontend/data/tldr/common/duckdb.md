@@ -1,29 +1,29 @@
 ---
-title: "Query DuckDB - Run SQL on Data Files | Online Free DevTools by Hexmos"
+title: 'Query DuckDB - Run SQL on Data Files | Online Free DevTools by Hexmos'
 name: duckdb
-path: "/freedevtools/tldr/common/duckdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/duckdb/"
-description: "Query data files with DuckDB. Execute SQL commands on CSV, JSON, and Parquet files, create in-memory databases, and run SQL scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/duckdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/duckdb/'
+description: 'Query data files with DuckDB. Execute SQL commands on CSV, JSON, and Parquet files, create in-memory databases, and run SQL scripts. Free online tool, no registration required.'
 category: common
 keywords:
-- DuckDB SQL query
-- CSV SQL engine
-- JSON SQL engine
-- Parquet SQL engine
-- In-memory database SQL
-- SQL script runner
-- Command line SQL client
-- Linux SQL data
-- macOS SQL analysis
-- DuckDB data analysis
+  - DuckDB SQL query
+  - CSV SQL engine
+  - JSON SQL engine
+  - Parquet SQL engine
+  - In-memory database SQL
+  - SQL script runner
+  - Command line SQL client
+  - Linux SQL data
+  - macOS SQL analysis
+  - DuckDB data analysis
 features:
-- Execute SQL queries against CSV, JSON, and Parquet files
-- Create and manage in-memory DuckDB databases
-- Run SQL scripts from the command line
-- Read CSV data from stdin and write CSV data to stdout
-- Launch the DuckDB UI for notebook-style data analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute SQL queries against CSV, JSON, and Parquet files
+  - Create and manage in-memory DuckDB databases
+  - Run SQL scripts from the command line
+  - Read CSV data from stdin and write CSV data to stdout
+  - Launch the DuckDB UI for notebook-style data analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # duckdb

@@ -1,5 +1,5 @@
-import { Skeleton } from "src/components/ui/skeleton";
-import React from "react";
+import { Skeleton } from 'src/components/ui/skeleton';
+import React from 'react';
 
 const RsaKeyPairGeneratorSkeleton: React.FC = () => {
   return (
@@ -20,11 +20,10 @@ const RsaKeyPairGeneratorSkeleton: React.FC = () => {
       <div className="p-6 bg-white dark:bg-slate-800 rounded-lg border">
         <Skeleton className="h-6 w-32 mb-4" />
         <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
         </div>
       </div>
-
     </div>
   );
 };

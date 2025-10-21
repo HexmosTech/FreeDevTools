@@ -1,29 +1,29 @@
 ---
-title: "Create PNM Montage - Compose Images | Online Free DevTools by Hexmos"
+title: 'Create PNM Montage - Compose Images | Online Free DevTools by Hexmos'
 name: pnmmontage
-path: "/freedevtools/tldr/pnm/pnmmontage/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmontage/"
-description: "Create a PNM montage with pnmmontage. Easily compose multiple PNM images into a single image. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmmontage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmmontage/'
+description: 'Create a PNM montage with pnmmontage. Easily compose multiple PNM images into a single image. Free online tool, no registration required.'
 category: common
 keywords:
-- pnm image montage
-- pnm image composer
-- image composition tool
-- netpbm image utility
-- pnm image manipulation
-- linux image tools
-- command line image editor
-- image packing tool
-- batch image processing
-- create image grids
+  - pnm image montage
+  - pnm image composer
+  - image composition tool
+  - netpbm image utility
+  - pnm image manipulation
+  - linux image tools
+  - command line image editor
+  - image packing tool
+  - batch image processing
+  - create image grids
 features:
-- Compose multiple PNM images into a single montage
-- Control packing quality for optimal image arrangement
-- Generate montages with specified packing percentages
-- Output image positions to a data file
-- Create image grids from command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compose multiple PNM images into a single montage
+  - Control packing quality for optimal image arrangement
+  - Generate montages with specified packing percentages
+  - Output image positions to a data file
+  - Create image grids from command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmmontage

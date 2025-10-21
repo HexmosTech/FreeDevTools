@@ -1,29 +1,29 @@
 ---
-title: "Rdiff-backup - Backup Files Incrementally | Online Free DevTools by Hexmos"
+title: 'Rdiff-backup - Backup Files Incrementally | Online Free DevTools by Hexmos'
 name: rdiff-backup
-path: "/freedevtools/tldr/common/rdiff-backup/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rdiff-backup/"
-description: "Backup files with rdiff-backup for local or remote mirroring. Incrementally manage file versions and restore specific points in time. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rdiff-backup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rdiff-backup/'
+description: 'Backup files with rdiff-backup for local or remote mirroring. Incrementally manage file versions and restore specific points in time. Free online tool, no registration required.'
 category: common
 keywords:
-- rdiff-backup file backup
-- incremental backup tool
-- remote file mirroring
-- local file mirroring
-- versioned file backup
-- linux rdiff-backup
-- command line backup
-- differential backup
-- data recovery tool
-- file restoration tool
+  - rdiff-backup file backup
+  - incremental backup tool
+  - remote file mirroring
+  - local file mirroring
+  - versioned file backup
+  - linux rdiff-backup
+  - command line backup
+  - differential backup
+  - data recovery tool
+  - file restoration tool
 features:
-- Back up files to local or remote repositories
-- List incremental backups in a repository
-- Restore files from the most recent backup
-- Restore files to a specific point in time
-- Perform differential backups for efficiency
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Back up files to local or remote repositories
+  - List incremental backups in a repository
+  - Restore files from the most recent backup
+  - Restore files to a specific point in time
+  - Perform differential backups for efficiency
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rdiff-backup

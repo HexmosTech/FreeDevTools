@@ -1,9 +1,9 @@
 ---
-title: "Sysdig - Capture System Calls | Online Free DevTools by Hexmos"
+title: 'Sysdig - Capture System Calls | Online Free DevTools by Hexmos'
 name: sysdig
-path: "/freedevtools/tldr/linux/sysdig/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sysdig/"
-description: "Capture system calls with Sysdig for in-depth system analysis. Troubleshoot, filter, and store system events efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sysdig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sysdig/'
+description: 'Capture system calls with Sysdig for in-depth system analysis. Troubleshoot, filter, and store system events efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - system call capture
@@ -22,8 +22,8 @@ features:
   - Read system events from a file.
   - Filter system calls by process name.
   - Utilize chisels for advanced analysis.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sysdig

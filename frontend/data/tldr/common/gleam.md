@@ -1,29 +1,29 @@
 ---
-title: "Gleam Compiler - Build Typesafe Systems | Online Free DevTools by Hexmos"
+title: 'Gleam Compiler - Build Typesafe Systems | Online Free DevTools by Hexmos'
 name: gleam
-path: "/freedevtools/tldr/common/gleam/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gleam/"
-description: "Build systems with Gleam Compiler, a type-safe language solution. Compile, format, and manage dependencies easily with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gleam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gleam/'
+description: 'Build systems with Gleam Compiler, a type-safe language solution. Compile, format, and manage dependencies easily with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- Gleam compiler
-- Gleam build tool
-- Gleam package manager
-- Gleam code formatter
-- Typesafe language
-- Erlang alternative
-- BEAM language
-- Functional programming language
-- Gleam hex packages
-- Gleam dependency management
+  - Gleam compiler
+  - Gleam build tool
+  - Gleam package manager
+  - Gleam code formatter
+  - Typesafe language
+  - Erlang alternative
+  - BEAM language
+  - Functional programming language
+  - Gleam hex packages
+  - Gleam dependency management
 features:
-- Compile Gleam projects to Erlang or JavaScript
-- Manage project dependencies using hex packages
-- Format Gleam code for consistency
-- Type check Gleam code for errors
-- Run Gleam projects with specific targets and runtimes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Gleam projects to Erlang or JavaScript
+  - Manage project dependencies using hex packages
+  - Format Gleam code for consistency
+  - Type check Gleam code for errors
+  - Run Gleam projects with specific targets and runtimes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gleam

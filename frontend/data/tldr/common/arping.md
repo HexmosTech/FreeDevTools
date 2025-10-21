@@ -1,29 +1,29 @@
 ---
-title: "Arping - Discover Hosts on Network | Online Free DevTools by Hexmos"
+title: 'Arping - Discover Hosts on Network | Online Free DevTools by Hexmos'
 name: arping
-path: "/freedevtools/tldr/common/arping/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/arping/"
-description: "Discover network hosts with Arping. Probe network devices, identify MAC addresses, and detect IP conflicts with this network diagnostic command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/arping/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/arping/'
+description: 'Discover network hosts with Arping. Probe network devices, identify MAC addresses, and detect IP conflicts with this network diagnostic command. Free online tool, no registration required.'
 category: common
 keywords:
-- ARP request
-- network probing
-- MAC address discovery
-- IP conflict detection
-- network diagnostics
-- linux arping
-- command line arping
-- network troubleshooting
-- arping utility
-- broadcast ARP
+  - ARP request
+  - network probing
+  - MAC address discovery
+  - IP conflict detection
+  - network diagnostics
+  - linux arping
+  - command line arping
+  - network troubleshooting
+  - arping utility
+  - broadcast ARP
 features:
-- Discover hosts on a local network
-- Probe network devices using ARP packets
-- Detect duplicate IP addresses
-- Broadcast ARP requests to update ARP caches
-- Ping hosts on a specific network interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Discover hosts on a local network
+  - Probe network devices using ARP packets
+  - Detect duplicate IP addresses
+  - Broadcast ARP requests to update ARP caches
+  - Ping hosts on a specific network interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arping

@@ -1,9 +1,9 @@
 ---
-title: "Unmount Filesystem - Control Disk Mounts | Online Free DevTools by Hexmos"
+title: 'Unmount Filesystem - Control Disk Mounts | Online Free DevTools by Hexmos'
 name: umount
-path: "/freedevtools/tldr/linux/umount/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/umount/"
-description: "Control disk mounts with the umount command. Unmount filesystems, manage device access, and resolve mount issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/umount/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/umount/'
+description: 'Control disk mounts with the umount command. Unmount filesystems, manage device access, and resolve mount issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - filesystem unmount command
@@ -22,8 +22,8 @@ features:
   - Supports recursive unmounting of directories.
   - Offers a read-only unmount option for resolving issues.
   - Provides a command to unmount all filesystems (excluding proc).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # umount

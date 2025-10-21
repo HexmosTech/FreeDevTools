@@ -1,29 +1,29 @@
 ---
-title: "Extract MIME Attachments - Rip Email Content | Online Free DevTools by Hexmos"
+title: 'Extract MIME Attachments - Rip Email Content | Online Free DevTools by Hexmos'
 name: ripmime
-path: "/freedevtools/tldr/linux/ripmime/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ripmime/"
-description: "Extract MIME attachments with ripmime.  Unpack email content, recover lost files, and analyze email structure effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ripmime/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ripmime/'
+description: 'Extract MIME attachments with ripmime.  Unpack email content, recover lost files, and analyze email structure effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
-- MIME attachment extractor
-- email attachment recovery
-- linux email analysis
-- ripmime linux command
-- extract email content
-- MIME decoder
-- email file parser
-- command-line email tool
-- linux attachment tool
-- ripmime file extraction
+  - MIME attachment extractor
+  - email attachment recovery
+  - linux email analysis
+  - ripmime linux command
+  - extract email content
+  - MIME decoder
+  - email file parser
+  - command-line email tool
+  - linux attachment tool
+  - ripmime file extraction
 features:
-- Extract attachments from MIME encoded emails
-- Save extracted files to a specified directory
-- Display verbose output for debugging
-- Provide detailed information about the decoding process
-- Process email content directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract attachments from MIME encoded emails
+  - Save extracted files to a specified directory
+  - Display verbose output for debugging
+  - Provide detailed information about the decoding process
+  - Process email content directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ripmime

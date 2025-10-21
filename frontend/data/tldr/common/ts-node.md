@@ -1,29 +1,29 @@
 ---
-title: "Execute TypeScript - Run TS Directly | Online Free DevTools by Hexmos"
+title: 'Execute TypeScript - Run TS Directly | Online Free DevTools by Hexmos'
 name: ts-node
-path: "/freedevtools/tldr/common/ts-node/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ts-node/"
-description: "Execute TypeScript code directly with ts-node, bypassing compilation. Run .ts files, evaluate code literals, and transpile TypeScript easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ts-node/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ts-node/'
+description: 'Execute TypeScript code directly with ts-node, bypassing compilation. Run .ts files, evaluate code literals, and transpile TypeScript easily. Free online tool, no registration required.'
 category: common
 keywords:
-- TypeScript execution
-- ts-node direct run
-- TypeScript interpreter
-- JavaScript transpilation
-- TypeScript REPL
-- ts-node compiler bypass
-- TypeScript scripting
-- Node.js TypeScript
-- TypeScript without compilation
-- Quick TypeScript prototyping
+  - TypeScript execution
+  - ts-node direct run
+  - TypeScript interpreter
+  - JavaScript transpilation
+  - TypeScript REPL
+  - ts-node compiler bypass
+  - TypeScript scripting
+  - Node.js TypeScript
+  - TypeScript without compilation
+  - Quick TypeScript prototyping
 features:
-- Execute TypeScript files without compiling.
-- Evaluate TypeScript code snippets directly from the command line.
-- Transpile TypeScript files to JavaScript without execution.
-- Skip project configuration files when running TypeScript.
-- Execute TypeScript code in script mode.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute TypeScript files without compiling.
+  - Evaluate TypeScript code snippets directly from the command line.
+  - Transpile TypeScript files to JavaScript without execution.
+  - Skip project configuration files when running TypeScript.
+  - Execute TypeScript code in script mode.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ts-node

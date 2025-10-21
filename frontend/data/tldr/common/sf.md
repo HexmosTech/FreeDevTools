@@ -1,29 +1,29 @@
 ---
-title: "Salesforce CLI - Control Salesforce Orgs | Online Free DevTools by Hexmos"
+title: 'Salesforce CLI - Control Salesforce Orgs | Online Free DevTools by Hexmos'
 name: sf
-path: "/freedevtools/tldr/common/sf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sf/"
-description: "Control Salesforce organizations with Salesforce CLI. Authorize, list, and manage your Salesforce environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sf/'
+description: 'Control Salesforce organizations with Salesforce CLI. Authorize, list, and manage your Salesforce environments. Free online tool, no registration required.'
 category: common
 keywords:
-- salesforce cli control
-- salesforce org manager
-- sf command line interface
-- salesforce automation
-- salesforce development tool
-- salesforce password generator
-- salesforce permission sets
-- sf force commands
-- salesforce metadata push pull
-- salesforce web login
+  - salesforce cli control
+  - salesforce org manager
+  - sf command line interface
+  - salesforce automation
+  - salesforce development tool
+  - salesforce password generator
+  - salesforce permission sets
+  - sf force commands
+  - salesforce metadata push pull
+  - salesforce web login
 features:
-- Authorize Salesforce organizations via web login
-- List authorized Salesforce organizations
-- Open Salesforce orgs in a web browser
-- Push and pull source metadata between local and org
-- Generate passwords for Salesforce users
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authorize Salesforce organizations via web login
+  - List authorized Salesforce organizations
+  - Open Salesforce orgs in a web browser
+  - Push and pull source metadata between local and org
+  - Generate passwords for Salesforce users
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sf

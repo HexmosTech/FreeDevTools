@@ -1,29 +1,29 @@
 ---
-title: "Compile Typst to PDF - Generate Docs | Online Free DevTools by Hexmos"
+title: 'Compile Typst to PDF - Generate Docs | Online Free DevTools by Hexmos'
 name: typst
-path: "/freedevtools/tldr/common/typst/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/typst/"
-description: "Compile documents with Typst, a powerful typesetting language. Generate professional PDF files from Typst markup. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/typst/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/typst/'
+description: 'Compile documents with Typst, a powerful typesetting language. Generate professional PDF files from Typst markup. Free online tool, no registration required.'
 category: common
 keywords:
-- typst compiler
-- typst to pdf
-- document compilation
-- typesetting language
-- markdown to pdf
-- typst documentation
-- typst command line
-- typst fonts
-- typst template
-- typst watch mode
+  - typst compiler
+  - typst to pdf
+  - document compilation
+  - typesetting language
+  - markdown to pdf
+  - typst documentation
+  - typst command line
+  - typst fonts
+  - typst template
+  - typst watch mode
 features:
-- Compile Typst source code into PDF documents.
-- Watch files for changes and automatically recompile.
-- Initialize new Typst projects from templates.
-- List available fonts in specified directories.
-- Customize output paths for generated PDFs.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Typst source code into PDF documents.
+  - Watch files for changes and automatically recompile.
+  - Initialize new Typst projects from templates.
+  - List available fonts in specified directories.
+  - Customize output paths for generated PDFs.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # typst

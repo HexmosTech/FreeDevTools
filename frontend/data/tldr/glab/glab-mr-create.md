@@ -1,29 +1,29 @@
 ---
-title: "GLab MR Create - Manage GitLab Merge Requests | Online Free DevTools by Hexmos"
+title: 'GLab MR Create - Manage GitLab Merge Requests | Online Free DevTools by Hexmos'
 name: glab-mr-create
-path: "/freedevtools/tldr/glab/glab-mr-create/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-mr-create/"
-description: "Create GitLab merge requests with GLab, the GitLab CLI. Simplify your workflow and manage code reviews efficiently using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-mr-create/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-mr-create/'
+description: 'Create GitLab merge requests with GLab, the GitLab CLI. Simplify your workflow and manage code reviews efficiently using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- gitlab merge request
-- glab merge request create
-- git merge request command line
-- gitlab cli
-- glab cli
-- merge request tool
-- code review tool
-- gitlab workflow automation
-- glab workflow
-- gitlab merge request automation
+  - gitlab merge request
+  - glab merge request create
+  - git merge request command line
+  - gitlab cli
+  - glab cli
+  - merge request tool
+  - code review tool
+  - gitlab workflow automation
+  - glab workflow
+  - gitlab merge request automation
 features:
-- Interactively create merge requests
-- Generate title/description from commit messages
-- Create draft merge requests
-- Specify target branch, title, and description
-- Open merge requests in a web browser
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Interactively create merge requests
+  - Generate title/description from commit messages
+  - Create draft merge requests
+  - Specify target branch, title, and description
+  - Open merge requests in a web browser
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab mr create

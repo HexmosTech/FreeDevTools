@@ -1,29 +1,29 @@
 ---
-title: "GNMI Get - Snapshot Device Data | Online Free DevTools by Hexmos"
+title: 'GNMI Get - Snapshot Device Data | Online Free DevTools by Hexmos'
 name: gnmic-get
-path: "/freedevtools/tldr/gnmic/gnmic-get/"
-canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-get/"
-description: "Snapshot device data with GNMI Get. Retrieve real-time network device state using gNMI protocol for efficient monitoring and diagnostics. Free online tool, no registration required."
+path: '/freedevtools/tldr/gnmic/gnmic-get/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gnmic/gnmic-get/'
+description: 'Snapshot device data with GNMI Get. Retrieve real-time network device state using gNMI protocol for efficient monitoring and diagnostics. Free online tool, no registration required.'
 category: common
 keywords:
-- gNMI get
-- gNMI data retrieval
-- Network device snapshot
-- gNMI client
-- gNMI path query
-- Telemetry data extraction
-- Real-time network monitoring
-- gNMI JSON encoding
-- gNMI telemetry
-- Network device configuration
+  - gNMI get
+  - gNMI data retrieval
+  - Network device snapshot
+  - gNMI client
+  - gNMI path query
+  - Telemetry data extraction
+  - Real-time network monitoring
+  - gNMI JSON encoding
+  - gNMI telemetry
+  - Network device configuration
 features:
-- Retrieve real-time network device state at specified paths
-- Query multiple device paths with a common prefix
-- Specify response encoding for data retrieval (e.g., json_ietf)
-- Extract telemetry data using the gNMI protocol
-- Get a snapshot of device configuration information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve real-time network device state at specified paths
+  - Query multiple device paths with a common prefix
+  - Specify response encoding for data retrieval (e.g., json_ietf)
+  - Extract telemetry data using the gNMI protocol
+  - Get a snapshot of device configuration information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnmic get

@@ -1,29 +1,29 @@
 ---
-title: "Shred File - Securely Delete Data | Online Free DevTools by Hexmos"
+title: 'Shred File - Securely Delete Data | Online Free DevTools by Hexmos'
 name: shred
-path: "/freedevtools/tldr/common/shred/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/shred/"
-description: "Securely delete data with Shred File tool. Overwrite files to prevent recovery and protect sensitive information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/shred/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/shred/'
+description: 'Securely delete data with Shred File tool. Overwrite files to prevent recovery and protect sensitive information. Free online tool, no registration required.'
 category: common
 keywords:
-- file shredder
-- secure file deletion
-- data wiping
-- shred command linux
-- shred command example
-- data sanitization
-- linux command line security
-- command line shred tool
-- permanently delete files
-- overwrite file data
+  - file shredder
+  - secure file deletion
+  - data wiping
+  - shred command linux
+  - shred command example
+  - data sanitization
+  - linux command line security
+  - command line shred tool
+  - permanently delete files
+  - overwrite file data
 features:
-- Overwrite files with random data.
-- Specify the number of overwrite iterations.
-- Remove files after overwriting.
-- Overwrite with zeros as the final step.
-- Display progress during the shredding process.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Overwrite files with random data.
+  - Specify the number of overwrite iterations.
+  - Remove files after overwriting.
+  - Overwrite with zeros as the final step.
+  - Display progress during the shredding process.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shred

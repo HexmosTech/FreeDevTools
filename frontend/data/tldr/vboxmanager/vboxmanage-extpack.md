@@ -1,29 +1,29 @@
 ---
-title: "VBoxManage Extpack - Manage VirtualBox Extensions | Online Free DevTools by Hexmos"
+title: 'VBoxManage Extpack - Manage VirtualBox Extensions | Online Free DevTools by Hexmos'
 name: vboxmanage-extpack
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-extpack/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-extpack/"
-description: "Manage VirtualBox extension packs with VBoxManage Extpack. Install, uninstall, and clean up extensions for enhanced functionality. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-extpack/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-extpack/'
+description: 'Manage VirtualBox extension packs with VBoxManage Extpack. Install, uninstall, and clean up extensions for enhanced functionality. Free online tool, no registration required.'
 category: common
 keywords:
-- virtualbox extension pack management
-- vboxmanage extpack install
-- vboxmanage extpack uninstall
-- virtualbox extension manager
-- vbox extpack command line
-- virtual machine extensions
-- virtualbox package manager
-- vboxmanage extpack cleanup
-- virtualbox extension update
-- cross platform extension tool
+  - virtualbox extension pack management
+  - vboxmanage extpack install
+  - vboxmanage extpack uninstall
+  - virtualbox extension manager
+  - vbox extpack command line
+  - virtual machine extensions
+  - virtualbox package manager
+  - vboxmanage extpack cleanup
+  - virtualbox extension update
+  - cross platform extension tool
 features:
-- Install extension packs into VirtualBox environments.
-- Remove existing versions of VirtualBox extension packs.
-- Uninstall extension packs from VirtualBox installations.
-- Forcefully uninstall extension packs, skipping refusals.
-- Clean up residual files from extension pack installations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install extension packs into VirtualBox environments.
+  - Remove existing versions of VirtualBox extension packs.
+  - Uninstall extension packs from VirtualBox installations.
+  - Forcefully uninstall extension packs, skipping refusals.
+  - Clean up residual files from extension pack installations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage extpack

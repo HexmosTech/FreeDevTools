@@ -1,9 +1,9 @@
 ---
-title: "Silentcast - Create Screencasts Silently | Online Free DevTools by Hexmos"
+title: 'Silentcast - Create Screencasts Silently | Online Free DevTools by Hexmos'
 name: silentcast
-path: "/freedevtools/tldr/linux/silentcast/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/silentcast/"
-description: "Create silent screencasts easily with Silentcast.  Generate screen recordings saved as .mkv and animated GIFs. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/silentcast/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/silentcast/'
+description: 'Create silent screencasts easily with Silentcast.  Generate screen recordings saved as .mkv and animated GIFs. Free online tool, no registration required.'
 category: linux
 keywords:
   - screencast creator
@@ -22,8 +22,8 @@ features:
   - Exports recordings as animated GIFs.
   - Allows specifying a particular display for recording.
   - Provides a simple command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # silentcast

@@ -1,9 +1,9 @@
 ---
-title: "Concatenate Files - Print Files with Cat | Online Free DevTools by Hexmos"
+title: 'Concatenate Files - Print Files with Cat | Online Free DevTools by Hexmos'
 name: cat
-path: "/freedevtools/tldr/linux/cat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cat/"
-description: "Print files with Cat, a command-line tool to display file content. Quickly concatenate multiple files into one with Cat. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cat/'
+description: 'Print files with Cat, a command-line tool to display file content. Quickly concatenate multiple files into one with Cat. Free online tool, no registration required.'
 category: linux
 keywords:
   - file concatenation
@@ -22,8 +22,8 @@ features:
   - Append files to an existing file
   - Write standard input to a file
   - Number all output lines of a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cat

@@ -1,29 +1,29 @@
 ---
-title: "Git Log - Show Commit History | Online Free DevTools by Hexmos"
+title: 'Git Log - Show Commit History | Online Free DevTools by Hexmos'
 name: git-log
-path: "/freedevtools/tldr/git/git-log/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-log/"
+path: '/freedevtools/tldr/git/git-log/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-log/'
 description: "Show commit history with Git Log. Inspect your Git repository's commit history and track changes effectively. Free online tool, no registration required."
 category: common
 keywords:
-- git commit history
-- git log command
-- git commit tracking
-- git repository history
-- git change tracking
-- git diff history
-- git log filter
-- git branch history
-- git log author
-- git log date
+  - git commit history
+  - git log command
+  - git commit tracking
+  - git repository history
+  - git change tracking
+  - git diff history
+  - git log filter
+  - git branch history
+  - git log author
+  - git log date
 features:
-- Display commit history in reverse chronological order
-- Filter commit history by file or directory
-- Show file changes for each commit
-- Visualize commit history as a graph
-- Filter commits by message content
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display commit history in reverse chronological order
+  - Filter commit history by file or directory
+  - Show file changes for each commit
+  - Visualize commit history as a graph
+  - Filter commits by message content
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git log

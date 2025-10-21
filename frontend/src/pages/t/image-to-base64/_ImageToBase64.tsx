@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ImageToBase64Skeleton from "./_ImageToBase64Skeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Upload, Image as ImageIcon, X } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ImageToBase64Skeleton from './_ImageToBase64Skeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Upload, Image as ImageIcon, X } from 'lucide-react';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 // Image Upload Component
 interface ImageUploadProps {
   onFileSelect: (file: File) => void;
@@ -32,9 +32,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   }, []);
@@ -47,10 +47,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
-        if (file.type.startsWith("image/")) {
+        if (file.type.startsWith('image/')) {
           onFileSelect(file);
         } else {
-          toast.error("Please select a valid image file");
+          toast.error('Please select a valid image file');
         }
       }
     },
@@ -62,10 +62,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       e.preventDefault();
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
-        if (file.type.startsWith("image/")) {
+        if (file.type.startsWith('image/')) {
           onFileSelect(file);
         } else {
-          toast.error("Please select a valid image file");
+          toast.error('Please select a valid image file');
         }
       }
     },
@@ -81,8 +81,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       <div
         className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
           dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+            : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -129,7 +129,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                Drop your image here, or{" "}
+                Drop your image here, or{' '}
                 <span className="text-blue-600 dark:text-blue-400">browse</span>
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -145,10 +145,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
 const ImageToBase64: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [base64Output, setBase64Output] = useState("");
-  const [imgTagOutput, setImgTagOutput] = useState("");
-  const [cssOutput, setCssOutput] = useState("");
-  const [error, setError] = useState("");
+  const [base64Output, setBase64Output] = useState('');
+  const [imgTagOutput, setImgTagOutput] = useState('');
+  const [cssOutput, setCssOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -160,7 +160,7 @@ const ImageToBase64: React.FC = () => {
   }, []);
 
   const handleFileSelect = useCallback((file: File) => {
-    setError("");
+    setError('');
     setSelectedFile(file);
 
     const reader = new FileReader();
@@ -169,31 +169,31 @@ const ImageToBase64: React.FC = () => {
       setBase64Output(result);
       setImgTagOutput(`<img src="${result}" alt="Base64 Image" />`);
       setCssOutput(`background-image: url(${result});`);
-      toast.success("Image converted to Base64 successfully!");
+      toast.success('Image converted to Base64 successfully!');
     };
     reader.onerror = () => {
-      setError("Failed to read the image file");
-      toast.error("Failed to convert image");
+      setError('Failed to read the image file');
+      toast.error('Failed to convert image');
     };
     reader.readAsDataURL(file);
   }, []);
 
   const handleClear = () => {
     setSelectedFile(null);
-    setBase64Output("");
-    setImgTagOutput("");
-    setCssOutput("");
-    setError("");
+    setBase64Output('');
+    setImgTagOutput('');
+    setCssOutput('');
+    setError('');
   };
 
   const truncateOutput = (text: string, maxLength: number = 100): string => {
     if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
+    return text.substring(0, maxLength) + '...';
   };
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead

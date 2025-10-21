@@ -1,9 +1,9 @@
 ---
-title: "Wget - Download Files via Command Line | Online Free DevTools by Hexmos"
+title: 'Wget - Download Files via Command Line | Online Free DevTools by Hexmos'
 name: wget
-path: "/freedevtools/tldr/windows/wget/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/wget/"
-description: "Download files easily with Wget. Retrieve web content using the command line. Access web servers, automate downloads, and mirror websites. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/wget/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/wget/'
+description: 'Download files easily with Wget. Retrieve web content using the command line. Access web servers, automate downloads, and mirror websites. Free online tool, no registration required.'
 category: windows
 keywords:
   - command line download
@@ -22,8 +22,8 @@ features:
   - Mirror entire websites recursively
   - Support HTTP and HTTPS protocols
   - Resume interrupted downloads
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wget

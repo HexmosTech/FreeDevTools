@@ -1,29 +1,29 @@
 ---
-title: "Gprof Profiler - Analyze Program Performance | Online Free DevTools by Hexmos"
+title: 'Gprof Profiler - Analyze Program Performance | Online Free DevTools by Hexmos'
 name: gprof
-path: "/freedevtools/tldr/common/gprof/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gprof/"
-description: "Analyze program performance with Gprof Profiler. Profile function executions and optimize your code for better efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gprof/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gprof/'
+description: 'Analyze program performance with Gprof Profiler. Profile function executions and optimize your code for better efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- program profiler
-- function profiler
-- gprof profiler
-- c++ profiler
-- code performance analysis
-- linux profiler
-- gnu profiler
-- application performance
-- performance optimization
-- execution profiler
+  - program profiler
+  - function profiler
+  - gprof profiler
+  - c++ profiler
+  - code performance analysis
+  - linux profiler
+  - gnu profiler
+  - application performance
+  - performance optimization
+  - execution profiler
 features:
-- Profile function execution times
-- Generate program call graphs
-- Identify performance bottlenecks
-- Analyze program runtime behavior
-- Suppress profile field descriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Profile function execution times
+  - Generate program call graphs
+  - Identify performance bottlenecks
+  - Analyze program runtime behavior
+  - Suppress profile field descriptions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gprof

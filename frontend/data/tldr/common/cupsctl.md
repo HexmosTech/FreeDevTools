@@ -1,29 +1,29 @@
 ---
-title: "CUPS Control - Manage Printing System Configuration | Online Free DevTools by Hexmos"
+title: 'CUPS Control - Manage Printing System Configuration | Online Free DevTools by Hexmos'
 name: cupsctl
-path: "/freedevtools/tldr/common/cupsctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cupsctl/"
-description: "Manage CUPS printing system configuration with CUPS Control. Configure printer settings and manage server options efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cupsctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cupsctl/'
+description: 'Manage CUPS printing system configuration with CUPS Control. Configure printer settings and manage server options efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- CUPS configuration
-- printer configuration tool
-- print server settings
-- cupsctl command
-- CUPS administration
-- Linux printer configuration
-- macOS printer configuration
-- common printing system
-- CUPS server control
-- print management command
+  - CUPS configuration
+  - printer configuration tool
+  - print server settings
+  - cupsctl command
+  - CUPS administration
+  - Linux printer configuration
+  - macOS printer configuration
+  - common printing system
+  - CUPS server control
+  - print management command
 features:
-- Display current CUPS configuration values
-- Configure CUPS server options remotely
-- Enable or disable encryption for CUPS connections
-- Control debug logging for CUPS
-- Manage remote administration settings for CUPS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current CUPS configuration values
+  - Configure CUPS server options remotely
+  - Enable or disable encryption for CUPS connections
+  - Control debug logging for CUPS
+  - Manage remote administration settings for CUPS
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cupsctl

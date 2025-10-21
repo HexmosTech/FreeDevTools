@@ -1,9 +1,9 @@
 ---
-title: "PVDisplay - Display LVM Physical Volumes | Online Free DevTools by Hexmos"
+title: 'PVDisplay - Display LVM Physical Volumes | Online Free DevTools by Hexmos'
 name: pvdisplay
-path: "/freedevtools/tldr/linux/pvdisplay/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pvdisplay/"
-description: "Display LVM physical volumes with pvdisplay. Manage and inspect physical volumes in Linux environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pvdisplay/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pvdisplay/'
+description: 'Display LVM physical volumes with pvdisplay. Manage and inspect physical volumes in Linux environments. Free online tool, no registration required.'
 category: linux
 keywords:
   - lvm physical volume
@@ -22,8 +22,8 @@ features:
   - Report on physical volume metadata.
   - Identify the volume group a PV belongs to.
   - Inspect physical volume allocation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pvdisplay

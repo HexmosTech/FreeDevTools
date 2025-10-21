@@ -1,9 +1,9 @@
 ---
-title: "Proxmox VM Wait - Control VM Shutdown | Online Free DevTools by Hexmos"
+title: 'Proxmox VM Wait - Control VM Shutdown | Online Free DevTools by Hexmos'
 name: qm-wait
-path: "/freedevtools/tldr/linux/qm-wait/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-wait/"
-description: "Control Proxmox virtual machine shutdown with qm wait.  Monitor VM status and manage shutdown processes efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-wait/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-wait/'
+description: 'Control Proxmox virtual machine shutdown with qm wait.  Monitor VM status and manage shutdown processes efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - proxmox vm wait
@@ -22,8 +22,8 @@ features:
   - Can be combined with a shutdown command for automated process.
   - Provides command-line control over VM shutdown.
   - Monitors VM status until shutdown is complete.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm wait

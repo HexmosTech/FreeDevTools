@@ -1,29 +1,29 @@
 ---
-title: "Bundle JavaScript - Create Web Bundles with Webpack | Online Free DevTools by Hexmos"
+title: 'Bundle JavaScript - Create Web Bundles with Webpack | Online Free DevTools by Hexmos'
 name: webpack
-path: "/freedevtools/tldr/common/webpack/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/webpack/"
-description: "Bundle JavaScript with Webpack for optimized web applications. Minify, transpile, and manage dependencies using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/webpack/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/webpack/'
+description: 'Bundle JavaScript with Webpack for optimized web applications. Minify, transpile, and manage dependencies using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript bundler
-- webpack bundle creation
-- web project packaging
-- javascript module loader
-- css loader webpack
-- dependency management
-- javascript minification
-- front end build tool
-- web application bundling
-- webpack configuration
+  - javascript bundler
+  - webpack bundle creation
+  - web project packaging
+  - javascript module loader
+  - css loader webpack
+  - dependency management
+  - javascript minification
+  - front end build tool
+  - web application bundling
+  - webpack configuration
 features:
-- Bundle JavaScript and other assets into a single file
-- Load CSS files directly from JavaScript files
-- Use a configuration file for advanced customization
-- Automatically recompile on project file changes
-- Manage dependencies and create optimized bundles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Bundle JavaScript and other assets into a single file
+  - Load CSS files directly from JavaScript files
+  - Use a configuration file for advanced customization
+  - Automatically recompile on project file changes
+  - Manage dependencies and create optimized bundles
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # webpack

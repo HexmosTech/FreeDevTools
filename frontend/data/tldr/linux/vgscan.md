@@ -1,29 +1,29 @@
 ---
-title: "VGScan - Scan Linux Volume Groups | Online Free DevTools by Hexmos"
+title: 'VGScan - Scan Linux Volume Groups | Online Free DevTools by Hexmos'
 name: vgscan
-path: "/freedevtools/tldr/linux/vgscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/vgscan/"
-description: "Scan Linux volume groups with VGScan. Discover LVM block devices and activate volume groups with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/vgscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/vgscan/'
+description: 'Scan Linux volume groups with VGScan. Discover LVM block devices and activate volume groups with ease. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux volume group scan
-- lvm volume scan
-- vgscan linux command
-- linux lvm management
-- lvm logical volume scan
-- vgscan block device discovery
-- linux volume management tool
-- lvm volume activation
-- vgscan command line utility
-- linux disk management
+  - linux volume group scan
+  - lvm volume scan
+  - vgscan linux command
+  - linux lvm management
+  - lvm logical volume scan
+  - vgscan block device discovery
+  - linux volume management tool
+  - lvm volume activation
+  - vgscan command line utility
+  - linux disk management
 features:
-- Scan for volume groups on LVM block devices
-- Identify and report found volume groups
-- Create special files in /dev to access logical volumes
-- Activate volume groups for immediate use
-- Automate LVM volume discovery on Linux systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan for volume groups on LVM block devices
+  - Identify and report found volume groups
+  - Create special files in /dev to access logical volumes
+  - Activate volume groups for immediate use
+  - Automate LVM volume discovery on Linux systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vgscan

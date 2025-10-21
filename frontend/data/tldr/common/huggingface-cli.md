@@ -1,29 +1,29 @@
 ---
-title: "Control Hugging Face Hub - Manage Models and Data | Online Free DevTools by Hexmos"
+title: 'Control Hugging Face Hub - Manage Models and Data | Online Free DevTools by Hexmos'
 name: huggingface-cli
-path: "/freedevtools/tldr/common/huggingface-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/huggingface-cli/"
-description: "Control Hugging Face Hub easily with huggingface-cli. Manage models, datasets, and login credentials effortlessly using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/huggingface-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/huggingface-cli/'
+description: 'Control Hugging Face Hub easily with huggingface-cli. Manage models, datasets, and login credentials effortlessly using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Hugging Face Hub control
-- Hugging Face command line
-- Hugging Face model manager
-- Hugging Face dataset manager
-- Hugging Face repository manager
-- Hugging Face cache management
-- Hugging Face CLI login
-- Hugging Face CLI download
-- Hugging Face CLI upload
-- Hugging Face environment variables
+  - Hugging Face Hub control
+  - Hugging Face command line
+  - Hugging Face model manager
+  - Hugging Face dataset manager
+  - Hugging Face repository manager
+  - Hugging Face cache management
+  - Hugging Face CLI login
+  - Hugging Face CLI download
+  - Hugging Face CLI upload
+  - Hugging Face environment variables
 features:
-- Login and manage Hugging Face Hub accounts.
-- Download models and datasets from repositories.
-- Upload files and directories to Hugging Face Hub.
-- Scan and delete the Hugging Face cache.
-- Print environment information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Login and manage Hugging Face Hub accounts.
+  - Download models and datasets from repositories.
+  - Upload files and directories to Hugging Face Hub.
+  - Scan and delete the Hugging Face cache.
+  - Print environment information.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # huggingface-cli

@@ -1,9 +1,9 @@
 ---
-title: "Unzip Files - Decompress Data with Lrunzip | Online Free DevTools by Hexmos"
+title: 'Unzip Files - Decompress Data with Lrunzip | Online Free DevTools by Hexmos'
 name: lrunzip
-path: "/freedevtools/tldr/linux/lrunzip/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lrunzip/"
-description: "Decompress files with Lrunzip, an alias for lrzip. Easily extract compressed archives using command-line tools on various platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lrunzip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lrunzip/'
+description: 'Decompress files with Lrunzip, an alias for lrzip. Easily extract compressed archives using command-line tools on various platforms. Free online tool, no registration required.'
 category: linux
 keywords:
   - compressed file decompression
@@ -22,8 +22,8 @@ features:
   - Execute decompression via command line
   - Utilize lrzip functionality through alias
   - Access original lrzip documentation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lrunzip

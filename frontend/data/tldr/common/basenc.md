@@ -1,29 +1,29 @@
 ---
-title: "Encode/Decode Base - Convert Files with basenc | Online Free DevTools by Hexmos"
+title: 'Encode/Decode Base - Convert Files with basenc | Online Free DevTools by Hexmos'
 name: basenc
-path: "/freedevtools/tldr/common/basenc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/basenc/"
-description: "Convert files and standard input with basenc. Easily encode to base32 or base64 formats or decode them back. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/basenc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/basenc/'
+description: 'Convert files and standard input with basenc. Easily encode to base32 or base64 formats or decode them back. Free online tool, no registration required.'
 category: common
 keywords:
-- base64 encoder
-- base64 decoder
-- base32 encoder
-- base32 decoder
-- file encoder
-- file decoder
-- stream encoder
-- stream decoder
-- linux basenc
-- basenc command
+  - base64 encoder
+  - base64 decoder
+  - base32 encoder
+  - base32 decoder
+  - file encoder
+  - file decoder
+  - stream encoder
+  - stream decoder
+  - linux basenc
+  - basenc command
 features:
-- Encode files to base64.
-- Decode base64 encoded files.
-- Encode standard input to base32.
-- Decode base32 encoded standard input.
-- Control output column width during encoding.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encode files to base64.
+  - Decode base64 encoded files.
+  - Encode standard input to base32.
+  - Decode base32 encoded standard input.
+  - Control output column width during encoding.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # basenc

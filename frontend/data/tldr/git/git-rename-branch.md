@@ -1,29 +1,29 @@
 ---
-title: "Git Rename Branch - Change Branch Names Easily | Online Free DevTools by Hexmos"
+title: 'Git Rename Branch - Change Branch Names Easily | Online Free DevTools by Hexmos'
 name: git-rename-branch
-path: "/freedevtools/tldr/git/git-rename-branch/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-rename-branch/"
-description: "Rename Git branch names easily with git-rename-branch. Update local and remote branches, manage your repository efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-rename-branch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-rename-branch/'
+description: 'Rename Git branch names easily with git-rename-branch. Update local and remote branches, manage your repository efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git rename branch
-- rename git branch name
-- git branch manager
-- git branch rename command
-- git change branch name
-- git rename local branch
-- git rename remote branch
-- git branch management
-- git branching workflow
-- git command line tool
+  - git rename branch
+  - rename git branch name
+  - git branch manager
+  - git branch rename command
+  - git change branch name
+  - git rename local branch
+  - git rename remote branch
+  - git branch management
+  - git branching workflow
+  - git command line tool
 features:
-- Rename the current Git branch
-- Rename a specific Git branch
-- Update local branch name
-- Seamless branch name transition
-- Simplify Git branch management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rename the current Git branch
+  - Rename a specific Git branch
+  - Update local branch name
+  - Seamless branch name transition
+  - Simplify Git branch management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git rename-branch

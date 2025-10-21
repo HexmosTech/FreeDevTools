@@ -1,29 +1,29 @@
 ---
-title: "Syncthing - Synchronize Folders Bidirectionally | Online Free DevTools by Hexmos"
+title: 'Syncthing - Synchronize Folders Bidirectionally | Online Free DevTools by Hexmos'
 name: syncthing
-path: "/freedevtools/tldr/common/syncthing/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/syncthing/"
-description: "Synchronize folders with Syncthing, a continuous, bidirectional, decentralised file synchronization tool. Securely share files across devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/syncthing/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/syncthing/'
+description: 'Synchronize folders with Syncthing, a continuous, bidirectional, decentralised file synchronization tool. Securely share files across devices. Free online tool, no registration required.'
 category: common
 keywords:
-- decentralised file sync
-- syncthing folder synchronization
-- cross-platform file sharing
-- bidirectional data syncing
-- continuous file backup
-- secure file transfer
-- syncthing linux
-- syncthing windows
-- syncthing macos
-- real-time folder synchronization
+  - decentralised file sync
+  - syncthing folder synchronization
+  - cross-platform file sharing
+  - bidirectional data syncing
+  - continuous file backup
+  - secure file transfer
+  - syncthing linux
+  - syncthing windows
+  - syncthing macos
+  - real-time folder synchronization
 features:
-- Synchronize folders between multiple devices bidirectionally
-- Configure home directory for syncthing process
-- Pause and resume device synchronization
-- Adjust the web interface listening address
-- Set the log level for debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize folders between multiple devices bidirectionally
+  - Configure home directory for syncthing process
+  - Pause and resume device synchronization
+  - Adjust the web interface listening address
+  - Set the log level for debugging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # syncthing

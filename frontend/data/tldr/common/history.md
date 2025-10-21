@@ -1,29 +1,29 @@
 ---
-title: "Manage Command History - Control Bash History | Online Free DevTools by Hexmos"
+title: 'Manage Command History - Control Bash History | Online Free DevTools by Hexmos'
 name: history
-path: "/freedevtools/tldr/common/history/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/history/"
-description: "Manage command-line history with the Bash History tool. Control, clear, and manipulate your shell history easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/history/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/history/'
+description: 'Manage command-line history with the Bash History tool. Control, clear, and manipulate your shell history easily. Free online tool, no registration required.'
 category: common
 keywords:
-- bash history manager
-- command line history
-- shell history manipulation
-- linux history tool
-- bash history control
-- zsh history tool
-- history command
-- history timestamp
-- history delete
-- history overwrite
+  - bash history manager
+  - command line history
+  - shell history manipulation
+  - linux history tool
+  - bash history control
+  - zsh history tool
+  - history command
+  - history timestamp
+  - history delete
+  - history overwrite
 features:
-- Display command history with line numbers
-- Clear command history
-- Overwrite history file with current session
-- Delete specific history entries by offset
-- Add commands to history without executing them
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display command history with line numbers
+  - Clear command history
+  - Overwrite history file with current session
+  - Delete specific history entries by offset
+  - Add commands to history without executing them
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # history

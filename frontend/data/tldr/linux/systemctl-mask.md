@@ -1,29 +1,29 @@
 ---
-title: "Systemctl Mask - Disable Units on Linux | Online Free DevTools by Hexmos"
+title: 'Systemctl Mask - Disable Units on Linux | Online Free DevTools by Hexmos'
 name: systemctl-mask
-path: "/freedevtools/tldr/linux/systemctl-mask/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-mask/"
-description: "Disable units with systemctl mask on Linux. Prevent services from starting and ensure system stability with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemctl-mask/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemctl-mask/'
+description: 'Disable units with systemctl mask on Linux. Prevent services from starting and ensure system stability with this powerful command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
-- systemctl mask linux
-- linux systemd mask unit
-- systemd disable service
-- linux service management
-- systemctl prevent start
-- linux systemd service control
-- systemd mask user service
-- systemctl mask command
-- linux systemd troubleshooting
-- systemctl unit management
+  - systemctl mask linux
+  - linux systemd mask unit
+  - systemd disable service
+  - linux service management
+  - systemctl prevent start
+  - linux systemd service control
+  - systemd mask user service
+  - systemctl mask command
+  - linux systemd troubleshooting
+  - systemctl unit management
 features:
-- Prevent systemd units from starting
-- Link units to /dev/null
-- Mask services, sockets, and other unit types
-- Disable user services using --user flag
-- Ensure service shutdown during masking with --now option
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Prevent systemd units from starting
+  - Link units to /dev/null
+  - Mask services, sockets, and other unit types
+  - Disable user services using --user flag
+  - Ensure service shutdown during masking with --now option
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemctl mask

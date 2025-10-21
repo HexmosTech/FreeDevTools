@@ -1,9 +1,9 @@
 ---
-title: "W Command - Show Logged-in Users | Online Free DevTools by Hexmos"
+title: 'W Command - Show Logged-in Users | Online Free DevTools by Hexmos'
 name: w
-path: "/freedevtools/tldr/osx/w/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/w/"
-description: "Display logged-in users with W command. Analyze user activity and system load, showing login time, idle time, and current process details. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/w/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/w/'
+description: 'Display logged-in users with W command. Analyze user activity and system load, showing login time, idle time, and current process details. Free online tool, no registration required.'
 category: osx
 keywords:
   - logged-in users information
@@ -22,8 +22,8 @@ features:
   - Identify current process being executed
   - Report TTY session information
   - Provide system load statistics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # w

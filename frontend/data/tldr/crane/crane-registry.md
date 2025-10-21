@@ -1,29 +1,29 @@
 ---
-title: "Create Crane Registry - Serve Container Images | Online Free DevTools by Hexmos"
+title: 'Create Crane Registry - Serve Container Images | Online Free DevTools by Hexmos'
 name: crane-registry
-path: "/freedevtools/tldr/crane/crane-registry/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-registry/"
-description: "Create container registries with Crane Registry. Serve container images, store blobs on disk, and manage image layers. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-registry/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-registry/'
+description: 'Create container registries with Crane Registry. Serve container images, store blobs on disk, and manage image layers. Free online tool, no registration required.'
 category: common
 keywords:
-- crane registry
-- container registry
-- serve container images
-- docker registry
-- oci registry
-- image storage
-- container image management
-- crane command
-- go-containerregistry
-- registry server
+  - crane registry
+  - container registry
+  - serve container images
+  - docker registry
+  - oci registry
+  - image storage
+  - container image management
+  - crane command
+  - go-containerregistry
+  - registry server
 features:
-- Serve a container registry on a specified port.
-- Store container image blobs in memory.
-- Store container image blobs on disk.
-- Accept container image pushes.
-- Allow container image pulls.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve a container registry on a specified port.
+  - Store container image blobs in memory.
+  - Store container image blobs on disk.
+  - Accept container image pushes.
+  - Allow container image pulls.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane registry

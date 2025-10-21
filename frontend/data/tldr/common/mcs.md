@@ -1,29 +1,29 @@
 ---
-title: "Compile C# Code - Control Compilation with mcs | Online Free DevTools by Hexmos"
+title: 'Compile C# Code - Control Compilation with mcs | Online Free DevTools by Hexmos'
 name: mcs
-path: "/freedevtools/tldr/common/mcs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mcs/"
-description: "Compile C# code quickly with mcs, the Mono C# Compiler. Generate executables, libraries, or modules with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mcs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mcs/'
+description: 'Compile C# code quickly with mcs, the Mono C# Compiler. Generate executables, libraries, or modules with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- csharp compiler
-- csharp code compiler
-- mono csharp compiler
-- mcs compiler
-- dotnet compiler
-- executable generator
-- library generator
-- module generator
-- linux csharp compiler
-- windows csharp compiler
+  - csharp compiler
+  - csharp code compiler
+  - mono csharp compiler
+  - mcs compiler
+  - dotnet compiler
+  - executable generator
+  - library generator
+  - module generator
+  - linux csharp compiler
+  - windows csharp compiler
 features:
-- Compile multiple C# source files simultaneously
-- Specify the output file name for the compiled program
-- Target different output types (exe, winexe, library, module)
-- Generate .NET executables from C# source code
-- Control the compilation process through command-line options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile multiple C# source files simultaneously
+  - Specify the output file name for the compiled program
+  - Target different output types (exe, winexe, library, module)
+  - Generate .NET executables from C# source code
+  - Control the compilation process through command-line options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mcs

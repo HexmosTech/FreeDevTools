@@ -1,33 +1,33 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import DiffCheckerSkeleton from "./_DiffCheckerSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import DiffCheckerSkeleton from './_DiffCheckerSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Diff algorithm options
 const DIFF_MODES = {
-  chars: { name: "Character", description: "Compare character by character" },
-  words: { name: "Word", description: "Compare word by word" },
-  lines: { name: "Line", description: "Compare line by line" },
-  sentences: { name: "Sentence", description: "Compare sentence by sentence" },
+  chars: { name: 'Character', description: 'Compare character by character' },
+  words: { name: 'Word', description: 'Compare word by word' },
+  lines: { name: 'Line', description: 'Compare line by line' },
+  sentences: { name: 'Sentence', description: 'Compare sentence by sentence' },
 } as const;
 
 // Diff change interface
@@ -51,10 +51,10 @@ interface DiffResult {
 }
 
 const DiffChecker: React.FC = () => {
-  const [leftText, setLeftText] = useState("");
-  const [rightText, setRightText] = useState("");
+  const [leftText, setLeftText] = useState('');
+  const [rightText, setRightText] = useState('');
   const [diffResult, setDiffResult] = useState<DiffResult | null>(null);
-  const [diffMode, setDiffMode] = useState<keyof typeof DIFF_MODES>("lines");
+  const [diffMode, setDiffMode] = useState<keyof typeof DIFF_MODES>('lines');
   const [ignoreCase, setIgnoreCase] = useState(false);
   const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -72,7 +72,7 @@ const DiffChecker: React.FC = () => {
     async (oldText: string, newText: string) => {
       try {
         const { diffChars, diffWords, diffLines, diffSentences, createPatch } =
-          await import("diff");
+          await import('diff');
 
         let changes: DiffChange[] = [];
 
@@ -86,22 +86,22 @@ const DiffChecker: React.FC = () => {
         }
 
         if (ignoreWhitespace) {
-          processedOldText = processedOldText.replace(/\s+/g, " ").trim();
-          processedNewText = processedNewText.replace(/\s+/g, " ").trim();
+          processedOldText = processedOldText.replace(/\s+/g, ' ').trim();
+          processedNewText = processedNewText.replace(/\s+/g, ' ').trim();
         }
 
         // Select diff algorithm based on mode
         switch (diffMode) {
-          case "chars":
+          case 'chars':
             changes = diffChars(processedOldText, processedNewText);
             break;
-          case "words":
+          case 'words':
             changes = diffWords(processedOldText, processedNewText);
             break;
-          case "lines":
+          case 'lines':
             changes = diffLines(processedOldText, processedNewText);
             break;
-          case "sentences":
+          case 'sentences':
             changes = diffSentences(processedOldText, processedNewText);
             break;
         }
@@ -120,11 +120,11 @@ const DiffChecker: React.FC = () => {
 
         // Generate unified diff
         const unified = createPatch(
-          "comparison",
+          'comparison',
           oldText,
           newText,
-          "Original",
-          "Modified",
+          'Original',
+          'Modified',
           {
             context: 3,
           }
@@ -132,8 +132,8 @@ const DiffChecker: React.FC = () => {
 
         setDiffResult({ changes, stats, unified });
       } catch (error) {
-        console.error("Diff calculation failed:", error);
-        toast.error("Failed to calculate differences");
+        console.error('Diff calculation failed:', error);
+        toast.error('Failed to calculate differences');
       }
     },
     [diffMode, ignoreCase, ignoreWhitespace]
@@ -149,10 +149,10 @@ const DiffChecker: React.FC = () => {
   }, [leftText, rightText, performDiff]);
 
   const handleClear = () => {
-    setLeftText("");
-    setRightText("");
+    setLeftText('');
+    setRightText('');
     setDiffResult(null);
-    toast.success("Cleared all content");
+    toast.success('Cleared all content');
   };
 
   const handleSampleText = () => {
@@ -187,7 +187,7 @@ const user = {
 
     setLeftText(sampleLeft);
     setRightText(sampleRight);
-    toast.success("Sample code loaded for comparison");
+    toast.success('Sample code loaded for comparison');
   };
 
   const renderDiffView = () => {
@@ -251,14 +251,14 @@ const user = {
                   key={index}
                   className={`whitespace-pre-wrap ${
                     change.added
-                      ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
                       : change.removed
-                        ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200"
-                        : "text-slate-700 dark:text-slate-300"
-                  } ${change.added || change.removed ? "px-1" : ""}`}
+                        ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+                        : 'text-slate-700 dark:text-slate-300'
+                  } ${change.added || change.removed ? 'px-1' : ''}`}
                 >
-                  {change.added && "+ "}
-                  {change.removed && "- "}
+                  {change.added && '+ '}
+                  {change.removed && '- '}
                   {change.value}
                 </div>
               ))}
@@ -271,7 +271,7 @@ const user = {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -316,8 +316,8 @@ Examples:
                       className="h-80 font-mono text-sm resize-none"
                     />
                     <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Characters: {leftText.length} | Lines:{" "}
-                      {leftText.split("\n").length}
+                      Characters: {leftText.length} | Lines:{' '}
+                      {leftText.split('\n').length}
                     </div>
                   </div>
 
@@ -341,8 +341,8 @@ automatically as you type."
                       className="h-80 font-mono text-sm resize-none"
                     />
                     <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Characters: {rightText.length} | Lines:{" "}
-                      {rightText.split("\n").length}
+                      Characters: {rightText.length} | Lines:{' '}
+                      {rightText.split('\n').length}
                     </div>
                   </div>
                 </div>

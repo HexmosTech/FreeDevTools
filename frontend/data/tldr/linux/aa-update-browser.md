@@ -1,29 +1,29 @@
 ---
-title: "Update AppArmor - Control Browser Profiles | Online Free DevTools by Hexmos"
+title: 'Update AppArmor - Control Browser Profiles | Online Free DevTools by Hexmos'
 name: aa-update-browser
-path: "/freedevtools/tldr/linux/aa-update-browser/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-update-browser/"
-description: "Control AppArmor browser profiles easily with aa-update-browser. Enhance security by managing browser abstractions on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aa-update-browser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aa-update-browser/'
+description: 'Control AppArmor browser profiles easily with aa-update-browser. Enhance security by managing browser abstractions on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- AppArmor profile update
-- Linux security profiles
-- Browser abstraction management
-- aa-update-browser command
-- Linux AppArmor tools
-- Security profile configuration
-- Browser security hardening
-- AppArmor update profiles
-- Linux browser security
-- Profile abstraction management
+  - AppArmor profile update
+  - Linux security profiles
+  - Browser abstraction management
+  - aa-update-browser command
+  - Linux AppArmor tools
+  - Security profile configuration
+  - Browser security hardening
+  - AppArmor update profiles
+  - Linux browser security
+  - Profile abstraction management
 features:
-- Update AppArmor browser profiles
-- List available browser abstractions
-- Dry-run profile updates
-- Remove abstractions from profiles
-- Manage browser security profiles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update AppArmor browser profiles
+  - List available browser abstractions
+  - Dry-run profile updates
+  - Remove abstractions from profiles
+  - Manage browser security profiles
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aa-update-browser

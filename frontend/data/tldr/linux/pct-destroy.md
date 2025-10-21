@@ -1,9 +1,9 @@
 ---
-title: "Destroy Container - PCT Command | Online Free DevTools by Hexmos"
+title: 'Destroy Container - PCT Command | Online Free DevTools by Hexmos'
 name: pct-destroy
-path: "/freedevtools/tldr/linux/pct-destroy/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pct-destroy/"
-description: "Destroy Proxmox containers quickly with the PCT command.  Manage and delete containers efficiently using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pct-destroy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pct-destroy/'
+description: 'Destroy Proxmox containers quickly with the PCT command.  Manage and delete containers efficiently using this powerful command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - container destruction command
@@ -22,8 +22,8 @@ features:
   - Completely remove all traces of a container.
   - Manage Proxmox containers via the command line.
   - Efficiently delete unwanted containers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pct destroy

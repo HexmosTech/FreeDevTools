@@ -1,29 +1,29 @@
 ---
-title: "Rename Files - Control File Names with Command Line | Online Free DevTools by Hexmos"
+title: 'Rename Files - Control File Names with Command Line | Online Free DevTools by Hexmos'
 name: rename
-path: "/freedevtools/tldr/common/rename/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rename/"
-description: "Control file names with Rename Files command. Easily batch rename files using regex patterns on Linux and macOS systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rename/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rename/'
+description: 'Control file names with Rename Files command. Easily batch rename files using regex patterns on Linux and macOS systems. Free online tool, no registration required.'
 category: common
 keywords:
-- file rename command
-- batch file rename
-- regex file rename
-- linux rename files
-- macOS rename files
-- command line rename
-- perl rename files
-- file name changer
-- bulk rename utility
-- rename multiple files
+  - file rename command
+  - batch file rename
+  - regex file rename
+  - linux rename files
+  - macOS rename files
+  - command line rename
+  - perl rename files
+  - file name changer
+  - bulk rename utility
+  - rename multiple files
 features:
-- Rename files using regular expressions
-- Perform dry-run to preview changes before renaming
-- Change file extensions in bulk
-- Convert filenames to lowercase or uppercase
-- Replace spaces with underscores in filenames
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rename files using regular expressions
+  - Perform dry-run to preview changes before renaming
+  - Change file extensions in bulk
+  - Convert filenames to lowercase or uppercase
+  - Replace spaces with underscores in filenames
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rename

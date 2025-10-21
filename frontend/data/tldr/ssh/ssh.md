@@ -1,29 +1,29 @@
 ---
-title: "SSH Command - Securely Connect to Remote Servers | Online Free DevTools by Hexmos"
+title: 'SSH Command - Securely Connect to Remote Servers | Online Free DevTools by Hexmos'
 name: ssh
-path: "/freedevtools/tldr/ssh/ssh/"
-canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh/"
-description: "Securely connect to remote servers with SSH Command. Use advanced options like port forwarding and jumping to manage connections. Free online tool, no registration required."
+path: '/freedevtools/tldr/ssh/ssh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ssh/ssh/'
+description: 'Securely connect to remote servers with SSH Command. Use advanced options like port forwarding and jumping to manage connections. Free online tool, no registration required.'
 category: common
 keywords:
-- ssh remote access
-- secure shell command
-- ssh tunneling
-- ssh port forwarding
-- linux ssh client
-- macos ssh client
-- ssh jumphost
-- ssh key authentication
-- ssh command line
-- secure remote connection
+  - ssh remote access
+  - secure shell command
+  - ssh tunneling
+  - ssh port forwarding
+  - linux ssh client
+  - macos ssh client
+  - ssh jumphost
+  - ssh key authentication
+  - ssh command line
+  - secure remote connection
 features:
-- Establish secure connections to remote systems.
-- Forward ports for secure tunneling.
-- Connect through jump hosts to access internal servers.
-- Authenticate with private keys for enhanced security.
-- Execute commands remotely with TTY allocation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Establish secure connections to remote systems.
+  - Forward ports for secure tunneling.
+  - Connect through jump hosts to access internal servers.
+  - Authenticate with private keys for enhanced security.
+  - Execute commands remotely with TTY allocation.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ssh

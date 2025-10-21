@@ -1,9 +1,9 @@
 ---
-title: "Portablectl - Manage Portable Service Images | Online Free DevTools by Hexmos"
+title: 'Portablectl - Manage Portable Service Images | Online Free DevTools by Hexmos'
 name: portablectl
-path: "/freedevtools/tldr/linux/portablectl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/portablectl/"
-description: "Manage portable service images with portablectl, a systemd utility for deploying services on Linux. Simplify container deployment. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/portablectl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/portablectl/'
+description: 'Manage portable service images with portablectl, a systemd utility for deploying services on Linux. Simplify container deployment. Free online tool, no registration required.'
 category: linux
 keywords:
   - portable service image manager
@@ -22,8 +22,8 @@ features:
   - Detach portable service images from a host system
   - Inspect details of portable service images
   - Check if a portable service image is attached
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # portablectl

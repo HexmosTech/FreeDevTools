@@ -1,9 +1,9 @@
 ---
-title: "Check Updates - List Pending Updates in Linux | Online Free DevTools by Hexmos"
+title: 'Check Updates - List Pending Updates in Linux | Online Free DevTools by Hexmos'
 name: checkupdates
-path: "/freedevtools/tldr/linux/checkupdates/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/checkupdates/"
-description: "List pending updates with checkupdates, a command-line tool for Arch Linux. Monitor package updates without syncing, and manage cached packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/checkupdates/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/checkupdates/'
+description: 'List pending updates with checkupdates, a command-line tool for Arch Linux. Monitor package updates without syncing, and manage cached packages. Free online tool, no registration required.'
 category: linux
 keywords:
   - arch linux update checker
@@ -22,8 +22,8 @@ features:
   - Download package updates to the pacman cache.
   - Utilize a specific pacman database for updates.
   - Display help information for the command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # checkupdates

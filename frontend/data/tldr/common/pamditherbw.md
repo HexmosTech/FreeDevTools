@@ -1,29 +1,29 @@
 ---
-title: "Dither Greyscale Image - Convert to Black & White | Online Free DevTools by Hexmos"
+title: 'Dither Greyscale Image - Convert to Black & White | Online Free DevTools by Hexmos'
 name: pamditherbw
-path: "/freedevtools/tldr/common/pamditherbw/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamditherbw/"
-description: "Dither greyscale images with pamditherbw, converting them to black and white patterns. Reduce image size and optimize visual representation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamditherbw/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamditherbw/'
+description: 'Dither greyscale images with pamditherbw, converting them to black and white patterns. Reduce image size and optimize visual representation. Free online tool, no registration required.'
 category: common
 keywords:
-- PGM Image Dithering
-- Greyscale to Black and White Conversion
-- Image Quantization
-- Black and White Pattern Generation
-- PAM Image Processing
-- Netpbm Image Tools
-- Command Line Image Manipulation
-- Image Dithering Algorithms
-- Floyd-Steinberg Dithering
-- Atkinson Dithering
+  - PGM Image Dithering
+  - Greyscale to Black and White Conversion
+  - Image Quantization
+  - Black and White Pattern Generation
+  - PAM Image Processing
+  - Netpbm Image Tools
+  - Command Line Image Manipulation
+  - Image Dithering Algorithms
+  - Floyd-Steinberg Dithering
+  - Atkinson Dithering
 features:
-- Apply dithering to greyscale images
-- Convert images to black and white pixel patterns
-- Use various quantization methods like Floyd-Steinberg and Atkinson
-- Specify random seed for dithering algorithms
-- Adjust thresholding values for quantization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Apply dithering to greyscale images
+  - Convert images to black and white pixel patterns
+  - Use various quantization methods like Floyd-Steinberg and Atkinson
+  - Specify random seed for dithering algorithms
+  - Adjust thresholding values for quantization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamditherbw

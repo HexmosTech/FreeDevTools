@@ -1,29 +1,29 @@
 ---
-title: "Manage CouchDB - Control Database Server | Online Free DevTools by Hexmos"
+title: 'Manage CouchDB - Control Database Server | Online Free DevTools by Hexmos'
 name: couchdb
-path: "/freedevtools/tldr/common/couchdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/couchdb/"
-description: "Manage your CouchDB database server with CouchDB command-line tool. Start, stop, and configure the server easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/couchdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/couchdb/'
+description: 'Manage your CouchDB database server with CouchDB command-line tool. Start, stop, and configure the server easily. Free online tool, no registration required.'
 category: common
 keywords:
-- CouchDB manager
-- Database server control
-- CouchDB command-line interface
-- NoSQL database administration
-- CouchDB background process
-- CouchDB interactive shell
-- Apache CouchDB tool
-- common platform CouchDB
-- command-line CouchDB
-- database management tool
+  - CouchDB manager
+  - Database server control
+  - CouchDB command-line interface
+  - NoSQL database administration
+  - CouchDB background process
+  - CouchDB interactive shell
+  - Apache CouchDB tool
+  - common platform CouchDB
+  - command-line CouchDB
+  - database management tool
 features:
-- Start the CouchDB server
-- Run CouchDB in interactive shell
-- Start CouchDB as a background process
-- Stop the CouchDB background process
-- Shutdown the CouchDB server completely
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the CouchDB server
+  - Run CouchDB in interactive shell
+  - Start CouchDB as a background process
+  - Stop the CouchDB background process
+  - Shutdown the CouchDB server completely
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # couchdb

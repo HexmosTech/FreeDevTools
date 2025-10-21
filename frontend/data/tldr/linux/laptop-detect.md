@@ -1,9 +1,9 @@
 ---
-title: "Detect Laptop - Identify Device Type | Online Free DevTools by Hexmos"
+title: 'Detect Laptop - Identify Device Type | Online Free DevTools by Hexmos'
 name: laptop-detect
-path: "/freedevtools/tldr/linux/laptop-detect/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/laptop-detect/"
-description: "Identify if a system is a laptop or desktop with laptop-detect.  Determine device type quickly and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/laptop-detect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/laptop-detect/'
+description: 'Identify if a system is a laptop or desktop with laptop-detect.  Determine device type quickly and easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - laptop detection command
@@ -22,8 +22,8 @@ features:
   - Provides verbose output specifying the detected device type.
   - Offers a simple command-line interface.
   - Displays the version number of the script.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # laptop-detect

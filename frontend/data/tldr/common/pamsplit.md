@@ -1,29 +1,29 @@
 ---
-title: "Split Netpbm Images - Divide PAM Files | Online Free DevTools by Hexmos"
+title: 'Split Netpbm Images - Divide PAM Files | Online Free DevTools by Hexmos'
 name: pamsplit
-path: "/freedevtools/tldr/common/pamsplit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamsplit/"
-description: "Split Netpbm images with pamsplit. Divide multi-image PAM files into individual images for easier manipulation and storage. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamsplit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamsplit/'
+description: 'Split Netpbm images with pamsplit. Divide multi-image PAM files into individual images for easier manipulation and storage. Free online tool, no registration required.'
 category: common
 keywords:
-- Netpbm image splitter
-- PAM file divider
-- multi-image extractor
-- image sequence splitter
-- Netpbm batch processing
-- Linux image utilities
-- command line image processing
-- PAM to individual images
-- image format conversion
-- Netpbm image editing
+  - Netpbm image splitter
+  - PAM file divider
+  - multi-image extractor
+  - image sequence splitter
+  - Netpbm batch processing
+  - Linux image utilities
+  - command line image processing
+  - PAM to individual images
+  - image format conversion
+  - Netpbm image editing
 features:
-- Split multi-image Netpbm files
-- Output individual PAM image files
-- Define a filename pattern for output images
-- Process PAM files from the command line
-- Automate image separation tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Split multi-image Netpbm files
+  - Output individual PAM image files
+  - Define a filename pattern for output images
+  - Process PAM files from the command line
+  - Automate image separation tasks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamsplit

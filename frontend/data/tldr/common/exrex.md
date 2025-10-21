@@ -1,29 +1,29 @@
 ---
-title: "Generate Regex Strings - Exrex | Online Free DevTools by Hexmos"
+title: 'Generate Regex Strings - Exrex | Online Free DevTools by Hexmos'
 name: exrex
-path: "/freedevtools/tldr/common/exrex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/exrex/"
-description: "Generate regular expression strings with Exrex. Create random regex patterns, simplify complex expressions, and count matching string combinations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/exrex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/exrex/'
+description: 'Generate regular expression strings with Exrex. Create random regex patterns, simplify complex expressions, and count matching string combinations. Free online tool, no registration required.'
 category: common
 keywords:
-- regex string generator
-- generate regex pattern
-- regular expression string
-- exrex regex tool
-- command line regex generator
-- simplify regex expressions
-- regex string count
-- linux regex generator
-- macos regex generator
-- terminal regex tool
+  - regex string generator
+  - generate regex pattern
+  - regular expression string
+  - exrex regex tool
+  - command line regex generator
+  - simplify regex expressions
+  - regex string count
+  - linux regex generator
+  - macos regex generator
+  - terminal regex tool
 features:
-- Generate all matching strings for a regular expression.
-- Generate random strings that match a regular expression.
-- Limit the maximum number of strings generated.
-- Join generated strings with a custom delimiter.
-- Count the number of possible matching strings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate all matching strings for a regular expression.
+  - Generate random strings that match a regular expression.
+  - Limit the maximum number of strings generated.
+  - Join generated strings with a custom delimiter.
+  - Count the number of possible matching strings.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exrex

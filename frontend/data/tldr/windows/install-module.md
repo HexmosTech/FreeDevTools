@@ -1,29 +1,29 @@
 ---
-title: "Install Module - Manage PowerShell Modules | Online Free DevTools by Hexmos"
+title: 'Install Module - Manage PowerShell Modules | Online Free DevTools by Hexmos'
 name: install-module
-path: "/freedevtools/tldr/windows/install-module/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/install-module/"
-description: "Install PowerShell modules easily with Install-Module. Manage versions, repositories, and scopes. Simplify module management with this free online tool, no registration required."
+path: '/freedevtools/tldr/windows/install-module/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/install-module/'
+description: 'Install PowerShell modules easily with Install-Module. Manage versions, repositories, and scopes. Simplify module management with this free online tool, no registration required.'
 category: windows
 keywords:
-- powershell module installation
-- powershell get install module
-- powershell module management
-- windows powershell module install
-- powershell module repository
-- powershell module versioning
-- install psmodule windows
-- powershell gallery module
-- psmodule install scope
-- powershell dry run install module
+  - powershell module installation
+  - powershell get install module
+  - powershell module management
+  - windows powershell module install
+  - powershell module repository
+  - powershell module versioning
+  - install psmodule windows
+  - powershell gallery module
+  - psmodule install scope
+  - powershell dry run install module
 features:
-- Install PowerShell modules from various repositories
-- Specify minimum and maximum module versions
-- Install modules for all or current user scope
-- Perform dry runs to preview module installations
-- Install specific module versions for compatibility
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install PowerShell modules from various repositories
+  - Specify minimum and maximum module versions
+  - Install modules for all or current user scope
+  - Perform dry runs to preview module installations
+  - Install specific module versions for compatibility
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Install-Module

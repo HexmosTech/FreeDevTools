@@ -1,29 +1,29 @@
 ---
-title: "Format Text - Printf Command | Online Free DevTools by Hexmos"
+title: 'Format Text - Printf Command | Online Free DevTools by Hexmos'
 name: printf
-path: "/freedevtools/tldr/common/printf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/printf/"
-description: "Format text with Printf, a powerful command-line utility. Control output formatting for strings, numbers, and variables in shell scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/printf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/printf/'
+description: 'Format text with Printf, a powerful command-line utility. Control output formatting for strings, numbers, and variables in shell scripts. Free online tool, no registration required.'
 category: common
 keywords:
-- format text command
-- string formatting linux
-- number formatting shell
-- printf formatting examples
-- linux printf tutorial
-- shell printf formatting
-- printf environment variables
-- bash printf command
-- printf hexadecimal output
-- printf octal conversion
+  - format text command
+  - string formatting linux
+  - number formatting shell
+  - printf formatting examples
+  - linux printf tutorial
+  - shell printf formatting
+  - printf environment variables
+  - bash printf command
+  - printf hexadecimal output
+  - printf octal conversion
 features:
-- Format strings with variable interpolation
-- Print numbers in various formats (decimal, hex, octal)
-- Use escape sequences for special characters and colors
-- Store formatted output in variables
-- Control output using format specifiers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format strings with variable interpolation
+  - Print numbers in various formats (decimal, hex, octal)
+  - Use escape sequences for special characters and colors
+  - Store formatted output in variables
+  - Control output using format specifiers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # printf

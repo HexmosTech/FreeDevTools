@@ -1,29 +1,29 @@
 ---
-title: "Nix Flake - Manage Dependencies with Nix | Online Free DevTools by Hexmos"
+title: 'Nix Flake - Manage Dependencies with Nix | Online Free DevTools by Hexmos'
 name: nix-flake
-path: "/freedevtools/tldr/nix/nix-flake/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-flake/"
-description: "Manage dependencies with Nix Flake. Update inputs, show outputs, and create new flakes. Streamline package management on any system. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-flake/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-flake/'
+description: 'Manage dependencies with Nix Flake. Update inputs, show outputs, and create new flakes. Streamline package management on any system. Free online tool, no registration required.'
 category: common
 keywords:
-- nix flake manager
-- nix dependency management
-- nix package manager
-- nix reproducible builds
-- nix package dependencies
-- linux nix flake
-- macos nix flake
-- nixos package management
-- declarative package management
-- nix flake update
+  - nix flake manager
+  - nix dependency management
+  - nix package manager
+  - nix reproducible builds
+  - nix package dependencies
+  - linux nix flake
+  - macos nix flake
+  - nixos package management
+  - declarative package management
+  - nix flake update
 features:
-- Initialize a new Nix flake from a template
-- Update all flake input dependencies
-- Update a specific flake input
-- Display flake outputs from a repository
-- Provide command-line help for nix flake
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new Nix flake from a template
+  - Update all flake input dependencies
+  - Update a specific flake input
+  - Display flake outputs from a repository
+  - Provide command-line help for nix flake
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix flake

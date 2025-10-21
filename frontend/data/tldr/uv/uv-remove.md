@@ -1,29 +1,29 @@
 ---
-title: "UV - Remove Dependencies | Online Free DevTools by Hexmos"
+title: 'UV - Remove Dependencies | Online Free DevTools by Hexmos'
 name: uv-remove
-path: "/freedevtools/tldr/uv/uv-remove/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-remove/"
-description: "Remove Python dependencies with UV. Manage project dependencies in pyproject.toml, including development and optional groups. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-remove/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-remove/'
+description: 'Remove Python dependencies with UV. Manage project dependencies in pyproject.toml, including development and optional groups. Free online tool, no registration required.'
 category: common
 keywords:
-- uv remove dependency
-- python dependency management
-- pyproject.toml editor
-- uv package remover
-- virtual environment cleaner
-- python package uninstaller
-- uv delete package
-- python dependency tools
-- uv command line interface
-- package group remover
+  - uv remove dependency
+  - python dependency management
+  - pyproject.toml editor
+  - uv package remover
+  - virtual environment cleaner
+  - python package uninstaller
+  - uv delete package
+  - python dependency tools
+  - uv command line interface
+  - package group remover
 features:
-- Remove a single dependency
-- Remove multiple dependencies simultaneously
-- Remove development dependencies
-- Remove dependencies from optional groups
-- Remove dependencies without syncing virtual environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove a single dependency
+  - Remove multiple dependencies simultaneously
+  - Remove development dependencies
+  - Remove dependencies from optional groups
+  - Remove dependencies without syncing virtual environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv remove

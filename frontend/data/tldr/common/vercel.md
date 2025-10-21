@@ -1,29 +1,29 @@
 ---
-title: "Vercel Deploy - Manage Vercel Deployments | Online Free DevTools by Hexmos"
+title: 'Vercel Deploy - Manage Vercel Deployments | Online Free DevTools by Hexmos'
 name: vercel
-path: "/freedevtools/tldr/common/vercel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vercel/"
-description: "Deploy projects with Vercel - Quickly manage Vercel deployments using the command line. Configure environment variables and default regions for deployment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vercel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vercel/'
+description: 'Deploy projects with Vercel - Quickly manage Vercel deployments using the command line. Configure environment variables and default regions for deployment. Free online tool, no registration required.'
 category: common
 keywords:
-- Vercel deployment
-- Vercel CLI
-- Vercel project deployment
-- Vercel environment variables
-- Vercel regions
-- Vercel remove deployment
-- Node.js deployment
-- Serverless deployment
-- Web application deployment
-- Static site deployment
+  - Vercel deployment
+  - Vercel CLI
+  - Vercel project deployment
+  - Vercel environment variables
+  - Vercel regions
+  - Vercel remove deployment
+  - Node.js deployment
+  - Serverless deployment
+  - Web application deployment
+  - Static site deployment
 features:
-- Deploy projects to the Vercel platform.
-- Deploy a specific directory to Vercel.
-- Configure environment variables for deployments.
-- Set default regions for deployments.
-- Remove existing Vercel deployments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy projects to the Vercel platform.
+  - Deploy a specific directory to Vercel.
+  - Configure environment variables for deployments.
+  - Set default regions for deployments.
+  - Remove existing Vercel deployments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vercel

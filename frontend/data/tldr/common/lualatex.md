@@ -1,29 +1,29 @@
 ---
-title: "Compile LaTeX - Create PDFs with LuaLaTeX | Online Free DevTools by Hexmos"
+title: 'Compile LaTeX - Create PDFs with LuaLaTeX | Online Free DevTools by Hexmos'
 name: lualatex
-path: "/freedevtools/tldr/common/lualatex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lualatex/"
-description: "Compile LaTeX documents effortlessly with LuaLaTeX. Generate PDFs from .tex files with advanced customization options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lualatex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lualatex/'
+description: 'Compile LaTeX documents effortlessly with LuaLaTeX. Generate PDFs from .tex files with advanced customization options. Free online tool, no registration required.'
 category: common
 keywords:
-- latex compiler
-- latex to pdf
-- lua latex
-- tex compiler
-- tex to pdf
-- command line latex
-- latex command
-- linux latex
-- macos latex
-- windows latex
+  - latex compiler
+  - latex to pdf
+  - lua latex
+  - tex compiler
+  - tex to pdf
+  - command line latex
+  - latex command
+  - linux latex
+  - macos latex
+  - windows latex
 features:
-- Compile LaTeX files to PDF format
-- Run LaTeX compilation without error interruption
-- Specify a custom output file name for the PDF
-- Execute LaTeX commands using Lua scripting
-- Integrate with other TeX-based tools and environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile LaTeX files to PDF format
+  - Run LaTeX compilation without error interruption
+  - Specify a custom output file name for the PDF
+  - Execute LaTeX commands using Lua scripting
+  - Integrate with other TeX-based tools and environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lualatex

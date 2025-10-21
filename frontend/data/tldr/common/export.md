@@ -1,29 +1,29 @@
 ---
-title: "Export Variables - Set Shell Variables | Online Free DevTools by Hexmos"
+title: 'Export Variables - Set Shell Variables | Online Free DevTools by Hexmos'
 name: export
-path: "/freedevtools/tldr/common/export/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/export/"
-description: "Set shell variables instantly with Export Variables. Easily manage environment variables for child processes on Linux, macOS, and Unix systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/export/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/export/'
+description: 'Set shell variables instantly with Export Variables. Easily manage environment variables for child processes on Linux, macOS, and Unix systems. Free online tool, no registration required.'
 category: common
 keywords:
-- shell variable export
-- environment variable setter
-- bash export command
-- zsh export command
-- linux environment variables
-- macos environment variables
-- unix environment variables
-- variable assignment command
-- path environment variable
-- shell script variables
+  - shell variable export
+  - environment variable setter
+  - bash export command
+  - zsh export command
+  - linux environment variables
+  - macos environment variables
+  - unix environment variables
+  - variable assignment command
+  - path environment variable
+  - shell script variables
 features:
-- Set environment variables for child processes
-- Append pathnames to the PATH variable
-- Define variables directly in the shell
-- Make variables available to subshells
-- Persist variable assignments for the current session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set environment variables for child processes
+  - Append pathnames to the PATH variable
+  - Define variables directly in the shell
+  - Make variables available to subshells
+  - Persist variable assignments for the current session
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # export

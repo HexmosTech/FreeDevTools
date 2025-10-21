@@ -1,29 +1,29 @@
 ---
-title: "Dolt Config - Manage Dolt Configuration Variables | Online Free DevTools by Hexmos"
+title: 'Dolt Config - Manage Dolt Configuration Variables | Online Free DevTools by Hexmos'
 name: dolt-config
-path: "/freedevtools/tldr/dolt/dolt-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-config/"
-description: "Manage Dolt configuration variables with Dolt Config. Read, write, and delete local and global configuration options. Free online tool, no registration required."
+path: '/freedevtools/tldr/dolt/dolt-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dolt/dolt-config/'
+description: 'Manage Dolt configuration variables with Dolt Config. Read, write, and delete local and global configuration options. Free online tool, no registration required.'
 category: common
 keywords:
-- dolt config
-- dolt configuration
-- dolt config list
-- dolt config get
-- dolt config add
-- dolt config unset
-- dolt global config
-- dolt local config
-- database configuration
-- version control configuration
+  - dolt config
+  - dolt configuration
+  - dolt config list
+  - dolt config get
+  - dolt config add
+  - dolt config unset
+  - dolt global config
+  - dolt local config
+  - database configuration
+  - version control configuration
 features:
-- List all local and global Dolt configuration options
-- Display the value of a specific Dolt configuration variable
-- Modify the value of a local Dolt configuration variable
-- Modify the value of a global Dolt configuration variable
-- Delete a Dolt configuration variable
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all local and global Dolt configuration options
+  - Display the value of a specific Dolt configuration variable
+  - Modify the value of a local Dolt configuration variable
+  - Modify the value of a global Dolt configuration variable
+  - Delete a Dolt configuration variable
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dolt config

@@ -1,29 +1,29 @@
 ---
-title: "Manage AWS ECR - Push & Pull Images | Online Free DevTools by Hexmos"
+title: 'Manage AWS ECR - Push & Pull Images | Online Free DevTools by Hexmos'
 name: aws-ecr
-path: "/freedevtools/tldr/aws/aws-ecr/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ecr/"
-description: "Manage container images with AWS ECR. Push, pull, create, and delete images and repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-ecr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-ecr/'
+description: 'Manage container images with AWS ECR. Push, pull, create, and delete images and repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- aws ecr commands
-- ecr container management
-- docker image push aws
-- docker image pull aws
-- aws ecr repository management
-- aws cloud container registry
-- ecr command line tools
-- aws container image registry
-- aws ecr authentication
-- aws container registry cli
+  - aws ecr commands
+  - ecr container management
+  - docker image push aws
+  - docker image pull aws
+  - aws ecr repository management
+  - aws cloud container registry
+  - ecr command line tools
+  - aws container image registry
+  - aws ecr authentication
+  - aws container registry cli
 features:
-- Authenticate Docker with AWS ECR for image operations.
-- Create and manage ECR repositories with image scanning.
-- Tag and push container images to ECR repositories.
-- Pull container images from ECR repositories for deployment.
-- Delete images and repositories within AWS ECR.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate Docker with AWS ECR for image operations.
+  - Create and manage ECR repositories with image scanning.
+  - Tag and push container images to ECR repositories.
+  - Pull container images from ECR repositories for deployment.
+  - Delete images and repositories within AWS ECR.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws ecr

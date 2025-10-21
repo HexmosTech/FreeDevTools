@@ -1,29 +1,29 @@
 ---
-title: "Synchronize Directories - Lsyncd File Watcher | Online Free DevTools by Hexmos"
+title: 'Synchronize Directories - Lsyncd File Watcher | Online Free DevTools by Hexmos'
 name: lsyncd
-path: "/freedevtools/tldr/common/lsyncd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lsyncd/"
-description: "Synchronize files with Lsyncd, an automated file watcher. Keep directories in sync across systems using rsync, ensuring immediate mirroring. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lsyncd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lsyncd/'
+description: 'Synchronize files with Lsyncd, an automated file watcher. Keep directories in sync across systems using rsync, ensuring immediate mirroring. Free online tool, no registration required.'
 category: common
 keywords:
-- directory synchronization
-- file synchronization
-- lsyncd
-- rsync
-- file watcher
-- real-time synchronization
-- linux file sync
-- cross-system file sync
-- directory mirroring
-- lsyncd configuration
+  - directory synchronization
+  - file synchronization
+  - lsyncd
+  - rsync
+  - file watcher
+  - real-time synchronization
+  - linux file sync
+  - cross-system file sync
+  - directory mirroring
+  - lsyncd configuration
 features:
-- Watch directories for file changes in real-time.
-- Automatically synchronize files to a remote destination using rsync.
-- Use SSH for secure file synchronization over networks.
-- Configure synchronization behavior with detailed options.
-- Mirror file systems across different servers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Watch directories for file changes in real-time.
+  - Automatically synchronize files to a remote destination using rsync.
+  - Use SSH for secure file synchronization over networks.
+  - Configure synchronization behavior with detailed options.
+  - Mirror file systems across different servers.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsyncd

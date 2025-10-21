@@ -1,29 +1,29 @@
 ---
-title: "Convert RAW Files - Image Converter | Online Free DevTools by Hexmos"
+title: 'Convert RAW Files - Image Converter | Online Free DevTools by Hexmos'
 name: ufraw-batch
-path: "/freedevtools/tldr/common/ufraw-batch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ufraw-batch/"
-description: "Convert RAW files with ufraw-batch image converter. Supports JPEG and PNG formats. Extract previews and resize images quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ufraw-batch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ufraw-batch/'
+description: 'Convert RAW files with ufraw-batch image converter. Supports JPEG and PNG formats. Extract previews and resize images quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- RAW image converter
-- camera raw converter
-- batch image converter
-- raw to jpg
-- raw to png
-- ufraw-batch linux
-- ufraw-batch command line
-- image format conversion
-- raw image processing
-- camera raw processing
+  - RAW image converter
+  - camera raw converter
+  - batch image converter
+  - raw to jpg
+  - raw to png
+  - ufraw-batch linux
+  - ufraw-batch command line
+  - image format conversion
+  - raw image processing
+  - camera raw processing
 features:
-- Convert RAW images to JPEG format
-- Convert RAW images to PNG format
-- Extract embedded preview images from RAW files
-- Resize images to specified dimensions
-- Batch process multiple RAW files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert RAW images to JPEG format
+  - Convert RAW images to PNG format
+  - Extract embedded preview images from RAW files
+  - Resize images to specified dimensions
+  - Batch process multiple RAW files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ufraw-batch

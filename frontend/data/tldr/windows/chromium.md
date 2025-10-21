@@ -1,9 +1,9 @@
 ---
-title: "Control Chromium Browser - Open URLs with Flags | Online Free DevTools by Hexmos"
+title: 'Control Chromium Browser - Open URLs with Flags | Online Free DevTools by Hexmos'
 name: chromium
-path: "/freedevtools/tldr/windows/chromium/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/chromium/"
-description: "Control Chromium browser tabs and windows with command-line flags. Launch in incognito mode, set proxies, disable CORS, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/chromium/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/chromium/'
+description: 'Control Chromium browser tabs and windows with command-line flags. Launch in incognito mode, set proxies, disable CORS, and more. Free online tool, no registration required.'
 category: windows
 keywords:
   - chromium browser control
@@ -22,8 +22,8 @@ features:
   - Disable CORS validation for API testing
   - Open specific URLs in application mode without browser UI
   - Utilize custom user data directories for different profiles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chromium

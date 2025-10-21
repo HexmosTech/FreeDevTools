@@ -1,29 +1,29 @@
 ---
-title: "Restore Disk Image - Copy Volume on OSX | Online Free DevTools by Hexmos"
+title: 'Restore Disk Image - Copy Volume on OSX | Online Free DevTools by Hexmos'
 name: asr
-path: "/freedevtools/tldr/osx/asr/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/asr/"
-description: "Restore disk images with ASR on macOS. Copy volumes, erase disks, and clone partitions quickly using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/asr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/asr/'
+description: 'Restore disk images with ASR on macOS. Copy volumes, erase disks, and clone partitions quickly using command-line. Free online tool, no registration required.'
 category: osx
 keywords:
-- disk image restore
-- volume copy macos
-- asr disk utility
-- dmg restore osx
-- macos volume cloning
-- disk partition restore
-- apple software restore
-- osx disk imaging
-- command line volume tools
-- disk cloning software
+  - disk image restore
+  - volume copy macos
+  - asr disk utility
+  - dmg restore osx
+  - macos volume cloning
+  - disk partition restore
+  - apple software restore
+  - osx disk imaging
+  - command line volume tools
+  - disk cloning software
 features:
-- Restore a disk image to a specified target volume
-- Erase the target volume before restoring the image
-- Skip verification of the restored volume for faster processing
-- Clone volumes directly without an intermediate image file
-- Copy file systems to new or existing volumes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restore a disk image to a specified target volume
+  - Erase the target volume before restoring the image
+  - Skip verification of the restored volume for faster processing
+  - Clone volumes directly without an intermediate image file
+  - Copy file systems to new or existing volumes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # asr

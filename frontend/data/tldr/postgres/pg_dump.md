@@ -1,29 +1,29 @@
 ---
-title: "pg_dump - Extract PostgreSQL Databases | Online Free DevTools by Hexmos"
+title: 'pg_dump - Extract PostgreSQL Databases | Online Free DevTools by Hexmos'
 name: pg_dump
-path: "/freedevtools/tldr/postgres/pg_dump/"
-canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_dump/"
-description: "Extract PostgreSQL databases with pg_dump. Backup, restore, and migrate your databases easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/postgres/pg_dump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/postgres/pg_dump/'
+description: 'Extract PostgreSQL databases with pg_dump. Backup, restore, and migrate your databases easily. Free online tool, no registration required.'
 category: common
 keywords:
-- PostgreSQL dump
-- database extraction
-- PostgreSQL backup
-- SQL script generation
-- database archive
-- pg_dump command
-- database migration
-- PostgreSQL data dump
-- schema extraction
-- command-line PostgreSQL tool
+  - PostgreSQL dump
+  - database extraction
+  - PostgreSQL backup
+  - SQL script generation
+  - database archive
+  - pg_dump command
+  - database migration
+  - PostgreSQL data dump
+  - schema extraction
+  - command-line PostgreSQL tool
 features:
-- Extract PostgreSQL database into an SQL script file
-- Create custom-format archive files for database backups
-- Dump only database data or schema definitions
-- Customize username, host, and port for connections
-- Backup databases for disaster recovery or migration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract PostgreSQL database into an SQL script file
+  - Create custom-format archive files for database backups
+  - Dump only database data or schema definitions
+  - Customize username, host, and port for connections
+  - Backup databases for disaster recovery or migration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pg_dump

@@ -1,9 +1,9 @@
 ---
-title: "Manage VM Guest Agent - Control Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Manage VM Guest Agent - Control Virtual Machines | Online Free DevTools by Hexmos'
 name: qm-guest
-path: "/freedevtools/tldr/linux/qm-guest/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-guest/"
-description: "Control virtual machine guest agent with qm-guest. Execute commands, manage passwords, and freeze filesystems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-guest/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-guest/'
+description: 'Control virtual machine guest agent with qm-guest. Execute commands, manage passwords, and freeze filesystems. Free online tool, no registration required.'
 category: linux
 keywords:
   - vm guest agent control
@@ -22,8 +22,8 @@ features:
   - Control and monitor the filesystem state using fsfreeze
   - Retrieve filesystem information from the guest operating system
   - Check the status of a specific process within the virtual machine
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm guest

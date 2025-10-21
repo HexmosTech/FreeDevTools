@@ -1,9 +1,9 @@
 ---
-title: "AppArmor Enforce - Enable Profiles | Online Free DevTools by Hexmos"
+title: 'AppArmor Enforce - Enable Profiles | Online Free DevTools by Hexmos'
 name: aa-enforce
-path: "/freedevtools/tldr/linux/aa-enforce/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-enforce/"
-description: "Enable AppArmor profiles with aa-enforce. Set Linux security profiles to enforce mode for enhanced system security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aa-enforce/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aa-enforce/'
+description: 'Enable AppArmor profiles with aa-enforce. Set Linux security profiles to enforce mode for enhanced system security. Free online tool, no registration required.'
 category: linux
 keywords:
   - AppArmor profile enforce
@@ -22,8 +22,8 @@ features:
   - Secure Linux systems with custom AppArmor profiles
   - Configure application security settings
   - Transition profiles to enforce mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aa-enforce

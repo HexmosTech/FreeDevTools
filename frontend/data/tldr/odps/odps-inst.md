@@ -1,29 +1,29 @@
 ---
-title: "ODPS Instance Manager - Control ODPS Instances | Online Free DevTools by Hexmos"
+title: 'ODPS Instance Manager - Control ODPS Instances | Online Free DevTools by Hexmos'
 name: odps-inst
-path: "/freedevtools/tldr/odps/odps-inst/"
-canonical: "https://hexmos.com/freedevtools/tldr/odps/odps-inst/"
+path: '/freedevtools/tldr/odps/odps-inst/'
+canonical: 'https://hexmos.com/freedevtools/tldr/odps/odps-inst/'
 description: "Manage ODPS instances easily with ODPS Instance Manager. Check instance status, kill tasks, and monitor progress within Alibaba Cloud's ODPS. Free online tool, no registration required."
 category: common
 keywords:
-- ODPS instance management
-- Alibaba Cloud ODPS
-- data processing service
-- ODPS task control
-- ODPS instance status
-- ODPS kill instance
-- ODPS instance logs
-- ODPS command line
-- ODPS task monitoring
-- ODPS instance termination
+  - ODPS instance management
+  - Alibaba Cloud ODPS
+  - data processing service
+  - ODPS task control
+  - ODPS instance status
+  - ODPS kill instance
+  - ODPS instance logs
+  - ODPS command line
+  - ODPS task monitoring
+  - ODPS instance termination
 features:
-- Show instances created by user
-- Describe details of a specific instance
-- Check the current status of an instance
-- Wait for instance termination with log output
-- Kill a specified ODPS instance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show instances created by user
+  - Describe details of a specific instance
+  - Check the current status of an instance
+  - Wait for instance termination with log output
+  - Kill a specified ODPS instance
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # odps inst

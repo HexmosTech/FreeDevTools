@@ -1,29 +1,29 @@
 ---
-title: "Control TeX Live Repositories - Manage TLMGR Config | Online Free DevTools by Hexmos"
+title: 'Control TeX Live Repositories - Manage TLMGR Config | Online Free DevTools by Hexmos'
 name: tlmgr-repository
-path: "/freedevtools/tldr/tlmgr/tlmgr-repository/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-repository/"
-description: "Manage TeX Live software repositories with TLMGR Repository. Configure, add, and remove repositories for package updates. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-repository/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-repository/'
+description: 'Manage TeX Live software repositories with TLMGR Repository. Configure, add, and remove repositories for package updates. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX Live repository manager
-- TLMGR repository configuration
-- TeX package repository control
-- Add TeX Live repository
-- Remove TeX Live repository
-- TLMGR repository list
-- TLMGR repository status
-- Latex package management
-- TeX package updates
-- Command line TeX manager
+  - TeX Live repository manager
+  - TLMGR repository configuration
+  - TeX package repository control
+  - Add TeX Live repository
+  - Remove TeX Live repository
+  - TLMGR repository list
+  - TLMGR repository status
+  - Latex package management
+  - TeX package updates
+  - Command line TeX manager
 features:
-- List configured TeX Live repositories
-- Add new TeX Live software repositories
-- Remove existing TeX Live repositories
-- Set a new list of repositories
-- Verify the status of TeX Live repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List configured TeX Live repositories
+  - Add new TeX Live software repositories
+  - Remove existing TeX Live repositories
+  - Set a new list of repositories
+  - Verify the status of TeX Live repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr repository

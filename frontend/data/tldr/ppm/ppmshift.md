@@ -1,29 +1,29 @@
 ---
-title: "PPM Shift - Randomize PPM Image Lines | Online Free DevTools by Hexmos"
+title: 'PPM Shift - Randomize PPM Image Lines | Online Free DevTools by Hexmos'
 name: ppmshift
-path: "/freedevtools/tldr/ppm/ppmshift/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmshift/"
-description: "Randomize PPM image lines with PPM Shift. Adjust pixel positions for creative effects and unique image distortions. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmshift/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmshift/'
+description: 'Randomize PPM image lines with PPM Shift. Adjust pixel positions for creative effects and unique image distortions. Free online tool, no registration required.'
 category: common
 keywords:
-- ppm image shift
-- image line randomization
-- ppm image distortion
-- netpbm ppmshift
-- linux image manipulation
-- command line image editor
-- ppm image effects
-- image processing tool
-- visual art generator
-- pixel displacement
+  - ppm image shift
+  - image line randomization
+  - ppm image distortion
+  - netpbm ppmshift
+  - linux image manipulation
+  - command line image editor
+  - ppm image effects
+  - image processing tool
+  - visual art generator
+  - pixel displacement
 features:
-- Shift lines in PPM images by a random amount
-- Apply a specified maximum shift value
-- Create randomized image distortions
-- Process PPM images from the command line
-- Generate unique visual effects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Shift lines in PPM images by a random amount
+  - Apply a specified maximum shift value
+  - Create randomized image distortions
+  - Process PPM images from the command line
+  - Generate unique visual effects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmshift

@@ -1,9 +1,9 @@
 ---
-title: "Resolve Avahi Addresses - Network Address Resolution | Online Free DevTools by Hexmos"
+title: 'Resolve Avahi Addresses - Network Address Resolution | Online Free DevTools by Hexmos'
 name: avahi-resolve-address
-path: "/freedevtools/tldr/linux/avahi-resolve-address/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/avahi-resolve-address/"
-description: "Resolve Avahi network addresses using the avahi-resolve-address command.  Quickly find IP addresses associated with network names. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/avahi-resolve-address/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/avahi-resolve-address/'
+description: 'Resolve Avahi network addresses using the avahi-resolve-address command.  Quickly find IP addresses associated with network names. Free online tool, no registration required.'
 category: linux
 keywords:
   - avahi address resolution
@@ -22,8 +22,8 @@ features:
   - Provides IP address information for Avahi services.
   - Uses the Avahi mDNS/DNS-SD protocol for resolution.
   - Simplifies network troubleshooting and configuration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # avahi-resolve-address

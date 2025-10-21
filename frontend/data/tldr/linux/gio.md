@@ -1,9 +1,9 @@
 ---
-title: "GVfs File Manager - Handle Files Easily | Online Free DevTools by Hexmos"
+title: 'GVfs File Manager - Handle Files Easily | Online Free DevTools by Hexmos'
 name: gio
-path: "/freedevtools/tldr/linux/gio/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gio/"
-description: "Handle files easily with GVfs File Manager, a command-line tool for manipulating files and directories. Manage local and virtual files without GNOME. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gio/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gio/'
+description: 'Handle files easily with GVfs File Manager, a command-line tool for manipulating files and directories. Manage local and virtual files without GNOME. Free online tool, no registration required.'
 category: linux
 keywords:
   - GVfs file manager
@@ -22,8 +22,8 @@ features:
   - Display detailed file information
   - Copy files between locations
   - Send files to the trash
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gio

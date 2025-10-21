@@ -1,29 +1,29 @@
 ---
-title: "Vendor Cargo Dependencies - Manage Rust Packages | Online Free DevTools by Hexmos"
+title: 'Vendor Cargo Dependencies - Manage Rust Packages | Online Free DevTools by Hexmos'
 name: cargo-vendor
-path: "/freedevtools/tldr/cargo/cargo-vendor/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-vendor/"
-description: "Vendor Cargo dependencies quickly with Cargo Vendor. Isolate dependencies, ensure consistent builds, and manage package versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-vendor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-vendor/'
+description: 'Vendor Cargo dependencies quickly with Cargo Vendor. Isolate dependencies, ensure consistent builds, and manage package versions. Free online tool, no registration required.'
 category: common
 keywords:
-- Rust package vendor
-- Cargo dependency management
-- Rust offline build
-- Cargo vendoring
-- Cargo dependency isolation
-- Rust package mirroring
-- Cargo config toml
-- Rust vendored sources
-- Cargo build configuration
-- Rust package download
+  - Rust package vendor
+  - Cargo dependency management
+  - Rust offline build
+  - Cargo vendoring
+  - Cargo dependency isolation
+  - Rust package mirroring
+  - Cargo config toml
+  - Rust vendored sources
+  - Cargo build configuration
+  - Rust package download
 features:
-- Vendor all project dependencies to a directory
-- Configure Cargo to use vendored sources
-- Isolate project builds from external networks
-- Manage specific dependency versions
-- Ensure consistent builds across different environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Vendor all project dependencies to a directory
+  - Configure Cargo to use vendored sources
+  - Isolate project builds from external networks
+  - Manage specific dependency versions
+  - Ensure consistent builds across different environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo vendor

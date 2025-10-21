@@ -1,29 +1,29 @@
 ---
-title: "Flarectl - Control Cloudflare Services | Online Free DevTools by Hexmos"
+title: 'Flarectl - Control Cloudflare Services | Online Free DevTools by Hexmos'
 name: flarectl
-path: "/freedevtools/tldr/common/flarectl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flarectl/"
-description: "Control Cloudflare services with Flarectl, the official CLI tool. Automate DNS record management, firewall rule creation, and IP range listing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flarectl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flarectl/'
+description: 'Control Cloudflare services with Flarectl, the official CLI tool. Automate DNS record management, firewall rule creation, and IP range listing. Free online tool, no registration required.'
 category: common
 keywords:
-- cloudflare cli
-- flarectl command line
-- dns record management
-- firewall rule automation
-- cloudflare zone creation
-- cloudflare api
-- cloudflare automation
-- flarectl firewall
-- flarectl dns
-- cloudflare ip ranges
+  - cloudflare cli
+  - flarectl command line
+  - dns record management
+  - firewall rule automation
+  - cloudflare zone creation
+  - cloudflare api
+  - cloudflare automation
+  - flarectl firewall
+  - flarectl dns
+  - cloudflare ip ranges
 features:
-- Manage Cloudflare DNS records programmatically
-- Automate the creation of Cloudflare firewall rules
-- List Cloudflare's IPv4 and IPv6 ranges
-- Batch create Cloudflare zones from a list
-- List all Cloudflare firewall rules
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage Cloudflare DNS records programmatically
+  - Automate the creation of Cloudflare firewall rules
+  - List Cloudflare's IPv4 and IPv6 ranges
+  - Batch create Cloudflare zones from a list
+  - List all Cloudflare firewall rules
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flarectl

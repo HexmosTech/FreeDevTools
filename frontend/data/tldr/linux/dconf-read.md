@@ -1,9 +1,9 @@
 ---
-title: "Read Dconf Keys - Access Config Values | Online Free DevTools by Hexmos"
+title: 'Read Dconf Keys - Access Config Values | Online Free DevTools by Hexmos'
 name: dconf-read
-path: "/freedevtools/tldr/linux/dconf-read/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dconf-read/"
-description: "Access and read Dconf key values with ease using dconf-read.  Retrieve configuration settings and default values directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dconf-read/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dconf-read/'
+description: 'Access and read Dconf key values with ease using dconf-read.  Retrieve configuration settings and default values directly from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - dconf key reader
@@ -22,8 +22,8 @@ features:
   - Access and display configuration settings via the command line.
   - Useful for system administrators and developers.
   - Provides quick access to application settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dconf read

@@ -1,29 +1,29 @@
 ---
-title: "Manage Files with Ranger - VI Key Bindings | Online Free DevTools by Hexmos"
+title: 'Manage Files with Ranger - VI Key Bindings | Online Free DevTools by Hexmos'
 name: ranger
-path: "/freedevtools/tldr/common/ranger/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ranger/"
-description: "Manage files effectively with Ranger, the console file manager using VI key bindings. Navigate directories, copy files, and execute commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ranger/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ranger/'
+description: 'Manage files effectively with Ranger, the console file manager using VI key bindings. Navigate directories, copy files, and execute commands. Free online tool, no registration required.'
 category: common
 keywords:
-- console file manager
-- ranger file manager
-- linux file manager
-- vi keybindings file manager
-- terminal file browser
-- command line file manager
-- ranger configuration
-- directory navigation
-- file operations cli
-- ranger shortcuts
+  - console file manager
+  - ranger file manager
+  - linux file manager
+  - vi keybindings file manager
+  - terminal file browser
+  - command line file manager
+  - ranger configuration
+  - directory navigation
+  - file operations cli
+  - ranger shortcuts
 features:
-- Navigate directories using VI key bindings
-- Show only directories within the file system
-- Customize the ranger configuration directory
-- Specify the data directory for ranger
-- Profile CPU usage upon ranger exit
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Navigate directories using VI key bindings
+  - Show only directories within the file system
+  - Customize the ranger configuration directory
+  - Specify the data directory for ranger
+  - Profile CPU usage upon ranger exit
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ranger

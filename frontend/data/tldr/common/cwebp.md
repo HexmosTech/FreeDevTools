@@ -1,29 +1,29 @@
 ---
-title: "Convert Image to WebP - Compress Images Online | Online Free DevTools by Hexmos"
+title: 'Convert Image to WebP - Compress Images Online | Online Free DevTools by Hexmos'
 name: cwebp
-path: "/freedevtools/tldr/common/cwebp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cwebp/"
-description: "Convert image to WebP with cwebp. Compress images quickly and efficiently for optimal web performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cwebp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cwebp/'
+description: 'Convert image to WebP with cwebp. Compress images quickly and efficiently for optimal web performance. Free online tool, no registration required.'
 category: common
 keywords:
-- image to webp converter
-- webp compression tool
-- cwebp online
-- image optimizer online
-- png to webp converter
-- jpg to webp converter
-- lossless webp compression
-- webp file compressor
-- command line webp
-- google webp converter
+  - image to webp converter
+  - webp compression tool
+  - cwebp online
+  - image optimizer online
+  - png to webp converter
+  - jpg to webp converter
+  - lossless webp compression
+  - webp file compressor
+  - command line webp
+  - google webp converter
 features:
-- Compress images to WebP format.
-- Resize images during compression.
-- Control image quality and file size.
-- Remove alpha channel information.
-- Optimize images for web use.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress images to WebP format.
+  - Resize images during compression.
+  - Control image quality and file size.
+  - Remove alpha channel information.
+  - Optimize images for web use.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cwebp

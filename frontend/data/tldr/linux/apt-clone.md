@@ -1,9 +1,9 @@
 ---
-title: "Clone Packages - Backup Debian Systems with apt-clone | Online Free DevTools by Hexmos"
+title: 'Clone Packages - Backup Debian Systems with apt-clone | Online Free DevTools by Hexmos'
 name: apt-clone
-path: "/freedevtools/tldr/linux/apt-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apt-clone/"
-description: "Backup Debian systems with apt-clone. Clone package states for disaster recovery and system migration. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apt-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apt-clone/'
+description: 'Backup Debian systems with apt-clone. Clone package states for disaster recovery and system migration. Free online tool, no registration required.'
 category: linux
 keywords:
   - debian package backup
@@ -22,8 +22,8 @@ features:
   - Restore package state from a clone file
   - Display information about a clone file
   - Verify restore compatibility on the current system
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apt-clone

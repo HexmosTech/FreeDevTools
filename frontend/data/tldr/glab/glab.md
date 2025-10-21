@@ -1,29 +1,29 @@
 ---
-title: "GitLab CLI - Manage GitLab Repositories | Online Free DevTools by Hexmos"
+title: 'GitLab CLI - Manage GitLab Repositories | Online Free DevTools by Hexmos'
 name: glab
-path: "/freedevtools/tldr/glab/glab/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab/"
-description: "Manage GitLab repositories seamlessly with GitLab CLI. Clone, create issues, and handle merge requests efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab/'
+description: 'Manage GitLab repositories seamlessly with GitLab CLI. Clone, create issues, and handle merge requests efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- GitLab CLI
-- GitLab command line
-- Git repository manager
-- GitLab merge request tool
-- GitLab issue tracker
-- glab clone
-- glab issue create
-- glab mr create
-- GitLab DevOps
-- GitLab automation
+  - GitLab CLI
+  - GitLab command line
+  - Git repository manager
+  - GitLab merge request tool
+  - GitLab issue tracker
+  - glab clone
+  - glab issue create
+  - glab mr create
+  - GitLab DevOps
+  - GitLab automation
 features:
-- Clone GitLab repositories locally
-- Create and manage GitLab issues
-- Submit and view merge requests
-- Checkout specific pull requests
-- Integrate GitLab with command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone GitLab repositories locally
+  - Create and manage GitLab issues
+  - Submit and view merge requests
+  - Checkout specific pull requests
+  - Integrate GitLab with command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab

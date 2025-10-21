@@ -1,29 +1,29 @@
 ---
-title: "Move VM Disk - Transfer Virtual Disks | Online Free DevTools by Hexmos"
+title: 'Move VM Disk - Transfer Virtual Disks | Online Free DevTools by Hexmos'
 name: qm-disk-move
-path: "/freedevtools/tldr/linux/qm-disk-move/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-disk-move/"
-description: "Move VM disks effortlessly with qm-disk-move, transfer virtual machines disks to new storage in Proxmox. Migrate data easily with our free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-disk-move/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-disk-move/'
+description: 'Move VM disks effortlessly with qm-disk-move, transfer virtual machines disks to new storage in Proxmox. Migrate data easily with our free online tool, no registration required.'
 category: linux
 keywords:
-- Proxmox VM disk move
-- virtual machine disk migration
-- qm disk move command
-- Proxmox storage migration
-- Linux disk transfer
-- VMDK migration tool
-- Proxmox CLI disk management
-- virtual disk relocation
-- Proxmox data migration
-- KVM disk move
+  - Proxmox VM disk move
+  - virtual machine disk migration
+  - qm disk move command
+  - Proxmox storage migration
+  - Linux disk transfer
+  - VMDK migration tool
+  - Proxmox CLI disk management
+  - virtual disk relocation
+  - Proxmox data migration
+  - KVM disk move
 features:
-- Migrate virtual disks to different storage within Proxmox
-- Delete the original virtual disk after successful migration
-- Move virtual disks using the command-line interface
-- Supports specifying the destination storage for the virtual disk
-- Allows disk movement within the same Proxmox cluster
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Migrate virtual disks to different storage within Proxmox
+  - Delete the original virtual disk after successful migration
+  - Move virtual disks using the command-line interface
+  - Supports specifying the destination storage for the virtual disk
+  - Allows disk movement within the same Proxmox cluster
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm disk move

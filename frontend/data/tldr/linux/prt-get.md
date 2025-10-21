@@ -1,9 +1,9 @@
 ---
-title: "Control CRUX Packages - Manage Software with prt-get | Online Free DevTools by Hexmos"
+title: 'Control CRUX Packages - Manage Software with prt-get | Online Free DevTools by Hexmos'
 name: prt-get
-path: "/freedevtools/tldr/linux/prt-get/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/prt-get/"
-description: "Manage CRUX packages effortlessly with prt-get. Install, update, and remove software on your CRUX system using simple command-line instructions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/prt-get/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/prt-get/'
+description: 'Manage CRUX packages effortlessly with prt-get. Install, update, and remove software on your CRUX system using simple command-line instructions. Free online tool, no registration required.'
 category: linux
 keywords:
   - crux package manager
@@ -22,8 +22,8 @@ features:
   - Upgrade existing packages from the local ports tree.
   - Remove installed packages easily.
   - Search the ports tree for available packages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prt-get

@@ -1,9 +1,9 @@
 ---
-title: "CPU Frequency Control - Modify CPU Settings | Online Free DevTools by Hexmos"
+title: 'CPU Frequency Control - Modify CPU Settings | Online Free DevTools by Hexmos'
 name: cpufreq-set
-path: "/freedevtools/tldr/linux/cpufreq-set/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cpufreq-set/"
-description: "Control CPU frequency settings with cpufreq-set. Optimize CPU performance, adjust frequency limits and governor. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cpufreq-set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cpufreq-set/'
+description: 'Control CPU frequency settings with cpufreq-set. Optimize CPU performance, adjust frequency limits and governor. Free online tool, no registration required.'
 category: linux
 keywords:
   - CPU frequency control
@@ -22,8 +22,8 @@ features:
   - Adjust maximum CPU frequency
   - Configure CPU work frequency
   - Control CPU governor settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cpufreq-set

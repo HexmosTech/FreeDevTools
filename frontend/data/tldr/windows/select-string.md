@@ -1,29 +1,29 @@
 ---
-title: "Select-String - Find Text in Files | Online Free DevTools by Hexmos"
+title: 'Select-String - Find Text in Files | Online Free DevTools by Hexmos'
 name: select-string
-path: "/freedevtools/tldr/windows/select-string/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/select-string/"
-description: "Find text with Select-String, the powerful text searching tool. Search files and strings using patterns and exact matches. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/select-string/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/select-string/'
+description: 'Find text with Select-String, the powerful text searching tool. Search files and strings using patterns and exact matches. Free online tool, no registration required.'
 category: windows
 keywords:
-- powershell text search
-- windows string search
-- file pattern matching
-- select-string command
-- powershell grep alternative
-- windows findstr alternative
-- regex file search
-- powershell search stdin
-- select-string notmatch
-- powershell context search
+  - powershell text search
+  - windows string search
+  - file pattern matching
+  - select-string command
+  - powershell grep alternative
+  - windows findstr alternative
+  - regex file search
+  - powershell search stdin
+  - select-string notmatch
+  - powershell context search
 features:
-- Search files for patterns using regular expressions
-- Find exact string matches in files
-- Search for patterns in multiple files using wildcards
-- Capture lines before and after a matching line
-- Search standard input (stdin) for non-matching lines
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search files for patterns using regular expressions
+  - Find exact string matches in files
+  - Search for patterns in multiple files using wildcards
+  - Capture lines before and after a matching line
+  - Search standard input (stdin) for non-matching lines
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Select-String

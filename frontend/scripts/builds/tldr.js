@@ -17,7 +17,7 @@ const colors = {
   blue: '\x1b[34m',
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
-  white: '\x1b[37m'
+  white: '\x1b[37m',
 };
 
 function log(message, color = 'white') {
@@ -50,7 +50,10 @@ const projectRoot = path.resolve(__dirname, '../..');
 const pagesDir = path.join(projectRoot, 'src', 'pages');
 
 function excludeUnchangedSections() {
-  logStep('Excluding unchanged sections from build', 'Building only TLDR section...');
+  logStep(
+    'Excluding unchanged sections from build',
+    'Building only TLDR section...'
+  );
 
   const changedSections = ['tldr']; // Only build TLDR
   logInfo(`Building strategy: ${changedSections.join(' ')}`);
@@ -58,9 +61,10 @@ function excludeUnchangedSections() {
   logInfo('🎯 Selective build mode - TLDR only');
 
   // Get all directories in pages folder
-  const dirs = fs.readdirSync(pagesDir, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
+  const dirs = fs
+    .readdirSync(pagesDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
 
   for (const dir of dirs) {
     const dirPath = path.join(pagesDir, dir);
@@ -84,11 +88,15 @@ function excludeUnchangedSections() {
 }
 
 function restoreOriginalStructure() {
-  logStep('Restoring original folder structure', 'Moving excluded directories back...');
+  logStep(
+    'Restoring original folder structure',
+    'Moving excluded directories back...'
+  );
 
-  const dirs = fs.readdirSync(pagesDir, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('_'))
-    .map(dirent => dirent.name);
+  const dirs = fs
+    .readdirSync(pagesDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory() && dirent.name.startsWith('_'))
+    .map((dirent) => dirent.name);
 
   for (const dir of dirs) {
     const originalName = dir.substring(1); // Remove the underscore
@@ -114,8 +122,8 @@ function installDependencies() {
       env: {
         ...process.env,
         NODE_OPTIONS: '--max-old-space-size=16384', // 14GB for 16GB system
-        UV_THREADPOOL_SIZE: '64' // 4x cores for I/O operations
-      }
+        UV_THREADPOOL_SIZE: '64', // 4x cores for I/O operations
+      },
     });
     logSuccess('Dependencies installed successfully');
   } catch (error) {
@@ -135,8 +143,8 @@ function buildProject() {
         ...process.env,
         NODE_OPTIONS: '--max-old-space-size=16384', // 14GB for 16GB system
         UV_THREADPOOL_SIZE: '64', // 4x cores for I/O operations
-        NODE_OPTIONS_EXTRA: '--experimental-loader' // Enable experimental features for better performance
-      }
+        NODE_OPTIONS_EXTRA: '--experimental-loader', // Enable experimental features for better performance
+      },
     });
     logSuccess('Build completed successfully');
   } catch (error) {
@@ -148,8 +156,14 @@ function buildProject() {
 function showBuildInfo() {
   log('\n📦 TLDR Build Script', 'magenta');
   log('====================', 'magenta');
-  log('This script will build only the TLDR section by excluding all other page directories.', 'white');
-  log('The excluded directories will be temporarily renamed with an underscore prefix.', 'white');
+  log(
+    'This script will build only the TLDR section by excluding all other page directories.',
+    'white'
+  );
+  log(
+    'The excluded directories will be temporarily renamed with an underscore prefix.',
+    'white'
+  );
   log('After the build, the original structure will be restored.\n', 'white');
 }
 
@@ -171,7 +185,6 @@ async function main() {
 
     logSuccess('\n🎉 TLDR build completed successfully!');
     logInfo('The build output is in the dist/ directory');
-
   } catch (error) {
     logError(`\n💥 Build failed: ${error.message}`);
     process.exit(1);

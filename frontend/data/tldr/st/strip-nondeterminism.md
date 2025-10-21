@@ -1,29 +1,29 @@
 ---
-title: "Strip Nondeterminism - Remove Timestamps | Online Free DevTools by Hexmos"
+title: 'Strip Nondeterminism - Remove Timestamps | Online Free DevTools by Hexmos'
 name: strip-nondeterminism
-path: "/freedevtools/tldr/st/strip-nondeterminism/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/strip-nondeterminism/"
-description: "Remove nondeterministic data with Strip Nondeterminism. Eliminate timestamps from files, ensuring reproducible builds. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/strip-nondeterminism/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/strip-nondeterminism/'
+description: 'Remove nondeterministic data with Strip Nondeterminism. Eliminate timestamps from files, ensuring reproducible builds. Free online tool, no registration required.'
 category: common
 keywords:
-- file timestamp removal
-- reproducible builds tool
-- deterministic build process
-- nondeterministic data remover
-- strip timestamps command
-- linux timestamp cleaner
-- macos timestamp cleaner
-- debian reproducible builds
-- file metadata editor
-- unix timestamp manipulation
+  - file timestamp removal
+  - reproducible builds tool
+  - deterministic build process
+  - nondeterministic data remover
+  - strip timestamps command
+  - linux timestamp cleaner
+  - macos timestamp cleaner
+  - debian reproducible builds
+  - file metadata editor
+  - unix timestamp manipulation
 features:
-- Removes non-deterministic file information
-- Eliminates timestamps from files
-- Sets timestamps to a specific UNIX timestamp
-- Supports manual filetype specification
-- Ensures reproducible build environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Removes non-deterministic file information
+  - Eliminates timestamps from files
+  - Sets timestamps to a specific UNIX timestamp
+  - Supports manual filetype specification
+  - Ensures reproducible build environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # strip-nondeterminism

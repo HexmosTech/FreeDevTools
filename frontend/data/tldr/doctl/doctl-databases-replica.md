@@ -1,29 +1,29 @@
 ---
-title: "doctl Replica - Manage Database Replicas | Online Free DevTools by Hexmos"
+title: 'doctl Replica - Manage Database Replicas | Online Free DevTools by Hexmos'
 name: doctl-databases-replica
-path: "/freedevtools/tldr/doctl/doctl-databases-replica/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-replica/"
-description: "Manage database replicas with doctl Replica. Create, list, and delete read-only database replicas. Free online tool, no registration required, plus secure token management."
+path: '/freedevtools/tldr/doctl/doctl-databases-replica/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-databases-replica/'
+description: 'Manage database replicas with doctl Replica. Create, list, and delete read-only database replicas. Free online tool, no registration required, plus secure token management.'
 category: common
 keywords:
-- doctl database replica management
-- DigitalOcean database replica control
-- doctl read-only replica command
-- DigitalOcean replica command line
-- database replica creation doctl
-- database replica deletion doctl
-- DigitalOcean databases command
-- doctl databases replica list
-- DigitalOcean database access token
-- doctl databases replica tools
+  - doctl database replica management
+  - DigitalOcean database replica control
+  - doctl read-only replica command
+  - DigitalOcean replica command line
+  - database replica creation doctl
+  - database replica deletion doctl
+  - DigitalOcean databases command
+  - doctl databases replica list
+  - DigitalOcean database access token
+  - doctl databases replica tools
 features:
-- Create read-only database replicas
-- List available database replicas
-- Delete existing database replicas
-- Retrieve information about a specific replica
-- Manage database replicas via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create read-only database replicas
+  - List available database replicas
+  - Delete existing database replicas
+  - Retrieve information about a specific replica
+  - Manage database replicas via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl databases replica

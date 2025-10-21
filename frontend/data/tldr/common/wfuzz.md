@@ -1,29 +1,29 @@
 ---
-title: "WFuzz - Web Application Brute Forcer | Online Free DevTools by Hexmos"
+title: 'WFuzz - Web Application Brute Forcer | Online Free DevTools by Hexmos'
 name: wfuzz
-path: "/freedevtools/tldr/common/wfuzz/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wfuzz/"
-description: "Brute force web applications with WFuzz, a powerful penetration testing tool for discovering vulnerabilities. Improve security with comprehensive directory traversal and parameter fuzzing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wfuzz/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wfuzz/'
+description: 'Brute force web applications with WFuzz, a powerful penetration testing tool for discovering vulnerabilities. Improve security with comprehensive directory traversal and parameter fuzzing. Free online tool, no registration required.'
 category: common
 keywords:
-- web application bruteforcer
-- web security scanner
-- penetration testing tool
-- directory traversal tool
-- parameter fuzzing tool
-- web application vulnerability scanner
-- wfuzz command line
-- wfuzz tutorial
-- web application testing
-- web security assessment
+  - web application bruteforcer
+  - web security scanner
+  - penetration testing tool
+  - directory traversal tool
+  - parameter fuzzing tool
+  - web application vulnerability scanner
+  - wfuzz command line
+  - wfuzz tutorial
+  - web application testing
+  - web security assessment
 features:
-- Perform directory and file bruteforcing
-- Save results to a file for analysis
-- Customize output with color and filter response codes
-- Brute force authentication with username and password lists
-- Encode payloads with base64 and md5
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform directory and file bruteforcing
+  - Save results to a file for analysis
+  - Customize output with color and filter response codes
+  - Brute force authentication with username and password lists
+  - Encode payloads with base64 and md5
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wfuzz

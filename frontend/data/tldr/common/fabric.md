@@ -1,29 +1,29 @@
 ---
-title: "Augment Humans with Fabric - AI Prompt Framework | Online Free DevTools by Hexmos"
+title: 'Augment Humans with Fabric - AI Prompt Framework | Online Free DevTools by Hexmos'
 name: fabric
-path: "/freedevtools/tldr/common/fabric/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fabric/"
-description: "Augment humans with AI using Fabric, a modular AI prompt framework. Solve problems using crowdsourced prompts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fabric/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fabric/'
+description: 'Augment humans with AI using Fabric, a modular AI prompt framework. Solve problems using crowdsourced prompts. Free online tool, no registration required.'
 category: common
 keywords:
-- ai prompt framework
-- augment humans ai
-- fabric ai tool
-- crowdsourced ai prompts
-- ai workflow automation
-- command line ai
-- ai pattern execution
-- youtube video ai analysis
-- user defined ai patterns
-- modular ai platform
+  - ai prompt framework
+  - augment humans ai
+  - fabric ai tool
+  - crowdsourced ai prompts
+  - ai workflow automation
+  - command line ai
+  - ai pattern execution
+  - youtube video ai analysis
+  - user defined ai patterns
+  - modular ai platform
 features:
-- Run pre-defined AI patterns from the command line.
-- Chain AI patterns together for complex workflows.
-- Execute patterns on YouTube video content.
-- Create and run custom, user-defined AI patterns.
-- Output AI pattern results to a specified file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run pre-defined AI patterns from the command line.
+  - Chain AI patterns together for complex workflows.
+  - Execute patterns on YouTube video content.
+  - Create and run custom, user-defined AI patterns.
+  - Output AI pattern results to a specified file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fabric

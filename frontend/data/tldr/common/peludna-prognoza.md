@@ -1,29 +1,29 @@
 ---
-title: "Fetch Pollen Data - peludna-prognoza CLI | Online Free DevTools by Hexmos"
+title: 'Fetch Pollen Data - peludna-prognoza CLI | Online Free DevTools by Hexmos'
 name: peludna-prognoza
-path: "/freedevtools/tldr/common/peludna-prognoza/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/peludna-prognoza/"
+path: '/freedevtools/tldr/common/peludna-prognoza/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/peludna-prognoza/'
 description: "Fetch pollen data with peludna-prognoza for Croatian cities from the terminal. Access real-time allergies information via Pliva's API using CLI commands. Free online tool, no registration required."
 category: common
 keywords:
-- pollen data CLI
-- allergies data fetch
-- croatian cities pollen
-- pliva allergies API
-- terminal pollen forecast
-- command line pollen
-- pollen measurement tool
-- console pollen monitor
-- allergies risk assessment
-- city pollen levels
+  - pollen data CLI
+  - allergies data fetch
+  - croatian cities pollen
+  - pliva allergies API
+  - terminal pollen forecast
+  - command line pollen
+  - pollen measurement tool
+  - console pollen monitor
+  - allergies risk assessment
+  - city pollen levels
 features:
-- Fetch pollen levels for specified Croatian cities
-- Display pollen data in JSON or XML format
-- Open the Pliva Zdravlje pollen measurement page in a web browser
-- Initiate an interactive city search for pollen information
-- Retrieve real-time pollen information from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fetch pollen levels for specified Croatian cities
+  - Display pollen data in JSON or XML format
+  - Open the Pliva Zdravlje pollen measurement page in a web browser
+  - Initiate an interactive city search for pollen information
+  - Retrieve real-time pollen information from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # peludna-prognoza

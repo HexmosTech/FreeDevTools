@@ -1,29 +1,29 @@
 ---
-title: "Convert Zeiss to PNM - Format Image Files | Online Free DevTools by Hexmos"
+title: 'Convert Zeiss to PNM - Format Image Files | Online Free DevTools by Hexmos'
 name: zeisstopnm
-path: "/freedevtools/tldr/common/zeisstopnm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zeisstopnm/"
-description: "Convert Zeiss confocal microscope images to PNM (Portable Network Graphics) with Zeisstopnm. Easily format image files using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zeisstopnm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zeisstopnm/'
+description: 'Convert Zeiss confocal microscope images to PNM (Portable Network Graphics) with Zeisstopnm. Easily format image files using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Zeiss to PNM converter
-- confocal image conversion
-- PGM file conversion
-- PPM file conversion
-- image format conversion
-- Netpbm conversion
-- Zeiss image processing
-- command line image converter
-- image file converter
-- zeisstopnm linux
+  - Zeiss to PNM converter
+  - confocal image conversion
+  - PGM file conversion
+  - PPM file conversion
+  - image format conversion
+  - Netpbm conversion
+  - Zeiss image processing
+  - command line image converter
+  - image file converter
+  - zeisstopnm linux
 features:
-- Convert Zeiss confocal images to PGM format
-- Convert Zeiss confocal images to PPM format
-- Specify the output file type (PGM or PPM)
-- Process image data from Zeiss confocal files
-- Use command line for image format conversion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Zeiss confocal images to PGM format
+  - Convert Zeiss confocal images to PPM format
+  - Specify the output file type (PGM or PPM)
+  - Process image data from Zeiss confocal files
+  - Use command line for image format conversion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zeisstopnm

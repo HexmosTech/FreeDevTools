@@ -1,29 +1,29 @@
 ---
-title: "Preview SVG - Visualize Vector Graphics with Inkview | Online Free DevTools by Hexmos"
+title: 'Preview SVG - Visualize Vector Graphics with Inkview | Online Free DevTools by Hexmos'
 name: inkview
-path: "/freedevtools/tldr/in/inkview/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/inkview/"
-description: "Preview SVG files seamlessly with Inkview. Quickly visualize vector graphics and manage slideshows. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/inkview/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/inkview/'
+description: 'Preview SVG files seamlessly with Inkview. Quickly visualize vector graphics and manage slideshows. Free online tool, no registration required.'
 category: common
 keywords:
-- svg viewer
-- vector graphics preview
-- inkscape preview
-- svg slideshow
-- command line svg
-- linux svg viewer
-- macos svg viewer
-- inkview svg
-- graphics display tool
-- svg image display
+  - svg viewer
+  - vector graphics preview
+  - inkscape preview
+  - svg slideshow
+  - command line svg
+  - linux svg viewer
+  - macos svg viewer
+  - inkview svg
+  - graphics display tool
+  - svg image display
 features:
-- Display SVG files in a command-line interface
-- Preview multiple SVG files as a slideshow
-- Navigate SVG slideshows using arrow keys
-- Render SVG images without Inkscape IDE
-- Quick SVG visualization tool
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display SVG files in a command-line interface
+  - Preview multiple SVG files as a slideshow
+  - Navigate SVG slideshows using arrow keys
+  - Render SVG images without Inkscape IDE
+  - Quick SVG visualization tool
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # inkview

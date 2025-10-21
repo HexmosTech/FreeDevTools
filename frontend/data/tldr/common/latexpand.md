@@ -1,29 +1,29 @@
 ---
-title: "Expand LaTeX Files - Simplify Documents | Online Free DevTools by Hexmos"
+title: 'Expand LaTeX Files - Simplify Documents | Online Free DevTools by Hexmos'
 name: latexpand
-path: "/freedevtools/tldr/common/latexpand/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/latexpand/"
-description: "Expand LaTeX files effortlessly with latexpand. Simplify LaTeX documents by resolving includes and removing comments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/latexpand/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/latexpand/'
+description: 'Expand LaTeX files effortlessly with latexpand. Simplify LaTeX documents by resolving includes and removing comments. Free online tool, no registration required.'
 category: common
 keywords:
-- LaTeX expander
-- LaTeX preprocessor
-- LaTeX include resolver
-- LaTeX comment remover
-- LaTeX file simplifier
-- LaTeX document compiler
-- TeX expander
-- TeX preprocessor
-- LaTeX package expander
-- CLI LaTeX tool
+  - LaTeX expander
+  - LaTeX preprocessor
+  - LaTeX include resolver
+  - LaTeX comment remover
+  - LaTeX file simplifier
+  - LaTeX document compiler
+  - TeX expander
+  - TeX preprocessor
+  - LaTeX package expander
+  - CLI LaTeX tool
 features:
-- Resolve LaTeX includes and inputs
-- Remove comments from LaTeX source
-- Expand LaTeX usepackage directives
-- Inline BBL bibliography files
-- Generate a simplified LaTeX document
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Resolve LaTeX includes and inputs
+  - Remove comments from LaTeX source
+  - Expand LaTeX usepackage directives
+  - Inline BBL bibliography files
+  - Generate a simplified LaTeX document
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # latexpand

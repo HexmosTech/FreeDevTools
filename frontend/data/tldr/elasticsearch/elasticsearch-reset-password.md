@@ -1,29 +1,29 @@
 ---
-title: "Reset Elasticsearch Password - Manage User Credentials | Online Free DevTools by Hexmos"
+title: 'Reset Elasticsearch Password - Manage User Credentials | Online Free DevTools by Hexmos'
 name: elasticsearch-reset-password
-path: "/freedevtools/tldr/elasticsearch/elasticsearch-reset-password/"
-canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-reset-password/"
-description: "Reset Elasticsearch passwords with elasticsearch-reset-password. Securely manage user credentials and gain control over built-in users and native realms. Free online tool, no registration required."
+path: '/freedevtools/tldr/elasticsearch/elasticsearch-reset-password/'
+canonical: 'https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-reset-password/'
+description: 'Reset Elasticsearch passwords with elasticsearch-reset-password. Securely manage user credentials and gain control over built-in users and native realms. Free online tool, no registration required.'
 category: common
 keywords:
-- Elasticsearch password reset
-- Elasticsearch user management
-- Reset user credentials
-- Elasticsearch command line
-- Elasticsearch native realm
-- Elasticsearch built-in users
-- Elasticsearch security
-- Elasticsearch admin
-- Reset Elasticsearch password Linux
-- Reset Elasticsearch password MacOS
+  - Elasticsearch password reset
+  - Elasticsearch user management
+  - Reset user credentials
+  - Elasticsearch command line
+  - Elasticsearch native realm
+  - Elasticsearch built-in users
+  - Elasticsearch security
+  - Elasticsearch admin
+  - Reset Elasticsearch password Linux
+  - Reset Elasticsearch password MacOS
 features:
-- Reset passwords for users in the native realm.
-- Reset passwords for built-in users.
-- Generate auto-generated passwords.
-- Interactively prompt for new passwords.
-- Reset passwords at a specified Elasticsearch node URL.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reset passwords for users in the native realm.
+  - Reset passwords for built-in users.
+  - Generate auto-generated passwords.
+  - Interactively prompt for new passwords.
+  - Reset passwords at a specified Elasticsearch node URL.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # elasticsearch-reset-password

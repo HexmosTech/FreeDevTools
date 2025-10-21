@@ -1,29 +1,29 @@
 ---
-title: "Info - Read Info Documentation | Online Free DevTools by Hexmos"
+title: 'Info - Read Info Documentation | Online Free DevTools by Hexmos'
 name: info
-path: "/freedevtools/tldr/in/info/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/info/"
-description: "Read info documentation with info. Access and navigate GNU info manuals. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/info/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/info/'
+description: 'Read info documentation with info. Access and navigate GNU info manuals. Free online tool, no registration required.'
 category: common
 keywords:
-- info documentation
-- info manual reader
-- gnu info
-- command line documentation
-- linux info
-- common commands documentation
-- terminal info
-- software documentation
-- help manual
-- command-line help
+  - info documentation
+  - info manual reader
+  - gnu info
+  - command line documentation
+  - linux info
+  - common commands documentation
+  - terminal info
+  - software documentation
+  - help manual
+  - command-line help
 features:
-- Access GNU info manuals directly from the command line
-- Navigate info manuals using menu items
-- Read documentation stored in the info format
-- Start reading at a specific menu item node
-- Access documentation quickly and easily
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Access GNU info manuals directly from the command line
+  - Navigate info manuals using menu items
+  - Read documentation stored in the info format
+  - Start reading at a specific menu item node
+  - Access documentation quickly and easily
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # info

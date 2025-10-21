@@ -1,9 +1,9 @@
 ---
-title: "Libtoolize - Generate Libtool Files | Online Free DevTools by Hexmos"
+title: 'Libtoolize - Generate Libtool Files | Online Free DevTools by Hexmos'
 name: libtoolize
-path: "/freedevtools/tldr/linux/libtoolize/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/libtoolize/"
-description: "Generate libtool files with Libtoolize for seamless project integration.  Prepare your autotools project for libtool using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/libtoolize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/libtoolize/'
+description: 'Generate libtool files with Libtoolize for seamless project integration.  Prepare your autotools project for libtool using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - libtool configuration
@@ -22,8 +22,8 @@ features:
   - Overwrites existing files if necessary.
   - Avoids the use of symbolic links.
   - Prepares your project for building with libtool.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # libtoolize

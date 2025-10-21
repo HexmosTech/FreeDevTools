@@ -1,29 +1,29 @@
 ---
-title: "Todoist - Control Tasks | Online Free DevTools by Hexmos"
+title: 'Todoist - Control Tasks | Online Free DevTools by Hexmos'
 name: todoist
-path: "/freedevtools/tldr/common/todoist/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/todoist/"
-description: "Control tasks with Todoist command-line tool. Easily manage projects, labels, and priorities from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/todoist/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/todoist/'
+description: 'Control tasks with Todoist command-line tool. Easily manage projects, labels, and priorities from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- todoist command line
-- todoist cli
-- task manager cli
-- command line task management
-- todoist linux
-- todoist macos
-- todoist windows
-- task scheduling cli
-- project management cli
-- command line productivity
+  - todoist command line
+  - todoist cli
+  - task manager cli
+  - command line task management
+  - todoist linux
+  - todoist macos
+  - todoist windows
+  - task scheduling cli
+  - project management cli
+  - command line productivity
 features:
-- Add tasks with specified due dates and priorities
-- Organize tasks by project and label
-- List tasks with filtering options
-- Manage tasks from the command line
-- Quickly add tasks with natural language parsing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add tasks with specified due dates and priorities
+  - Organize tasks by project and label
+  - List tasks with filtering options
+  - Manage tasks from the command line
+  - Quickly add tasks with natural language parsing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # todoist

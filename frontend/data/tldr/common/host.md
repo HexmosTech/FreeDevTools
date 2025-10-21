@@ -1,29 +1,29 @@
 ---
-title: "Host Lookup - Query DNS Records | Online Free DevTools by Hexmos"
+title: 'Host Lookup - Query DNS Records | Online Free DevTools by Hexmos'
 name: host
-path: "/freedevtools/tldr/common/host/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/host/"
-description: "Lookup DNS records with Host Lookup. Resolve domain names to IP addresses and retrieve different DNS record types. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/host/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/host/'
+description: 'Lookup DNS records with Host Lookup. Resolve domain names to IP addresses and retrieve different DNS record types. Free online tool, no registration required.'
 category: common
 keywords:
-- DNS lookup tool
-- domain name resolver
-- A record lookup
-- MX record lookup
-- CNAME record lookup
-- TXT record lookup
-- IP address reverse lookup
-- Linux host command
-- MacOS host command
-- network troubleshooting
+  - DNS lookup tool
+  - domain name resolver
+  - A record lookup
+  - MX record lookup
+  - CNAME record lookup
+  - TXT record lookup
+  - IP address reverse lookup
+  - Linux host command
+  - MacOS host command
+  - network troubleshooting
 features:
-- Resolve domain names to IP addresses
-- Retrieve A, AAAA, MX, CNAME, and TXT records
-- Perform reverse IP address lookups
-- Specify an alternate DNS server
-- Troubleshoot network connectivity issues
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Resolve domain names to IP addresses
+  - Retrieve A, AAAA, MX, CNAME, and TXT records
+  - Perform reverse IP address lookups
+  - Specify an alternate DNS server
+  - Troubleshoot network connectivity issues
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # host

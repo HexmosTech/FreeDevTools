@@ -1,9 +1,9 @@
 ---
-title: "Display PMN Images - cacaview Image Viewer | Online Free DevTools by Hexmos"
+title: 'Display PMN Images - cacaview Image Viewer | Online Free DevTools by Hexmos'
 name: cacaview
-path: "/freedevtools/tldr/linux/cacaview/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cacaview/"
-description: "Display PMN images with cacaview, a command-line image viewer.  Quickly view and inspect your PMN formatted images. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cacaview/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cacaview/'
+description: 'Display PMN images with cacaview, a command-line image viewer.  Quickly view and inspect your PMN formatted images. Free online tool, no registration required.'
 category: linux
 keywords:
   - PMN image viewer
@@ -22,8 +22,8 @@ features:
   - Offers simple and intuitive command-line interface.
   - Provides a lightweight and fast image viewing experience.
   - Compatible with Linux systems.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cacaview

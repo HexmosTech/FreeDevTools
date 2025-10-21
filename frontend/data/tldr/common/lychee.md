@@ -1,29 +1,29 @@
 ---
-title: "Validate URLs - Find Broken Links with Lychee | Online Free DevTools by Hexmos"
+title: 'Validate URLs - Find Broken Links with Lychee | Online Free DevTools by Hexmos'
 name: lychee
-path: "/freedevtools/tldr/common/lychee/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lychee/"
-description: "Validate URLs with Lychee, an efficient broken link checker. Quickly identify and fix broken links on websites and in files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lychee/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lychee/'
+description: 'Validate URLs with Lychee, an efficient broken link checker. Quickly identify and fix broken links on websites and in files. Free online tool, no registration required.'
 category: common
 keywords:
-- broken link checker
-- URL validator
-- website link scanner
-- lychee broken links
-- command line link checker
-- website link validator
-- recursive URL check
-- URL status checker
-- bulk URL validation
-- website health check
+  - broken link checker
+  - URL validator
+  - website link scanner
+  - lychee broken links
+  - command line link checker
+  - website link validator
+  - recursive URL check
+  - URL status checker
+  - bulk URL validation
+  - website health check
 features:
-- Scan websites for broken URLs
-- Display detailed error type breakdowns
-- Limit connections to prevent DDOS protection
-- Recursively check files in directory structures
-- Validate URLs from standard input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan websites for broken URLs
+  - Display detailed error type breakdowns
+  - Limit connections to prevent DDOS protection
+  - Recursively check files in directory structures
+  - Validate URLs from standard input
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lychee

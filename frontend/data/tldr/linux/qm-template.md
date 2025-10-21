@@ -1,9 +1,9 @@
 ---
-title: "Create Proxmox VM Template - qm-template | Online Free DevTools by Hexmos"
+title: 'Create Proxmox VM Template - qm-template | Online Free DevTools by Hexmos'
 name: qm-template
-path: "/freedevtools/tldr/linux/qm-template/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-template/"
-description: "Create Proxmox VM templates with qm-template.  Easily manage virtual machines and streamline your workflow using this simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-template/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-template/'
+description: 'Create Proxmox VM templates with qm-template.  Easily manage virtual machines and streamline your workflow using this simple command. Free online tool, no registration required.'
 category: linux
 keywords:
   - proxmox template creation
@@ -22,8 +22,8 @@ features:
   - Streamlines Proxmox server management.
   - Saves time and effort in VM deployment.
   - Improves consistency in VM setups.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm template

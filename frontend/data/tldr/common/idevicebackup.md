@@ -1,29 +1,29 @@
 ---
-title: "Create iOS Backup - Backup and Restore iOS Devices | Online Free DevTools by Hexmos"
+title: 'Create iOS Backup - Backup and Restore iOS Devices | Online Free DevTools by Hexmos'
 name: idevicebackup
-path: "/freedevtools/tldr/common/idevicebackup/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/idevicebackup/"
-description: "Create iOS backups with idevicebackup. Securely backup and restore your iPhone or iPad data. Free online tool, no registration required. Command line backup utility."
+path: '/freedevtools/tldr/common/idevicebackup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/idevicebackup/'
+description: 'Create iOS backups with idevicebackup. Securely backup and restore your iPhone or iPad data. Free online tool, no registration required. Command line backup utility.'
 category: common
 keywords:
-- iOS backup creation
-- iPhone data backup
-- iPad backup command
-- iOS restore tool
-- idevicebackup command line
-- iOS device backup
-- Apple backup utility
-- backup iOS data
-- iOS file restore
-- mobile backup solution
+  - iOS backup creation
+  - iPhone data backup
+  - iPad backup command
+  - iOS restore tool
+  - idevicebackup command line
+  - iOS device backup
+  - Apple backup utility
+  - backup iOS data
+  - iOS file restore
+  - mobile backup solution
 features:
-- Create full iOS device backups
-- Restore iOS devices from existing backups
-- Backup iOS devices via command line
-- Restore iOS devices via command line
-- Store iOS backups in specified directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create full iOS device backups
+  - Restore iOS devices from existing backups
+  - Backup iOS devices via command line
+  - Restore iOS devices via command line
+  - Store iOS backups in specified directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # idevicebackup

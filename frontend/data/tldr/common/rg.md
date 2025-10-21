@@ -1,29 +1,29 @@
 ---
-title: "Ripgrep Search - Find Text Faster with rg | Online Free DevTools by Hexmos"
+title: 'Ripgrep Search - Find Text Faster with rg | Online Free DevTools by Hexmos'
 name: rg
-path: "/freedevtools/tldr/common/rg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rg/"
-description: "Search text efficiently with Ripgrep using command line. Quickly locate patterns, include hidden files, and refine searches. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rg/'
+description: 'Search text efficiently with Ripgrep using command line. Quickly locate patterns, include hidden files, and refine searches. Free online tool, no registration required.'
 category: common
 keywords:
-- ripgrep search
-- recursive grep
-- text search
-- command line search
-- grep alternative
-- file search linux
-- regex search tool
-- ripgrep windows
-- ripgrep macos
-- ripgrep tutorial
+  - ripgrep search
+  - recursive grep
+  - text search
+  - command line search
+  - grep alternative
+  - file search linux
+  - regex search tool
+  - ripgrep windows
+  - ripgrep macos
+  - ripgrep tutorial
 features:
-- Recursively search directories for text patterns
-- Include hidden files in search results
-- Search for literal string patterns
-- Filter search results based on file names
-- Invert search to find non-matching lines
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search directories for text patterns
+  - Include hidden files in search results
+  - Search for literal string patterns
+  - Filter search results based on file names
+  - Invert search to find non-matching lines
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rg

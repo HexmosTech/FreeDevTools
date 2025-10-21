@@ -1,29 +1,29 @@
 ---
-title: "Control etckeeper - Track Configs in Git | Online Free DevTools by Hexmos"
+title: 'Control etckeeper - Track Configs in Git | Online Free DevTools by Hexmos'
 name: etckeeper
-path: "/freedevtools/tldr/linux/etckeeper/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/etckeeper/"
-description: "Control system configuration files with etckeeper. Track changes, manage commits, and run Git commands directly within /etc. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/etckeeper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/etckeeper/'
+description: 'Control system configuration files with etckeeper. Track changes, manage commits, and run Git commands directly within /etc. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux configuration tracking
-- git configuration management
-- etc directory version control
-- etckeeper commit changes
-- etckeeper init repository
-- linux configuration backup
-- system configuration versioning
-- etckeeper VCS commands
-- etckeeper uninit repository
-- linux config file monitoring
+  - linux configuration tracking
+  - git configuration management
+  - etc directory version control
+  - etckeeper commit changes
+  - etckeeper init repository
+  - linux configuration backup
+  - system configuration versioning
+  - etckeeper VCS commands
+  - etckeeper uninit repository
+  - linux config file monitoring
 features:
-- Initialize a Git repository in /etc
-- Commit configuration changes to Git
-- Execute arbitrary Git commands within /etc
-- Check for uncommitted modifications
-- Destroy the Git repository and stop tracking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a Git repository in /etc
+  - Commit configuration changes to Git
+  - Execute arbitrary Git commands within /etc
+  - Check for uncommitted modifications
+  - Destroy the Git repository and stop tracking
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # etckeeper

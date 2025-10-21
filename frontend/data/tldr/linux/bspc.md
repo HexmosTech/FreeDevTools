@@ -1,9 +1,9 @@
 ---
-title: "BSPC Window Manager - Control Bspwm Windows | Online Free DevTools by Hexmos"
+title: 'BSPC Window Manager - Control Bspwm Windows | Online Free DevTools by Hexmos'
 name: bspc
-path: "/freedevtools/tldr/linux/bspc/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bspc/"
-description: "Control Bspwm window management with BSPC commands. Manage desktops, nodes, and monitors efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bspc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bspc/'
+description: 'Control Bspwm window management with BSPC commands. Manage desktops, nodes, and monitors efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - bspc window manager
@@ -22,8 +22,8 @@ features:
   - Close windows rooted at selected nodes
   - Send nodes to designated desktops
   - Toggle fullscreen mode for selected nodes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bspc

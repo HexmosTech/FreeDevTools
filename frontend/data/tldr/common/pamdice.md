@@ -1,29 +1,29 @@
 ---
-title: "Slice Netpbm Image - Control Image Tiles | Online Free DevTools by Hexmos"
+title: 'Slice Netpbm Image - Control Image Tiles | Online Free DevTools by Hexmos'
 name: pamdice
-path: "/freedevtools/tldr/common/pamdice/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamdice/"
-description: "Slice Netpbm image easily with pamdice. Control image tiles by height and width. Free online tool, no registration required. Manage image segments using command line."
+path: '/freedevtools/tldr/common/pamdice/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamdice/'
+description: 'Slice Netpbm image easily with pamdice. Control image tiles by height and width. Free online tool, no registration required. Manage image segments using command line.'
 category: common
 keywords:
-- netpbm image slice
-- image tile cutter
-- ppm image divider
-- pam image splitter
-- netpbm cropping tool
-- linux image manipulation
-- command line image editing
-- image segmentation
-- netpbm utilities
-- image tiling tool
+  - netpbm image slice
+  - image tile cutter
+  - ppm image divider
+  - pam image splitter
+  - netpbm cropping tool
+  - linux image manipulation
+  - command line image editing
+  - image segmentation
+  - netpbm utilities
+  - image tiling tool
 features:
-- Slice Netpbm images into specified height and width tiles
-- Overlap resulting tiles horizontally and vertically
-- Define output filename stem for sliced tiles
-- Process ppm images
-- Control image segmentation from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Slice Netpbm images into specified height and width tiles
+  - Overlap resulting tiles horizontally and vertically
+  - Define output filename stem for sliced tiles
+  - Process ppm images
+  - Control image segmentation from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamdice

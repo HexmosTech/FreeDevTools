@@ -1,9 +1,9 @@
 ---
-title: "ARP Spoof - Intercept Packets | Online Free DevTools by Hexmos"
+title: 'ARP Spoof - Intercept Packets | Online Free DevTools by Hexmos'
 name: arpspoof
-path: "/freedevtools/tldr/linux/arpspoof/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/arpspoof/"
-description: "Intercept network packets with ARP Spoof.  This command-line tool allows for advanced network manipulation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/arpspoof/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/arpspoof/'
+description: 'Intercept network packets with ARP Spoof.  This command-line tool allows for advanced network manipulation. Free online tool, no registration required.'
 category: linux
 keywords:
   - arp spoofing command
@@ -22,8 +22,8 @@ features:
   - Target specific hosts for packet interception.
   - Utilize the -r flag for bidirectional ARP poisoning.
   - Requires root privileges for execution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arpspoof

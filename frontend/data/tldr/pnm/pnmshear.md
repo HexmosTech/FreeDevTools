@@ -1,29 +1,29 @@
 ---
-title: "Shear PNM Image - Control Image Shearing | Online Free DevTools by Hexmos"
+title: 'Shear PNM Image - Control Image Shearing | Online Free DevTools by Hexmos'
 name: pnmshear
-path: "/freedevtools/tldr/pnm/pnmshear/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmshear/"
-description: "Control image shearing with pnmshear. Precisely shear PNM images using command-line. Modify images with angle specifications and background color. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmshear/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmshear/'
+description: 'Control image shearing with pnmshear. Precisely shear PNM images using command-line. Modify images with angle specifications and background color. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image shearing
-- image shearing tool
-- netpbm pnmshear
-- pnm image editor
-- linux image manipulation
-- command line image tools
-- pnm graphics converter
-- image processing scripts
-- PNM image angle shear
-- PNM batch image processing
+  - PNM image shearing
+  - image shearing tool
+  - netpbm pnmshear
+  - pnm image editor
+  - linux image manipulation
+  - command line image tools
+  - pnm graphics converter
+  - image processing scripts
+  - PNM image angle shear
+  - PNM batch image processing
 features:
-- Shear PNM images by specified angle
-- Define background color during shearing
-- Disable anti-aliasing for faster processing
-- Support batch processing of images via scripting
-- Integrate into image processing pipelines
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Shear PNM images by specified angle
+  - Define background color during shearing
+  - Disable anti-aliasing for faster processing
+  - Support batch processing of images via scripting
+  - Integrate into image processing pipelines
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmshear

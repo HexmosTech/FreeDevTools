@@ -1,29 +1,29 @@
 ---
-title: "Set Shell Options - Control Bash Behavior | Online Free DevTools by Hexmos"
+title: 'Set Shell Options - Control Bash Behavior | Online Free DevTools by Hexmos'
 name: set
-path: "/freedevtools/tldr/set/set/"
-canonical: "https://hexmos.com/freedevtools/tldr/set/set/"
-description: "Control Bash shell options instantly with the Set command. Customize shell behavior, manage variables, and debug scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/set/set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/set/set/'
+description: 'Control Bash shell options instantly with the Set command. Customize shell behavior, manage variables, and debug scripts. Free online tool, no registration required.'
 category: common
 keywords:
-- bash shell options
-- set command
-- shell variable management
-- bash debugging
-- linux shell configuration
-- shell scripting environment
-- command line behavior
-- posix shell options
-- gnu bash set
-- interactive shell settings
+  - bash shell options
+  - set command
+  - shell variable management
+  - bash debugging
+  - linux shell configuration
+  - shell scripting environment
+  - command line behavior
+  - posix shell options
+  - gnu bash set
+  - interactive shell settings
 features:
-- Toggle shell options for debugging
-- Export shell variables to child processes
-- Customize command-line editing mode
-- Configure error handling within scripts
-- Reset and assign positional parameters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Toggle shell options for debugging
+  - Export shell variables to child processes
+  - Customize command-line editing mode
+  - Configure error handling within scripts
+  - Reset and assign positional parameters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # set

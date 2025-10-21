@@ -1,29 +1,29 @@
 ---
-title: "Takeout - Manage Docker Dependencies | Online Free DevTools by Hexmos"
+title: 'Takeout - Manage Docker Dependencies | Online Free DevTools by Hexmos'
 name: takeout
-path: "/freedevtools/tldr/common/takeout/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/takeout/"
-description: "Manage Docker dependencies with Takeout, a development-only dependency manager. Simplify environment setup and streamline your workflow with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/takeout/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/takeout/'
+description: 'Manage Docker dependencies with Takeout, a development-only dependency manager. Simplify environment setup and streamline your workflow with this free online tool, no registration required.'
 category: common
 keywords:
-- docker dependency manager
-- takeout docker
-- docker development environment
-- container management
-- takeout cli
-- docker service manager
-- development environment setup
-- containerized dependencies
-- tighten takeout
-- docker development tool
+  - docker dependency manager
+  - takeout docker
+  - docker development environment
+  - container management
+  - takeout cli
+  - docker service manager
+  - development environment setup
+  - containerized dependencies
+  - tighten takeout
+  - docker development tool
 features:
-- Enable and disable services with simple commands
-- Manage Docker containers for local development
-- Configure services with default parameters
-- Control the state of individual containers
-- List available and enabled services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enable and disable services with simple commands
+  - Manage Docker containers for local development
+  - Configure services with default parameters
+  - Control the state of individual containers
+  - List available and enabled services
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # takeout

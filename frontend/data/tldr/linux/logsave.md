@@ -1,9 +1,9 @@
 ---
-title: "Logsave - Save Command Output to Log File | Online Free DevTools by Hexmos"
+title: 'Logsave - Save Command Output to Log File | Online Free DevTools by Hexmos'
 name: logsave
-path: "/freedevtools/tldr/linux/logsave/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/logsave/"
-description: "Save command output effortlessly with Logsave. Capture and manage command-line data efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/logsave/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/logsave/'
+description: 'Save command output effortlessly with Logsave. Capture and manage command-line data efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - command output capture
@@ -22,8 +22,8 @@ features:
   - Accept input from stdin for logging.
   - Display verbose output during the logging process.
   - Easily manage and archive command execution data.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # logsave

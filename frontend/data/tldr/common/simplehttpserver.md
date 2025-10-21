@@ -1,29 +1,29 @@
 ---
-title: "Create HTTP Server - Simple File Sharing | Online Free DevTools by Hexmos"
+title: 'Create HTTP Server - Simple File Sharing | Online Free DevTools by Hexmos'
 name: simplehttpserver
-path: "/freedevtools/tldr/common/simplehttpserver/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/simplehttpserver/"
-description: "Create HTTP server instantly with SimpleHTTPServer. Share files and directories easily using custom rules and authentication. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/simplehttpserver/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/simplehttpserver/'
+description: 'Create HTTP server instantly with SimpleHTTPServer. Share files and directories easily using custom rules and authentication. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP server creator
-- file server
-- simple web server
-- command line server
-- file sharing server
-- local server
-- rules-based server
-- go server
-- https server
-- authentication server
+  - HTTP server creator
+  - file server
+  - simple web server
+  - command line server
+  - file sharing server
+  - local server
+  - rules-based server
+  - go server
+  - https server
+  - authentication server
 features:
-- Serve files from a specified directory
-- Enable basic authentication for access control
-- Configure custom response headers
-- Handle file uploads
-- Define custom routing rules with YAML
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve files from a specified directory
+  - Enable basic authentication for access control
+  - Configure custom response headers
+  - Handle file uploads
+  - Define custom routing rules with YAML
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # simplehttpserver

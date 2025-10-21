@@ -1,9 +1,9 @@
 ---
-title: "Control Wireless Devices with iw dev | Online Free DevTools by Hexmos"
+title: 'Control Wireless Devices with iw dev | Online Free DevTools by Hexmos'
 name: iw-dev
-path: "/freedevtools/tldr/linux/iw-dev/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/iw-dev/"
-description: "Control and manage wireless devices with the iw dev command.  Configure network interfaces, set channels and frequencies, and monitor station activity. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/iw-dev/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/iw-dev/'
+description: 'Control and manage wireless devices with the iw dev command.  Configure network interfaces, set channels and frequencies, and monitor station activity. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux wireless control
@@ -22,8 +22,8 @@ features:
   - Display detailed station information.
   - Create and delete virtual monitor interfaces.
   - Manage wireless device settings via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iw dev

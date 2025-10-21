@@ -1,29 +1,29 @@
 ---
-title: "Provide Gcloud Feedback - Send Cloud Team Input | Online Free DevTools by Hexmos"
+title: 'Provide Gcloud Feedback - Send Cloud Team Input | Online Free DevTools by Hexmos'
 name: gcloud-feedback
-path: "/freedevtools/tldr/gcloud/gcloud-feedback/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-feedback/"
-description: "Provide Gcloud feedback with this command-line tool. Submit suggestions, bug reports, and opinions directly to the Google Cloud team. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-feedback/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-feedback/'
+description: 'Provide Gcloud feedback with this command-line tool. Submit suggestions, bug reports, and opinions directly to the Google Cloud team. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud feedback command
-- google cloud feedback
-- gcloud cli feedback
-- report gcloud issues
-- submit cloud suggestion
-- gcloud log feedback
-- cloud sdk feedback
-- gcloud bug report
-- provide gcloud opinion
-- command line feedback
+  - gcloud feedback command
+  - google cloud feedback
+  - gcloud cli feedback
+  - report gcloud issues
+  - submit cloud suggestion
+  - gcloud log feedback
+  - cloud sdk feedback
+  - gcloud bug report
+  - provide gcloud opinion
+  - command line feedback
 features:
-- Submit feedback directly to the Google Cloud team
-- Attach log files for detailed problem descriptions
-- Provide suggestions for gcloud features
-- Report bugs found in the gcloud CLI
-- Offer opinions and insights on the Google Cloud platform
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Submit feedback directly to the Google Cloud team
+  - Attach log files for detailed problem descriptions
+  - Provide suggestions for gcloud features
+  - Report bugs found in the gcloud CLI
+  - Offer opinions and insights on the Google Cloud platform
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud feedback

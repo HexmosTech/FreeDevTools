@@ -1,29 +1,29 @@
 ---
-title: "Git Help - Display Git Information | Online Free DevTools by Hexmos"
+title: 'Git Help - Display Git Information | Online Free DevTools by Hexmos'
 name: git-help
-path: "/freedevtools/tldr/git/git-help/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-help/"
-description: "Display Git information with Git Help. Access Git subcommands, guides, and configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-help/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-help/'
+description: 'Display Git information with Git Help. Access Git subcommands, guides, and configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- git help command
-- git subcommand help
-- git command documentation
-- git manual pages
-- git command reference
-- git configuration help
-- git guides
-- git command line help
-- linux git help
-- macos git help
+  - git help command
+  - git subcommand help
+  - git command documentation
+  - git manual pages
+  - git command reference
+  - git configuration help
+  - git guides
+  - git command line help
+  - linux git help
+  - macos git help
 features:
-- Display help for specific Git subcommands
-- Open Git help in a web browser
-- List all available Git subcommands
-- Display available Git guides
-- List all possible Git configuration variables
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display help for specific Git subcommands
+  - Open Git help in a web browser
+  - List all available Git subcommands
+  - Display available Git guides
+  - List all possible Git configuration variables
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git help

@@ -1,9 +1,9 @@
 ---
-title: "Convert RPM Packages - rpm2cpio Converter | Online Free DevTools by Hexmos"
+title: 'Convert RPM Packages - rpm2cpio Converter | Online Free DevTools by Hexmos'
 name: rpm2cpio
-path: "/freedevtools/tldr/linux/rpm2cpio/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpm2cpio/"
-description: "Convert RPM packages to cpio archives with rpm2cpio.  This efficient converter simplifies package manipulation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpm2cpio/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpm2cpio/'
+description: 'Convert RPM packages to cpio archives with rpm2cpio.  This efficient converter simplifies package manipulation. Free online tool, no registration required.'
 category: linux
 keywords:
   - rpm package converter
@@ -22,8 +22,8 @@ features:
   - Provides a command-line interface for easy integration.
   - Creates cpio archives compatible with various systems.
   - Offers efficient and reliable package conversion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpm2cpio

@@ -1,29 +1,29 @@
 ---
-title: "Create Dev Containers - Docker Development with devcontainer | Online Free DevTools by Hexmos"
+title: 'Create Dev Containers - Docker Development with devcontainer | Online Free DevTools by Hexmos'
 name: devcontainer
-path: "/freedevtools/tldr/common/devcontainer/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/devcontainer/"
-description: "Create and manage Docker development environments with devcontainer. Build images, apply templates, and execute commands easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/devcontainer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/devcontainer/'
+description: 'Create and manage Docker development environments with devcontainer. Build images, apply templates, and execute commands easily. Free online tool, no registration required.'
 category: common
 keywords:
-- devcontainer Docker development
-- Docker container development environment
-- Dev container configuration
-- devcontainer build image
-- devcontainer templates apply
-- devcontainer exec command
-- VS Code devcontainer
-- Containerized development workflow
-- Dockerized development environment
-- Remote development containers
+  - devcontainer Docker development
+  - Docker container development environment
+  - Dev container configuration
+  - devcontainer build image
+  - devcontainer templates apply
+  - devcontainer exec command
+  - VS Code devcontainer
+  - Containerized development workflow
+  - Dockerized development environment
+  - Remote development containers
 features:
-- Create and run development containers
-- Apply Dev Container Templates to workspaces
-- Execute commands in running Dev Containers
-- Build Dev Container images from `devcontainer.json`
-- Read Dev Container configuration from `devcontainer.json`
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and run development containers
+  - Apply Dev Container Templates to workspaces
+  - Execute commands in running Dev Containers
+  - Build Dev Container images from `devcontainer.json`
+  - Read Dev Container configuration from `devcontainer.json`
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # devcontainer

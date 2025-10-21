@@ -1,9 +1,9 @@
 ---
-title: "Debian Package Builder - Create Packages from Source | Online Free DevTools by Hexmos"
+title: 'Debian Package Builder - Create Packages from Source | Online Free DevTools by Hexmos'
 name: debuild
-path: "/freedevtools/tldr/linux/debuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/debuild/"
-description: "Create Debian packages quickly with debuild. Build binary packages and control lintian checks for quality assurance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/debuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/debuild/'
+description: 'Create Debian packages quickly with debuild. Build binary packages and control lintian checks for quality assurance. Free online tool, no registration required.'
 category: linux
 keywords:
   - debian package builder
@@ -22,8 +22,8 @@ features:
   - Skip lintian checks during package building
   - Build packages in the current directory
   - Streamline Debian package creation process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # debuild

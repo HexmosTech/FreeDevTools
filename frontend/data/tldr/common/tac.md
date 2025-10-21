@@ -1,29 +1,29 @@
 ---
-title: "Reverse File Order - Tac Command | Online Free DevTools by Hexmos"
+title: 'Reverse File Order - Tac Command | Online Free DevTools by Hexmos'
 name: tac
-path: "/freedevtools/tldr/common/tac/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tac/"
-description: "Reverse file order instantly with Tac command. Concatenate files and display lines in reversed sequence on Linux & macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tac/'
+description: 'Reverse file order instantly with Tac command. Concatenate files and display lines in reversed sequence on Linux & macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- reverse file order
-- tac command linux
-- tac command macos
-- concatenate reversed files
-- linux command line tools
-- reverse text order
-- display reversed lines
-- gnu coreutils tac
-- file manipulation tools
-- text processing utilities
+  - reverse file order
+  - tac command linux
+  - tac command macos
+  - concatenate reversed files
+  - linux command line tools
+  - reverse text order
+  - display reversed lines
+  - gnu coreutils tac
+  - file manipulation tools
+  - text processing utilities
 features:
-- Reverse the order of lines in files
-- Concatenate multiple files in reversed line order
-- Display standard input in reversed order
-- Specify a custom separator between lines
-- Reverse the order of files before concatenation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reverse the order of lines in files
+  - Concatenate multiple files in reversed line order
+  - Display standard input in reversed order
+  - Specify a custom separator between lines
+  - Reverse the order of files before concatenation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tac

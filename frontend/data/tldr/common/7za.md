@@ -1,29 +1,29 @@
 ---
-title: "Archive Files - Create Archives with 7za | Online Free DevTools by Hexmos"
+title: 'Archive Files - Create Archives with 7za | Online Free DevTools by Hexmos'
 name: 7za
-path: "/freedevtools/tldr/common/7za/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/7za/"
-description: "Create archives with 7za, a powerful file archiver supporting multiple formats. Compress, extract, and encrypt files easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/7za/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/7za/'
+description: 'Create archives with 7za, a powerful file archiver supporting multiple formats. Compress, extract, and encrypt files easily. Free online tool, no registration required.'
 category: common
 keywords:
-- 7za archive creation
-- 7za file compression
-- 7z archive extraction
-- cross-platform archiver
-- command line archive
-- 7za encryption
-- 7za command examples
-- 7za linux
-- 7za windows
-- file archiver
+  - 7za archive creation
+  - 7za file compression
+  - 7z archive extraction
+  - cross-platform archiver
+  - command line archive
+  - 7za encryption
+  - 7za command examples
+  - 7za linux
+  - 7za windows
+  - file archiver
 features:
-- Create compressed archives in various formats
-- Encrypt existing archives with password protection
-- Extract archive contents to a specified directory
-- List archive contents before extraction
-- Set compression levels for optimal file size
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create compressed archives in various formats
+  - Encrypt existing archives with password protection
+  - Extract archive contents to a specified directory
+  - List archive contents before extraction
+  - Set compression levels for optimal file size
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # 7za

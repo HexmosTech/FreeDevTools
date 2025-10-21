@@ -1,29 +1,29 @@
 ---
-title: "Helm - Manage Kubernetes Applications | Online Free DevTools by Hexmos"
+title: 'Helm - Manage Kubernetes Applications | Online Free DevTools by Hexmos'
 name: helm
-path: "/freedevtools/tldr/common/helm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/helm/"
-description: "Manage Kubernetes deployments easily with Helm. Streamline application installation, upgrades, and rollbacks with this powerful package manager. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/helm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/helm/'
+description: 'Manage Kubernetes deployments easily with Helm. Streamline application installation, upgrades, and rollbacks with this powerful package manager. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes package manager
-- helm chart management
-- application deployment kubernetes
-- kubernetes application installer
-- helm repository management
-- yaml kubernetes deployment
-- kubernetes deployment manager
-- cli kubernetes tools
-- docker kubernetes deployment
-- microservices deployment helm
+  - kubernetes package manager
+  - helm chart management
+  - application deployment kubernetes
+  - kubernetes application installer
+  - helm repository management
+  - yaml kubernetes deployment
+  - kubernetes deployment manager
+  - cli kubernetes tools
+  - docker kubernetes deployment
+  - microservices deployment helm
 features:
-- Create new Helm charts for application deployment.
-- Manage Helm repositories for accessing charts.
-- Install applications into Kubernetes clusters using Helm charts.
-- Update dependencies within a Helm chart.
-- Download existing Helm charts for inspection and modification.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Helm charts for application deployment.
+  - Manage Helm repositories for accessing charts.
+  - Install applications into Kubernetes clusters using Helm charts.
+  - Update dependencies within a Helm chart.
+  - Download existing Helm charts for inspection and modification.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # helm

@@ -1,29 +1,29 @@
 ---
-title: "Azure Storage - Manage Cloud Resources | Online Free DevTools by Hexmos"
+title: 'Azure Storage - Manage Cloud Resources | Online Free DevTools by Hexmos'
 name: az-storage
-path: "/freedevtools/tldr/az/az-storage/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage/"
-description: "Manage Azure Storage resources efficiently with az-storage. Control storage accounts, access keys, and TLS versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-storage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-storage/'
+description: 'Manage Azure Storage resources efficiently with az-storage. Control storage accounts, access keys, and TLS versions. Free online tool, no registration required.'
 category: common
 keywords:
-- azure storage management
-- azure cloud storage
-- storage account cli
-- azure storage account
-- az storage commands
-- azure storage keys
-- storage tls version
-- azure storage resources
-- command line storage
-- azure cli storage
+  - azure storage management
+  - azure cloud storage
+  - storage account cli
+  - azure storage account
+  - az storage commands
+  - azure storage keys
+  - storage tls version
+  - azure storage resources
+  - command line storage
+  - azure cli storage
 features:
-- Create and manage Azure Storage accounts
-- List storage accounts within a resource group
-- Retrieve access keys for a storage account
-- Delete storage accounts as needed
-- Update the minimum TLS version for enhanced security
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage Azure Storage accounts
+  - List storage accounts within a resource group
+  - Retrieve access keys for a storage account
+  - Delete storage accounts as needed
+  - Update the minimum TLS version for enhanced security
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az storage

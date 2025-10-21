@@ -1,29 +1,29 @@
 ---
-title: "Compile XeTeX - Generate PDF Documents | Online Free DevTools by Hexmos"
+title: 'Compile XeTeX - Generate PDF Documents | Online Free DevTools by Hexmos'
 name: xetex
-path: "/freedevtools/tldr/common/xetex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xetex/"
-description: "Compile PDF documents with XeTeX. Generate professional-quality documents from LaTeX source. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xetex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xetex/'
+description: 'Compile PDF documents with XeTeX. Generate professional-quality documents from LaTeX source. Free online tool, no registration required.'
 category: common
 keywords:
-- xetex compiler
-- latex to pdf
-- tex document generation
-- pdf document creation
-- xetex command line
-- latex compiler common
-- xetex pdf compilation
-- tex pdf converter
-- xetex document building
-- latex document generation
+  - xetex compiler
+  - latex to pdf
+  - tex document generation
+  - pdf document creation
+  - xetex command line
+  - latex compiler common
+  - xetex pdf compilation
+  - tex pdf converter
+  - xetex document building
+  - latex document generation
 features:
-- Compile XeTeX source files into PDF documents.
-- Specify an output directory for compiled PDFs.
-- Halt compilation on error for debugging.
-- Convert LaTeX documents to PDF format.
-- Generate PDF documents from XeTeX source.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile XeTeX source files into PDF documents.
+  - Specify an output directory for compiled PDFs.
+  - Halt compilation on error for debugging.
+  - Convert LaTeX documents to PDF format.
+  - Generate PDF documents from XeTeX source.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xetex

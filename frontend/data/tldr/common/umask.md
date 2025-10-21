@@ -1,29 +1,29 @@
 ---
-title: "Umask - Control File Permissions | Online Free DevTools by Hexmos"
+title: 'Umask - Control File Permissions | Online Free DevTools by Hexmos'
 name: umask
-path: "/freedevtools/tldr/common/umask/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/umask/"
-description: "Control file permissions with Umask. Restrict read, write, and execute access for newly created files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/umask/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/umask/'
+description: 'Control file permissions with Umask. Restrict read, write, and execute access for newly created files. Free online tool, no registration required.'
 category: common
 keywords:
-- umask file permissions
-- linux umask
-- unix umask
-- macos umask
-- command line umask
-- file access control
-- octal permission mask
-- symbolic permission mask
-- default file permissions
-- restrict file access
+  - umask file permissions
+  - linux umask
+  - unix umask
+  - macos umask
+  - command line umask
+  - file access control
+  - octal permission mask
+  - symbolic permission mask
+  - default file permissions
+  - restrict file access
 features:
-- Display the current permission mask
-- Modify the permission mask in octal format
-- Modify the permission mask symbolically
-- Restrict permissions for specific user groups
-- Manage default file creation permissions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the current permission mask
+  - Modify the permission mask in octal format
+  - Modify the permission mask symbolically
+  - Restrict permissions for specific user groups
+  - Manage default file creation permissions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # umask

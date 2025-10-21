@@ -13,7 +13,7 @@ var TOKEN_COMMENT = RegExp(/^\s*#.*$/);
 var TOKEN_ESCAPE_DIRECTIVE = RegExp(/^#[ \t]*escape[ \t]*=[ \t]*(.).*$/);
 
 var errDockerfileNotStringArray = new Error(
-  "When using JSON array syntax, " + "arrays must be comprised of strings only."
+  'When using JSON array syntax, ' + 'arrays must be comprised of strings only.'
 );
 
 function isSpace(s) {
@@ -22,7 +22,7 @@ function isSpace(s) {
 
 // Escape special regular expression characters in the provided string.
 function regexEscape(str) {
-  return str.replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+  return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&');
 }
 
 /**
@@ -43,7 +43,7 @@ function parseSubCommand(cmd) {
     cmd.args = parseDetails.command;
     return true;
   }
-  cmd.error = "Unhandled onbuild command: " + cmd.rest;
+  cmd.error = 'Unhandled onbuild command: ' + cmd.rest;
   return false;
 }
 
@@ -57,8 +57,8 @@ function parseWords(rest) {
 
   var words = [];
   var phase = S_inSpaces;
-  var word = "";
-  var quote = "";
+  var word = '';
+  var quote = '';
   var blankOK = false;
   var ch;
   var pos;
@@ -92,7 +92,7 @@ function parseWords(rest) {
         if (blankOK || word.length > 0) {
           words.push(word);
         }
-        word = "";
+        word = '';
         blankOK = false;
         continue;
       }
@@ -101,7 +101,7 @@ function parseWords(rest) {
         blankOK = true;
         phase = S_inQuote;
       }
-      if (ch == "\\") {
+      if (ch == '\\') {
         if (pos + 1 == rest.length) {
           continue; // just skip \ at end
         }
@@ -120,7 +120,7 @@ function parseWords(rest) {
         phase = S_inWord;
       }
       // \ is special except for ' quotes - can't escape anything for '
-      if (ch == "\\" && quote != "'") {
+      if (ch == '\\' && quote != "'") {
         if (pos + 1 == rest.length) {
           phase = S_inWord;
           continue; // just skip \ at end
@@ -150,34 +150,34 @@ function parseNameVal(cmd) {
   cmd.args = {};
 
   if (words.length === 0) {
-    cmd.error = "No KEY name value, or KEY name=value arguments found";
+    cmd.error = 'No KEY name value, or KEY name=value arguments found';
     return false;
   }
 
-  if (words[0].indexOf("=") == -1) {
+  if (words[0].indexOf('=') == -1) {
     // Old format (KEY name value)
     var strs = cmd.rest.split(TOKEN_WHITESPACE);
     if (strs.length < 2) {
-      cmd.error = cmd.name + " must have two arguments, got " + cmd.rest;
+      cmd.error = cmd.name + ' must have two arguments, got ' + cmd.rest;
       return false;
     }
 
     // Convert to new style key:value map.
-    cmd.args[strs[0]] = strs.slice(1).join(" ");
+    cmd.args[strs[0]] = strs.slice(1).join(' ');
   } else {
     // New format (KEY name=value ...)
     var i;
     for (i = 0; i < words.length; i++) {
       word = words[i];
-      if (word.indexOf("=") == -1) {
+      if (word.indexOf('=') == -1) {
         cmd.error =
           "Syntax error - can't find = in " +
           word +
-          ". Must be of the form: name=value";
+          '. Must be of the form: name=value';
         return false;
       }
-      var parts = word.split("=");
-      cmd.args[parts[0]] = parts.slice(1).join("=");
+      var parts = word.split('=');
+      cmd.args[parts[0]] = parts.slice(1).join('=');
     }
   }
 
@@ -234,7 +234,7 @@ function parseJSON(cmd) {
   // Ensure every entry in the array is a string.
   if (
     !json.every(function (entry) {
-      return typeof entry === "string";
+      return typeof entry === 'string';
     })
   ) {
     return false;
@@ -297,7 +297,7 @@ function splitCommand(line) {
   // Make sure we get the same results irrespective of leading/trailing spaces
   var match = line.match(TOKEN_WHITESPACE);
   if (!match) {
-    return { name: line.toUpperCase(), rest: "" };
+    return { name: line.toUpperCase(), rest: '' };
   }
   var name = line.substr(0, match.index).toUpperCase();
   var rest = line.substr(match.index + match[0].length);
@@ -315,18 +315,18 @@ function parseLine(line, lineno, options) {
 
   if (!line) {
     // Ignore empty lines
-    return { command: null, remainder: "" };
+    return { command: null, remainder: '' };
   }
 
   if (isComment(line)) {
     // Handle comment lines.
-    command = { name: "COMMENT", args: line, lineno: lineno };
-    return { command: command, remainder: "" };
+    command = { name: 'COMMENT', args: line, lineno: lineno };
+    return { command: command, remainder: '' };
   }
 
   if (line.match(lineContinuationRegex)) {
     // Line continues on next line.
-    var remainder = line.replace(lineContinuationRegex, "", "g");
+    var remainder = line.replace(lineContinuationRegex, '', 'g');
     return { command: null, remainder: remainder };
   }
 
@@ -346,7 +346,7 @@ function parseLine(line, lineno, options) {
     delete command.rest;
   }
 
-  return { command: command, remainder: "" };
+  return { command: command, remainder: '' };
 }
 
 /**
@@ -379,8 +379,8 @@ function parse(contents, options) {
   var parseOptions = {};
   var parseResult;
   var regexMatch;
-  var remainder = "";
-  var includeComments = options && options["includeComments"];
+  var remainder = '';
+  var includeComments = options && options['includeComments'];
 
   for (i = 0; i < lines.length; i++) {
     lineno = i + 1;
@@ -388,7 +388,7 @@ function parse(contents, options) {
     // remove inline RUN # comment see https://github.com/joyent/node-docker-file-parser/issues/8
     // if line will be continued, comments don't matter :=
     if (line && line.match(TOKEN_LINE_CONTINUATION) && isComment(nextLine)) {
-      line = remainder + "\\";
+      line = remainder + '\\';
     } else if (remainder) {
       line = remainder + nextLine;
     } else {
@@ -401,16 +401,16 @@ function parse(contents, options) {
       // cannot be repeated.
       regexMatch = line.match(TOKEN_ESCAPE_DIRECTIVE);
       if (regexMatch) {
-        if (regexMatch[1] != "`" && regexMatch[1] != "\\") {
+        if (regexMatch[1] != '`' && regexMatch[1] != '\\') {
           throw new Error(
             'invalid ESCAPE "' + regexMatch[1] + '". Must be ` or \\'
           );
         }
         if (parseOptions.lineContinuationRegex) {
-          throw new Error("only one escape parser directive can be used");
+          throw new Error('only one escape parser directive can be used');
         }
         parseOptions.lineContinuationRegex = RegExp(
-          regexEscape(regexMatch[1]) + "[ \t]*$"
+          regexEscape(regexMatch[1]) + '[ \t]*$'
         );
         continue;
       }
@@ -421,7 +421,7 @@ function parse(contents, options) {
 
     parseResult = parseLine(line, lineno, parseOptions);
     if (parseResult.command) {
-      if (parseResult.command.name !== "COMMENT" || includeComments) {
+      if (parseResult.command.name !== 'COMMENT' || includeComments) {
         commands.push(parseResult.command);
       }
     }

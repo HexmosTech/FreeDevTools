@@ -1,29 +1,29 @@
 ---
-title: "KeePassXC Password Manager - Control Secrets | Online Free DevTools by Hexmos"
+title: 'KeePassXC Password Manager - Control Secrets | Online Free DevTools by Hexmos'
 name: keepassxc-cli
-path: "/freedevtools/tldr/common/keepassxc-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/keepassxc-cli/"
-description: "Control secrets with KeePassXC Password Manager. Securely store passwords, generate strong keys, and manage credentials with this CLI tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/keepassxc-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/keepassxc-cli/'
+description: 'Control secrets with KeePassXC Password Manager. Securely store passwords, generate strong keys, and manage credentials with this CLI tool. Free online tool, no registration required.'
 category: common
 keywords:
-- KeePassXC password manager
-- password management CLI
-- secure password storage
-- password generator command line
-- KeePassXC command-line interface
-- password database manager
-- secret management tool
-- credential management CLI
-- linux password manager
-- macos password manager
+  - KeePassXC password manager
+  - password management CLI
+  - secure password storage
+  - password generator command line
+  - KeePassXC command-line interface
+  - password database manager
+  - secret management tool
+  - credential management CLI
+  - linux password manager
+  - macos password manager
 features:
-- Search for entries in a KeePassXC database
-- List contents of a directory within a database
-- Add new entries with auto-generated passwords
-- Copy passwords and TOTP codes to the clipboard
-- Generate secure passphrases and passwords
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for entries in a KeePassXC database
+  - List contents of a directory within a database
+  - Add new entries with auto-generated passwords
+  - Copy passwords and TOTP codes to the clipboard
+  - Generate secure passphrases and passwords
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # keepassxc-cli

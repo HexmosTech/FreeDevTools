@@ -1,29 +1,29 @@
 ---
-title: "React Native - Create Native Apps with React | Online Free DevTools by Hexmos"
+title: 'React Native - Create Native Apps with React | Online Free DevTools by Hexmos'
 name: react-native
-path: "/freedevtools/tldr/react/react-native/"
-canonical: "https://hexmos.com/freedevtools/tldr/react/react-native/"
-description: "Create native apps instantly with React Native. Build cross-platform mobile applications for iOS and Android using a single JavaScript codebase. Free online tool, no registration required."
+path: '/freedevtools/tldr/react/react-native/'
+canonical: 'https://hexmos.com/freedevtools/tldr/react/react-native/'
+description: 'Create native apps instantly with React Native. Build cross-platform mobile applications for iOS and Android using a single JavaScript codebase. Free online tool, no registration required.'
 category: common
 keywords:
-- react native framework
-- native app builder
-- cross platform mobile development
-- javascript mobile development
-- react native cli
-- ios app development
-- android app development
-- mobile app development tools
-- react native project setup
-- metro bundler
+  - react native framework
+  - native app builder
+  - cross platform mobile development
+  - javascript mobile development
+  - react native cli
+  - ios app development
+  - android app development
+  - mobile app development tools
+  - react native project setup
+  - metro bundler
 features:
-- Initialize new React Native projects
-- Start and manage the Metro bundler
-- Build and run apps on Android devices and emulators
-- Build and run apps on iOS simulators
-- Stream logs from Android and iOS devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new React Native projects
+  - Start and manage the Metro bundler
+  - Build and run apps on Android devices and emulators
+  - Build and run apps on iOS simulators
+  - Stream logs from Android and iOS devices
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # react-native

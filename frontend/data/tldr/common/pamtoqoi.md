@@ -1,29 +1,29 @@
 ---
-title: "Convert Netpbm to QOI - Image Format Conversion | Online Free DevTools by Hexmos"
+title: 'Convert Netpbm to QOI - Image Format Conversion | Online Free DevTools by Hexmos'
 name: pamtoqoi
-path: "/freedevtools/tldr/common/pamtoqoi/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamtoqoi/"
-description: "Convert Netpbm images to QOI format with pamtoqoi. Efficient image format conversion using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamtoqoi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamtoqoi/'
+description: 'Convert Netpbm images to QOI format with pamtoqoi. Efficient image format conversion using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- Netpbm to QOI conversion
-- PNM to QOI conversion
-- Image format converter
-- Command-line image tools
-- Netpbm image processing
-- QOI image encoding
-- Image file conversion
-- Linux image utilities
-- macOS image tools
-- Netpbm tools
+  - Netpbm to QOI conversion
+  - PNM to QOI conversion
+  - Image format converter
+  - Command-line image tools
+  - Netpbm image processing
+  - QOI image encoding
+  - Image file conversion
+  - Linux image utilities
+  - macOS image tools
+  - Netpbm tools
 features:
-- Convert Netpbm images to the QOI format
-- Encode images using the QOI (Quite OK Image) format
-- Process image files from the command line
-- Facilitate lossless image compression
-- Output converted images to a specified file path
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Netpbm images to the QOI format
+  - Encode images using the QOI (Quite OK Image) format
+  - Process image files from the command line
+  - Facilitate lossless image compression
+  - Output converted images to a specified file path
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamtoqoi

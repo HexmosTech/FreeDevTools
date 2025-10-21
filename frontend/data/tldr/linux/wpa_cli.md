@@ -1,9 +1,9 @@
 ---
-title: "WPA CLI - Manage Wireless Networks | Online Free DevTools by Hexmos"
+title: 'WPA CLI - Manage Wireless Networks | Online Free DevTools by Hexmos'
 name: wpa_cli
-path: "/freedevtools/tldr/linux/wpa_cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wpa_cli/"
-description: "Configure and manage wireless networks with WPA CLI.  Scan for networks, add networks, set SSIDs, and save configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wpa_cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wpa_cli/'
+description: 'Configure and manage wireless networks with WPA CLI.  Scan for networks, add networks, set SSIDs, and save configurations. Free online tool, no registration required.'
 category: linux
 keywords:
   - wpa_cli commands
@@ -22,8 +22,8 @@ features:
   - Configure SSID and other network parameters.
   - Enable and disable wireless networks.
   - Save wireless network configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wpa_cli

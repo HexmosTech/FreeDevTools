@@ -1,9 +1,9 @@
 ---
-title: "Control Hardware - Interface IPMI with ipmitool | Online Free DevTools by Hexmos"
+title: 'Control Hardware - Interface IPMI with ipmitool | Online Free DevTools by Hexmos'
 name: ipmitool
-path: "/freedevtools/tldr/freebsd/ipmitool/"
-canonical: "https://hexmos.com/freedevtools/tldr/freebsd/ipmitool/"
-description: "Control server hardware remotely with ipmitool, interfacing the Intelligent Platform Management Interface (IPMI). Manage power, sensors, and system events. Free online tool, no registration required."
+path: '/freedevtools/tldr/freebsd/ipmitool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/freebsd/ipmitool/'
+description: 'Control server hardware remotely with ipmitool, interfacing the Intelligent Platform Management Interface (IPMI). Manage power, sensors, and system events. Free online tool, no registration required.'
 category: freebsd
 keywords:
   - IPMI management interface
@@ -22,8 +22,8 @@ features:
   - Open an IPMI shell on a remote host
   - Manage server hardware remotely using IPMI
   - Access system information via the IPMI interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipmitool

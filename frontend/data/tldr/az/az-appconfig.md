@@ -1,29 +1,29 @@
 ---
-title: "AppConfig - Manage Azure App Configuration | Online Free DevTools by Hexmos"
+title: 'AppConfig - Manage Azure App Configuration | Online Free DevTools by Hexmos'
 name: az-appconfig
-path: "/freedevtools/tldr/az/az-appconfig/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-appconfig/"
-description: "Manage Azure App Configuration with az-appconfig. Configure settings, secrets and feature flags for your applications on Azure. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-appconfig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-appconfig/'
+description: 'Manage Azure App Configuration with az-appconfig. Configure settings, secrets and feature flags for your applications on Azure. Free online tool, no registration required.'
 category: common
 keywords:
-- azure app configuration management
-- app configuration az cli
-- azure cli appconfig
-- appconfig create azure
-- appconfig delete azure
-- appconfig list azure
-- appconfig show azure
-- appconfig update azure
-- azure app config settings
-- azure app configuration flags
+  - azure app configuration management
+  - app configuration az cli
+  - azure cli appconfig
+  - appconfig create azure
+  - appconfig delete azure
+  - appconfig list azure
+  - appconfig show azure
+  - appconfig update azure
+  - azure app config settings
+  - azure app configuration flags
 features:
-- Create Azure App Configurations
-- Delete specific App Configurations
-- List App Configurations in a subscription
-- Show properties of an App Configuration
-- Update existing App Configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Azure App Configurations
+  - Delete specific App Configurations
+  - List App Configurations in a subscription
+  - Show properties of an App Configuration
+  - Update existing App Configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az appconfig

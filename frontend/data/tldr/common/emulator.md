@@ -1,29 +1,29 @@
 ---
-title: "Android Emulator - Manage Virtual Devices | Online Free DevTools by Hexmos"
+title: 'Android Emulator - Manage Virtual Devices | Online Free DevTools by Hexmos'
 name: emulator
-path: "/freedevtools/tldr/common/emulator/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/emulator/"
-description: "Manage Android virtual devices easily with Android Emulator. Control device settings, network speed, and cameras for app testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/emulator/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/emulator/'
+description: 'Manage Android virtual devices easily with Android Emulator. Control device settings, network speed, and cameras for app testing. Free online tool, no registration required.'
 category: common
 keywords:
-- android emulator control
-- android virtual device management
-- avd manager
-- android development tools
-- emulator command line
-- adb emulator settings
-- android debugging emulator
-- linux emulator android
-- macos emulator android
-- windows emulator android
+  - android emulator control
+  - android virtual device management
+  - avd manager
+  - android development tools
+  - emulator command line
+  - adb emulator settings
+  - android debugging emulator
+  - linux emulator android
+  - macos emulator android
+  - windows emulator android
 features:
-- Start and configure Android emulator instances
-- Control network speed and latency for testing
-- Manage virtual device cameras for realistic scenarios
-- Customize SD card partition image files
-- Display available webcams for emulation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and configure Android emulator instances
+  - Control network speed and latency for testing
+  - Manage virtual device cameras for realistic scenarios
+  - Customize SD card partition image files
+  - Display available webcams for emulation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # emulator

@@ -1,29 +1,29 @@
 ---
-title: "Goenv Manager - Control Go Versions | Online Free DevTools by Hexmos"
+title: 'Goenv Manager - Control Go Versions | Online Free DevTools by Hexmos'
 name: goenv
-path: "/freedevtools/tldr/common/goenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/goenv/"
-description: "Control Golang versions with Goenv Manager. Install, uninstall, and switch between Go versions effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/goenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/goenv/'
+description: 'Control Golang versions with Goenv Manager. Install, uninstall, and switch between Go versions effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- go version manager
-- golang version control
-- goenv version management
-- goenv install version
-- goenv switch version
-- goenv global version
-- go version list
-- go uninstall version
-- goenv command line
-- golang development environment
+  - go version manager
+  - golang version control
+  - goenv version management
+  - goenv install version
+  - goenv switch version
+  - goenv global version
+  - go version list
+  - go uninstall version
+  - goenv command line
+  - golang development environment
 features:
-- Install specific Golang versions
-- Switch between Golang versions locally
-- Set a global default Golang version
-- List available Golang versions
-- Uninstall specific Golang versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Golang versions
+  - Switch between Golang versions locally
+  - Set a global default Golang version
+  - List available Golang versions
+  - Uninstall specific Golang versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # goenv

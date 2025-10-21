@@ -1,52 +1,58 @@
-import React, { useState, useEffect, useRef } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import LlamaTokenCounterSkeleton from "./_LlamaTokenCounterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useRef } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import LlamaTokenCounterSkeleton from './_LlamaTokenCounterSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const LLAMA_MODELS = {
-  "llama-4": {
-    name: "Llama 4",
+  'llama-4': {
+    name: 'Llama 4',
     context: 1000000,
-    hub: "Xenova/llama-tokenizer",
+    hub: 'Xenova/llama-tokenizer',
   },
-  "llama-3.3": {
-    name: "Llama 3.3",
+  'llama-3.3': {
+    name: 'Llama 3.3',
     context: 128000,
-    hub: "Xenova/llama-tokenizer",
+    hub: 'Xenova/llama-tokenizer',
   },
-  "llama-3.2": {
-    name: "Llama 3.2",
+  'llama-3.2': {
+    name: 'Llama 3.2',
     context: 128000,
-    hub: "Xenova/llama-tokenizer",
+    hub: 'Xenova/llama-tokenizer',
   },
-  "llama-3.1": {
-    name: "Llama 3.1",
+  'llama-3.1': {
+    name: 'Llama 3.1',
     context: 128000,
-    hub: "Xenova/llama-tokenizer",
+    hub: 'Xenova/llama-tokenizer',
   },
-  "llama-3": {
-    name: "Llama 3",
+  'llama-3': {
+    name: 'Llama 3',
     context: 8192,
-    hub: "Xenova/llama-tokenizer",
+    hub: 'Xenova/llama-tokenizer',
   },
-  "llama-2": {
-    name: "Llama 2",
+  'llama-2': {
+    name: 'Llama 2',
     context: 4096,
-    hub: "Xenova/llama-tokenizer",
+    hub: 'Xenova/llama-tokenizer',
   },
-  "code-llama": {
-    name: "Code Llama",
+  'code-llama': {
+    name: 'Code Llama',
     context: 16384,
-    hub: "Xenova/llama-tokenizer",
+    hub: 'Xenova/llama-tokenizer',
   },
 };
 
@@ -62,8 +68,8 @@ const useDebouncedCallback = (
 };
 
 const LlamaTokenCounter: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState("llama-3-70b");
+  const [input, setInput] = useState('');
+  const [selectedModel, setSelectedModel] = useState('llama-3-70b');
   const [tokens, setTokens] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [tokenizerLoading, setTokenizerLoading] = useState(false);
@@ -80,18 +86,21 @@ const LlamaTokenCounter: React.FC = () => {
     const initTokenizer = async () => {
       setTokenizerLoading(true);
       try {
-        const { AutoTokenizer } = await import("@huggingface/transformers");
-        const modelConfig = LLAMA_MODELS[selectedModel as keyof typeof LLAMA_MODELS];
+        const { AutoTokenizer } = await import('@huggingface/transformers');
+        const modelConfig =
+          LLAMA_MODELS[selectedModel as keyof typeof LLAMA_MODELS];
         if (modelConfig?.hub) {
-          tokenizerRef.current = await AutoTokenizer.from_pretrained(modelConfig.hub);
+          tokenizerRef.current = await AutoTokenizer.from_pretrained(
+            modelConfig.hub
+          );
           if (input.trim() && tokenizerRef.current) {
             const encoding = tokenizerRef.current.encode(input);
             setTokens(encoding.length);
           }
         }
       } catch (error) {
-        console.error("Failed to load Llama tokenizer:", error);
-        toast.error("Failed to load Llama tokenizer. Please try again.");
+        console.error('Failed to load Llama tokenizer:', error);
+        toast.error('Failed to load Llama tokenizer. Please try again.');
         tokenizerRef.current = undefined;
       }
       setTokenizerLoading(false);
@@ -110,7 +119,7 @@ const LlamaTokenCounter: React.FC = () => {
           const encoding = tokenizerRef.current.encode(input);
           setTokens(encoding.length);
         } catch (error) {
-          console.error("Tokenization error:", error);
+          console.error('Tokenization error:', error);
           setTokens(0);
         }
       }
@@ -120,16 +129,17 @@ const LlamaTokenCounter: React.FC = () => {
   );
 
   const handleClear = () => {
-    setInput("");
+    setInput('');
     setTokens(0);
-    toast.success("Cleared input text");
+    toast.success('Cleared input text');
   };
 
   const copyTokenCount = () => {
-    const selectedModelConfig = LLAMA_MODELS[selectedModel as keyof typeof LLAMA_MODELS];
+    const selectedModelConfig =
+      LLAMA_MODELS[selectedModel as keyof typeof LLAMA_MODELS];
     const results = `Token Count: ${tokens}\nModel: ${selectedModelConfig?.name || selectedModel}\nCompany: Meta\nContext Limit: ${selectedModelConfig?.context.toLocaleString()} tokens\nText Length: ${input.length} characters\nWords: ${input.trim() ? input.split(/\s+/).length : 0}`;
     navigator.clipboard.writeText(results);
-    toast.success("Token count copied to clipboard!");
+    toast.success('Token count copied to clipboard!');
   };
 
   return (
@@ -155,7 +165,8 @@ const LlamaTokenCounter: React.FC = () => {
                         Text Input
                       </label>
                       <div className="text-slate-500 dark:text-slate-400">
-                        {input.length} characters • {input.trim() ? input.split(/\s+/).length : 0} words
+                        {input.length} characters •{' '}
+                        {input.trim() ? input.split(/\s+/).length : 0} words
                       </div>
                     </div>
                     <textarea
@@ -175,7 +186,9 @@ const LlamaTokenCounter: React.FC = () => {
                       className="w-full p-2 border border-slate-300 rounded-lg dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
                     >
                       {Object.entries(LLAMA_MODELS).map(([key, model]) => (
-                        <option key={key} value={key}>{model.name}</option>
+                        <option key={key} value={key}>
+                          {model.name}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -206,14 +219,29 @@ const LlamaTokenCounter: React.FC = () => {
                       <div className="w-px h-16 bg-slate-300 dark:bg-slate-600 mx-6"></div>
                       <div className="text-center flex-1">
                         <div className="font-medium text-slate-700 dark:text-slate-300 mb-1">
-                          {LLAMA_MODELS[selectedModel as keyof typeof LLAMA_MODELS]?.name}
+                          {
+                            LLAMA_MODELS[
+                              selectedModel as keyof typeof LLAMA_MODELS
+                            ]?.name
+                          }
                         </div>
                         <div className="text-xs text-slate-700 dark:text-slate-400 mb-1">
-                          Max context: {LLAMA_MODELS[selectedModel as keyof typeof LLAMA_MODELS]?.context.toLocaleString()} tokens
+                          Max context:{' '}
+                          {LLAMA_MODELS[
+                            selectedModel as keyof typeof LLAMA_MODELS
+                          ]?.context.toLocaleString()}{' '}
+                          tokens
                         </div>
                         {tokens > 0 && (
                           <div className="text-xs text-slate-700 dark:text-slate-500">
-                            {((tokens / LLAMA_MODELS[selectedModel as keyof typeof LLAMA_MODELS]?.context) * 100).toFixed(1)}% used
+                            {(
+                              (tokens /
+                                LLAMA_MODELS[
+                                  selectedModel as keyof typeof LLAMA_MODELS
+                                ]?.context) *
+                              100
+                            ).toFixed(1)}
+                            % used
                           </div>
                         )}
                       </div>
@@ -221,7 +249,11 @@ const LlamaTokenCounter: React.FC = () => {
                   )}
                 </div>
                 <div className="flex space-x-3">
-                  <Button onClick={copyTokenCount} disabled={tokens === 0} className="flex-1">
+                  <Button
+                    onClick={copyTokenCount}
+                    disabled={tokens === 0}
+                    className="flex-1"
+                  >
                     Copy Token Count
                   </Button>
                   <Button onClick={handleClear} variant="outline">
@@ -230,7 +262,8 @@ const LlamaTokenCounter: React.FC = () => {
                 </div>
                 <div className="p-3 bg-blue-50 text-center dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                   <p className="text-blue-800 dark:text-blue-200">
-                    💡 All calculations happen in your browser - your data stays private.
+                    💡 All calculations happen in your browser - your data stays
+                    private.
                   </p>
                 </div>
               </CardContent>
@@ -251,18 +284,27 @@ const LlamaTokenCounter: React.FC = () => {
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-4">
                   <p>
-                    Meta's Llama models use advanced tokenization to break text into units called <strong>tokens</strong>. Tokens may represent words, subwords, punctuation, or special characters. This process impacts API costs and context limits.
+                    Meta's Llama models use advanced tokenization to break text
+                    into units called <strong>tokens</strong>. Tokens may
+                    represent words, subwords, punctuation, or special
+                    characters. This process impacts API costs and context
+                    limits.
                   </p>
                   <p>
-                    The Llama tokenizer is optimized for code, natural language, and long context windows. Our tool uses the same tokenizer as Meta's API, so your token counts match what you'll be charged for.
+                    The Llama tokenizer is optimized for code, natural language,
+                    and long context windows. Our tool uses the same tokenizer
+                    as Meta's API, so your token counts match what you'll be
+                    charged for.
                   </p>
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
                     <p className="text-blue-800 dark:text-blue-200 text-sm">
-                      <strong>💡 Llama Advantage:</strong> Llama supports up to 8K context, making it ideal for long documents and code.
+                      <strong>💡 Llama Advantage:</strong> Llama supports up to
+                      8K context, making it ideal for long documents and code.
                     </p>
                   </div>
                   <p>
-                    Use this tool to estimate costs and ensure your prompts fit within Llama's context limits.
+                    Use this tool to estimate costs and ensure your prompts fit
+                    within Llama's context limits.
                   </p>
                 </div>
               </CardContent>
@@ -276,7 +318,8 @@ const LlamaTokenCounter: React.FC = () => {
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-4">
                   <p>
-                    To maximize efficiency with Llama, manage your context and select the right model for your task. Here are some tips:
+                    To maximize efficiency with Llama, manage your context and
+                    select the right model for your task. Here are some tips:
                   </p>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
@@ -286,7 +329,9 @@ const LlamaTokenCounter: React.FC = () => {
                       <ul className="space-y-2">
                         <li>Leverage Llama's context for long documents</li>
                         <li>Use structured prompts for clarity</li>
-                        <li>Keep conversation history for coherent interactions</li>
+                        <li>
+                          Keep conversation history for coherent interactions
+                        </li>
                         <li>Trim unnecessary text to save tokens</li>
                       </ul>
                     </div>
@@ -303,7 +348,8 @@ const LlamaTokenCounter: React.FC = () => {
                     </div>
                   </div>
                   <p>
-                    <strong>Pro Tip:</strong> Clear, concise prompts often yield better results and lower token usage.
+                    <strong>Pro Tip:</strong> Clear, concise prompts often yield
+                    better results and lower token usage.
                   </p>
                 </div>
               </CardContent>
@@ -326,7 +372,9 @@ const LlamaTokenCounter: React.FC = () => {
                     className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">🔗</span>
+                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                        🔗
+                      </span>
                     </div>
                     <div className="flex-1">
                       <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
@@ -344,7 +392,9 @@ const LlamaTokenCounter: React.FC = () => {
                     className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                      <span className="text-green-600 dark:text-green-400 font-semibold text-sm">🤖</span>
+                      <span className="text-green-600 dark:text-green-400 font-semibold text-sm">
+                        🤖
+                      </span>
                     </div>
                     <div className="flex-1">
                       <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-green-600 dark:group-hover:text-green-400">
@@ -362,7 +412,9 @@ const LlamaTokenCounter: React.FC = () => {
                     className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                      <span className="text-indigo-600 dark:text-indigo-400 font-semibold text-sm">📋</span>
+                      <span className="text-indigo-600 dark:text-indigo-400 font-semibold text-sm">
+                        📋
+                      </span>
                     </div>
                     <div className="flex-1">
                       <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
@@ -380,7 +432,9 @@ const LlamaTokenCounter: React.FC = () => {
                     className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
                   >
                     <div className="flex-shrink-0 w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
-                      <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">⚡</span>
+                      <span className="text-orange-600 dark:text-orange-400 font-semibold text-sm">
+                        ⚡
+                      </span>
                     </div>
                     <div className="flex-1">
                       <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">

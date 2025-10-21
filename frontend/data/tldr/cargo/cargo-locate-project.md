@@ -1,29 +1,29 @@
 ---
-title: "Locate Cargo Project - Find Cargo.toml Manifest | Online Free DevTools by Hexmos"
+title: 'Locate Cargo Project - Find Cargo.toml Manifest | Online Free DevTools by Hexmos'
 name: cargo-locate-project
-path: "/freedevtools/tldr/cargo/cargo-locate-project/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-locate-project/"
-description: "Locate Cargo projects instantly with Cargo Locate-Project. Find the Cargo.toml manifest path for projects and workspaces. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-locate-project/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-locate-project/'
+description: 'Locate Cargo projects instantly with Cargo Locate-Project. Find the Cargo.toml manifest path for projects and workspaces. Free online tool, no registration required.'
 category: common
 keywords:
-- cargo locate project
-- rust locate project
-- cargo toml path
-- rust manifest path
-- cargo workspace manifest
-- rust project discovery
-- cargo command line
-- rust build system
-- cargo metadata
-- rust development
+  - cargo locate project
+  - rust locate project
+  - cargo toml path
+  - rust manifest path
+  - cargo workspace manifest
+  - rust project discovery
+  - cargo command line
+  - rust build system
+  - cargo metadata
+  - rust development
 features:
-- Find the Cargo.toml manifest of a project
-- Display the manifest of a workspace member
-- Locate the root manifest of a workspace
-- Output the manifest path in JSON format
-- Locate manifest for specific directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Find the Cargo.toml manifest of a project
+  - Display the manifest of a workspace member
+  - Locate the root manifest of a workspace
+  - Output the manifest path in JSON format
+  - Locate manifest for specific directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo locate-project

@@ -1,29 +1,29 @@
 ---
-title: "Virsh - Manage Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Virsh - Manage Virtual Machines | Online Free DevTools by Hexmos'
 name: virsh
-path: "/freedevtools/tldr/virsh/virsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh/"
-description: "Manage virtual machines easily with Virsh, the command line tool for libvirt. Control VMs, start/stop domains, and edit configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/virsh/virsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virsh/virsh/'
+description: 'Manage virtual machines easily with Virsh, the command line tool for libvirt. Control VMs, start/stop domains, and edit configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine manager
-- libvirt command line
-- virsh vm control
-- kvm virtual machines
-- qemu virtual machines
-- linux virtualization
-- virtual machine management
-- virsh domain management
-- vm configuration editor
-- command line virtualization
+  - virtual machine manager
+  - libvirt command line
+  - virsh vm control
+  - kvm virtual machines
+  - qemu virtual machines
+  - linux virtualization
+  - virtual machine management
+  - virsh domain management
+  - vm configuration editor
+  - command line virtualization
 features:
-- Connect to a hypervisor session
-- List and manage virtual machine domains
-- Create a guest from a configuration file
-- Edit a guest's configuration using a text editor
-- Save and restore the state of a virtual machine
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to a hypervisor session
+  - List and manage virtual machine domains
+  - Create a guest from a configuration file
+  - Edit a guest's configuration using a text editor
+  - Save and restore the state of a virtual machine
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virsh

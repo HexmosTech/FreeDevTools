@@ -1,9 +1,9 @@
 ---
-title: "Conky System Monitor - Control System Resources | Online Free DevTools by Hexmos"
+title: 'Conky System Monitor - Control System Resources | Online Free DevTools by Hexmos'
 name: conky
-path: "/freedevtools/tldr/linux/conky/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/conky/"
-description: "Monitor system resources effectively with Conky.  Customize your system information display with various configuration options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/conky/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/conky/'
+description: 'Monitor system resources effectively with Conky.  Customize your system information display with various configuration options. Free online tool, no registration required.'
 category: linux
 keywords:
   - system monitor linux
@@ -22,8 +22,8 @@ features:
   - Run as a background daemon for persistent monitoring
   - Control screen alignment for optimal placement
   - Adjustable startup delay for smoother integration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # conky

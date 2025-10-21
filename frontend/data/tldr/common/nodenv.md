@@ -1,29 +1,29 @@
 ---
-title: "Nodenv - Manage Node.js Versions | Online Free DevTools by Hexmos"
+title: 'Nodenv - Manage Node.js Versions | Online Free DevTools by Hexmos'
 name: nodenv
-path: "/freedevtools/tldr/common/nodenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nodenv/"
-description: "Manage Node.js versions effectively with Nodenv. Install specific versions, control global and local versions effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nodenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nodenv/'
+description: 'Manage Node.js versions effectively with Nodenv. Install specific versions, control global and local versions effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- node.js version manager
-- nodenv version control
-- node.js environment manager
-- install node.js version
-- nodenv global version
-- nodenv local version
-- javascript version management
-- node.js development environment
-- node version selection
-- cross-platform node.js
+  - node.js version manager
+  - nodenv version control
+  - node.js environment manager
+  - install node.js version
+  - nodenv global version
+  - nodenv local version
+  - javascript version management
+  - node.js development environment
+  - node version selection
+  - cross-platform node.js
 features:
-- Install specific Node.js versions
-- Set global Node.js version
-- Set local Node.js version for directories
-- Display current Node.js version
-- Locate installed Node.js commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Node.js versions
+  - Set global Node.js version
+  - Set local Node.js version for directories
+  - Display current Node.js version
+  - Locate installed Node.js commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nodenv

@@ -1,29 +1,29 @@
 ---
-title: "Create WinGet Manifests - komac | Online Free DevTools by Hexmos"
+title: 'Create WinGet Manifests - komac | Online Free DevTools by Hexmos'
 name: komac
-path: "/freedevtools/tldr/common/komac/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/komac/"
-description: "Create WinGet manifests with komac, a command-line tool for managing winget-pkgs repositories. Automate package creation and updates. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/komac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/komac/'
+description: 'Create WinGet manifests with komac, a command-line tool for managing winget-pkgs repositories. Automate package creation and updates. Free online tool, no registration required.'
 category: common
 keywords:
-- WinGet manifest creation
-- winget-pkgs management
-- Package version control
-- Command-line winget
-- komac package manager
-- Software manifest generator
-- Windows package deployment
-- winget manifest editor
-- Application manifest tool
-- WinGet repository sync
+  - WinGet manifest creation
+  - winget-pkgs management
+  - Package version control
+  - Command-line winget
+  - komac package manager
+  - Software manifest generator
+  - Windows package deployment
+  - winget manifest editor
+  - Application manifest tool
+  - WinGet repository sync
 features:
-- Create new WinGet packages from scratch
-- Update existing WinGet packages with new versions
-- Remove specific versions of packages
-- Sync a forked winget-pkgs repository
-- Generate shell autocompletion scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new WinGet packages from scratch
+  - Update existing WinGet packages with new versions
+  - Remove specific versions of packages
+  - Sync a forked winget-pkgs repository
+  - Generate shell autocompletion scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # komac

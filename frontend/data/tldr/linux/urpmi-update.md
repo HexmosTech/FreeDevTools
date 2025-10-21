@@ -1,9 +1,9 @@
 ---
-title: "Update Mageia Packages - urpmi.update Command | Online Free DevTools by Hexmos"
+title: 'Update Mageia Packages - urpmi.update Command | Online Free DevTools by Hexmos'
 name: urpmi.update
-path: "/freedevtools/tldr/linux/urpmi-update/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/urpmi-update/"
-description: "Update Mageia package lists with the urpmi.update command. Manage repositories and update specific media or keywords. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/urpmi-update/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/urpmi-update/'
+description: 'Update Mageia package lists with the urpmi.update command. Manage repositories and update specific media or keywords. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package update
@@ -22,8 +22,8 @@ features:
   - Update repositories based on a keyword search.
   - Update all configured repositories with a single command.
   - Manage Mageia package lists efficiently from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # urpmi.update

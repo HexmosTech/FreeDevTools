@@ -1,29 +1,29 @@
 ---
 title: "Generate PBM Life Images - Conway's Life with PBM | Online Free DevTools by Hexmos"
 name: pbmlife
-path: "/freedevtools/tldr/common/pbmlife/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmlife/"
+path: '/freedevtools/tldr/common/pbmlife/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmlife/'
 description: "Generate PBM Life images with pbmlife, applying Conway's Rules of Life to PBM image files. Manipulate image evolution and create cellular automata. Free online tool, no registration required."
 category: common
 keywords:
-- PBM image life generator
-- Conway's life PBM
-- PBM cellular automata
-- pbmlife PBM evolution
-- Netpbm PBM editor
-- PBM image processing
-- command line PBM tool
-- PBM file manipulation
-- Linux PBM life
-- macOS PBM life
+  - PBM image life generator
+  - Conway's life PBM
+  - PBM cellular automata
+  - pbmlife PBM evolution
+  - Netpbm PBM editor
+  - PBM image processing
+  - command line PBM tool
+  - PBM file manipulation
+  - Linux PBM life
+  - macOS PBM life
 features:
-- Apply Conway's Rules of Life to PBM images.
-- Generate subsequent generations of a PBM image.
-- Output the resulting generation as a PBM file.
-- Process image data using command-line interface.
-- Display the version of the pbmlife utility.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Apply Conway's Rules of Life to PBM images.
+  - Generate subsequent generations of a PBM image.
+  - Output the resulting generation as a PBM file.
+  - Process image data using command-line interface.
+  - Display the version of the pbmlife utility.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmlife

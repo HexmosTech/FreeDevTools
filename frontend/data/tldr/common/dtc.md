@@ -1,29 +1,29 @@
 ---
-title: "Device Tree Compiler - Recompile DTB Files | Online Free DevTools by Hexmos"
+title: 'Device Tree Compiler - Recompile DTB Files | Online Free DevTools by Hexmos'
 name: dtc
-path: "/freedevtools/tldr/common/dtc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dtc/"
-description: "Recompile device trees with Device Tree Compiler (dtc). Convert between `.dts` and `.dtb` formats, create overlays and decompile system trees. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dtc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dtc/'
+description: 'Recompile device trees with Device Tree Compiler (dtc). Convert between `.dts` and `.dtb` formats, create overlays and decompile system trees. Free online tool, no registration required.'
 category: common
 keywords:
-- device tree compiler
-- dts to dtb converter
-- dtb to dts decompiler
-- device tree overlay
-- linux device tree
-- dtc command line
-- device tree source
-- device tree blob
-- linux device tree compiler
-- embedded device tree
+  - device tree compiler
+  - dts to dtb converter
+  - dtb to dts decompiler
+  - device tree overlay
+  - linux device tree
+  - dtc command line
+  - device tree source
+  - device tree blob
+  - linux device tree compiler
+  - embedded device tree
 features:
-- Compile device tree source files into binary blob files
-- Decompile device tree blob files into human-readable source files
-- Create device tree overlay files
-- Extract device tree from a running Linux system
-- Convert device tree files between `.dts` and `.dtb` formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile device tree source files into binary blob files
+  - Decompile device tree blob files into human-readable source files
+  - Create device tree overlay files
+  - Extract device tree from a running Linux system
+  - Convert device tree files between `.dts` and `.dtb` formats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dtc

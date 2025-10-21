@@ -1,29 +1,29 @@
 ---
-title: "Manage npm Teams - Organize Users | Online Free DevTools by Hexmos"
+title: 'Manage npm Teams - Organize Users | Online Free DevTools by Hexmos'
 name: npm-team
-path: "/freedevtools/tldr/npm/npm-team/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-team/"
-description: "Manage npm teams to control user access within your organization with npm-team. Add, remove, create, and list teams for efficient collaboration. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-team/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-team/'
+description: 'Manage npm teams to control user access within your organization with npm-team. Add, remove, create, and list teams for efficient collaboration. Free online tool, no registration required.'
 category: common
 keywords:
-- npm team management
-- npm user roles
-- npm organization team
-- npm access control
-- npm team add user
-- npm team remove user
-- npm team create
-- npm team list
-- npm registry team
-- node package manager teams
+  - npm team management
+  - npm user roles
+  - npm organization team
+  - npm access control
+  - npm team add user
+  - npm team remove user
+  - npm team create
+  - npm team list
+  - npm registry team
+  - node package manager teams
 features:
-- Add users to npm teams within an organization.
-- Remove users from existing npm teams.
-- Create new npm teams for organized collaboration.
-- Delete unused npm teams to maintain clean organization.
-- List all teams or users within specific teams in an organization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add users to npm teams within an organization.
+  - Remove users from existing npm teams.
+  - Create new npm teams for organized collaboration.
+  - Delete unused npm teams to maintain clean organization.
+  - List all teams or users within specific teams in an organization.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm team

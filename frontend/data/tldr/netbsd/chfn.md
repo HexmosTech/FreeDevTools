@@ -1,9 +1,9 @@
 ---
-title: "Change User Info - Update User Data | Online Free DevTools by Hexmos"
+title: 'Change User Info - Update User Data | Online Free DevTools by Hexmos'
 name: chfn
-path: "/freedevtools/tldr/netbsd/chfn/"
-canonical: "https://hexmos.com/freedevtools/tldr/netbsd/chfn/"
-description: "Update user information with chfn command, an alias of chpass, on NetBSD. Modify user details including name, office, and phone numbers. Free online tool, no registration required."
+path: '/freedevtools/tldr/netbsd/chfn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/netbsd/chfn/'
+description: 'Update user information with chfn command, an alias of chpass, on NetBSD. Modify user details including name, office, and phone numbers. Free online tool, no registration required.'
 category: netbsd
 keywords:
   - netbsd change user information
@@ -22,8 +22,8 @@ features:
   - Change user's office phone number via chfn
   - Alter user's home phone number using chfn
   - Utilize chpass command functions through chfn alias
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chfn

@@ -1,29 +1,29 @@
 ---
-title: "Synthesize Speech - Generate Audio from Text | Online Free DevTools by Hexmos"
+title: 'Synthesize Speech - Generate Audio from Text | Online Free DevTools by Hexmos'
 name: tts
-path: "/freedevtools/tldr/common/tts/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tts/"
-description: "Synthesize speech with TTS. Convert text to speech, creating audio files using various models and configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tts/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tts/'
+description: 'Synthesize speech with TTS. Convert text to speech, creating audio files using various models and configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- Text to Speech
-- Speech Synthesis
-- Audio Generation
-- Command Line TTS
-- Linux TTS
-- macOS TTS
-- Coqui TTS
-- Speech Output
-- Voice Synthesis
-- TTS model
+  - Text to Speech
+  - Speech Synthesis
+  - Audio Generation
+  - Command Line TTS
+  - Linux TTS
+  - macOS TTS
+  - Coqui TTS
+  - Speech Output
+  - Voice Synthesis
+  - TTS model
 features:
-- Generate speech from text input
-- List available TTS models
-- Query model information by index
-- Specify custom model and configuration paths
-- Output audio to a WAV file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate speech from text input
+  - List available TTS models
+  - Query model information by index
+  - Specify custom model and configuration paths
+  - Output audio to a WAV file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tts

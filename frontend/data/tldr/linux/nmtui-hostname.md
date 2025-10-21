@@ -1,8 +1,8 @@
 ---
-title: "Control nmtui Hostname - Manage Network Hostname | Online Free DevTools by Hexmos"
+title: 'Control nmtui Hostname - Manage Network Hostname | Online Free DevTools by Hexmos'
 name: nmtui-hostname
-path: "/freedevtools/tldr/linux/nmtui-hostname/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nmtui-hostname/"
+path: '/freedevtools/tldr/linux/nmtui-hostname/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nmtui-hostname/'
 description: "Control network hostname with nmtui Hostname. Configure and manage your system's hostname quickly and easily via the command line. Free online tool, no registration required."
 category: linux
 keywords:
@@ -22,8 +22,8 @@ features:
   - Configure hostname via command line.
   - Integrate with NetworkManager.
   - View current hostname settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nmtui-hostname

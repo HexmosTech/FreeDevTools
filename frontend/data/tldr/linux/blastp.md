@@ -1,9 +1,9 @@
 ---
-title: "BLASTP Protein Alignment - Align Sequences with BLAST | Online Free DevTools by Hexmos"
+title: 'BLASTP Protein Alignment - Align Sequences with BLAST | Online Free DevTools by Hexmos'
 name: blastp
-path: "/freedevtools/tldr/linux/blastp/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/blastp/"
-description: "Align protein sequences with BLASTP, a powerful bioinformatics tool for comparing protein sequences.  Perform fast and efficient alignments with customizable parameters. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/blastp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/blastp/'
+description: 'Align protein sequences with BLASTP, a powerful bioinformatics tool for comparing protein sequences.  Perform fast and efficient alignments with customizable parameters. Free online tool, no registration required.'
 category: linux
 keywords:
   - protein sequence alignment
@@ -22,8 +22,8 @@ features:
   - Customize output format for tailored results.
   - Search protein databases using a protein query.
   - Utilize multiple threads for faster searches.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blastp

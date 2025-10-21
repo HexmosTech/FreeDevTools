@@ -1,29 +1,29 @@
 ---
-title: "JJ Status - Show Repository Status | Online Free DevTools by Hexmos"
+title: 'JJ Status - Show Repository Status | Online Free DevTools by Hexmos'
 name: jj-status
-path: "/freedevtools/tldr/jj/jj-status/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-status/"
-description: "Show repository status with JJ. Inspect working copy changes and identify conflicts using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-status/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-status/'
+description: 'Show repository status with JJ. Inspect working copy changes and identify conflicts using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- jj status
-- jj repository status
-- jj version control status
-- version control status
-- repository status
-- git status alternative
-- jj command line
-- jj workflow
-- jj tool
-- jj vcs
+  - jj status
+  - jj repository status
+  - jj version control status
+  - version control status
+  - repository status
+  - git status alternative
+  - jj command line
+  - jj workflow
+  - jj tool
+  - jj vcs
 features:
-- Display the working copy commit and its parents
-- Summarize changes in the working copy
-- Identify existing conflicts in the working copy
-- Show high-level repository information
-- Provide a concise overview of repository state
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the working copy commit and its parents
+  - Summarize changes in the working copy
+  - Identify existing conflicts in the working copy
+  - Show high-level repository information
+  - Provide a concise overview of repository state
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj status

@@ -1,29 +1,29 @@
 ---
-title: "NetExec NXC - Enumerate Network Services | Online Free DevTools by Hexmos"
+title: 'NetExec NXC - Enumerate Network Services | Online Free DevTools by Hexmos'
 name: nxc
-path: "/freedevtools/tldr/nxc/nxc/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc/"
-description: "Enumerate network services with NetExec NXC. Discover vulnerabilities and exploit target systems through various protocols. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc/'
+description: 'Enumerate network services with NetExec NXC. Discover vulnerabilities and exploit target systems through various protocols. Free online tool, no registration required.'
 category: common
 keywords:
-- Network service enumeration
-- Network exploitation tool
-- Vulnerability scanning
-- Penetration testing
-- SMB enumeration
-- SSH enumeration
-- Windows network scanning
-- Linux network scanning
-- NXC modules
-- Network reconnaissance
+  - Network service enumeration
+  - Network exploitation tool
+  - Vulnerability scanning
+  - Penetration testing
+  - SMB enumeration
+  - SSH enumeration
+  - Windows network scanning
+  - Linux network scanning
+  - NXC modules
+  - Network reconnaissance
 features:
-- Enumerate network services across multiple protocols
-- List available modules for specific protocols
-- Display available options for specific modules
-- Configure module options directly from the command line
-- Identify potential network vulnerabilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate network services across multiple protocols
+  - List available modules for specific protocols
+  - Display available options for specific modules
+  - Configure module options directly from the command line
+  - Identify potential network vulnerabilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc

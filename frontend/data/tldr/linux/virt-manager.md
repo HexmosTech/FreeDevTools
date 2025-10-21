@@ -1,29 +1,29 @@
 ---
-title: "Virt-Manager - Manage Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Virt-Manager - Manage Virtual Machines | Online Free DevTools by Hexmos'
 name: virt-manager
-path: "/freedevtools/tldr/linux/virt-manager/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-manager/"
-description: "Manage virtual machines with Virt-Manager. Control KVM and Xen virtual machines, plus LXC containers. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/virt-manager/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/virt-manager/'
+description: 'Manage virtual machines with Virt-Manager. Control KVM and Xen virtual machines, plus LXC containers. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux virtual machine manager
-- kvm virtual machine control
-- xen virtual machine manager
-- lxc container management
-- virtual machine hypervisor
-- linux virtualization gui
-- vm domain control
-- virtual machine performance monitoring
-- linux container manager
-- virt-manager command line
+  - linux virtual machine manager
+  - kvm virtual machine control
+  - xen virtual machine manager
+  - lxc container management
+  - virtual machine hypervisor
+  - linux virtualization gui
+  - vm domain control
+  - virtual machine performance monitoring
+  - linux container manager
+  - virt-manager command line
 features:
-- Launch a graphical user interface for managing virtual machines.
-- Connect to various hypervisors, including KVM and Xen.
-- Display performance data for virtual machines.
-- Show domain details and configuration for a specific VM.
-- Create new virtual machines using a guided wizard.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch a graphical user interface for managing virtual machines.
+  - Connect to various hypervisors, including KVM and Xen.
+  - Display performance data for virtual machines.
+  - Show domain details and configuration for a specific VM.
+  - Create new virtual machines using a guided wizard.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virt-manager

@@ -1,29 +1,29 @@
 ---
-title: "TSV Filter - Control TSV Data | Online Free DevTools by Hexmos"
+title: 'TSV Filter - Control TSV Data | Online Free DevTools by Hexmos'
 name: tsv-filter
-path: "/freedevtools/tldr/common/tsv-filter/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tsv-filter/"
-description: "Filter TSV data easily with TSV Filter. Control and manipulate TSV files based on field values. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tsv-filter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tsv-filter/'
+description: 'Filter TSV data easily with TSV Filter. Control and manipulate TSV files based on field values. Free online tool, no registration required.'
 category: common
 keywords:
-- TSV data filter
-- TSV file filter
-- Filter TSV columns
-- TSV data manipulation
-- TSV conditional filtering
-- Command line TSV tool
-- Linux TSV filter
-- macOS TSV filter
-- TSV field extractor
-- TSV data processor
+  - TSV data filter
+  - TSV file filter
+  - Filter TSV columns
+  - TSV data manipulation
+  - TSV conditional filtering
+  - Command line TSV tool
+  - Linux TSV filter
+  - macOS TSV filter
+  - TSV field extractor
+  - TSV data processor
 features:
-- Filter TSV rows based on numerical comparisons
-- Filter TSV rows based on string comparisons
-- Filter TSV rows for empty or non-empty fields
-- Combine multiple filter conditions with AND/OR logic
-- Count the number of matching lines in a TSV file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Filter TSV rows based on numerical comparisons
+  - Filter TSV rows based on string comparisons
+  - Filter TSV rows for empty or non-empty fields
+  - Combine multiple filter conditions with AND/OR logic
+  - Count the number of matching lines in a TSV file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tsv-filter

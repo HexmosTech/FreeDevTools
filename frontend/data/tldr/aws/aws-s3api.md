@@ -1,29 +1,29 @@
 ---
-title: "Create S3 Buckets - Manage AWS S3 Buckets | Online Free DevTools by Hexmos"
+title: 'Create S3 Buckets - Manage AWS S3 Buckets | Online Free DevTools by Hexmos'
 name: aws-s3api
-path: "/freedevtools/tldr/aws/aws-s3api/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3api/"
-description: "Create S3 buckets and manage your Amazon S3 storage effectively with aws-s3api. Control bucket properties, upload objects, and configure policies effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-s3api/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-s3api/'
+description: 'Create S3 buckets and manage your Amazon S3 storage effectively with aws-s3api. Control bucket properties, upload objects, and configure policies effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- S3 bucket creation
-- S3 bucket management
-- AWS S3 object upload
-- S3 bucket policy configuration
-- S3 bucket download
-- S3 bucket list objects
-- S3 command line interface
-- AWS command line tool
-- S3 data storage
-- S3 region configuration
+  - S3 bucket creation
+  - S3 bucket management
+  - AWS S3 object upload
+  - S3 bucket policy configuration
+  - S3 bucket download
+  - S3 bucket list objects
+  - S3 command line interface
+  - AWS command line tool
+  - S3 data storage
+  - S3 region configuration
 features:
-- Create S3 buckets in specific regions.
-- Manage S3 bucket policies through command line.
-- List and download objects within S3 buckets.
-- Upload objects to S3 buckets.
-- Configure S3 bucket properties programmatically.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create S3 buckets in specific regions.
+  - Manage S3 bucket policies through command line.
+  - List and download objects within S3 buckets.
+  - Upload objects to S3 buckets.
+  - Configure S3 bucket properties programmatically.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws s3api

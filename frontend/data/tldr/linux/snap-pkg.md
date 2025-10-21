@@ -1,9 +1,9 @@
 ---
-title: "Snap Package Manager - Manage Linux Software | Online Free DevTools by Hexmos"
+title: 'Snap Package Manager - Manage Linux Software | Online Free DevTools by Hexmos'
 name: snap.pkg
-path: "/freedevtools/tldr/linux/snap-pkg/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/snap-pkg/"
-description: "Manage Linux software packages with the Snap Package Manager.  Easily install, update, and remove applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/snap-pkg/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/snap-pkg/'
+description: 'Manage Linux software packages with the Snap Package Manager.  Easily install, update, and remove applications. Free online tool, no registration required.'
 category: linux
 keywords:
   - snap package manager
@@ -22,8 +22,8 @@ features:
   - Uninstall unwanted packages.
   - Search for available packages.
   - Manage different channels (tracks) for packages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # snap

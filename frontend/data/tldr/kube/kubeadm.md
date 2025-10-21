@@ -1,29 +1,29 @@
 ---
-title: "Kubeadm - Manage Kubernetes Clusters | Online Free DevTools by Hexmos"
+title: 'Kubeadm - Manage Kubernetes Clusters | Online Free DevTools by Hexmos'
 name: kubeadm
-path: "/freedevtools/tldr/kube/kubeadm/"
-canonical: "https://hexmos.com/freedevtools/tldr/kube/kubeadm/"
-description: "Manage Kubernetes clusters easily with Kubeadm. Streamline cluster creation, upgrading, and configuration management with this essential command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/kube/kubeadm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kube/kubeadm/'
+description: 'Manage Kubernetes clusters easily with Kubeadm. Streamline cluster creation, upgrading, and configuration management with this essential command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes cluster manager
-- kubeadm kubernetes setup
-- kubernetes control plane
-- kubeadm node join
-- kubernetes upgrade tool
-- kubeadm token management
-- kubernetes configmap view
-- kubeadm reset command
-- kubernetes cluster bootstrap
-- linux kubeadm
+  - kubernetes cluster manager
+  - kubeadm kubernetes setup
+  - kubernetes control plane
+  - kubeadm node join
+  - kubernetes upgrade tool
+  - kubeadm token management
+  - kubernetes configmap view
+  - kubeadm reset command
+  - kubernetes cluster bootstrap
+  - linux kubeadm
 features:
-- Create a Kubernetes control plane instance
-- Bootstrap worker nodes into a cluster
-- Generate authentication tokens for node join
-- Upgrade Kubernetes cluster versions
-- Reset cluster to a clean state
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create a Kubernetes control plane instance
+  - Bootstrap worker nodes into a cluster
+  - Generate authentication tokens for node join
+  - Upgrade Kubernetes cluster versions
+  - Reset cluster to a clean state
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubeadm

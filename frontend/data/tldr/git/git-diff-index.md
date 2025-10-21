@@ -1,29 +1,29 @@
 ---
-title: "Diff Index - Compare Git Index to Commit | Online Free DevTools by Hexmos"
+title: 'Diff Index - Compare Git Index to Commit | Online Free DevTools by Hexmos'
 name: git-diff-index
-path: "/freedevtools/tldr/git/git-diff-index/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-diff-index/"
-description: "Compare Git index to commit with Git Diff Index. Identify changes between working directory and staging area. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-diff-index/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-diff-index/'
+description: 'Compare Git index to commit with Git Diff Index. Identify changes between working directory and staging area. Free online tool, no registration required.'
 category: common
 keywords:
-- git diff index
-- git compare commit
-- git working directory changes
-- git staging area diff
-- git index comparison
-- git file differences
-- git command line diff
-- git check for changes
-- git staged changes
-- git commit comparison tool
+  - git diff index
+  - git compare commit
+  - git working directory changes
+  - git staging area diff
+  - git index comparison
+  - git file differences
+  - git command line diff
+  - git check for changes
+  - git staged changes
+  - git commit comparison tool
 features:
-- Compare working directory to specific commit
-- Identify differences in specific files or directories
-- Check for staged changes against a commit
-- Suppress output to check for differences quietly
-- Compare index with working tree for unstaged changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare working directory to specific commit
+  - Identify differences in specific files or directories
+  - Check for staged changes against a commit
+  - Suppress output to check for differences quietly
+  - Compare index with working tree for unstaged changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git diff-index

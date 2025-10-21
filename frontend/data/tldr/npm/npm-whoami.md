@@ -1,30 +1,30 @@
 ---
-title: "NPM Username - Display NPM Username | Online Free DevTools by Hexmos"
+title: 'NPM Username - Display NPM Username | Online Free DevTools by Hexmos'
 name: npm-whoami
-path: "/freedevtools/tldr/npm/npm-whoami/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-whoami/"
-description: "Display your NPM username with NPM Whoami. Check login status and manage registry access. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-whoami/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-whoami/'
+description: 'Display your NPM username with NPM Whoami. Check login status and manage registry access. Free online tool, no registration required.'
 category: common
 keywords:
-- npm username
-- npm whoami
-- npm registry
-- npm account
-- node package manager
-- command line npm
-- javascript package manager
-- npm cli
-- npm login
-- display npm user
+  - npm username
+  - npm whoami
+  - npm registry
+  - npm account
+  - node package manager
+  - command line npm
+  - javascript package manager
+  - npm cli
+  - npm login
+  - display npm user
 
 features:
-- Display the currently logged-in npm username
-- Verify npm authentication status
-- Specify a custom npm registry to check
-- Quickly identify the active npm user
-- Retrieve username from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the currently logged-in npm username
+  - Verify npm authentication status
+  - Specify a custom npm registry to check
+  - Quickly identify the active npm user
+  - Retrieve username from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm whoami

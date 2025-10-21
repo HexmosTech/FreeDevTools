@@ -1,9 +1,9 @@
 ---
-title: "Control Network Devices - nmcli Device | Online Free DevTools by Hexmos"
+title: 'Control Network Devices - nmcli Device | Online Free DevTools by Hexmos'
 name: nmcli-device
-path: "/freedevtools/tldr/linux/nmcli-device/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-device/"
-description: "Control network devices with nmcli Device. Manage interfaces, Wi-Fi connections, and network configurations easily using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nmcli-device/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nmcli-device/'
+description: 'Control network devices with nmcli Device. Manage interfaces, Wi-Fi connections, and network configurations easily using command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - network device control
@@ -22,8 +22,8 @@ features:
   - Connect to Wi-Fi networks with SSID
   - Show Wi-Fi password and QR code
   - Display detailed device information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nmcli device

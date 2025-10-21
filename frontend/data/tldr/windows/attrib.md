@@ -1,29 +1,29 @@
 ---
-title: "Attrib - Control File Attributes on Windows | Online Free DevTools by Hexmos"
+title: 'Attrib - Control File Attributes on Windows | Online Free DevTools by Hexmos'
 name: attrib
-path: "/freedevtools/tldr/windows/attrib/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/attrib/"
-description: "Control file attributes with Attrib on Windows. Modify read-only, hidden, system, and archive flags. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/attrib/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/attrib/'
+description: 'Control file attributes with Attrib on Windows. Modify read-only, hidden, system, and archive flags. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows file attributes
-- attrib command
-- change file attributes
-- windows command line
-- file permission manager
-- modify read only attribute
-- hide files windows
-- system file attribute
-- archive file flag
-- windows file visibility
+  - windows file attributes
+  - attrib command
+  - change file attributes
+  - windows command line
+  - file permission manager
+  - modify read only attribute
+  - hide files windows
+  - system file attribute
+  - archive file flag
+  - windows file visibility
 features:
-- Display attributes of files and directories.
-- Add or remove read-only attribute.
-- Add or remove hidden attribute.
-- Add or remove system attribute.
-- Recursively apply attribute changes to subdirectories.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display attributes of files and directories.
+  - Add or remove read-only attribute.
+  - Add or remove hidden attribute.
+  - Add or remove system attribute.
+  - Recursively apply attribute changes to subdirectories.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # attrib

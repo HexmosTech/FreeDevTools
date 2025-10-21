@@ -1,9 +1,9 @@
 ---
-title: "Show DNS Domain Name - Resolve Hostname | Online Free DevTools by Hexmos"
+title: 'Show DNS Domain Name - Resolve Hostname | Online Free DevTools by Hexmos'
 name: dnsdomainname
-path: "/freedevtools/tldr/linux/dnsdomainname/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dnsdomainname/"
-description: "Show DNS domain name by resolving hostname with dnsdomainname. Obtain the fully qualified domain name of your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dnsdomainname/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dnsdomainname/'
+description: 'Show DNS domain name by resolving hostname with dnsdomainname. Obtain the fully qualified domain name of your system. Free online tool, no registration required.'
 category: linux
 keywords:
   - dns domain name
@@ -22,8 +22,8 @@ features:
   - Utilize gethostname and getaddrinfo functions
   - Obtain the canonical name of the system
   - Retrieve the network domain name
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnsdomainname

@@ -1,9 +1,9 @@
 ---
-title: "XFS Filesystem Repair - Repair XFS Partitions | Online Free DevTools by Hexmos"
+title: 'XFS Filesystem Repair - Repair XFS Partitions | Online Free DevTools by Hexmos'
 name: xfs_repair
-path: "/freedevtools/tldr/linux/xfs_repair/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xfs_repair/"
-description: "Repair damaged XFS filesystems with xfs_repair.  Quickly fix partition errors and recover data using this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xfs_repair/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xfs_repair/'
+description: 'Repair damaged XFS filesystems with xfs_repair.  Quickly fix partition errors and recover data using this command-line utility. Free online tool, no registration required.'
 category: linux
 keywords:
   - xfs repair command
@@ -22,8 +22,8 @@ features:
   - Fixes filesystem metadata inconsistencies.
   - Handles various types of XFS errors.
   - Offers options for in-place repair or data recovery.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xfs_repair

@@ -1,29 +1,29 @@
 ---
-title: "Magick - Convert Image Formats | Online Free DevTools by Hexmos"
+title: 'Magick - Convert Image Formats | Online Free DevTools by Hexmos'
 name: magick
-path: "/freedevtools/tldr/magick/magick/"
-canonical: "https://hexmos.com/freedevtools/tldr/magick/magick/"
-description: "Convert image formats with Magick. Resize, create GIFs, and generate patterns with this powerful command-line image manipulation tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/magick/magick/'
+canonical: 'https://hexmos.com/freedevtools/tldr/magick/magick/'
+description: 'Convert image formats with Magick. Resize, create GIFs, and generate patterns with this powerful command-line image manipulation tool. Free online tool, no registration required.'
 category: common
 keywords:
-- image converter
-- image format converter
-- image manipulation
-- command line image processing
-- png to jpg converter
-- jpg to pdf converter
-- gif creator
-- magick image resize
-- image magick linux
-- magick command
+  - image converter
+  - image format converter
+  - image manipulation
+  - command line image processing
+  - png to jpg converter
+  - jpg to pdf converter
+  - gif creator
+  - magick image resize
+  - image magick linux
+  - magick command
 features:
-- Convert between various image formats
-- Resize images while preserving quality
-- Create GIF animations from image sequences
-- Generate patterned images like checkerboards
-- Combine multiple images into a single PDF file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between various image formats
+  - Resize images while preserving quality
+  - Create GIF animations from image sequences
+  - Generate patterned images like checkerboards
+  - Combine multiple images into a single PDF file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # magick

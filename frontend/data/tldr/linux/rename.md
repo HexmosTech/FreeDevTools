@@ -1,9 +1,9 @@
 ---
-title: "Rename Files - Control File Names | Online Free DevTools by Hexmos"
+title: 'Rename Files - Control File Names | Online Free DevTools by Hexmos'
 name: rename
-path: "/freedevtools/tldr/linux/rename/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rename/"
-description: "Control file names efficiently with the rename command.  Manage files across various systems and easily batch-rename multiple files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rename/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rename/'
+description: 'Control file names efficiently with the rename command.  Manage files across various systems and easily batch-rename multiple files. Free online tool, no registration required.'
 category: linux
 keywords:
   - file renaming command
@@ -22,8 +22,8 @@ features:
   - Supports various file systems.
   - Offers both Perl and util-linux implementations.
   - Provides flexible options for customizing renaming logic.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rename

@@ -1,29 +1,29 @@
 ---
-title: "Git Remote - Manage Git Remotes | Online Free DevTools by Hexmos"
+title: 'Git Remote - Manage Git Remotes | Online Free DevTools by Hexmos'
 name: jj-git-remote
-path: "/freedevtools/tldr/jj/jj-git-remote/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-git-remote/"
-description: "Manage Git remotes easily with Git Remote. Add, remove, rename, and change the URL of your Git remotes from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-git-remote/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-git-remote/'
+description: 'Manage Git remotes easily with Git Remote. Add, remove, rename, and change the URL of your Git remotes from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Git remote manager
-- Git remote command line
-- jj git remote
-- jj git management
-- Version control remote
-- Git repository remote
-- Git URL manager
-- jj remote rename
-- jj remote add
-- jj remote remove
+  - Git remote manager
+  - Git remote command line
+  - jj git remote
+  - jj git management
+  - Version control remote
+  - Git repository remote
+  - Git URL manager
+  - jj remote rename
+  - jj remote add
+  - jj remote remove
 features:
-- List existing Git remotes
-- Add new Git remotes with a specified URL
-- Modify the URL of existing Git remotes
-- Remove unwanted Git remotes from the configuration
-- Rename existing Git remotes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing Git remotes
+  - Add new Git remotes with a specified URL
+  - Modify the URL of existing Git remotes
+  - Remove unwanted Git remotes from the configuration
+  - Rename existing Git remotes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj git remote

@@ -1,29 +1,29 @@
 ---
-title: "Watchexec - Control File Changes | Online Free DevTools by Hexmos"
+title: 'Watchexec - Control File Changes | Online Free DevTools by Hexmos'
 name: watchexec
-path: "/freedevtools/tldr/common/watchexec/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/watchexec/"
-description: "Control file changes with Watchexec. Automate actions upon file modifications, triggering commands and tasks instantly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/watchexec/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/watchexec/'
+description: 'Control file changes with Watchexec. Automate actions upon file modifications, triggering commands and tasks instantly. Free online tool, no registration required.'
 category: common
 keywords:
-- file change watcher
-- file system monitoring
-- file event handling
-- command execution on file change
-- automatic task runner
-- file change trigger
-- watchexec automation
-- directory monitoring
-- file update detection
-- linux file watcher
+  - file change watcher
+  - file system monitoring
+  - file event handling
+  - command execution on file change
+  - automatic task runner
+  - file change trigger
+  - watchexec automation
+  - directory monitoring
+  - file update detection
+  - linux file watcher
 features:
-- Executes commands automatically on file changes
-- Watches specific directories or files for modifications
-- Restarts processes with custom stop signals
-- Filters changes based on file extensions
-- Polls for changes at defined intervals
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Executes commands automatically on file changes
+  - Watches specific directories or files for modifications
+  - Restarts processes with custom stop signals
+  - Filters changes based on file extensions
+  - Polls for changes at defined intervals
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # watchexec

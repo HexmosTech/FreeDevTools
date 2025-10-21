@@ -1,29 +1,29 @@
 ---
-title: "Compress Data - Lzip Archive and Compress Files | Online Free DevTools by Hexmos"
+title: 'Compress Data - Lzip Archive and Compress Files | Online Free DevTools by Hexmos'
 name: lzip
-path: "/freedevtools/tldr/common/lzip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lzip/"
-description: "Compress data with Lzip, create and manage lz archives with this powerful command-line tool. Free online tool, no registration required. Optimize storage and transfer files efficiently."
+path: '/freedevtools/tldr/common/lzip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lzip/'
+description: 'Compress data with Lzip, create and manage lz archives with this powerful command-line tool. Free online tool, no registration required. Optimize storage and transfer files efficiently.'
 category: common
 keywords:
-- lzip data compression
-- lz archive creation
-- linux file compression
-- command line archive tool
-- lossless data compression
-- lzip archive management
-- compress files linux
-- compress files macos
-- lzip integrity check
-- decompress lzip archive
+  - lzip data compression
+  - lz archive creation
+  - linux file compression
+  - command line archive tool
+  - lossless data compression
+  - lzip archive management
+  - compress files linux
+  - compress files macos
+  - lzip integrity check
+  - decompress lzip archive
 features:
-- Compress files into LZ archives
-- Decompress LZ archives back to original files
-- Test the integrity of existing LZ archives
-- List the contents and statistics of LZ archives
-- Archive files using different compression levels
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files into LZ archives
+  - Decompress LZ archives back to original files
+  - Test the integrity of existing LZ archives
+  - List the contents and statistics of LZ archives
+  - Archive files using different compression levels
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lzip

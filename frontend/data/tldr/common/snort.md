@@ -1,29 +1,29 @@
 ---
-title: "Snort - Analyze Network Traffic | Online Free DevTools by Hexmos"
+title: 'Snort - Analyze Network Traffic | Online Free DevTools by Hexmos'
 name: snort
-path: "/freedevtools/tldr/common/snort/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/snort/"
-description: "Analyze network traffic effectively with Snort, the open-source intrusion detection system. Capture packets, detect threats, and enhance network security. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/snort/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/snort/'
+description: 'Analyze network traffic effectively with Snort, the open-source intrusion detection system. Capture packets, detect threats, and enhance network security. Free online tool, no registration required.'
 category: common
 keywords:
-- network traffic analysis
-- intrusion detection system
-- packet capture snort
-- network security monitoring
-- snort rules configuration
-- linux network analysis
-- tcpdump alternative
-- network threat detection
-- network intrusion prevention
-- snort command line
+  - network traffic analysis
+  - intrusion detection system
+  - packet capture snort
+  - network security monitoring
+  - snort rules configuration
+  - linux network analysis
+  - tcpdump alternative
+  - network threat detection
+  - network intrusion prevention
+  - snort command line
 features:
-- Capture network packets with verbose output
-- Dump application layer data from captured packets
-- Display link layer packet headers for detailed analysis
-- Save captured packets to a specified directory for later examination
-- Analyze packets against defined rules and save alert-triggering packets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture network packets with verbose output
+  - Dump application layer data from captured packets
+  - Display link layer packet headers for detailed analysis
+  - Save captured packets to a specified directory for later examination
+  - Analyze packets against defined rules and save alert-triggering packets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # snort

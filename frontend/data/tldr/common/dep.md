@@ -1,29 +1,29 @@
 ---
-title: "Deploy PHP Apps - Automate Deployment | Online Free DevTools by Hexmos"
+title: 'Deploy PHP Apps - Automate Deployment | Online Free DevTools by Hexmos'
 name: dep
-path: "/freedevtools/tldr/common/dep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dep/"
-description: "Automate PHP deployment with Dep, a deployment automation tool. Quickly deploy your PHP applications with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dep/'
+description: 'Automate PHP deployment with Dep, a deployment automation tool. Quickly deploy your PHP applications with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP deployment tool
-- PHP deployment automation
-- application deployment
-- command line deployment
-- dep deploy command
-- deployer automation
-- rollback deployment
-- SSH remote host
-- command execution
-- PHP application
+  - PHP deployment tool
+  - PHP deployment automation
+  - application deployment
+  - command line deployment
+  - dep deploy command
+  - deployer automation
+  - rollback deployment
+  - SSH remote host
+  - command execution
+  - PHP application
 features:
-- Initialize Deployer interactively
-- Deploy applications to a remote host
-- Rollback to the previous working release
-- Connect to a remote host via SSH
-- Run arbitrary commands on remote hosts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Deployer interactively
+  - Deploy applications to a remote host
+  - Rollback to the previous working release
+  - Connect to a remote host via SSH
+  - Run arbitrary commands on remote hosts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dep

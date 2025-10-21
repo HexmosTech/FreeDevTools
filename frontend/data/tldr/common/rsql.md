@@ -1,29 +1,29 @@
 ---
-title: "RSQL - Query Databases Interactively | Online Free DevTools by Hexmos"
+title: 'RSQL - Query Databases Interactively | Online Free DevTools by Hexmos'
 name: rsql
-path: "/freedevtools/tldr/common/rsql/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rsql/"
-description: "Query databases interactively with RSQL. Connect to various data sources like PostgreSQL, MySQL, and SQLite. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rsql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rsql/'
+description: 'Query databases interactively with RSQL. Connect to various data sources like PostgreSQL, MySQL, and SQLite. Free online tool, no registration required.'
 category: common
 keywords:
-- SQL client
-- interactive database query
-- PostgreSQL client
-- MySQL client
-- SQLite client
-- command-line SQL tool
-- terminal database interface
-- database connection manager
-- rsql terminal
-- database query tool
+  - SQL client
+  - interactive database query
+  - PostgreSQL client
+  - MySQL client
+  - SQLite client
+  - command-line SQL tool
+  - terminal database interface
+  - database connection manager
+  - rsql terminal
+  - database query tool
 features:
-- Connect to PostgreSQL, MySQL, and SQLite databases
-- Execute SQL queries from the command line
-- Display results in various formats
-- Support SSL connections to databases
-- Use custom line separators for delimited data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to PostgreSQL, MySQL, and SQLite databases
+  - Execute SQL queries from the command line
+  - Display results in various formats
+  - Support SSL connections to databases
+  - Use custom line separators for delimited data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rsql

@@ -1,9 +1,9 @@
 ---
-title: "Zile Text Editor - Edit Text Files Efficiently | Online Free DevTools by Hexmos"
+title: 'Zile Text Editor - Edit Text Files Efficiently | Online Free DevTools by Hexmos'
 name: zile
-path: "/freedevtools/tldr/linux/zile/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/zile/"
-description: "Edit text files efficiently with Zile, a lightweight Emacs clone.  Create, open, and save files with simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/zile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/zile/'
+description: 'Edit text files efficiently with Zile, a lightweight Emacs clone.  Create, open, and save files with simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - text editor command
@@ -22,8 +22,8 @@ features:
   - Save changes quickly using keyboard shortcuts.
   - Supports opening files at a specific line number.
   - Provides basic undo functionality.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zile

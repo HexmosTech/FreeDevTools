@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Refresh - Update Infrastructure State | Online Free DevTools by Hexmos"
+title: 'Pulumi Refresh - Update Infrastructure State | Online Free DevTools by Hexmos'
 name: pulumi-refresh
-path: "/freedevtools/tldr/pulumi/pulumi-refresh/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-refresh/"
+path: '/freedevtools/tldr/pulumi/pulumi-refresh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-refresh/'
 description: "Update infrastructure state with Pulumi Refresh. Synchronize your stack's resources with the actual cloud provider state. Free online tool, no registration required."
 category: common
 keywords:
-- infrastructure refresh
-- pulumi state management
-- cloud resource synchronization
-- pulumi cloud automation
-- infrastructure as code refresh
-- pulumi refresh command
-- infrastructure state update
-- pulumi infrastructure management
-- IaC state synchronization
-- pulumi cloud deployment
+  - infrastructure refresh
+  - pulumi state management
+  - cloud resource synchronization
+  - pulumi cloud automation
+  - infrastructure as code refresh
+  - pulumi refresh command
+  - infrastructure state update
+  - pulumi infrastructure management
+  - IaC state synchronization
+  - pulumi cloud deployment
 features:
-- Synchronizes the stack's state with the cloud provider.
-- Detects changes made outside of Pulumi.
-- Applies infrastructure changes to the current stack.
-- Shows a rich diff of changes to be applied.
-- Prevents unexpected changes during refresh with error handling.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronizes the stack's state with the cloud provider.
+  - Detects changes made outside of Pulumi.
+  - Applies infrastructure changes to the current stack.
+  - Shows a rich diff of changes to be applied.
+  - Prevents unexpected changes during refresh with error handling.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi refresh

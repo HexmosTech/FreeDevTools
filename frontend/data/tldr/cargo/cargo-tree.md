@@ -1,29 +1,29 @@
 ---
-title: "Generate Rust Dependency Tree - Visualize Cargo Dependencies | Online Free DevTools by Hexmos"
+title: 'Generate Rust Dependency Tree - Visualize Cargo Dependencies | Online Free DevTools by Hexmos'
 name: cargo-tree
-path: "/freedevtools/tldr/cargo/cargo-tree/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-tree/"
-description: "Generate a Rust dependency tree with cargo-tree. Analyze and visualize project dependencies for effective Rust development. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-tree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-tree/'
+description: 'Generate a Rust dependency tree with cargo-tree. Analyze and visualize project dependencies for effective Rust development. Free online tool, no registration required.'
 category: common
 keywords:
-- rust dependency tree
-- cargo dependency graph
-- rust package visualization
-- cargo tree command
-- rust dependency analysis
-- cargo crate dependencies
-- rust dependency management
-- cargo crate graph
-- rust project dependencies
-- cargo dependency explorer
+  - rust dependency tree
+  - cargo dependency graph
+  - rust package visualization
+  - cargo tree command
+  - rust dependency analysis
+  - cargo crate dependencies
+  - rust dependency management
+  - cargo crate graph
+  - rust project dependencies
+  - cargo dependency explorer
 features:
-- Visualize Rust project dependencies as a tree.
-- Filter dependencies by depth to focus on specific levels.
-- Exclude specific packages from the dependency tree.
-- Show all occurrences of repeated dependencies.
-- Display normal, build, or development dependencies.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Visualize Rust project dependencies as a tree.
+  - Filter dependencies by depth to focus on specific levels.
+  - Exclude specific packages from the dependency tree.
+  - Show all occurrences of repeated dependencies.
+  - Display normal, build, or development dependencies.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo tree

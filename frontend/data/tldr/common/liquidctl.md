@@ -1,29 +1,29 @@
 ---
-title: "Liquid Cooler Control - Manage Cooling Systems | Online Free DevTools by Hexmos"
+title: 'Liquid Cooler Control - Manage Cooling Systems | Online Free DevTools by Hexmos'
 name: liquidctl
-path: "/freedevtools/tldr/common/liquidctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/liquidctl/"
-description: "Control liquid coolers with liquidctl. Monitor temperatures, adjust fan speeds, and optimize cooling performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/liquidctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/liquidctl/'
+description: 'Control liquid coolers with liquidctl. Monitor temperatures, adjust fan speeds, and optimize cooling performance. Free online tool, no registration required.'
 category: common
 keywords:
-- liquid cooler control
-- cooler fan speed control
-- liquid cooling monitor
-- system temperature control
-- liquidctl configuration
-- linux cooler control
-- windows cooler control
-- fan control cli
-- system cooling automation
-- liquid cooler optimization
+  - liquid cooler control
+  - cooler fan speed control
+  - liquid cooling monitor
+  - system temperature control
+  - liquidctl configuration
+  - linux cooler control
+  - windows cooler control
+  - fan control cli
+  - system cooling automation
+  - liquid cooler optimization
 features:
-- List available liquid cooling devices
-- Initialize and configure cooling systems
-- Print the status of connected liquid coolers
-- Set custom fan speeds based on temperature
-- Automate liquid cooler adjustments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available liquid cooling devices
+  - Initialize and configure cooling systems
+  - Print the status of connected liquid coolers
+  - Set custom fan speeds based on temperature
+  - Automate liquid cooler adjustments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # liquidctl

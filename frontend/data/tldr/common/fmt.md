@@ -1,29 +1,29 @@
 ---
-title: "Format Text - Reformat Text Files with fmt | Online Free DevTools by Hexmos"
+title: 'Format Text - Reformat Text Files with fmt | Online Free DevTools by Hexmos'
 name: fmt
-path: "/freedevtools/tldr/common/fmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fmt/"
-description: "Reformat text with fmt. Efficiently adjust line widths and paragraph spacing for improved readability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fmt/'
+description: 'Reformat text with fmt. Efficiently adjust line widths and paragraph spacing for improved readability. Free online tool, no registration required.'
 category: common
 keywords:
-- text formatter
-- format text file
-- fmt command
-- line width adjuster
-- paragraph spacing tool
-- text reflowing
-- coreutils fmt
-- linux text formatting
-- gnu fmt
-- command line text formatter
+  - text formatter
+  - format text file
+  - fmt command
+  - line width adjuster
+  - paragraph spacing tool
+  - text reflowing
+  - coreutils fmt
+  - linux text formatting
+  - gnu fmt
+  - command line text formatter
 features:
-- Reformat text files to a specified width
-- Join paragraphs for consistent formatting
-- Split lines to enforce maximum line length
-- Uniformly space words and paragraphs
-- Adjust spacing between paragraphs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reformat text files to a specified width
+  - Join paragraphs for consistent formatting
+  - Split lines to enforce maximum line length
+  - Uniformly space words and paragraphs
+  - Adjust spacing between paragraphs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fmt

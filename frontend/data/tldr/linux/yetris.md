@@ -1,9 +1,9 @@
 ---
-title: "Control Tetris Game - Play Yetris in Terminal | Online Free DevTools by Hexmos"
+title: 'Control Tetris Game - Play Yetris in Terminal | Online Free DevTools by Hexmos'
 name: yetris
-path: "/freedevtools/tldr/linux/yetris/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/yetris/"
-description: "Control your Tetris game with Yetris, a terminal-based Tetris clone. Enjoy classic gameplay and keyboard controls. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/yetris/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/yetris/'
+description: 'Control your Tetris game with Yetris, a terminal-based Tetris clone. Enjoy classic gameplay and keyboard controls. Free online tool, no registration required.'
 category: linux
 keywords:
   - terminal Tetris
@@ -22,8 +22,8 @@ features:
   - Hold a Tetris piece for later use
   - Soft drop and hard drop Tetris pieces
   - Pause and quit the Tetris game
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yetris

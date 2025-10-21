@@ -1,9 +1,9 @@
 ---
-title: "Wofi App Launcher - Launch Apps with Wayland | Online Free DevTools by Hexmos"
+title: 'Wofi App Launcher - Launch Apps with Wayland | Online Free DevTools by Hexmos'
 name: wofi
-path: "/freedevtools/tldr/linux/wofi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wofi/"
-description: "Launch applications quickly with Wofi, a Wayland app launcher.  Similar to rofi and dmenu, it offers flexible searching and selection. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wofi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wofi/'
+description: 'Launch applications quickly with Wofi, a Wayland app launcher.  Similar to rofi and dmenu, it offers flexible searching and selection. Free online tool, no registration required.'
 category: linux
 keywords:
   - wayland app launcher
@@ -22,8 +22,8 @@ features:
   - Select applications using keyboard navigation.
   - Pipe a list of items to wofi for selection.
   - Works with wlroots-based Wayland compositors.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wofi

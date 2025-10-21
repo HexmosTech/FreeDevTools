@@ -1,29 +1,29 @@
 ---
-title: "Create Electrum Wallet - Manage Keys | Online Free DevTools by Hexmos"
+title: 'Create Electrum Wallet - Manage Keys | Online Free DevTools by Hexmos'
 name: electrum
-path: "/freedevtools/tldr/common/electrum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/electrum/"
-description: "Create Bitcoin wallets securely with Electrum. Manage private keys, sign transactions offline, and verify messages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/electrum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/electrum/'
+description: 'Create Bitcoin wallets securely with Electrum. Manage private keys, sign transactions offline, and verify messages. Free online tool, no registration required.'
 category: common
 keywords:
-- Bitcoin wallet creation
-- Electrum wallet manager
-- Cryptocurrency key management
-- Offline transaction signing
-- Bitcoin address generation
-- Message signing verification
-- Electrum server connection
-- Bitcoin security tool
-- Electrum wallet restoration
-- Bitcoin private key management
+  - Bitcoin wallet creation
+  - Electrum wallet manager
+  - Cryptocurrency key management
+  - Offline transaction signing
+  - Bitcoin address generation
+  - Message signing verification
+  - Electrum server connection
+  - Bitcoin security tool
+  - Electrum wallet restoration
+  - Bitcoin private key management
 features:
-- Create new Electrum wallets with ease
-- Restore existing wallets securely from seed
-- Create signed Bitcoin transactions offline
-- Display wallet receiving addresses comprehensively
-- Sign and verify messages using your Electrum wallet
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Electrum wallets with ease
+  - Restore existing wallets securely from seed
+  - Create signed Bitcoin transactions offline
+  - Display wallet receiving addresses comprehensively
+  - Sign and verify messages using your Electrum wallet
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # electrum

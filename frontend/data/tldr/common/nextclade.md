@@ -1,29 +1,29 @@
 ---
-title: "Nextclade - Analyze Virus Genomes | Online Free DevTools by Hexmos"
+title: 'Nextclade - Analyze Virus Genomes | Online Free DevTools by Hexmos'
 name: nextclade
-path: "/freedevtools/tldr/common/nextclade/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nextclade/"
-description: "Analyze virus genomes with Nextclade. Perform sequence alignment, clade assignment, and QC checks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nextclade/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nextclade/'
+description: 'Analyze virus genomes with Nextclade. Perform sequence alignment, clade assignment, and QC checks. Free online tool, no registration required.'
 category: common
 keywords:
-- virus genome analysis
-- sequence alignment tool
-- clade assignment
-- phylogenetic analysis
-- viral mutation analysis
-- bioinformatics tool
-- nextstrain analysis
-- SARS-CoV-2 analysis
-- fasta alignment
-- genome QC check
+  - virus genome analysis
+  - sequence alignment tool
+  - clade assignment
+  - phylogenetic analysis
+  - viral mutation analysis
+  - bioinformatics tool
+  - nextstrain analysis
+  - SARS-CoV-2 analysis
+  - fasta alignment
+  - genome QC check
 features:
-- Align virus sequences against a reference genome
-- Assign viral sequences to specific clades
-- Perform quality control checks on genome sequences
-- Identify mutations in viral genomes
-- Generate reports for virus genome analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Align virus sequences against a reference genome
+  - Assign viral sequences to specific clades
+  - Perform quality control checks on genome sequences
+  - Identify mutations in viral genomes
+  - Generate reports for virus genome analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nextclade

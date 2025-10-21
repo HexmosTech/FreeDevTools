@@ -1,29 +1,29 @@
 ---
-title: "HG Push - Send Mercurial Changesets | Online Free DevTools by Hexmos"
+title: 'HG Push - Send Mercurial Changesets | Online Free DevTools by Hexmos'
 name: hg-push
-path: "/freedevtools/tldr/hg/hg-push/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-push/"
-description: "Push Mercurial changesets with HG Push. Transfer local commits to a remote repository, manage branches, and update bookmarks using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-push/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-push/'
+description: 'Push Mercurial changesets with HG Push. Transfer local commits to a remote repository, manage branches, and update bookmarks using command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- mercurial push
-- hg push command
-- mercurial changeset
-- push remote repository
-- mercurial branch push
-- mercurial bookmark push
-- version control system
-- distributed revision control
-- hg command line
-- hgscm
+  - mercurial push
+  - hg push command
+  - mercurial changeset
+  - push remote repository
+  - mercurial branch push
+  - mercurial bookmark push
+  - version control system
+  - distributed revision control
+  - hg command line
+  - hgscm
 features:
-- Push changes to a remote Mercurial repository
-- Create new branches on the remote repository
-- Specify a revision to push
-- Push a specific branch
-- Push a specific bookmark
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Push changes to a remote Mercurial repository
+  - Create new branches on the remote repository
+  - Specify a revision to push
+  - Push a specific branch
+  - Push a specific bookmark
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg push

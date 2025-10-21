@@ -1,29 +1,29 @@
 ---
-title: "Docker Remove - Delete Containers | Online Free DevTools by Hexmos"
+title: 'Docker Remove - Delete Containers | Online Free DevTools by Hexmos'
 name: docker-rm
-path: "/freedevtools/tldr/docker/docker-rm/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-rm/"
-description: "Remove Docker containers instantly with Docker Remove. Force remove, delete volumes and manage containers using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-rm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-rm/'
+description: 'Remove Docker containers instantly with Docker Remove. Force remove, delete volumes and manage containers using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- docker container remove
-- docker container deletion
-- docker force remove container
-- docker volume deletion
-- docker container management
-- linux docker commands
-- macos docker commands
-- windows docker commands
-- command line docker
-- docker container cleanup
+  - docker container remove
+  - docker container deletion
+  - docker force remove container
+  - docker volume deletion
+  - docker container management
+  - linux docker commands
+  - macos docker commands
+  - windows docker commands
+  - command line docker
+  - docker container cleanup
 features:
-- Force remove running Docker containers
-- Delete Docker containers and associated volumes
-- Remove multiple Docker containers simultaneously
-- Display help information for the docker rm command
-- Remove containers with a single command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Force remove running Docker containers
+  - Delete Docker containers and associated volumes
+  - Remove multiple Docker containers simultaneously
+  - Display help information for the docker rm command
+  - Remove containers with a single command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker rm

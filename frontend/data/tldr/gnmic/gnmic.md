@@ -1,29 +1,29 @@
 ---
-title: "Manage gNMI Network Configuration | Online Free DevTools by Hexmos"
+title: 'Manage gNMI Network Configuration | Online Free DevTools by Hexmos'
 name: gnmic
-path: "/freedevtools/tldr/gnmic/gnmic/"
-canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic/"
-description: "Manage gNMI network configurations with gnmic. View operational data and request device capabilities easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/gnmic/gnmic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gnmic/gnmic/'
+description: 'Manage gNMI network configurations with gnmic. View operational data and request device capabilities easily. Free online tool, no registration required.'
 category: common
 keywords:
-- gNMI client
-- gNMI network management
-- network configuration management
-- telemetry data collection
-- network device monitoring
-- gNMI path configuration
-- gNMI subscribe updates
-- gNMI get request
-- gNMI set request
-- gNMI capabilities discovery
+  - gNMI client
+  - gNMI network management
+  - network configuration management
+  - telemetry data collection
+  - network device monitoring
+  - gNMI path configuration
+  - gNMI subscribe updates
+  - gNMI get request
+  - gNMI set request
+  - gNMI capabilities discovery
 features:
-- Request device capabilities via gNMI
-- Get snapshot of device state at a specific path
-- Update device state at a specific path using gNMI
-- Subscribe to target state updates at a specific path
-- Manage network device configurations using gNMI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Request device capabilities via gNMI
+  - Get snapshot of device state at a specific path
+  - Update device state at a specific path using gNMI
+  - Subscribe to target state updates at a specific path
+  - Manage network device configurations using gNMI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnmic

@@ -1,29 +1,29 @@
 ---
-title: "Generate Desktop File - Create .desktop Files | Online Free DevTools by Hexmos"
+title: 'Generate Desktop File - Create .desktop Files | Online Free DevTools by Hexmos'
 name: gendesk
-path: "/freedevtools/tldr/common/gendesk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gendesk/"
-description: "Generate .desktop files easily with gendesk. Create application launchers and download icons quickly using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gendesk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gendesk/'
+description: 'Generate .desktop files easily with gendesk. Create application launchers and download icons quickly using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- desktop file generator
-- .desktop file creator
-- linux launcher generator
-- application launcher maker
-- freedesktop entry
-- desktop icon creator
-- command line launcher
-- linux application shortcut
-- debian desktop entry
-- ubuntu launcher tool
+  - desktop file generator
+  - .desktop file creator
+  - linux launcher generator
+  - application launcher maker
+  - freedesktop entry
+  - desktop icon creator
+  - command line launcher
+  - linux application shortcut
+  - debian desktop entry
+  - ubuntu launcher tool
 features:
-- Generate .desktop files from the command line
-- Create application launchers with minimal information
-- Customize application name, execution path, and icon
-- Overwrite existing desktop files
-- Suppress output for silent operation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate .desktop files from the command line
+  - Create application launchers with minimal information
+  - Customize application name, execution path, and icon
+  - Overwrite existing desktop files
+  - Suppress output for silent operation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gendesk

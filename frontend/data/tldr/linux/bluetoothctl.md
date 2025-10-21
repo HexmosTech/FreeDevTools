@@ -1,9 +1,9 @@
 ---
-title: "Bluetooth Control - Manage Bluetooth Devices | Online Free DevTools by Hexmos"
+title: 'Bluetooth Control - Manage Bluetooth Devices | Online Free DevTools by Hexmos'
 name: bluetoothctl
-path: "/freedevtools/tldr/linux/bluetoothctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bluetoothctl/"
-description: "Manage Bluetooth devices effectively with Bluetoothctl. Control power, pair devices, and troubleshoot connections using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bluetoothctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bluetoothctl/'
+description: 'Manage Bluetooth devices effectively with Bluetoothctl. Control power, pair devices, and troubleshoot connections using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - bluetooth device management
@@ -22,8 +22,8 @@ features:
   - Remove paired Bluetooth devices
   - Connect to and disconnect from paired Bluetooth devices
   - Display helpful information about bluetoothctl commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bluetoothctl

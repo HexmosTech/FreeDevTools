@@ -1,9 +1,9 @@
 ---
-title: "SMTP Tester - Test Email Deliverability with swaks | Online Free DevTools by Hexmos"
+title: 'SMTP Tester - Test Email Deliverability with swaks | Online Free DevTools by Hexmos'
 name: swaks
-path: "/freedevtools/tldr/linux/swaks/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/swaks/"
-description: "Test email deliverability with swaks SMTP tester.  Send test emails, authenticate with various methods, and test spam/virus scanners. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/swaks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/swaks/'
+description: 'Test email deliverability with swaks SMTP tester.  Send test emails, authenticate with various methods, and test spam/virus scanners. Free online tool, no registration required.'
 category: linux
 keywords:
   - smtp testing
@@ -22,8 +22,8 @@ features:
   - Test email attachments for virus scanning.
   - Test email content for spam scanning.
   - Use LMTP protocol via UNIX domain sockets.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swaks

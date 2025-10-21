@@ -1,29 +1,29 @@
 ---
-title: "Convert AsciiDoc - Generate Documents | Online Free DevTools by Hexmos"
+title: 'Convert AsciiDoc - Generate Documents | Online Free DevTools by Hexmos'
 name: asciidoctor
-path: "/freedevtools/tldr/common/asciidoctor/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/asciidoctor/"
-description: "Convert AsciiDoc documents effortlessly with Asciidoctor. Generate HTML and PDF files from AsciiDoc source. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/asciidoctor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/asciidoctor/'
+description: 'Convert AsciiDoc documents effortlessly with Asciidoctor. Generate HTML and PDF files from AsciiDoc source. Free online tool, no registration required.'
 category: common
 keywords:
-- asciidoc converter
-- adoc to html
-- adoc to pdf
-- asciidoctor command line
-- document generation
-- markdown alternative
-- lightweight markup
-- documentation tool
-- commonmark converter
-- publishing workflow
+  - asciidoc converter
+  - adoc to html
+  - adoc to pdf
+  - asciidoctor command line
+  - document generation
+  - markdown alternative
+  - lightweight markup
+  - documentation tool
+  - commonmark converter
+  - publishing workflow
 features:
-- Convert AsciiDoc files to HTML format
-- Generate PDF documents from AsciiDoc source
-- Link custom CSS stylesheets for HTML output
-- Create embeddable HTML fragments
-- Utilize the asciidoctor-pdf library
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert AsciiDoc files to HTML format
+  - Generate PDF documents from AsciiDoc source
+  - Link custom CSS stylesheets for HTML output
+  - Create embeddable HTML fragments
+  - Utilize the asciidoctor-pdf library
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # asciidoctor

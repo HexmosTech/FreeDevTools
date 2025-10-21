@@ -1,29 +1,29 @@
 ---
-title: "Ropper - Find ROP Gadgets in Binaries | Online Free DevTools by Hexmos"
+title: 'Ropper - Find ROP Gadgets in Binaries | Online Free DevTools by Hexmos'
 name: ropper
-path: "/freedevtools/tldr/common/ropper/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ropper/"
-description: "Find ROP gadgets in binary files with Ropper, an efficient tool for reverse engineering. Analyze binaries for security vulnerabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ropper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ropper/'
+description: 'Find ROP gadgets in binary files with Ropper, an efficient tool for reverse engineering. Analyze binaries for security vulnerabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- ROP gadget finder
-- Binary analysis tool
-- Reverse engineering tool
-- Exploit development tool
-- Security vulnerability scanner
-- ropper linux
-- ropper windows
-- ropper macos
-- gadget search tool
-- ropper binary
+  - ROP gadget finder
+  - Binary analysis tool
+  - Reverse engineering tool
+  - Exploit development tool
+  - Security vulnerability scanner
+  - ropper linux
+  - ropper windows
+  - ropper macos
+  - gadget search tool
+  - ropper binary
 features:
-- List all gadgets within a binary file.
-- Filter gadgets based on a specified regular expression.
-- List gadgets of a specific type (ROP, JOB, SYS, ALL).
-- Exclude gadgets containing bad bytes.
-- Limit the number of instructions to display.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all gadgets within a binary file.
+  - Filter gadgets based on a specified regular expression.
+  - List gadgets of a specific type (ROP, JOB, SYS, ALL).
+  - Exclude gadgets containing bad bytes.
+  - Limit the number of instructions to display.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ropper

@@ -1,9 +1,9 @@
 ---
-title: "Pkgctl Repo - Manage Git Repositories | Online Free DevTools by Hexmos"
+title: 'Pkgctl Repo - Manage Git Repositories | Online Free DevTools by Hexmos'
 name: pkgctl-repo
-path: "/freedevtools/tldr/linux/pkgctl-repo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgctl-repo/"
-description: "Manage Arch Linux Git package repositories with Pkgctl Repo. Clone, create, switch versions, and open repository websites. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pkgctl-repo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pkgctl-repo/'
+description: 'Manage Arch Linux Git package repositories with Pkgctl Repo. Clone, create, switch versions, and open repository websites. Free online tool, no registration required.'
 category: linux
 keywords:
   - Arch Linux package repository management
@@ -22,8 +22,8 @@ features:
   - Switch package repositories to specific versions
   - Open package repository websites directly
   - Manage Git repositories for Arch Linux packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkgctl repo

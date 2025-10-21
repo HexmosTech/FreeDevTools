@@ -1,29 +1,29 @@
 ---
-title: "Generate Telegram Themes - wal-telegram | Online Free DevTools by Hexmos"
+title: 'Generate Telegram Themes - wal-telegram | Online Free DevTools by Hexmos'
 name: wal-telegram
-path: "/freedevtools/tldr/linux/wal-telegram/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wal-telegram/"
-description: "Generate Telegram themes with wal-telegram, using colors from pywal. Customize Telegram appearance and create unique themes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wal-telegram/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wal-telegram/'
+description: 'Generate Telegram themes with wal-telegram, using colors from pywal. Customize Telegram appearance and create unique themes. Free online tool, no registration required.'
 category: linux
 keywords:
-- telegram theme generator
-- wal telegram themes
-- linux theme customization
-- pywal telegram theme
-- telegram appearance settings
-- telegram theme maker
-- wal theme creation
-- command line theme generator
-- telegram custom theme
-- linux wal telegram
+  - telegram theme generator
+  - wal telegram themes
+  - linux theme customization
+  - pywal telegram theme
+  - telegram appearance settings
+  - telegram theme maker
+  - wal theme creation
+  - command line theme generator
+  - telegram custom theme
+  - linux wal telegram
 features:
-- Generate Telegram themes from pywal color palettes.
-- Customize Telegram themes using background images.
-- Create Telegram themes with colored backgrounds based on the palette.
-- Apply gaussian blur to background images for Telegram themes.
-- Automatically restart the Telegram application after theme generation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate Telegram themes from pywal color palettes.
+  - Customize Telegram themes using background images.
+  - Create Telegram themes with colored backgrounds based on the palette.
+  - Apply gaussian blur to background images for Telegram themes.
+  - Automatically restart the Telegram application after theme generation.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wal-telegram

@@ -1,29 +1,29 @@
 ---
-title: "Route Traffic with Torsocks - Anonymize Connections | Online Free DevTools by Hexmos"
+title: 'Route Traffic with Torsocks - Anonymize Connections | Online Free DevTools by Hexmos'
 name: torsocks
-path: "/freedevtools/tldr/linux/torsocks/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/torsocks/"
-description: "Anonymize connections with Torsocks, route application traffic through the Tor network for enhanced security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/torsocks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/torsocks/'
+description: 'Anonymize connections with Torsocks, route application traffic through the Tor network for enhanced security. Free online tool, no registration required.'
 category: linux
 keywords:
-- tor proxy linux
-- torsocks tor network
-- route traffic tor
-- linux tor anonymizer
-- command line tor
-- tor connection manager
-- tor socks proxy
-- tor circuit isolation
-- secure linux connection
-- torsocks command
+  - tor proxy linux
+  - torsocks tor network
+  - route traffic tor
+  - linux tor anonymizer
+  - command line tor
+  - tor connection manager
+  - tor socks proxy
+  - tor circuit isolation
+  - secure linux connection
+  - torsocks command
 features:
-- Route application traffic through the Tor network
-- Enable or disable Tor in a shell session
-- Spawn a new Tor-enabled shell
-- Check if the current shell is Tor enabled
-- Isolate traffic through a different Tor circuit
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Route application traffic through the Tor network
+  - Enable or disable Tor in a shell session
+  - Spawn a new Tor-enabled shell
+  - Check if the current shell is Tor enabled
+  - Isolate traffic through a different Tor circuit
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # torsocks

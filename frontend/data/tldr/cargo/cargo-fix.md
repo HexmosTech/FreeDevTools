@@ -1,29 +1,29 @@
 ---
-title: "Cargo Fix - Auto-Fix Rust Code with Cargo | Online Free DevTools by Hexmos"
+title: 'Cargo Fix - Auto-Fix Rust Code with Cargo | Online Free DevTools by Hexmos'
 name: cargo-fix
-path: "/freedevtools/tldr/cargo/cargo-fix/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-fix/"
-description: "Auto-fix Rust code instantly with Cargo Fix. Resolve lint warnings and migrate Rust editions effortlessly using cargo command. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-fix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-fix/'
+description: 'Auto-fix Rust code instantly with Cargo Fix. Resolve lint warnings and migrate Rust editions effortlessly using cargo command. Free online tool, no registration required.'
 category: common
 keywords:
-- cargo fix rust
-- rust code fixer
-- rust lint auto fix
-- cargo rust edition migration
-- cargo fix broken code
-- rust compiler warnings fix
-- cargo workspace fix
-- rust cargo commands
-- rust code refactoring
-- rust auto code fix
+  - cargo fix rust
+  - rust code fixer
+  - rust lint auto fix
+  - cargo rust edition migration
+  - cargo fix broken code
+  - rust compiler warnings fix
+  - cargo workspace fix
+  - rust cargo commands
+  - rust code refactoring
+  - rust auto code fix
 features:
-- Fixes code with compiler errors
-- Allows fixing code in dirty working directories
-- Migrates packages to newer Rust editions
-- Fixes specific integration tests
-- Fixes all members within a workspace
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fixes code with compiler errors
+  - Allows fixing code in dirty working directories
+  - Migrates packages to newer Rust editions
+  - Fixes specific integration tests
+  - Fixes all members within a workspace
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo fix

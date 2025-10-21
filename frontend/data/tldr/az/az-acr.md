@@ -1,29 +1,29 @@
 ---
-title: "Create ACR Registry - Manage Azure Containers | Online Free DevTools by Hexmos"
+title: 'Create ACR Registry - Manage Azure Containers | Online Free DevTools by Hexmos'
 name: az-acr
-path: "/freedevtools/tldr/az/az-acr/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-acr/"
-description: "Create ACR registry with az-acr. Manage, store and retrieve container images in Azure. Streamline your DevOps workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-acr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-acr/'
+description: 'Create ACR registry with az-acr. Manage, store and retrieve container images in Azure. Streamline your DevOps workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure Container Registry management
-- ACR image creation
-- Azure CLI container commands
-- Docker image repository
-- Azure container deployment
-- az-acr container management
-- Container registry command line
-- Azure container storage
-- Cloud container images
-- Azure container registry CLI
+  - Azure Container Registry management
+  - ACR image creation
+  - Azure CLI container commands
+  - Docker image repository
+  - Azure container deployment
+  - az-acr container management
+  - Container registry command line
+  - Azure container storage
+  - Cloud container images
+  - Azure container registry CLI
 features:
-- Create and manage Azure Container Registries.
-- Authenticate and login to private registries.
-- Push and pull container images to and from ACR.
-- Delete images and repositories from the registry.
-- List images within a specific registry.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage Azure Container Registries.
+  - Authenticate and login to private registries.
+  - Push and pull container images to and from ACR.
+  - Delete images and repositories from the registry.
+  - List images within a specific registry.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az acr

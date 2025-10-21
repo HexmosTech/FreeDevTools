@@ -1,29 +1,29 @@
 ---
-title: "Highlight Files - Format Files with Bat | Online Free DevTools by Hexmos"
+title: 'Highlight Files - Format Files with Bat | Online Free DevTools by Hexmos'
 name: bat
-path: "/freedevtools/tldr/common/bat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bat/"
-description: "Format files with Bat, a syntax highlighting cat clone. Enhance readability and integrate Git info with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bat/'
+description: 'Format files with Bat, a syntax highlighting cat clone. Enhance readability and integrate Git info with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- Syntax Highlighting Files
-- Colorized File Output
-- Git Integration Cat Clone
-- Command Line File Viewer
-- bat command linux
-- bat command macos
-- File Formatting Command
-- Text File Highlighter
-- Code Syntax Highlighting
-- Terminal File Viewer
+  - Syntax Highlighting Files
+  - Colorized File Output
+  - Git Integration Cat Clone
+  - Command Line File Viewer
+  - bat command linux
+  - bat command macos
+  - File Formatting Command
+  - Text File Highlighter
+  - Code Syntax Highlighting
+  - Terminal File Viewer
 features:
-- Display files with syntax highlighting.
-- Integrate with Git to show modified lines.
-- Highlight specific lines for focused viewing.
-- Show non-printable characters in file content.
-- Customize output style and disable paging.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display files with syntax highlighting.
+  - Integrate with Git to show modified lines.
+  - Highlight specific lines for focused viewing.
+  - Show non-printable characters in file content.
+  - Customize output style and disable paging.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bat

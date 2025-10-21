@@ -1,29 +1,29 @@
 ---
-title: "Hexdump - Create Hexadecimal Dumps with xxd | Online Free DevTools by Hexmos"
+title: 'Hexdump - Create Hexadecimal Dumps with xxd | Online Free DevTools by Hexmos'
 name: xxd
-path: "/freedevtools/tldr/common/xxd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xxd/"
-description: "Generate hexdumps with xxd. Convert binary files to hexadecimal representation or vice versa. Explore xxd functionalities with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/xxd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xxd/'
+description: 'Generate hexdumps with xxd. Convert binary files to hexadecimal representation or vice versa. Explore xxd functionalities with this free online tool, no registration required.'
 category: common
 keywords:
-- hexdump generator
-- binary to hex converter
-- hex to binary converter
-- xxd command
-- linux hexdump
-- macos hexdump
-- hexadecimal dump tool
-- binary file analysis
-- data representation tool
-- file inspection
+  - hexdump generator
+  - binary to hex converter
+  - hex to binary converter
+  - xxd command
+  - linux hexdump
+  - macos hexdump
+  - hexadecimal dump tool
+  - binary file analysis
+  - data representation tool
+  - file inspection
 features:
-- Generate hexadecimal representations of binary files
-- Convert hexadecimal dumps back to binary files
-- Customize output format with column control and autoskip
-- Limit output length for specific data sections
-- Revert postscript-style hexdumps to binary
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate hexadecimal representations of binary files
+  - Convert hexadecimal dumps back to binary files
+  - Customize output format with column control and autoskip
+  - Limit output length for specific data sections
+  - Revert postscript-style hexdumps to binary
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xxd

@@ -1,29 +1,29 @@
 ---
-title: "Rsync File Transfer - Sync and Copy Files | Online Free DevTools by Hexmos"
+title: 'Rsync File Transfer - Sync and Copy Files | Online Free DevTools by Hexmos'
 name: rsync
-path: "/freedevtools/tldr/common/rsync/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rsync/"
-description: "Transfer files instantly with Rsync. Securely copy files between systems, efficiently update directories, and manage file versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rsync/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rsync/'
+description: 'Transfer files instantly with Rsync. Securely copy files between systems, efficiently update directories, and manage file versions. Free online tool, no registration required.'
 category: common
 keywords:
-- rsync file transfer
-- rsync remote sync
-- rsync file copy
-- rsync directory sync
-- rsync ssh transfer
-- rsync linux
-- rsync macos
-- rsync data backup
-- rsync file synchronization
-- rsync incremental backup
+  - rsync file transfer
+  - rsync remote sync
+  - rsync file copy
+  - rsync directory sync
+  - rsync ssh transfer
+  - rsync linux
+  - rsync macos
+  - rsync data backup
+  - rsync file synchronization
+  - rsync incremental backup
 features:
-- Securely transfer files over SSH
-- Synchronize directories recursively
-- Preserve file permissions and ownership
-- Update destination with source changes
-- Efficiently copy only changed files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely transfer files over SSH
+  - Synchronize directories recursively
+  - Preserve file permissions and ownership
+  - Update destination with source changes
+  - Efficiently copy only changed files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rsync

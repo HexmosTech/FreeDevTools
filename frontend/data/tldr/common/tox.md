@@ -1,29 +1,29 @@
 ---
-title: "Tox - Automate Python Testing Across Versions | Online Free DevTools by Hexmos"
+title: 'Tox - Automate Python Testing Across Versions | Online Free DevTools by Hexmos'
 name: tox
-path: "/freedevtools/tldr/common/tox/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tox/"
-description: "Automate Python testing with Tox across multiple versions, ensuring compatibility and reliability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tox/'
+description: 'Automate Python testing with Tox across multiple versions, ensuring compatibility and reliability. Free online tool, no registration required.'
 category: common
 keywords:
-- python testing automation
-- tox environment configuration
-- python version management
-- cross-platform python testing
-- python virtual environment
-- tox.ini configuration
-- continuous integration python
-- pyenv integration
-- python test runner
-- python test environments
+  - python testing automation
+  - tox environment configuration
+  - python version management
+  - cross-platform python testing
+  - python virtual environment
+  - tox.ini configuration
+  - continuous integration python
+  - pyenv integration
+  - python test runner
+  - python test environments
 features:
-- Automate Python testing across multiple versions
-- Configure test environments with tox.ini
-- Manage Python virtual environments
-- Run tests on specific Python environments
-- Recreate virtual environments forcefully
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automate Python testing across multiple versions
+  - Configure test environments with tox.ini
+  - Manage Python virtual environments
+  - Run tests on specific Python environments
+  - Recreate virtual environments forcefully
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tox

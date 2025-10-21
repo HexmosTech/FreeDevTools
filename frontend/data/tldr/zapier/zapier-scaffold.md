@@ -1,29 +1,29 @@
 ---
-title: "Zapier Scaffold - Generate Integration Templates | Online Free DevTools by Hexmos"
+title: 'Zapier Scaffold - Generate Integration Templates | Online Free DevTools by Hexmos'
 name: zapier-scaffold
-path: "/freedevtools/tldr/zapier/zapier-scaffold/"
-canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-scaffold/"
-description: "Generate Zapier integration templates with Zapier Scaffold. Quickly create triggers, searches, creates, and resources for your Zapier apps. Free online tool, no registration required."
+path: '/freedevtools/tldr/zapier/zapier-scaffold/'
+canonical: 'https://hexmos.com/freedevtools/tldr/zapier/zapier-scaffold/'
+description: 'Generate Zapier integration templates with Zapier Scaffold. Quickly create triggers, searches, creates, and resources for your Zapier apps. Free online tool, no registration required.'
 category: common
 keywords:
-- Zapier integration scaffold
-- Zapier trigger generator
-- Zapier create template
-- Zapier search template
-- Zapier resource template
-- Zapier CLI tool
-- Zapier integration development
-- Zapier app builder
-- Zapier app template
-- Zapier integration scaffolding
+  - Zapier integration scaffold
+  - Zapier trigger generator
+  - Zapier create template
+  - Zapier search template
+  - Zapier resource template
+  - Zapier CLI tool
+  - Zapier integration development
+  - Zapier app builder
+  - Zapier app template
+  - Zapier integration scaffolding
 features:
-- Scaffold new Zapier triggers
-- Scaffold new Zapier creates
-- Scaffold new Zapier searches
-- Scaffold new Zapier resources
-- Customize the destination directory for scaffolded files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scaffold new Zapier triggers
+  - Scaffold new Zapier creates
+  - Scaffold new Zapier searches
+  - Scaffold new Zapier resources
+  - Customize the destination directory for scaffolded files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zapier scaffold

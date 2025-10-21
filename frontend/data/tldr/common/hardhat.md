@@ -1,29 +1,29 @@
 ---
-title: "Develop Ethereum Software - Hardhat Development | Online Free DevTools by Hexmos"
+title: 'Develop Ethereum Software - Hardhat Development | Online Free DevTools by Hexmos'
 name: hardhat
-path: "/freedevtools/tldr/common/hardhat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hardhat/"
-description: "Develop Ethereum software with Hardhat, a robust development environment. Compile smart contracts, run tests, and deploy decentralized apps. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hardhat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hardhat/'
+description: 'Develop Ethereum software with Hardhat, a robust development environment. Compile smart contracts, run tests, and deploy decentralized apps. Free online tool, no registration required.'
 category: common
 keywords:
-- Ethereum development environment
-- Hardhat smart contract compiler
-- Javascript Ethereum testing
-- Blockchain development tool
-- Decentralized application development
-- Solidity compilation
-- Ethereum JSON-RPC node
-- Hardhat test runner
-- Smart contract artifact generation
-- dApp development environment
+  - Ethereum development environment
+  - Hardhat smart contract compiler
+  - Javascript Ethereum testing
+  - Blockchain development tool
+  - Decentralized application development
+  - Solidity compilation
+  - Ethereum JSON-RPC node
+  - Hardhat test runner
+  - Smart contract artifact generation
+  - dApp development environment
 features:
-- Compile smart contracts and generate artifacts
-- Run user-defined scripts after compilation
-- Execute Mocha tests for smart contracts
-- Start a local Ethereum JSON-RPC node
-- Clean the cache and artifacts directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile smart contracts and generate artifacts
+  - Run user-defined scripts after compilation
+  - Execute Mocha tests for smart contracts
+  - Start a local Ethereum JSON-RPC node
+  - Clean the cache and artifacts directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hardhat

@@ -1,9 +1,9 @@
 ---
-title: "xrandr - Control Screen Resolution | Online Free DevTools by Hexmos"
+title: 'xrandr - Control Screen Resolution | Online Free DevTools by Hexmos'
 name: xrandr
-path: "/freedevtools/tldr/linux/xrandr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xrandr/"
-description: "Control screen resolution and orientation with xrandr.  Manage multiple displays, set brightness, and configure output settings easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xrandr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xrandr/'
+description: 'Control screen resolution and orientation with xrandr.  Manage multiple displays, set brightness, and configure output settings easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - screen resolution configuration
@@ -22,8 +22,8 @@ features:
   - Manage multiple display outputs (e.g., HDMI, DisplayPort).
   - Enable and disable display outputs.
   - Adjust display brightness levels.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xrandr

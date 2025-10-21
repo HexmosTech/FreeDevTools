@@ -1,9 +1,9 @@
 ---
-title: "Swaplabel - Manage Swap Partitions | Online Free DevTools by Hexmos"
+title: 'Swaplabel - Manage Swap Partitions | Online Free DevTools by Hexmos'
 name: swaplabel
-path: "/freedevtools/tldr/linux/swaplabel/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/swaplabel/"
-description: "Manage swap partition labels and UUIDs with swaplabel.  View, set, and change swap area identifiers easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/swaplabel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/swaplabel/'
+description: 'Manage swap partition labels and UUIDs with swaplabel.  View, set, and change swap area identifiers easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - swap partition management
@@ -22,8 +22,8 @@ features:
   - Set a new UUID for a swap area.
   - Works with both files and partitions.
   - Uses the standard uuidgen utility for UUID generation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swaplabel

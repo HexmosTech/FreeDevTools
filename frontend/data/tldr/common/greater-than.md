@@ -1,29 +1,29 @@
 ---
 title: "Redirect Output - Control File Output with '>' | Online Free DevTools by Hexmos"
 name: greater-than
-path: "/freedevtools/tldr/common/greater-than/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/greater-than/"
+path: '/freedevtools/tldr/common/greater-than/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/greater-than/'
 description: "Control file output with Redirect Output ('>'). Manage stdout, stderr, and file descriptors using the command line. Free online tool, no registration required."
 category: common
 keywords:
-- file output redirection
-- stdout redirection
-- stderr redirection
-- file descriptor manipulation
-- bash redirection
-- command line redirection
-- append to file
-- redirect output linux
-- redirect output macos
-- redirect output common
+  - file output redirection
+  - stdout redirection
+  - stderr redirection
+  - file descriptor manipulation
+  - bash redirection
+  - command line redirection
+  - append to file
+  - redirect output linux
+  - redirect output macos
+  - redirect output common
 features:
-- Redirect standard output to a file
-- Append standard output to an existing file
-- Redirect both standard output and standard error
-- Suppress error messages by redirecting to /dev/null
-- Create or clear file contents
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Redirect standard output to a file
+  - Append standard output to an existing file
+  - Redirect both standard output and standard error
+  - Suppress error messages by redirecting to /dev/null
+  - Create or clear file contents
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # >

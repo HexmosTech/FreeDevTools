@@ -1,29 +1,29 @@
 ---
-title: "List Archive - View Archive Contents | Online Free DevTools by Hexmos"
+title: 'List Archive - View Archive Contents | Online Free DevTools by Hexmos'
 name: lsar
-path: "/freedevtools/tldr/common/lsar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lsar/"
-description: "List archive file contents with Lsar. Inspect, test integrity, and view archive contents in JSON. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lsar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lsar/'
+description: 'List archive file contents with Lsar. Inspect, test integrity, and view archive contents in JSON. Free online tool, no registration required.'
 category: common
 keywords:
-- archive viewer
-- lsar command
-- archive contents list
-- tar file viewer
-- zip file viewer
-- rar file viewer
-- archive integrity check
-- archive json output
-- command line archive
-- unix archive tool
+  - archive viewer
+  - lsar command
+  - archive contents list
+  - tar file viewer
+  - zip file viewer
+  - rar file viewer
+  - archive integrity check
+  - archive json output
+  - command line archive
+  - unix archive tool
 features:
-- List the contents of archive files
-- Test archive file integrity
-- Output archive contents in JSON format
-- Support password-protected archives
-- Display detailed information about archive files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List the contents of archive files
+  - Test archive file integrity
+  - Output archive contents in JSON format
+  - Support password-protected archives
+  - Display detailed information about archive files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsar

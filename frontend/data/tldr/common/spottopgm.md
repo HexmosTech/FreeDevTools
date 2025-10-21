@@ -1,29 +1,29 @@
 ---
-title: "Convert SPOT to PGM - Image Conversion | Online Free DevTools by Hexmos"
+title: 'Convert SPOT to PGM - Image Conversion | Online Free DevTools by Hexmos'
 name: spottopgm
-path: "/freedevtools/tldr/common/spottopgm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/spottopgm/"
-description: "Convert SPOT image to PGM format with spottopgm. Extract color channels and specific rectangles for image processing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/spottopgm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/spottopgm/'
+description: 'Convert SPOT image to PGM format with spottopgm. Extract color channels and specific rectangles for image processing. Free online tool, no registration required.'
 category: common
 keywords:
-- SPOT to PGM converter
-- Image format conversion
-- SPOT image processing
-- PGM file generation
-- SPOT satellite imagery
-- Image channel extraction
-- Rectangle image cropping
-- Command line image tools
-- netpbm image utilities
-- Linux image converter
+  - SPOT to PGM converter
+  - Image format conversion
+  - SPOT image processing
+  - PGM file generation
+  - SPOT satellite imagery
+  - Image channel extraction
+  - Rectangle image cropping
+  - Command line image tools
+  - netpbm image utilities
+  - Linux image converter
 features:
-- Convert SPOT images to PGM format
-- Extract specific color channels from SPOT images
-- Extract rectangular regions from SPOT images
-- Support for various SPOT image formats
-- Command-line interface for batch processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert SPOT images to PGM format
+  - Extract specific color channels from SPOT images
+  - Extract rectangular regions from SPOT images
+  - Support for various SPOT image formats
+  - Command-line interface for batch processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # spottopgm

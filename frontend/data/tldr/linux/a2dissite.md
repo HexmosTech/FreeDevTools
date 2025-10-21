@@ -1,9 +1,9 @@
 ---
-title: "a2dissite - Disable Apache Sites | Online Free DevTools by Hexmos"
+title: 'a2dissite - Disable Apache Sites | Online Free DevTools by Hexmos'
 name: a2dissite
-path: "/freedevtools/tldr/linux/a2dissite/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/a2dissite/"
-description: "Disable Apache virtual hosts quickly with a2dissite. Manage website configurations on Debian-based systems efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/a2dissite/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/a2dissite/'
+description: 'Disable Apache virtual hosts quickly with a2dissite. Manage website configurations on Debian-based systems efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - apache disable command
@@ -22,8 +22,8 @@ features:
   - Integrates seamlessly with Debian-based systems.
   - Enables efficient management of multiple websites.
   - Simplifies Apache server configuration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # a2dissite

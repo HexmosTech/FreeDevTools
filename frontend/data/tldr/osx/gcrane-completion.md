@@ -1,9 +1,9 @@
 ---
-title: "Gcrane - Generate Shell Completions | Online Free DevTools by Hexmos"
+title: 'Gcrane - Generate Shell Completions | Online Free DevTools by Hexmos'
 name: gcrane-completion
-path: "/freedevtools/tldr/osx/gcrane-completion/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/gcrane-completion/"
-description: "Generate shell autocompletion scripts with Gcrane. Enhance command-line efficiency and reduce errors with autocompletion suggestions. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/gcrane-completion/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/gcrane-completion/'
+description: 'Generate shell autocompletion scripts with Gcrane. Enhance command-line efficiency and reduce errors with autocompletion suggestions. Free online tool, no registration required.'
 category: osx
 keywords:
   - gcrane shell completion
@@ -22,8 +22,8 @@ features:
   - Generate autocompletion scripts for fish
   - Generate autocompletion scripts for powershell
   - Disable completion descriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcrane completion

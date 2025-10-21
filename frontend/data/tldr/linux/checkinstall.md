@@ -1,29 +1,29 @@
 ---
-title: "Create Linux Packages - Track Install with Checkinstall | Online Free DevTools by Hexmos"
+title: 'Create Linux Packages - Track Install with Checkinstall | Online Free DevTools by Hexmos'
 name: checkinstall
-path: "/freedevtools/tldr/linux/checkinstall/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/checkinstall/"
+path: '/freedevtools/tldr/linux/checkinstall/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/checkinstall/'
 description: "Create Linux packages easily with Checkinstall. Track software installations and generate installable binaries with your system's package manager. Free online tool, no registration required."
 category: linux
 keywords:
-- linux package creation
-- checkinstall package manager
-- software installation tracker
-- create installable binary
-- linux package builder
-- track software installation
-- deb package creation
-- rpm package creation
-- linux installation monitor
-- command line packaging
+  - linux package creation
+  - checkinstall package manager
+  - software installation tracker
+  - create installable binary
+  - linux package builder
+  - track software installation
+  - deb package creation
+  - rpm package creation
+  - linux installation monitor
+  - command line packaging
 features:
-- Create installable binary packages.
-- Track local software installations.
-- Integrate with system package managers.
-- Customize package name and directory.
-- Omit documentation during package creation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create installable binary packages.
+  - Track local software installations.
+  - Integrate with system package managers.
+  - Customize package name and directory.
+  - Omit documentation during package creation.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # checkinstall

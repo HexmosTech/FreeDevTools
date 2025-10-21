@@ -1,29 +1,29 @@
 ---
-title: "Assemble Machine Code - with llvm-mc | Online Free DevTools by Hexmos"
+title: 'Assemble Machine Code - with llvm-mc | Online Free DevTools by Hexmos'
 name: llvm-mc
-path: "/freedevtools/tldr/llvm/llvm-mc/"
-canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-mc/"
-description: "Assemble machine code with llvm-mc. Convert assembly to machine code and disassemble object files with this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/llvm/llvm-mc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/llvm/llvm-mc/'
+description: 'Assemble machine code with llvm-mc. Convert assembly to machine code and disassemble object files with this command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- llvm machine code assembler
-- assembly code to machine code
-- object file disassembler
-- llvm bitcode compiler
-- machine code encoder
-- llvm target triple
-- object file assembly
-- llvm-mc command line
-- assembly syntax
-- machine code utilities
+  - llvm machine code assembler
+  - assembly code to machine code
+  - object file disassembler
+  - llvm bitcode compiler
+  - machine code encoder
+  - llvm target triple
+  - object file assembly
+  - llvm-mc command line
+  - assembly syntax
+  - machine code utilities
 features:
-- Assemble assembly code into object files
-- Disassemble object files into assembly code
-- Compile LLVM bitcode into assembly
-- Encode assembly instructions to machine code
-- Disassemble machine code for specific target triples
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Assemble assembly code into object files
+  - Disassemble object files into assembly code
+  - Compile LLVM bitcode into assembly
+  - Encode assembly instructions to machine code
+  - Disassemble machine code for specific target triples
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # llvm-mc

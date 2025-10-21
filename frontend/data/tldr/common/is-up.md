@@ -1,29 +1,29 @@
 ---
-title: "Is-Up Check - Validate Website Status | Online Free DevTools by Hexmos"
+title: 'Is-Up Check - Validate Website Status | Online Free DevTools by Hexmos'
 name: is-up
-path: "/freedevtools/tldr/common/is-up/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/is-up/"
-description: "Check website status instantly with Is-Up Check. Determine website uptime and availability using a simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/is-up/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/is-up/'
+description: 'Check website status instantly with Is-Up Check. Determine website uptime and availability using a simple command. Free online tool, no registration required.'
 category: common
 keywords:
-- website status checker
-- website uptime monitor
-- website availability test
-- domain status check
-- is-up command line tool
-- http status code checker
-- web server status check
-- website down detector
-- url availability checker
-- network connectivity test
+  - website status checker
+  - website uptime monitor
+  - website availability test
+  - domain status check
+  - is-up command line tool
+  - http status code checker
+  - web server status check
+  - website down detector
+  - url availability checker
+  - network connectivity test
 features:
-- Determine if a website is online
-- Display website status information
-- Check the availability of web servers
-- Test network connectivity to a website
-- Provide a simple command-line interface for checking website uptime
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Determine if a website is online
+  - Display website status information
+  - Check the availability of web servers
+  - Test network connectivity to a website
+  - Provide a simple command-line interface for checking website uptime
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # is-up

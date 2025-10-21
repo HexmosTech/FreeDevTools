@@ -1,29 +1,29 @@
 ---
-title: "Connect to MongoDB - Manage Databases | Online Free DevTools by Hexmos"
+title: 'Connect to MongoDB - Manage Databases | Online Free DevTools by Hexmos'
 name: mongo
-path: "/freedevtools/tldr/mongo/mongo/"
-canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongo/"
-description: "Connect to MongoDB databases with the `mongo` shell. Execute queries, authenticate users, and manage your data. Free online tool, no registration required."
+path: '/freedevtools/tldr/mongo/mongo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/mongo/mongo/'
+description: 'Connect to MongoDB databases with the `mongo` shell. Execute queries, authenticate users, and manage your data. Free online tool, no registration required.'
 category: common
 keywords:
-- mongodb connection
-- mongodb query
-- mongodb shell
-- mongodb database
-- mongodb authentication
-- mongodb javascript
-- mongodb localhost
-- mongodb command line
-- nosql database
-- mongodb user management
+  - mongodb connection
+  - mongodb query
+  - mongodb shell
+  - mongodb database
+  - mongodb authentication
+  - mongodb javascript
+  - mongodb localhost
+  - mongodb command line
+  - nosql database
+  - mongodb user management
 features:
-- Connect to MongoDB databases using various connection strings
-- Authenticate with MongoDB using usernames and authentication databases
-- Execute JavaScript expressions directly on the MongoDB database
-- Query and manipulate data within MongoDB databases
-- Specify host, port, and database name for targeted connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to MongoDB databases using various connection strings
+  - Authenticate with MongoDB using usernames and authentication databases
+  - Execute JavaScript expressions directly on the MongoDB database
+  - Query and manipulate data within MongoDB databases
+  - Specify host, port, and database name for targeted connections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mongo

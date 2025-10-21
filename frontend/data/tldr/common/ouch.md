@@ -1,29 +1,29 @@
 ---
-title: "Compress Files - Archive and Decompress with Ouch | Online Free DevTools by Hexmos"
+title: 'Compress Files - Archive and Decompress with Ouch | Online Free DevTools by Hexmos'
 name: ouch
-path: "/freedevtools/tldr/common/ouch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ouch/"
-description: "Compress files easily with Ouch. Archive and decompress files and directories with this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ouch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ouch/'
+description: 'Compress files easily with Ouch. Archive and decompress files and directories with this command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- archive files
-- decompress files
-- compress directories
-- decompress directories
-- file compression
-- file decompression
-- tar xz
-- zip archive
-- command line archive
-- terminal compression
+  - archive files
+  - decompress files
+  - compress directories
+  - decompress directories
+  - file compression
+  - file decompression
+  - tar xz
+  - zip archive
+  - command line archive
+  - terminal compression
 features:
-- Decompress single files
-- Decompress files to a specific directory
-- Decompress multiple files simultaneously
-- Compress multiple files into an archive
-- Create compressed archives from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decompress single files
+  - Decompress files to a specific directory
+  - Decompress multiple files simultaneously
+  - Compress multiple files into an archive
+  - Create compressed archives from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ouch

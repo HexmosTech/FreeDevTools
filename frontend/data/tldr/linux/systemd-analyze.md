@@ -1,29 +1,29 @@
 ---
-title: "Systemd Analyze - Debug System Manager | Online Free DevTools by Hexmos"
+title: 'Systemd Analyze - Debug System Manager | Online Free DevTools by Hexmos'
 name: systemd-analyze
-path: "/freedevtools/tldr/linux/systemd-analyze/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-analyze/"
-description: "Debug system performance with Systemd Analyze. Analyze boot process, service initialization, and unit dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-analyze/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-analyze/'
+description: 'Debug system performance with Systemd Analyze. Analyze boot process, service initialization, and unit dependencies. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux system manager analysis
-- system boot time analyzer
-- systemd service debugger
-- unit initialization timing
-- critical chain analysis linux
-- system security score checker
-- udev rules viewer linux
-- systemd performance monitor
-- linux service dependency graph
-- system startup analysis tool
+  - linux system manager analysis
+  - system boot time analyzer
+  - systemd service debugger
+  - unit initialization timing
+  - critical chain analysis linux
+  - system security score checker
+  - udev rules viewer linux
+  - systemd performance monitor
+  - linux service dependency graph
+  - system startup analysis tool
 features:
-- Analyze system boot process timing
-- List units ordered by initialization time
-- Print time-critical unit dependency chain
-- Create SVG plots of service startup times
-- Plot dependency graphs and convert to SVG
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze system boot process timing
+  - List units ordered by initialization time
+  - Print time-critical unit dependency chain
+  - Create SVG plots of service startup times
+  - Plot dependency graphs and convert to SVG
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-analyze

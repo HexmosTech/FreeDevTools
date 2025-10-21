@@ -1,29 +1,29 @@
 ---
-title: "Tailscale SSH - Secure Shell Access | Online Free DevTools by Hexmos"
+title: 'Tailscale SSH - Secure Shell Access | Online Free DevTools by Hexmos'
 name: tailscale-ssh
-path: "/freedevtools/tldr/tailscale/tailscale-ssh/"
-canonical: "https://hexmos.com/freedevtools/tldr/tailscale/tailscale-ssh/"
-description: "Secure shell access with Tailscale SSH. Easily connect to your Tailscale machines using SSH, streamlining remote access. Free online tool, no registration required."
+path: '/freedevtools/tldr/tailscale/tailscale-ssh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tailscale/tailscale-ssh/'
+description: 'Secure shell access with Tailscale SSH. Easily connect to your Tailscale machines using SSH, streamlining remote access. Free online tool, no registration required.'
 category: common
 keywords:
-- tailscale ssh access
-- secure shell tailscale
-- remote access linux
-- tailscale network ssh
-- ssh client tailscale
-- tailscale ssh configuration
-- tailscale secure connection
-- tailscale linux ssh
-- private network ssh
-- tailscale zero trust ssh
+  - tailscale ssh access
+  - secure shell tailscale
+  - remote access linux
+  - tailscale network ssh
+  - ssh client tailscale
+  - tailscale ssh configuration
+  - tailscale secure connection
+  - tailscale linux ssh
+  - private network ssh
+  - tailscale zero trust ssh
 features:
-- Securely SSH to Tailscale connected machines
-- Configure SSH access via Tailscale up command
-- Access machines without public IP addresses
-- Manage SSH connections through Tailscale network
-- Authenticate using Tailscale's built-in security
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely SSH to Tailscale connected machines
+  - Configure SSH access via Tailscale up command
+  - Access machines without public IP addresses
+  - Manage SSH connections through Tailscale network
+  - Authenticate using Tailscale's built-in security
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tailscale ssh

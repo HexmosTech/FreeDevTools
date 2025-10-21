@@ -1,29 +1,29 @@
 ---
-title: "View Images - Render Images in Terminal | Online Free DevTools by Hexmos"
+title: 'View Images - Render Images in Terminal | Online Free DevTools by Hexmos'
 name: viu
-path: "/freedevtools/tldr/common/viu/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/viu/"
-description: "Render images instantly with Viu terminal image viewer. Display PNGs, JPGs, and GIFs directly in your command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/viu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/viu/'
+description: 'Render images instantly with Viu terminal image viewer. Display PNGs, JPGs, and GIFs directly in your command line. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal image viewer
-- command line image viewer
-- image rendering terminal
-- ascii art generator
-- terminal graphics
-- image display linux
-- image display macos
-- image display common
-- viu image viewer
-- gif terminal display
+  - terminal image viewer
+  - command line image viewer
+  - image rendering terminal
+  - ascii art generator
+  - terminal graphics
+  - image display linux
+  - image display macos
+  - image display common
+  - viu image viewer
+  - gif terminal display
 features:
-- Render images directly in the terminal
-- Display animated GIFs in the command line
-- Control image width and height
-- Support transparent backgrounds
-- Display image filename option
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render images directly in the terminal
+  - Display animated GIFs in the command line
+  - Control image width and height
+  - Support transparent backgrounds
+  - Display image filename option
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # viu

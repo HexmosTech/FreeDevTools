@@ -1,29 +1,29 @@
 ---
-title: "CFSSL - Generate TLS/PKI Certificates | Online Free DevTools by Hexmos"
+title: 'CFSSL - Generate TLS/PKI Certificates | Online Free DevTools by Hexmos'
 name: cfssl
-path: "/freedevtools/tldr/common/cfssl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cfssl/"
-description: "Generate TLS/PKI certificates with CFSSL. Scan for SSL/TLS issues and decode certificate information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cfssl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cfssl/'
+description: 'Generate TLS/PKI certificates with CFSSL. Scan for SSL/TLS issues and decode certificate information. Free online tool, no registration required.'
 category: common
 keywords:
-- TLS certificate generation
-- PKI certificate authority
-- SSL certificate scanner
-- CFSSL certificate signing
-- Certificate information decoder
-- Linux certificate tools
-- MacOS certificate tools
-- Cloudflare certificate management
-- Certificate revocation list CRL
-- Command-line certificate utility
+  - TLS certificate generation
+  - PKI certificate authority
+  - SSL certificate scanner
+  - CFSSL certificate signing
+  - Certificate information decoder
+  - Linux certificate tools
+  - MacOS certificate tools
+  - Cloudflare certificate management
+  - Certificate revocation list CRL
+  - Command-line certificate utility
 features:
-- Scan hosts for SSL/TLS vulnerabilities
-- Decode and display certificate information
-- Generate certificate signing requests (CSRs)
-- Create and manage certificate revocation lists (CRLs)
-- Display help for specific CFSSL subcommands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan hosts for SSL/TLS vulnerabilities
+  - Decode and display certificate information
+  - Generate certificate signing requests (CSRs)
+  - Create and manage certificate revocation lists (CRLs)
+  - Display help for specific CFSSL subcommands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cfssl

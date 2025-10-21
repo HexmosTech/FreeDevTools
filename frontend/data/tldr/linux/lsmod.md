@@ -1,9 +1,9 @@
 ---
-title: "List Kernel Modules - Show Linux Module Status | Online Free DevTools by Hexmos"
+title: 'List Kernel Modules - Show Linux Module Status | Online Free DevTools by Hexmos'
 name: lsmod
-path: "/freedevtools/tldr/linux/lsmod/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lsmod/"
-description: "List and view Linux kernel modules with lsmod.  Inspect loaded modules and their details. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lsmod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lsmod/'
+description: 'List and view Linux kernel modules with lsmod.  Inspect loaded modules and their details. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux module list
@@ -22,8 +22,8 @@ features:
   - Provides information on module usage.
   - Lists module licenses.
   - Helps identify conflicting modules.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsmod

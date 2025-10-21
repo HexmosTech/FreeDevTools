@@ -1,29 +1,29 @@
 ---
-title: "IBM Cloud Login - Access Cloud Resources | Online Free DevTools by Hexmos"
+title: 'IBM Cloud Login - Access Cloud Resources | Online Free DevTools by Hexmos'
 name: ibmcloud-login
-path: "/freedevtools/tldr/common/ibmcloud-login/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ibmcloud-login/"
-description: "Access IBM Cloud resources easily with IBM Cloud Login. Securely authenticate and manage your cloud environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ibmcloud-login/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ibmcloud-login/'
+description: 'Access IBM Cloud resources easily with IBM Cloud Login. Securely authenticate and manage your cloud environment. Free online tool, no registration required.'
 category: common
 keywords:
-- ibmcloud login
-- ibm cloud login cli
-- ibmcloud authentication
-- ibm cloud api key login
-- ibmcloud sso login
-- ibmcloud region login
-- ibm cloud interactive login
-- ibmcloud command line login
-- cloud resource access
-- ibm cloud security
+  - ibmcloud login
+  - ibm cloud login cli
+  - ibmcloud authentication
+  - ibm cloud api key login
+  - ibmcloud sso login
+  - ibmcloud region login
+  - ibm cloud interactive login
+  - ibmcloud command line login
+  - cloud resource access
+  - ibm cloud security
 features:
-- Log in to IBM Cloud using interactive prompts.
-- Authenticate to a specific IBM Cloud API endpoint.
-- Log in with username, password and targeted region.
-- Authenticate using an IBM Cloud API key (string or file).
-- Log in using a federated ID (single sign-on).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Log in to IBM Cloud using interactive prompts.
+  - Authenticate to a specific IBM Cloud API endpoint.
+  - Log in with username, password and targeted region.
+  - Authenticate using an IBM Cloud API key (string or file).
+  - Log in using a federated ID (single sign-on).
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ibmcloud login

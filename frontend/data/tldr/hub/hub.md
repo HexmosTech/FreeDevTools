@@ -1,29 +1,29 @@
 ---
-title: "GitHub Hub - Manage GitHub Repositories | Online Free DevTools by Hexmos"
+title: 'GitHub Hub - Manage GitHub Repositories | Online Free DevTools by Hexmos'
 name: hub
-path: "/freedevtools/tldr/hub/hub/"
-canonical: "https://hexmos.com/freedevtools/tldr/hub/hub/"
-description: "Manage GitHub repositories with Hub, a Git wrapper. Easily clone, fork, push, and create pull requests from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/hub/hub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hub/hub/'
+description: 'Manage GitHub repositories with Hub, a Git wrapper. Easily clone, fork, push, and create pull requests from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub repository manager
-- Git GitHub integration
-- GitHub command-line tool
-- Hub Git wrapper
-- Pull request generator
-- GitHub fork manager
-- Repository clone tool
-- Git command alias
-- GitHub CLI tool
-- Hub Linux MacOS
+  - GitHub repository manager
+  - Git GitHub integration
+  - GitHub command-line tool
+  - Hub Git wrapper
+  - Pull request generator
+  - GitHub fork manager
+  - Repository clone tool
+  - Git command alias
+  - GitHub CLI tool
+  - Hub Linux MacOS
 features:
-- Clone repositories using slugs
-- Create forks under your GitHub profile
-- Push branches and create pull requests
-- Checkout branches from pull requests
-- Sync local branches with upstream
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone repositories using slugs
+  - Create forks under your GitHub profile
+  - Push branches and create pull requests
+  - Checkout branches from pull requests
+  - Sync local branches with upstream
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hub

@@ -1,29 +1,29 @@
 ---
-title: "Vagrant Halt - Shutdown Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Vagrant Halt - Shutdown Virtual Machines | Online Free DevTools by Hexmos'
 name: vagrant-halt
-path: "/freedevtools/tldr/vagrant/vagrant-halt/"
-canonical: "https://hexmos.com/freedevtools/tldr/vagrant/vagrant-halt/"
-description: "Shutdown virtual machines effortlessly with Vagrant Halt. Manage and control your Vagrant environments with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/vagrant/vagrant-halt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vagrant/vagrant-halt/'
+description: 'Shutdown virtual machines effortlessly with Vagrant Halt. Manage and control your Vagrant environments with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Vagrant halt command
-- Virtual machine shutdown
-- Vagrant environment control
-- Graceful machine halt
-- Forceful machine halt
-- Vagrant machine management
-- Vagrant CLI tool
-- HashiCorp Vagrant
-- Vagrant development environment
-- Vagrant box shutdown
+  - Vagrant halt command
+  - Virtual machine shutdown
+  - Vagrant environment control
+  - Graceful machine halt
+  - Forceful machine halt
+  - Vagrant machine management
+  - Vagrant CLI tool
+  - HashiCorp Vagrant
+  - Vagrant development environment
+  - Vagrant box shutdown
 features:
-- Gracefully halt running Vagrant machines
-- Forcefully shutdown Vagrant machines
-- Halt specific machines by ID or name
-- Manage multiple Vagrant environments
-- Control Vagrant machines via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Gracefully halt running Vagrant machines
+  - Forcefully shutdown Vagrant machines
+  - Halt specific machines by ID or name
+  - Manage multiple Vagrant environments
+  - Control Vagrant machines via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vagrant halt

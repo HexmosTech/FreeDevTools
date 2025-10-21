@@ -1,9 +1,9 @@
 ---
-title: "i3exit Command - Control i3 Window Manager | Online Free DevTools by Hexmos"
+title: 'i3exit Command - Control i3 Window Manager | Online Free DevTools by Hexmos'
 name: i3exit
-path: "/freedevtools/tldr/linux/i3exit/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/i3exit/"
-description: "Control i3 window manager actions with the i3exit command.  Log out, lock, shutdown, reboot, suspend, hibernate, or switch users. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/i3exit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/i3exit/'
+description: 'Control i3 window manager actions with the i3exit command.  Log out, lock, shutdown, reboot, suspend, hibernate, or switch users. Free online tool, no registration required.'
 category: linux
 keywords:
   - i3exit command
@@ -22,8 +22,8 @@ features:
   - Shut down the system from within i3.
   - Suspend the system from within i3.
   - Switch users via the login screen from within i3.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # i3exit

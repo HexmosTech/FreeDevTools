@@ -1,29 +1,29 @@
 ---
-title: "Reg Unload - Remove Registry Data | Online Free DevTools by Hexmos"
+title: 'Reg Unload - Remove Registry Data | Online Free DevTools by Hexmos'
 name: reg-unload
-path: "/freedevtools/tldr/windows/reg-unload/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-unload/"
-description: "Unload registry data with Reg Unload. Remove registry keys loaded by reg load to manage system configuration. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/reg-unload/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/reg-unload/'
+description: 'Unload registry data with Reg Unload. Remove registry keys loaded by reg load to manage system configuration. Free online tool, no registration required.'
 category: windows
 keywords:
-- registry unload
-- registry data removal
-- reg unload command
-- windows registry management
-- windows reg unload
-- registry key manipulation
-- command line registry
-- unload registry key
-- windows configuration
-- reg command
+  - registry unload
+  - registry data removal
+  - reg unload command
+  - windows registry management
+  - windows reg unload
+  - registry key manipulation
+  - command line registry
+  - unload registry key
+  - windows configuration
+  - reg command
 features:
-- Unload specified registry keys
-- Remove loaded registry data
-- Manage system registry configuration
-- Control access to registry keys
-- Prevent registry conflicts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Unload specified registry keys
+  - Remove loaded registry data
+  - Manage system registry configuration
+  - Control access to registry keys
+  - Prevent registry conflicts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # reg unload

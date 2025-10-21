@@ -1,29 +1,29 @@
 ---
-title: "Bedtools Analysis - Intersect Genomic Data | Online Free DevTools by Hexmos"
+title: 'Bedtools Analysis - Intersect Genomic Data | Online Free DevTools by Hexmos'
 name: bedtools
-path: "/freedevtools/tldr/common/bedtools/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bedtools/"
-description: "Intersect genomic data with Bedtools analysis. Analyze, group, and convert genomic data formats like BAM, BED, and VCF. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bedtools/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bedtools/'
+description: 'Intersect genomic data with Bedtools analysis. Analyze, group, and convert genomic data formats like BAM, BED, and VCF. Free online tool, no registration required.'
 category: common
 keywords:
-- genomic data intersect
-- bedtools analysis
-- bam to bed converter
-- bed file manipulation
-- vcf data processing
-- genomic interval analysis
-- bedtools groupby
-- sequence strand intersection
-- genomic feature distance
-- data format conversion
+  - genomic data intersect
+  - bedtools analysis
+  - bam to bed converter
+  - bed file manipulation
+  - vcf data processing
+  - genomic interval analysis
+  - bedtools groupby
+  - sequence strand intersection
+  - genomic feature distance
+  - data format conversion
 features:
-- Intersects genomic intervals between multiple files.
-- Groups genomic data by specified columns with aggregation operations.
-- Converts BAM-formatted files to BED format.
-- Finds the closest genomic feature between two files and reports the distance.
-- Performs left outer joins on genomic intervals based on overlap.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Intersects genomic intervals between multiple files.
+  - Groups genomic data by specified columns with aggregation operations.
+  - Converts BAM-formatted files to BED format.
+  - Finds the closest genomic feature between two files and reports the distance.
+  - Performs left outer joins on genomic intervals based on overlap.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bedtools

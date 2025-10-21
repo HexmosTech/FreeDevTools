@@ -1,29 +1,29 @@
 ---
-title: "Calculate Bitwise - Convert Bases | Online Free DevTools by Hexmos"
+title: 'Calculate Bitwise - Convert Bases | Online Free DevTools by Hexmos'
 name: bitwise
-path: "/freedevtools/tldr/linux/bitwise/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bitwise/"
-description: "Calculate bitwise operations with Bitwise, an interactive multi-base converter. Perform base conversions and bit manipulations with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bitwise/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bitwise/'
+description: 'Calculate bitwise operations with Bitwise, an interactive multi-base converter. Perform base conversions and bit manipulations with ease. Free online tool, no registration required.'
 category: linux
 keywords:
-- bitwise calculator
-- base converter
-- bit manipulation
-- linux bitwise operations
-- hexadecimal converter
-- decimal converter
-- C-style calculation
-- interactive calculator
-- command line calculator
-- number base conversion
+  - bitwise calculator
+  - base converter
+  - bit manipulation
+  - linux bitwise operations
+  - hexadecimal converter
+  - decimal converter
+  - C-style calculation
+  - interactive calculator
+  - command line calculator
+  - number base conversion
 features:
-- Convert between different number bases (decimal, hexadecimal, etc.)
-- Perform bitwise calculations and manipulations
-- Execute C-style arithmetic expressions
-- Operate in interactive mode for continuous calculations
-- Accept input from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between different number bases (decimal, hexadecimal, etc.)
+  - Perform bitwise calculations and manipulations
+  - Execute C-style arithmetic expressions
+  - Operate in interactive mode for continuous calculations
+  - Accept input from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bitwise

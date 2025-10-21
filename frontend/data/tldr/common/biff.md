@@ -1,29 +1,29 @@
 ---
-title: "Format Datetime - Arithmetic, Parsing & Formatting | Online Free DevTools by Hexmos"
+title: 'Format Datetime - Arithmetic, Parsing & Formatting | Online Free DevTools by Hexmos'
 name: biff
-path: "/freedevtools/tldr/common/biff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/biff/"
-description: "Format datetime values with biff. Perform date arithmetic, parsing, and formatting operations with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/biff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/biff/'
+description: 'Format datetime values with biff. Perform date arithmetic, parsing, and formatting operations with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- datetime formatter
-- datetime parser
-- date arithmetic
-- date formatting tool
-- time zone converter
-- relative time calculator
-- date duration calculator
-- log timestamp formatter
-- command line datetime tool
-- unix datetime tool
+  - datetime formatter
+  - datetime parser
+  - date arithmetic
+  - date formatting tool
+  - time zone converter
+  - relative time calculator
+  - date duration calculator
+  - log timestamp formatter
+  - command line datetime tool
+  - unix datetime tool
 features:
-- Format datetime values using custom formats.
-- Convert datetime values between different time zones.
-- Calculate relative times and durations.
-- Perform datetime arithmetic operations (add/subtract).
-- Parse datetime values from various sources like log files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format datetime values using custom formats.
+  - Convert datetime values between different time zones.
+  - Calculate relative times and durations.
+  - Perform datetime arithmetic operations (add/subtract).
+  - Parse datetime values from various sources like log files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # biff

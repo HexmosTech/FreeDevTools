@@ -1,9 +1,9 @@
 ---
-title: "Control Machines with machinectl | Online Free DevTools by Hexmos"
+title: 'Control Machines with machinectl | Online Free DevTools by Hexmos'
 name: machinectl
-path: "/freedevtools/tldr/linux/machinectl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/machinectl/"
-description: "Control systemd machine manager with machinectl. Manage virtual machines, containers, and images using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/machinectl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/machinectl/'
+description: 'Control systemd machine manager with machinectl. Manage virtual machines, containers, and images using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - machinectl commands
@@ -22,8 +22,8 @@ features:
   - List running machines and their status
   - Access interactive shells within machines
   - Execute various operations on virtual machines, containers and images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # machinectl

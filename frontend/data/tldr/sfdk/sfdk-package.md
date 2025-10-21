@@ -1,29 +1,29 @@
 ---
-title: "SFDK Package - Create Sailfish OS Packages | Online Free DevTools by Hexmos"
+title: 'SFDK Package - Create Sailfish OS Packages | Online Free DevTools by Hexmos'
 name: sfdk-package
-path: "/freedevtools/tldr/sfdk/sfdk-package/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-package/"
-description: "Create Sailfish OS application packages with SFDK Package. Streamline your Sailfish OS development process by building and signing packages easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-package/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-package/'
+description: 'Create Sailfish OS application packages with SFDK Package. Streamline your Sailfish OS development process by building and signing packages easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Sailfish OS package creator
-- SFDK package builder
-- RPM package creation
-- Sailfish OS application packaging
-- Linux package signing
-- Command line packaging tool
-- Sailfish OS development tool
-- Harmattan package build
-- Mer SDK package
-- Qt application packaging
+  - Sailfish OS package creator
+  - SFDK package builder
+  - RPM package creation
+  - Sailfish OS application packaging
+  - Linux package signing
+  - Command line packaging tool
+  - Sailfish OS development tool
+  - Harmattan package build
+  - Mer SDK package
+  - Qt application packaging
 features:
-- Creates Sailfish OS RPM packages from specified sources.
-- Signs packages using specified keys for distribution.
-- Skips the check section in the RPM SPEC file.
-- Supports automated package building within SFDK.
-- Simplifies the package creation process for Sailfish OS apps.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Creates Sailfish OS RPM packages from specified sources.
+  - Signs packages using specified keys for distribution.
+  - Skips the check section in the RPM SPEC file.
+  - Supports automated package building within SFDK.
+  - Simplifies the package creation process for Sailfish OS apps.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk package

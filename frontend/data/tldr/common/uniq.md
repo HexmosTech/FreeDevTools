@@ -1,29 +1,29 @@
 ---
-title: "Uniq Command - Filter Unique Lines | Online Free DevTools by Hexmos"
+title: 'Uniq Command - Filter Unique Lines | Online Free DevTools by Hexmos'
 name: uniq
-path: "/freedevtools/tldr/common/uniq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/uniq/"
-description: "Filter duplicate lines with Uniq Command, enabling easy data cleaning and analysis. Identify unique entries from files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/uniq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/uniq/'
+description: 'Filter duplicate lines with Uniq Command, enabling easy data cleaning and analysis. Identify unique entries from files. Free online tool, no registration required.'
 category: common
 keywords:
-- Unique lines filter
-- Uniq command
-- Deduplicate text
-- Remove duplicate lines
-- Sort and unique
-- Command line uniq
-- Coreutils uniq
-- Linux uniq
-- macOS uniq
-- Text processing
+  - Unique lines filter
+  - Uniq command
+  - Deduplicate text
+  - Remove duplicate lines
+  - Sort and unique
+  - Command line uniq
+  - Coreutils uniq
+  - Linux uniq
+  - macOS uniq
+  - Text processing
 features:
-- Filter unique lines from input
-- Display only repeated lines
-- Count occurrences of each line
-- Sort lines before filtering
-- Identify adjacent duplicates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Filter unique lines from input
+  - Display only repeated lines
+  - Count occurrences of each line
+  - Sort lines before filtering
+  - Identify adjacent duplicates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uniq

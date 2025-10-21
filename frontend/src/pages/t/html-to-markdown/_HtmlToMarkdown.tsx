@@ -8,7 +8,12 @@ import HtmlToMarkdownSkeleton from 'src/pages/t/html-to-markdown/_HtmlToMarkdown
 import CopyButton from 'src/components/ui/copy-button';
 import { toast } from 'src/components/ToastProvider';
 import { Button } from 'src/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from 'src/components/ui/card';
 import { Textarea } from 'src/components/ui/textarea';
 import { Label } from 'src/components/ui/label';
 import ToolVideo from 'src/components/tool/ToolVideo';
@@ -144,7 +149,9 @@ const HtmlToMarkdown: React.FC = () => {
               </CardHeader>
               <CardContent className="text-slate-800 dark:text-slate-400 space-y-4">
                 <p>
-                  This tool converts HTML into Markdown, a lightweight markup language. This is useful for converting rich text content into a simpler, more readable format.
+                  This tool converts HTML into Markdown, a lightweight markup
+                  language. This is useful for converting rich text content into
+                  a simpler, more readable format.
                 </p>
               </CardContent>
             </Card>

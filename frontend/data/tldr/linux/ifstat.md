@@ -1,9 +1,9 @@
 ---
-title: "View Network Stats - ifstat Command | Online Free DevTools by Hexmos"
+title: 'View Network Stats - ifstat Command | Online Free DevTools by Hexmos'
 name: ifstat
-path: "/freedevtools/tldr/linux/ifstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ifstat/"
-description: "View network interface statistics with ifstat. Monitor network traffic, identify bottlenecks, and troubleshoot network issues using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ifstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ifstat/'
+description: 'View network interface statistics with ifstat. Monitor network traffic, identify bottlenecks, and troubleshoot network issues using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - network statistics viewer
@@ -22,8 +22,8 @@ features:
   - Reports network errors and error rates.
   - Provides detailed bandwidth usage information.
   - Allows for flexible reporting intervals.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ifstat

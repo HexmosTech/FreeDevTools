@@ -1,29 +1,29 @@
 ---
-title: "Storage Entity - Manage Azure Tables | Online Free DevTools by Hexmos"
+title: 'Storage Entity - Manage Azure Tables | Online Free DevTools by Hexmos'
 name: az-storage-entity
-path: "/freedevtools/tldr/az/az-storage-entity/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-entity/"
-description: "Manage Azure table storage entities with Storage Entity Tool. Insert, delete, update, and query entities in Azure tables. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-storage-entity/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-storage-entity/'
+description: 'Manage Azure table storage entities with Storage Entity Tool. Insert, delete, update, and query entities in Azure tables. Free online tool, no registration required.'
 category: common
 keywords:
-- azure table entity management
-- storage entity command line tool
-- azure storage table operations
-- command line table manager
-- az storage entity insert
-- az storage entity delete
-- az storage entity query
-- azure cli table utility
-- azure storage entity cli
-- manage azure table data
+  - azure table entity management
+  - storage entity command line tool
+  - azure storage table operations
+  - command line table manager
+  - az storage entity insert
+  - az storage entity delete
+  - az storage entity query
+  - azure cli table utility
+  - azure storage entity cli
+  - manage azure table data
 features:
-- Insert entities into Azure tables using the command line.
-- Delete existing entities from specified Azure tables.
-- Update existing entity properties by merging changes.
-- Query entities in Azure tables based on specified filters.
-- Retrieve a specific entity from an Azure table using partition and row keys.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Insert entities into Azure tables using the command line.
+  - Delete existing entities from specified Azure tables.
+  - Update existing entity properties by merging changes.
+  - Query entities in Azure tables based on specified filters.
+  - Retrieve a specific entity from an Azure table using partition and row keys.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az storage entity

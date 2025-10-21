@@ -1,29 +1,29 @@
 ---
-title: "Control Chromium - Open Web Pages | Online Free DevTools by Hexmos"
+title: 'Control Chromium - Open Web Pages | Online Free DevTools by Hexmos'
 name: chromium
-path: "/freedevtools/tldr/common/chromium/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chromium/"
-description: "Control Chromium with this command line tool to open web pages and manage browser settings. Debug websites and manage profiles easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chromium/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chromium/'
+description: 'Control Chromium with this command line tool to open web pages and manage browser settings. Debug websites and manage profiles easily. Free online tool, no registration required.'
 category: common
 keywords:
-- chromium command line
-- web browser automation
-- chrome command flags
-- chromium incognito mode
-- browser proxy settings
-- chromium profile manager
-- disable web security chromium
-- chromium developer tools
-- chromium url opener
-- chromium new window
+  - chromium command line
+  - web browser automation
+  - chrome command flags
+  - chromium incognito mode
+  - browser proxy settings
+  - chromium profile manager
+  - disable web security chromium
+  - chromium developer tools
+  - chromium url opener
+  - chromium new window
 features:
-- Open URLs and local files in Chromium
-- Launch Chromium in incognito mode
-- Open Chromium in a new window
-- Use a custom proxy server with Chromium
-- Disable CORS validation for testing APIs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open URLs and local files in Chromium
+  - Launch Chromium in incognito mode
+  - Open Chromium in a new window
+  - Use a custom proxy server with Chromium
+  - Disable CORS validation for testing APIs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chromium

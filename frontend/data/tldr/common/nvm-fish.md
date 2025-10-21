@@ -1,29 +1,29 @@
 ---
-title: "NVM - Manage Node.js Versions | Online Free DevTools by Hexmos"
+title: 'NVM - Manage Node.js Versions | Online Free DevTools by Hexmos'
 name: nvm.fish
-path: "/freedevtools/tldr/common/nvm-fish/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/nvm-fish/"
-description: "Manage Node.js versions easily with NVM. Switch between versions, install, and uninstall Node.js. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nvm-fish/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/nvm-fish/'
+description: 'Manage Node.js versions easily with NVM. Switch between versions, install, and uninstall Node.js. Free online tool, no registration required.'
 category: common
 keywords:
-- node version manager
-- nvm fish
-- node.js version control
-- fish shell nvm
-- javascript runtime manager
-- install node versions
-- uninstall node versions
-- set default node version
-- nvm linux
-- nvm macos
+  - node version manager
+  - nvm fish
+  - node.js version control
+  - fish shell nvm
+  - javascript runtime manager
+  - install node versions
+  - uninstall node versions
+  - set default node version
+  - nvm linux
+  - nvm macos
 features:
-- Install specific Node.js versions
-- Switch between Node.js versions in the current shell
-- Set a default Node.js version
-- List available Node.js versions
-- Uninstall specific Node.js versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Node.js versions
+  - Switch between Node.js versions in the current shell
+  - Set a default Node.js version
+  - List available Node.js versions
+  - Uninstall specific Node.js versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nvm

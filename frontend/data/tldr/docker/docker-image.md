@@ -1,29 +1,29 @@
 ---
-title: "Manage Docker Images - Control Container Images | Online Free DevTools by Hexmos"
+title: 'Manage Docker Images - Control Container Images | Online Free DevTools by Hexmos'
 name: docker-image
-path: "/freedevtools/tldr/docker/docker-image/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-image/"
-description: "Manage Docker images with this command line tool. Delete unused images, view history, and optimize container storage. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-image/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-image/'
+description: 'Manage Docker images with this command line tool. Delete unused images, view history, and optimize container storage. Free online tool, no registration required.'
 category: common
 keywords:
-- Docker image management
-- Container image prune
-- Docker image history
-- Docker image delete
-- Docker image ls
-- Linux Docker commands
-- macOS Docker commands
-- CLI image tools
-- Docker storage optimization
-- Container image cleanup
+  - Docker image management
+  - Container image prune
+  - Docker image history
+  - Docker image delete
+  - Docker image ls
+  - Linux Docker commands
+  - macOS Docker commands
+  - CLI image tools
+  - Docker storage optimization
+  - Container image cleanup
 features:
-- List local Docker images
-- Delete unused Docker images
-- Show Docker image history
-- Prune all unused images
-- Access docker image documentation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List local Docker images
+  - Delete unused Docker images
+  - Show Docker image history
+  - Prune all unused images
+  - Access docker image documentation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker image

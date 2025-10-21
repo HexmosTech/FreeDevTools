@@ -1,9 +1,9 @@
 ---
-title: "Open Editor - Launch Default Editor | Online Free DevTools by Hexmos"
+title: 'Open Editor - Launch Default Editor | Online Free DevTools by Hexmos'
 name: sensible-editor
-path: "/freedevtools/tldr/linux/sensible-editor/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sensible-editor/"
-description: "Open files with sensible-editor, the default editor on your system. Quickly edit files from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sensible-editor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sensible-editor/'
+description: 'Open files with sensible-editor, the default editor on your system. Quickly edit files from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - default editor launcher
@@ -22,8 +22,8 @@ features:
   - Open multiple files simultaneously
   - Launch the editor from the command line
   - Work with file paths directly from the terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sensible-editor

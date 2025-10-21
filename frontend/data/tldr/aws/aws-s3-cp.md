@@ -1,29 +1,29 @@
 ---
-title: "AWS S3 Copy - Transfer Files | Online Free DevTools by Hexmos"
+title: 'AWS S3 Copy - Transfer Files | Online Free DevTools by Hexmos'
 name: aws-s3-cp
-path: "/freedevtools/tldr/aws/aws-s3-cp/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-cp/"
-description: "Transfer files easily with AWS S3 Copy. Manage S3 objects, copy to/from buckets, and sync directories using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-s3-cp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-s3-cp/'
+description: 'Transfer files easily with AWS S3 Copy. Manage S3 objects, copy to/from buckets, and sync directories using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS S3 file transfer
-- S3 bucket copy
-- AWS S3 copy command
-- S3 object management
-- Cloud storage transfer
-- AWS command-line interface
-- S3 data migration
-- AWS S3 sync
-- S3 file upload
-- S3 file download
+  - AWS S3 file transfer
+  - S3 bucket copy
+  - AWS S3 copy command
+  - S3 object management
+  - Cloud storage transfer
+  - AWS command-line interface
+  - S3 data migration
+  - AWS S3 sync
+  - S3 file upload
+  - S3 file download
 features:
-- Copy files between local and S3 buckets
-- Transfer S3 objects between different buckets
-- Recursively copy directories to and from S3
-- Sync local directories with S3 buckets
-- Manage file transfers with the AWS CLI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy files between local and S3 buckets
+  - Transfer S3 objects between different buckets
+  - Recursively copy directories to and from S3
+  - Sync local directories with S3 buckets
+  - Manage file transfers with the AWS CLI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws s3 cp

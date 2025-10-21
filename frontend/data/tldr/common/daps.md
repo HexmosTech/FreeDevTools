@@ -1,29 +1,29 @@
 ---
-title: "DocBook Validation - Convert DocBook XML | Online Free DevTools by Hexmos"
+title: 'DocBook Validation - Convert DocBook XML | Online Free DevTools by Hexmos'
 name: daps
-path: "/freedevtools/tldr/common/daps/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/daps/"
-description: "Validate DocBook XML with daps. Convert DocBook files to HTML and PDF. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/daps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/daps/'
+description: 'Validate DocBook XML with daps. Convert DocBook files to HTML and PDF. Free online tool, no registration required.'
 category: common
 keywords:
-- DocBook validation
-- DocBook XML converter
-- XML to PDF conversion
-- XML to HTML conversion
-- DocBook to HTML
-- DocBook to PDF
-- XML validation linux
-- DocBook processing
-- daps command
-- XML command line tool
+  - DocBook validation
+  - DocBook XML converter
+  - XML to PDF conversion
+  - XML to HTML conversion
+  - DocBook to HTML
+  - DocBook to PDF
+  - XML validation linux
+  - DocBook processing
+  - daps command
+  - XML command line tool
 features:
-- Validate DocBook XML files
-- Convert DocBook XML to PDF
-- Convert DocBook XML to single HTML file
-- Display daps help information
-- Display daps version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validate DocBook XML files
+  - Convert DocBook XML to PDF
+  - Convert DocBook XML to single HTML file
+  - Display daps help information
+  - Display daps version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # daps

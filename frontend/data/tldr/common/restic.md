@@ -1,29 +1,29 @@
 ---
-title: "Backup Data Securely - Control Restic Backups | Online Free DevTools by Hexmos"
+title: 'Backup Data Securely - Control Restic Backups | Online Free DevTools by Hexmos'
 name: restic
-path: "/freedevtools/tldr/common/restic/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/restic/"
-description: "Control data backups securely with Restic. Manage snapshots, restore files, and prune repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/restic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/restic/'
+description: 'Control data backups securely with Restic. Manage snapshots, restore files, and prune repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- restic backup
-- restic restore
-- restic snapshots
-- restic repository
-- restic prune
-- data backup linux
-- data backup macos
-- secure data backup
-- command line backup
-- restic encryption
+  - restic backup
+  - restic restore
+  - restic snapshots
+  - restic repository
+  - restic prune
+  - data backup linux
+  - data backup macos
+  - secure data backup
+  - command line backup
+  - restic encryption
 features:
-- Initialize a backup repository.
-- Backup directories to a repository.
-- List snapshots stored in the repository.
-- Restore snapshots to a target directory.
-- Prune the repository to save space.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a backup repository.
+  - Backup directories to a repository.
+  - List snapshots stored in the repository.
+  - Restore snapshots to a target directory.
+  - Prune the repository to save space.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # restic

@@ -1,29 +1,29 @@
 ---
-title: "Netlify CLI - Control Netlify Deployments | Online Free DevTools by Hexmos"
+title: 'Netlify CLI - Control Netlify Deployments | Online Free DevTools by Hexmos'
 name: ntl
-path: "/freedevtools/tldr/common/ntl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ntl/"
-description: "Control Netlify deployments effortlessly with Netlify CLI. Manage sites, deploy previews, and automate workflows using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ntl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ntl/'
+description: 'Control Netlify deployments effortlessly with Netlify CLI. Manage sites, deploy previews, and automate workflows using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- netlify command line interface
-- netlify cli tool
-- netlify site deployment
-- netlify continuous integration
-- netlify build automation
-- netlify serverless functions
-- netlify deploy preview
-- linux netlify cli
-- macos netlify cli
-- windows netlify cli
+  - netlify command line interface
+  - netlify cli tool
+  - netlify site deployment
+  - netlify continuous integration
+  - netlify build automation
+  - netlify serverless functions
+  - netlify deploy preview
+  - linux netlify cli
+  - macos netlify cli
+  - windows netlify cli
 features:
-- Deploy Netlify sites from the command line
-- Manage Netlify site settings and configurations
-- Trigger automated builds and deployments
-- Preview changes before publishing live
-- Integrate Netlify with CI/CD pipelines
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy Netlify sites from the command line
+  - Manage Netlify site settings and configurations
+  - Trigger automated builds and deployments
+  - Preview changes before publishing live
+  - Integrate Netlify with CI/CD pipelines
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ntl

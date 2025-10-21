@@ -1,29 +1,29 @@
 ---
-title: "Create Vite Project - Build JavaScript Apps | Online Free DevTools by Hexmos"
+title: 'Create Vite Project - Build JavaScript Apps | Online Free DevTools by Hexmos'
 name: vite
-path: "/freedevtools/tldr/common/vite/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vite/"
-description: "Create JavaScript apps with Vite Project Builder. Scaffold projects using templates for React, Vue, Svelte and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vite/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vite/'
+description: 'Create JavaScript apps with Vite Project Builder. Scaffold projects using templates for React, Vue, Svelte and more. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript project builder
-- vite project scaffolding
-- react vite template
-- vue vite template
-- svelte vite template
-- typescript vite template
-- vite npm create
-- vite yarn create
-- vite pnpm create
-- vite javascript bundler
+  - javascript project builder
+  - vite project scaffolding
+  - react vite template
+  - vue vite template
+  - svelte vite template
+  - typescript vite template
+  - vite npm create
+  - vite yarn create
+  - vite pnpm create
+  - vite javascript bundler
 features:
-- Scaffold new JavaScript projects
-- Support for various front-end frameworks like React, Vue, and Svelte
-- Generate projects with TypeScript support
-- Utilize templates for rapid project setup
-- Configure projects using npm, yarn, or pnpm
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scaffold new JavaScript projects
+  - Support for various front-end frameworks like React, Vue, and Svelte
+  - Generate projects with TypeScript support
+  - Utilize templates for rapid project setup
+  - Configure projects using npm, yarn, or pnpm
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Vite

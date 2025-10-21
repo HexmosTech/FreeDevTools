@@ -1,9 +1,9 @@
 ---
-title: "Display Dialog Boxes - Control Terminal Interactions | Online Free DevTools by Hexmos"
+title: 'Display Dialog Boxes - Control Terminal Interactions | Online Free DevTools by Hexmos'
 name: dialog
-path: "/freedevtools/tldr/linux/dialog/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dialog/"
-description: "Control terminal interactions easily with dialog. Display message boxes, prompt for user input, and create yes/no questions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dialog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dialog/'
+description: 'Control terminal interactions easily with dialog. Display message boxes, prompt for user input, and create yes/no questions. Free online tool, no registration required.'
 category: linux
 keywords:
   - terminal dialog box
@@ -22,8 +22,8 @@ features:
   - Create interactive yes/no questions
   - Provide simple help information
   - Offer flexible size adjustments for dialogs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dialog

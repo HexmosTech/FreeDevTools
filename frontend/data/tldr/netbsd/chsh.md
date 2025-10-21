@@ -1,9 +1,9 @@
 ---
-title: "Change User Shell - Alter Shell Settings | Online Free DevTools by Hexmos"
+title: 'Change User Shell - Alter Shell Settings | Online Free DevTools by Hexmos'
 name: chsh
-path: "/freedevtools/tldr/netbsd/chsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/netbsd/chsh/"
-description: "Change user shell settings with chsh. Modify login shell on NetBSD and leverage system authentication for user account management. Free online tool, no registration required."
+path: '/freedevtools/tldr/netbsd/chsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/netbsd/chsh/'
+description: 'Change user shell settings with chsh. Modify login shell on NetBSD and leverage system authentication for user account management. Free online tool, no registration required.'
 category: netbsd
 keywords:
   - netbsd change user shell
@@ -22,8 +22,8 @@ features:
   - act as an alias for chpass on NetBSD
   - leverage NetBSD system authentication
   - update shell configuration on NetBSD
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chsh

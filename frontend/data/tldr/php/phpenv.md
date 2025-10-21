@@ -1,29 +1,29 @@
 ---
-title: "PHP Version Manager - Control PHP Environments | Online Free DevTools by Hexmos"
+title: 'PHP Version Manager - Control PHP Environments | Online Free DevTools by Hexmos'
 name: phpenv
-path: "/freedevtools/tldr/php/phpenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpenv/"
-description: "Manage PHP versions effectively with phpenv. Install, switch, and isolate PHP environments for diverse projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpenv/'
+description: 'Manage PHP versions effectively with phpenv. Install, switch, and isolate PHP environments for diverse projects. Free online tool, no registration required.'
 category: common
 keywords:
-- php version manager
-- php environment control
-- phpenv version control
-- php version installation
-- php local version
-- php global version
-- php rehash command
-- php shim files
-- linux php version
-- macos php version
+  - php version manager
+  - php environment control
+  - phpenv version control
+  - php version installation
+  - php local version
+  - php global version
+  - php rehash command
+  - php shim files
+  - linux php version
+  - macos php version
 features:
-- Install specific PHP versions globally
-- Refresh shim files for PHP binaries
-- List all installed PHP versions
-- Set global and local PHP versions
-- Unset local PHP versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific PHP versions globally
+  - Refresh shim files for PHP binaries
+  - List all installed PHP versions
+  - Set global and local PHP versions
+  - Unset local PHP versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpenv

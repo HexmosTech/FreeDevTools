@@ -1,29 +1,29 @@
 ---
-title: "Ansible Lint - Validate Playbooks | Online Free DevTools by Hexmos"
+title: 'Ansible Lint - Validate Playbooks | Online Free DevTools by Hexmos'
 name: ansible-lint
-path: "/freedevtools/tldr/ansible/ansible-lint/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-lint/"
-description: "Validate Ansible playbooks with Ansible Lint. Find errors, enforce best practices, and improve automation workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible-lint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible-lint/'
+description: 'Validate Ansible playbooks with Ansible Lint. Find errors, enforce best practices, and improve automation workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible playbook linter
-- yaml linter
-- ansible code analysis
-- playbook syntax checker
-- ansible best practices
-- lint ansible automation
-- ansible linting rules
-- validate ansible code
-- ansible quality control
-- ansible code style
+  - ansible playbook linter
+  - yaml linter
+  - ansible code analysis
+  - playbook syntax checker
+  - ansible best practices
+  - lint ansible automation
+  - ansible linting rules
+  - validate ansible code
+  - ansible quality control
+  - ansible code style
 features:
-- Lint Ansible playbooks for syntax errors
-- Enforce Ansible best practices
-- Exclude specific linting rules
-- Customize rules directory
-- Analyze entire Ansible project directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lint Ansible playbooks for syntax errors
+  - Enforce Ansible best practices
+  - Exclude specific linting rules
+  - Customize rules directory
+  - Analyze entire Ansible project directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible-lint

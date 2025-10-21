@@ -1,29 +1,29 @@
 ---
-title: "Brew Package Manager - Control Packages on macOS/Linux | Online Free DevTools by Hexmos"
+title: 'Brew Package Manager - Control Packages on macOS/Linux | Online Free DevTools by Hexmos'
 name: brew
-path: "/freedevtools/tldr/brew/brew/"
-canonical: "https://hexmos.com/freedevtools/tldr/brew/brew/"
-description: "Control packages on macOS and Linux with Brew Package Manager. Install, upgrade, search, and manage software effortlessly using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/brew/brew/'
+canonical: 'https://hexmos.com/freedevtools/tldr/brew/brew/'
+description: 'Control packages on macOS and Linux with Brew Package Manager. Install, upgrade, search, and manage software effortlessly using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- brew package manager
-- macos package manager
-- linux package manager
-- brew install command
-- brew upgrade command
-- brew search command
-- brew cask manager
-- brew formula manager
-- brew commands macos
-- brew commands linux
+  - brew package manager
+  - macos package manager
+  - linux package manager
+  - brew install command
+  - brew upgrade command
+  - brew search command
+  - brew cask manager
+  - brew formula manager
+  - brew commands macos
+  - brew commands linux
 features:
-- Install software packages on macOS and Linux
-- Upgrade existing packages to their latest versions
-- Search for available packages in the Brew repository
-- Display information about installed packages
-- Update the Brew package list from the repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install software packages on macOS and Linux
+  - Upgrade existing packages to their latest versions
+  - Search for available packages in the Brew repository
+  - Display information about installed packages
+  - Update the Brew package list from the repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brew

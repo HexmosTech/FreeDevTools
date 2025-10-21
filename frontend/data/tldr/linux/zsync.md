@@ -1,9 +1,9 @@
 ---
-title: "zsync Downloader - Download Files Efficiently | Online Free DevTools by Hexmos"
+title: 'zsync Downloader - Download Files Efficiently | Online Free DevTools by Hexmos'
 name: zsync
-path: "/freedevtools/tldr/linux/zsync/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/zsync/"
-description: "Download files efficiently with zsync, leveraging partial downloads for faster transfers and resuming interrupted downloads.  Supports HTTP URLs. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/zsync/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/zsync/'
+description: 'Download files efficiently with zsync, leveraging partial downloads for faster transfers and resuming interrupted downloads.  Supports HTTP URLs. Free online tool, no registration required.'
 category: linux
 keywords:
   - zsync download
@@ -22,8 +22,8 @@ features:
   - Uses existing files as seeds for faster downloads.
   - Saves downloaded files to a specified location.
   - Offers quiet mode for minimal output during download.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zsync

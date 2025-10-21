@@ -1,29 +1,29 @@
 ---
-title: "Control MongoDB Server - Manage Database Instances | Online Free DevTools by Hexmos"
+title: 'Control MongoDB Server - Manage Database Instances | Online Free DevTools by Hexmos'
 name: mongod
-path: "/freedevtools/tldr/mongo/mongod/"
-canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongod/"
-description: "Control MongoDB server instances with mongod. Configure database paths, ports, and profiling levels using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/mongo/mongod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/mongo/mongod/'
+description: 'Control MongoDB server instances with mongod. Configure database paths, ports, and profiling levels using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- MongoDB server control
-- MongoDB database management
-- MongoDB command line tool
-- MongoDB instance configuration
-- MongoDB profiling tool
-- NoSQL database server
-- mongod command
-- Linux MongoDB
-- macOS MongoDB
-- Windows MongoDB
+  - MongoDB server control
+  - MongoDB database management
+  - MongoDB command line tool
+  - MongoDB instance configuration
+  - MongoDB profiling tool
+  - NoSQL database server
+  - mongod command
+  - Linux MongoDB
+  - macOS MongoDB
+  - Windows MongoDB
 features:
-- Specify the database storage path
-- Configure the port the server listens on
-- Set the database profiling level
-- Use a configuration file to define settings
-- Manage MongoDB instances from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Specify the database storage path
+  - Configure the port the server listens on
+  - Set the database profiling level
+  - Use a configuration file to define settings
+  - Manage MongoDB instances from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mongod

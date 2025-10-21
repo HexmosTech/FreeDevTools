@@ -1,29 +1,29 @@
 ---
-title: "Iproxy Forward Ports - Control USB Port Forwarding | Online Free DevTools by Hexmos"
+title: 'Iproxy Forward Ports - Control USB Port Forwarding | Online Free DevTools by Hexmos'
 name: iproxy
-path: "/freedevtools/tldr/common/iproxy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/iproxy/"
-description: "Control USB port forwarding with Iproxy. Easily forward TCP ports over USB for debugging and development on iOS devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/iproxy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/iproxy/'
+description: 'Control USB port forwarding with Iproxy. Easily forward TCP ports over USB for debugging and development on iOS devices. Free online tool, no registration required.'
 category: common
 keywords:
-- usb port forwarding
-- ios port forwarding
-- tcp port proxy
-- usbmuxd proxy
-- iphone port forward
-- ipad port forward
-- iproxy command
-- ios development
-- usb debugging
-- ios wifi sync
+  - usb port forwarding
+  - ios port forwarding
+  - tcp port proxy
+  - usbmuxd proxy
+  - iphone port forward
+  - ipad port forward
+  - iproxy command
+  - ios development
+  - usb debugging
+  - ios wifi sync
 features:
-- Forward TCP ports over USB to iOS devices.
-- Proxy connections to specific devices via UDID.
-- Enable network port forwarding for WiFi synced devices.
-- Bind multiple local TCP ports simultaneously.
-- Connect to device ports using command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Forward TCP ports over USB to iOS devices.
+  - Proxy connections to specific devices via UDID.
+  - Enable network port forwarding for WiFi synced devices.
+  - Bind multiple local TCP ports simultaneously.
+  - Connect to device ports using command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iproxy

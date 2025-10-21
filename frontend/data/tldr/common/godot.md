@@ -1,29 +1,29 @@
 ---
-title: "Godot Game Engine - Create 2D/3D Games | Online Free DevTools by Hexmos"
+title: 'Godot Game Engine - Create 2D/3D Games | Online Free DevTools by Hexmos'
 name: godot
-path: "/freedevtools/tldr/common/godot/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/godot/"
-description: "Create games with Godot game engine. Build 2D and 3D games, export for multiple platforms, and use GDScript. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/godot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/godot/'
+description: 'Create games with Godot game engine. Build 2D and 3D games, export for multiple platforms, and use GDScript. Free online tool, no registration required.'
 category: common
 keywords:
-- godot game engine
-- 2D game engine
-- 3D game engine
-- game development
-- game creation
-- GDScript scripting
-- cross-platform game export
-- godot command-line
-- game project manager
-- godot editor
+  - godot game engine
+  - 2D game engine
+  - 3D game engine
+  - game development
+  - game creation
+  - GDScript scripting
+  - cross-platform game export
+  - godot command-line
+  - game project manager
+  - godot editor
 features:
-- Run Godot projects from the command line
-- Edit Godot projects using the built-in editor
-- Manage Godot projects via the project manager
-- Export Godot projects for release with custom presets
-- Execute standalone GDScript files for testing and automation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run Godot projects from the command line
+  - Edit Godot projects using the built-in editor
+  - Manage Godot projects via the project manager
+  - Export Godot projects for release with custom presets
+  - Execute standalone GDScript files for testing and automation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # godot

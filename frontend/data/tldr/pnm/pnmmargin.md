@@ -1,29 +1,29 @@
 ---
-title: "Add PNM Border - Control Image Margins | Online Free DevTools by Hexmos"
+title: 'Add PNM Border - Control Image Margins | Online Free DevTools by Hexmos'
 name: pnmmargin
-path: "/freedevtools/tldr/pnm/pnmmargin/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmargin/"
-description: "Add PNM border with pnmmargin. Control image margins by specifying size and color for visually appealing results. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmmargin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmmargin/'
+description: 'Add PNM border with pnmmargin. Control image margins by specifying size and color for visually appealing results. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image border
-- Image margin control
-- PNM image editor
-- PNM command line
-- Netpbm PNM tools
-- Linux image manipulation
-- macOS image processing
-- PNM border size
-- PNM border color
-- Image format converter
+  - PNM image border
+  - Image margin control
+  - PNM image editor
+  - PNM command line
+  - Netpbm PNM tools
+  - Linux image manipulation
+  - macOS image processing
+  - PNM border size
+  - PNM border color
+  - Image format converter
 features:
-- Add a border of a specified size to a PNM image.
-- Specify a custom color for the added border.
-- Adjust image margins through command-line arguments.
-- Modify PNM image appearance with precise border control.
-- Enhance PNM images with visual formatting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add a border of a specified size to a PNM image.
+  - Specify a custom color for the added border.
+  - Adjust image margins through command-line arguments.
+  - Modify PNM image appearance with precise border control.
+  - Enhance PNM images with visual formatting.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmmargin

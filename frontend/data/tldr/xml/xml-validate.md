@@ -1,29 +1,29 @@
 ---
-title: "XML Validate - Validate XML Documents | Online Free DevTools by Hexmos"
+title: 'XML Validate - Validate XML Documents | Online Free DevTools by Hexmos'
 name: xml-validate
-path: "/freedevtools/tldr/xml/xml-validate/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-validate/"
-description: "Validate XML files with XML Validate, ensuring they are well-formed and adhere to specified schemas. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xml-validate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xml-validate/'
+description: 'Validate XML files with XML Validate, ensuring they are well-formed and adhere to specified schemas. Free online tool, no registration required.'
 category: common
 keywords:
-- XML validation
-- XML validator
-- XML DTD validation
-- XML XSD validation
-- XML Relax NG validation
-- XML schema validation
-- command line XML validation
-- Linux XML validation
-- macOS XML validation
-- cross-platform XML validation
+  - XML validation
+  - XML validator
+  - XML DTD validation
+  - XML XSD validation
+  - XML Relax NG validation
+  - XML schema validation
+  - command line XML validation
+  - Linux XML validation
+  - macOS XML validation
+  - cross-platform XML validation
 features:
-- Validates XML documents for well-formedness
-- Validates XML documents against DTD schemas
-- Validates XML documents against XSD schemas
-- Validates XML documents against Relax NG schemas
-- Supports validation from local files and URIs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validates XML documents for well-formedness
+  - Validates XML documents against DTD schemas
+  - Validates XML documents against XSD schemas
+  - Validates XML documents against Relax NG schemas
+  - Supports validation from local files and URIs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml validate

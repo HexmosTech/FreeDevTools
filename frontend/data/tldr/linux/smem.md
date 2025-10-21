@@ -1,9 +1,9 @@
 ---
-title: "smem Memory Usage - Monitor System Processes | Online Free DevTools by Hexmos"
+title: 'smem Memory Usage - Monitor System Processes | Online Free DevTools by Hexmos'
 name: smem
-path: "/freedevtools/tldr/linux/smem/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/smem/"
-description: "Monitor system memory usage with smem.  View process memory consumption per user, filter by username, and analyze system memory information. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/smem/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/smem/'
+description: 'Monitor system memory usage with smem.  View process memory consumption per user, filter by username, and analyze system memory information. Free online tool, no registration required.'
 category: linux
 keywords:
   - memory usage monitor
@@ -22,8 +22,8 @@ features:
   - Allows filtering processes by specific usernames.
   - Provides detailed system memory information.
   - Offers a command-line interface for easy usage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smem

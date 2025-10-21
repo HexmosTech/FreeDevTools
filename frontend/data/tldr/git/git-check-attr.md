@@ -1,29 +1,29 @@
 ---
-title: "Git Check-Attr - Inspect File Attributes | Online Free DevTools by Hexmos"
+title: 'Git Check-Attr - Inspect File Attributes | Online Free DevTools by Hexmos'
 name: git-check-attr
-path: "/freedevtools/tldr/git/git-check-attr/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-check-attr/"
-description: "Inspect file attributes with Git Check-Attr. Quickly determine if attributes are unspecified, set, or unset on your files. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-check-attr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-check-attr/'
+description: 'Inspect file attributes with Git Check-Attr. Quickly determine if attributes are unspecified, set, or unset on your files. Free online tool, no registration required.'
 category: common
 keywords:
-- git attribute inspection
-- file attribute checker
-- git check-attr command
-- git repository attributes
-- git file metadata
-- git attribute status
-- git attribute debugging
-- git attribute configuration
-- command line attribute tool
-- cross-platform git attributes
+  - git attribute inspection
+  - file attribute checker
+  - git check-attr command
+  - git repository attributes
+  - git file metadata
+  - git attribute status
+  - git attribute debugging
+  - git attribute configuration
+  - command line attribute tool
+  - cross-platform git attributes
 features:
-- Determine if a git attribute is set, unset, or unspecified.
-- Check attributes for multiple files at once.
-- List all attributes for a specific file.
-- Inspect specific attribute values.
-- Support for cross-platform git environments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Determine if a git attribute is set, unset, or unspecified.
+  - Check attributes for multiple files at once.
+  - List all attributes for a specific file.
+  - Inspect specific attribute values.
+  - Support for cross-platform git environments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git check-attr

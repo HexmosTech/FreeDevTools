@@ -1,29 +1,29 @@
 ---
-title: "Maven Build Tool - Manage Java Projects | Online Free DevTools by Hexmos"
+title: 'Maven Build Tool - Manage Java Projects | Online Free DevTools by Hexmos'
 name: mvn
-path: "/freedevtools/tldr/common/mvn/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mvn/"
-description: "Manage Java projects effectively with Maven Build Tool. Automate builds, manage dependencies, and streamline development workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mvn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mvn/'
+description: 'Manage Java projects effectively with Maven Build Tool. Automate builds, manage dependencies, and streamline development workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- java build automation
-- maven project management
-- dependency management maven
-- maven command line
-- java package manager
-- maven build lifecycle
-- maven repository
-- maven clean install
-- common command maven
-- cross platform maven
+  - java build automation
+  - maven project management
+  - dependency management maven
+  - maven command line
+  - java package manager
+  - maven build lifecycle
+  - maven repository
+  - maven clean install
+  - common command maven
+  - cross platform maven
 features:
-- Compile Java projects
-- Package compiled code into distributable formats
-- Install packages into a local Maven repository
-- Clean build artifacts from the target directory
-- Execute Java classes with a main method
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Java projects
+  - Package compiled code into distributable formats
+  - Install packages into a local Maven repository
+  - Clean build artifacts from the target directory
+  - Execute Java classes with a main method
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mvn

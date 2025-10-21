@@ -1,29 +1,29 @@
 ---
-title: "ESpeak - Generate Speech from Text | Online Free DevTools by Hexmos"
+title: 'ESpeak - Generate Speech from Text | Online Free DevTools by Hexmos'
 name: espeak
-path: "/freedevtools/tldr/common/espeak/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/espeak/"
-description: "Generate speech with ESpeak, a text-to-speech synthesizer. Convert text to audio and speak phrases aloud. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/espeak/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/espeak/'
+description: 'Generate speech with ESpeak, a text-to-speech synthesizer. Convert text to audio and speak phrases aloud. Free online tool, no registration required.'
 category: common
 keywords:
-- text to speech
-- speech synthesizer
-- text to audio converter
-- espeak linux
-- espeak command
-- espeak tts
-- audio generation
-- speech generation
-- command line tts
-- linux text to speech
+  - text to speech
+  - speech synthesizer
+  - text to audio converter
+  - espeak linux
+  - espeak command
+  - espeak tts
+  - audio generation
+  - speech generation
+  - command line tts
+  - linux text to speech
 features:
-- Convert text to speech directly through the default sound device.
-- Read text from a file and speak it aloud.
-- Save speech output to a WAV audio file.
-- Utilize different voices for speech synthesis.
-- Generate audio from command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert text to speech directly through the default sound device.
+  - Read text from a file and speak it aloud.
+  - Save speech output to a WAV audio file.
+  - Utilize different voices for speech synthesis.
+  - Generate audio from command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # espeak

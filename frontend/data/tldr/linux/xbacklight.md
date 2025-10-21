@@ -1,9 +1,9 @@
 ---
-title: "Control Backlight Brightness with xbacklight | Online Free DevTools by Hexmos"
+title: 'Control Backlight Brightness with xbacklight | Online Free DevTools by Hexmos'
 name: xbacklight
-path: "/freedevtools/tldr/linux/xbacklight/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xbacklight/"
-description: "Control and adjust screen backlight brightness using xbacklight.  Get current brightness, increase, decrease, or set precise brightness levels with simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xbacklight/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xbacklight/'
+description: 'Control and adjust screen backlight brightness using xbacklight.  Get current brightness, increase, decrease, or set precise brightness levels with simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - backlight control linux
@@ -22,8 +22,8 @@ features:
   - Increase screen brightness by a specified percentage.
   - Decrease screen brightness by a specified percentage.
   - Adjust brightness gradually over a defined time using steps.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xbacklight

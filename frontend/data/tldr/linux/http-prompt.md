@@ -1,9 +1,9 @@
 ---
-title: "HTTP Client - Interact with APIs | Online Free DevTools by Hexmos"
+title: 'HTTP Client - Interact with APIs | Online Free DevTools by Hexmos'
 name: http-prompt
-path: "/freedevtools/tldr/linux/http-prompt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/http-prompt/"
-description: "Interact with APIs effortlessly using http-prompt, an interactive HTTP client.  Features autocomplete and syntax highlighting for efficient API testing and debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/http-prompt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/http-prompt/'
+description: 'Interact with APIs effortlessly using http-prompt, an interactive HTTP client.  Features autocomplete and syntax highlighting for efficient API testing and debugging. Free online tool, no registration required.'
 category: linux
 keywords:
   - HTTP client command
@@ -22,8 +22,8 @@ features:
   - Includes syntax highlighting for improved readability and error detection.
   - Allows for easy session management, resuming previous sessions.
   - Supports custom headers and authentication methods.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # http-prompt

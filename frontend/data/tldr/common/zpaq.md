@@ -1,29 +1,29 @@
 ---
-title: "Create ZPAQ Archives - Incremental Backup | Online Free DevTools by Hexmos"
+title: 'Create ZPAQ Archives - Incremental Backup | Online Free DevTools by Hexmos'
 name: zpaq
-path: "/freedevtools/tldr/common/zpaq/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zpaq/"
-description: "Create ZPAQ archives with ZPAQ. Compress files incrementally, enabling efficient backups and storage. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zpaq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zpaq/'
+description: 'Create ZPAQ archives with ZPAQ. Compress files incrementally, enabling efficient backups and storage. Free online tool, no registration required.'
 category: common
 keywords:
-- ZPAQ archiver
-- incremental backup
-- file compression
-- archive creation
-- ZPAQ command line
-- data archiving
-- backup utility
-- file journaling
-- archive management
-- compressed archive
+  - ZPAQ archiver
+  - incremental backup
+  - file compression
+  - archive creation
+  - ZPAQ command line
+  - data archiving
+  - backup utility
+  - file journaling
+  - archive management
+  - compressed archive
 features:
-- Create new ZPAQ archives or add files to existing ones
-- Encrypt archives with password protection
-- Extract files from ZPAQ archives
-- List the contents of an archive
-- Control compression level for optimized storage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new ZPAQ archives or add files to existing ones
+  - Encrypt archives with password protection
+  - Extract files from ZPAQ archives
+  - List the contents of an archive
+  - Control compression level for optimized storage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zpaq

@@ -1,29 +1,29 @@
 ---
-title: "Crane - Append Index Manifest | Online Free DevTools by Hexmos"
+title: 'Crane - Append Index Manifest | Online Free DevTools by Hexmos'
 name: crane-index-append
-path: "/freedevtools/tldr/crane/crane-index-append/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-index-append/"
-description: "Append container index manifest with Crane. Create new container image indexes by adding manifests. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-index-append/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-index-append/'
+description: 'Append container index manifest with Crane. Create new container image indexes by adding manifests. Free online tool, no registration required.'
 category: common
 keywords:
-- container index manifest
-- crane index append
-- container registry index
-- oci index append
-- docker index append
-- image index manipulation
-- container image management
-- crane command line tool
-- container index builder
-- image index creator
+  - container index manifest
+  - crane index append
+  - container registry index
+  - oci index append
+  - docker index append
+  - image index manipulation
+  - container image management
+  - crane command line tool
+  - container index builder
+  - image index creator
 features:
-- Append manifests to an existing container index
-- Create a new container index from a base index
-- Flatten container indexes by appending children
-- Tag the resulting container image index
-- Support Docker media types for empty base indexes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Append manifests to an existing container index
+  - Create a new container index from a base index
+  - Flatten container indexes by appending children
+  - Tag the resulting container image index
+  - Support Docker media types for empty base indexes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane index append

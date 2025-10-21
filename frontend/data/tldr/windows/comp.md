@@ -1,35 +1,35 @@
 ---
-title: "Compare Files - Compare File Contents | Online Free DevTools by Hexmos"
+title: 'Compare Files - Compare File Contents | Online Free DevTools by Hexmos'
 name: comp
-path: "/freedevtools/tldr/windows/comp/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/comp/"
-description: "Compare file contents easily with Compare Files. Find differences between files and sets of files using wildcard support. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/comp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/comp/'
+description: 'Compare file contents easily with Compare Files. Find differences between files and sets of files using wildcard support. Free online tool, no registration required.'
 category: windows
 keywords:
-- file comparison
-- compare files
-- windows compare files
-- file difference checker
-- wildcard file comparison
-- command line file comparison
-- file content comparison
-- ASCII file comparison
-- decimal file comparison
-- case insensitive comparison
+  - file comparison
+  - compare files
+  - windows compare files
+  - file difference checker
+  - wildcard file comparison
+  - command line file comparison
+  - file content comparison
+  - ASCII file comparison
+  - decimal file comparison
+  - case insensitive comparison
 features:
-- Compare two specified files
-- Compare sets of files using wildcards
-- Display differences in decimal or ASCII format
-- Display line numbers for differences
-- Compare files case-insensitively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare two specified files
+  - Compare sets of files using wildcards
+  - Display differences in decimal or ASCII format
+  - Display line numbers for differences
+  - Compare files case-insensitively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # comp
 
 > Compare the contents of two files or sets of files.
-> Use wildcards (*) to compare sets of files.
+> Use wildcards (\*) to compare sets of files.
 > More information: <https://learn.microsoft.com/windows-server/administration/windows-commands/comp>.
 
 - Compare files interactively:

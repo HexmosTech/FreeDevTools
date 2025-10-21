@@ -1,29 +1,29 @@
 ---
-title: "Validate PHP Extensions - Pickle Command | Online Free DevTools by Hexmos"
+title: 'Validate PHP Extensions - Pickle Command | Online Free DevTools by Hexmos'
 name: pickle
-path: "/freedevtools/tldr/common/pickle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pickle/"
-description: "Validate PHP extensions with Pickle. Easily manage and package PECL extensions for release. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pickle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pickle/'
+description: 'Validate PHP extensions with Pickle. Easily manage and package PECL extensions for release. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP extension manager
-- PECL package manager
-- Pickle installer
-- PHP package release tool
-- PHP extension validator
-- Pickle convert configuration
-- Pickle install extension
-- Linux PHP extension
-- MacOS PHP extension
-- Cross-platform PHP tool
+  - PHP extension manager
+  - PECL package manager
+  - Pickle installer
+  - PHP package release tool
+  - PHP extension validator
+  - Pickle convert configuration
+  - Pickle install extension
+  - Linux PHP extension
+  - MacOS PHP extension
+  - Cross-platform PHP tool
 features:
-- Install specific PHP extensions from the command line
-- Convert existing PECL configurations to Pickle format
-- Validate PECL extensions for errors
-- Package PECL extensions for release
-- Automate PHP extension installation and management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific PHP extensions from the command line
+  - Convert existing PECL configurations to Pickle format
+  - Validate PECL extensions for errors
+  - Package PECL extensions for release
+  - Automate PHP extension installation and management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pickle

@@ -1,29 +1,29 @@
 ---
-title: "Decompose Graph - Biconnected Components | Online Free DevTools by Hexmos"
+title: 'Decompose Graph - Biconnected Components | Online Free DevTools by Hexmos'
 name: bcomps
-path: "/freedevtools/tldr/common/bcomps/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bcomps/"
-description: "Decompose graphs into biconnected components with bcomps. Analyze graph connectivity and identify articulation points effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bcomps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bcomps/'
+description: 'Decompose graphs into biconnected components with bcomps. Analyze graph connectivity and identify articulation points effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- graph decomposition
-- biconnected components finder
-- graph analysis tool
-- articulation point identifier
-- graph connectivity checker
-- graphviz bcomps
-- command line graph tools
-- graphviz filters
-- graph processing
-- block cutvertex tree
+  - graph decomposition
+  - biconnected components finder
+  - graph analysis tool
+  - articulation point identifier
+  - graph connectivity checker
+  - graphviz bcomps
+  - command line graph tools
+  - graphviz filters
+  - graph processing
+  - block cutvertex tree
 features:
-- Decomposes graphs into biconnected components.
-- Identifies articulation points in graphs.
-- Generates block-cutvertex trees.
-- Provides statistics on blocks and cutvertices.
-- Supports multiple input graph files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decomposes graphs into biconnected components.
+  - Identifies articulation points in graphs.
+  - Generates block-cutvertex trees.
+  - Provides statistics on blocks and cutvertices.
+  - Supports multiple input graph files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bcomps

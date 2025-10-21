@@ -1,29 +1,29 @@
 ---
-title: "Doppler Run - Inject Secrets | Online Free DevTools by Hexmos"
+title: 'Doppler Run - Inject Secrets | Online Free DevTools by Hexmos'
 name: doppler-run
-path: "/freedevtools/tldr/doppler/doppler-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler-run/"
-description: "Inject secrets instantly with Doppler Run. Securely run commands with secrets populated in the environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/doppler/doppler-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doppler/doppler-run/'
+description: 'Inject secrets instantly with Doppler Run. Securely run commands with secrets populated in the environment. Free online tool, no registration required.'
 category: common
 keywords:
-- doppler run
-- secrets injection
-- environment variables
-- command line secrets
-- doppler cli
-- configuration management
-- secrets management
-- secure execution
-- application secrets
-- doppler configuration
+  - doppler run
+  - secrets injection
+  - environment variables
+  - command line secrets
+  - doppler cli
+  - configuration management
+  - secrets management
+  - secure execution
+  - application secrets
+  - doppler configuration
 features:
-- Run commands with secrets injected into the environment
-- Automatically restart processes when secrets change
-- Specify project and configuration for command execution
-- Execute multiple commands sequentially
-- Run scripts with Doppler secrets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run commands with secrets injected into the environment
+  - Automatically restart processes when secrets change
+  - Specify project and configuration for command execution
+  - Execute multiple commands sequentially
+  - Run scripts with Doppler secrets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doppler run

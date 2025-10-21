@@ -1,29 +1,29 @@
 ---
-title: "Manage Git Subtrees - Dependency Management | Online Free DevTools by Hexmos"
+title: 'Manage Git Subtrees - Dependency Management | Online Free DevTools by Hexmos'
 name: git-subtree
-path: "/freedevtools/tldr/git/git-subtree/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-subtree/"
-description: "Manage Git subtrees efficiently with git-subtree. Integrate, update, and push project dependencies easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-subtree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-subtree/'
+description: 'Manage Git subtrees efficiently with git-subtree. Integrate, update, and push project dependencies easily. Free online tool, no registration required.'
 category: common
 keywords:
-- git subtree management
-- git dependency management
-- git subtree add
-- git subtree pull
-- git subtree push
-- git subtree split
-- git monorepo management
-- git subtree workflow
-- git submodule alternative
-- distributed version control
+  - git subtree management
+  - git dependency management
+  - git subtree add
+  - git subtree pull
+  - git subtree push
+  - git subtree split
+  - git monorepo management
+  - git subtree workflow
+  - git submodule alternative
+  - distributed version control
 features:
-- Add external Git repositories as subtrees
-- Update subtrees to their latest commit
-- Merge changes into subtrees
-- Push commits to subtree repositories
-- Extract a new project history from a subtree
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add external Git repositories as subtrees
+  - Update subtrees to their latest commit
+  - Merge changes into subtrees
+  - Push commits to subtree repositories
+  - Extract a new project history from a subtree
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git subtree

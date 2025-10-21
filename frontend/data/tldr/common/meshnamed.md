@@ -1,29 +1,29 @@
 ---
-title: "Resolve Meshnames - Distributed Naming with Meshnamed | Online Free DevTools by Hexmos"
+title: 'Resolve Meshnames - Distributed Naming with Meshnamed | Online Free DevTools by Hexmos'
 name: meshnamed
-path: "/freedevtools/tldr/common/meshnamed/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/meshnamed/"
-description: "Resolve meshnames with Meshnamed for IPv6 mesh networks. Convert addresses to names and vice-versa. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/meshnamed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/meshnamed/'
+description: 'Resolve meshnames with Meshnamed for IPv6 mesh networks. Convert addresses to names and vice-versa. Free online tool, no registration required.'
 category: common
 keywords:
-- meshname resolver
-- ipv6 mesh network naming
-- distributed naming system
-- meshnamed command
-- meshname to ipv6 conversion
-- ipv6 to meshname conversion
-- mesh network dns server
-- linux meshname
-- macos meshname
-- command line meshname tool
+  - meshname resolver
+  - ipv6 mesh network naming
+  - distributed naming system
+  - meshnamed command
+  - meshname to ipv6 conversion
+  - ipv6 to meshname conversion
+  - mesh network dns server
+  - linux meshname
+  - macos meshname
+  - command line meshname tool
 features:
-- Start a local meshname DNS server
-- Resolve IPv6 addresses to meshnames
-- Resolve meshnames to IPv6 addresses
-- Support for distributed naming in IPv6 mesh networks
-- Command-line interface for meshname operations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a local meshname DNS server
+  - Resolve IPv6 addresses to meshnames
+  - Resolve meshnames to IPv6 addresses
+  - Support for distributed naming in IPv6 mesh networks
+  - Command-line interface for meshname operations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # meshnamed

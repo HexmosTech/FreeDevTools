@@ -1,29 +1,29 @@
 ---
-title: "Highlight Syntax - Format Code with Highlight | Online Free DevTools by Hexmos"
+title: 'Highlight Syntax - Format Code with Highlight | Online Free DevTools by Hexmos'
 name: highlight
-path: "/freedevtools/tldr/common/highlight/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/highlight/"
-description: "Format code syntax with Highlight. Generate HTML from source code and customize themes using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/highlight/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/highlight/'
+description: 'Format code syntax with Highlight. Generate HTML from source code and customize themes using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- syntax highlighting
-- code formatter
-- HTML generator
-- source code highlighter
-- command line formatter
-- highlight themes
-- highlight languages
-- code to HTML
-- syntax converter
-- code stylesheet generator
+  - syntax highlighting
+  - code formatter
+  - HTML generator
+  - source code highlighter
+  - command line formatter
+  - highlight themes
+  - highlight languages
+  - code to HTML
+  - syntax converter
+  - code stylesheet generator
 features:
-- Generate complete HTML documents from source code.
-- Produce HTML fragments for embedding.
-- Inline CSS styling for self-contained HTML.
-- List supported languages, themes, and plugins.
-- Print CSS stylesheets for customized themes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate complete HTML documents from source code.
+  - Produce HTML fragments for embedding.
+  - Inline CSS styling for self-contained HTML.
+  - List supported languages, themes, and plugins.
+  - Print CSS stylesheets for customized themes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # highlight

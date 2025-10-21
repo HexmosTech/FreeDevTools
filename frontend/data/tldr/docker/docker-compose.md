@@ -1,29 +1,29 @@
 ---
-title: "Docker Compose - Control Multi-Container Apps | Online Free DevTools by Hexmos"
+title: 'Docker Compose - Control Multi-Container Apps | Online Free DevTools by Hexmos'
 name: docker-compose
-path: "/freedevtools/tldr/docker/docker-compose/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-compose/"
-description: "Control multi-container apps with Docker Compose. Easily manage and orchestrate Docker applications with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-compose/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-compose/'
+description: 'Control multi-container apps with Docker Compose. Easily manage and orchestrate Docker applications with this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- docker compose management
-- container orchestration tool
-- docker compose up command
-- docker compose down command
-- docker compose logs command
-- docker multi-container apps
-- docker compose YAML
-- docker application deployment
-- docker compose CLI
-- linux docker compose
+  - docker compose management
+  - container orchestration tool
+  - docker compose up command
+  - docker compose down command
+  - docker compose logs command
+  - docker multi-container apps
+  - docker compose YAML
+  - docker application deployment
+  - docker compose CLI
+  - linux docker compose
 features:
-- Start and stop multi-container Docker applications
-- Define and manage application services using docker-compose.yml
-- View logs for individual containers or the entire application
-- Rebuild containers automatically when changes are detected
-- Scale and update applications seamlessly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and stop multi-container Docker applications
+  - Define and manage application services using docker-compose.yml
+  - View logs for individual containers or the entire application
+  - Rebuild containers automatically when changes are detected
+  - Scale and update applications seamlessly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker compose

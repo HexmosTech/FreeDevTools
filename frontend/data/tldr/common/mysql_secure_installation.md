@@ -1,29 +1,29 @@
 ---
-title: "Secure MySQL - Improve Database Security | Online Free DevTools by Hexmos"
+title: 'Secure MySQL - Improve Database Security | Online Free DevTools by Hexmos'
 name: mysql_secure_installation
-path: "/freedevtools/tldr/common/mysql_secure_installation/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mysql_secure_installation/"
-description: "Secure MySQL database installations with mysql_secure_installation. Harden your MySQL server by setting root password, removing anonymous users, and disallowing remote root login. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mysql_secure_installation/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mysql_secure_installation/'
+description: 'Secure MySQL database installations with mysql_secure_installation. Harden your MySQL server by setting root password, removing anonymous users, and disallowing remote root login. Free online tool, no registration required.'
 category: common
 keywords:
-- MySQL security
-- MySQL secure installation
-- Database security setup
-- MySQL hardening
-- MySQL root password
-- Remove anonymous MySQL users
-- Disallow remote root login
-- MySQL command line
-- MySQL server security
-- Secure MySQL database
+  - MySQL security
+  - MySQL secure installation
+  - Database security setup
+  - MySQL hardening
+  - MySQL root password
+  - Remove anonymous MySQL users
+  - Disallow remote root login
+  - MySQL command line
+  - MySQL server security
+  - Secure MySQL database
 features:
-- Set the root password for MySQL installations
-- Remove anonymous user accounts from MySQL
-- Disallow root login remotely
-- Remove the test database and access to it
-- Reload privilege tables to apply changes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set the root password for MySQL installations
+  - Remove anonymous user accounts from MySQL
+  - Disallow root login remotely
+  - Remove the test database and access to it
+  - Reload privilege tables to apply changes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mysql_secure_installation

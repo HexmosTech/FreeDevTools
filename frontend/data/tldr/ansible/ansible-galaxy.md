@@ -1,29 +1,29 @@
 ---
-title: "Ansible Galaxy - Manage Roles & Collections | Online Free DevTools by Hexmos"
+title: 'Ansible Galaxy - Manage Roles & Collections | Online Free DevTools by Hexmos'
 name: ansible-galaxy
-path: "/freedevtools/tldr/ansible/ansible-galaxy/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-galaxy/"
-description: "Manage Ansible roles and collections easily with Ansible Galaxy. Install, remove, search, and initialize roles & collections with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible-galaxy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible-galaxy/'
+description: 'Manage Ansible roles and collections easily with Ansible Galaxy. Install, remove, search, and initialize roles & collections with this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible galaxy role manager
-- ansible collection management
-- ansible role install command
-- ansible collection install command
-- ansible role search tool
-- ansible galaxy command line
-- ansible automation roles
-- ansible galaxy collections
-- yaml automation management
-- ansible role creation
+  - ansible galaxy role manager
+  - ansible collection management
+  - ansible role install command
+  - ansible collection install command
+  - ansible role search tool
+  - ansible galaxy command line
+  - ansible automation roles
+  - ansible galaxy collections
+  - yaml automation management
+  - ansible role creation
 features:
-- Install and remove Ansible roles
-- Manage Ansible collections
-- Search for Ansible roles using keywords
-- Initialize new Ansible roles
-- Display help information for roles and collections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and remove Ansible roles
+  - Manage Ansible collections
+  - Search for Ansible roles using keywords
+  - Initialize new Ansible roles
+  - Display help information for roles and collections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible-galaxy

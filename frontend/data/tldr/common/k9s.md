@@ -1,29 +1,29 @@
 ---
-title: "Manage Kubernetes Clusters - k9s | Online Free DevTools by Hexmos"
+title: 'Manage Kubernetes Clusters - k9s | Online Free DevTools by Hexmos'
 name: k9s
-path: "/freedevtools/tldr/common/k9s/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/k9s/"
-description: "Manage Kubernetes clusters effectively with k9s. Monitor cluster resources and troubleshoot issues instantly using the terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/k9s/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/k9s/'
+description: 'Manage Kubernetes clusters effectively with k9s. Monitor cluster resources and troubleshoot issues instantly using the terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes cluster manager
-- kubernetes resource viewer
-- kubernetes terminal UI
-- k9s kubernetes dashboard
-- k9s cli tool
-- kubernetes context management
-- kubernetes namespace management
-- kubernetes pod viewer
-- kubernetes debug logs
-- kubectl alternative
+  - kubernetes cluster manager
+  - kubernetes resource viewer
+  - kubernetes terminal UI
+  - k9s kubernetes dashboard
+  - k9s cli tool
+  - kubernetes context management
+  - kubernetes namespace management
+  - kubernetes pod viewer
+  - kubernetes debug logs
+  - kubectl alternative
 features:
-- Manage clusters using kubeconfig contexts
-- Operate in read-only mode for safer cluster viewing
-- Focus on specific Kubernetes namespaces
-- Launch in pod view for targeted analysis
-- Enable debug logging for detailed troubleshooting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage clusters using kubeconfig contexts
+  - Operate in read-only mode for safer cluster viewing
+  - Focus on specific Kubernetes namespaces
+  - Launch in pod view for targeted analysis
+  - Enable debug logging for detailed troubleshooting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # k9s

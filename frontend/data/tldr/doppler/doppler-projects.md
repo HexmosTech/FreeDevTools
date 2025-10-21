@@ -1,29 +1,29 @@
 ---
-title: "Doppler Projects - Manage Secure Configuration | Online Free DevTools by Hexmos"
+title: 'Doppler Projects - Manage Secure Configuration | Online Free DevTools by Hexmos'
 name: doppler-projects
-path: "/freedevtools/tldr/doppler/doppler-projects/"
-canonical: "https://hexmos.com/freedevtools/tldr/doppler/doppler-projects/"
-description: "Manage Doppler projects securely with Doppler Projects command. Create, update, and delete projects, ensuring secure configuration management. Free online tool, no registration required."
+path: '/freedevtools/tldr/doppler/doppler-projects/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doppler/doppler-projects/'
+description: 'Manage Doppler projects securely with Doppler Projects command. Create, update, and delete projects, ensuring secure configuration management. Free online tool, no registration required.'
 category: common
 keywords:
-- Doppler projects management
-- Configuration management projects
-- Secure project configuration
-- Doppler CLI projects
-- Projects create update delete
-- Secrets management project
-- Environment variables project
-- Project access control
-- DevOps configuration
-- Infrastructure as code Doppler
+  - Doppler projects management
+  - Configuration management projects
+  - Secure project configuration
+  - Doppler CLI projects
+  - Projects create update delete
+  - Secrets management project
+  - Environment variables project
+  - Project access control
+  - DevOps configuration
+  - Infrastructure as code Doppler
 features:
-- List all Doppler projects.
-- Retrieve information for a specific project.
-- Create new Doppler projects easily.
-- Update existing project names and descriptions.
-- Delete Doppler projects when no longer needed.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all Doppler projects.
+  - Retrieve information for a specific project.
+  - Create new Doppler projects easily.
+  - Update existing project names and descriptions.
+  - Delete Doppler projects when no longer needed.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doppler projects

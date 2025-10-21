@@ -1,29 +1,29 @@
 ---
-title: "Lscpu - Display CPU Information | Online Free DevTools by Hexmos"
+title: 'Lscpu - Display CPU Information | Online Free DevTools by Hexmos'
 name: lscpu
-path: "/freedevtools/tldr/linux/lscpu/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lscpu/"
-description: "Display CPU information with lscpu. Examine processor architecture, cache details, and online/offline CPU status. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lscpu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lscpu/'
+description: 'Display CPU information with lscpu. Examine processor architecture, cache details, and online/offline CPU status. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux cpu information
-- cpu architecture details
-- display cpu cores
-- show lscpu output
-- processor cache details
-- cpu online status
-- cpu offline status
-- lscpu json output
-- linux hardware info
-- lscpu command
+  - linux cpu information
+  - cpu architecture details
+  - display cpu cores
+  - show lscpu output
+  - processor cache details
+  - cpu online status
+  - cpu offline status
+  - lscpu json output
+  - linux hardware info
+  - lscpu command
 features:
-- Display detailed CPU architecture information
-- Show information about CPU caches
-- List only online or offline CPUs
-- Output information in JSON format
-- Display information in a tabular format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display detailed CPU architecture information
+  - Show information about CPU caches
+  - List only online or offline CPUs
+  - Output information in JSON format
+  - Display information in a tabular format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lscpu

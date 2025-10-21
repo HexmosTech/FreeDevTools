@@ -1,29 +1,29 @@
 ---
-title: "Cabal Package Manager - Manage Haskell Packages | Online Free DevTools by Hexmos"
+title: 'Cabal Package Manager - Manage Haskell Packages | Online Free DevTools by Hexmos'
 name: cabal
-path: "/freedevtools/tldr/common/cabal/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cabal/"
-description: "Manage Haskell packages with Cabal Package Manager. Install, build, and test Haskell projects from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cabal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cabal/'
+description: 'Manage Haskell packages with Cabal Package Manager. Install, build, and test Haskell projects from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Haskell package management
-- Cabal package installer
-- Hackage package repository
-- Haskell build tool
-- Cabal command line
-- Haskell project manager
-- Cabal package search
-- Cabal install package
-- Cabal build project
-- Cabal test project
+  - Haskell package management
+  - Cabal package installer
+  - Hackage package repository
+  - Haskell build tool
+  - Cabal command line
+  - Haskell project manager
+  - Cabal package search
+  - Cabal install package
+  - Cabal build project
+  - Cabal test project
 features:
-- Search and list Haskell packages from Hackage.
-- Show detailed information about a specific package.
-- Download and install Haskell packages.
-- Create a new Haskell project with default settings.
-- Build and test existing Haskell projects.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search and list Haskell packages from Hackage.
+  - Show detailed information about a specific package.
+  - Download and install Haskell packages.
+  - Create a new Haskell project with default settings.
+  - Build and test existing Haskell projects.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cabal

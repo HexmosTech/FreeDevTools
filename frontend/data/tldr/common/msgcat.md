@@ -1,29 +1,29 @@
 ---
-title: "Concatenate PO Files - Combine Translations | Online Free DevTools by Hexmos"
+title: 'Concatenate PO Files - Combine Translations | Online Free DevTools by Hexmos'
 name: msgcat
-path: "/freedevtools/tldr/common/msgcat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/msgcat/"
-description: "Combine translations with msgcat, a command-line tool for merging .po files. Easily consolidate language catalogs for software localization. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/msgcat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/msgcat/'
+description: 'Combine translations with msgcat, a command-line tool for merging .po files. Easily consolidate language catalogs for software localization. Free online tool, no registration required.'
 category: common
 keywords:
-- PO file concatenation
-- message catalog merging
-- translation file combination
-- gettext msgcat
-- language localization tools
-- .po file merge
-- combine translations linux
-- concatenate PO files macos
-- msgcat command
-- combine .po files
+  - PO file concatenation
+  - message catalog merging
+  - translation file combination
+  - gettext msgcat
+  - language localization tools
+  - .po file merge
+  - combine translations linux
+  - concatenate PO files macos
+  - msgcat command
+  - combine .po files
 features:
-- Concatenate multiple .po files into a single file
-- Merge translation catalogs efficiently
-- Filter and combine translations based on specified criteria
-- Set the output encoding for combined translation files
-- Output only unique messages from multiple .po files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Concatenate multiple .po files into a single file
+  - Merge translation catalogs efficiently
+  - Filter and combine translations based on specified criteria
+  - Set the output encoding for combined translation files
+  - Output only unique messages from multiple .po files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msgcat

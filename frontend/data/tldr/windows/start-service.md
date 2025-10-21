@@ -1,29 +1,29 @@
 ---
-title: "Start Service - Control Windows Services | Online Free DevTools by Hexmos"
+title: 'Start Service - Control Windows Services | Online Free DevTools by Hexmos'
 name: start-service
-path: "/freedevtools/tldr/windows/start-service/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/start-service/"
-description: "Control Windows Services with Start-Service. Easily manage and start stopped services using PowerShell. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/start-service/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/start-service/'
+description: 'Control Windows Services with Start-Service. Easily manage and start stopped services using PowerShell. Free online tool, no registration required.'
 category: windows
 keywords:
-- Windows service control
-- PowerShell start service
-- Windows service manager
-- Service start command
-- Windows service automation
-- Start disabled service
-- Stop and start service
-- Windows server management
-- PowerShell service administration
-- Windows service troubleshooting
+  - Windows service control
+  - PowerShell start service
+  - Windows service manager
+  - Service start command
+  - Windows service automation
+  - Start disabled service
+  - Stop and start service
+  - Windows server management
+  - PowerShell service administration
+  - Windows service troubleshooting
 features:
-- Start stopped Windows services by name
-- Display information about a service without starting it
-- Start a disabled Windows service
-- Automate service startup with PowerShell
-- Manage Windows services from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start stopped Windows services by name
+  - Display information about a service without starting it
+  - Start a disabled Windows service
+  - Automate service startup with PowerShell
+  - Manage Windows services from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Start-Service

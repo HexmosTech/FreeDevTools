@@ -1,29 +1,29 @@
 ---
-title: "Complete Dependency - Search Maven Artifacts | Online Free DevTools by Hexmos"
+title: 'Complete Dependency - Search Maven Artifacts | Online Free DevTools by Hexmos'
 name: cs-complete-dep
-path: "/freedevtools/tldr/cs/cs-complete-dep/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-complete-dep/"
-description: "Search Maven artifacts with Complete Dependency tool. Quickly find library versions and group identifiers without web browsing. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/cs-complete-dep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/cs-complete-dep/'
+description: 'Search Maven artifacts with Complete Dependency tool. Quickly find library versions and group identifiers without web browsing. Free online tool, no registration required.'
 category: common
 keywords:
-- maven artifact search
-- dependency completion
-- coursier complete-dep
-- library version finder
-- ivy2local repository
-- maven group identifier
-- artifact identifier
-- dependency resolver
-- cli dependency search
-- command line dependency
+  - maven artifact search
+  - dependency completion
+  - coursier complete-dep
+  - library version finder
+  - ivy2local repository
+  - maven group identifier
+  - artifact identifier
+  - dependency resolver
+  - cli dependency search
+  - command line dependency
 features:
-- Search for artifacts under a Maven group identifier.
-- List published library versions under a specific Maven group and artifact.
-- Search for artifacts in ivy2local repository.
-- Authenticate against repositories with username and password.
-- Retrieve dependencies from specified repository URL.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for artifacts under a Maven group identifier.
+  - List published library versions under a specific Maven group and artifact.
+  - Search for artifacts in ivy2local repository.
+  - Authenticate against repositories with username and password.
+  - Retrieve dependencies from specified repository URL.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cs complete-dep

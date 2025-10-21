@@ -1,29 +1,29 @@
 ---
-title: "Control Atom Packages - Manage APM Packages | Online Free DevTools by Hexmos"
+title: 'Control Atom Packages - Manage APM Packages | Online Free DevTools by Hexmos'
 name: apm
-path: "/freedevtools/tldr/common/apm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/apm/"
-description: "Control Atom packages with APM Package Manager. Install, remove, and upgrade Atom packages and themes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/apm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/apm/'
+description: 'Control Atom packages with APM Package Manager. Install, remove, and upgrade Atom packages and themes easily. Free online tool, no registration required.'
 category: common
 keywords:
-- atom package manager
-- apm package control
-- atom theme manager
-- apm install package
-- apm remove package
-- apm upgrade package
-- atom package registry
-- atom package cli
-- cross-platform package manager
-- apm package search
+  - atom package manager
+  - apm package control
+  - atom theme manager
+  - apm install package
+  - apm remove package
+  - apm upgrade package
+  - atom package registry
+  - atom package cli
+  - cross-platform package manager
+  - apm package search
 features:
-- Install packages from Atom's package registry
-- Remove unwanted Atom packages and themes
-- Upgrade outdated Atom packages and themes
-- Manage Atom editor extensions via command line
-- Search for packages in the Atom repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages from Atom's package registry
+  - Remove unwanted Atom packages and themes
+  - Upgrade outdated Atom packages and themes
+  - Manage Atom editor extensions via command line
+  - Search for packages in the Atom repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apm

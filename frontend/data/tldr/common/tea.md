@@ -1,29 +1,29 @@
 ---
-title: "Gitea Interact - Manage Gitea Servers | Online Free DevTools by Hexmos"
+title: 'Gitea Interact - Manage Gitea Servers | Online Free DevTools by Hexmos'
 name: tea
-path: "/freedevtools/tldr/common/tea/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tea/"
-description: "Interact with Gitea servers easily using Gitea Interact. Manage repositories, issues, and pull requests from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tea/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tea/'
+description: 'Interact with Gitea servers easily using Gitea Interact. Manage repositories, issues, and pull requests from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Gitea interaction
-- Gitea server management
-- Gitea command line
-- Gitea repository management
-- Gitea issue tracker
-- Gitea pull request
-- tea command
-- git server
-- software forge
-- code hosting
+  - Gitea interaction
+  - Gitea server management
+  - Gitea command line
+  - Gitea repository management
+  - Gitea issue tracker
+  - Gitea pull request
+  - tea command
+  - git server
+  - software forge
+  - code hosting
 features:
-- Log into Gitea servers
-- List Gitea repositories
-- Manage Gitea issues
-- Create new issues
-- Open repositories in a browser
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Log into Gitea servers
+  - List Gitea repositories
+  - Manage Gitea issues
+  - Create new issues
+  - Open repositories in a browser
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tea

@@ -1,29 +1,29 @@
 ---
-title: "Find Duplicate Files - Manage Duplicates with rdfind | Online Free DevTools by Hexmos"
+title: 'Find Duplicate Files - Manage Duplicates with rdfind | Online Free DevTools by Hexmos'
 name: rdfind
-path: "/freedevtools/tldr/common/rdfind/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rdfind/"
-description: "Find duplicate files efficiently with rdfind. Manage and remove redundant files, reclaim disk space with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rdfind/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rdfind/'
+description: 'Find duplicate files efficiently with rdfind. Manage and remove redundant files, reclaim disk space with this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- duplicate file finder
-- rdfind duplicate removal
-- command line file manager
-- linux duplicate finder
-- macos duplicate cleaner
-- hardlink duplicate files
-- symlink duplicate files
-- disk space recovery
-- file redundancy removal
-- duplicate file management
+  - duplicate file finder
+  - rdfind duplicate removal
+  - command line file manager
+  - linux duplicate finder
+  - macos duplicate cleaner
+  - hardlink duplicate files
+  - symlink duplicate files
+  - disk space recovery
+  - file redundancy removal
+  - duplicate file management
 features:
-- Identifies duplicate files in specified directories
-- Replaces duplicate files with hard links to save space
-- Replaces duplicate files with symbolic links
-- Deletes duplicate files while retaining one original
-- Allows ignoring or including empty files in the search
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identifies duplicate files in specified directories
+  - Replaces duplicate files with hard links to save space
+  - Replaces duplicate files with symbolic links
+  - Deletes duplicate files while retaining one original
+  - Allows ignoring or including empty files in the search
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rdfind

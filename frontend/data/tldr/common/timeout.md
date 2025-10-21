@@ -1,29 +1,29 @@
 ---
-title: "Timeout Command - Control Process Execution | Online Free DevTools by Hexmos"
+title: 'Timeout Command - Control Process Execution | Online Free DevTools by Hexmos'
 name: timeout
-path: "/freedevtools/tldr/common/timeout/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/timeout/"
-description: "Control process execution with Timeout Command. Limit execution time, send signals, and preserve exit statuses. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/timeout/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/timeout/'
+description: 'Control process execution with Timeout Command. Limit execution time, send signals, and preserve exit statuses. Free online tool, no registration required.'
 category: common
 keywords:
-- timeout command linux
-- timeout command execution
-- timeout process limit
-- linux timeout kill signal
-- command timeout control
-- execution time control
-- process management linux
-- timeout command macos
-- timeout command common
-- timeout command examples
+  - timeout command linux
+  - timeout command execution
+  - timeout process limit
+  - linux timeout kill signal
+  - command timeout control
+  - execution time control
+  - process management linux
+  - timeout command macos
+  - timeout command common
+  - timeout command examples
 features:
-- Limit command execution time
-- Send signals upon timeout
-- Preserve the exit status
-- Forcefully terminate processes
-- Display verbose timeout messages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Limit command execution time
+  - Send signals upon timeout
+  - Preserve the exit status
+  - Forcefully terminate processes
+  - Display verbose timeout messages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # timeout

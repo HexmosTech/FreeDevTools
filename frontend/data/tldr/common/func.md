@@ -1,29 +1,29 @@
 ---
-title: "Azure Functions - Create & Run Apps Locally | Online Free DevTools by Hexmos"
+title: 'Azure Functions - Create & Run Apps Locally | Online Free DevTools by Hexmos'
 name: func
-path: "/freedevtools/tldr/common/func/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/func/"
-description: "Create Azure Functions with func, a powerful command-line tool for local development and deployment. Test, debug, and publish your serverless applications to Azure effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/func/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/func/'
+description: 'Create Azure Functions with func, a powerful command-line tool for local development and deployment. Test, debug, and publish your serverless applications to Azure effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure Functions CLI
-- Serverless development
-- Function app deployment
-- Local function testing
-- Azure Functions Core Tools
-- Azure CLI tool
-- Function app settings
-- Storage account connection
-- Azure function publish
-- func command-line
+  - Azure Functions CLI
+  - Serverless development
+  - Function app deployment
+  - Local function testing
+  - Azure Functions Core Tools
+  - Azure CLI tool
+  - Function app settings
+  - Storage account connection
+  - Azure function publish
+  - func command-line
 features:
-- Initialize new Azure Functions projects
-- Create new functions using templates
-- Run functions locally for testing
-- Publish code to Azure function apps
-- Fetch app settings from existing function apps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new Azure Functions projects
+  - Create new functions using templates
+  - Run functions locally for testing
+  - Publish code to Azure function apps
+  - Fetch app settings from existing function apps
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # func

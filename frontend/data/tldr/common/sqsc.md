@@ -1,29 +1,29 @@
 ---
-title: "SQS Client - Manage AWS Queues | Online Free DevTools by Hexmos"
+title: 'SQS Client - Manage AWS Queues | Online Free DevTools by Hexmos'
 name: sqsc
-path: "/freedevtools/tldr/common/sqsc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sqsc/"
-description: "Manage AWS SQS queues easily with SQSC. Interact, query, and copy messages across queues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sqsc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sqsc/'
+description: 'Manage AWS SQS queues easily with SQSC. Interact, query, and copy messages across queues. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS SQS client
-- SQS queue manager
-- AWS message queue
-- SQS command line
-- SQS queue copy
-- SQS queue move
-- SQS queue query
-- AWS queue describe
-- Linux SQS
-- macOS SQS
+  - AWS SQS client
+  - SQS queue manager
+  - AWS message queue
+  - SQS command line
+  - SQS queue copy
+  - SQS queue move
+  - SQS queue query
+  - AWS queue describe
+  - Linux SQS
+  - macOS SQS
 features:
-- List all queues in AWS SQS
-- Copy messages between AWS SQS queues
-- Query queue messages with SQL syntax
-- Move messages between AWS SQS queues
-- Pull messages to a local SQLite database
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all queues in AWS SQS
+  - Copy messages between AWS SQS queues
+  - Query queue messages with SQL syntax
+  - Move messages between AWS SQS queues
+  - Pull messages to a local SQLite database
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sqsc

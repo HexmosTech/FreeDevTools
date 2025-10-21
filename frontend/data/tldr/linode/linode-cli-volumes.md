@@ -1,29 +1,29 @@
 ---
-title: "Linode Volumes - Manage Block Storage | Online Free DevTools by Hexmos"
+title: 'Linode Volumes - Manage Block Storage | Online Free DevTools by Hexmos'
 name: linode-cli-volumes
-path: "/freedevtools/tldr/linode/linode-cli-volumes/"
-canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-volumes/"
-description: "Manage Linode volumes easily with linode-cli. Attach, detach, resize, and create block storage volumes directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linode/linode-cli-volumes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linode/linode-cli-volumes/'
+description: 'Manage Linode volumes easily with linode-cli. Attach, detach, resize, and create block storage volumes directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- linode volumes management
-- linode cli block storage
-- volumes attach linode
-- volumes detach linode
-- volumes resize linode
-- volumes create linode
-- linode cli volumes commands
-- linode volumes linux
-- block storage management
-- cloud volumes control
+  - linode volumes management
+  - linode cli block storage
+  - volumes attach linode
+  - volumes detach linode
+  - volumes resize linode
+  - volumes create linode
+  - linode cli volumes commands
+  - linode volumes linux
+  - block storage management
+  - cloud volumes control
 features:
-- List available Linode Volumes
-- Create and attach new Volumes to Linodes
-- Detach existing Volumes from Linodes
-- Resize Linode Volumes to increase storage capacity
-- Delete unwanted Linode Volumes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available Linode Volumes
+  - Create and attach new Volumes to Linodes
+  - Detach existing Volumes from Linodes
+  - Resize Linode Volumes to increase storage capacity
+  - Delete unwanted Linode Volumes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # linode-cli volumes

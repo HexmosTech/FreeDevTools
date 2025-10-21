@@ -1,9 +1,9 @@
 ---
-title: "Control Bandwidth Usage - iftop | Online Free DevTools by Hexmos"
+title: 'Control Bandwidth Usage - iftop | Online Free DevTools by Hexmos'
 name: iftop
-path: "/freedevtools/tldr/linux/iftop/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/iftop/"
-description: "Control bandwidth usage with iftop, a network traffic monitor. Analyze interface activity, identify top bandwidth consumers, and optimize network performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/iftop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/iftop/'
+description: 'Control bandwidth usage with iftop, a network traffic monitor. Analyze interface activity, identify top bandwidth consumers, and optimize network performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - bandwidth monitor
@@ -22,8 +22,8 @@ features:
   - Show port information for network connections
   - Suppress the display of traffic bar graphs
   - Disable hostname lookups for faster analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iftop

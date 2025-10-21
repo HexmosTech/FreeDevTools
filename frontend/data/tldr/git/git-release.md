@@ -1,29 +1,29 @@
 ---
-title: "Create Git Release - Tag Releases with Command Line | Online Free DevTools by Hexmos"
+title: 'Create Git Release - Tag Releases with Command Line | Online Free DevTools by Hexmos'
 name: git-release
-path: "/freedevtools/tldr/git/git-release/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-release/"
-description: "Create Git releases effortlessly with git-release command. Tag your commits, manage release versions and push to remote repositories. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-release/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-release/'
+description: 'Create Git releases effortlessly with git-release command. Tag your commits, manage release versions and push to remote repositories. Free online tool, no registration required.'
 category: common
 keywords:
-- git release
-- git tag release
-- create git tag
-- command line release
-- git release management
-- git version control
-- git command
-- common git commands
-- git extras
-- git workflow
+  - git release
+  - git tag release
+  - create git tag
+  - command line release
+  - git release management
+  - git version control
+  - git command
+  - common git commands
+  - git extras
+  - git workflow
 features:
-- Create a new Git tag for a release
-- Push the created tag to a remote repository
-- Sign the release tag cryptographically
-- Add a descriptive message to the release tag
-- Simplify the Git release process with a single command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create a new Git tag for a release
+  - Push the created tag to a remote repository
+  - Sign the release tag cryptographically
+  - Add a descriptive message to the release tag
+  - Simplify the Git release process with a single command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git release

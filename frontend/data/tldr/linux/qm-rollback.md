@@ -1,9 +1,9 @@
 ---
-title: "QM Rollback - Restore VM Snapshots | Online Free DevTools by Hexmos"
+title: 'QM Rollback - Restore VM Snapshots | Online Free DevTools by Hexmos'
 name: qm-rollback
-path: "/freedevtools/tldr/linux/qm-rollback/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-rollback/"
-description: "Rollback Proxmox VM states to specific snapshots with QM Rollback.  Quickly restore previous VM configurations using a simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-rollback/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-rollback/'
+description: 'Rollback Proxmox VM states to specific snapshots with QM Rollback.  Quickly restore previous VM configurations using a simple command. Free online tool, no registration required.'
 category: linux
 keywords:
   - proxmox vm rollback
@@ -22,8 +22,8 @@ features:
   - Uses the Proxmox command-line interface (CLI).
   - Supports specific VM ID and snapshot name targeting.
   - Offers efficient state restoration for troubleshooting and recovery.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm rollback

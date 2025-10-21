@@ -1,9 +1,9 @@
 ---
-title: "Tool Recommender - Find Programs for Tasks | Online Free DevTools by Hexmos"
+title: 'Tool Recommender - Find Programs for Tasks | Online Free DevTools by Hexmos'
 name: wami
-path: "/freedevtools/tldr/linux/wami/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wami/"
-description: "Recommend software solutions with Tool Recommender. Discover optimal programs for any task and improve your workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wami/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wami/'
+description: 'Recommend software solutions with Tool Recommender. Discover optimal programs for any task and improve your workflow. Free online tool, no registration required.'
 category: linux
 keywords:
   - program recommender
@@ -22,8 +22,8 @@ features:
   - Search GitHub for relevant topics.
   - Find tools related to pentesting.
   - Display expanded results from all categories.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wami

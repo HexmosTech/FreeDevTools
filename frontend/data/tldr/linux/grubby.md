@@ -1,9 +1,9 @@
 ---
-title: "Grubby Config - Control GRUB Bootloader | Online Free DevTools by Hexmos"
+title: 'Grubby Config - Control GRUB Bootloader | Online Free DevTools by Hexmos'
 name: grubby
-path: "/freedevtools/tldr/linux/grubby/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/grubby/"
-description: "Control GRUB bootloader configurations with Grubby. Manage kernel boot parameters and update bootloader entries. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/grubby/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/grubby/'
+description: 'Control GRUB bootloader configurations with Grubby. Manage kernel boot parameters and update bootloader entries. Free online tool, no registration required.'
 category: linux
 keywords:
   - grubby bootloader config
@@ -22,8 +22,8 @@ features:
   - List all kernel menu entries.
   - Update bootloader configuration.
   - Manage kernel boot parameters.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grubby

@@ -1,29 +1,29 @@
 ---
-title: "Stow Symlink Manager - Manage Dotfiles | Online Free DevTools by Hexmos"
+title: 'Stow Symlink Manager - Manage Dotfiles | Online Free DevTools by Hexmos'
 name: stow
-path: "/freedevtools/tldr/st/stow/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/stow/"
-description: "Manage dotfiles easily with Stow Symlink Manager. Organize configurations and maintain consistency across systems using symlinks. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/stow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/stow/'
+description: 'Manage dotfiles easily with Stow Symlink Manager. Organize configurations and maintain consistency across systems using symlinks. Free online tool, no registration required.'
 category: common
 keywords:
-- dotfile manager
-- symlink manager
-- stow dotfiles
-- configuration manager
-- linux symlink
-- macos symlink
-- stow symlink
-- dotfile management
-- symbolic link
-- dotfile organization
+  - dotfile manager
+  - symlink manager
+  - stow dotfiles
+  - configuration manager
+  - linux symlink
+  - macos symlink
+  - stow symlink
+  - dotfile management
+  - symbolic link
+  - dotfile organization
 features:
-- Recursively symlink files to a target directory
-- Delete symlinks from a specified directory
-- Simulate stow operations before execution
-- Delete and recreate symlinks with restow
-- Exclude files from stow operations using regular expressions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively symlink files to a target directory
+  - Delete symlinks from a specified directory
+  - Simulate stow operations before execution
+  - Delete and recreate symlinks with restow
+  - Exclude files from stow operations using regular expressions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # stow

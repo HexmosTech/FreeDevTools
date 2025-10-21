@@ -1,29 +1,29 @@
 ---
-title: "Convert PNM Images - Mercator Projection | Online Free DevTools by Hexmos"
+title: 'Convert PNM Images - Mercator Projection | Online Free DevTools by Hexmos'
 name: pnmmercator
-path: "/freedevtools/tldr/pnm/pnmmercator/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmmercator/"
-description: "Convert PNM images with pnmmercator for Mercator projections. Transform and manipulate Netpbm image formats effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmmercator/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmmercator/'
+description: 'Convert PNM images with pnmmercator for Mercator projections. Transform and manipulate Netpbm image formats effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- "PNM image converter"
-- "Mercator projection tool"
-- "Netpbm image transformation"
-- "Image projection software"
-- "Raster image conversion"
-- "pnmmercator linux"
-- "pnmmercator macos"
-- "pnmmercator command"
-- "rectangular to Mercator converter"
-- "Mercator to rectangular converter"
+  - 'PNM image converter'
+  - 'Mercator projection tool'
+  - 'Netpbm image transformation'
+  - 'Image projection software'
+  - 'Raster image conversion'
+  - 'pnmmercator linux'
+  - 'pnmmercator macos'
+  - 'pnmmercator command'
+  - 'rectangular to Mercator converter'
+  - 'Mercator to rectangular converter'
 features:
-- "Convert rectangular projection images to Mercator projection"
-- "Convert Mercator projection images to rectangular projection"
-- "Transform Netpbm image formats"
-- "Process images directly from the command line"
-- "Support inverse Mercator transformations"
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - 'Convert rectangular projection images to Mercator projection'
+  - 'Convert Mercator projection images to rectangular projection'
+  - 'Transform Netpbm image formats'
+  - 'Process images directly from the command line'
+  - 'Support inverse Mercator transformations'
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmmercator

@@ -1,29 +1,29 @@
 ---
-title: "Scan Viruses - Find and Remove Malware with Clamscan | Online Free DevTools by Hexmos"
+title: 'Scan Viruses - Find and Remove Malware with Clamscan | Online Free DevTools by Hexmos'
 name: clamscan
-path: "/freedevtools/tldr/common/clamscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/clamscan/"
-description: "Scan viruses with Clamscan to detect and remove malware. Analyze files and directories for vulnerabilities efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/clamscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/clamscan/'
+description: 'Scan viruses with Clamscan to detect and remove malware. Analyze files and directories for vulnerabilities efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- virus scan
-- malware removal
-- clamscan command
-- linux virus scanner
-- command line scanner
-- file vulnerability scan
-- directory malware scan
-- stdin virus analysis
-- quarantine infected files
-- remove infected files
+  - virus scan
+  - malware removal
+  - clamscan command
+  - linux virus scanner
+  - command line scanner
+  - file vulnerability scan
+  - directory malware scan
+  - stdin virus analysis
+  - quarantine infected files
+  - remove infected files
 features:
-- Scan files and directories for viruses
-- Recursively scan directories for malware
-- Analyze data from stdin for vulnerabilities
-- Quarantine or remove infected files
-- Output scan reports to a log file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan files and directories for viruses
+  - Recursively scan directories for malware
+  - Analyze data from stdin for vulnerabilities
+  - Quarantine or remove infected files
+  - Output scan reports to a log file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clamscan

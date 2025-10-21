@@ -1,29 +1,29 @@
 ---
-title: "Execute R Scripts - Run R Code | Online Free DevTools by Hexmos"
+title: 'Execute R Scripts - Run R Code | Online Free DevTools by Hexmos'
 name: rscript
-path: "/freedevtools/tldr/common/rscript/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rscript/"
-description: "Execute R scripts with Rscript, the command-line interface for the R programming language. Process data analysis tasks efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rscript/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rscript/'
+description: 'Execute R scripts with Rscript, the command-line interface for the R programming language. Process data analysis tasks efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- R script execution
-- R code runner
-- command-line R interpreter
-- R batch processing
-- R data analysis script
-- Rscript vanilla mode
-- R expression execution
-- linux R script
-- macos R script
-- rscript version control
+  - R script execution
+  - R code runner
+  - command-line R interpreter
+  - R batch processing
+  - R data analysis script
+  - Rscript vanilla mode
+  - R expression execution
+  - linux R script
+  - macos R script
+  - rscript version control
 features:
-- Run R scripts from the command line
-- Execute R code in vanilla mode
-- Evaluate R expressions directly
-- Display the installed R version
-- Automate data processing tasks using R scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run R scripts from the command line
+  - Execute R code in vanilla mode
+  - Evaluate R expressions directly
+  - Display the installed R version
+  - Automate data processing tasks using R scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Rscript

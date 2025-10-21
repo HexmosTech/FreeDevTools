@@ -1,29 +1,29 @@
 ---
-title: "Logic Apps - Manage Azure Logic Apps | Online Free DevTools by Hexmos"
+title: 'Logic Apps - Manage Azure Logic Apps | Online Free DevTools by Hexmos'
 name: az-logicapp
-path: "/freedevtools/tldr/az/az-logicapp/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-logicapp/"
-description: "Manage Azure Logic Apps with az-logicapp. Deploy, configure, and monitor serverless workflows in Azure. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-logicapp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-logicapp/'
+description: 'Manage Azure Logic Apps with az-logicapp. Deploy, configure, and monitor serverless workflows in Azure. Free online tool, no registration required.'
 category: common
 keywords:
-- azure logic apps management
-- az logicapp deployment
-- azure workflow automation
-- serverless workflow configuration
-- azure cli logic apps
-- logic app resource management
-- azure automation scripts
-- logic app monitoring tools
-- azure cloud services cli
-- az automation commands
+  - azure logic apps management
+  - az logicapp deployment
+  - azure workflow automation
+  - serverless workflow configuration
+  - azure cli logic apps
+  - logic app resource management
+  - azure automation scripts
+  - logic app monitoring tools
+  - azure cloud services cli
+  - az automation commands
 features:
-- Create new Azure Logic Apps instances
-- Delete existing Logic Apps
-- List available Logic Apps within a resource group
-- Restart stopped Logic Apps for quick recovery
-- Start and stop Logic Apps for cost optimization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Azure Logic Apps instances
+  - Delete existing Logic Apps
+  - List available Logic Apps within a resource group
+  - Restart stopped Logic Apps for quick recovery
+  - Start and stop Logic Apps for cost optimization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az logicapp

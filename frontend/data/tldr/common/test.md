@@ -1,29 +1,29 @@
 ---
-title: "Test Command - Validate File Types | Online Free DevTools by Hexmos"
+title: 'Test Command - Validate File Types | Online Free DevTools by Hexmos'
 name: test
-path: "/freedevtools/tldr/common/test/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/test/"
-description: "Validate file types and compare values with Test Command. Determine file existence and compare strings. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/test/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/test/'
+description: 'Validate file types and compare values with Test Command. Determine file existence and compare strings. Free online tool, no registration required.'
 category: common
 keywords:
-- file type validation
-- string comparison test
-- file existence check
-- directory existence check
-- shell script test
-- command line test
-- bash test command
-- zsh test command
-- linux test command
-- macos test command
+  - file type validation
+  - string comparison test
+  - file existence check
+  - directory existence check
+  - shell script test
+  - command line test
+  - bash test command
+  - zsh test command
+  - linux test command
+  - macos test command
 features:
-- Check if a file exists
-- Compare string values
-- Determine if a variable is empty
-- Verify directory existence
-- Execute conditional statements based on test results
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check if a file exists
+  - Compare string values
+  - Determine if a variable is empty
+  - Verify directory existence
+  - Execute conditional statements based on test results
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # test

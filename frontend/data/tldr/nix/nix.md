@@ -1,29 +1,29 @@
 ---
-title: "Nix Package Manager - Control Packages Declaratively | Online Free DevTools by Hexmos"
+title: 'Nix Package Manager - Control Packages Declaratively | Online Free DevTools by Hexmos'
 name: nix
-path: "/freedevtools/tldr/nix/nix/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix/"
-description: "Control packages reliably with Nix Package Manager. Manage dependencies, create reproducible builds, and simplify software deployments. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix/'
+description: 'Control packages reliably with Nix Package Manager. Manage dependencies, create reproducible builds, and simplify software deployments. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package management
-- declarative package manager
-- reproducible builds nix
-- nix command line
-- functional package manager
-- nixpkgs package search
-- nix shell environment
-- nix store garbage collection
-- linux package management
-- macos package management
+  - nix package management
+  - declarative package manager
+  - reproducible builds nix
+  - nix command line
+  - functional package manager
+  - nixpkgs package search
+  - nix shell environment
+  - nix store garbage collection
+  - linux package management
+  - macos package management
 features:
-- Declaratively manage software dependencies
-- Create reproducible build environments
-- Search for packages in the nixpkgs repository
-- Install and uninstall packages easily
-- Start interactive Nix expression evaluation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Declaratively manage software dependencies
+  - Create reproducible build environments
+  - Search for packages in the nixpkgs repository
+  - Install and uninstall packages easily
+  - Start interactive Nix expression evaluation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix

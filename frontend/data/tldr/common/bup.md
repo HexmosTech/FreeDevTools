@@ -1,29 +1,29 @@
 ---
-title: "Create Bup Backups - Deduplicate Data | Online Free DevTools by Hexmos"
+title: 'Create Bup Backups - Deduplicate Data | Online Free DevTools by Hexmos'
 name: bup
-path: "/freedevtools/tldr/common/bup/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bup/"
-description: "Create backups with Bup. Easily manage incremental backups with global deduplication and version control, using the Git packfile format. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bup/'
+description: 'Create backups with Bup. Easily manage incremental backups with global deduplication and version control, using the Git packfile format. Free online tool, no registration required.'
 category: common
 keywords:
-- Bup backup tool
-- Git based backup
-- Data deduplication
-- Incremental backup
-- Version control backup
-- Command line backup
-- Backup repository
-- Bup restore
-- Linux backup
-- MacOS backup
+  - Bup backup tool
+  - Git based backup
+  - Data deduplication
+  - Incremental backup
+  - Version control backup
+  - Command line backup
+  - Backup repository
+  - Bup restore
+  - Linux backup
+  - MacOS backup
 features:
-- Initialize a Bup repository
-- Index a directory for backup
-- Save a directory to the Bup repository
-- List available backup snapshots
-- Restore a backup snapshot to a target directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a Bup repository
+  - Index a directory for backup
+  - Save a directory to the Bup repository
+  - List available backup snapshots
+  - Restore a backup snapshot to a target directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bup

@@ -1,29 +1,29 @@
 ---
-title: "Download LinkedIn Learning Videos - LLVD Downloader | Online Free DevTools by Hexmos"
+title: 'Download LinkedIn Learning Videos - LLVD Downloader | Online Free DevTools by Hexmos'
 name: llvd
-path: "/freedevtools/tldr/common/llvd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/llvd/"
-description: "Download LinkedIn Learning videos with LLVD. Extract courses, captions, and specify resolutions effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/llvd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/llvd/'
+description: 'Download LinkedIn Learning videos with LLVD. Extract courses, captions, and specify resolutions effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- LinkedIn Learning video downloader
-- LLVD downloader
-- course downloader
-- video extraction tool
-- LinkedIn Learning course download
-- video downloader command line
-- course download with captions
-- online learning downloader
-- video resolution control
-- cookie-based authentication download
+  - LinkedIn Learning video downloader
+  - LLVD downloader
+  - course downloader
+  - video extraction tool
+  - LinkedIn Learning course download
+  - video downloader command line
+  - course download with captions
+  - online learning downloader
+  - video resolution control
+  - cookie-based authentication download
 features:
-- Download LinkedIn Learning courses using cookie authentication.
-- Download courses at specific resolutions.
-- Download courses with captions and subtitles.
-- Throttle download speeds to avoid detection.
-- Extract specific paths within a course.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download LinkedIn Learning courses using cookie authentication.
+  - Download courses at specific resolutions.
+  - Download courses with captions and subtitles.
+  - Throttle download speeds to avoid detection.
+  - Extract specific paths within a course.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # llvd

@@ -1,9 +1,9 @@
 ---
-title: "Bore - Expose Local Port | Online Free DevTools by Hexmos"
+title: 'Bore - Expose Local Port | Online Free DevTools by Hexmos'
 name: bore
-path: "/freedevtools/tldr/linux/bore/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bore/"
-description: "Expose local ports with Bore. Create secure tunnels to a remote server and share your localhost. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bore/'
+description: 'Expose local ports with Bore. Create secure tunnels to a remote server and share your localhost. Free online tool, no registration required.'
 category: linux
 keywords:
   - bore tunnel
@@ -22,8 +22,8 @@ features:
   - Create secure tunnels to a remote host.
   - Forward traffic from a remote server to a local port.
   - Run a Bore server.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bore

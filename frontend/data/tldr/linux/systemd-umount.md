@@ -1,9 +1,9 @@
 ---
-title: "Systemd Umount - Control Mount Points | Online Free DevTools by Hexmos"
+title: 'Systemd Umount - Control Mount Points | Online Free DevTools by Hexmos'
 name: systemd-umount
-path: "/freedevtools/tldr/linux/systemd-umount/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-umount/"
-description: "Control mount points with Systemd Umount, a command alias for systemd-mount. Unmount file systems efficiently and manage devices easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-umount/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-umount/'
+description: 'Control mount points with Systemd Umount, a command alias for systemd-mount. Unmount file systems efficiently and manage devices easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd umount linux
@@ -22,8 +22,8 @@ features:
   - Execute systemd-mount operations
   - Utilize command alias functionality
   - Simplify device unmounting procedures
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-umount

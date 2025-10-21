@@ -1,9 +1,9 @@
 ---
-title: "Create Debian Systems - debootstrap Command | Online Free DevTools by Hexmos"
+title: 'Create Debian Systems - debootstrap Command | Online Free DevTools by Hexmos'
 name: debootstrap
-path: "/freedevtools/tldr/linux/debootstrap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/debootstrap/"
-description: "Create Debian systems quickly with the debootstrap command.  Bootstrap minimal or full systems, specify releases, and manage dependencies effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/debootstrap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/debootstrap/'
+description: 'Create Debian systems quickly with the debootstrap command.  Bootstrap minimal or full systems, specify releases, and manage dependencies effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - debian installer
@@ -22,8 +22,8 @@ features:
   - Use a local mirror for faster bootstrapping.
   - Create chroot environments for easy system administration.
   - Install Debian systems to a specified directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # debootstrap

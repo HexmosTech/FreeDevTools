@@ -1,29 +1,29 @@
 ---
-title: "TLMGR GUI - Control TeX Live Manager Graphically | Online Free DevTools by Hexmos"
+title: 'TLMGR GUI - Control TeX Live Manager Graphically | Online Free DevTools by Hexmos'
 name: tlmgr-gui
-path: "/freedevtools/tldr/tlmgr/tlmgr-gui/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-gui/"
-description: "Control TeX Live Manager graphically with TLMGR GUI. Configure TeX packages and settings using an intuitive interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-gui/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-gui/'
+description: 'Control TeX Live Manager graphically with TLMGR GUI. Configure TeX packages and settings using an intuitive interface. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX Live Manager GUI
-- TLMGR GUI Linux
-- TLMGR GUI macOS
-- TLMGR Package Manager
-- TeX Package Configuration
-- TeX Live Update Manager
-- TLMGR Perl-Tk Interface
-- TeX Distribution Manager
-- LaTeX Package Manager GUI
-- TLMGR Font Configuration
+  - TeX Live Manager GUI
+  - TLMGR GUI Linux
+  - TLMGR GUI macOS
+  - TLMGR Package Manager
+  - TeX Package Configuration
+  - TeX Live Update Manager
+  - TLMGR Perl-Tk Interface
+  - TeX Distribution Manager
+  - LaTeX Package Manager GUI
+  - TLMGR Font Configuration
 features:
-- Launch graphical user interface for TLMGR
-- Customize background and foreground colors
-- Set custom font and font size
-- Specify window geometry for the GUI
-- Pass arbitrary X resource strings to the GUI
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch graphical user interface for TLMGR
+  - Customize background and foreground colors
+  - Set custom font and font size
+  - Specify window geometry for the GUI
+  - Pass arbitrary X resource strings to the GUI
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr gui

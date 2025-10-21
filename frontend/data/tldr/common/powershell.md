@@ -1,29 +1,29 @@
 ---
-title: "PowerShell - Execute Commands | Online Free DevTools by Hexmos"
+title: 'PowerShell - Execute Commands | Online Free DevTools by Hexmos'
 name: powershell
-path: "/freedevtools/tldr/common/powershell/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/powershell/"
-description: "Execute commands with PowerShell. Manage Windows systems, automate tasks and configure settings with Windows PowerShell command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/powershell/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/powershell/'
+description: 'Execute commands with PowerShell. Manage Windows systems, automate tasks and configure settings with Windows PowerShell command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- PowerShell command
-- Windows PowerShell
-- command-line interface
-- task automation
-- configuration management
-- system administration
-- script execution
-- shell scripting
-- cmdlets
-- Windows scripting
+  - PowerShell command
+  - Windows PowerShell
+  - command-line interface
+  - task automation
+  - configuration management
+  - system administration
+  - script execution
+  - shell scripting
+  - cmdlets
+  - Windows scripting
 features:
-- Execute PowerShell commands directly.
-- Automate system administration tasks.
-- Configure Windows settings via command-line.
-- Manage and control Windows systems remotely.
-- Run PowerShell scripts for batch processing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute PowerShell commands directly.
+  - Automate system administration tasks.
+  - Configure Windows settings via command-line.
+  - Manage and control Windows systems remotely.
+  - Run PowerShell scripts for batch processing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # powershell

@@ -1,29 +1,29 @@
 ---
-title: "Convert Raw to PPM - Create PPM Images | Online Free DevTools by Hexmos"
+title: 'Convert Raw to PPM - Create PPM Images | Online Free DevTools by Hexmos'
 name: rawtoppm
-path: "/freedevtools/tldr/common/rawtoppm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rawtoppm/"
-description: "Convert raw image data to PPM format with rawtoppm.  Create and manipulate images efficiently with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/rawtoppm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rawtoppm/'
+description: 'Convert raw image data to PPM format with rawtoppm.  Create and manipulate images efficiently with this free online tool, no registration required.'
 category: common
 keywords:
-- raw image to ppm
-- ppm image converter
-- raw rgb to ppm
-- image format conversion
-- raw image processor
-- linux image tools
-- command line image converter
-- ppm image creation
-- image data manipulation
-- raw image manipulation
+  - raw image to ppm
+  - ppm image converter
+  - raw rgb to ppm
+  - image format conversion
+  - raw image processor
+  - linux image tools
+  - command line image converter
+  - ppm image creation
+  - image data manipulation
+  - raw image manipulation
 features:
-- Convert raw RGB stream to PPM image format
-- Handle different color component orders (RGB, RBG, GRB, GBR, BRG, BGR)
-- Skip initial bytes from raw image file
-- Skip trailing bytes from each row in raw image file
-- Support bottom-to-top raw image data conversion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert raw RGB stream to PPM image format
+  - Handle different color component orders (RGB, RBG, GRB, GBR, BRG, BGR)
+  - Skip initial bytes from raw image file
+  - Skip trailing bytes from each row in raw image file
+  - Support bottom-to-top raw image data conversion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rawtoppm

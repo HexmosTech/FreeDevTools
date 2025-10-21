@@ -1,29 +1,29 @@
 ---
-title: "Optimize WebAssembly - Optimize WASM Binary Files | Online Free DevTools by Hexmos"
+title: 'Optimize WebAssembly - Optimize WASM Binary Files | Online Free DevTools by Hexmos'
 name: wasm-opt
-path: "/freedevtools/tldr/wasm/wasm-opt/"
-canonical: "https://hexmos.com/freedevtools/tldr/wasm/wasm-opt/"
-description: "Optimize WebAssembly binary files with wasm-opt. Reduce file sizes and improve performance of WASM applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/wasm/wasm-opt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/wasm/wasm-opt/'
+description: 'Optimize WebAssembly binary files with wasm-opt. Reduce file sizes and improve performance of WASM applications. Free online tool, no registration required.'
 category: common
 keywords:
-- WebAssembly optimization
-- WASM optimizer
-- Binaryen WASM tool
-- WASM file size reduction
-- WASM performance improvement
-- WASM binary compression
-- WASM code shrinker
-- WASM module optimizer
-- Command line WASM tools
-- WASM code optimization
+  - WebAssembly optimization
+  - WASM optimizer
+  - Binaryen WASM tool
+  - WASM file size reduction
+  - WASM performance improvement
+  - WASM binary compression
+  - WASM code shrinker
+  - WASM module optimizer
+  - Command line WASM tools
+  - WASM code optimization
 features:
-- Reduce WebAssembly binary file sizes
-- Improve WASM application performance
-- Apply various optimization levels
-- Print textual representation of WASM binaries
-- Support size-optimized builds
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Reduce WebAssembly binary file sizes
+  - Improve WASM application performance
+  - Apply various optimization levels
+  - Print textual representation of WASM binaries
+  - Support size-optimized builds
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wasm-opt

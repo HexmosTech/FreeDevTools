@@ -1,29 +1,29 @@
 ---
-title: "Convert PICT to PPM - Image Converter | Online Free DevTools by Hexmos"
+title: 'Convert PICT to PPM - Image Converter | Online Free DevTools by Hexmos'
 name: picttoppm
-path: "/freedevtools/tldr/common/picttoppm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/picttoppm/"
-description: "Convert PICT images to PPM format with picttoppm. Process legacy Macintosh graphics into modern image formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/picttoppm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/picttoppm/'
+description: 'Convert PICT images to PPM format with picttoppm. Process legacy Macintosh graphics into modern image formats. Free online tool, no registration required.'
 category: common
 keywords:
-- pict to ppm converter
-- macintosh image conversion
-- ppm image generation
-- pict image editor
-- graphics file conversion
-- command line image tools
-- netpbm image tools
-- image format converter
-- legacy image format
-- pict image manipulation
+  - pict to ppm converter
+  - macintosh image conversion
+  - ppm image generation
+  - pict image editor
+  - graphics file conversion
+  - command line image tools
+  - netpbm image tools
+  - image format converter
+  - legacy image format
+  - pict image manipulation
 features:
-- Converts PICT image files to PPM format
-- Processes Macintosh legacy graphic files
-- Outputs images at full resolution
-- Executes quickdraw operations without PICT header
-- Supports command-line image conversion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Converts PICT image files to PPM format
+  - Processes Macintosh legacy graphic files
+  - Outputs images at full resolution
+  - Executes quickdraw operations without PICT header
+  - Supports command-line image conversion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # picttoppm

@@ -1,9 +1,9 @@
 ---
-title: "List System Locks - Control System Resources with lslocks | Online Free DevTools by Hexmos"
+title: 'List System Locks - Control System Resources with lslocks | Online Free DevTools by Hexmos'
 name: lslocks
-path: "/freedevtools/tldr/linux/lslocks/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lslocks/"
-description: "List and manage system locks with lslocks.  View lock details, filter by PID, and output in various formats (raw, JSON). Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lslocks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lslocks/'
+description: 'List and manage system locks with lslocks.  View lock details, filter by PID, and output in various formats (raw, JSON). Free online tool, no registration required.'
 category: linux
 keywords:
   - system lock listing
@@ -22,8 +22,8 @@ features:
   - Provides output with customizable column headers.
   - Generates raw output without column headers.
   - Exports lock information in JSON format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lslocks

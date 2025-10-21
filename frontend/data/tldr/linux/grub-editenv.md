@@ -1,9 +1,9 @@
 ---
-title: "Control GRUB Environment - Edit Variables | Online Free DevTools by Hexmos"
+title: 'Control GRUB Environment - Edit Variables | Online Free DevTools by Hexmos'
 name: grub-editenv
-path: "/freedevtools/tldr/linux/grub-editenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-editenv/"
-description: "Control GRUB environment variables with grub-editenv. Manage boot entries, reset variables, and configure the GRUB environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/grub-editenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/grub-editenv/'
+description: 'Control GRUB environment variables with grub-editenv. Manage boot entries, reset variables, and configure the GRUB environment. Free online tool, no registration required.'
 category: linux
 keywords:
   - grub environment editor
@@ -22,8 +22,8 @@ features:
   - Reset specific GRUB variables
   - Modify GRUB environment settings
   - Manage boot configuration from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grub-editenv

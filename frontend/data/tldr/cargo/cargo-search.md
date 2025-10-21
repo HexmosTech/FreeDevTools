@@ -1,29 +1,29 @@
 ---
-title: "Cargo Search - Find Rust Packages | Online Free DevTools by Hexmos"
+title: 'Cargo Search - Find Rust Packages | Online Free DevTools by Hexmos'
 name: cargo-search
-path: "/freedevtools/tldr/cargo/cargo-search/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-search/"
-description: "Find Rust packages easily with Cargo Search. Discover crates and their descriptions in TOML format for seamless Cargo.toml integration. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-search/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-search/'
+description: 'Find Rust packages easily with Cargo Search. Discover crates and their descriptions in TOML format for seamless Cargo.toml integration. Free online tool, no registration required.'
 category: common
 keywords:
-- rust package search
-- crates.io search
-- cargo crate finder
-- rust dependency lookup
-- toml package info
-- rust command line tools
-- cargo package manager
-- rust development
-- rust library search
-- cargo crates search
+  - rust package search
+  - crates.io search
+  - cargo crate finder
+  - rust dependency lookup
+  - toml package info
+  - rust command line tools
+  - cargo package manager
+  - rust development
+  - rust library search
+  - cargo crates search
 features:
-- Search for packages on crates.io
-- Display crate descriptions in TOML format
-- Limit the number of search results
-- Integrate seamlessly with Cargo.toml
-- Find Rust dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for packages on crates.io
+  - Display crate descriptions in TOML format
+  - Limit the number of search results
+  - Integrate seamlessly with Cargo.toml
+  - Find Rust dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo search

@@ -1,29 +1,29 @@
 ---
-title: "Age Encryption - Encrypt and Decrypt Files | Online Free DevTools by Hexmos"
+title: 'Age Encryption - Encrypt and Decrypt Files | Online Free DevTools by Hexmos'
 name: age
-path: "/freedevtools/tldr/common/age/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/age/"
-description: "Encrypt files securely with Age, a modern encryption tool. Protect sensitive data using public keys, passphrases and file encryption. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/age/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/age/'
+description: 'Encrypt files securely with Age, a modern encryption tool. Protect sensitive data using public keys, passphrases and file encryption. Free online tool, no registration required.'
 category: common
 keywords:
-- age file encryption
-- file encryption
-- age encryption tool
-- public key encryption
-- private key decryption
-- age passphrase encryption
-- linux file encryption
-- macos file encryption
-- command line encryption
-- age recipients file
+  - age file encryption
+  - file encryption
+  - age encryption tool
+  - public key encryption
+  - private key decryption
+  - age passphrase encryption
+  - linux file encryption
+  - macos file encryption
+  - command line encryption
+  - age recipients file
 features:
-- Encrypt files using public keys for secure sharing
-- Decrypt files using private keys for authorized access
-- Encrypt files with a passphrase for ease of use
-- Encrypt files using a recipients file for multiple users
-- Generate encrypted files suitable for archival or transfer
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encrypt files using public keys for secure sharing
+  - Decrypt files using private keys for authorized access
+  - Encrypt files with a passphrase for ease of use
+  - Encrypt files using a recipients file for multiple users
+  - Generate encrypted files suitable for archival or transfer
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # age

@@ -1,29 +1,29 @@
 ---
-title: "PlatformIO Check - Validate Project Code | Online Free DevTools by Hexmos"
+title: 'PlatformIO Check - Validate Project Code | Online Free DevTools by Hexmos'
 name: pio-check
-path: "/freedevtools/tldr/pio/pio-check/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-check/"
-description: "Validate PlatformIO project code with PlatformIO Check. Perform static analysis and identify potential defects in your code. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-check/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-check/'
+description: 'Validate PlatformIO project code with PlatformIO Check. Perform static analysis and identify potential defects in your code. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO static analysis
-- PlatformIO code check
-- Pio project validation
-- PlatformIO linting
-- Pio code quality
-- Pio defect detection
-- PlatformIO build analysis
-- PlatformIO environment check
-- Pio project directory check
-- PlatformIO project analysis
+  - PlatformIO static analysis
+  - PlatformIO code check
+  - Pio project validation
+  - PlatformIO linting
+  - Pio code quality
+  - Pio defect detection
+  - PlatformIO build analysis
+  - PlatformIO environment check
+  - Pio project directory check
+  - PlatformIO project analysis
 features:
-- Perform static analysis on PlatformIO projects
-- Check for defects in PlatformIO project code
-- Analyze code for specific environments
-- Report defects based on severity levels
-- Provide detailed information during environment processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform static analysis on PlatformIO projects
+  - Check for defects in PlatformIO project code
+  - Analyze code for specific environments
+  - Report defects based on severity levels
+  - Provide detailed information during environment processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio check

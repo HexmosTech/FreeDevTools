@@ -1,29 +1,29 @@
 ---
-title: "Manage Cloud Storage - Control GCP Buckets | Online Free DevTools by Hexmos"
+title: 'Manage Cloud Storage - Control GCP Buckets | Online Free DevTools by Hexmos'
 name: gsutil
-path: "/freedevtools/tldr/common/gsutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gsutil/"
-description: "Manage Google Cloud Storage with gsutil command. Upload, download, and manipulate buckets and objects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gsutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gsutil/'
+description: 'Manage Google Cloud Storage with gsutil command. Upload, download, and manipulate buckets and objects. Free online tool, no registration required.'
 category: common
 keywords:
-- cloud storage manager
-- gsutil command line
-- google cloud bucket manager
-- gcp storage control
-- object storage management
-- bucket operations
-- cloud file transfer
-- storage bucket manipulation
-- gsutil linux
-- gsutil macos
+  - cloud storage manager
+  - gsutil command line
+  - google cloud bucket manager
+  - gcp storage control
+  - object storage management
+  - bucket operations
+  - cloud file transfer
+  - storage bucket manipulation
+  - gsutil linux
+  - gsutil macos
 features:
-- List buckets in a Google Cloud project
-- Upload objects to Google Cloud Storage buckets
-- Download objects from Google Cloud Storage buckets
-- Rename or move objects within Google Cloud Storage
-- Create and delete Google Cloud Storage buckets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List buckets in a Google Cloud project
+  - Upload objects to Google Cloud Storage buckets
+  - Download objects from Google Cloud Storage buckets
+  - Rename or move objects within Google Cloud Storage
+  - Create and delete Google Cloud Storage buckets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gsutil

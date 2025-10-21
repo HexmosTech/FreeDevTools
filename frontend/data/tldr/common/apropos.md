@@ -1,29 +1,29 @@
 ---
-title: "Search Man Pages - Find Commands by Keyword | Online Free DevTools by Hexmos"
+title: 'Search Man Pages - Find Commands by Keyword | Online Free DevTools by Hexmos'
 name: apropos
-path: "/freedevtools/tldr/common/apropos/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/apropos/"
-description: "Search man pages effortlessly with Apropos. Quickly find commands and descriptions using keywords for Linux, macOS, and other Unix-like systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/apropos/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/apropos/'
+description: 'Search man pages effortlessly with Apropos. Quickly find commands and descriptions using keywords for Linux, macOS, and other Unix-like systems. Free online tool, no registration required.'
 category: common
 keywords:
-- manual page search
-- command line search
-- linux command search
-- macos command search
-- unix command finder
-- terminal command lookup
-- regex manual search
-- apropos command
-- command description search
-- manual page index
+  - manual page search
+  - command line search
+  - linux command search
+  - macos command search
+  - unix command finder
+  - terminal command lookup
+  - regex manual search
+  - apropos command
+  - command description search
+  - manual page index
 features:
-- Search manual pages by keyword
-- Find commands using regular expressions
-- Display long output without terminal width restriction
-- Search for pages matching multiple keywords
-- Quickly locate command descriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search manual pages by keyword
+  - Find commands using regular expressions
+  - Display long output without terminal width restriction
+  - Search for pages matching multiple keywords
+  - Quickly locate command descriptions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apropos

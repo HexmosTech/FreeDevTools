@@ -1,29 +1,29 @@
 ---
-title: "Create Qemu-img Images - Manage Virtual Disks | Online Free DevTools by Hexmos"
+title: 'Create Qemu-img Images - Manage Virtual Disks | Online Free DevTools by Hexmos'
 name: qemu-img
-path: "/freedevtools/tldr/qemu/qemu-img/"
-canonical: "https://hexmos.com/freedevtools/tldr/qemu/qemu-img/"
-description: "Create and manage virtual disk images with Qemu-img, the quick emulator image utility. Convert formats and handle snapshots with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/qemu/qemu-img/'
+canonical: 'https://hexmos.com/freedevtools/tldr/qemu/qemu-img/'
+description: 'Create and manage virtual disk images with Qemu-img, the quick emulator image utility. Convert formats and handle snapshots with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- qemu image creation
-- virtual disk management
-- qcow2 conversion
-- vmdk to qcow2
-- qemu snapshot
-- kvm image manipulation
-- disk image resize
-- virtual machine disk
-- qemu-img command
-- linux disk image
+  - qemu image creation
+  - virtual disk management
+  - qcow2 conversion
+  - vmdk to qcow2
+  - qemu snapshot
+  - kvm image manipulation
+  - disk image resize
+  - virtual machine disk
+  - qemu-img command
+  - linux disk image
 features:
-- Create virtual hard disk images
-- Convert between different image formats
-- Resize existing disk images
-- Manage internal snapshots
-- Dump allocation maps for disk analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create virtual hard disk images
+  - Convert between different image formats
+  - Resize existing disk images
+  - Manage internal snapshots
+  - Dump allocation maps for disk analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qemu-img

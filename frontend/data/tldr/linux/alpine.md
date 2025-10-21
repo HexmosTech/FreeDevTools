@@ -1,9 +1,9 @@
 ---
-title: "Alpine Email Client - Manage Emails via Command Line | Online Free DevTools by Hexmos"
+title: 'Alpine Email Client - Manage Emails via Command Line | Online Free DevTools by Hexmos'
 name: alpine
-path: "/freedevtools/tldr/linux/alpine/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/alpine/"
-description: "Manage emails efficiently with Alpine email client.  Compose, read, and send emails using a simple command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/alpine/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/alpine/'
+description: 'Manage emails efficiently with Alpine email client.  Compose, read, and send emails using a simple command-line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - email command-line client
@@ -22,8 +22,8 @@ features:
   - Access and participate in Usenet newsgroups.
   - Utilize a simple, intuitive pico/nano-like interface.
   - Supports efficient keyboard shortcuts for navigation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # alpine

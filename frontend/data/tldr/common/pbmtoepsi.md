@@ -1,29 +1,29 @@
 ---
-title: "Convert PBM to EPSI - Generate EPSI Preview Bitmaps | Online Free DevTools by Hexmos"
+title: 'Convert PBM to EPSI - Generate EPSI Preview Bitmaps | Online Free DevTools by Hexmos'
 name: pbmtoepsi
-path: "/freedevtools/tldr/common/pbmtoepsi/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoepsi/"
-description: "Convert PBM images to EPSI format with PBMtoEPSI. Generate encapsulated PostScript preview bitmaps. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmtoepsi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmtoepsi/'
+description: 'Convert PBM images to EPSI format with PBMtoEPSI. Generate encapsulated PostScript preview bitmaps. Free online tool, no registration required.'
 category: common
 keywords:
-- PBM to EPSI
-- EPSI converter
-- Bitmap converter
-- Image converter
-- Netpbm tools
-- PostScript preview
-- PBM image
-- Linux image tools
-- macOS image converter
-- Command line image tool
+  - PBM to EPSI
+  - EPSI converter
+  - Bitmap converter
+  - Image converter
+  - Netpbm tools
+  - PostScript preview
+  - PBM image
+  - Linux image tools
+  - macOS image converter
+  - Command line image tool
 features:
-- Convert PBM images to EPSI format
-- Generate encapsulated PostScript preview bitmaps
-- Specify output image resolution
-- Create boundary boxes only
-- Produce quadratic output images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PBM images to EPSI format
+  - Generate encapsulated PostScript preview bitmaps
+  - Specify output image resolution
+  - Create boundary boxes only
+  - Produce quadratic output images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmtoepsi

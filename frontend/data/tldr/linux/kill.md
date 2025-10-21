@@ -1,9 +1,9 @@
 ---
-title: "Control Processes - Kill Processes with Command | Online Free DevTools by Hexmos"
+title: 'Control Processes - Kill Processes with Command | Online Free DevTools by Hexmos'
 name: kill
-path: "/freedevtools/tldr/linux/kill/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kill/"
-description: "Control processes instantly with the Kill command. Send signals to terminate, interrupt, or pause processes on your system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kill/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kill/'
+description: 'Control processes instantly with the Kill command. Send signals to terminate, interrupt, or pause processes on your system. Free online tool, no registration required.'
 category: linux
 keywords:
   - process termination
@@ -22,8 +22,8 @@ features:
   - Terminate background jobs
   - Send custom signals to processes
   - Pause and resume processes with signals
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kill

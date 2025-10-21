@@ -1,9 +1,9 @@
 ---
-title: "Xargs Command - Execute Commands in Parallel | Online Free DevTools by Hexmos"
+title: 'Xargs Command - Execute Commands in Parallel | Online Free DevTools by Hexmos'
 name: gxargs
-path: "/freedevtools/tldr/osx/gxargs/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/gxargs/"
-description: "Execute commands in parallel with Xargs Command. Chain commands and process inputs efficiently, enhancing command-line productivity. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/gxargs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/gxargs/'
+description: 'Execute commands in parallel with Xargs Command. Chain commands and process inputs efficiently, enhancing command-line productivity. Free online tool, no registration required.'
 category: osx
 keywords:
   - command execution
@@ -22,8 +22,8 @@ features:
   - Process input from standard input
   - Handle large numbers of arguments efficiently
   - Build and execute command lines from standard input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gxargs

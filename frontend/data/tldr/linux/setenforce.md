@@ -1,9 +1,9 @@
 ---
-title: "Control SELinux - Set Enforcing Mode | Online Free DevTools by Hexmos"
+title: 'Control SELinux - Set Enforcing Mode | Online Free DevTools by Hexmos'
 name: setenforce
-path: "/freedevtools/tldr/linux/setenforce/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/setenforce/"
-description: "Control SELinux mode with the setenforce command.  Switch between enforcing and permissive modes easily for enhanced security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/setenforce/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/setenforce/'
+description: 'Control SELinux mode with the setenforce command.  Switch between enforcing and permissive modes easily for enhanced security. Free online tool, no registration required.'
 category: linux
 keywords:
   - selinux control command
@@ -22,8 +22,8 @@ features:
   - Provides a simple command-line interface for managing SELinux.
   - Enables testing of SELinux rules in permissive mode before enforcing.
   - Offers a crucial tool for system administrators to manage Linux security.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # setenforce

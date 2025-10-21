@@ -1,29 +1,29 @@
 ---
-title: "Launch GitWeb Server - Control Git Repository Web Interface | Online Free DevTools by Hexmos"
+title: 'Launch GitWeb Server - Control Git Repository Web Interface | Online Free DevTools by Hexmos'
 name: git-instaweb
-path: "/freedevtools/tldr/git/git-instaweb/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-instaweb/"
-description: "Control your Git repository web interface with git-instaweb. Launch a local GitWeb server and browse your repository in a web browser. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-instaweb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-instaweb/'
+description: 'Control your Git repository web interface with git-instaweb. Launch a local GitWeb server and browse your repository in a web browser. Free online tool, no registration required.'
 category: common
 keywords:
-- git web server
-- git instaweb server
-- git repository web interface
-- git web browser
-- git local server
-- git http server
-- git web ui
-- git command line server
-- git repository browser
-- git web development
+  - git web server
+  - git instaweb server
+  - git repository web interface
+  - git web browser
+  - git local server
+  - git http server
+  - git web ui
+  - git command line server
+  - git repository browser
+  - git web development
 features:
-- Launch a GitWeb server for easy repository browsing.
-- Configure server port and host.
-- Choose HTTP daemon (lighttpd, apache2, etc.).
-- Automatically launch a web browser.
-- Start, stop, or restart the GitWeb server.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch a GitWeb server for easy repository browsing.
+  - Configure server port and host.
+  - Choose HTTP daemon (lighttpd, apache2, etc.).
+  - Automatically launch a web browser.
+  - Start, stop, or restart the GitWeb server.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git instaweb

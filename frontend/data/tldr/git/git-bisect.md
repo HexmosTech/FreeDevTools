@@ -1,29 +1,29 @@
 ---
-title: "Git Bisect - Find Bug-Inducing Commits | Online Free DevTools by Hexmos"
+title: 'Git Bisect - Find Bug-Inducing Commits | Online Free DevTools by Hexmos'
 name: git-bisect
-path: "/freedevtools/tldr/git/git-bisect/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-bisect/"
-description: "Find bug-inducing commits with Git Bisect. Use binary search in Git to identify faulty commits efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-bisect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-bisect/'
+description: 'Find bug-inducing commits with Git Bisect. Use binary search in Git to identify faulty commits efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git bisect
-- git commit bisect
-- git binary search
-- git bug finder
-- git debug commit
-- git error tracking
-- git commit history
-- git version control bisect
-- command line git bisect
-- git bisect tool
+  - git bisect
+  - git commit bisect
+  - git binary search
+  - git bug finder
+  - git debug commit
+  - git error tracking
+  - git commit history
+  - git version control bisect
+  - command line git bisect
+  - git bisect tool
 features:
-- Find the commit that introduced a bug using binary search.
-- Pinpoint faulty commits in your Git repository.
-- Narrow down a commit range to locate the problematic code.
-- Skip commits during the bisect process to isolate the issue.
-- Log the bisect session to track your progress.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Find the commit that introduced a bug using binary search.
+  - Pinpoint faulty commits in your Git repository.
+  - Narrow down a commit range to locate the problematic code.
+  - Skip commits during the bisect process to isolate the issue.
+  - Log the bisect session to track your progress.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git bisect

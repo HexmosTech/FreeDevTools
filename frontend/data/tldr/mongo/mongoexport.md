@@ -1,29 +1,29 @@
 ---
-title: "Mongoexport - Export MongoDB Data to JSON or CSV | Online Free DevTools by Hexmos"
+title: 'Mongoexport - Export MongoDB Data to JSON or CSV | Online Free DevTools by Hexmos'
 name: mongoexport
-path: "/freedevtools/tldr/mongo/mongoexport/"
-canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongoexport/"
-description: "Export MongoDB data with Mongoexport. Convert MongoDB collections to JSON or CSV format for data analysis and migration. Free online tool, no registration required."
+path: '/freedevtools/tldr/mongo/mongoexport/'
+canonical: 'https://hexmos.com/freedevtools/tldr/mongo/mongoexport/'
+description: 'Export MongoDB data with Mongoexport. Convert MongoDB collections to JSON or CSV format for data analysis and migration. Free online tool, no registration required.'
 category: common
 keywords:
-- MongoDB export
-- JSON export MongoDB
-- CSV export MongoDB
-- MongoDB data export tool
-- Command line MongoDB export
-- MongoDB export collection
-- MongoDB export to file
-- MongoDB export query
-- MongoDB export JSON array
-- MongoDB export CSV fields
+  - MongoDB export
+  - JSON export MongoDB
+  - CSV export MongoDB
+  - MongoDB data export tool
+  - Command line MongoDB export
+  - MongoDB export collection
+  - MongoDB export to file
+  - MongoDB export query
+  - MongoDB export JSON array
+  - MongoDB export CSV fields
 features:
-- Export MongoDB collections to JSON format.
-- Export MongoDB data to CSV format with specified fields.
-- Export MongoDB data based on query filters.
-- Export MongoDB data to stdout for piping.
-- Export MongoDB data as a JSON array.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Export MongoDB collections to JSON format.
+  - Export MongoDB data to CSV format with specified fields.
+  - Export MongoDB data based on query filters.
+  - Export MongoDB data to stdout for piping.
+  - Export MongoDB data as a JSON array.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mongoexport

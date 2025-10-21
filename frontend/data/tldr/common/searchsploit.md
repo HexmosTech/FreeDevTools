@@ -1,29 +1,29 @@
 ---
-title: "Searchsploit - Find Exploits & Vulnerabilities | Online Free DevTools by Hexmos"
+title: 'Searchsploit - Find Exploits & Vulnerabilities | Online Free DevTools by Hexmos'
 name: searchsploit
-path: "/freedevtools/tldr/common/searchsploit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/searchsploit/"
-description: "Find exploits and vulnerabilities with Searchsploit. Discover shellcodes, papers, and CVE details effortlessly using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/searchsploit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/searchsploit/'
+description: 'Find exploits and vulnerabilities with Searchsploit. Discover shellcodes, papers, and CVE details effortlessly using this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- exploit database search
-- shellcode search
-- vulnerability scanner
-- exploit finder linux
-- exploit finder command line
-- exploit search tool
-- cve exploit search
-- exploit database linux
-- vulnerability search common
-- exploit-db search
+  - exploit database search
+  - shellcode search
+  - vulnerability scanner
+  - exploit finder linux
+  - exploit finder command line
+  - exploit search tool
+  - cve exploit search
+  - exploit database linux
+  - vulnerability search common
+  - exploit-db search
 features:
-- Search exploit database for specific exploits
-- Identify vulnerabilities using CVE identifiers
-- Mirror exploit resources to local directory
-- Examine exploit details in pager
-- Update local exploit database
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search exploit database for specific exploits
+  - Identify vulnerabilities using CVE identifiers
+  - Mirror exploit resources to local directory
+  - Examine exploit details in pager
+  - Update local exploit database
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # searchsploit

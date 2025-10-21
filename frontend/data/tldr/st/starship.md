@@ -1,29 +1,29 @@
 ---
-title: "Starship Prompt - Customize Shell Prompts | Online Free DevTools by Hexmos"
+title: 'Starship Prompt - Customize Shell Prompts | Online Free DevTools by Hexmos'
 name: starship
-path: "/freedevtools/tldr/st/starship/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/starship/"
-description: "Customize shell prompts with Starship. Configure shell prompts, integrate across multiple shells, and enhance terminal experience with this blazing-fast tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/starship/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/starship/'
+description: 'Customize shell prompts with Starship. Configure shell prompts, integrate across multiple shells, and enhance terminal experience with this blazing-fast tool. Free online tool, no registration required.'
 category: common
 keywords:
-- starship prompt customization
-- cross-shell prompt manager
-- terminal prompt configuration
-- bash prompt starship
-- zsh prompt starship
-- powershell prompt starship
-- fish prompt starship
-- starship configuration manager
-- custom shell theme
-- starship module configuration
+  - starship prompt customization
+  - cross-shell prompt manager
+  - terminal prompt configuration
+  - bash prompt starship
+  - zsh prompt starship
+  - powershell prompt starship
+  - fish prompt starship
+  - starship configuration manager
+  - custom shell theme
+  - starship module configuration
 features:
-- Customize prompts for various shells (bash, zsh, powershell, etc.)
-- Analyze and explain prompt rendering components and time
-- Generate shell-specific integration code for Starship
-- Print and manage Starship configuration settings
-- Create bug reports with system and configuration information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Customize prompts for various shells (bash, zsh, powershell, etc.)
+  - Analyze and explain prompt rendering components and time
+  - Generate shell-specific integration code for Starship
+  - Print and manage Starship configuration settings
+  - Create bug reports with system and configuration information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # starship

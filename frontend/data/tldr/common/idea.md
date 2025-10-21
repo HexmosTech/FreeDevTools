@@ -1,29 +1,29 @@
 ---
-title: "IntelliJ IDEA - Open Projects & Diff Files | Online Free DevTools by Hexmos"
+title: 'IntelliJ IDEA - Open Projects & Diff Files | Online Free DevTools by Hexmos'
 name: idea
-path: "/freedevtools/tldr/common/idea/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/idea/"
-description: "Open projects and compare files with IntelliJ IDEA command-line tool. Enhance Java and Kotlin development workflow with this powerful IDE integration. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/idea/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/idea/'
+description: 'Open projects and compare files with IntelliJ IDEA command-line tool. Enhance Java and Kotlin development workflow with this powerful IDE integration. Free online tool, no registration required.'
 category: common
 keywords:
-- IntelliJ IDEA command line
-- Java IDE launcher
-- Kotlin IDE launcher
-- Open IntelliJ project CLI
-- IntelliJ diff tool command
-- IntelliJ merge tool command
-- Code inspection CLI
-- IntelliJ IDEA Linux
-- IntelliJ IDEA MacOS
-- IntelliJ IDEA Windows
+  - IntelliJ IDEA command line
+  - Java IDE launcher
+  - Kotlin IDE launcher
+  - Open IntelliJ project CLI
+  - IntelliJ diff tool command
+  - IntelliJ merge tool command
+  - Code inspection CLI
+  - IntelliJ IDEA Linux
+  - IntelliJ IDEA MacOS
+  - IntelliJ IDEA Windows
 features:
-- Open projects in IntelliJ IDEA from the command line
-- Compare up to three files using the IntelliJ IDEA diff viewer
-- Perform two-way file merges using the IntelliJ IDEA merge dialog
-- Run code inspections on a project from the terminal
-- Launch the IntelliJ IDEA IDE
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open projects in IntelliJ IDEA from the command line
+  - Compare up to three files using the IntelliJ IDEA diff viewer
+  - Perform two-way file merges using the IntelliJ IDEA merge dialog
+  - Run code inspections on a project from the terminal
+  - Launch the IntelliJ IDEA IDE
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # idea

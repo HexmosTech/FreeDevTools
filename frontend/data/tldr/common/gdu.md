@@ -1,29 +1,29 @@
 ---
-title: "Analyze Disk Usage - Control Directory Sizes with GDU | Online Free DevTools by Hexmos"
+title: 'Analyze Disk Usage - Control Directory Sizes with GDU | Online Free DevTools by Hexmos'
 name: gdu
-path: "/freedevtools/tldr/common/gdu/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdu/"
-description: "Analyze disk usage efficiently with GDU. Find large files and directories quickly using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gdu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gdu/'
+description: 'Analyze disk usage efficiently with GDU. Find large files and directories quickly using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- disk usage analyzer
-- directory size analyzer
-- command line disk usage
-- terminal disk usage
-- linux disk usage
-- macos disk usage
-- gdu command
-- interactive disk usage
-- disk space usage
-- console disk usage
+  - disk usage analyzer
+  - directory size analyzer
+  - command line disk usage
+  - terminal disk usage
+  - linux disk usage
+  - macos disk usage
+  - gdu command
+  - interactive disk usage
+  - disk space usage
+  - console disk usage
 features:
-- Display disk usage interactively
-- Show disk usage for specific directories
-- Ignore directories based on names
-- Exclude directories using regex patterns
-- Print disk usage without interactive mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display disk usage interactively
+  - Show disk usage for specific directories
+  - Ignore directories based on names
+  - Exclude directories using regex patterns
+  - Print disk usage without interactive mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdu

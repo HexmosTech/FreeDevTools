@@ -1,29 +1,29 @@
 ---
-title: "Control Twitter Stream - Rainbowstream | Online Free DevTools by Hexmos"
+title: 'Control Twitter Stream - Rainbowstream | Online Free DevTools by Hexmos'
 name: rainbowstream
-path: "/freedevtools/tldr/common/rainbowstream/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rainbowstream/"
-description: "Control your Twitter stream easily with Rainbowstream, a command-line Twitter client. Manage tweets, search trends, and user profiles. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rainbowstream/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rainbowstream/'
+description: 'Control your Twitter stream easily with Rainbowstream, a command-line Twitter client. Manage tweets, search trends, and user profiles. Free online tool, no registration required.'
 category: common
 keywords:
-- twitter stream control
-- command line twitter client
-- terminal twitter client
-- twitter management tool
-- tweet search tool
-- retweet command line
-- twitter timeline viewer
-- linux twitter client
-- macos twitter client
-- cross-platform twitter client
+  - twitter stream control
+  - command line twitter client
+  - terminal twitter client
+  - twitter management tool
+  - tweet search tool
+  - retweet command line
+  - twitter timeline viewer
+  - linux twitter client
+  - macos twitter client
+  - cross-platform twitter client
 features:
-- View a real-time Twitter stream in the terminal
-- Search for tweets and hashtags
-- Retweet and favorite tweets directly
-- Display user profiles and timelines
-- Send tweets from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View a real-time Twitter stream in the terminal
+  - Search for tweets and hashtags
+  - Retweet and favorite tweets directly
+  - Display user profiles and timelines
+  - Send tweets from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rainbowstream

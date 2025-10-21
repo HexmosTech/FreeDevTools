@@ -1,9 +1,9 @@
 ---
-title: "Control Wireless Devices with rfkill | Online Free DevTools by Hexmos"
+title: 'Control Wireless Devices with rfkill | Online Free DevTools by Hexmos'
 name: rfkill
-path: "/freedevtools/tldr/linux/rfkill/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rfkill/"
-description: "Control wireless devices with the rfkill command.  Manage Bluetooth, Wi-Fi, and other wireless interfaces easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rfkill/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rfkill/'
+description: 'Control wireless devices with the rfkill command.  Manage Bluetooth, Wi-Fi, and other wireless interfaces easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - rfkill command
@@ -22,8 +22,8 @@ features:
   - Unblock specific wireless devices by type.
   - View device information with customized output columns.
   - Output device information in JSON format for easy parsing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rfkill

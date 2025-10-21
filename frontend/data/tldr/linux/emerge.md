@@ -1,9 +1,9 @@
 ---
-title: "Manage Packages with emerge - Gentoo Package Management | Online Free DevTools by Hexmos"
+title: 'Manage Packages with emerge - Gentoo Package Management | Online Free DevTools by Hexmos'
 name: emerge
-path: "/freedevtools/tldr/linux/emerge/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/emerge/"
-description: "Manage Gentoo packages efficiently with emerge, the powerful package manager.  Update, install, remove, and search for packages with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/emerge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/emerge/'
+description: 'Manage Gentoo packages efficiently with emerge, the powerful package manager.  Update, install, remove, and search for packages with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - Gentoo package manager
@@ -22,8 +22,8 @@ features:
   - Resume interrupted package installations
   - Install new packages with dependency resolution
   - Remove packages and their dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # emerge

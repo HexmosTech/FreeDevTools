@@ -1,9 +1,9 @@
 ---
-title: "Benchmark Memory Bandwidth - Measure System Performance | Online Free DevTools by Hexmos"
+title: 'Benchmark Memory Bandwidth - Measure System Performance | Online Free DevTools by Hexmos'
 name: mbw
-path: "/freedevtools/tldr/linux/mbw/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mbw/"
-description: "Benchmark memory bandwidth quickly and efficiently with mbw.  Analyze system performance and identify bottlenecks with detailed statistics. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mbw/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mbw/'
+description: 'Benchmark memory bandwidth quickly and efficiently with mbw.  Analyze system performance and identify bottlenecks with detailed statistics. Free online tool, no registration required.'
 category: linux
 keywords:
   - memory bandwidth benchmark
@@ -22,8 +22,8 @@ features:
   - Allows specifying memory size and number of test iterations.
   - Supports different test types including memcpy and a "dumb" test.
   - Offers options for outputting only statistics, not averages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mbw

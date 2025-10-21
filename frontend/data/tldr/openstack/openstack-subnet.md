@@ -1,29 +1,29 @@
 ---
-title: "OpenStack Subnet - Manage Network Subnets | Online Free DevTools by Hexmos"
+title: 'OpenStack Subnet - Manage Network Subnets | Online Free DevTools by Hexmos'
 name: openstack-subnet
-path: "/freedevtools/tldr/openstack/openstack-subnet/"
-canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-subnet/"
-description: "Manage OpenStack network subnets with OpenStack Subnet command. Configure IP address blocks and network settings with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/openstack/openstack-subnet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openstack/openstack-subnet/'
+description: 'Manage OpenStack network subnets with OpenStack Subnet command. Configure IP address blocks and network settings with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- openstack subnet management
-- openstack network configuration
-- openstack subnet range
-- openstack cli subnet
-- openstack subnet create
-- openstack subnet delete
-- openstack subnet show
-- openstack subnet dns
-- openstack network subnet
-- openstack subnet update
+  - openstack subnet management
+  - openstack network configuration
+  - openstack subnet range
+  - openstack cli subnet
+  - openstack subnet create
+  - openstack subnet delete
+  - openstack subnet show
+  - openstack subnet dns
+  - openstack network subnet
+  - openstack subnet update
 features:
-- List available OpenStack subnets
-- Display details of a specific subnet
-- Create new subnets with specified ranges
-- Delete existing OpenStack subnets
-- Update subnet DNS and name settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available OpenStack subnets
+  - Display details of a specific subnet
+  - Create new subnets with specified ranges
+  - Delete existing OpenStack subnets
+  - Update subnet DNS and name settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openstack subnet

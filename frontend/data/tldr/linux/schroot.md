@@ -1,29 +1,29 @@
 ---
-title: "Schroot - Control Root Directories | Online Free DevTools by Hexmos"
+title: 'Schroot - Control Root Directories | Online Free DevTools by Hexmos'
 name: schroot
-path: "/freedevtools/tldr/linux/schroot/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/schroot/"
-description: "Control root directories with Schroot. Easily manage chroot environments and run commands in isolated systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/schroot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/schroot/'
+description: 'Control root directories with Schroot. Easily manage chroot environments and run commands in isolated systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux schroot
-- schroot command
-- chroot manager
-- root directory control
-- isolated environment
-- debian schroot
-- linux container
-- schroot session
-- schroot user
-- schroot interactive shell
+  - linux schroot
+  - schroot command
+  - chroot manager
+  - root directory control
+  - isolated environment
+  - debian schroot
+  - linux container
+  - schroot session
+  - schroot user
+  - schroot interactive shell
 features:
-- Manage multiple chroot environments
-- Run commands in isolated environments
-- Start interactive shells within a chroot
-- Begin and connect to schroot sessions
-- Execute commands as a specific user within a chroot
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage multiple chroot environments
+  - Run commands in isolated environments
+  - Start interactive shells within a chroot
+  - Begin and connect to schroot sessions
+  - Execute commands as a specific user within a chroot
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # schroot

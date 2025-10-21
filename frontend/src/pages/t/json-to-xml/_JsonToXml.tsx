@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import ToolVideo from "@/components/tool/ToolVideo";
-import JsonToXmlSkeleton from "./_JsonToXmlSkeleton";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect } from 'react';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolGridContainer from '@/components/tool/ToolGridContainer';
+import { Card } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import ToolVideo from '@/components/tool/ToolVideo';
+import JsonToXmlSkeleton from './_JsonToXmlSkeleton';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const JsonToXml: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -27,30 +27,30 @@ const JsonToXml: React.FC = () => {
   }, []);
 
   const handleConvert = () => {
-    setError("");
-    toast.info("Processing your input...");
+    setError('');
+    toast.info('Processing your input...');
     try {
       const json = JSON.parse(input);
       const xml = jsonToXml(json);
       setOutput(xml);
-      toast.success("Conversion completed!");
+      toast.success('Conversion completed!');
     } catch (err) {
-      setError("Invalid JSON format. Please check your input.");
-      setOutput("");
-      toast.error("Processing failed");
+      setError('Invalid JSON format. Please check your input.');
+      setOutput('');
+      toast.error('Processing failed');
     }
   };
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   // Simple JSON to XML converter
-  function jsonToXml(obj: any, root = "root"): string {
-    let xml = "";
-    if (typeof obj === "object" && !Array.isArray(obj)) {
+  function jsonToXml(obj: any, root = 'root'): string {
+    let xml = '';
+    if (typeof obj === 'object' && !Array.isArray(obj)) {
       xml += `<${root}>`;
       for (const key in obj) {
         xml += jsonToXml(obj[key], key);

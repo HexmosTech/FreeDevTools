@@ -1,9 +1,9 @@
 ---
-title: "Shutdown System - Control System Power States | Online Free DevTools by Hexmos"
+title: 'Shutdown System - Control System Power States | Online Free DevTools by Hexmos'
 name: shutdown
-path: "/freedevtools/tldr/linux/shutdown/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/shutdown/"
-description: "Control system power states with Shutdown. Reboot, halt, or schedule shutdowns easily using command-line. Free online tool, no registration required. Command-line utilities"
+path: '/freedevtools/tldr/linux/shutdown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/shutdown/'
+description: 'Control system power states with Shutdown. Reboot, halt, or schedule shutdowns easily using command-line. Free online tool, no registration required. Command-line utilities'
 category: linux
 keywords:
   - System shutdown command
@@ -22,8 +22,8 @@ features:
   - Schedule a system shutdown or reboot
   - Cancel a pending shutdown or reboot operation
   - Specify a shutdown time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shutdown

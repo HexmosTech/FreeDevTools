@@ -1,9 +1,9 @@
 ---
-title: "Control SteamOS Sessions - Manage Desktop Modes | Online Free DevTools by Hexmos"
+title: 'Control SteamOS Sessions - Manage Desktop Modes | Online Free DevTools by Hexmos'
 name: steamos-session-select
-path: "/freedevtools/tldr/linux/steamos-session-select/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-session-select/"
-description: "Manage SteamOS sessions with steamos-session-select.  Switch between desktop modes (Plasma, Wayland, X11),  set persistent boot options, and control your SteamOS environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/steamos-session-select/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/steamos-session-select/'
+description: 'Manage SteamOS sessions with steamos-session-select.  Switch between desktop modes (Plasma, Wayland, X11),  set persistent boot options, and control your SteamOS environment. Free online tool, no registration required.'
 category: linux
 keywords:
   - steamOS session manager
@@ -22,8 +22,8 @@ features:
   - Easily switch to gamemode for optimal gaming performance.
   - Control SteamOS session from the command line.
   - Manage system boot behavior for different session types.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # steamos-session-select

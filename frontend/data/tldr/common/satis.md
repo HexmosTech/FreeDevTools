@@ -1,29 +1,29 @@
 ---
-title: "Generate Satis Repository - Static Composer Output | Online Free DevTools by Hexmos"
+title: 'Generate Satis Repository - Static Composer Output | Online Free DevTools by Hexmos'
 name: satis
-path: "/freedevtools/tldr/common/satis/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/satis/"
-description: "Generate static Composer repositories with Satis. Build optimized package distributions, manage dependencies, and streamline deployments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/satis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/satis/'
+description: 'Generate static Composer repositories with Satis. Build optimized package distributions, manage dependencies, and streamline deployments. Free online tool, no registration required.'
 category: common
 keywords:
-- composer repository
-- satis repository
-- static composer
-- php package manager
-- package distribution
-- satis configuration
-- composer dependencies
-- package archive
-- satis build
-- composer mirror
+  - composer repository
+  - satis repository
+  - static composer
+  - php package manager
+  - package distribution
+  - satis configuration
+  - composer dependencies
+  - package archive
+  - satis build
+  - composer mirror
 features:
-- Initialize a new Satis configuration file.
-- Add VCS repositories to a Satis configuration.
-- Build static Composer repositories from a configuration.
-- Update specific repositories during the build process.
-- Remove unnecessary archive files after building.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new Satis configuration file.
+  - Add VCS repositories to a Satis configuration.
+  - Build static Composer repositories from a configuration.
+  - Update specific repositories during the build process.
+  - Remove unnecessary archive files after building.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # satis

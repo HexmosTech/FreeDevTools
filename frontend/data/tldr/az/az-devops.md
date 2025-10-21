@@ -1,29 +1,29 @@
 ---
-title: "Manage Azure DevOps - Control Organizations | Online Free DevTools by Hexmos"
+title: 'Manage Azure DevOps - Control Organizations | Online Free DevTools by Hexmos'
 name: az-devops
-path: "/freedevtools/tldr/az/az-devops/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-devops/"
-description: "Manage Azure DevOps organizations easily with az devops. Configure projects, manage teams, and streamline your development workflow with Azure CLI. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-devops/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-devops/'
+description: 'Manage Azure DevOps organizations easily with az devops. Configure projects, manage teams, and streamline your development workflow with Azure CLI. Free online tool, no registration required.'
 category: common
 keywords:
-- azure devops manager
-- devops configuration
-- azure cli devops
-- azure devops project management
-- devops team management
-- azure devops organization control
-- devops pat authentication
-- az devops command line
-- devops cli configuration
-- azure devops automation
+  - azure devops manager
+  - devops configuration
+  - azure cli devops
+  - azure devops project management
+  - devops team management
+  - azure devops organization control
+  - devops pat authentication
+  - az devops command line
+  - devops cli configuration
+  - azure devops automation
 features:
-- Configure Azure DevOps projects and organizations
-- Manage team members within specific projects
-- Authenticate using Personal Access Tokens (PAT)
-- Open Azure DevOps projects directly in a browser
-- Configure default project and organization settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure Azure DevOps projects and organizations
+  - Manage team members within specific projects
+  - Authenticate using Personal Access Tokens (PAT)
+  - Open Azure DevOps projects directly in a browser
+  - Configure default project and organization settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az devops

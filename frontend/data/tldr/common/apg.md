@@ -1,29 +1,29 @@
 ---
-title: "Generate Password - Create Secure Passwords with APG | Online Free DevTools by Hexmos"
+title: 'Generate Password - Create Secure Passwords with APG | Online Free DevTools by Hexmos'
 name: apg
-path: "/freedevtools/tldr/common/apg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/apg/"
-description: "Generate secure passwords with APG, the Advanced Password Generator. Create complex random passwords and enforce security policies. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/apg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/apg/'
+description: 'Generate secure passwords with APG, the Advanced Password Generator. Create complex random passwords and enforce security policies. Free online tool, no registration required.'
 category: common
 keywords:
-- password generator
-- random password generator
-- secure password generator
-- apg password generator
-- linux password generator
-- command line password generator
-- complex password generator
-- password complexity tool
-- password security tool
-- command-line password tool
+  - password generator
+  - random password generator
+  - secure password generator
+  - apg password generator
+  - linux password generator
+  - command line password generator
+  - complex password generator
+  - password complexity tool
+  - password security tool
+  - command-line password tool
 features:
-- Generate passwords with customizable length.
-- Enforce password complexity rules with character set requirements.
-- Create passwords that avoid dictionary words.
-- Set maximum password length limits.
-- Generate multiple passwords in batch.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate passwords with customizable length.
+  - Enforce password complexity rules with character set requirements.
+  - Create passwords that avoid dictionary words.
+  - Set maximum password length limits.
+  - Generate multiple passwords in batch.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apg

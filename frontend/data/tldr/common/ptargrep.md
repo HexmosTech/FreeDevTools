@@ -1,29 +1,29 @@
 ---
-title: "Search Tar Archives - Find Regex Patterns | Online Free DevTools by Hexmos"
+title: 'Search Tar Archives - Find Regex Patterns | Online Free DevTools by Hexmos'
 name: ptargrep
-path: "/freedevtools/tldr/common/ptargrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ptargrep/"
-description: "Search Tar archives with ptargrep. Find regex patterns in tar files for efficient code analysis and data extraction. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ptargrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ptargrep/'
+description: 'Search Tar archives with ptargrep. Find regex patterns in tar files for efficient code analysis and data extraction. Free online tool, no registration required.'
 category: common
 keywords:
-- tar archive search
-- regex pattern finder
-- tar file grep
-- linux archive search
-- command line tar grep
-- tar archive regex
-- file archive search
-- data extraction tool
-- pattern matching tar
-- archive analysis
+  - tar archive search
+  - regex pattern finder
+  - tar file grep
+  - linux archive search
+  - command line tar grep
+  - tar archive regex
+  - file archive search
+  - data extraction tool
+  - pattern matching tar
+  - archive analysis
 features:
-- Search for patterns within tar archive files
-- Extract matched content from archives based on filename
-- Perform case-insensitive searches within archives
-- Support multiple archive files simultaneously
-- Find specific text or code within archived files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for patterns within tar archive files
+  - Extract matched content from archives based on filename
+  - Perform case-insensitive searches within archives
+  - Support multiple archive files simultaneously
+  - Find specific text or code within archived files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ptargrep

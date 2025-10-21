@@ -1,29 +1,29 @@
 ---
-title: "Pacdiff - Manage Pacman Configuration Files | Online Free DevTools by Hexmos"
+title: 'Pacdiff - Manage Pacman Configuration Files | Online Free DevTools by Hexmos'
 name: pacdiff
-path: "/freedevtools/tldr/linux/pacdiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacdiff/"
-description: "Manage pacman configuration files with Pacdiff. Review, merge, and backup `.pacorig`, `.pacnew`, and `.pacsave` files efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacdiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacdiff/'
+description: 'Manage pacman configuration files with Pacdiff. Review, merge, and backup `.pacorig`, `.pacnew`, and `.pacsave` files efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
-- pacman configuration files
-- pacnew merge
-- pacorig resolve
-- pacsave management
-- linux configuration management
-- pacdiff editor
-- pacman update
-- configuration backup
-- file comparison linux
-- locate pacman configs
+  - pacman configuration files
+  - pacnew merge
+  - pacorig resolve
+  - pacsave management
+  - linux configuration management
+  - pacdiff editor
+  - pacman update
+  - configuration backup
+  - file comparison linux
+  - locate pacman configs
 features:
-- Review configuration files needing maintenance in interactive mode.
-- Remove and merge configuration files using sudo.
-- Create backups of original configuration files before overwriting.
-- Utilize a specific editor for viewing and merging configurations.
-- Scan for configuration files using locate instead of the pacman database.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Review configuration files needing maintenance in interactive mode.
+  - Remove and merge configuration files using sudo.
+  - Create backups of original configuration files before overwriting.
+  - Utilize a specific editor for viewing and merging configurations.
+  - Scan for configuration files using locate instead of the pacman database.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacdiff

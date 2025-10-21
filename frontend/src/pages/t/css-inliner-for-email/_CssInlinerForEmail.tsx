@@ -1,19 +1,19 @@
-import { toast } from "@/components/ToastProvider";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import CopyButton from "@/components/ui/copy-button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import React, { useCallback, useEffect, useState } from "react";
-import AdBanner from "../../../components/banner/AdBanner";
-import CssInlinerForEmailSkeleton from "./_CssInlinerForEmailSkeleton";
+import { toast } from '@/components/ToastProvider';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolVideo from '@/components/tool/ToolVideo';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import CopyButton from '@/components/ui/copy-button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import React, { useCallback, useEffect, useState } from 'react';
+import AdBanner from '../../../components/banner/AdBanner';
+import CssInlinerForEmailSkeleton from './_CssInlinerForEmailSkeleton';
 
 // CSS Inlining utility functions
 const convertCSSToInline = (
@@ -24,14 +24,14 @@ const convertCSSToInline = (
   try {
     // Create a DOM parser to work with the HTML
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+    const doc = parser.parseFromString(html, 'text/html');
 
     // Parse CSS rules
     const cssRules = parseCSSRules(css);
 
     // Apply CSS rules to matching elements
     cssRules.forEach((rule) => {
-      if (rule.selector.startsWith("@media") && preserveMediaQueries) {
+      if (rule.selector.startsWith('@media') && preserveMediaQueries) {
         // Skip media queries if preserving them
         return;
       }
@@ -39,10 +39,10 @@ const convertCSSToInline = (
       try {
         const elements = doc.querySelectorAll(rule.selector);
         elements.forEach((element) => {
-          const existingStyle = element.getAttribute("style") || "";
+          const existingStyle = element.getAttribute('style') || '';
           const newStyle =
-            existingStyle + (existingStyle ? "; " : "") + rule.declarations;
-          element.setAttribute("style", newStyle);
+            existingStyle + (existingStyle ? '; ' : '') + rule.declarations;
+          element.setAttribute('style', newStyle);
         });
       } catch (e) {
         // Skip invalid selectors
@@ -54,12 +54,12 @@ const convertCSSToInline = (
     if (preserveMediaQueries) {
       const mediaQueries = extractMediaQueries(css);
       if (mediaQueries) {
-        let head = doc.querySelector("head");
+        let head = doc.querySelector('head');
         if (!head) {
-          head = doc.createElement("head");
+          head = doc.createElement('head');
           doc.documentElement.insertBefore(head, doc.body);
         }
-        const style = doc.createElement("style");
+        const style = doc.createElement('style');
         style.textContent = mediaQueries;
         head.appendChild(style);
       }
@@ -68,7 +68,7 @@ const convertCSSToInline = (
     return doc.documentElement.outerHTML;
   } catch (error) {
     throw new Error(
-      `Failed to inline CSS: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to inline CSS: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 };
@@ -79,18 +79,18 @@ const parseCSSRules = (
   const rules: Array<{ selector: string; declarations: string }> = [];
 
   // Remove comments
-  const cleanCSS = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  const cleanCSS = css.replace(/\/\*[\s\S]*?\*\//g, '');
 
   // Split by closing braces to get individual rules
-  const ruleBlocks = cleanCSS.split("}").filter((block) => block.trim());
+  const ruleBlocks = cleanCSS.split('}').filter((block) => block.trim());
 
   ruleBlocks.forEach((block) => {
-    const parts = block.split("{");
+    const parts = block.split('{');
     if (parts.length === 2) {
       const selector = parts[0].trim();
       const declarations = parts[1].trim();
 
-      if (selector && declarations && !selector.startsWith("@media")) {
+      if (selector && declarations && !selector.startsWith('@media')) {
         rules.push({ selector, declarations });
       }
     }
@@ -108,17 +108,17 @@ const extractMediaQueries = (css: string): string => {
     mediaQueries.push(match[0]);
   }
 
-  return mediaQueries.join("\n");
+  return mediaQueries.join('\n');
 };
 
 const isValidHTML = (html: string): boolean => {
   try {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+    const doc = parser.parseFromString(html, 'text/html');
 
     const hasTags =
       doc.body?.children.length > 0 || doc.head?.children.length > 0;
-    const hasParsingErrors = doc.querySelectorAll("parsererror").length > 0;
+    const hasParsingErrors = doc.querySelectorAll('parsererror').length > 0;
 
     return hasTags && !hasParsingErrors;
   } catch {
@@ -127,10 +127,10 @@ const isValidHTML = (html: string): boolean => {
 };
 
 const CssInlinerForEmail: React.FC = () => {
-  const [htmlInput, setHtmlInput] = useState("");
-  const [cssInput, setCssInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [htmlInput, setHtmlInput] = useState('');
+  const [cssInput, setCssInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [preserveMediaQueries, setPreserveMediaQueries] = useState(true);
   const [autoConvert, setAutoConvert] = useState(false);
@@ -144,23 +144,23 @@ const CssInlinerForEmail: React.FC = () => {
   }, []);
 
   const handleConversion = useCallback(() => {
-    setError("");
+    setError('');
 
     if (!htmlInput.trim()) {
-      setError("Please provide HTML input");
-      setOutput("");
+      setError('Please provide HTML input');
+      setOutput('');
       return;
     }
 
     if (!cssInput.trim()) {
-      setError("Please provide CSS input");
-      setOutput("");
+      setError('Please provide CSS input');
+      setOutput('');
       return;
     }
 
     if (!isValidHTML(htmlInput)) {
-      setError("Invalid HTML input. Please check your HTML syntax.");
-      setOutput("");
+      setError('Invalid HTML input. Please check your HTML syntax.');
+      setOutput('');
       return;
     }
 
@@ -171,20 +171,20 @@ const CssInlinerForEmail: React.FC = () => {
         preserveMediaQueries
       );
       setOutput(inlinedHtml);
-      toast.success("CSS successfully inlined!");
+      toast.success('CSS successfully inlined!');
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to inline CSS";
+        err instanceof Error ? err.message : 'Failed to inline CSS';
       setError(errorMessage);
-      setOutput("");
-      toast.error("Failed to inline CSS");
+      setOutput('');
+      toast.error('Failed to inline CSS');
     }
   }, [htmlInput, cssInput, preserveMediaQueries]);
 
   const handleHtmlChange = useCallback(
     (value: string) => {
       setHtmlInput(value);
-      setError("");
+      setError('');
 
       if (autoConvert && value.trim() && cssInput.trim()) {
         setTimeout(() => {
@@ -209,7 +209,7 @@ const CssInlinerForEmail: React.FC = () => {
   const handleCssChange = useCallback(
     (value: string) => {
       setCssInput(value);
-      setError("");
+      setError('');
 
       if (autoConvert && value.trim() && htmlInput.trim()) {
         setTimeout(() => {
@@ -232,10 +232,10 @@ const CssInlinerForEmail: React.FC = () => {
   );
 
   const handleClear = () => {
-    setHtmlInput("");
-    setCssInput("");
-    setOutput("");
-    setError("");
+    setHtmlInput('');
+    setCssInput('');
+    setOutput('');
+    setError('');
   };
 
   const sampleHTML = `<!DOCTYPE html>

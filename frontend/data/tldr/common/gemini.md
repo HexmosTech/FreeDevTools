@@ -1,29 +1,29 @@
 ---
-title: "Generate Gemini AI Prompts - Interact with AI | Online Free DevTools by Hexmos"
+title: 'Generate Gemini AI Prompts - Interact with AI | Online Free DevTools by Hexmos'
 name: gemini
-path: "/freedevtools/tldr/common/gemini/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gemini/"
+path: '/freedevtools/tldr/common/gemini/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gemini/'
 description: "Generate AI prompts with Gemini. Interact with Google's AI models using the Gemini command-line tool. Free online tool, no registration required."
 category: common
 keywords:
-- gemini ai
-- ai prompt generator
-- command line ai
-- large language model cli
-- google ai api
-- gemini api
-- gemini cli
-- terminal ai assistant
-- conversational ai tool
-- interactive ai prompt
+  - gemini ai
+  - ai prompt generator
+  - command line ai
+  - large language model cli
+  - google ai api
+  - gemini api
+  - gemini cli
+  - terminal ai assistant
+  - conversational ai tool
+  - interactive ai prompt
 features:
-- Launch an interactive Gemini AI chat session
-- Send command output to Gemini for processing
-- Override the default AI model
-- Execute prompts and then enter interactive mode
-- Include all files in the context for AI analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch an interactive Gemini AI chat session
+  - Send command output to Gemini for processing
+  - Override the default AI model
+  - Execute prompts and then enter interactive mode
+  - Include all files in the context for AI analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gemini

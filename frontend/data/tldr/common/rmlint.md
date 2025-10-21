@@ -1,29 +1,29 @@
 ---
-title: "Find Duplicate Files - rmlint File Cleaner | Online Free DevTools by Hexmos"
+title: 'Find Duplicate Files - rmlint File Cleaner | Online Free DevTools by Hexmos'
 name: rmlint
-path: "/freedevtools/tldr/common/rmlint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rmlint/"
-description: "Find duplicate files with rmlint, a powerful file system cleaner. Reclaim disk space and eliminate broken links. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rmlint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rmlint/'
+description: 'Find duplicate files with rmlint, a powerful file system cleaner. Reclaim disk space and eliminate broken links. Free online tool, no registration required.'
 category: common
 keywords:
-- duplicate file finder
-- space waste cleaner
-- file system analyzer
-- broken link checker
-- file integrity tool
-- disk space management
-- file comparison tool
-- linux file cleaner
-- macos file cleaner
-- rmlint command line
+  - duplicate file finder
+  - space waste cleaner
+  - file system analyzer
+  - broken link checker
+  - file integrity tool
+  - disk space management
+  - file comparison tool
+  - linux file cleaner
+  - macos file cleaner
+  - rmlint command line
 features:
-- Identify duplicate files across directories
-- Detect empty and broken files
-- Merge duplicate directory trees by data
-- Rank files for preferred deletion based on path depth and length
-- Link identical files to save disk space
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify duplicate files across directories
+  - Detect empty and broken files
+  - Merge duplicate directory trees by data
+  - Rank files for preferred deletion based on path depth and length
+  - Link identical files to save disk space
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rmlint

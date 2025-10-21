@@ -1,29 +1,29 @@
 ---
-title: "Show Nix Dependencies - Find Dependency Reasons | Online Free DevTools by Hexmos"
+title: 'Show Nix Dependencies - Find Dependency Reasons | Online Free DevTools by Hexmos'
 name: nix-why-depends
-path: "/freedevtools/tldr/nix/nix-why-depends/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-why-depends/"
-description: "Show Nix dependencies with nix-why-depends. Identify the reasons a package depends on another, even build-time dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-why-depends/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-why-depends/'
+description: 'Show Nix dependencies with nix-why-depends. Identify the reasons a package depends on another, even build-time dependencies. Free online tool, no registration required.'
 category: common
 keywords:
-- nix dependency analysis
-- nix package dependencies
-- nix dependency tree
-- nix why depends command
-- nixos dependency inspector
-- nix build dependencies
-- nix store path dependencies
-- nix package origin tracing
-- linux package manager
-- nix dependency graph
+  - nix dependency analysis
+  - nix package dependencies
+  - nix dependency tree
+  - nix why depends command
+  - nixos dependency inspector
+  - nix build dependencies
+  - nix store path dependencies
+  - nix package origin tracing
+  - linux package manager
+  - nix dependency graph
 features:
-- Show reasons for package dependencies
-- Trace dependency chains in NixOS
-- Identify build-time dependencies
-- Analyze store path requirements
-- Determine origin of package dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show reasons for package dependencies
+  - Trace dependency chains in NixOS
+  - Identify build-time dependencies
+  - Analyze store path requirements
+  - Determine origin of package dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix why-depends

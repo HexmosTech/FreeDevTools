@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import SvgPlaceholderGeneratorSkeleton from "./_SvgPlaceholderGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Download } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import SvgPlaceholderGeneratorSkeleton from './_SvgPlaceholderGeneratorSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import ToolVideo from '@/components/tool/ToolVideo';
+import { Download } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import AdBanner from '../../../components/banner/AdBanner';
 const DEFAULT_WIDTH = 600;
 const DEFAULT_HEIGHT = 350;
 const DEFAULT_FONT_SIZE = 26;
-const DEFAULT_BG = "#cccccc";
-const DEFAULT_FG = "#333333";
+const DEFAULT_BG = '#cccccc';
+const DEFAULT_FG = '#333333';
 
 const SvgPlaceholderGenerator: React.FC = () => {
   const [width, setWidth] = useState(DEFAULT_WIDTH);
@@ -24,11 +24,11 @@ const SvgPlaceholderGenerator: React.FC = () => {
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
   const [fgColor, setFgColor] = useState(DEFAULT_FG);
-  const [customText, setCustomText] = useState("");
+  const [customText, setCustomText] = useState('');
   const [useExactSize, setUseExactSize] = useState(true);
-  const [output, setOutput] = useState("");
-  const [base64, setBase64] = useState("");
-  const [error, setError] = useState("");
+  const [output, setOutput] = useState('');
+  const [base64, setBase64] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -42,17 +42,17 @@ const SvgPlaceholderGenerator: React.FC = () => {
       const w = width;
       const h = height;
       const text = customText.length > 0 ? customText : `${w}x${h}`;
-      const sizeAttr = useExactSize ? ` width="${w}" height="${h}"` : "";
+      const sizeAttr = useExactSize ? ` width="${w}" height="${h}"` : '';
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}"${sizeAttr}><rect width="${w}" height="${h}" fill="${bgColor}"></rect><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="${fontSize}px" fill="${fgColor}">${text}</text></svg>`;
       setOutput(svg);
       setBase64(
         `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
       );
-      setError("");
+      setError('');
     } catch (err) {
-      setError("Failed to generate SVG");
-      setOutput("");
-      setBase64("");
+      setError('Failed to generate SVG');
+      setOutput('');
+      setBase64('');
     }
   }, [
     width,
@@ -68,23 +68,23 @@ const SvgPlaceholderGenerator: React.FC = () => {
   const handleCopySVG = () => {
     if (!output) return;
     navigator.clipboard.writeText(output);
-    toast.success("SVG code copied!");
+    toast.success('SVG code copied!');
   };
   const handleCopyBase64 = () => {
     if (!base64) return;
     navigator.clipboard.writeText(base64);
-    toast.success("Base64 copied!");
+    toast.success('Base64 copied!');
   };
   const handleDownload = () => {
     if (!output) return;
-    const blob = new Blob([output], { type: "image/svg+xml" });
+    const blob = new Blob([output], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = `svg-placeholder-${width}x${height}.svg`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("SVG downloaded!");
+    toast.success('SVG downloaded!');
   };
   const handleClear = () => {
     setWidth(DEFAULT_WIDTH);
@@ -92,18 +92,18 @@ const SvgPlaceholderGenerator: React.FC = () => {
     setFontSize(DEFAULT_FONT_SIZE);
     setBgColor(DEFAULT_BG);
     setFgColor(DEFAULT_FG);
-    setCustomText("");
+    setCustomText('');
     setUseExactSize(true);
-    setError("");
+    setError('');
   };
 
   // Example cost table data
   const modelCosts = [
-    { model: "GPT-4", cost: "$0.03 / 1K tokens" },
-    { model: "GPT-4o", cost: "$0.005 / 1K tokens" },
-    { model: "Claude 3", cost: "$0.008 / 1K tokens" },
-    { model: "Llama 3", cost: "$0.002 / 1K tokens" },
-    { model: "Deepseek V2", cost: "$0.0015 / 1K tokens" },
+    { model: 'GPT-4', cost: '$0.03 / 1K tokens' },
+    { model: 'GPT-4o', cost: '$0.005 / 1K tokens' },
+    { model: 'Claude 3', cost: '$0.008 / 1K tokens' },
+    { model: 'Llama 3', cost: '$0.002 / 1K tokens' },
+    { model: 'Deepseek V2', cost: '$0.0015 / 1K tokens' },
   ];
 
   return (
@@ -306,9 +306,9 @@ const SvgPlaceholderGenerator: React.FC = () => {
                           alt="SVG preview"
                           className="max-w-full max-h-[300px] h-auto rounded border shadow-sm"
                           style={{
-                            maxWidth: "100%",
-                            height: "auto",
-                            width: width > 400 ? "400px" : `${width}px`,
+                            maxWidth: '100%',
+                            height: 'auto',
+                            width: width > 400 ? '400px' : `${width}px`,
                           }}
                         />
                       ) : (
@@ -392,10 +392,17 @@ const SvgPlaceholderGenerator: React.FC = () => {
               <CardContent>
                 <div className="text-slate-800 dark:text-slate-400 space-y-4">
                   <p>
-                    SVG placeholders are scalable, lightweight images used to fill space in layouts, mockups, and prototypes. They are ideal for responsive design, as SVGs scale perfectly on any device and can be customized for color, size, and text.
+                    SVG placeholders are scalable, lightweight images used to
+                    fill space in layouts, mockups, and prototypes. They are
+                    ideal for responsive design, as SVGs scale perfectly on any
+                    device and can be customized for color, size, and text.
                   </p>
                   <p>
-                    <strong>Benefits:</strong> SVG placeholders load instantly, require no external assets, and can be styled to match your brand or design system. They are perfect for wireframes, skeleton screens, and preview images in web and app development.
+                    <strong>Benefits:</strong> SVG placeholders load instantly,
+                    require no external assets, and can be styled to match your
+                    brand or design system. They are perfect for wireframes,
+                    skeleton screens, and preview images in web and app
+                    development.
                   </p>
                   <ul className="list-disc pl-5 text-sm">
                     <li>Scalable to any resolution without loss of quality</li>
@@ -414,17 +421,16 @@ const SvgPlaceholderGenerator: React.FC = () => {
               <div className="text-slate-800 dark:text-slate-400 space-y-2">
                 <p>
                   Instantly generate custom SVG placeholder images for rapid
-                  prototyping, design mockups, and responsive layouts. Set width,
-                  height, background, text color, font size, and custom text. Copy
-                  SVG code, Base64 string, or download the image for use in your
-                  projects.
+                  prototyping, design mockups, and responsive layouts. Set
+                  width, height, background, text color, font size, and custom
+                  text. Copy SVG code, Base64 string, or download the image for
+                  use in your projects.
                 </p>
                 <p>
                   <strong>Common uses:</strong> Web development, UI/UX design,
                   image mockups, responsive layout testing, and placeholder
                   graphics for apps and websites.
                 </p>
-
               </div>
             </div>
           </ToolContentCardWrapper>

@@ -1,29 +1,29 @@
 ---
-title: "Control DigitalOcean Accounts - doctl Account | Online Free DevTools by Hexmos"
+title: 'Control DigitalOcean Accounts - doctl Account | Online Free DevTools by Hexmos'
 name: doctl-account
-path: "/freedevtools/tldr/doctl/doctl-account/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-account/"
-description: "Control DigitalOcean accounts with doctl Account. Manage account information, rate limits, and help documentation. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-account/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-account/'
+description: 'Control DigitalOcean accounts with doctl Account. Manage account information, rate limits, and help documentation. Free online tool, no registration required.'
 category: common
 keywords:
-- DigitalOcean account management
-- doctl account info
-- DigitalOcean rate limit check
-- doctl help display
-- DigitalOcean CLI tool
-- doctl command line
-- DigitalOcean account details
-- doctl usage examples
-- DigitalOcean API management
-- cloud account control
+  - DigitalOcean account management
+  - doctl account info
+  - DigitalOcean rate limit check
+  - doctl help display
+  - DigitalOcean CLI tool
+  - doctl command line
+  - DigitalOcean account details
+  - doctl usage examples
+  - DigitalOcean API management
+  - cloud account control
 features:
-- Retrieve DigitalOcean account information
-- Display API rate limits and reset time
-- Show help documentation for doctl account
-- Manage DigitalOcean account settings
-- Get detailed account statistics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve DigitalOcean account information
+  - Display API rate limits and reset time
+  - Show help documentation for doctl account
+  - Manage DigitalOcean account settings
+  - Get detailed account statistics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl account

@@ -1,29 +1,29 @@
 ---
-title: "Archive Manager - Manage Files with Atool | Online Free DevTools by Hexmos"
+title: 'Archive Manager - Manage Files with Atool | Online Free DevTools by Hexmos'
 name: atool
-path: "/freedevtools/tldr/common/atool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/atool/"
-description: "Manage file archives easily with Atool. Extract, create, and list files within archives using a consistent command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/atool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/atool/'
+description: 'Manage file archives easily with Atool. Extract, create, and list files within archives using a consistent command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- archive manager
-- file archive extraction
-- command line archive tool
-- atool archive utility
-- archive listing
-- linux archive manager
-- tar.gz extractor
-- zip file manager
-- rar archive tool
-- bzip2 archive
+  - archive manager
+  - file archive extraction
+  - command line archive tool
+  - atool archive utility
+  - archive listing
+  - linux archive manager
+  - tar.gz extractor
+  - zip file manager
+  - rar archive tool
+  - bzip2 archive
 features:
-- List files within various archive formats.
-- Extract archives with automatic subdirectory creation.
-- Create new archives from files and directories.
-- Repack archives between different formats.
-- Extract multiple archives in a single command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List files within various archive formats.
+  - Extract archives with automatic subdirectory creation.
+  - Create new archives from files and directories.
+  - Repack archives between different formats.
+  - Extract multiple archives in a single command.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # atool

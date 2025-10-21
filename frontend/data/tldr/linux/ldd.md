@@ -1,9 +1,9 @@
 ---
-title: "Display Shared Library Dependencies with ldd | Online Free DevTools by Hexmos"
+title: 'Display Shared Library Dependencies with ldd | Online Free DevTools by Hexmos'
 name: ldd
-path: "/freedevtools/tldr/linux/ldd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ldd/"
-description: "Display shared library dependencies with ldd. Uncover hidden dependencies and resolve issues. Analyze binaries effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ldd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ldd/'
+description: 'Display shared library dependencies with ldd. Uncover hidden dependencies and resolve issues. Analyze binaries effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - shared library dependencies
@@ -22,8 +22,8 @@ features:
   - Perform data relocations analysis
   - Show unused direct dependencies
   - Report function relocations details
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ldd

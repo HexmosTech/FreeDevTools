@@ -1,29 +1,29 @@
 ---
-title: "Create Distributed Compiler - Distccd Server | Online Free DevTools by Hexmos"
+title: 'Create Distributed Compiler - Distccd Server | Online Free DevTools by Hexmos'
 name: distccd
-path: "/freedevtools/tldr/common/distccd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/distccd/"
-description: "Create distributed compiler environments with Distccd server daemon. Accelerate compilation times using network resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/distccd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/distccd/'
+description: 'Create distributed compiler environments with Distccd server daemon. Accelerate compilation times using network resources. Free online tool, no registration required.'
 category: common
 keywords:
-- distributed compiler
-- distccd server
-- network compilation
-- c++ compiler distribution
-- linux distcc
-- distributed build system
-- parallel compilation
-- cross-compilation server
-- remote compiler daemon
-- compile farm
+  - distributed compiler
+  - distccd server
+  - network compilation
+  - c++ compiler distribution
+  - linux distcc
+  - distributed build system
+  - parallel compilation
+  - cross-compilation server
+  - remote compiler daemon
+  - compile farm
 features:
-- Start a distccd server daemon in the background
-- Allow connections from specific network ranges
-- Control the number of parallel compilation jobs
-- Lower the server priority to reduce system impact
-- Register the distccd server using Zeroconf
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a distccd server daemon in the background
+  - Allow connections from specific network ranges
+  - Control the number of parallel compilation jobs
+  - Lower the server priority to reduce system impact
+  - Register the distccd server using Zeroconf
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # distccd

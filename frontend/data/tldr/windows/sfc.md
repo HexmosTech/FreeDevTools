@@ -1,29 +1,29 @@
 ---
-title: "System File Check - Scan & Repair Windows System Files | Online Free DevTools by Hexmos"
+title: 'System File Check - Scan & Repair Windows System Files | Online Free DevTools by Hexmos'
 name: sfc
-path: "/freedevtools/tldr/windows/sfc/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/sfc/"
-description: "Scan Windows system files for integrity issues with System File Check. Repair corrupted files to ensure system stability. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/sfc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/sfc/'
+description: 'Scan Windows system files for integrity issues with System File Check. Repair corrupted files to ensure system stability. Free online tool, no registration required.'
 category: windows
 keywords:
-- System File Check Windows
-- Windows SFC scan
-- Windows system file repair
-- SFC scannow command
-- Windows file integrity checker
-- SFC verifyonly command
-- Windows system file scanner
-- Windows repair tool
-- SFC offline repair
-- Command line file check
+  - System File Check Windows
+  - Windows SFC scan
+  - Windows system file repair
+  - SFC scannow command
+  - Windows file integrity checker
+  - SFC verifyonly command
+  - Windows system file scanner
+  - Windows repair tool
+  - SFC offline repair
+  - Command line file check
 features:
-- Scan all Windows system files for errors
-- Repair corrupted system files automatically
-- Verify system file integrity without repair
-- Scan and repair specific system files
-- Perform offline system file repair
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan all Windows system files for errors
+  - Repair corrupted system files automatically
+  - Verify system file integrity without repair
+  - Scan and repair specific system files
+  - Perform offline system file repair
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfc

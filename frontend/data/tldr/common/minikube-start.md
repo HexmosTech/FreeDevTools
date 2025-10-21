@@ -1,29 +1,29 @@
 ---
-title: "Minikube Start - Control Kubernetes Clusters | Online Free DevTools by Hexmos"
+title: 'Minikube Start - Control Kubernetes Clusters | Online Free DevTools by Hexmos'
 name: minikube-start
-path: "/freedevtools/tldr/common/minikube-start/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/minikube-start/"
-description: "Control Kubernetes clusters with Minikube Start. Configure versions, resources, and drivers for local development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/minikube-start/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/minikube-start/'
+description: 'Control Kubernetes clusters with Minikube Start. Configure versions, resources, and drivers for local development. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes cluster start
-- minikube cluster management
-- container orchestration control
-- kubernetes local development
-- minikube kubernetes setup
-- virtualbox kubernetes driver
-- kubernetes version configuration
-- minikube resource allocation
-- command line kubernetes
-- linux kubernetes
+  - kubernetes cluster start
+  - minikube cluster management
+  - container orchestration control
+  - kubernetes local development
+  - minikube kubernetes setup
+  - virtualbox kubernetes driver
+  - kubernetes version configuration
+  - minikube resource allocation
+  - command line kubernetes
+  - linux kubernetes
 features:
-- Specify Kubernetes version for startup.
-- Allocate custom memory and CPU resources.
-- Choose a specific driver for the cluster.
-- Run Minikube in background (headless mode).
-- Enable custom Kubernetes addons.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Specify Kubernetes version for startup.
+  - Allocate custom memory and CPU resources.
+  - Choose a specific driver for the cluster.
+  - Run Minikube in background (headless mode).
+  - Enable custom Kubernetes addons.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # minikube start

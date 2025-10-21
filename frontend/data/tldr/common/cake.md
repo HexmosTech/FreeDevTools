@@ -1,29 +1,29 @@
 ---
-title: "CakePHP Framework - Control App Building | Online Free DevTools by Hexmos"
+title: 'CakePHP Framework - Control App Building | Online Free DevTools by Hexmos'
 name: cake
-path: "/freedevtools/tldr/common/cake/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cake/"
-description: "Control CakePHP framework app building with Cake. Clear caches, manage routes, and start development servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cake/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cake/'
+description: 'Control CakePHP framework app building with Cake. Clear caches, manage routes, and start development servers. Free online tool, no registration required.'
 category: common
 keywords:
-- CakePHP framework
-- CakePHP development
-- CakePHP console
-- CakePHP routing
-- CakePHP cache
-- CakePHP server
-- CakePHP command-line
-- PHP framework
-- web development
-- CakePHP schema
+  - CakePHP framework
+  - CakePHP development
+  - CakePHP console
+  - CakePHP routing
+  - CakePHP cache
+  - CakePHP server
+  - CakePHP command-line
+  - PHP framework
+  - web development
+  - CakePHP schema
 features:
-- Clear application configuration caches
-- Build and clear metadata cache
-- List available routes within a CakePHP application
-- Start a development web server for CakePHP projects
-- Launch a REPL interactive shell for development
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clear application configuration caches
+  - Build and clear metadata cache
+  - List available routes within a CakePHP application
+  - Start a development web server for CakePHP projects
+  - Launch a REPL interactive shell for development
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cake

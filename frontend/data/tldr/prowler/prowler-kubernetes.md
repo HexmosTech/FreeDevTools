@@ -1,29 +1,29 @@
 ---
-title: "Assess Kubernetes Security - Prowler Kubernetes | Online Free DevTools by Hexmos"
+title: 'Assess Kubernetes Security - Prowler Kubernetes | Online Free DevTools by Hexmos'
 name: prowler-kubernetes
-path: "/freedevtools/tldr/prowler/prowler-kubernetes/"
-canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-kubernetes/"
-description: "Assess Kubernetes security configurations with Prowler Kubernetes. Identify vulnerabilities and ensure best practices. Free online tool, no registration required."
+path: '/freedevtools/tldr/prowler/prowler-kubernetes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/prowler/prowler-kubernetes/'
+description: 'Assess Kubernetes security configurations with Prowler Kubernetes. Identify vulnerabilities and ensure best practices. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes security assessment
-- kubernetes compliance check
-- kubernetes audit tool
-- prowler kubernetes scanner
-- container security best practices
-- kubernetes vulnerability detection
-- kubeconfig security analysis
-- kubernetes security posture management
-- kubernetes security hardening
-- cloud native security assessment
+  - kubernetes security assessment
+  - kubernetes compliance check
+  - kubernetes audit tool
+  - prowler kubernetes scanner
+  - container security best practices
+  - kubernetes vulnerability detection
+  - kubeconfig security analysis
+  - kubernetes security posture management
+  - kubernetes security hardening
+  - cloud native security assessment
 features:
-- Scan Kubernetes clusters for security misconfigurations
-- Identify vulnerabilities in Kubernetes deployments
-- Enforce Kubernetes security best practices
-- Generate detailed Kubernetes security reports
-- Assess Kubernetes compliance against industry standards
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan Kubernetes clusters for security misconfigurations
+  - Identify vulnerabilities in Kubernetes deployments
+  - Enforce Kubernetes security best practices
+  - Generate detailed Kubernetes security reports
+  - Assess Kubernetes compliance against industry standards
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prowler kubernetes

@@ -1,29 +1,29 @@
 ---
-title: "Validate Dockerfiles - Hadolint Linter | Online Free DevTools by Hexmos"
+title: 'Validate Dockerfiles - Hadolint Linter | Online Free DevTools by Hexmos'
 name: hadolint
-path: "/freedevtools/tldr/common/hadolint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hadolint/"
-description: "Validate Dockerfiles with Hadolint, a Dockerfile linter. Detect errors and enforce best practices in your Docker configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hadolint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hadolint/'
+description: 'Validate Dockerfiles with Hadolint, a Dockerfile linter. Detect errors and enforce best practices in your Docker configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- dockerfile linting
-- dockerfile validation
-- dockerfile linter
-- docker linting
-- docker validation
-- docker best practices
-- container security
-- dockerfile security
-- hadolint cli
-- dockerfile advisor
+  - dockerfile linting
+  - dockerfile validation
+  - dockerfile linter
+  - docker linting
+  - docker validation
+  - docker best practices
+  - container security
+  - dockerfile security
+  - hadolint cli
+  - dockerfile advisor
 features:
-- Lint Dockerfiles for errors and warnings
-- Enforce best practices in Dockerfile configurations
-- Output linting results in various formats (TTY, JSON, Checkstyle, CodeClimate, Codacy)
-- Ignore specific linting rules
-- Support trusted registries for secure Dockerfile analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lint Dockerfiles for errors and warnings
+  - Enforce best practices in Dockerfile configurations
+  - Output linting results in various formats (TTY, JSON, Checkstyle, CodeClimate, Codacy)
+  - Ignore specific linting rules
+  - Support trusted registries for secure Dockerfile analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hadolint

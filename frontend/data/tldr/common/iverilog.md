@@ -1,29 +1,29 @@
 ---
-title: "Iverilog - Compile Verilog Code | Online Free DevTools by Hexmos"
+title: 'Iverilog - Compile Verilog Code | Online Free DevTools by Hexmos'
 name: iverilog
-path: "/freedevtools/tldr/common/iverilog/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/iverilog/"
-description: "Compile Verilog code with Iverilog. Simulate and test hardware designs effectively with this Verilog compiler. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/iverilog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/iverilog/'
+description: 'Compile Verilog code with Iverilog. Simulate and test hardware designs effectively with this Verilog compiler. Free online tool, no registration required.'
 category: common
 keywords:
-- Verilog compiler
-- Verilog simulator
-- IEEE 1364 Verilog
-- Hardware description language compilation
-- Verilog HDL compiler
-- Command-line Verilog tool
-- Digital circuit simulation
-- Verilog testbench development
-- Icarus Verilog
-- SystemVerilog compilation
+  - Verilog compiler
+  - Verilog simulator
+  - IEEE 1364 Verilog
+  - Hardware description language compilation
+  - Verilog HDL compiler
+  - Command-line Verilog tool
+  - Digital circuit simulation
+  - Verilog testbench development
+  - Icarus Verilog
+  - SystemVerilog compilation
 features:
-- Compiles Verilog source code into executable programs
-- Supports specifying library directories for Verilog modules
-- Enables preprocessing of Verilog code
-- Allows explicit compilation and runtime execution using VVP
-- Provides options for displaying all compilation warnings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compiles Verilog source code into executable programs
+  - Supports specifying library directories for Verilog modules
+  - Enables preprocessing of Verilog code
+  - Allows explicit compilation and runtime execution using VVP
+  - Provides options for displaying all compilation warnings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iverilog

@@ -1,9 +1,9 @@
 ---
-title: "Control File Caching - fadvise Command | Online Free DevTools by Hexmos"
+title: 'Control File Caching - fadvise Command | Online Free DevTools by Hexmos'
 name: fadvise
-path: "/freedevtools/tldr/linux/fadvise/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fadvise/"
-description: "Control Linux file caching behavior with the fadvise command.  Manage file preloading and removal from cache for improved performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fadvise/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fadvise/'
+description: 'Control Linux file caching behavior with the fadvise command.  Manage file preloading and removal from cache for improved performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux file caching
@@ -22,8 +22,8 @@ features:
   - Optimize application performance by controlling file caching.
   - Improve I/O performance by managing data access patterns.
   - Fine-grained control over file caching behavior in Linux.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fadvise

@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to XPM - Create XPM Images | Online Free DevTools by Hexmos"
+title: 'Convert PPM to XPM - Create XPM Images | Online Free DevTools by Hexmos'
 name: ppmtoxpm
-path: "/freedevtools/tldr/ppm/ppmtoxpm/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoxpm/"
-description: "Convert PPM images to XPM format with ppmtoxpm. Generate XPM files from PPM input, specifying prefixes, color encoding, and transparency masks. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmtoxpm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtoxpm/'
+description: 'Convert PPM images to XPM format with ppmtoxpm. Generate XPM files from PPM input, specifying prefixes, color encoding, and transparency masks. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to XPM converter
-- XPM image creation
-- PPM image manipulation
-- Netpbm image converter
-- Command line image tool
-- Image format conversion
-- PPM image processing
-- Linux image tools
-- macOS image tools
-- PPM to XPM command
+  - PPM to XPM converter
+  - XPM image creation
+  - PPM image manipulation
+  - Netpbm image converter
+  - Command line image tool
+  - Image format conversion
+  - PPM image processing
+  - Linux image tools
+  - macOS image tools
+  - PPM to XPM command
 features:
-- Convert PPM images to XPM format.
-- Specify a prefix string for the XPM image.
-- Define colors using hexadecimal codes.
-- Use a PGM file as a transparency mask.
-- Generate XPM images from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to XPM format.
+  - Specify a prefix string for the XPM image.
+  - Define colors using hexadecimal codes.
+  - Use a PGM file as a transparency mask.
+  - Generate XPM images from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtoxpm

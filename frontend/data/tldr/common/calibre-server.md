@@ -1,29 +1,29 @@
 ---
-title: "Control Calibre Server - Distribute E-books | Online Free DevTools by Hexmos"
+title: 'Control Calibre Server - Distribute E-books | Online Free DevTools by Hexmos'
 name: calibre-server
-path: "/freedevtools/tldr/common/calibre-server/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/calibre-server/"
-description: "Control your Calibre server and share ebooks with calibre-server. Manage ebook distribution over a network with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/calibre-server/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/calibre-server/'
+description: 'Control your Calibre server and share ebooks with calibre-server. Manage ebook distribution over a network with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- calibre ebook server
-- ebook server distribution
-- calibre server command line
-- ebook network sharing
-- calibre library server
-- calibre ebook management
-- ebook server password
-- calibre server port
-- calibre server linux
-- calibre server command
+  - calibre ebook server
+  - ebook server distribution
+  - calibre server command line
+  - ebook network sharing
+  - calibre library server
+  - calibre ebook management
+  - ebook server password
+  - calibre server port
+  - calibre server linux
+  - calibre server command
 features:
-- Start a Calibre ebook server.
-- Specify a custom port for the server.
-- Set a username and password for server access.
-- Distribute ebooks over a local network.
-- Manage access to your Calibre library.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a Calibre ebook server.
+  - Specify a custom port for the server.
+  - Set a username and password for server access.
+  - Distribute ebooks over a local network.
+  - Manage access to your Calibre library.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # calibre-server

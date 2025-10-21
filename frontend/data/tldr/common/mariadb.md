@@ -1,29 +1,29 @@
 ---
-title: "MariaDB Client - Control Databases | Online Free DevTools by Hexmos"
+title: 'MariaDB Client - Control Databases | Online Free DevTools by Hexmos'
 name: mariadb
-path: "/freedevtools/tldr/common/mariadb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mariadb/"
-description: "Control databases with MariaDB Client. Connect, execute SQL scripts, and debug memory usage. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mariadb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mariadb/'
+description: 'Control databases with MariaDB Client. Connect, execute SQL scripts, and debug memory usage. Free online tool, no registration required.'
 category: common
 keywords:
-- mariadb client control
-- mariadb database manager
-- sql script executor
-- mariadb command line tool
-- database connection manager
-- mariadb memory debugger
-- socket connection mariadb
-- linux mariadb client
-- macos mariadb client
-- mariadb command line interface
+  - mariadb client control
+  - mariadb database manager
+  - sql script executor
+  - mariadb command line tool
+  - database connection manager
+  - mariadb memory debugger
+  - socket connection mariadb
+  - linux mariadb client
+  - macos mariadb client
+  - mariadb command line interface
 features:
-- Connect to MariaDB databases using various methods
-- Execute SQL scripts from files
-- Display warnings for each executed statement
-- Check memory and file usage during debugging
-- Connect to a MariaDB server using a socket file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to MariaDB databases using various methods
+  - Execute SQL scripts from files
+  - Display warnings for each executed statement
+  - Check memory and file usage during debugging
+  - Connect to a MariaDB server using a socket file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mariadb

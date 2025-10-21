@@ -1,29 +1,29 @@
 ---
-title: "MP4 Container - Muxe Streams into MP4 with mp4box | Online Free DevTools by Hexmos"
+title: 'MP4 Container - Muxe Streams into MP4 with mp4box | Online Free DevTools by Hexmos'
 name: mp4box
-path: "/freedevtools/tldr/common/mp4box/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mp4box/"
-description: "Muxe streams into MP4 container with mp4box. Combine audio and video, add subtitles, and display file information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mp4box/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mp4box/'
+description: 'Muxe streams into MP4 container with mp4box. Combine audio and video, add subtitles, and display file information. Free online tool, no registration required.'
 category: common
 keywords:
-- MP4 container muxing
-- MP4 stream combining
-- MP4 subtitle adding
-- MP4 file information
-- MP4 muxing utility
-- Audio video merging
-- SRT to MP4 converter
-- GPAC mp4box tool
-- MP4 command line
-- Video stream manipulation
+  - MP4 container muxing
+  - MP4 stream combining
+  - MP4 subtitle adding
+  - MP4 file information
+  - MP4 muxing utility
+  - Audio video merging
+  - SRT to MP4 converter
+  - GPAC mp4box tool
+  - MP4 command line
+  - Video stream manipulation
 features:
-- Combine audio and video streams into an MP4 container
-- Add SRT subtitle tracks to existing MP4 files
-- Display detailed information about MP4 file structure
-- Extract specific streams from MP4 files (audio, video)
-- Muxe multiple media streams into a single MP4 file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Combine audio and video streams into an MP4 container
+  - Add SRT subtitle tracks to existing MP4 files
+  - Display detailed information about MP4 file structure
+  - Extract specific streams from MP4 files (audio, video)
+  - Muxe multiple media streams into a single MP4 file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mp4box

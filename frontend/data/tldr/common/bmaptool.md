@@ -1,29 +1,29 @@
 ---
-title: "Create Block Maps - Intelligently Copy Images | Online Free DevTools by Hexmos"
+title: 'Create Block Maps - Intelligently Copy Images | Online Free DevTools by Hexmos'
 name: bmaptool
-path: "/freedevtools/tldr/common/bmaptool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bmaptool/"
-description: "Create block maps intelligently with bmaptool, designed to copy images faster than traditional methods. Optimize image deployments and reduce write operations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bmaptool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bmaptool/'
+description: 'Create block maps intelligently with bmaptool, designed to copy images faster than traditional methods. Optimize image deployments and reduce write operations. Free online tool, no registration required.'
 category: common
 keywords:
-- block map creation
-- image copy tool
-- image deployment optimization
-- bmap image tool
-- linux image copier
-- block-level copy utility
-- sparse image transfer
-- image file transfer
-- flash memory programming
-- embedded linux imaging
+  - block map creation
+  - image copy tool
+  - image deployment optimization
+  - bmap image tool
+  - linux image copier
+  - block-level copy utility
+  - sparse image transfer
+  - image file transfer
+  - flash memory programming
+  - embedded linux imaging
 features:
-- Create block maps from image files
-- Copy images to devices using block maps
-- Copy compressed images efficiently
-- Copy images without block maps
-- Optimize image deployment speed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create block maps from image files
+  - Copy images to devices using block maps
+  - Copy compressed images efficiently
+  - Copy images without block maps
+  - Optimize image deployment speed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bmaptool

@@ -1,29 +1,29 @@
 ---
-title: "Control Kakoune - Edit Code with Multiple Selections | Online Free DevTools by Hexmos"
+title: 'Control Kakoune - Edit Code with Multiple Selections | Online Free DevTools by Hexmos'
 name: kak
-path: "/freedevtools/tldr/common/kak/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kak/"
-description: "Control code editing with Kakoune, leveraging multiple selections for efficient text manipulation. Collaborative editing and advanced search capabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kak/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kak/'
+description: 'Control code editing with Kakoune, leveraging multiple selections for efficient text manipulation. Collaborative editing and advanced search capabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- kakoune editor
-- multiple selections editor
-- collaborative code editing
-- modal editor
-- linux code editor
-- macos code editor
-- text manipulation
-- code navigation
-- kak commands
-- kak scripting
+  - kakoune editor
+  - multiple selections editor
+  - collaborative code editing
+  - modal editor
+  - linux code editor
+  - macos code editor
+  - text manipulation
+  - code navigation
+  - kak commands
+  - kak scripting
 features:
-- Open and edit files in a terminal-based environment
-- Use multiple selections for simultaneous editing
-- Search and select text using regular expressions
-- Replace text across multiple selections
-- Execute shell commands within the editor
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit files in a terminal-based environment
+  - Use multiple selections for simultaneous editing
+  - Search and select text using regular expressions
+  - Replace text across multiple selections
+  - Execute shell commands within the editor
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kak

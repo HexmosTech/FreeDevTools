@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import JsonToCsvConverterSkeleton from "./_JsonToCsvConverterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Download } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import JsonToCsvConverterSkeleton from './_JsonToCsvConverterSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Download } from 'lucide-react';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // JSON to CSV conversion utility
 function convertJsonToCsv(
@@ -30,20 +30,20 @@ function convertJsonToCsv(
     if (!Array.isArray(data)) {
       // If it's a single object, wrap it in an array
       const singleObject = data;
-      if (typeof singleObject === "object" && singleObject !== null) {
+      if (typeof singleObject === 'object' && singleObject !== null) {
         return objectToCsv([singleObject], options);
       }
-      throw new Error("JSON must be an array of objects or a single object");
+      throw new Error('JSON must be an array of objects or a single object');
     }
 
     if (data.length === 0) {
-      return "";
+      return '';
     }
 
     return objectToCsv(data, options);
   } catch (error) {
     throw new Error(
-      `Invalid JSON: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Invalid JSON: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 }
@@ -52,7 +52,7 @@ function objectToCsv(
   data: any[],
   options: { flatten: boolean; includeEmptyFields: boolean }
 ): string {
-  if (data.length === 0) return "";
+  if (data.length === 0) return '';
 
   // Flatten objects if requested
   const processedData = options.flatten ? data.map(flattenObject) : data;
@@ -60,7 +60,7 @@ function objectToCsv(
   // Get all unique keys from all objects
   const allKeys = new Set<string>();
   processedData.forEach((obj) => {
-    if (typeof obj === "object" && obj !== null) {
+    if (typeof obj === 'object' && obj !== null) {
       Object.keys(obj).forEach((key) => allKeys.add(key));
     }
   });
@@ -68,17 +68,17 @@ function objectToCsv(
   const headers = Array.from(allKeys);
 
   // Create CSV header
-  const csvRows = [headers.map(escapeCSVField).join(",")];
+  const csvRows = [headers.map(escapeCSVField).join(',')];
 
   // Create CSV rows
   processedData.forEach((obj) => {
     const row = headers.map((header) => {
-      let value = obj && typeof obj === "object" ? obj[header] : "";
+      let value = obj && typeof obj === 'object' ? obj[header] : '';
 
       // Handle different data types
       if (value === null || value === undefined) {
-        value = options.includeEmptyFields ? "" : "";
-      } else if (typeof value === "object") {
+        value = options.includeEmptyFields ? '' : '';
+      } else if (typeof value === 'object') {
         value = JSON.stringify(value);
       } else {
         value = String(value);
@@ -86,13 +86,13 @@ function objectToCsv(
 
       return escapeCSVField(value);
     });
-    csvRows.push(row.join(","));
+    csvRows.push(row.join(','));
   });
 
-  return csvRows.join("\n");
+  return csvRows.join('\n');
 }
 
-function flattenObject(obj: any, prefix = ""): any {
+function flattenObject(obj: any, prefix = ''): any {
   const flattened: any = {};
 
   for (const key in obj) {
@@ -101,7 +101,7 @@ function flattenObject(obj: any, prefix = ""): any {
       const newKey = prefix ? `${prefix}.${key}` : key;
 
       if (
-        typeof value === "object" &&
+        typeof value === 'object' &&
         value !== null &&
         !Array.isArray(value)
       ) {
@@ -121,10 +121,10 @@ function escapeCSVField(field: string): string {
 
   // If field contains comma, quote, or newline, wrap in quotes and escape quotes
   if (
-    str.includes(",") ||
+    str.includes(',') ||
     str.includes('"') ||
-    str.includes("\n") ||
-    str.includes("\r")
+    str.includes('\n') ||
+    str.includes('\r')
   ) {
     return `"${str.replace(/"/g, '""')}"`;
   }
@@ -133,9 +133,9 @@ function escapeCSVField(field: string): string {
 }
 
 const JsonToCsvConverter: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [flatten, setFlatten] = useState(false);
   const [includeEmptyFields, setIncludeEmptyFields] = useState(true);
@@ -151,18 +151,18 @@ const JsonToCsvConverter: React.FC = () => {
   // Real-time conversion when input changes
   const handleConversion = useCallback(() => {
     if (!input.trim()) {
-      setOutput("");
-      setError("");
+      setOutput('');
+      setError('');
       return;
     }
 
     try {
       const csv = convertJsonToCsv(input, { flatten, includeEmptyFields });
       setOutput(csv);
-      setError("");
+      setError('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Conversion failed");
-      setOutput("");
+      setError(err instanceof Error ? err.message : 'Conversion failed');
+      setOutput('');
     }
   }, [input, flatten, includeEmptyFields]);
 
@@ -172,34 +172,34 @@ const JsonToCsvConverter: React.FC = () => {
   }, [handleConversion]);
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   const handleDownload = () => {
     if (!output) {
-      toast.error("No CSV data to download");
+      toast.error('No CSV data to download');
       return;
     }
 
     try {
-      const blob = new Blob([output], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
+      const blob = new Blob([output], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
 
       if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", "converted_data.csv");
-        link.style.visibility = "hidden";
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'converted_data.csv');
+        link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        toast.success("CSV file downloaded successfully!");
+        toast.success('CSV file downloaded successfully!');
       }
     } catch (err) {
-      toast.error("Failed to download CSV file");
+      toast.error('Failed to download CSV file');
     }
   };
 
@@ -208,27 +208,27 @@ const JsonToCsvConverter: React.FC = () => {
       [
         {
           id: 1,
-          name: "John Doe",
-          email: "john@example.com",
+          name: 'John Doe',
+          email: 'john@example.com',
           age: 30,
           address: {
-            street: "123 Main St",
-            city: "New York",
-            zipCode: "10001",
+            street: '123 Main St',
+            city: 'New York',
+            zipCode: '10001',
           },
-          hobbies: ["reading", "cycling"],
+          hobbies: ['reading', 'cycling'],
         },
         {
           id: 2,
-          name: "Jane Smith",
-          email: "jane@example.com",
+          name: 'Jane Smith',
+          email: 'jane@example.com',
           age: 25,
           address: {
-            street: "456 Oak Ave",
-            city: "Los Angeles",
-            zipCode: "90210",
+            street: '456 Oak Ave',
+            city: 'Los Angeles',
+            zipCode: '90210',
           },
-          hobbies: ["painting", "cooking", "traveling"],
+          hobbies: ['painting', 'cooking', 'traveling'],
         },
       ],
       null,
@@ -239,7 +239,7 @@ const JsonToCsvConverter: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -701,9 +701,9 @@ const JsonToCsvConverter: React.FC = () => {
                       <strong>💡 Pro Tip:</strong> Use the "Flatten nested
                       objects" option when dealing with complex JSON structures
                       to create more manageable CSV files for analysis. This
-                      converts nested objects like{" "}
-                      <code>{`{\"user\": {\"name\": \"John\", \"age\": 30}}"`}</code>{" "}
-                      into flat columns like <code>user.name</code> and{" "}
+                      converts nested objects like{' '}
+                      <code>{`{\"user\": {\"name\": \"John\", \"age\": 30}}"`}</code>{' '}
+                      into flat columns like <code>user.name</code> and{' '}
                       <code>user.age</code>.
                     </p>
                   </div>

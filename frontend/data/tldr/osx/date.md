@@ -1,29 +1,29 @@
 ---
-title: "Date Command - Display System Date | Online Free DevTools by Hexmos"
+title: 'Date Command - Display System Date | Online Free DevTools by Hexmos'
 name: date
-path: "/freedevtools/tldr/osx/date/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/date/"
-description: "Display system date with Date Command. Get current date and time in various formats on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/date/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/date/'
+description: 'Display system date with Date Command. Get current date and time in various formats on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- date command
-- osx date
-- macos date
-- unix timestamp
-- utc date
-- iso 8601 date
-- date formatting
-- display date
-- set date
-- date manipulation
+  - date command
+  - osx date
+  - macos date
+  - unix timestamp
+  - utc date
+  - iso 8601 date
+  - date formatting
+  - display date
+  - set date
+  - date manipulation
 features:
-- Display current date and time
-- Format date in various ways
-- Output Unix timestamp
-- Display date in UTC format
-- Show date relative to current time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current date and time
+  - Format date in various ways
+  - Output Unix timestamp
+  - Display date in UTC format
+  - Show date relative to current time
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # date

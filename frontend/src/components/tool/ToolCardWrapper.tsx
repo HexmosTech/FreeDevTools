@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -6,7 +6,7 @@ interface WrapperProps {
 }
 
 const ToolCardWrapper: React.FC<WrapperProps> = ({ children, className }) => {
-  return <div className={`space-y-6 py-6 ${className ?? ""}`}>{children}</div>;
+  return <div className={`space-y-6 py-6 ${className ?? ''}`}>{children}</div>;
 };
 
 export default ToolCardWrapper;

@@ -1,29 +1,29 @@
 ---
-title: "EFIBootMgr Control - Manage UEFI Boot Options | Online Free DevTools by Hexmos"
+title: 'EFIBootMgr Control - Manage UEFI Boot Options | Online Free DevTools by Hexmos'
 name: efibootmgr
-path: "/freedevtools/tldr/linux/efibootmgr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/efibootmgr/"
-description: "Control UEFI boot options with EFIBootMgr. Configure boot order and manage boot entries on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/efibootmgr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/efibootmgr/'
+description: 'Control UEFI boot options with EFIBootMgr. Configure boot order and manage boot entries on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- UEFI Boot Manager
-- Linux boot configuration
-- Boot order control
-- EFI boot entry management
-- Linux efibootmgr command
-- UEFI shell boot
-- Linux kernel boot options
-- efibootmgr delete
-- efibootmgr create
-- efibootmgr bootorder
+  - UEFI Boot Manager
+  - Linux boot configuration
+  - Boot order control
+  - EFI boot entry management
+  - Linux efibootmgr command
+  - UEFI shell boot
+  - Linux kernel boot options
+  - efibootmgr delete
+  - efibootmgr create
+  - efibootmgr bootorder
 features:
-- List available UEFI boot options
-- Create new UEFI boot entries
-- Modify the boot order of UEFI devices
-- Delete existing UEFI boot entries
-- Configure bootloader paths and labels
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available UEFI boot options
+  - Create new UEFI boot entries
+  - Modify the boot order of UEFI devices
+  - Delete existing UEFI boot entries
+  - Configure bootloader paths and labels
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # efibootmgr

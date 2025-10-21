@@ -1,29 +1,29 @@
 ---
-title: "Find Linux Packages - Search Files with urpmf | Online Free DevTools by Hexmos"
+title: 'Find Linux Packages - Search Files with urpmf | Online Free DevTools by Hexmos'
 name: urpmf
-path: "/freedevtools/tldr/linux/urpmf/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/urpmf/"
-description: "Find Linux packages instantly with urpmf. Locate files within packages and query package information efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/urpmf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/urpmf/'
+description: 'Find Linux packages instantly with urpmf. Locate files within packages and query package information efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux package finder
-- urpmf search tool
-- file search in packages
-- mageia package manager
-- linux command line tools
-- rpm package lookup
-- package content search
-- linux dependency finder
-- find file in rpm
-- package summary search
+  - linux package finder
+  - urpmf search tool
+  - file search in packages
+  - mageia package manager
+  - linux command line tools
+  - rpm package lookup
+  - package content search
+  - linux dependency finder
+  - find file in rpm
+  - package summary search
 features:
-- Search for files within Linux packages
-- Query package information in Mageia
-- Filter packages based on keywords in summaries
-- Filter packages based on keywords in descriptions
-- Exclude packages based on keywords using negation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for files within Linux packages
+  - Query package information in Mageia
+  - Filter packages based on keywords in summaries
+  - Filter packages based on keywords in descriptions
+  - Exclude packages based on keywords using negation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # urpmf

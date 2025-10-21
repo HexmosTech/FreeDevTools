@@ -1,29 +1,29 @@
 ---
-title: "GPG Card Admin - Manage Smart Cards | Online Free DevTools by Hexmos"
+title: 'GPG Card Admin - Manage Smart Cards | Online Free DevTools by Hexmos'
 name: gpg-card
-path: "/freedevtools/tldr/gpg/gpg-card/"
-canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg-card/"
-description: "Administer OpenPGP smart cards with GPG Card. Manage keys, URLs, and PINs directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/gpg/gpg-card/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gpg/gpg-card/'
+description: 'Administer OpenPGP smart cards with GPG Card. Manage keys, URLs, and PINs directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- OpenPGP Card Management
-- Smart Card Administration
-- GPG Card Control
-- PIV Card Utility
-- Command Line Key Manager
-- Card Edit Tool
-- GPG Card Fetch
-- GPG Card Passwd
-- Linux Smart Card
-- MacOS GPG Card
+  - OpenPGP Card Management
+  - Smart Card Administration
+  - GPG Card Control
+  - PIV Card Utility
+  - Command Line Key Manager
+  - Card Edit Tool
+  - GPG Card Fetch
+  - GPG Card Passwd
+  - Linux Smart Card
+  - MacOS GPG Card
 features:
-- Manage OpenPGP and PIV smart cards.
-- Fetch public keys from URLs stored on cards.
-- Change or unblock PINs for smart cards.
-- Toggle the forcesig flag for signing operations.
-- Factory reset smart cards to a clean state.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage OpenPGP and PIV smart cards.
+  - Fetch public keys from URLs stored on cards.
+  - Change or unblock PINs for smart cards.
+  - Toggle the forcesig flag for signing operations.
+  - Factory reset smart cards to a clean state.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gpg-card

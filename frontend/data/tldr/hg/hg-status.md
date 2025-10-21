@@ -1,29 +1,29 @@
 ---
-title: "Control Mercurial Status - Track Changes | Online Free DevTools by Hexmos"
+title: 'Control Mercurial Status - Track Changes | Online Free DevTools by Hexmos'
 name: hg-status
-path: "/freedevtools/tldr/hg/hg-status/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-status/"
-description: "Control Mercurial status efficiently with hg-status. Track file changes, identify modified files, and manage revisions easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-status/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-status/'
+description: 'Control Mercurial status efficiently with hg-status. Track file changes, identify modified files, and manage revisions easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Mercurial status control
-- HG version control status
-- File change tracker
-- Repository status manager
-- Modified file checker
-- Mercurial revision inspector
-- Command line status tool
-- HG exclude pattern
-- HG include pattern
-- Mercurial status command
+  - Mercurial status control
+  - HG version control status
+  - File change tracker
+  - Repository status manager
+  - Modified file checker
+  - Mercurial revision inspector
+  - Command line status tool
+  - HG exclude pattern
+  - HG include pattern
+  - Mercurial status command
 features:
-- Track changes in the working directory
-- Identify modified, added, and removed files
-- Compare changes against specific revisions
-- Include or exclude files based on glob patterns
-- Display status for deleted (but tracked) files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Track changes in the working directory
+  - Identify modified, added, and removed files
+  - Compare changes against specific revisions
+  - Include or exclude files based on glob patterns
+  - Display status for deleted (but tracked) files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg status

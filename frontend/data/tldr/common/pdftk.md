@@ -1,29 +1,29 @@
 ---
-title: "PDF Toolkit - Control PDF Files | Online Free DevTools by Hexmos"
+title: 'PDF Toolkit - Control PDF Files | Online Free DevTools by Hexmos'
 name: pdftk
-path: "/freedevtools/tldr/common/pdftk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pdftk/"
-description: "Control PDF files with PDFtk. Merge, split, rotate and extract pages from your PDF documents. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pdftk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pdftk/'
+description: 'Control PDF files with PDFtk. Merge, split, rotate and extract pages from your PDF documents. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF Toolkit
-- PDF Merge
-- PDF Split
-- PDF Rotate
-- PDF Extract
-- PDF Command Line
-- PDF Manipulation
-- PDF Linux
-- PDF macOS
-- PDF Batch Processing
+  - PDF Toolkit
+  - PDF Merge
+  - PDF Split
+  - PDF Rotate
+  - PDF Extract
+  - PDF Command Line
+  - PDF Manipulation
+  - PDF Linux
+  - PDF macOS
+  - PDF Batch Processing
 features:
-- Merge multiple PDF files into one
-- Split a PDF file into individual pages
-- Rotate pages within a PDF document
-- Extract specific pages from a PDF file
-- Manipulate PDF documents via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Merge multiple PDF files into one
+  - Split a PDF file into individual pages
+  - Rotate pages within a PDF document
+  - Extract specific pages from a PDF file
+  - Manipulate PDF documents via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdftk

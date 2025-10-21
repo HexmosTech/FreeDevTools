@@ -1,29 +1,29 @@
 ---
-title: "Manage GitLab Issues - View & Create Issues | Online Free DevTools by Hexmos"
+title: 'Manage GitLab Issues - View & Create Issues | Online Free DevTools by Hexmos'
 name: glab-issue
-path: "/freedevtools/tldr/glab/glab-issue/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-issue/"
-description: "Manage GitLab issues effectively with Glab Issue manager. Create, view, and list issues seamlessly using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-issue/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-issue/'
+description: 'Manage GitLab issues effectively with Glab Issue manager. Create, view, and list issues seamlessly using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- GitLab issue manager
-- GitLab issue CLI
-- Glab issue command
-- GitLab issue tracker
-- GitLab bug tracker
-- GitLab command line tool
-- glab issue list
-- glab issue create
-- glab issue view
-- gitlab
+  - GitLab issue manager
+  - GitLab issue CLI
+  - Glab issue command
+  - GitLab issue tracker
+  - GitLab bug tracker
+  - GitLab command line tool
+  - glab issue list
+  - glab issue create
+  - glab issue view
+  - gitlab
 features:
-- Display specific GitLab issues by number
-- Open GitLab issues in a web browser
-- Create new GitLab issues via command line
-- List GitLab issues with specific labels
-- Reopen closed GitLab issues
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display specific GitLab issues by number
+  - Open GitLab issues in a web browser
+  - Create new GitLab issues via command line
+  - List GitLab issues with specific labels
+  - Reopen closed GitLab issues
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab issue

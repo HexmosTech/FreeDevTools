@@ -1,29 +1,29 @@
 ---
-title: "Convert PSID to PGM - Transform Images | Online Free DevTools by Hexmos"
+title: 'Convert PSID to PGM - Transform Images | Online Free DevTools by Hexmos'
 name: psidtopgm
-path: "/freedevtools/tldr/common/psidtopgm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/psidtopgm/"
-description: "Convert PSID image data to PGM format with psidtopgm. Easily transform PostScript images into PGM images. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/psidtopgm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/psidtopgm/'
+description: 'Convert PSID image data to PGM format with psidtopgm. Easily transform PostScript images into PGM images. Free online tool, no registration required.'
 category: common
 keywords:
-- PSID to PGM conversion
-- PostScript to PGM
-- image format converter
-- PS image processing
-- PGM image generation
-- netpbm image tools
-- graphics conversion linux
-- command line image converter
-- PSID processing
-- PGM image manipulation
+  - PSID to PGM conversion
+  - PostScript to PGM
+  - image format converter
+  - PS image processing
+  - PGM image generation
+  - netpbm image tools
+  - graphics conversion linux
+  - command line image converter
+  - PSID processing
+  - PGM image manipulation
 features:
-- Convert PostScript image data to PGM format.
-- Specify the width of the output PGM image.
-- Define the height of the output PGM image.
-- Set the bits per sample for the PGM image.
-- Output PGM image data to standard output.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PostScript image data to PGM format.
+  - Specify the width of the output PGM image.
+  - Define the height of the output PGM image.
+  - Set the bits per sample for the PGM image.
+  - Output PGM image data to standard output.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # psidtopgm

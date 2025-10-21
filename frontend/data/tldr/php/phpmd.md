@@ -1,29 +1,29 @@
 ---
-title: "Validate PHP Code - Detect Messes with phpmd | Online Free DevTools by Hexmos"
+title: 'Validate PHP Code - Detect Messes with phpmd | Online Free DevTools by Hexmos'
 name: phpmd
-path: "/freedevtools/tldr/php/phpmd/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpmd/"
-description: "Validate PHP code quality with phpmd and detect potential messes in your codebase. Identify issues with code style, complexity, and more with this free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpmd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpmd/'
+description: 'Validate PHP code quality with phpmd and detect potential messes in your codebase. Identify issues with code style, complexity, and more with this free online tool, no registration required.'
 category: common
 keywords:
-- PHP code analysis
-- PHP mess detection
-- PHP code quality
-- PHP code review
-- PHP static analysis
-- Command line PHP linter
-- PHP code smells
-- PHP coding standards
-- PHP potential problems
-- PHP code validation
+  - PHP code analysis
+  - PHP mess detection
+  - PHP code quality
+  - PHP code review
+  - PHP static analysis
+  - Command line PHP linter
+  - PHP code smells
+  - PHP coding standards
+  - PHP potential problems
+  - PHP code validation
 features:
-- Scan PHP code for violations of coding standards
-- Identify potential code smells and anti-patterns
-- Generate reports in XML, text, or HTML format
-- Exclude specific directories from analysis
-- Specify minimum priority threshold for rules
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan PHP code for violations of coding standards
+  - Identify potential code smells and anti-patterns
+  - Generate reports in XML, text, or HTML format
+  - Exclude specific directories from analysis
+  - Specify minimum priority threshold for rules
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpmd

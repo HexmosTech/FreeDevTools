@@ -1,9 +1,9 @@
 ---
-title: "Control Abbreviations - Manage Shell Aliases | Online Free DevTools by Hexmos"
+title: 'Control Abbreviations - Manage Shell Aliases | Online Free DevTools by Hexmos'
 name: abbr
-path: "/freedevtools/tldr/linux/abbr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/abbr/"
-description: "Control abbreviations easily with Abbr. Manage shell aliases, create shortcuts, and expand commands in your fish shell. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/abbr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/abbr/'
+description: 'Control abbreviations easily with Abbr. Manage shell aliases, create shortcuts, and expand commands in your fish shell. Free online tool, no registration required.'
 category: linux
 keywords:
   - fish shell abbreviations
@@ -22,8 +22,8 @@ features:
   - Erase existing shell abbreviations
   - Import abbreviations from remote hosts
   - Manage command shortcuts within the fish shell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # abbr

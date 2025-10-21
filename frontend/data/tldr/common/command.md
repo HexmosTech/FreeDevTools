@@ -1,29 +1,29 @@
 ---
-title: "Command Execution - Control Shell Commands | Online Free DevTools by Hexmos"
+title: 'Command Execution - Control Shell Commands | Online Free DevTools by Hexmos'
 name: command
-path: "/freedevtools/tldr/common/command/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/command/"
-description: "Control shell command execution with Command. Bypass functions and aliases, guaranteeing precise program execution. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/command/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/command/'
+description: 'Control shell command execution with Command. Bypass functions and aliases, guaranteeing precise program execution. Free online tool, no registration required.'
 category: common
 keywords:
-- shell command execution
-- command line bypass
-- program execution control
-- bash command override
-- linux command utility
-- command path resolution
-- shell builtins ignore
-- alias bypassing command
-- force program execution
-- command definition display
+  - shell command execution
+  - command line bypass
+  - program execution control
+  - bash command override
+  - linux command utility
+  - command path resolution
+  - shell builtins ignore
+  - alias bypassing command
+  - force program execution
+  - command definition display
 features:
-- Execute programs bypassing shell functions and aliases.
-- Force execution using the default `$PATH`.
-- Display the path to the executable command.
-- Resolve command definitions and aliases.
-- Guarantee execution of standard utilities.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute programs bypassing shell functions and aliases.
+  - Force execution using the default `$PATH`.
+  - Display the path to the executable command.
+  - Resolve command definitions and aliases.
+  - Guarantee execution of standard utilities.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # command

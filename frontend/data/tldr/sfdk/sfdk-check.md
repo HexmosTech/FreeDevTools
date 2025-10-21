@@ -1,29 +1,29 @@
 ---
-title: "SFDK Check - Perform Quality Checks | Online Free DevTools by Hexmos"
+title: 'SFDK Check - Perform Quality Checks | Online Free DevTools by Hexmos'
 name: sfdk-check
-path: "/freedevtools/tldr/sfdk/sfdk-check/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-check/"
-description: "Perform quality checks with SFDK Check. Validate your Sailfish OS applications, manage test suites, and ensure application quality using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-check/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-check/'
+description: 'Perform quality checks with SFDK Check. Validate your Sailfish OS applications, manage test suites, and ensure application quality using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- sfdk check
-- sailfishos quality check
-- sfdk test suite
-- sailfish application validation
-- sfdk command line interface
-- sailfish sdk check
-- qtcreator sfdk
-- sfdk build validation
-- sailfishos development
-- sfdk testing levels
+  - sfdk check
+  - sailfishos quality check
+  - sfdk test suite
+  - sailfish application validation
+  - sfdk command line interface
+  - sailfish sdk check
+  - qtcreator sfdk
+  - sfdk build validation
+  - sailfishos development
+  - sfdk testing levels
 features:
-- List available test suites for Sailfish OS applications.
-- Execute all or essential quality checks on Sailfish OS projects.
-- Add specific testing levels to the quality check process.
-- Remove unwanted testing levels from the check configuration.
-- Include custom test suites in the quality check execution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available test suites for Sailfish OS applications.
+  - Execute all or essential quality checks on Sailfish OS projects.
+  - Add specific testing levels to the quality check process.
+  - Remove unwanted testing levels from the check configuration.
+  - Include custom test suites in the quality check execution.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk check

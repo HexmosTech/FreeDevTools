@@ -1,9 +1,9 @@
 ---
-title: "Display Kernel Messages - Analyze System Startup | Online Free DevTools by Hexmos"
+title: 'Display Kernel Messages - Analyze System Startup | Online Free DevTools by Hexmos'
 name: dmesg
-path: "/freedevtools/tldr/sunos/dmesg/"
-canonical: "https://hexmos.com/freedevtools/tldr/sunos/dmesg/"
-description: "Display kernel messages with dmesg. Analyze system startup, detect hardware, and troubleshoot errors on SunOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/sunos/dmesg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sunos/dmesg/'
+description: 'Display kernel messages with dmesg. Analyze system startup, detect hardware, and troubleshoot errors on SunOS. Free online tool, no registration required.'
 category: sunos
 keywords:
   - kernel message analyzer
@@ -22,8 +22,8 @@ features:
   - Paginate kernel output with less
   - Analyze system memory information
   - View hardware detection details
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dmesg

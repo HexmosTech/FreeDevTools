@@ -1,29 +1,29 @@
 ---
-title: "Convert PBM to XBM - Generate Bitmap Images | Online Free DevTools by Hexmos"
+title: 'Convert PBM to XBM - Generate Bitmap Images | Online Free DevTools by Hexmos'
 name: pbmtoxbm
-path: "/freedevtools/tldr/common/pbmtoxbm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtoxbm/"
-description: "Convert PBM to XBM with pbmtoxbm. Generate X11 and X10 bitmap images from PBM files with this Netpbm tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmtoxbm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmtoxbm/'
+description: 'Convert PBM to XBM with pbmtoxbm. Generate X11 and X10 bitmap images from PBM files with this Netpbm tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PBM to XBM converter
-- XBM generator
-- Netpbm image conversion
-- Bitmap image converter
-- PBM image editor
-- X11 bitmap generator
-- X10 bitmap generator
-- Linux image tools
-- Command line image converter
-- Image format conversion
+  - PBM to XBM converter
+  - XBM generator
+  - Netpbm image conversion
+  - Bitmap image converter
+  - PBM image editor
+  - X11 bitmap generator
+  - X10 bitmap generator
+  - Linux image tools
+  - Command line image converter
+  - Image format conversion
 features:
-- Convert PBM images to X11 XBM format
-- Convert PBM images to X10 XBM format
-- Generate X11 bitmaps from PBM
-- Generate X10 bitmaps from PBM
-- Enable explicit specification of X11 or X10 format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PBM images to X11 XBM format
+  - Convert PBM images to X10 XBM format
+  - Generate X11 bitmaps from PBM
+  - Generate X10 bitmaps from PBM
+  - Enable explicit specification of X11 or X10 format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmtoxbm

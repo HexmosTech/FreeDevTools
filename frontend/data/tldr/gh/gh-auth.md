@@ -1,29 +1,29 @@
 ---
-title: "GitHub Auth - Authenticate GitHub Hosts | Online Free DevTools by Hexmos"
+title: 'GitHub Auth - Authenticate GitHub Hosts | Online Free DevTools by Hexmos'
 name: gh-auth
-path: "/freedevtools/tldr/gh/gh-auth/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-auth/"
-description: "Authenticate with GitHub hosts using GitHub Auth. Manage GitHub authentication, tokens, and scopes from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-auth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-auth/'
+description: 'Authenticate with GitHub hosts using GitHub Auth. Manage GitHub authentication, tokens, and scopes from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- github authentication
-- github cli authentication
-- gh auth login
-- gh auth status
-- gh auth logout
-- github token authentication
-- github enterprise authentication
-- gh auth refresh
-- github scopes management
-- cli github authentication
+  - github authentication
+  - github cli authentication
+  - gh auth login
+  - gh auth status
+  - gh auth logout
+  - github token authentication
+  - github enterprise authentication
+  - gh auth refresh
+  - github scopes management
+  - cli github authentication
 features:
-- Authenticate with GitHub hosts via interactive prompt
-- Authenticate with a GitHub token from stdin
-- Check authentication status with a GitHub host
-- Log out of a GitHub host
-- Refresh authentication credentials with minimal scopes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate with GitHub hosts via interactive prompt
+  - Authenticate with a GitHub token from stdin
+  - Check authentication status with a GitHub host
+  - Log out of a GitHub host
+  - Refresh authentication credentials with minimal scopes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh auth

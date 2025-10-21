@@ -1,9 +1,9 @@
 ---
-title: "sstat Command - View Job Status | Online Free DevTools by Hexmos"
+title: 'sstat Command - View Job Status | Online Free DevTools by Hexmos'
 name: sstat
-path: "/freedevtools/tldr/linux/sstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sstat/"
-description: "View and manage Slurm job status with the sstat command.  Check job IDs, CPU usage, and memory consumption easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sstat/'
+description: 'View and manage Slurm job status with the sstat command.  Check job IDs, CPU usage, and memory consumption easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - slurm job status
@@ -22,8 +22,8 @@ features:
   - Filter jobs by ID for specific status checks.
   - Provide parsable output for scripting and automation.
   - List available fields for customized output formatting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sstat

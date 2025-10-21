@@ -1,29 +1,29 @@
 ---
-title: "Capture Network Packets - Dumpcap Tool | Online Free DevTools by Hexmos"
+title: 'Capture Network Packets - Dumpcap Tool | Online Free DevTools by Hexmos'
 name: dumpcap
-path: "/freedevtools/tldr/common/dumpcap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dumpcap/"
-description: "Capture network packets efficiently with Dumpcap. Analyze network traffic and diagnose issues using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dumpcap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dumpcap/'
+description: 'Capture network packets efficiently with Dumpcap. Analyze network traffic and diagnose issues using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- network packet capture
-- packet sniffing linux
-- network traffic analysis
-- pcapng capture utility
-- command-line packet sniffer
-- dumpcap command examples
-- wireshark network analysis
-- network troubleshooting tool
-- linux network monitoring
-- tcpdump alternative
+  - network packet capture
+  - packet sniffing linux
+  - network traffic analysis
+  - pcapng capture utility
+  - command-line packet sniffer
+  - dumpcap command examples
+  - wireshark network analysis
+  - network troubleshooting tool
+  - linux network monitoring
+  - tcpdump alternative
 features:
-- Capture network packets from specified interfaces.
-- Save captured packets to pcapng files for analysis.
-- Utilize ring buffer for continuous packet capture.
-- Manage capture file size and number with defined limits.
-- List available network interfaces for targeted capture.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture network packets from specified interfaces.
+  - Save captured packets to pcapng files for analysis.
+  - Utilize ring buffer for continuous packet capture.
+  - Manage capture file size and number with defined limits.
+  - List available network interfaces for targeted capture.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dumpcap

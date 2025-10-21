@@ -1,29 +1,29 @@
 ---
-title: "Manage IAM - Configure Access with gcloud-iam | Online Free DevTools by Hexmos"
+title: 'Manage IAM - Configure Access with gcloud-iam | Online Free DevTools by Hexmos'
 name: gcloud-iam
-path: "/freedevtools/tldr/gcloud/gcloud-iam/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-iam/"
-description: "Configure Identity and Access Management (IAM) with gcloud-iam. Create service accounts, manage roles, and control permissions effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-iam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-iam/'
+description: 'Configure Identity and Access Management (IAM) with gcloud-iam. Create service accounts, manage roles, and control permissions effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud iam
-- gcloud iam roles
-- gcloud iam service accounts
-- gcloud iam policy
-- google cloud iam
-- iam roles management
-- service account creation
-- cloud identity access management
-- iam binding configuration
-- gcloud command line iam
+  - gcloud iam
+  - gcloud iam roles
+  - gcloud iam service accounts
+  - gcloud iam policy
+  - google cloud iam
+  - iam roles management
+  - service account creation
+  - cloud identity access management
+  - iam binding configuration
+  - gcloud command line iam
 features:
-- List grantable IAM roles for resources
-- Create custom IAM roles for organizations or projects
-- Create new service accounts
-- Add IAM policy bindings to service accounts
-- List service account keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List grantable IAM roles for resources
+  - Create custom IAM roles for organizations or projects
+  - Create new service accounts
+  - Add IAM policy bindings to service accounts
+  - List service account keys
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud iam

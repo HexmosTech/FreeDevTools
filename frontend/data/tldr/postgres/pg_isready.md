@@ -1,29 +1,29 @@
 ---
-title: "PostgreSQL Ready Check - Control Connection Status | Online Free DevTools by Hexmos"
+title: 'PostgreSQL Ready Check - Control Connection Status | Online Free DevTools by Hexmos'
 name: pg_isready
-path: "/freedevtools/tldr/postgres/pg_isready/"
-canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_isready/"
-description: "Check PostgreSQL connection status with pg_isready. Monitor database availability and troubleshoot connection issues effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/postgres/pg_isready/'
+canonical: 'https://hexmos.com/freedevtools/tldr/postgres/pg_isready/'
+description: 'Check PostgreSQL connection status with pg_isready. Monitor database availability and troubleshoot connection issues effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- PostgreSQL connection check
-- database availability status
-- PostgreSQL readiness probe
-- connection status monitor
-- PostgreSQL command line tool
-- pg_isready utility
-- PostgreSQL server health
-- database connection troubleshooting
-- common database commands
-- command line connection test
+  - PostgreSQL connection check
+  - database availability status
+  - PostgreSQL readiness probe
+  - connection status monitor
+  - PostgreSQL command line tool
+  - pg_isready utility
+  - PostgreSQL server health
+  - database connection troubleshooting
+  - common database commands
+  - command line connection test
 features:
-- Determine PostgreSQL server connection status
-- Check server availability using command line
-- Verify connection with specific hostname and port
-- Display output only on connection failure
-- Support quiet mode for silent checking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Determine PostgreSQL server connection status
+  - Check server availability using command line
+  - Verify connection with specific hostname and port
+  - Display output only on connection failure
+  - Support quiet mode for silent checking
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pg_isready

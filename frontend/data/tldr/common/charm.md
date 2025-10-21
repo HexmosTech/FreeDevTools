@@ -1,29 +1,29 @@
 ---
-title: "Charm Account Manager - Control SSH Keys | Online Free DevTools by Hexmos"
+title: 'Charm Account Manager - Control SSH Keys | Online Free DevTools by Hexmos'
 name: charm
-path: "/freedevtools/tldr/common/charm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/charm/"
-description: "Control SSH keys and manage your Charm account with Charm Account Manager. Securely backup, import, and manage your keys for terminal-based apps. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/charm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/charm/'
+description: 'Control SSH keys and manage your Charm account with Charm Account Manager. Securely backup, import, and manage your keys for terminal-based apps. Free online tool, no registration required.'
 category: common
 keywords:
-- Charm account manager
-- SSH key management
-- Terminal application backend
-- Charmbracelet backup keys
-- Charm SSH keys
-- Charm ID lookup
-- Charm server management
-- Charm account backup
-- Terminal application authentication
-- Command-line key manager
+  - Charm account manager
+  - SSH key management
+  - Terminal application backend
+  - Charmbracelet backup keys
+  - Charm SSH keys
+  - Charm ID lookup
+  - Charm server management
+  - Charm account backup
+  - Terminal application authentication
+  - Command-line key manager
 features:
-- Backup Charm account keys securely
-- Import previously backed up keys
-- Locate the `cloud.charm.sh` folder
-- Start a local Charm server
-- Print linked SSH keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Backup Charm account keys securely
+  - Import previously backed up keys
+  - Locate the `cloud.charm.sh` folder
+  - Start a local Charm server
+  - Print linked SSH keys
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # charm

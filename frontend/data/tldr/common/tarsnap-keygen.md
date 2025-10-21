@@ -1,29 +1,29 @@
 ---
-title: "Generate Tarsnap Key - Secure Backup Keygen | Online Free DevTools by Hexmos"
+title: 'Generate Tarsnap Key - Secure Backup Keygen | Online Free DevTools by Hexmos'
 name: tarsnap-keygen
-path: "/freedevtools/tldr/common/tarsnap-keygen/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tarsnap-keygen/"
-description: "Generate Tarsnap keys with tarsnap-keygen. Secure your online backups and register machines for Tarsnap cloud storage services. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tarsnap-keygen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tarsnap-keygen/'
+description: 'Generate Tarsnap keys with tarsnap-keygen. Secure your online backups and register machines for Tarsnap cloud storage services. Free online tool, no registration required.'
 category: common
 keywords:
-- Tarsnap key generator
-- Tarsnap backup keygen
-- Secure key generation
-- Cloud backup key
-- Tarsnap machine registration
-- Key file encryption
-- Online backup security
-- Linux keygen
-- MacOS keygen
-- Command line keygen
+  - Tarsnap key generator
+  - Tarsnap backup keygen
+  - Secure key generation
+  - Cloud backup key
+  - Tarsnap machine registration
+  - Key file encryption
+  - Online backup security
+  - Linux keygen
+  - MacOS keygen
+  - Command line keygen
 features:
-- Generate key files for Tarsnap backups
-- Register machines with the Tarsnap server
-- Encrypt key files with a passphrase
-- Securely manage Tarsnap backup keys
-- Automate key generation with command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate key files for Tarsnap backups
+  - Register machines with the Tarsnap server
+  - Encrypt key files with a passphrase
+  - Securely manage Tarsnap backup keys
+  - Automate key generation with command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tarsnap-keygen

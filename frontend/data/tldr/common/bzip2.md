@@ -1,29 +1,29 @@
 ---
-title: "Compress Files - bzip2 Block-Sorting Compression | Online Free DevTools by Hexmos"
+title: 'Compress Files - bzip2 Block-Sorting Compression | Online Free DevTools by Hexmos'
 name: bzip2
-path: "/freedevtools/tldr/common/bzip2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bzip2/"
-description: "Compress files efficiently with bzip2, a block-sorting compression tool. Reduce file sizes and improve storage utilization with this powerful command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bzip2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bzip2/'
+description: 'Compress files efficiently with bzip2, a block-sorting compression tool. Reduce file sizes and improve storage utilization with this powerful command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- bzip2 file compression
-- block-sorting compression
-- command-line compressor
-- bz2 archive utility
-- linux file compression
-- unix bzip2 command
-- file decompression tool
-- bzip2 archive integrity check
-- compress large files
-- bzip2 verbose compression
+  - bzip2 file compression
+  - block-sorting compression
+  - command-line compressor
+  - bz2 archive utility
+  - linux file compression
+  - unix bzip2 command
+  - file decompression tool
+  - bzip2 archive integrity check
+  - compress large files
+  - bzip2 verbose compression
 features:
-- Compress files using block-sorting compression
-- Decompress bzip2 archives
-- Test the integrity of compressed files
-- Display compression ratio and verbose output
-- Force decompression and overwrite existing files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files using block-sorting compression
+  - Decompress bzip2 archives
+  - Test the integrity of compressed files
+  - Display compression ratio and verbose output
+  - Force decompression and overwrite existing files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bzip2

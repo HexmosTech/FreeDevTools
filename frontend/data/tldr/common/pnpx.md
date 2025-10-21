@@ -1,29 +1,29 @@
 ---
-title: "PNPX Executor - Execute npm Binaries with pnpm | Online Free DevTools by Hexmos"
+title: 'PNPX Executor - Execute npm Binaries with pnpm | Online Free DevTools by Hexmos'
 name: pnpx
-path: "/freedevtools/tldr/common/pnpx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pnpx/"
-description: "Execute npm package binaries swiftly with PNpx Executor, leveraging pnpm for faster and more efficient execution. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pnpx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pnpx/'
+description: 'Execute npm package binaries swiftly with PNpx Executor, leveraging pnpm for faster and more efficient execution. Free online tool, no registration required.'
 category: common
 keywords:
-- npm package executor
-- pnpm binary executor
-- node package runner
-- command-line executor
-- npm command runner
-- pnpm command runner
-- node binary execution
-- package binary launcher
-- npm package invoker
-- pnpm package invoker
+  - npm package executor
+  - pnpm binary executor
+  - node package runner
+  - command-line executor
+  - npm command runner
+  - pnpm command runner
+  - node binary execution
+  - package binary launcher
+  - npm package invoker
+  - pnpm package invoker
 features:
-- Execute binaries directly from npm packages using pnpm
-- Specify a specific binary to execute within a package
-- Run commands without globally installing npm packages
-- Utilize pnpm's efficient package management for faster execution
-- Access command help and usage information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute binaries directly from npm packages using pnpm
+  - Specify a specific binary to execute within a package
+  - Run commands without globally installing npm packages
+  - Utilize pnpm's efficient package management for faster execution
+  - Access command help and usage information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnpx

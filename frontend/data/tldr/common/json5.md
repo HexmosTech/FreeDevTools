@@ -1,29 +1,29 @@
 ---
-title: "JSON5 Converter - Format JSON5 Files to JSON | Online Free DevTools by Hexmos"
+title: 'JSON5 Converter - Format JSON5 Files to JSON | Online Free DevTools by Hexmos'
 name: json5
-path: "/freedevtools/tldr/common/json5/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/json5/"
-description: "Format JSON5 files quickly with JSON5 Converter. Convert JSON5 to JSON, validate syntax, and specify indentations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/json5/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/json5/'
+description: 'Format JSON5 files quickly with JSON5 Converter. Convert JSON5 to JSON, validate syntax, and specify indentations. Free online tool, no registration required.'
 category: common
 keywords:
-- JSON5 converter
-- JSON5 to JSON
-- JSON5 validator
-- JSON5 formatter
-- JSON5 online
-- JSON5 command line
-- JSON to JSON5 converter
-- validate JSON5
-- convert JSON5 files
-- JSON5 tools
+  - JSON5 converter
+  - JSON5 to JSON
+  - JSON5 validator
+  - JSON5 formatter
+  - JSON5 online
+  - JSON5 command line
+  - JSON to JSON5 converter
+  - validate JSON5
+  - convert JSON5 files
+  - JSON5 tools
 features:
-- Converts JSON5 files to JSON format
-- Validates JSON5 syntax for errors
-- Allows specifying indentation for output JSON
-- Converts JSON5 from stdin to stdout
-- Supports outputting to a specified JSON file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Converts JSON5 files to JSON format
+  - Validates JSON5 syntax for errors
+  - Allows specifying indentation for output JSON
+  - Converts JSON5 from stdin to stdout
+  - Supports outputting to a specified JSON file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # json5

@@ -1,29 +1,29 @@
 ---
-title: "Manage PHP Dependencies - Composer Package Manager | Online Free DevTools by Hexmos"
+title: 'Manage PHP Dependencies - Composer Package Manager | Online Free DevTools by Hexmos'
 name: composer
-path: "/freedevtools/tldr/composer/composer/"
-canonical: "https://hexmos.com/freedevtools/tldr/composer/composer/"
-description: "Manage PHP dependencies easily with Composer Package Manager. Install, update, and remove packages for your PHP projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/composer/composer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/composer/composer/'
+description: 'Manage PHP dependencies easily with Composer Package Manager. Install, update, and remove packages for your PHP projects. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP dependency manager
-- Composer package management
-- PHP composer require
-- Composer install update
-- PHP project dependencies
-- Composer lock file
-- PHP package installer
-- Composer self-update
-- Common platform commands
-- PHP Composer tool
+  - PHP dependency manager
+  - Composer package management
+  - PHP composer require
+  - Composer install update
+  - PHP project dependencies
+  - Composer lock file
+  - PHP package installer
+  - Composer self-update
+  - Common platform commands
+  - PHP Composer tool
 features:
-- Install PHP project dependencies
-- Update PHP packages and lock file
-- Remove packages from PHP projects
-- Manage PHP project dependencies
-- Update Composer to latest version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install PHP project dependencies
+  - Update PHP packages and lock file
+  - Remove packages from PHP projects
+  - Manage PHP project dependencies
+  - Update Composer to latest version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # composer

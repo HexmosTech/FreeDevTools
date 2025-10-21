@@ -1,9 +1,9 @@
 ---
-title: "Generate Code with Codex - Natural Language Tool | Online Free DevTools by Hexmos"
+title: 'Generate Code with Codex - Natural Language Tool | Online Free DevTools by Hexmos'
 name: codex
-path: "/freedevtools/tldr/common/codex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/codex/"
-description: "Generate code with Codex, a natural language code assistant. Edit files, run commands, and get help with coding tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/codex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/codex/'
+description: 'Generate code with Codex, a natural language code assistant. Edit files, run commands, and get help with coding tasks. Free online tool, no registration required.'
 category: common
 keywords:
   - natural language code generation
@@ -22,8 +22,8 @@ features:
   - Run commands automatically based on prompts
   - Use specific providers and models for code generation
   - Load entire repository context for more accurate results
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # codex

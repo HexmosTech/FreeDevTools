@@ -1,29 +1,29 @@
 ---
-title: "Synchronize IMAP - Manage Mail with Offlineimap | Online Free DevTools by Hexmos"
+title: 'Synchronize IMAP - Manage Mail with Offlineimap | Online Free DevTools by Hexmos'
 name: offlineimap
-path: "/freedevtools/tldr/common/offlineimap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/offlineimap/"
-description: "Synchronize IMAP server with Offlineimap. Manage email, and backup your important messages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/offlineimap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/offlineimap/'
+description: 'Synchronize IMAP server with Offlineimap. Manage email, and backup your important messages. Free online tool, no registration required.'
 category: common
 keywords:
-- imap synchronization
-- maildir synchronization
-- offlineimap linux
-- offlineimap mail backup
-- email synchronization tool
-- imap client linux
-- mail transfer agent
-- email archiving
-- imap server sync
-- offlineimap configuration
+  - imap synchronization
+  - maildir synchronization
+  - offlineimap linux
+  - offlineimap mail backup
+  - email synchronization tool
+  - imap client linux
+  - mail transfer agent
+  - email archiving
+  - imap server sync
+  - offlineimap configuration
 features:
-- Synchronize a remote IMAP server with local Maildir folders.
-- Perform a one-time synchronization without autorefresh.
-- Synchronize a specific mail account.
-- Synchronize a specific mail folder.
-- Manage your email offline with local access.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize a remote IMAP server with local Maildir folders.
+  - Perform a one-time synchronization without autorefresh.
+  - Synchronize a specific mail account.
+  - Synchronize a specific mail folder.
+  - Manage your email offline with local access.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # offlineimap

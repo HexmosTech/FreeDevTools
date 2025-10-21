@@ -1,29 +1,29 @@
 ---
-title: "Clementine Player - Control Music Playback | Online Free DevTools by Hexmos"
+title: 'Clementine Player - Control Music Playback | Online Free DevTools by Hexmos'
 name: clementine
-path: "/freedevtools/tldr/common/clementine/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/clementine/"
-description: "Control music playback with Clementine music player. Manage playlists, skip tracks, and pause/resume music with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/clementine/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/clementine/'
+description: 'Control music playback with Clementine music player. Manage playlists, skip tracks, and pause/resume music with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Clementine music player
-- Music player command line
-- Audio playback control
-- Playlist management tool
-- Clementine command examples
-- Linux music player
-- macOS music player
-- Audio library organizer
-- Clementine audio player
-- Music control CLI
+  - Clementine music player
+  - Music player command line
+  - Audio playback control
+  - Playlist management tool
+  - Clementine command examples
+  - Linux music player
+  - macOS music player
+  - Audio library organizer
+  - Clementine audio player
+  - Music control CLI
 features:
-- Start Clementine GUI
-- Begin playing music from a URL or path
-- Toggle between pausing and playing audio
-- Skip to the next or previous track in a playlist
-- Create or load music playlists
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start Clementine GUI
+  - Begin playing music from a URL or path
+  - Toggle between pausing and playing audio
+  - Skip to the next or previous track in a playlist
+  - Create or load music playlists
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clementine

@@ -1,9 +1,9 @@
 ---
-title: "ZNC IRC Bouncer - Manage IRC Connections | Online Free DevTools by Hexmos"
+title: 'ZNC IRC Bouncer - Manage IRC Connections | Online Free DevTools by Hexmos'
 name: znc
-path: "/freedevtools/tldr/linux/znc/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/znc/"
-description: "Manage IRC connections effortlessly with the ZNC IRC bouncer.  Setup and control your IRC experience from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/znc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/znc/'
+description: 'Manage IRC connections effortlessly with the ZNC IRC bouncer.  Setup and control your IRC experience from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - znc irc bouncer
@@ -22,8 +22,8 @@ features:
   - Provides offline message storage.
   - Offers customizable configuration options.
   - Simplifies IRC management via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # znc

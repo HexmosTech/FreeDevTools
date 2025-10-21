@@ -1,9 +1,9 @@
 ---
-title: "Base64 Encode/Decode - Format Data with base64 | Online Free DevTools by Hexmos"
+title: 'Base64 Encode/Decode - Format Data with base64 | Online Free DevTools by Hexmos'
 name: base64
-path: "/freedevtools/tldr/common/base64/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/base64/"
-description: "Encode and decode data with the base64 command-line tool.  Easily convert files or stdin/stdout data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/base64/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/base64/'
+description: 'Encode and decode data with the base64 command-line tool.  Easily convert files or stdin/stdout data. Free online tool, no registration required.'
 category: common
 keywords:
   - base64 encoding
@@ -22,8 +22,8 @@ features:
   - Wraps encoded output to a specified width.
   - Encodes data piped from stdin.
   - Decodes data piped from stdin.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # base64

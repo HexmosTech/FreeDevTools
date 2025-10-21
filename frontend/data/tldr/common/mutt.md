@@ -1,29 +1,29 @@
 ---
-title: "Send Email with Mutt - Command Line Mail | Online Free DevTools by Hexmos"
+title: 'Send Email with Mutt - Command Line Mail | Online Free DevTools by Hexmos'
 name: mutt
-path: "/freedevtools/tldr/common/mutt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mutt/"
-description: "Send email with Mutt command-line client. Compose, send, and manage email from the terminal with advanced customization. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mutt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mutt/'
+description: 'Send email with Mutt command-line client. Compose, send, and manage email from the terminal with advanced customization. Free online tool, no registration required.'
 category: common
 keywords:
-- command line email
-- mutt email client
-- terminal email
-- send email linux
-- send email command line
-- mutt send attachments
-- mutt configuration
-- mutt tutorial
-- email client linux
-- linux email command
+  - command line email
+  - mutt email client
+  - terminal email
+  - send email linux
+  - send email command line
+  - mutt send attachments
+  - mutt configuration
+  - mutt tutorial
+  - email client linux
+  - linux email command
 features:
-- Send email with specified subject and recipients
-- Attach files to email messages
-- Specify a file as the email message body
-- Use a draft file for email composition
-- Open specific mailboxes from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send email with specified subject and recipients
+  - Attach files to email messages
+  - Specify a file as the email message body
+  - Use a draft file for email composition
+  - Open specific mailboxes from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mutt

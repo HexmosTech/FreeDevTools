@@ -1,29 +1,29 @@
 ---
-title: "Extract Package Data - Control Alpm Databases with expac | Online Free DevTools by Hexmos"
+title: 'Extract Package Data - Control Alpm Databases with expac | Online Free DevTools by Hexmos'
 name: expac
-path: "/freedevtools/tldr/linux/expac/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/expac/"
-description: "Extract package data with expac. Control alpm databases and manage pacman utilities effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/expac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/expac/'
+description: 'Extract package data with expac. Control alpm databases and manage pacman utilities effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
-- alpm database extraction
-- pacman package manager
-- linux package analysis
-- expac package dependencies
-- software package metadata
-- alpm query tool
-- package size calculation
-- dependency tree visualization
-- arch linux package info
-- pacman database inspection
+  - alpm database extraction
+  - pacman package manager
+  - linux package analysis
+  - expac package dependencies
+  - software package metadata
+  - alpm query tool
+  - package size calculation
+  - dependency tree visualization
+  - arch linux package info
+  - pacman database inspection
 features:
-- Extract package dependencies
-- List optional package dependencies
-- Calculate package download sizes
-- Identify packages marked for upgrade
-- Display explicitly installed packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract package dependencies
+  - List optional package dependencies
+  - Calculate package download sizes
+  - Identify packages marked for upgrade
+  - Display explicitly installed packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # expac

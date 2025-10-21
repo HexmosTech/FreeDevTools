@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import WebpConverterSkeleton from "./_WebpConverterSkeleton";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { Progress } from "@/components/ui/progress";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FileImageIcon, DownloadIcon, TrashIcon, Upload } from "lucide-react";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import WebpConverterSkeleton from './_WebpConverterSkeleton';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
+import { Progress } from '@/components/ui/progress';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FileImageIcon, DownloadIcon, TrashIcon, Upload } from 'lucide-react';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // WebP conversion utilities
 const MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB per file
@@ -39,8 +39,8 @@ const convertToWebP = async (
   quality: number
 ): Promise<{ blob: Blob; size: number }> => {
   return new Promise((resolve, reject) => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     const img = new Image();
 
     img.onload = () => {
@@ -48,7 +48,7 @@ const convertToWebP = async (
       canvas.height = img.height;
 
       if (!ctx) {
-        reject(new Error("Could not get canvas context"));
+        reject(new Error('Could not get canvas context'));
         return;
       }
 
@@ -59,16 +59,16 @@ const convertToWebP = async (
           if (blob) {
             resolve({ blob, size: blob.size });
           } else {
-            reject(new Error("Failed to convert image"));
+            reject(new Error('Failed to convert image'));
           }
         },
-        "image/webp",
+        'image/webp',
         quality / 100
       );
     };
 
     img.onerror = () => {
-      reject(new Error("Failed to load image"));
+      reject(new Error('Failed to load image'));
     };
 
     img.src = URL.createObjectURL(file);
@@ -104,7 +104,7 @@ const batchConvertToWebP = async (
         webpSize: 0,
         webpBlob: new Blob(),
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
 
@@ -115,16 +115,16 @@ const batchConvertToWebP = async (
 };
 
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return "0 Bytes";
+  if (bytes === 0) return '0 Bytes';
   const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
 const downloadFile = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
@@ -139,13 +139,13 @@ const downloadZip = async (results: ConversionResult[]) => {
 
   if (successfulResults.length === 1) {
     const result = successfulResults[0];
-    const filename = result.originalName.replace(/\.[^/.]+$/, ".webp");
+    const filename = result.originalName.replace(/\.[^/.]+$/, '.webp');
     downloadFile(result.webpBlob, filename);
   } else {
     // For multiple files, download each individually for now
     // In a real implementation, you'd use JSZip to create a proper ZIP
     for (const result of successfulResults) {
-      const filename = result.originalName.replace(/\.[^/.]+$/, ".webp");
+      const filename = result.originalName.replace(/\.[^/.]+$/, '.webp');
       downloadFile(result.webpBlob, filename);
     }
   }
@@ -175,7 +175,7 @@ const WebpConverter: React.FC = () => {
 
   // Load settings from localStorage
   useEffect(() => {
-    const savedQuality = localStorage.getItem("webp-converter-quality");
+    const savedQuality = localStorage.getItem('webp-converter-quality');
     if (savedQuality) {
       const parsedQuality = parseInt(savedQuality);
       if (parsedQuality >= 1 && parsedQuality <= 100) {
@@ -184,10 +184,10 @@ const WebpConverter: React.FC = () => {
     }
 
     const savedAutoDownload = localStorage.getItem(
-      "webp-converter-auto-download"
+      'webp-converter-auto-download'
     );
     if (savedAutoDownload) {
-      setAutoDownload(savedAutoDownload === "true");
+      setAutoDownload(savedAutoDownload === 'true');
     }
   }, []);
 
@@ -201,7 +201,7 @@ const WebpConverter: React.FC = () => {
           toast.error(`${file.name} is too large. Maximum size is 40MB.`);
           return false;
         }
-        if (!file.type.startsWith("image/")) {
+        if (!file.type.startsWith('image/')) {
           toast.error(`${file.name} is not a valid image file.`);
           return false;
         }
@@ -217,7 +217,7 @@ const WebpConverter: React.FC = () => {
       setConversionResults([]);
 
       // Reset the input
-      event.target.value = "";
+      event.target.value = '';
     },
     []
   );
@@ -235,7 +235,7 @@ const WebpConverter: React.FC = () => {
   const handleQualityChange = useCallback((value: number[]) => {
     const newQuality = Math.max(1, Math.min(100, value[0]));
     setQuality(newQuality);
-    localStorage.setItem("webp-converter-quality", newQuality.toString());
+    localStorage.setItem('webp-converter-quality', newQuality.toString());
   }, []);
 
   const handleQualityInputChange = useCallback(
@@ -243,14 +243,14 @@ const WebpConverter: React.FC = () => {
       const value = parseInt(e.target.value);
       const newQuality = Math.max(1, Math.min(100, value));
       setQuality(newQuality);
-      localStorage.setItem("webp-converter-quality", newQuality.toString());
+      localStorage.setItem('webp-converter-quality', newQuality.toString());
     },
     []
   );
 
   const handleAutoDownloadChange = useCallback((checked: boolean) => {
     setAutoDownload(checked);
-    localStorage.setItem("webp-converter-auto-download", checked.toString());
+    localStorage.setItem('webp-converter-auto-download', checked.toString());
   }, []);
 
   const handleConvert = useCallback(async () => {
@@ -281,7 +281,7 @@ const WebpConverter: React.FC = () => {
           await downloadZip(successfulResults);
         }
       } else {
-        toast.error("No images were converted successfully.");
+        toast.error('No images were converted successfully.');
       }
 
       if (results.some((r) => !r.success)) {
@@ -289,8 +289,8 @@ const WebpConverter: React.FC = () => {
         toast.error(`${failedCount} image(s) failed to convert.`);
       }
     } catch (error) {
-      toast.error("Conversion failed");
-      console.error("Conversion error:", error);
+      toast.error('Conversion failed');
+      console.error('Conversion error:', error);
     } finally {
       setIsConverting(false);
       setProgress(null);
@@ -350,15 +350,14 @@ const WebpConverter: React.FC = () => {
           {/* TOOL CARDS SECTION */}
           <ToolCardWrapper>
             <Card className="tool-card-bg">
-              <CardHeader>
-              </CardHeader>
+              <CardHeader></CardHeader>
               <CardContent className="space-y-6">
                 {/* File Upload Area */}
                 <div className="space-y-4">
                   <div
                     className="relative border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-muted-foreground/50 transition-colors cursor-pointer"
                     onClick={() =>
-                      document.getElementById("file-upload")?.click()
+                      document.getElementById('file-upload')?.click()
                     }
                     onDragOver={(e) => {
                       e.preventDefault();
@@ -370,7 +369,7 @@ const WebpConverter: React.FC = () => {
                       const files = e.dataTransfer.files;
                       if (files.length > 0) {
                         const event = {
-                          target: { files, value: "" },
+                          target: { files, value: '' },
                         } as React.ChangeEvent<HTMLInputElement>;
                         handleFileUpload(event);
                       }
@@ -515,7 +514,7 @@ const WebpConverter: React.FC = () => {
                         disabled={isConverting || files.length === 0}
                         className="flex-1"
                       >
-                        {isConverting ? "Converting..." : "Convert to WebP"}
+                        {isConverting ? 'Converting...' : 'Convert to WebP'}
                       </Button>
 
                       {conversionResults.length > 0 && (
@@ -596,8 +595,8 @@ const WebpConverter: React.FC = () => {
                         <div className="text-green-600 font-medium">
                           {formatFileSize(
                             conversionStats.totalOriginal -
-                            conversionStats.totalWebP
-                          )}{" "}
+                              conversionStats.totalWebP
+                          )}{' '}
                           saved
                         </div>
                       </div>

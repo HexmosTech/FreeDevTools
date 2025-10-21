@@ -1,29 +1,29 @@
 ---
-title: "QDBus Control - Manage IPC and RPC Calls | Online Free DevTools by Hexmos"
+title: 'QDBus Control - Manage IPC and RPC Calls | Online Free DevTools by Hexmos'
 name: qdbus
-path: "/freedevtools/tldr/common/qdbus/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qdbus/"
-description: "Control inter-process communication with QDBus. Execute methods and manage object properties via command line with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/qdbus/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qdbus/'
+description: 'Control inter-process communication with QDBus. Execute methods and manage object properties via command line with this free online tool, no registration required.'
 category: common
 keywords:
-- QDBus IPC control
-- QDBus RPC manager
-- Linux IPC tool
-- Qt DBus client
-- KDE Plasma automation
-- Command-line IPC
-- DBus method execution
-- Remote procedure call
-- Service discovery
-- Inter-process communication tool
+  - QDBus IPC control
+  - QDBus RPC manager
+  - Linux IPC tool
+  - Qt DBus client
+  - KDE Plasma automation
+  - Command-line IPC
+  - DBus method execution
+  - Remote procedure call
+  - Service discovery
+  - Inter-process communication tool
 features:
-- List available DBus services
-- Execute specific methods on DBus objects
-- Display object properties and signals
-- Automate KDE Plasma tasks via DBus
-- Manage inter-process communication from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available DBus services
+  - Execute specific methods on DBus objects
+  - Display object properties and signals
+  - Automate KDE Plasma tasks via DBus
+  - Manage inter-process communication from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qdbus

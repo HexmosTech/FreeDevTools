@@ -1,29 +1,29 @@
 ---
-title: "Screenshooter - Capture Screenshots with XFCE4 | Online Free DevTools by Hexmos"
+title: 'Screenshooter - Capture Screenshots with XFCE4 | Online Free DevTools by Hexmos'
 name: xfce4-screenshooter
-path: "/freedevtools/tldr/linux/xfce4-screenshooter/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xfce4-screenshooter/"
-description: "Capture screenshots instantly with xfce4-screenshooter. Control the capture area and delay, save to file, copy to clipboard and integrate with image editors. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xfce4-screenshooter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xfce4-screenshooter/'
+description: 'Capture screenshots instantly with xfce4-screenshooter. Control the capture area and delay, save to file, copy to clipboard and integrate with image editors. Free online tool, no registration required.'
 category: linux
 keywords:
-- xfce4-screenshooter screenshot
-- linux screenshot tool
-- command line screenshot
-- xfce4 screenshot capture
-- screenshot to clipboard
-- timed screenshot linux
-- region screenshot xfce4
-- active window screenshot
-- screenshot save directory
-- linux gui screenshot
+  - xfce4-screenshooter screenshot
+  - linux screenshot tool
+  - command line screenshot
+  - xfce4 screenshot capture
+  - screenshot to clipboard
+  - timed screenshot linux
+  - region screenshot xfce4
+  - active window screenshot
+  - screenshot save directory
+  - linux gui screenshot
 features:
-- Capture the entire screen
-- Capture a selected region of the screen
-- Capture the active window
-- Delay screenshot capture for a specified time
-- Save screenshots to a specified directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture the entire screen
+  - Capture a selected region of the screen
+  - Capture the active window
+  - Delay screenshot capture for a specified time
+  - Save screenshots to a specified directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xfce4-screenshooter

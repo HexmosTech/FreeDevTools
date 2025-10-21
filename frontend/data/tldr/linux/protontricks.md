@@ -1,9 +1,9 @@
 ---
-title: "Protontricks - Run Winetricks for Proton Games | Online Free DevTools by Hexmos"
+title: 'Protontricks - Run Winetricks for Proton Games | Online Free DevTools by Hexmos'
 name: protontricks
-path: "/freedevtools/tldr/linux/protontricks/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/protontricks/"
-description: "Manage Wine configurations for Proton games with Protontricks.  Easily run Winetricks commands and control game settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/protontricks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/protontricks/'
+description: 'Manage Wine configurations for Proton games with Protontricks.  Easily run Winetricks commands and control game settings. Free online tool, no registration required.'
 category: linux
 keywords:
   - proton winetricks commands
@@ -22,8 +22,8 @@ features:
   - Access a graphical user interface (GUI) for simplified usage.
   - Search for and find App IDs of games.
   - Execute commands directly within a game's installation directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # protontricks

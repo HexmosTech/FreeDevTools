@@ -1,29 +1,29 @@
 ---
-title: "Generate Static Sites - Control Zola Builds | Online Free DevTools by Hexmos"
+title: 'Generate Static Sites - Control Zola Builds | Online Free DevTools by Hexmos'
 name: zola
-path: "/freedevtools/tldr/common/zola/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zola/"
-description: "Generate static websites with Zola. Control site builds, manage output directories and preview locally with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zola/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zola/'
+description: 'Generate static websites with Zola. Control site builds, manage output directories and preview locally with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- static site generator
-- zola static site
-- zola build command
-- zola serve command
-- zola init command
-- markdown to html
-- static website deployment
-- static site development
-- zola documentation
-- static content management
+  - static site generator
+  - zola static site
+  - zola build command
+  - zola serve command
+  - zola init command
+  - markdown to html
+  - static website deployment
+  - static site development
+  - zola documentation
+  - static content management
 features:
-- Initialize a new Zola project structure
-- Build the entire site into the public directory
-- Specify a custom output directory for built site
-- Build and serve the website using a local server
-- Check for errors without writing to disk
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new Zola project structure
+  - Build the entire site into the public directory
+  - Specify a custom output directory for built site
+  - Build and serve the website using a local server
+  - Check for errors without writing to disk
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zola

@@ -1,9 +1,9 @@
 ---
-title: "Pacman Files - Manage Files with Pacman | Online Free DevTools by Hexmos"
+title: 'Pacman Files - Manage Files with Pacman | Online Free DevTools by Hexmos'
 name: pacman-f
-path: "/freedevtools/tldr/linux/pacman-f/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-f/"
-description: "Manage files efficiently with Pacman. View file information and lists of files installed by packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacman-f/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacman-f/'
+description: 'Manage files efficiently with Pacman. View file information and lists of files installed by packages. Free online tool, no registration required.'
 category: linux
 keywords:
   - pacman files management
@@ -22,8 +22,8 @@ features:
   - Identifies package ownership of files.
   - Allows quick checking of installed files.
   - Facilitates troubleshooting file-related issues.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacman -F

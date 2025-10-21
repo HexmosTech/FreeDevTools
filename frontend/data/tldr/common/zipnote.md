@@ -1,29 +1,29 @@
 ---
-title: "Zipnote - Edit Zip Archive Comments | Online Free DevTools by Hexmos"
+title: 'Zipnote - Edit Zip Archive Comments | Online Free DevTools by Hexmos'
 name: zipnote
-path: "/freedevtools/tldr/common/zipnote/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zipnote/"
-description: "Edit Zip archive comments with Zipnote. Add, view, or extract comments from Zip files. Manage and update archive information easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zipnote/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zipnote/'
+description: 'Edit Zip archive comments with Zipnote. Add, view, or extract comments from Zip files. Manage and update archive information easily. Free online tool, no registration required.'
 category: common
 keywords:
-- zip archive editor
-- zip comment viewer
-- zip file comment extractor
-- zip file comment updater
-- zip archive manager
-- command line zip utility
-- linux zipnote
-- macos zipnote
-- windows zipnote
-- zip file rename tool
+  - zip archive editor
+  - zip comment viewer
+  - zip file comment extractor
+  - zip file comment updater
+  - zip archive manager
+  - command line zip utility
+  - linux zipnote
+  - macos zipnote
+  - windows zipnote
+  - zip file rename tool
 features:
-- View comments within a Zip archive.
-- Extract Zip archive comments to a text file.
-- Add or update comments from a text file.
-- Rename files within a Zip archive.
-- Modify Zip archive metadata from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View comments within a Zip archive.
+  - Extract Zip archive comments to a text file.
+  - Add or update comments from a text file.
+  - Rename files within a Zip archive.
+  - Modify Zip archive metadata from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zipnote

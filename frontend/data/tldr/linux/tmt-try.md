@@ -1,9 +1,9 @@
 ---
-title: "TMT Try - Experiment with Tests | Online Free DevTools by Hexmos"
+title: 'TMT Try - Experiment with Tests | Online Free DevTools by Hexmos'
 name: tmt-try
-path: "/freedevtools/tldr/linux/tmt-try/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tmt-try/"
-description: "Experiment quickly with TMT Try for streamlined testing.  Easily run tests, specify OS, and customize environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tmt-try/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tmt-try/'
+description: 'Experiment quickly with TMT Try for streamlined testing.  Easily run tests, specify OS, and customize environments. Free online tool, no registration required.'
 category: linux
 keywords:
   - tmt test execution
@@ -22,8 +22,8 @@ features:
   - Select custom test images and provision methods.
   - Filter tests using flexible selection criteria.
   - Directly access and control guest environments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tmt try

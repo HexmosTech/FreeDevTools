@@ -1,29 +1,29 @@
 ---
-title: "Exiftool - Edit Image Metadata | Online Free DevTools by Hexmos"
+title: 'Exiftool - Edit Image Metadata | Online Free DevTools by Hexmos'
 name: exiftool
-path: "/freedevtools/tldr/common/exiftool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/exiftool/"
-description: "Edit image metadata with Exiftool. Remove, add, or modify EXIF data from various file types. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/exiftool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/exiftool/'
+description: 'Edit image metadata with Exiftool. Remove, add, or modify EXIF data from various file types. Free online tool, no registration required.'
 category: common
 keywords:
-- exif metadata editor
-- image metadata remover
-- exiftool command line
-- photo metadata modifier
-- file metadata utility
-- exif data cleaner
-- exif gps data removal
-- image date shifter
-- exiftool rename images
-- exiftool batch process
+  - exif metadata editor
+  - image metadata remover
+  - exiftool command line
+  - photo metadata modifier
+  - file metadata utility
+  - exif data cleaner
+  - exif gps data removal
+  - image date shifter
+  - exiftool rename images
+  - exiftool batch process
 features:
-- Read and write metadata for various file formats.
-- Remove all EXIF metadata from files.
-- Modify date and time stamps in image metadata.
-- Rename files based on EXIF DateTimeOriginal data.
-- Batch process multiple files or directories.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Read and write metadata for various file formats.
+  - Remove all EXIF metadata from files.
+  - Modify date and time stamps in image metadata.
+  - Rename files based on EXIF DateTimeOriginal data.
+  - Batch process multiple files or directories.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exiftool

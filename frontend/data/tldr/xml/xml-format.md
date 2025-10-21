@@ -1,29 +1,29 @@
 ---
-title: "XML Format - Format XML Documents | Online Free DevTools by Hexmos"
+title: 'XML Format - Format XML Documents | Online Free DevTools by Hexmos'
 name: xml-format
-path: "/freedevtools/tldr/xml/xml-format/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xml-format/"
-description: "Format XML documents with XML Format. Clean, indent, and recover XML data with ease using this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xml-format/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xml-format/'
+description: 'Format XML documents with XML Format. Clean, indent, and recover XML data with ease using this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- XML formatting
-- XML indentation
-- XML recovery
-- Command line XML formatter
-- XML beautifier
-- XMLStarlet
-- XML parser
-- HTML formatting
-- XML to HTML conversion
-- XML command line tools
+  - XML formatting
+  - XML indentation
+  - XML recovery
+  - Command line XML formatter
+  - XML beautifier
+  - XMLStarlet
+  - XML parser
+  - HTML formatting
+  - XML to HTML conversion
+  - XML command line tools
 features:
-- Format XML documents with customizable indentation
-- Recover parsable parts from malformed XML
-- Remove DOCTYPE declarations from XML
-- Omit XML declarations during formatting
-- Support for HTML formatting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format XML documents with customizable indentation
+  - Recover parsable parts from malformed XML
+  - Remove DOCTYPE declarations from XML
+  - Omit XML declarations during formatting
+  - Support for HTML formatting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xml format

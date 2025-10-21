@@ -1,29 +1,29 @@
 ---
-title: "Network Trip - Diagnose Network Issues | Online Free DevTools by Hexmos"
+title: 'Network Trip - Diagnose Network Issues | Online Free DevTools by Hexmos'
 name: trip
-path: "/freedevtools/tldr/common/trip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/trip/"
-description: "Diagnose network issues with Network Trip, combining traceroute and ping functionality. Analyze network paths and latency with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/trip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/trip/'
+description: 'Diagnose network issues with Network Trip, combining traceroute and ping functionality. Analyze network paths and latency with this free online tool, no registration required.'
 category: common
 keywords:
-- network diagnostic tool
-- network path analysis
-- latency measurement
-- traceroute alternative
-- ping utility
-- network troubleshooting
-- linux network tools
-- macos network tools
-- command line network analysis
-- network connectivity test
+  - network diagnostic tool
+  - network path analysis
+  - latency measurement
+  - traceroute alternative
+  - ping utility
+  - network troubleshooting
+  - linux network tools
+  - macos network tools
+  - command line network analysis
+  - network connectivity test
 features:
-- Trace network paths using traceroute
-- Measure network latency using ping
-- Support IPv4 and IPv6 protocols
-- Allow unprivileged tracing on supported platforms
-- Customize destination and source ports for TCP and UDP tracing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trace network paths using traceroute
+  - Measure network latency using ping
+  - Support IPv4 and IPv6 protocols
+  - Allow unprivileged tracing on supported platforms
+  - Customize destination and source ports for TCP and UDP tracing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trip

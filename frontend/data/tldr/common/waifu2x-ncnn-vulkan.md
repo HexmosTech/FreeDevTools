@@ -1,29 +1,29 @@
 ---
-title: "Upscale Images - waifu2x-ncnn-vulkan | Online Free DevTools by Hexmos"
+title: 'Upscale Images - waifu2x-ncnn-vulkan | Online Free DevTools by Hexmos'
 name: waifu2x-ncnn-vulkan
-path: "/freedevtools/tldr/common/waifu2x-ncnn-vulkan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/waifu2x-ncnn-vulkan/"
-description: "Upscale images easily with waifu2x-ncnn-vulkan. Enhance image resolution using NCNN neural network framework. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/waifu2x-ncnn-vulkan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/waifu2x-ncnn-vulkan/'
+description: 'Upscale images easily with waifu2x-ncnn-vulkan. Enhance image resolution using NCNN neural network framework. Free online tool, no registration required.'
 category: common
 keywords:
-- manga image upscaler
-- anime image upscaler
-- image resolution enhancer
-- NCNN image processing
-- Vulkan image processing
-- waifu2x image upscaling
-- image denoise tool
-- command line image upscaler
-- high resolution image generator
-- batch image upscaling
+  - manga image upscaler
+  - anime image upscaler
+  - image resolution enhancer
+  - NCNN image processing
+  - Vulkan image processing
+  - waifu2x image upscaling
+  - image denoise tool
+  - command line image upscaler
+  - high resolution image generator
+  - batch image upscaling
 features:
-- Upscale manga and anime style images
-- Denoise images while upscaling
-- Support multiple image formats (JPG, PNG, WEBP)
-- Process images using NCNN neural network
-- Enhance image resolution with custom scaling factors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upscale manga and anime style images
+  - Denoise images while upscaling
+  - Support multiple image formats (JPG, PNG, WEBP)
+  - Process images using NCNN neural network
+  - Enhance image resolution with custom scaling factors
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # waifu2x-ncnn-vulkan

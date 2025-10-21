@@ -1,29 +1,29 @@
 ---
-title: "IEx Shell - Control Elixir Interactions | Online Free DevTools by Hexmos"
+title: 'IEx Shell - Control Elixir Interactions | Online Free DevTools by Hexmos'
 name: iex
-path: "/freedevtools/tldr/common/iex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/iex/"
-description: "Control Elixir code interactions with IEx Shell. Start interactive sessions, load projects, and manage history. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/iex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/iex/'
+description: 'Control Elixir code interactions with IEx Shell. Start interactive sessions, load projects, and manage history. Free online tool, no registration required.'
 category: common
 keywords:
-- elixir interactive shell
-- iex elixir console
-- erlang shell history
-- mix project loader
-- elixir debugging tool
-- command line interface elixir
-- elixir code runner
-- elixir interactive session
-- iex command options
-- elixir shell scripting
+  - elixir interactive shell
+  - iex elixir console
+  - erlang shell history
+  - mix project loader
+  - elixir debugging tool
+  - command line interface elixir
+  - elixir code runner
+  - elixir interactive session
+  - iex command options
+  - elixir shell scripting
 features:
-- Start interactive Elixir sessions
-- Enable command history in sessions
-- Load and run Mix project files
-- Execute Elixir code snippets
-- Debug Elixir applications interactively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start interactive Elixir sessions
+  - Enable command history in sessions
+  - Load and run Mix project files
+  - Execute Elixir code snippets
+  - Debug Elixir applications interactively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iex

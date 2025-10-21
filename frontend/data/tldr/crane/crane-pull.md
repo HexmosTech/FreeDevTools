@@ -1,29 +1,29 @@
 ---
-title: "Crane Pull - Retrieve Container Images | Online Free DevTools by Hexmos"
+title: 'Crane Pull - Retrieve Container Images | Online Free DevTools by Hexmos'
 name: crane-pull
-path: "/freedevtools/tldr/crane/crane-pull/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-pull/"
-description: "Retrieve container images locally with Crane Pull. Download and store container images by reference. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-pull/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-pull/'
+description: 'Retrieve container images locally with Crane Pull. Download and store container images by reference. Free online tool, no registration required.'
 category: common
 keywords:
-- container image pull
-- image tarball download
-- oci image retrieval
-- crane container tool
-- docker image pull alternative
-- container registry client
-- image layer caching
-- command line image pull
-- container image archive
-- crane tool download
+  - container image pull
+  - image tarball download
+  - oci image retrieval
+  - crane container tool
+  - docker image pull alternative
+  - container registry client
+  - image layer caching
+  - command line image pull
+  - container image archive
+  - crane tool download
 features:
-- Pull container images from a remote registry
-- Save container images as tarballs
-- Cache container image layers for faster retrieval
-- Preserve image reference as an annotation
-- Support different image formats for saving
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pull container images from a remote registry
+  - Save container images as tarballs
+  - Cache container image layers for faster retrieval
+  - Preserve image reference as an annotation
+  - Support different image formats for saving
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane pull

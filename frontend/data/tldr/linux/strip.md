@@ -1,29 +1,29 @@
 ---
-title: "Strip Tool - Discard Symbols from Executables | Online Free DevTools by Hexmos"
+title: 'Strip Tool - Discard Symbols from Executables | Online Free DevTools by Hexmos'
 name: strip
-path: "/freedevtools/tldr/linux/strip/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/strip/"
-description: "Discard symbols from executables with Strip Tool. Reduce file size and protect your code. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/strip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/strip/'
+description: 'Discard symbols from executables with Strip Tool. Reduce file size and protect your code. Free online tool, no registration required.'
 category: linux
 keywords:
-- executable stripper
-- object file stripper
-- linux strip command
-- remove symbols linux
-- strip debug symbols
-- binary size reduction
-- elf stripper
-- executable compression
-- linux optimization
-- object file optimization
+  - executable stripper
+  - object file stripper
+  - linux strip command
+  - remove symbols linux
+  - strip debug symbols
+  - binary size reduction
+  - elf stripper
+  - executable compression
+  - linux optimization
+  - object file optimization
 features:
-- Remove symbols from executable files
-- Reduce the size of object files
-- Strip debug information from binaries
-- Output stripped file to a specified location
-- Replace original file with stripped version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove symbols from executable files
+  - Reduce the size of object files
+  - Strip debug information from binaries
+  - Output stripped file to a specified location
+  - Replace original file with stripped version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # strip

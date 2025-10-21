@@ -1,29 +1,29 @@
 ---
-title: "Resize2fs - Resize Linux Filesystems | Online Free DevTools by Hexmos"
+title: 'Resize2fs - Resize Linux Filesystems | Online Free DevTools by Hexmos'
 name: resize2fs
-path: "/freedevtools/tldr/linux/resize2fs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/resize2fs/"
-description: "Resize filesystems with Resize2fs. Adjust ext2/3/4 partition sizes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/resize2fs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/resize2fs/'
+description: 'Resize filesystems with Resize2fs. Adjust ext2/3/4 partition sizes. Free online tool, no registration required.'
 category: linux
 keywords:
-- filesystem resize linux
-- ext2 resize linux
-- ext3 resize linux
-- ext4 resize linux
-- resize2fs command
-- linux filesystem management
-- partition resize linux
-- linux disk resize
-- resize ext4 partition
-- linux filesystem tools
+  - filesystem resize linux
+  - ext2 resize linux
+  - ext3 resize linux
+  - ext4 resize linux
+  - resize2fs command
+  - linux filesystem management
+  - partition resize linux
+  - linux disk resize
+  - resize ext4 partition
+  - linux filesystem tools
 features:
-- Automatically resize filesystems to maximum size
-- Resize filesystems to a specified size
-- Shrink filesystems to minimum size
-- Display progress during filesystem resizing
-- Manage ext2, ext3, and ext4 filesystems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically resize filesystems to maximum size
+  - Resize filesystems to a specified size
+  - Shrink filesystems to minimum size
+  - Display progress during filesystem resizing
+  - Manage ext2, ext3, and ext4 filesystems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # resize2fs

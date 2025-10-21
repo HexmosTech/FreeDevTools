@@ -1,29 +1,29 @@
 ---
-title: "Generate Terminal GIFs - VHS Tape Recorder | Online Free DevTools by Hexmos"
+title: 'Generate Terminal GIFs - VHS Tape Recorder | Online Free DevTools by Hexmos'
 name: vhs
-path: "/freedevtools/tldr/common/vhs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vhs/"
-description: "Generate animated GIFs from terminal recordings with VHS. Create high-quality GIFs for documentation, tutorials, or presentations with this tape recorder. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vhs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vhs/'
+description: 'Generate animated GIFs from terminal recordings with VHS. Create high-quality GIFs for documentation, tutorials, or presentations with this tape recorder. Free online tool, no registration required.'
 category: common
 keywords:
-- Terminal GIF generator
-- VHS tape recorder
-- Command line GIF recorder
-- Animated GIF creator
-- Terminal recording tool
-- Shell recording GIF
-- GIF from terminal
-- Charmbracelet VHS
-- vhs cli tool
-- Tape file GIF converter
+  - Terminal GIF generator
+  - VHS tape recorder
+  - Command line GIF recorder
+  - Animated GIF creator
+  - Terminal recording tool
+  - Shell recording GIF
+  - GIF from terminal
+  - Charmbracelet VHS
+  - vhs cli tool
+  - Tape file GIF converter
 features:
-- Create GIF animations from terminal recordings.
-- Validate syntax of tape files.
-- Record terminal inputs to tape files.
-- Publish GIFs to shareable URLs.
-- Customize terminal settings within tape files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create GIF animations from terminal recordings.
+  - Validate syntax of tape files.
+  - Record terminal inputs to tape files.
+  - Publish GIFs to shareable URLs.
+  - Customize terminal settings within tape files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vhs

@@ -1,29 +1,29 @@
 ---
-title: "Pg_restore - Restore PostgreSQL Databases | Online Free DevTools by Hexmos"
+title: 'Pg_restore - Restore PostgreSQL Databases | Online Free DevTools by Hexmos'
 name: pg_restore
-path: "/freedevtools/tldr/postgres/pg_restore/"
-canonical: "https://hexmos.com/freedevtools/tldr/postgres/pg_restore/"
-description: "Restore PostgreSQL databases instantly with pg_restore. Recover data from backups and manage database objects easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/postgres/pg_restore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/postgres/pg_restore/'
+description: 'Restore PostgreSQL databases instantly with pg_restore. Recover data from backups and manage database objects easily. Free online tool, no registration required.'
 category: common
 keywords:
-- PostgreSQL database restore
-- pg_restore command
-- Database backup recovery
-- PostgreSQL archive file
-- Restore database objects
-- SQL database recovery
-- Command line restore
-- Database dump restore
-- Common pg_restore
-- psql restore
+  - PostgreSQL database restore
+  - pg_restore command
+  - Database backup recovery
+  - PostgreSQL archive file
+  - Restore database objects
+  - SQL database recovery
+  - Command line restore
+  - Database dump restore
+  - Common pg_restore
+  - psql restore
 features:
-- Restore a PostgreSQL database from an archive file
-- List database objects within an archive
-- Clean database objects prior to restoration
-- Customize the database username, host and port
-- Utilize multiple jobs for faster restoration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restore a PostgreSQL database from an archive file
+  - List database objects within an archive
+  - Clean database objects prior to restoration
+  - Customize the database username, host and port
+  - Utilize multiple jobs for faster restoration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pg_restore

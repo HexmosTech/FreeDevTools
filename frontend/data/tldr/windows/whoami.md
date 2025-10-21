@@ -1,9 +1,9 @@
 ---
-title: "Whoami - Display User Details | Online Free DevTools by Hexmos"
+title: 'Whoami - Display User Details | Online Free DevTools by Hexmos'
 name: whoami
-path: "/freedevtools/tldr/windows/whoami/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/whoami/"
-description: "Display user details with Whoami. Show username, groups, privileges, and logon ID. A comprehensive user information retrieval tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/whoami/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/whoami/'
+description: 'Display user details with Whoami. Show username, groups, privileges, and logon ID. A comprehensive user information retrieval tool. Free online tool, no registration required.'
 category: windows
 keywords:
   - user details
@@ -22,8 +22,8 @@ features:
   - Show user's assigned privileges
   - Retrieve user principal name (UPN)
   - Display user's logon ID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # whoami

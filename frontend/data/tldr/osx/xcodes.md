@@ -1,29 +1,29 @@
 ---
-title: "Xcode Manager - Control Xcode Versions | Online Free DevTools by Hexmos"
+title: 'Xcode Manager - Control Xcode Versions | Online Free DevTools by Hexmos'
 name: xcodes
-path: "/freedevtools/tldr/osx/xcodes/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xcodes/"
-description: "Control Xcode versions with Xcode Manager. Download, install, and select specific Xcode versions for macOS development. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xcodes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xcodes/'
+description: 'Control Xcode versions with Xcode Manager. Download, install, and select specific Xcode versions for macOS development. Free online tool, no registration required.'
 category: osx
 keywords:
-- Xcode version manager
-- macOS Xcode installer
-- Xcode command line tools
-- Xcode select version
-- Xcode download manager
-- Xcode installation guide
-- Xcode command-line interface
-- macOS developer tools
-- Xcode version control
-- Xcode build environment
+  - Xcode version manager
+  - macOS Xcode installer
+  - Xcode command line tools
+  - Xcode select version
+  - Xcode download manager
+  - Xcode installation guide
+  - Xcode command-line interface
+  - macOS developer tools
+  - Xcode version control
+  - Xcode build environment
 features:
-- List all installed Xcode versions
-- Download and install specific Xcode versions
-- Select an Xcode version for use
-- Manage multiple Xcode installations
-- Download Xcode archives without installation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all installed Xcode versions
+  - Download and install specific Xcode versions
+  - Select an Xcode version for use
+  - Manage multiple Xcode installations
+  - Download Xcode archives without installation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xcodes

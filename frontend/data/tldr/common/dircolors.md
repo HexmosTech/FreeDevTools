@@ -1,29 +1,29 @@
 ---
-title: "Generate LS_COLOR - Style LS Commands | Online Free DevTools by Hexmos"
+title: 'Generate LS_COLOR - Style LS Commands | Online Free DevTools by Hexmos'
 name: dircolors
-path: "/freedevtools/tldr/common/dircolors/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dircolors/"
-description: "Generate LS_COLOR environment variables with dircolors. Style `ls` commands, customize terminal colors, and improve file readability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dircolors/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dircolors/'
+description: 'Generate LS_COLOR environment variables with dircolors. Style `ls` commands, customize terminal colors, and improve file readability. Free online tool, no registration required.'
 category: common
 keywords:
-- LS_COLOR generator
-- terminal color customization
-- ls command styling
-- dircolors configuration
-- linux terminal colors
-- bash ls colors
-- zsh ls colors
-- directory color scheme
-- coreutils dircolors
-- file type color coding
+  - LS_COLOR generator
+  - terminal color customization
+  - ls command styling
+  - dircolors configuration
+  - linux terminal colors
+  - bash ls colors
+  - zsh ls colors
+  - directory color scheme
+  - coreutils dircolors
+  - file type color coding
 features:
-- Output commands to set LS_COLOR with default colors
-- Display filetypes with corresponding `ls` colors
-- Use custom colors from a specified file
-- Generate commands for Bourne shell
-- Generate commands for C shell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Output commands to set LS_COLOR with default colors
+  - Display filetypes with corresponding `ls` colors
+  - Use custom colors from a specified file
+  - Generate commands for Bourne shell
+  - Generate commands for C shell
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dircolors

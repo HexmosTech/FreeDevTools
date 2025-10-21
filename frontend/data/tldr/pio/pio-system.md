@@ -1,29 +1,29 @@
 ---
-title: "PlatformIO System - Control PlatformIO | Online Free DevTools by Hexmos"
+title: 'PlatformIO System - Control PlatformIO | Online Free DevTools by Hexmos'
 name: pio-system
-path: "/freedevtools/tldr/pio/pio-system/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-system/"
-description: "Control PlatformIO system configurations with pio system. Manage PlatformIO installations, completions, and data with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-system/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-system/'
+description: 'Control PlatformIO system configurations with pio system. Manage PlatformIO installations, completions, and data with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO system
-- PlatformIO completion
-- PlatformIO info
-- PlatformIO prune
-- PlatformIO uninstall
-- PlatformIO install
-- PlatformIO cache
-- PlatformIO data management
-- PlatformIO configuration
-- PlatformIO environment
+  - PlatformIO system
+  - PlatformIO completion
+  - PlatformIO info
+  - PlatformIO prune
+  - PlatformIO uninstall
+  - PlatformIO install
+  - PlatformIO cache
+  - PlatformIO data management
+  - PlatformIO configuration
+  - PlatformIO environment
 features:
-- Install shell completions
-- Uninstall shell completions
-- Display system information
-- Remove unused data
-- Manage cached data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install shell completions
+  - Uninstall shell completions
+  - Display system information
+  - Remove unused data
+  - Manage cached data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio system

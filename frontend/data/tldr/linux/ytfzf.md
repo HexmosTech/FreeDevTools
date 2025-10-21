@@ -1,9 +1,9 @@
 ---
-title: "ytfzf - Find YouTube Videos and Music | Online Free DevTools by Hexmos"
+title: 'ytfzf - Find YouTube Videos and Music | Online Free DevTools by Hexmos'
 name: ytfzf
-path: "/freedevtools/tldr/linux/ytfzf/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ytfzf/"
-description: "Find videos and music with ytfzf, a command-line YouTube search tool. Quickly download, play audio, and explore trending content. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ytfzf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ytfzf/'
+description: 'Find videos and music with ytfzf, a command-line YouTube search tool. Quickly download, play audio, and explore trending content. Free online tool, no registration required.'
 category: linux
 keywords:
   - youtube search command line
@@ -22,8 +22,8 @@ features:
   - Download videos from YouTube history
   - Play all music from a YouTube search in a loop
   - Search for videos on PeerTube using the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ytfzf

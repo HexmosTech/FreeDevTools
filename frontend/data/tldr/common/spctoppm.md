@@ -1,29 +1,29 @@
 ---
-title: "Convert Spectrum Image - spctoppm to PPM | Online Free DevTools by Hexmos"
+title: 'Convert Spectrum Image - spctoppm to PPM | Online Free DevTools by Hexmos'
 name: spctoppm
-path: "/freedevtools/tldr/common/spctoppm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/spctoppm/"
-description: "Convert Spectrum images to PPM format with spctoppm. Transform Atari compressed images for modern display. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/spctoppm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/spctoppm/'
+description: 'Convert Spectrum images to PPM format with spctoppm. Transform Atari compressed images for modern display. Free online tool, no registration required.'
 category: common
 keywords:
-- spectrum image converter
-- spc to ppm conversion
-- atari image conversion
-- compressed image processing
-- ppm image generation
-- image format conversion
-- graphics file manipulation
-- spctoppm command line
-- netpbm tools
-- image conversion tools
+  - spectrum image converter
+  - spc to ppm conversion
+  - atari image conversion
+  - compressed image processing
+  - ppm image generation
+  - image format conversion
+  - graphics file manipulation
+  - spctoppm command line
+  - netpbm tools
+  - image conversion tools
 features:
-- Convert Atari SPC images to PPM format
-- Process compressed Spectrum images
-- Output in portable pixmap format
-- Facilitate image format transformation
-- Enable legacy image preservation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Atari SPC images to PPM format
+  - Process compressed Spectrum images
+  - Output in portable pixmap format
+  - Facilitate image format transformation
+  - Enable legacy image preservation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # spctoppm

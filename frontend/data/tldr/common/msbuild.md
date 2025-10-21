@@ -1,29 +1,29 @@
 ---
-title: "MSBuild - Build Visual Studio Projects | Online Free DevTools by Hexmos"
+title: 'MSBuild - Build Visual Studio Projects | Online Free DevTools by Hexmos'
 name: msbuild
-path: "/freedevtools/tldr/common/msbuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/msbuild/"
-description: "Build Visual Studio projects efficiently with MSBuild. Automate compilation, manage dependencies, and create distributable packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/msbuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/msbuild/'
+description: 'Build Visual Studio projects efficiently with MSBuild. Automate compilation, manage dependencies, and create distributable packages. Free online tool, no registration required.'
 category: common
 keywords:
-- Visual Studio project builder
-- MSBuild command line tool
-- .NET project compilation
-- C# project build
-- VB.NET project build
-- MSBuild automation
-- Project dependency management
-- Solution build automation
-- MSBuild targets and properties
-- Windows build tool
+  - Visual Studio project builder
+  - MSBuild command line tool
+  - .NET project compilation
+  - C# project build
+  - VB.NET project build
+  - MSBuild automation
+  - Project dependency management
+  - Solution build automation
+  - MSBuild targets and properties
+  - Windows build tool
 features:
-- Build Visual Studio solutions from the command line
-- Specify targets and properties for customized builds
-- Control the build tools version
-- Generate detailed build summaries
-- Automate project compilation and packaging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Visual Studio solutions from the command line
+  - Specify targets and properties for customized builds
+  - Control the build tools version
+  - Generate detailed build summaries
+  - Automate project compilation and packaging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msbuild

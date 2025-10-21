@@ -1,9 +1,9 @@
 ---
-title: "Create Spark Projects - Laravel Spark Tool | Online Free DevTools by Hexmos"
+title: 'Create Spark Projects - Laravel Spark Tool | Online Free DevTools by Hexmos'
 name: spark
-path: "/freedevtools/tldr/common/spark/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/spark/"
-description: "Create new Laravel Spark projects with Spark, the official Laravel scaffolding tool. Generate projects with Braintree or team billing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/spark/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/spark/'
+description: 'Create new Laravel Spark projects with Spark, the official Laravel scaffolding tool. Generate projects with Braintree or team billing. Free online tool, no registration required.'
 category: common
 keywords:
   - laravel spark project
@@ -22,8 +22,8 @@ features:
   - Create projects with Braintree stubs
   - Create projects with team billing stubs
   - Quickly scaffold new Laravel applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # spark

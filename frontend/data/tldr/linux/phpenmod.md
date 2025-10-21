@@ -1,9 +1,9 @@
 ---
-title: "PHPENMOD - Enable PHP Extensions | Online Free DevTools by Hexmos"
+title: 'PHPENMOD - Enable PHP Extensions | Online Free DevTools by Hexmos'
 name: phpenmod
-path: "/freedevtools/tldr/linux/phpenmod/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/phpenmod/"
-description: "Enable PHP extensions easily with phpenmod. Manage PHP modules across different versions and SAPIs on Debian-based systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/phpenmod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/phpenmod/'
+description: 'Enable PHP extensions easily with phpenmod. Manage PHP modules across different versions and SAPIs on Debian-based systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - php extension manager
@@ -22,8 +22,8 @@ features:
   - Allows selection of specific SAPIs (e.g., cli, apache).
   - Enables multiple extensions simultaneously.
   - Simplifies PHP extension management via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpenmod

@@ -1,29 +1,29 @@
 ---
-title: "Decompile Android Dex - Generate Java Code with Jadx | Online Free DevTools by Hexmos"
+title: 'Decompile Android Dex - Generate Java Code with Jadx | Online Free DevTools by Hexmos'
 name: jadx
-path: "/freedevtools/tldr/common/jadx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jadx/"
-description: "Decompile Android Dex files into readable Java code with Jadx. Analyze and reverse engineer Android applications quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jadx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jadx/'
+description: 'Decompile Android Dex files into readable Java code with Jadx. Analyze and reverse engineer Android applications quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- dex to java decompiler
-- android decompiler
-- apk decompiler
-- jadx decompiler online
-- android reverse engineering
-- dex file analyzer
-- jadx command line
-- java code generator
-- android application analysis
-- linux dex decompiler
+  - dex to java decompiler
+  - android decompiler
+  - apk decompiler
+  - jadx decompiler online
+  - android reverse engineering
+  - dex file analyzer
+  - jadx command line
+  - java code generator
+  - android application analysis
+  - linux dex decompiler
 features:
-- Decompile Dex files to Java source code.
-- Output decompiled code to a specified directory.
-- Analyze Android APK files for vulnerabilities.
-- Reverse engineer Android applications.
-- Support for multiple Dex file formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decompile Dex files to Java source code.
+  - Output decompiled code to a specified directory.
+  - Analyze Android APK files for vulnerabilities.
+  - Reverse engineer Android applications.
+  - Support for multiple Dex file formats.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jadx

@@ -1,9 +1,9 @@
 ---
-title: "Execute DNS Server - Resolve Hostnames with Named | Online Free DevTools by Hexmos"
+title: 'Execute DNS Server - Resolve Hostnames with Named | Online Free DevTools by Hexmos'
 name: named
-path: "/freedevtools/tldr/linux/named/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/named/"
-description: "Execute DNS server operations with Named. Convert hostnames to IP addresses and vice versa. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/named/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/named/'
+description: 'Execute DNS server operations with Named. Convert hostnames to IP addresses and vice versa. Free online tool, no registration required.'
 category: linux
 keywords:
   - DNS server execution
@@ -22,8 +22,8 @@ features:
   - Restrict execution to IPv4 or IPv6 only
   - Listen for queries on a specified port
   - Run the server in the foreground, skipping daemonization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # named

@@ -1,29 +1,29 @@
 ---
-title: "XML Format Tool - Convert XML with XSLT | Online Free DevTools by Hexmos"
+title: 'XML Format Tool - Convert XML with XSLT | Online Free DevTools by Hexmos'
 name: xmlto
-path: "/freedevtools/tldr/xml/xmlto/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xmlto/"
-description: "Convert XML files with XSLT using xmlto. Apply stylesheets to XML documents for various output formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xmlto/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xmlto/'
+description: 'Convert XML files with XSLT using xmlto. Apply stylesheets to XML documents for various output formats. Free online tool, no registration required.'
 category: common
 keywords:
-- XML conversion
-- XSLT transformation
-- DocBook to HTML
-- DocBook to PDF
-- XML to HTML converter
-- XML to PDF converter
-- XSL stylesheet application
-- Linux XML tools
-- Common platform XML
-- XML formatting tool
+  - XML conversion
+  - XSLT transformation
+  - DocBook to HTML
+  - DocBook to PDF
+  - XML to HTML converter
+  - XML to PDF converter
+  - XSL stylesheet application
+  - Linux XML tools
+  - Common platform XML
+  - XML formatting tool
 features:
-- Convert XML documents to various formats
-- Apply XSL stylesheets for transformations
-- Generate HTML output from DocBook XML
-- Produce PDF output from DocBook XML
-- Customize transformations with specific stylesheets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert XML documents to various formats
+  - Apply XSL stylesheets for transformations
+  - Generate HTML output from DocBook XML
+  - Produce PDF output from DocBook XML
+  - Customize transformations with specific stylesheets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xmlto

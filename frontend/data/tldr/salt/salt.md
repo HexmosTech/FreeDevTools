@@ -1,29 +1,29 @@
 ---
-title: "Salt - Control Remote Systems | Online Free DevTools by Hexmos"
+title: 'Salt - Control Remote Systems | Online Free DevTools by Hexmos'
 name: salt
-path: "/freedevtools/tldr/salt/salt/"
-canonical: "https://hexmos.com/freedevtools/tldr/salt/salt/"
-description: "Control remote systems efficiently with Salt. Manage configurations, execute commands, and automate infrastructure tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/salt/salt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/salt/salt/'
+description: 'Control remote systems efficiently with Salt. Manage configurations, execute commands, and automate infrastructure tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- salt command
-- salt configuration management
-- remote execution salt
-- linux salt automation
-- salt minion management
-- salt state management
-- infrastructure as code salt
-- salt orchestration
-- python salt automation
-- salt remote administration
+  - salt command
+  - salt configuration management
+  - remote execution salt
+  - linux salt automation
+  - salt minion management
+  - salt state management
+  - infrastructure as code salt
+  - salt orchestration
+  - python salt automation
+  - salt remote administration
 features:
-- Execute commands on multiple remote minions simultaneously
-- Enforce system states based on defined configurations
-- Automate infrastructure management tasks
-- Manage configurations across diverse environments
-- Orchestrate complex workflows across distributed systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands on multiple remote minions simultaneously
+  - Enforce system states based on defined configurations
+  - Automate infrastructure management tasks
+  - Manage configurations across diverse environments
+  - Orchestrate complex workflows across distributed systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # salt

@@ -1,29 +1,29 @@
 ---
-title: "Start Mercurial Server - Browse Repositories | Online Free DevTools by Hexmos"
+title: 'Start Mercurial Server - Browse Repositories | Online Free DevTools by Hexmos'
 name: hg-serve
-path: "/freedevtools/tldr/hg/hg-serve/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-serve/"
-description: "Start Mercurial server to browse repositories with hg-serve. Access and manage your Mercurial repositories easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-serve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-serve/'
+description: 'Start Mercurial server to browse repositories with hg-serve. Access and manage your Mercurial repositories easily. Free online tool, no registration required.'
 category: common
 keywords:
-- mercurial server
-- mercurial repository browser
-- hg serve command
-- version control web server
-- mercurial web interface
-- hg web server
-- repository browsing tool
-- code repository server
-- mercurial server configuration
-- hg serve options
+  - mercurial server
+  - mercurial repository browser
+  - hg serve command
+  - version control web server
+  - mercurial web interface
+  - hg web server
+  - repository browsing tool
+  - code repository server
+  - mercurial server configuration
+  - hg serve options
 features:
-- Start a Mercurial web server instance
-- Specify the listening port for the server
-- Define the listening address for the server
-- Set a custom server identifier
-- Customize the server theme using styles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a Mercurial web server instance
+  - Specify the listening port for the server
+  - Define the listening address for the server
+  - Set a custom server identifier
+  - Customize the server theme using styles
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg serve

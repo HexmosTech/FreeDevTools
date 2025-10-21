@@ -1,29 +1,29 @@
 ---
-title: "Suspend Shell - Halt Processes Quickly | Online Free DevTools by Hexmos"
+title: 'Suspend Shell - Halt Processes Quickly | Online Free DevTools by Hexmos'
 name: suspend
-path: "/freedevtools/tldr/common/suspend/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/suspend/"
-description: "Suspend execution with Shell Suspend. Pause processes and manage shell sessions using this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/suspend/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/suspend/'
+description: 'Suspend execution with Shell Suspend. Pause processes and manage shell sessions using this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- shell suspend command
-- bash suspend process
-- linux suspend shell
-- command line suspend
-- terminal process control
-- gnu suspend execution
-- shell session management
-- process pausing bash
-- background shell process
-- suspend command tutorial
+  - shell suspend command
+  - bash suspend process
+  - linux suspend shell
+  - command line suspend
+  - terminal process control
+  - gnu suspend execution
+  - shell session management
+  - process pausing bash
+  - background shell process
+  - suspend command tutorial
 features:
-- Pauses the execution of the current shell
-- Allows continuation from suspension in a separate terminal
-- Supports forced suspension to halt processes
-- Manages nested shell environments effectively
-- Provides command-line process control
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pauses the execution of the current shell
+  - Allows continuation from suspension in a separate terminal
+  - Supports forced suspension to halt processes
+  - Manages nested shell environments effectively
+  - Provides command-line process control
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # suspend

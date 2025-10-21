@@ -1,29 +1,29 @@
 ---
-title: "OMF Package Manager - Extend Fish Shell | Online Free DevTools by Hexmos"
+title: 'OMF Package Manager - Extend Fish Shell | Online Free DevTools by Hexmos'
 name: omf
-path: "/freedevtools/tldr/common/omf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/omf/"
-description: "Extend Fish shell with OMF package manager. Install themes, plugins, and customize your shell environment with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/omf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/omf/'
+description: 'Extend Fish shell with OMF package manager. Install themes, plugins, and customize your shell environment with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Fish shell package manager
-- Fish shell framework
-- OMF package installer
-- Fish shell theme manager
-- Fish shell plugin manager
-- Shell environment customization
-- Command-line package management
-- Oh My Fish
-- Fish shell extensions
-- Terminal theme installer
+  - Fish shell package manager
+  - Fish shell framework
+  - OMF package installer
+  - Fish shell theme manager
+  - Fish shell plugin manager
+  - Shell environment customization
+  - Command-line package management
+  - Oh My Fish
+  - Fish shell extensions
+  - Terminal theme installer
 features:
-- Install and manage Fish shell packages
-- Apply and manage Fish shell themes
-- List available packages and themes
-- Remove installed packages and themes
-- Uninstall Oh My Fish framework
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and manage Fish shell packages
+  - Apply and manage Fish shell themes
+  - List available packages and themes
+  - Remove installed packages and themes
+  - Uninstall Oh My Fish framework
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # omf

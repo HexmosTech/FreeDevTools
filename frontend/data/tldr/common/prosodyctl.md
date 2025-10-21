@@ -1,29 +1,29 @@
 ---
-title: "Prosodyctl - Control Prosody Server | Online Free DevTools by Hexmos"
+title: 'Prosodyctl - Control Prosody Server | Online Free DevTools by Hexmos'
 name: prosodyctl
-path: "/freedevtools/tldr/common/prosodyctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/prosodyctl/"
-description: "Control Prosody XMPP server with Prosodyctl. Manage users, reload configuration, and check server status. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/prosodyctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/prosodyctl/'
+description: 'Control Prosody XMPP server with Prosodyctl. Manage users, reload configuration, and check server status. Free online tool, no registration required.'
 category: common
 keywords:
-- prosodyctl command
-- prosody XMPP server control
-- prosody user management
-- XMPP server administration
-- prosody configuration reload
-- linux prosodyctl
-- prosodyctl status
-- prosodyctl adduser
-- prosodyctl deluser
-- prosodyctl password
+  - prosodyctl command
+  - prosody XMPP server control
+  - prosody user management
+  - XMPP server administration
+  - prosody configuration reload
+  - linux prosodyctl
+  - prosodyctl status
+  - prosodyctl adduser
+  - prosodyctl deluser
+  - prosodyctl password
 features:
-- Show the status of the Prosody server
-- Reload Prosody configuration files
-- Add a user to the Prosody XMPP server
-- Set a user's password
-- Permanently delete a user
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show the status of the Prosody server
+  - Reload Prosody configuration files
+  - Add a user to the Prosody XMPP server
+  - Set a user's password
+  - Permanently delete a user
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prosodyctl

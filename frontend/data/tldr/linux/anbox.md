@@ -1,9 +1,9 @@
 ---
-title: "Android Apps - Run and Control on Linux with Anbox | Online Free DevTools by Hexmos"
+title: 'Android Apps - Run and Control on Linux with Anbox | Online Free DevTools by Hexmos'
 name: anbox
-path: "/freedevtools/tldr/linux/anbox/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/anbox/"
-description: "Run Android apps with Anbox on Linux. Execute applications and manage the Android environment seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/anbox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/anbox/'
+description: 'Run Android apps with Anbox on Linux. Execute applications and manage the Android environment seamlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - android apps linux
@@ -22,8 +22,8 @@ features:
   - Access the Android app manager
   - Execute adb commands within the container
   - Integrate Android apps with the Linux desktop
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # anbox

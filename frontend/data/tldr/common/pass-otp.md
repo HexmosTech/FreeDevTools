@@ -1,29 +1,29 @@
 ---
-title: "Generate OTP Code - Manage One-Time Passwords | Online Free DevTools by Hexmos"
+title: 'Generate OTP Code - Manage One-Time Passwords | Online Free DevTools by Hexmos'
 name: pass-otp
-path: "/freedevtools/tldr/common/pass-otp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pass-otp/"
-description: "Generate OTP codes quickly with pass-otp. Securely manage one-time passwords using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pass-otp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pass-otp/'
+description: 'Generate OTP codes quickly with pass-otp. Securely manage one-time passwords using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- OTP code generator
-- One-time password manager
-- Pass extension
-- Command-line OTP tool
-- 2FA code generator
-- Password management tool
-- OTP authentication
-- Linux password manager
-- MacOS password manager
-- Unix OTP
+  - OTP code generator
+  - One-time password manager
+  - Pass extension
+  - Command-line OTP tool
+  - 2FA code generator
+  - Password management tool
+  - OTP authentication
+  - Linux password manager
+  - MacOS password manager
+  - Unix OTP
 features:
-- Generate 2FA codes from command line
-- Append OTP secrets to existing pass files
-- Display OTP tokens as QR codes
-- Import otpauth URI tokens
-- Manage OTP secrets with issuer and account options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate 2FA codes from command line
+  - Append OTP secrets to existing pass files
+  - Display OTP tokens as QR codes
+  - Import otpauth URI tokens
+  - Manage OTP secrets with issuer and account options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pass otp

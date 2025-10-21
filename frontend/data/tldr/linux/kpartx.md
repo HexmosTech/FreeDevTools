@@ -1,9 +1,9 @@
 ---
-title: "Create Device Maps - kpartx Partition Tool | Online Free DevTools by Hexmos"
+title: 'Create Device Maps - kpartx Partition Tool | Online Free DevTools by Hexmos'
 name: kpartx
-path: "/freedevtools/tldr/linux/kpartx/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kpartx/"
-description: "Create device maps with kpartx, a powerful command-line partition tool for Linux. Manage disk partitions efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kpartx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kpartx/'
+description: 'Create device maps with kpartx, a powerful command-line partition tool for Linux. Manage disk partitions efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - disk partition mapping
@@ -22,8 +22,8 @@ features:
   - List all available partition mappings
   - Create device maps from partition tables
   - Support mounting and unmounting disk images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kpartx

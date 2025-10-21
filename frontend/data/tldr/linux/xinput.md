@@ -1,9 +1,9 @@
 ---
-title: "xinput Control - Manage Input Devices | Online Free DevTools by Hexmos"
+title: 'xinput Control - Manage Input Devices | Online Free DevTools by Hexmos'
 name: xinput
-path: "/freedevtools/tldr/linux/xinput/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xinput/"
-description: "Control and manage Linux input devices with xinput.  List, enable, disable, and reconfigure input devices using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xinput/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xinput/'
+description: 'Control and manage Linux input devices with xinput.  List, enable, disable, and reconfigure input devices using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - xinput command
@@ -22,8 +22,8 @@ features:
   - Disconnect and reconnect input devices from their master device.
   - Query detailed settings of any input device.
   - Modify specific properties of input devices.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xinput

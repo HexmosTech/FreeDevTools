@@ -1,9 +1,9 @@
 ---
-title: "Create Laravel Apps - Lambo New Project Tool | Online Free DevTools by Hexmos"
+title: 'Create Laravel Apps - Lambo New Project Tool | Online Free DevTools by Hexmos'
 name: lambo
-path: "/freedevtools/tldr/common/lambo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lambo/"
-description: "Create new Laravel applications quickly with Lambo, a Laravel new project scaffolding tool. Streamline project setup and configuration. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lambo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lambo/'
+description: 'Create new Laravel applications quickly with Lambo, a Laravel new project scaffolding tool. Streamline project setup and configuration. Free online tool, no registration required.'
 category: common
 keywords:
   - Laravel project generator
@@ -22,8 +22,8 @@ features:
   - Edit configuration files easily
   - Customize application setup process
   - Integrate seamlessly with Laravel Valet
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lambo

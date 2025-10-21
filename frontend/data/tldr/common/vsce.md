@@ -1,29 +1,29 @@
 ---
-title: "VSCE - Manage VS Code Extensions | Online Free DevTools by Hexmos"
+title: 'VSCE - Manage VS Code Extensions | Online Free DevTools by Hexmos'
 name: vsce
-path: "/freedevtools/tldr/common/vsce/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vsce/"
-description: "Manage VS Code extensions with VSCE. Package, publish, and unpublish extensions quickly. Streamline your Visual Studio Code development workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vsce/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vsce/'
+description: 'Manage VS Code extensions with VSCE. Package, publish, and unpublish extensions quickly. Streamline your Visual Studio Code development workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- vscode extension manager
-- vsce package
-- vsce publish
-- vsce unpublish
-- vs code extension development
-- vsix package
-- visual studio code extensions
-- extension marketplace
-- vscode cli
-- vsce show
+  - vscode extension manager
+  - vsce package
+  - vsce publish
+  - vsce unpublish
+  - vs code extension development
+  - vsix package
+  - visual studio code extensions
+  - extension marketplace
+  - vscode cli
+  - vsce show
 features:
-- Package VS Code extensions into VSIX files
-- Publish extensions to the VS Code Marketplace
-- Unpublish extensions from the VS Code Marketplace
-- List extensions by publisher
-- Show metadata associated with an extension
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Package VS Code extensions into VSIX files
+  - Publish extensions to the VS Code Marketplace
+  - Unpublish extensions from the VS Code Marketplace
+  - List extensions by publisher
+  - Show metadata associated with an extension
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vsce

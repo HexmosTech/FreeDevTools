@@ -1,9 +1,9 @@
 ---
-title: "Control LXC Container - Attach to Container | Online Free DevTools by Hexmos"
+title: 'Control LXC Container - Attach to Container | Online Free DevTools by Hexmos'
 name: lxc-console
-path: "/freedevtools/tldr/linux/lxc-console/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-console/"
-description: "Control LXC container sessions with lxc-console. Attach to running containers, manage console access, and debug applications remotely. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lxc-console/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lxc-console/'
+description: 'Control LXC container sessions with lxc-console. Attach to running containers, manage console access, and debug applications remotely. Free online tool, no registration required.'
 category: linux
 keywords:
   - lxc container console
@@ -22,8 +22,8 @@ features:
   - Manage interactive container sessions
   - Debug applications within containers
   - Start console sessions using agetty
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lxc-console

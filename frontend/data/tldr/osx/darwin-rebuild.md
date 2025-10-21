@@ -1,29 +1,29 @@
 ---
-title: "Darwin Rebuild - Generate macOS System Configuration | Online Free DevTools by Hexmos"
+title: 'Darwin Rebuild - Generate macOS System Configuration | Online Free DevTools by Hexmos'
 name: darwin-rebuild
-path: "/freedevtools/tldr/osx/darwin-rebuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/darwin-rebuild/"
-description: "Generate macOS system configuration with Darwin Rebuild. Easily switch and build Nix-based configurations for your macOS system. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/darwin-rebuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/darwin-rebuild/'
+description: 'Generate macOS system configuration with Darwin Rebuild. Easily switch and build Nix-based configurations for your macOS system. Free online tool, no registration required.'
 category: osx
 keywords:
-- darwin rebuild configuration
-- macos system configuration
-- nix darwin rebuild
-- darwin flake configuration
-- osx system builder
-- macos configuration manager
-- nix-darwin configuration
-- darwin system switch
-- darwin system build
-- macos nix environment
+  - darwin rebuild configuration
+  - macos system configuration
+  - nix darwin rebuild
+  - darwin flake configuration
+  - osx system builder
+  - macos configuration manager
+  - nix-darwin configuration
+  - darwin system switch
+  - darwin system build
+  - macos nix environment
 features:
-- Rebuild and switch to a new Darwin configuration using a flake.
-- Build a Darwin configuration without switching.
-- Manage macOS system configurations with Nix.
-- Update macOS system with a Nix-based configuration.
-- Easily switch between Darwin system configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rebuild and switch to a new Darwin configuration using a flake.
+  - Build a Darwin configuration without switching.
+  - Manage macOS system configurations with Nix.
+  - Update macOS system with a Nix-based configuration.
+  - Easily switch between Darwin system configurations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # darwin-rebuild

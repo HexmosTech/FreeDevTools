@@ -1,29 +1,29 @@
 ---
-title: "Control AdGuardHome - Block Ads Network-Wide | Online Free DevTools by Hexmos"
+title: 'Control AdGuardHome - Block Ads Network-Wide | Online Free DevTools by Hexmos'
 name: adguardhome
-path: "/freedevtools/tldr/common/adguardhome/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/adguardhome/"
-description: "Control ads network-wide with AdGuardHome. Block ads and tracking at the DNS level. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/adguardhome/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/adguardhome/'
+description: 'Control ads network-wide with AdGuardHome. Block ads and tracking at the DNS level. Free online tool, no registration required.'
 category: common
 keywords:
-- AdGuardHome network ad blocker
-- network-wide ad blocking software
-- DNS-level ad filtering
-- ad and tracking protection
-- AdGuardHome configuration management
-- AdGuardHome service management
-- AdGuardHome YAML configuration
-- AdGuardHome command line tool
-- privacy protection software
-- AdGuardHome Linux
+  - AdGuardHome network ad blocker
+  - network-wide ad blocking software
+  - DNS-level ad filtering
+  - ad and tracking protection
+  - AdGuardHome configuration management
+  - AdGuardHome service management
+  - AdGuardHome YAML configuration
+  - AdGuardHome command line tool
+  - privacy protection software
+  - AdGuardHome Linux
 features:
-- Block ads and tracking across your entire network.
-- Configure AdGuardHome with a custom YAML configuration file.
-- Manage AdGuardHome as a system service (install, start, stop, restart).
-- Specify a custom work directory for data storage.
-- Reload the configuration without restarting the service.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Block ads and tracking across your entire network.
+  - Configure AdGuardHome with a custom YAML configuration file.
+  - Manage AdGuardHome as a system service (install, start, stop, restart).
+  - Specify a custom work directory for data storage.
+  - Reload the configuration without restarting the service.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # AdGuardHome

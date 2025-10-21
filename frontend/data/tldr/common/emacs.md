@@ -1,29 +1,29 @@
 ---
-title: "Emacs Editor - Control Text Editing | Online Free DevTools by Hexmos"
+title: 'Emacs Editor - Control Text Editing | Online Free DevTools by Hexmos'
 name: emacs
-path: "/freedevtools/tldr/common/emacs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/emacs/"
-description: "Control text editing with Emacs Editor, the extensible text editor. Edit files, run scripts, and manage Emacs server instances quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/emacs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/emacs/'
+description: 'Control text editing with Emacs Editor, the extensible text editor. Edit files, run scripts, and manage Emacs server instances quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- emacs editor
-- gnu emacs
-- text editor linux
-- extensible text editor
-- emacs lisp
-- emacs command line
-- emacs server
-- console text editor
-- text editor macos
-- text editor windows
+  - emacs editor
+  - gnu emacs
+  - text editor linux
+  - extensible text editor
+  - emacs lisp
+  - emacs command line
+  - emacs server
+  - console text editor
+  - text editor macos
+  - text editor windows
 features:
-- Open and edit files directly from the command line
-- Execute Emacs Lisp scripts for automated tasks
-- Start and manage Emacs server instances in the background
-- Open files at specific line numbers for focused editing
-- Run Emacs in console mode without a graphical interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit files directly from the command line
+  - Execute Emacs Lisp scripts for automated tasks
+  - Start and manage Emacs server instances in the background
+  - Open files at specific line numbers for focused editing
+  - Run Emacs in console mode without a graphical interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # emacs

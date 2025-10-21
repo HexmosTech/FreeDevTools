@@ -1,29 +1,29 @@
 ---
-title: "Bash Help - Display Command Information | Online Free DevTools by Hexmos"
+title: 'Bash Help - Display Command Information | Online Free DevTools by Hexmos'
 name: help
-path: "/freedevtools/tldr/common/help/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/help/"
-description: "Display Bash command information with Bash Help. Explore command syntax, usage, and examples directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/help/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/help/'
+description: 'Display Bash command information with Bash Help. Explore command syntax, usage, and examples directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- bash command help
-- linux command information
-- unix shell commands
-- bash builtin commands
-- command line documentation
-- bash usage guide
-- shell command syntax
-- linux help manual
-- bash command reference
-- command line arguments
+  - bash command help
+  - linux command information
+  - unix shell commands
+  - bash builtin commands
+  - command line documentation
+  - bash usage guide
+  - shell command syntax
+  - linux help manual
+  - bash command reference
+  - command line arguments
 features:
-- Display syntax for Bash built-in commands
-- Provide usage examples for Bash commands
-- Show documentation for control flow constructs
-- Explain arithmetic expression evaluation syntax
-- List available Bash built-in commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display syntax for Bash built-in commands
+  - Provide usage examples for Bash commands
+  - Show documentation for control flow constructs
+  - Explain arithmetic expression evaluation syntax
+  - List available Bash built-in commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # help

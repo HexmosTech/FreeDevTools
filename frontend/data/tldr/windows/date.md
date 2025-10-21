@@ -1,9 +1,9 @@
 ---
-title: "Date - Display System Date | Online Free DevTools by Hexmos"
+title: 'Date - Display System Date | Online Free DevTools by Hexmos'
 name: date
-path: "/freedevtools/tldr/windows/date/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/date/"
-description: "Display the system date with Date. Control date formatting and update the system date using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/date/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/date/'
+description: 'Display the system date with Date. Control date formatting and update the system date using command-line interface. Free online tool, no registration required.'
 category: windows
 keywords:
   - system date
@@ -22,8 +22,8 @@ features:
   - Format the date output.
   - Suppress prompts when displaying the date.
   - Manipulate date values in various formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # date

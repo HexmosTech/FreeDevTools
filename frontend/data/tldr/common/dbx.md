@@ -1,29 +1,29 @@
 ---
-title: "DBX - Interact with Databricks | Online Free DevTools by Hexmos"
+title: 'DBX - Interact with Databricks | Online Free DevTools by Hexmos'
 name: dbx
-path: "/freedevtools/tldr/common/dbx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dbx/"
-description: "Interact with Databricks platform using DBX. Deploy workflows, sync files, and configure projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dbx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dbx/'
+description: 'Interact with Databricks platform using DBX. Deploy workflows, sync files, and configure projects. Free online tool, no registration required.'
 category: common
 keywords:
-- databricks workflow deployment
-- dbx project configuration
-- dbfs file synchronization
-- databricks command line interface
-- dbx deploy workflow
-- dbx sync dbfs
-- dbx launch workflow
-- databricks asset bundles
-- dbx interactive tool
-- dbx databricks commands
+  - databricks workflow deployment
+  - dbx project configuration
+  - dbfs file synchronization
+  - databricks command line interface
+  - dbx deploy workflow
+  - dbx sync dbfs
+  - dbx launch workflow
+  - databricks asset bundles
+  - dbx interactive tool
+  - dbx databricks commands
 features:
-- Deploy workflows to Databricks artifact storage
-- Sync local files to DBFS and watch for changes
-- Configure new DBX projects
-- Launch deployed workflows
-- Interact with the Databricks platform
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy workflows to Databricks artifact storage
+  - Sync local files to DBFS and watch for changes
+  - Configure new DBX projects
+  - Launch deployed workflows
+  - Interact with the Databricks platform
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dbx

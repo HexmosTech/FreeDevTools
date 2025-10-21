@@ -1,29 +1,29 @@
 ---
-title: "Delete User - Manage System Users | Online Free DevTools by Hexmos"
+title: 'Delete User - Manage System Users | Online Free DevTools by Hexmos'
 name: deluser
-path: "/freedevtools/tldr/linux/deluser/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/deluser/"
-description: "Delete users efficiently with deluser. Manage user accounts, remove home directories, and backup user data on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/deluser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/deluser/'
+description: 'Delete users efficiently with deluser. Manage user accounts, remove home directories, and backup user data on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux user management
-- delete linux user
-- deluser command
-- remove user account linux
-- linux user account deletion
-- user account management
-- command line user deletion
-- backup user data linux
-- remove user home directory
-- linux system administration
+  - linux user management
+  - delete linux user
+  - deluser command
+  - remove user account linux
+  - linux user account deletion
+  - user account management
+  - command line user deletion
+  - backup user data linux
+  - remove user home directory
+  - linux system administration
 features:
-- Remove a user account from the system
-- Delete a user's home directory
-- Backup a user's home directory before deletion
-- Remove all files owned by a specified user
-- Manage user accounts via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove a user account from the system
+  - Delete a user's home directory
+  - Backup a user's home directory before deletion
+  - Remove all files owned by a specified user
+  - Manage user accounts via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # deluser

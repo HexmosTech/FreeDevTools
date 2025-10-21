@@ -1,29 +1,29 @@
 ---
-title: "Format Numbers - Convert Numbers to Human-Readable Format | Online Free DevTools by Hexmos"
+title: 'Format Numbers - Convert Numbers to Human-Readable Format | Online Free DevTools by Hexmos'
 name: numfmt
-path: "/freedevtools/tldr/common/numfmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/numfmt/"
-description: "Format numbers with numfmt and convert them into human-readable strings or SI units. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/numfmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/numfmt/'
+description: 'Format numbers with numfmt and convert them into human-readable strings or SI units. Free online tool, no registration required.'
 category: common
 keywords:
-- number formatting
-- human-readable numbers
-- SI units conversion
-- IEC units conversion
-- linux numfmt
-- macos numfmt
-- command line number format
-- number string converter
-- data formatting
-- command line data conversion
+  - number formatting
+  - human-readable numbers
+  - SI units conversion
+  - IEC units conversion
+  - linux numfmt
+  - macos numfmt
+  - command line number format
+  - number string converter
+  - data formatting
+  - command line data conversion
 features:
-- Convert numbers to human-readable format
-- Convert numbers to SI units
-- Convert numbers to IEC units
-- Format numbers with padding and alignment
-- Parse and format numbers from command line output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert numbers to human-readable format
+  - Convert numbers to SI units
+  - Convert numbers to IEC units
+  - Format numbers with padding and alignment
+  - Parse and format numbers from command line output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # numfmt

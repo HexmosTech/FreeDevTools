@@ -1,9 +1,9 @@
 ---
-title: "Control Xauth - Manage X Server Authorizations | Online Free DevTools by Hexmos"
+title: 'Control Xauth - Manage X Server Authorizations | Online Free DevTools by Hexmos'
 name: xauth
-path: "/freedevtools/tldr/linux/xauth/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xauth/"
-description: "Control X server authorizations with Xauth. Manage access, list entries, and extract authentication tokens. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xauth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xauth/'
+description: 'Control X server authorizations with Xauth. Manage access, list entries, and extract authentication tokens. Free online tool, no registration required.'
 category: linux
 keywords:
   - X server authentication
@@ -22,8 +22,8 @@ features:
   - Add new authorization entries for displays
   - Remove existing authorization entries
   - Extract authorization information to standard output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xauth

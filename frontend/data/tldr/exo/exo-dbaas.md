@@ -1,29 +1,29 @@
 ---
-title: "Manage Exoscale DBaaS - Control Cloud Databases | Online Free DevTools by Hexmos"
+title: 'Manage Exoscale DBaaS - Control Cloud Databases | Online Free DevTools by Hexmos'
 name: exo-dbaas
-path: "/freedevtools/tldr/exo/exo-dbaas/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-dbaas/"
-description: "Manage Exoscale DBaaS instances with this tool. Control database service types, create new databases, and update maintenance schedules. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo-dbaas/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo-dbaas/'
+description: 'Manage Exoscale DBaaS instances with this tool. Control database service types, create new databases, and update maintenance schedules. Free online tool, no registration required.'
 category: common
 keywords:
-- exoscale dbaas manager
-- cloud database control
-- dbaas command line
-- exoscale database service
-- database instance management
-- dbaas maintenance schedule
-- exoscale cli dbaas
-- exoscale database types
-- dbaas connection uri
-- exoscale dbaas cli
+  - exoscale dbaas manager
+  - cloud database control
+  - dbaas command line
+  - exoscale database service
+  - database instance management
+  - dbaas maintenance schedule
+  - exoscale cli dbaas
+  - exoscale database types
+  - dbaas connection uri
+  - exoscale dbaas cli
 features:
-- List available database service types
-- Show available plans for a service type
-- Create new Exoscale DBaaS instances
-- Display connection URIs for database services
-- Update maintenance schedules for DBaaS instances
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available database service types
+  - Show available plans for a service type
+  - Create new Exoscale DBaaS instances
+  - Display connection URIs for database services
+  - Update maintenance schedules for DBaaS instances
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo dbaas

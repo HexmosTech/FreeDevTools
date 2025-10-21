@@ -1,29 +1,29 @@
 ---
-title: "Istats - Show System Statistics | Online Free DevTools by Hexmos"
+title: 'Istats - Show System Statistics | Online Free DevTools by Hexmos'
 name: istats
-path: "/freedevtools/tldr/osx/istats/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/istats/"
-description: "Show system statistics with istats on macOS. Monitor CPU temperature, fan speed, and battery status with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/istats/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/istats/'
+description: 'Show system statistics with istats on macOS. Monitor CPU temperature, fan speed, and battery status with this command-line tool. Free online tool, no registration required.'
 category: osx
 keywords:
-- system statistics macos
-- macos system monitor
-- cpu temperature macos
-- fan speed macos
-- battery status macos
-- istats command line
-- macos system information
-- hardware monitoring macos
-- istats osx
-- system stats tool
+  - system statistics macos
+  - macos system monitor
+  - cpu temperature macos
+  - fan speed macos
+  - battery status macos
+  - istats command line
+  - macos system information
+  - hardware monitoring macos
+  - istats osx
+  - system stats tool
 features:
-- Display CPU temperature readings
-- Show fan speeds in RPM
-- Report battery health and status
-- Scan and display system temperatures
-- Monitor various system statistics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display CPU temperature readings
+  - Show fan speeds in RPM
+  - Report battery health and status
+  - Scan and display system temperatures
+  - Monitor various system statistics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # istats

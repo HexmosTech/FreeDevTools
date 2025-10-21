@@ -1,29 +1,29 @@
 ---
-title: "Search and Replace - Control Text with Ned | Online Free DevTools by Hexmos"
+title: 'Search and Replace - Control Text with Ned | Online Free DevTools by Hexmos'
 name: ned
-path: "/freedevtools/tldr/common/ned/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ned/"
-description: "Control text with Ned, a powerful search and replace command line tool. Edit text recursively and non-linearly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ned/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ned/'
+description: 'Control text with Ned, a powerful search and replace command line tool. Edit text recursively and non-linearly. Free online tool, no registration required.'
 category: common
 keywords:
-- text search and replace
-- command line text editor
-- recursive text search
-- non-line oriented editing
-- regex replace tool
-- command line text manipulation
-- linux text search
-- macos text search
-- regular expression tool
-- search and replace utility
+  - text search and replace
+  - command line text editor
+  - recursive text search
+  - non-line oriented editing
+  - regex replace tool
+  - command line text manipulation
+  - linux text search
+  - macos text search
+  - regular expression tool
+  - search and replace utility
 features:
-- Perform recursive searches in directories
-- Replace text using regular expressions
-- Utilize numbered group references in replacements
-- Preview find and replace results without modifying files
-- Exclude specific files during the search process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform recursive searches in directories
+  - Replace text using regular expressions
+  - Utilize numbered group references in replacements
+  - Preview find and replace results without modifying files
+  - Exclude specific files during the search process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ned

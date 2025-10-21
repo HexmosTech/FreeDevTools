@@ -1,9 +1,9 @@
 ---
-title: "Generate UUIDs - UUID Generator Command | Online Free DevTools by Hexmos"
+title: 'Generate UUIDs - UUID Generator Command | Online Free DevTools by Hexmos'
 name: uuidd
-path: "/freedevtools/tldr/linux/uuidd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/uuidd/"
-description: "Generate UUIDs with the uuidd command-line tool.  Create random or time-based UUIDs easily and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/uuidd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/uuidd/'
+description: 'Generate UUIDs with the uuidd command-line tool.  Create random or time-based UUIDs easily and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - uuid generator
@@ -22,8 +22,8 @@ features:
   - Generates time-based UUIDs using system time and MAC address.
   - Provides command-line interface for easy use.
   - Offers flexibility with different UUID generation options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uuidd

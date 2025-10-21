@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to NTSC/PAL - Color Correct PPM Images | Online Free DevTools by Hexmos"
+title: 'Convert PPM to NTSC/PAL - Color Correct PPM Images | Online Free DevTools by Hexmos'
 name: ppmntsc
-path: "/freedevtools/tldr/ppm/ppmntsc/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmntsc/"
-description: "Convert PPM images to NTSC/PAL color spaces with ppmntsc. Adjust RGB values for accurate display. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmntsc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmntsc/'
+description: 'Convert PPM images to NTSC/PAL color spaces with ppmntsc. Adjust RGB values for accurate display. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to NTSC conversion
-- PPM to PAL conversion
-- Image color correction
-- NTSC color encoding
-- PAL color encoding
-- PPM image processing
-- Color space conversion
-- Netpbm tools
-- RGB color adjustment
-- PPM color converter
+  - PPM to NTSC conversion
+  - PPM to PAL conversion
+  - Image color correction
+  - NTSC color encoding
+  - PAL color encoding
+  - PPM image processing
+  - Color space conversion
+  - Netpbm tools
+  - RGB color adjustment
+  - PPM color converter
 features:
-- Convert PPM images to NTSC color space.
-- Convert PPM images to PAL color space.
-- Identify illegal color values in PPM images.
-- Output only legal, illegal, or corrected pixels.
-- Print the number of illegal pixels to stderr.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to NTSC color space.
+  - Convert PPM images to PAL color space.
+  - Identify illegal color values in PPM images.
+  - Output only legal, illegal, or corrected pixels.
+  - Print the number of illegal pixels to stderr.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmntsc

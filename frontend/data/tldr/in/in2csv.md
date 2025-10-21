@@ -1,29 +1,29 @@
 ---
-title: "Convert to CSV - Format Tabular Data | Online Free DevTools by Hexmos"
+title: 'Convert to CSV - Format Tabular Data | Online Free DevTools by Hexmos'
 name: in2csv
-path: "/freedevtools/tldr/in/in2csv/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/in2csv/"
-description: "Convert tabular data to CSV with in2csv. Format XLS, XLSX, DBF, and JSON files. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/in2csv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/in2csv/'
+description: 'Convert tabular data to CSV with in2csv. Format XLS, XLSX, DBF, and JSON files. Free online tool, no registration required.'
 category: common
 keywords:
-- tabular data to CSV
-- XLS to CSV conversion
-- XLSX to CSV conversion
-- DBF to CSV conversion
-- JSON to CSV conversion
-- data format conversion
-- csvkit in2csv
-- command-line CSV converter
-- in2csv examples
-- tabular data converter
+  - tabular data to CSV
+  - XLS to CSV conversion
+  - XLSX to CSV conversion
+  - DBF to CSV conversion
+  - JSON to CSV conversion
+  - data format conversion
+  - csvkit in2csv
+  - command-line CSV converter
+  - in2csv examples
+  - tabular data converter
 features:
-- Convert XLS files to CSV format.
-- Convert DBF files to CSV format.
-- Convert specific sheets from XLSX files to CSV.
-- Accept JSON data via pipe and convert to CSV.
-- Supports multiple tabular data formats for CSV conversion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert XLS files to CSV format.
+  - Convert DBF files to CSV format.
+  - Convert specific sheets from XLSX files to CSV.
+  - Accept JSON data via pipe and convert to CSV.
+  - Supports multiple tabular data formats for CSV conversion.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # in2csv

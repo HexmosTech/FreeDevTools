@@ -1,9 +1,9 @@
 ---
-title: "Slurm Attach - Control Job Steps | Online Free DevTools by Hexmos"
+title: 'Slurm Attach - Control Job Steps | Online Free DevTools by Hexmos'
 name: sattach
-path: "/freedevtools/tldr/linux/sattach/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sattach/"
-description: "Control Slurm job steps effortlessly with Slurm Attach. Monitor, debug, and interact with running jobs. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sattach/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sattach/'
+description: 'Control Slurm job steps effortlessly with Slurm Attach. Monitor, debug, and interact with running jobs. Free online tool, no registration required.'
 category: linux
 keywords:
   - Slurm job attach
@@ -22,8 +22,8 @@ features:
   - Use console input as stdin for specific tasks
   - Filter stdin/stderr of specific tasks
   - Interact with Slurm jobs in real-time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sattach

@@ -1,29 +1,29 @@
 ---
-title: "Singularity - Manage Containers | Online Free DevTools by Hexmos"
+title: 'Singularity - Manage Containers | Online Free DevTools by Hexmos'
 name: singularity
-path: "/freedevtools/tldr/common/singularity/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/singularity/"
-description: "Manage Singularity containers with Singularity command. Build, run, and execute commands within containers effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/singularity/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/singularity/'
+description: 'Manage Singularity containers with Singularity command. Build, run, and execute commands within containers effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- singularity container management
-- linux containerization
-- singularity image building
-- container runtime environment
-- singularity shell access
-- singularity exec command
-- singularity recipe creation
-- container image pull
-- sylabs cloud containers
-- containerized application deployment
+  - singularity container management
+  - linux containerization
+  - singularity image building
+  - container runtime environment
+  - singularity shell access
+  - singularity exec command
+  - singularity recipe creation
+  - container image pull
+  - sylabs cloud containers
+  - containerized application deployment
 features:
-- Build singularity images from recipes
-- Pull images from remote registries like Sylabs Cloud
-- Execute commands inside a singularity container
-- Start an interactive shell within a container
-- Run the default script within a container image
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build singularity images from recipes
+  - Pull images from remote registries like Sylabs Cloud
+  - Execute commands inside a singularity container
+  - Start an interactive shell within a container
+  - Run the default script within a container image
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # singularity

@@ -1,9 +1,9 @@
 ---
-title: "Capture Video - rpicam-vid Command | Online Free DevTools by Hexmos"
+title: 'Capture Video - rpicam-vid Command | Online Free DevTools by Hexmos'
 name: rpicam-vid
-path: "/freedevtools/tldr/linux/rpicam-vid/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-vid/"
-description: "Capture videos with the rpicam-vid command.  Easily record video clips from your Raspberry Pi camera. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpicam-vid/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpicam-vid/'
+description: 'Capture videos with the rpicam-vid command.  Easily record video clips from your Raspberry Pi camera. Free online tool, no registration required.'
 category: linux
 keywords:
   - raspberry pi video capture
@@ -22,8 +22,8 @@ features:
   - Define output file name and location.
   - Utilize command-line interface for easy integration.
   - Control video recording parameters via command-line options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpicam-vid

@@ -1,9 +1,9 @@
 ---
-title: "Control Notifications - Dunstify Message Tool | Online Free DevTools by Hexmos"
+title: 'Control Notifications - Dunstify Message Tool | Online Free DevTools by Hexmos'
 name: dunstify
-path: "/freedevtools/tldr/common/dunstify/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dunstify/"
-description: "Control Linux desktop notifications with Dunstify, a powerful message tool. Customize urgency, replace messages, and enhance your notification experience. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dunstify/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dunstify/'
+description: 'Control Linux desktop notifications with Dunstify, a powerful message tool. Customize urgency, replace messages, and enhance your notification experience. Free online tool, no registration required.'
 category: common
 keywords:
   - linux desktop notification
@@ -22,8 +22,8 @@ features:
   - Replace existing notifications by ID
   - Display help information for dunstify
   - Display notifications with custom titles and messages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dunstify

@@ -1,29 +1,29 @@
 ---
-title: "Create LKE Cluster - Manage Linode Kubernetes | Online Free DevTools by Hexmos"
+title: 'Create LKE Cluster - Manage Linode Kubernetes | Online Free DevTools by Hexmos'
 name: linode-cli-lke
-path: "/freedevtools/tldr/linode/linode-cli-lke/"
-canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli-lke/"
-description: "Create LKE clusters easily with linode-cli. Manage and deploy Kubernetes clusters on Linode infrastructure efficiently using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linode/linode-cli-lke/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linode/linode-cli-lke/'
+description: 'Create LKE clusters easily with linode-cli. Manage and deploy Kubernetes clusters on Linode infrastructure efficiently using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- LKE cluster management
-- Linode Kubernetes engine
-- Kubernetes cluster creation
-- linode-cli lke commands
-- kubectl cluster management
-- Linux LKE management
-- cloud native Kubernetes
-- LKE cluster deployment
-- infrastructure as code LKE
-- command line Kubernetes
+  - LKE cluster management
+  - Linode Kubernetes engine
+  - Kubernetes cluster creation
+  - linode-cli lke commands
+  - kubectl cluster management
+  - Linux LKE management
+  - cloud native Kubernetes
+  - LKE cluster deployment
+  - infrastructure as code LKE
+  - command line Kubernetes
 features:
-- List existing Linode Kubernetes Engine (LKE) clusters
-- Create new LKE clusters with specified region, type, and node configuration
-- View detailed information about a specific LKE cluster
-- Update the node type of an existing LKE cluster
-- Delete an LKE cluster
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing Linode Kubernetes Engine (LKE) clusters
+  - Create new LKE clusters with specified region, type, and node configuration
+  - View detailed information about a specific LKE cluster
+  - Update the node type of an existing LKE cluster
+  - Delete an LKE cluster
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # linode-cli lke

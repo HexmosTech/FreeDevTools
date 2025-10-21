@@ -1,29 +1,29 @@
 ---
-title: "GitHub PR Merge - Manage Pull Requests | Online Free DevTools by Hexmos"
+title: 'GitHub PR Merge - Manage Pull Requests | Online Free DevTools by Hexmos'
 name: gh-pr-merge
-path: "/freedevtools/tldr/gh/gh-pr-merge/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-pr-merge/"
-description: "Manage GitHub pull requests with gh-pr-merge. Streamline your code review workflow and merge changes seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-pr-merge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-pr-merge/'
+description: 'Manage GitHub pull requests with gh-pr-merge. Streamline your code review workflow and merge changes seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub pull request merge
-- gh pr merge command
-- GitHub CLI merge
-- Pull request branch delete
-- Interactive pull request merge
-- Squash merge GitHub
-- Rebase merge GitHub
-- Pull request merge strategy
-- GitHub code review
-- Command line git merge
+  - GitHub pull request merge
+  - gh pr merge command
+  - GitHub CLI merge
+  - Pull request branch delete
+  - Interactive pull request merge
+  - Squash merge GitHub
+  - Rebase merge GitHub
+  - Pull request merge strategy
+  - GitHub code review
+  - Command line git merge
 features:
-- Interactively merge pull requests
-- Delete branches after merging pull requests
-- Merge pull requests with specific strategies (merge, squash, rebase)
-- Customize commit messages during merge
-- Squash pull requests into a single commit
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Interactively merge pull requests
+  - Delete branches after merging pull requests
+  - Merge pull requests with specific strategies (merge, squash, rebase)
+  - Customize commit messages during merge
+  - Squash pull requests into a single commit
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh pr merge

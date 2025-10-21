@@ -1,9 +1,9 @@
 ---
-title: "Control Windows with wmctrl - Manage X Window Manager | Online Free DevTools by Hexmos"
+title: 'Control Windows with wmctrl - Manage X Window Manager | Online Free DevTools by Hexmos'
 name: wmctrl
-path: "/freedevtools/tldr/linux/wmctrl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wmctrl/"
-description: "Control X Window Manager windows efficiently with wmctrl. List, switch, move, and manage windows via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wmctrl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wmctrl/'
+description: 'Control X Window Manager windows efficiently with wmctrl. List, switch, move, and manage windows via command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - window manager control
@@ -22,8 +22,8 @@ features:
   - Move a window to a specific workspace.
   - Toggle fullscreen mode for a selected window.
   - Manage workspaces by switching between them.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wmctrl

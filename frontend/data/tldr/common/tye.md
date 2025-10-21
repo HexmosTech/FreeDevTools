@@ -1,29 +1,29 @@
 ---
-title: "Tye - Deploy Microservices Easily | Online Free DevTools by Hexmos"
+title: 'Tye - Deploy Microservices Easily | Online Free DevTools by Hexmos'
 name: tye
-path: "/freedevtools/tldr/common/tye/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tye/"
-description: "Deploy microservices efficiently with Tye. Build, push, and deploy .NET applications to Kubernetes with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tye/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tye/'
+description: 'Deploy microservices efficiently with Tye. Build, push, and deploy .NET applications to Kubernetes with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- tye microservices deployment
-- tye kubernetes deployment
-- dotnet microservice deployment
-- docker tye build
-- tye yaml configuration
-- tye application deployment
-- tye development tool
-- microservice orchestration tool
-- containerized application deploy
-- tye application scaffolding
+  - tye microservices deployment
+  - tye kubernetes deployment
+  - dotnet microservice deployment
+  - docker tye build
+  - tye yaml configuration
+  - tye application deployment
+  - tye development tool
+  - microservice orchestration tool
+  - containerized application deploy
+  - tye application scaffolding
 features:
-- Scaffold Tye application manifests.
-- Run microservice applications locally.
-- Build application containers with Tye.
-- Push container images to registries.
-- Deploy applications to Kubernetes clusters.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scaffold Tye application manifests.
+  - Run microservice applications locally.
+  - Build application containers with Tye.
+  - Push container images to registries.
+  - Deploy applications to Kubernetes clusters.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tye

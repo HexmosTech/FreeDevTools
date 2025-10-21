@@ -1,29 +1,29 @@
 ---
-title: "BLASTN - Align Nucleotide Sequences | Online Free DevTools by Hexmos"
+title: 'BLASTN - Align Nucleotide Sequences | Online Free DevTools by Hexmos'
 name: blastn
-path: "/freedevtools/tldr/linux/blastn/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/blastn/"
-description: "Align nucleotide sequences with BLASTN using command-line interface. Perform sequence similarity searches and identify homologous genes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/blastn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/blastn/'
+description: 'Align nucleotide sequences with BLASTN using command-line interface. Perform sequence similarity searches and identify homologous genes. Free online tool, no registration required.'
 category: linux
 keywords:
-- nucleotide alignment
-- blastn sequence search
-- DNA sequence analysis
-- nucleotide database search
-- linux blastn
-- command-line blastn
-- blastn parameters
-- sequence homology detection
-- blastn remote search
-- blastn tabular output
+  - nucleotide alignment
+  - blastn sequence search
+  - DNA sequence analysis
+  - nucleotide database search
+  - linux blastn
+  - command-line blastn
+  - blastn parameters
+  - sequence homology detection
+  - blastn remote search
+  - blastn tabular output
 features:
-- Align nucleotide sequences using various BLASTN algorithms.
-- Search nucleotide databases for similar sequences.
-- Customize output format for detailed sequence analysis.
-- Utilize multi-threading for faster sequence alignment.
-- Perform remote BLASTN searches against NCBI databases.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Align nucleotide sequences using various BLASTN algorithms.
+  - Search nucleotide databases for similar sequences.
+  - Customize output format for detailed sequence analysis.
+  - Utilize multi-threading for faster sequence alignment.
+  - Perform remote BLASTN searches against NCBI databases.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blastn

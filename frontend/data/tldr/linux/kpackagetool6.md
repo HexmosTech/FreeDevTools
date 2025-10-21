@@ -1,9 +1,9 @@
 ---
-title: "Manage Plasma Packages - KPackageTool6 | Online Free DevTools by Hexmos"
+title: 'Manage Plasma Packages - KPackageTool6 | Online Free DevTools by Hexmos'
 name: kpackagetool6
-path: "/freedevtools/tldr/linux/kpackagetool6/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kpackagetool6/"
-description: "Manage Plasma packages efficiently with KPackageTool6. Install, update, list, and remove Plasma applets and other package types easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kpackagetool6/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kpackagetool6/'
+description: 'Manage Plasma packages efficiently with KPackageTool6. Install, update, list, and remove Plasma applets and other package types easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - plasma package manager
@@ -22,8 +22,8 @@ features:
   - List all installed plasmoids (globally or per user).
   - Remove plasmoids by name.
   - List all known installable package types.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kpackagetool6

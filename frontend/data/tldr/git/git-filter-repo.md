@@ -1,29 +1,29 @@
 ---
-title: "Filter Repo - Rewrite Git History | Online Free DevTools by Hexmos"
+title: 'Filter Repo - Rewrite Git History | Online Free DevTools by Hexmos'
 name: git-filter-repo
-path: "/freedevtools/tldr/git/git-filter-repo/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-filter-repo/"
-description: "Rewrite Git history with Filter Repo. Remove sensitive data, extract subfolders, and restructure repositories using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-filter-repo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-filter-repo/'
+description: 'Rewrite Git history with Filter Repo. Remove sensitive data, extract subfolders, and restructure repositories using this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- git history rewriting
-- git filter repo command
-- git repository cleaning
-- git sensitive data removal
-- git subfolder extraction
-- git path renaming
-- git commit filtering
-- git repository restructuring
-- git large file removal
-- git project migration
+  - git history rewriting
+  - git filter repo command
+  - git repository cleaning
+  - git sensitive data removal
+  - git subfolder extraction
+  - git path renaming
+  - git commit filtering
+  - git repository restructuring
+  - git large file removal
+  - git project migration
 features:
-- Replace sensitive text in Git history
-- Extract specific folders from a repository
-- Remove unwanted folders from Git history
-- Rename paths within a Git repository
-- Restructure the file system within a Git repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Replace sensitive text in Git history
+  - Extract specific folders from a repository
+  - Remove unwanted folders from Git history
+  - Rename paths within a Git repository
+  - Restructure the file system within a Git repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git filter-repo

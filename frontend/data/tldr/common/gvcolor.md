@@ -1,29 +1,29 @@
 ---
-title: "Colorize Graph - Colorize Ranked Digraphs | Online Free DevTools by Hexmos"
+title: 'Colorize Graph - Colorize Ranked Digraphs | Online Free DevTools by Hexmos'
 name: gvcolor
-path: "/freedevtools/tldr/common/gvcolor/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gvcolor/"
-description: "Colorize ranked digraphs with gvcolor. Enhance graph visualization with dynamic color ranges, improving data analysis and presentation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gvcolor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gvcolor/'
+description: 'Colorize ranked digraphs with gvcolor. Enhance graph visualization with dynamic color ranges, improving data analysis and presentation. Free online tool, no registration required.'
 category: common
 keywords:
-- graph colorization
-- digraph coloring
-- graphviz color
-- ranked graph color
-- dot graph color
-- graph layout color
-- linux graph tools
-- command line graph color
-- graph visualization color
-- gvcolor graphviz
+  - graph colorization
+  - digraph coloring
+  - graphviz color
+  - ranked graph color
+  - dot graph color
+  - graph layout color
+  - linux graph tools
+  - command line graph color
+  - graph visualization color
+  - gvcolor graphviz
 features:
-- Colorize directed graphs based on ranking
-- Apply a range of colors to nodes and edges
-- Integrate with dot layout engine
-- Output colorized graph in Graphviz format
-- Enhance graph readability through color coding
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Colorize directed graphs based on ranking
+  - Apply a range of colors to nodes and edges
+  - Integrate with dot layout engine
+  - Output colorized graph in Graphviz format
+  - Enhance graph readability through color coding
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gvcolor

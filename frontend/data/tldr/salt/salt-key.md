@@ -1,29 +1,29 @@
 ---
-title: "Salt-Key - Control Salt Minion Keys | Online Free DevTools by Hexmos"
+title: 'Salt-Key - Control Salt Minion Keys | Online Free DevTools by Hexmos'
 name: salt-key
-path: "/freedevtools/tldr/salt/salt-key/"
-canonical: "https://hexmos.com/freedevtools/tldr/salt/salt-key/"
-description: "Control Salt minion keys securely with Salt-Key. Manage, accept, reject and fingerprint keys for secure communication. Free online tool, no registration required."
+path: '/freedevtools/tldr/salt/salt-key/'
+canonical: 'https://hexmos.com/freedevtools/tldr/salt/salt-key/'
+description: 'Control Salt minion keys securely with Salt-Key. Manage, accept, reject and fingerprint keys for secure communication. Free online tool, no registration required.'
 category: common
 keywords:
-- salt minion key management
-- salt-key command line
-- saltstack key authentication
-- salt key accept
-- salt key reject
-- salt key fingerprint
-- salt master security
-- linux salt-key
-- salt security best practices
-- salt key list
+  - salt minion key management
+  - salt-key command line
+  - saltstack key authentication
+  - salt key accept
+  - salt key reject
+  - salt key fingerprint
+  - salt master security
+  - linux salt-key
+  - salt security best practices
+  - salt key list
 features:
-- List accepted, unaccepted, and rejected minion keys
-- Accept a specific minion key
-- Reject a specific minion key
-- Print fingerprints of all public keys
-- Manage salt minion keys from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List accepted, unaccepted, and rejected minion keys
+  - Accept a specific minion key
+  - Reject a specific minion key
+  - Print fingerprints of all public keys
+  - Manage salt minion keys from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # salt-key

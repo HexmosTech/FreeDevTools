@@ -1,9 +1,9 @@
 ---
-title: "Compile Arduino Sketches - Command Line Tool | Online Free DevTools by Hexmos"
+title: 'Compile Arduino Sketches - Command Line Tool | Online Free DevTools by Hexmos'
 name: arduino-builder
-path: "/freedevtools/tldr/common/arduino-builder/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/arduino-builder/"
-description: "Compile Arduino sketches efficiently with arduino-builder. Customize build options, debug, and streamline your Arduino development process. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/arduino-builder/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/arduino-builder/'
+description: 'Compile Arduino sketches efficiently with arduino-builder. Customize build options, debug, and streamline your Arduino development process. Free online tool, no registration required.'
 category: common
 keywords:
   - Arduino sketch compiler
@@ -22,8 +22,8 @@ features:
   - Specify debug level for detailed error reporting
   - Define a custom build directory
   - Enable verbose mode for detailed build output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arduino-builder

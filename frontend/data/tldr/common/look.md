@@ -1,29 +1,29 @@
 ---
-title: "Look - Search Sorted File Lines | Online Free DevTools by Hexmos"
+title: 'Look - Search Sorted File Lines | Online Free DevTools by Hexmos'
 name: look
-path: "/freedevtools/tldr/common/look/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/look/"
-description: "Search sorted file lines with Look, quickly finding lines beginning with a prefix in a sorted file. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/look/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/look/'
+description: 'Search sorted file lines with Look, quickly finding lines beginning with a prefix in a sorted file. Free online tool, no registration required.'
 category: common
 keywords:
-- sorted file search
-- line prefix lookup
-- file content filtering
-- command line search
-- text pattern matching
-- openbsd look command
-- linux look command
-- macos look command
-- case-insensitive search
-- alphanumeric search
+  - sorted file search
+  - line prefix lookup
+  - file content filtering
+  - command line search
+  - text pattern matching
+  - openbsd look command
+  - linux look command
+  - macos look command
+  - case-insensitive search
+  - alphanumeric search
 features:
-- Search for lines beginning with a given prefix
-- Perform case-insensitive searches
-- Search only on alphanumeric characters
-- Specify a string termination character
-- Search the system dictionary file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for lines beginning with a given prefix
+  - Perform case-insensitive searches
+  - Search only on alphanumeric characters
+  - Specify a string termination character
+  - Search the system dictionary file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # look

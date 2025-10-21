@@ -1,29 +1,29 @@
 ---
-title: "Convert JPEG to ASCII - Generate Art | Online Free DevTools by Hexmos"
+title: 'Convert JPEG to ASCII - Generate Art | Online Free DevTools by Hexmos'
 name: jp2a
-path: "/freedevtools/tldr/common/jp2a/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jp2a/"
-description: "Generate ASCII art with jp2a. Convert JPEG images to text-based representations. Free online tool, no registration required. Supports color and custom character sets."
+path: '/freedevtools/tldr/common/jp2a/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jp2a/'
+description: 'Generate ASCII art with jp2a. Convert JPEG images to text-based representations. Free online tool, no registration required. Supports color and custom character sets.'
 category: common
 keywords:
-- JPEG to ASCII converter
-- Image to ASCII art generator
-- ASCII art command line tool
-- Linux image converter
-- macOS image converter
-- jp2a image conversion
-- Command line image tools
-- Terminal art generator
-- Text-based image representation
-- Image ASCII art generator
+  - JPEG to ASCII converter
+  - Image to ASCII art generator
+  - ASCII art command line tool
+  - Linux image converter
+  - macOS image converter
+  - jp2a image conversion
+  - Command line image tools
+  - Terminal art generator
+  - Text-based image representation
+  - Image ASCII art generator
 features:
-- Convert JPEG images to ASCII art
-- Support colorized ASCII output
-- Allow customization of ASCII characters
-- Write ASCII output to a file
-- Generate HTML for web browser viewing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert JPEG images to ASCII art
+  - Support colorized ASCII output
+  - Allow customization of ASCII characters
+  - Write ASCII output to a file
+  - Generate HTML for web browser viewing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jp2a

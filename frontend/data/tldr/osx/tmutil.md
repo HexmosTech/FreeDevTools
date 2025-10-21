@@ -1,29 +1,29 @@
 ---
-title: "Time Machine - Manage Backups on macOS | Online Free DevTools by Hexmos"
+title: 'Time Machine - Manage Backups on macOS | Online Free DevTools by Hexmos'
 name: tmutil
-path: "/freedevtools/tldr/osx/tmutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/tmutil/"
-description: "Manage Time Machine backups with tmutil, the command line interface for macOS. Automate, enable, disable, start and stop backups easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/tmutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/tmutil/'
+description: 'Manage Time Machine backups with tmutil, the command line interface for macOS. Automate, enable, disable, start and stop backups easily. Free online tool, no registration required.'
 category: osx
 keywords:
-- macos time machine
-- time machine backup management
-- tmutil command line
-- macos backup utility
-- backup destination configuration
-- hfs+ backup
-- apfs backup
-- smb share backup
-- time machine automation
-- macos backup control
+  - macos time machine
+  - time machine backup management
+  - tmutil command line
+  - macos backup utility
+  - backup destination configuration
+  - hfs+ backup
+  - apfs backup
+  - smb share backup
+  - time machine automation
+  - macos backup control
 features:
-- Set HFS+ or APFS drives as backup destinations
-- Configure SMB share destinations for backups
-- Enable and disable automatic Time Machine backups
-- Start and stop Time Machine backups from the command line
-- Append new destinations to the list of backup destinations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set HFS+ or APFS drives as backup destinations
+  - Configure SMB share destinations for backups
+  - Enable and disable automatic Time Machine backups
+  - Start and stop Time Machine backups from the command line
+  - Append new destinations to the list of backup destinations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tmutil

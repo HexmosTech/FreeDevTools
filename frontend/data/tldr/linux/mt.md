@@ -1,9 +1,9 @@
 ---
-title: "MT - Control Magnetic Tape Drive Operation | Online Free DevTools by Hexmos"
+title: 'MT - Control Magnetic Tape Drive Operation | Online Free DevTools by Hexmos'
 name: mt
-path: "/freedevtools/tldr/linux/mt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mt/"
-description: "Control magnetic tape drive operation with MT. Manage LTO tapes, rewind, eject, and write EOF marks. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mt/'
+description: 'Control magnetic tape drive operation with MT. Manage LTO tapes, rewind, eject, and write EOF marks. Free online tool, no registration required.'
 category: linux
 keywords:
   - magnetic tape control
@@ -22,8 +22,8 @@ features:
   - Move forward specified number of files.
   - Position the tape at the end of valid data.
   - Write End-of-File (EOF) mark to the tape.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mt

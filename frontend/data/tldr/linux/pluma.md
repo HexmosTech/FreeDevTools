@@ -1,9 +1,9 @@
 ---
-title: "Pluma Text Editor - Edit Files in MATE | Online Free DevTools by Hexmos"
+title: 'Pluma Text Editor - Edit Files in MATE | Online Free DevTools by Hexmos'
 name: pluma
-path: "/freedevtools/tldr/linux/pluma/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pluma/"
-description: "Edit files efficiently with Pluma text editor.  Open, edit, and save files with various encoding options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pluma/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pluma/'
+description: 'Edit files efficiently with Pluma text editor.  Open, edit, and save files with various encoding options. Free online tool, no registration required.'
 category: linux
 keywords:
   - text editor linux
@@ -22,8 +22,8 @@ features:
   - Allows opening multiple files simultaneously.
   - Enables navigating to specific line numbers.
   - Provides a simple and user-friendly interface within the MATE desktop environment.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pluma

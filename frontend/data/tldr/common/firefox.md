@@ -1,29 +1,29 @@
 ---
-title: "Control Firefox - Browse the Web | Online Free DevTools by Hexmos"
+title: 'Control Firefox - Browse the Web | Online Free DevTools by Hexmos'
 name: firefox
-path: "/freedevtools/tldr/common/firefox/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/firefox/"
-description: "Control browsing with Firefox using command-line options. Launch, search, and debug with this open-source browser. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/firefox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/firefox/'
+description: 'Control browsing with Firefox using command-line options. Launch, search, and debug with this open-source browser. Free online tool, no registration required.'
 category: common
 keywords:
-- web browser command line
-- firefox command line
-- firefox browser control
-- linux firefox
-- macos firefox
-- browser automation
-- web browser options
-- private browsing firefox
-- firefox headless screenshot
-- firefox profile management
+  - web browser command line
+  - firefox command line
+  - firefox browser control
+  - linux firefox
+  - macos firefox
+  - browser automation
+  - web browser options
+  - private browsing firefox
+  - firefox headless screenshot
+  - firefox profile management
 features:
-- Launch Firefox with a specific URL.
-- Open a new Firefox window or private window.
-- Search the web from the command line.
-- Run Firefox in safe mode with disabled extensions.
-- Take a screenshot of a web page in headless mode.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch Firefox with a specific URL.
+  - Open a new Firefox window or private window.
+  - Search the web from the command line.
+  - Run Firefox in safe mode with disabled extensions.
+  - Take a screenshot of a web page in headless mode.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # firefox

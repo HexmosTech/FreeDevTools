@@ -1,29 +1,29 @@
 ---
-title: "AFConvert - Convert AFF Files | Online Free DevTools by Hexmos"
+title: 'AFConvert - Convert AFF Files | Online Free DevTools by Hexmos'
 name: afconvert
-path: "/freedevtools/tldr/common/afconvert/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/afconvert/"
-description: "Convert AFF files with AFConvert. Effortlessly transform audio and raw file formats using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/afconvert/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/afconvert/'
+description: 'Convert AFF files with AFConvert. Effortlessly transform audio and raw file formats using command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- aff file converter
-- audio format conversion
-- raw file conversion
-- command-line audio conversion
-- aff file manipulation
-- audio file processing
-- macos audio tools
-- linux audio tools
-- free audio converter
-- audio file compressor
+  - aff file converter
+  - audio format conversion
+  - raw file conversion
+  - command-line audio conversion
+  - aff file manipulation
+  - audio file processing
+  - macos audio tools
+  - linux audio tools
+  - free audio converter
+  - audio file compressor
 features:
-- Convert between AFF and raw audio formats
-- Specify custom audio file extensions
-- Set custom audio compression levels
-- Convert multiple audio files at once
-- Process audio files from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between AFF and raw audio formats
+  - Specify custom audio file extensions
+  - Set custom audio compression levels
+  - Convert multiple audio files at once
+  - Process audio files from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # afconvert

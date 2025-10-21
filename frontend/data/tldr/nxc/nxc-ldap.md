@@ -1,29 +1,29 @@
 ---
-title: "LDAP Exploitation - Control Active Directory | Online Free DevTools by Hexmos"
+title: 'LDAP Exploitation - Control Active Directory | Online Free DevTools by Hexmos'
 name: nxc-ldap
-path: "/freedevtools/tldr/nxc/nxc-ldap/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-ldap/"
-description: "Control Active Directory via LDAP exploitation with nxc-ldap. Enumerate users, extract data, and attempt ASREPRoasting attacks. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-ldap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-ldap/'
+description: 'Control Active Directory via LDAP exploitation with nxc-ldap. Enumerate users, extract data, and attempt ASREPRoasting attacks. Free online tool, no registration required.'
 category: common
 keywords:
-- LDAP Active Directory exploitation
-- Active Directory enumeration
-- LDAP user extraction
-- ASREPRoasting attack
-- GMSA password extraction
-- Windows domain pentesting
-- Network exploitation command
-- LDAP password cracking
-- nxc exploitation tool
-- Domain credentials search
+  - LDAP Active Directory exploitation
+  - Active Directory enumeration
+  - LDAP user extraction
+  - ASREPRoasting attack
+  - GMSA password extraction
+  - Windows domain pentesting
+  - Network exploitation command
+  - LDAP password cracking
+  - nxc exploitation tool
+  - Domain credentials search
 features:
-- Search for valid domain credentials using username/password lists.
-- Enumerate active users within the Active Directory domain.
-- Collect domain data and import it into BloodHound for analysis.
-- Attempt ASREPRoasting attacks by collecting AS_REP messages.
-- Extract passwords for group managed service accounts (GMSA).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for valid domain credentials using username/password lists.
+  - Enumerate active users within the Active Directory domain.
+  - Collect domain data and import it into BloodHound for analysis.
+  - Attempt ASREPRoasting attacks by collecting AS_REP messages.
+  - Extract passwords for group managed service accounts (GMSA).
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc ldap

@@ -1,29 +1,29 @@
 ---
-title: "Pamcut - Cut Netpbm Images | Online Free DevTools by Hexmos"
+title: 'Pamcut - Cut Netpbm Images | Online Free DevTools by Hexmos'
 name: pamcut
-path: "/freedevtools/tldr/common/pamcut/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamcut/"
-description: "Cut rectangular regions from Netpbm images with Pamcut. Crop images, discard columns/rows, and fill missing areas. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamcut/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamcut/'
+description: 'Cut rectangular regions from Netpbm images with Pamcut. Crop images, discard columns/rows, and fill missing areas. Free online tool, no registration required.'
 category: common
 keywords:
-- netpbm image cut
-- pam image crop
-- ppm image editor
-- netpbm image manipulation
-- linux image processing
-- command line image tools
-- pamcut image region
-- image cropping utility
-- ppm image cropping
-- netpbm image slicing
+  - netpbm image cut
+  - pam image crop
+  - ppm image editor
+  - netpbm image manipulation
+  - linux image processing
+  - command line image tools
+  - pamcut image region
+  - image cropping utility
+  - ppm image cropping
+  - netpbm image slicing
 features:
-- Discard specified columns and rows from images
-- Keep only specified columns between given values
-- Fill missing areas with black pixels if rectangle exceeds image boundaries
-- Crop images from left, right, top, and bottom edges
-- Extract rectangular regions from Netpbm images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Discard specified columns and rows from images
+  - Keep only specified columns between given values
+  - Fill missing areas with black pixels if rectangle exceeds image boundaries
+  - Crop images from left, right, top, and bottom edges
+  - Extract rectangular regions from Netpbm images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamcut

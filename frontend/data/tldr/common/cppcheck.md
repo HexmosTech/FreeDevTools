@@ -1,29 +1,29 @@
 ---
-title: "CPPCheck - Validate C/C++ Code | Online Free DevTools by Hexmos"
+title: 'CPPCheck - Validate C/C++ Code | Online Free DevTools by Hexmos'
 name: cppcheck
-path: "/freedevtools/tldr/common/cppcheck/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cppcheck/"
-description: "Validate C/C++ code with CPPCheck, a static analyzer that detects errors compilers miss. Improve code quality and reliability effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cppcheck/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cppcheck/'
+description: 'Validate C/C++ code with CPPCheck, a static analyzer that detects errors compilers miss. Improve code quality and reliability effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- C/C++ static analysis
-- code validation
-- bug detection
-- error checking
-- software quality assurance
-- cppcheck analysis
-- c++ code review
-- c code review
-- code scanning
-- source code analysis
+  - C/C++ static analysis
+  - code validation
+  - bug detection
+  - error checking
+  - software quality assurance
+  - cppcheck analysis
+  - c++ code review
+  - c code review
+  - code scanning
+  - source code analysis
 features:
-- Recursively check directories for errors
-- Suppress specific tests during code analysis
-- Specify include paths for external libraries
-- Check Microsoft Visual Studio projects and solutions
-- Enable different test categories (error, warning, style)
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively check directories for errors
+  - Suppress specific tests during code analysis
+  - Specify include paths for external libraries
+  - Check Microsoft Visual Studio projects and solutions
+  - Enable different test categories (error, warning, style)
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cppcheck

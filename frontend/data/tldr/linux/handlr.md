@@ -1,9 +1,9 @@
 ---
-title: "Manage Default Apps - Control Application Settings | Online Free DevTools by Hexmos"
+title: 'Manage Default Apps - Control Application Settings | Online Free DevTools by Hexmos'
 name: handlr
-path: "/freedevtools/tldr/linux/handlr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/handlr/"
-description: "Manage default applications with handlr.  Set, get, and list default applications for different file types easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/handlr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/handlr/'
+description: 'Manage default applications with handlr.  Set, get, and list default applications for different file types easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - application default manager
@@ -22,8 +22,8 @@ features:
   - List all currently configured default applications.
   - Retrieve the default application for a given file type.
   - Manage application associations via the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # handlr

@@ -1,29 +1,29 @@
 ---
-title: "Build Python Packages - Create Wheels & SDists | Online Free DevTools by Hexmos"
+title: 'Build Python Packages - Create Wheels & SDists | Online Free DevTools by Hexmos'
 name: uv-build
-path: "/freedevtools/tldr/uv/uv-build/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-build/"
-description: "Build Python packages efficiently with uv-build. Create source distributions (SDists) and wheels from your Python projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-build/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-build/'
+description: 'Build Python packages efficiently with uv-build. Create source distributions (SDists) and wheels from your Python projects. Free online tool, no registration required.'
 category: common
 keywords:
-- Python package builder
-- Python wheel generator
-- Python sdist creator
-- uv package build
-- Python build tool
-- Python package distribution
-- Python package workspace
-- Pyproject.toml build
-- uv build command
-- Python isolated build
+  - Python package builder
+  - Python wheel generator
+  - Python sdist creator
+  - uv package build
+  - Python build tool
+  - Python package distribution
+  - Python package workspace
+  - Pyproject.toml build
+  - uv build command
+  - Python isolated build
 features:
-- Build Python wheels from source
-- Create source distributions (SDists)
-- Build from a specific directory or workspace
-- Output builds to a designated directory
-- Build with a specific Python interpreter version
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Python wheels from source
+  - Create source distributions (SDists)
+  - Build from a specific directory or workspace
+  - Output builds to a designated directory
+  - Build with a specific Python interpreter version
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv build

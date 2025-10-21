@@ -1,29 +1,29 @@
 ---
-title: "Choco Pin - Control Package Versions | Online Free DevTools by Hexmos"
+title: 'Choco Pin - Control Package Versions | Online Free DevTools by Hexmos'
 name: choco-pin
-path: "/freedevtools/tldr/windows/choco-pin/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-pin/"
-description: "Control package versions with Choco Pin on Windows. Prevent unwanted upgrades and maintain stable environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/choco-pin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/choco-pin/'
+description: 'Control package versions with Choco Pin on Windows. Prevent unwanted upgrades and maintain stable environments. Free online tool, no registration required.'
 category: windows
 keywords:
-- chocolatey pin package
-- choco pin version
-- windows package management
-- choco pin command
-- chocolatey freeze version
-- windows package pinning
-- choco block upgrade
-- chocolatey version control
-- package version manager
-- windows choco pin
+  - chocolatey pin package
+  - choco pin version
+  - windows package management
+  - choco pin command
+  - chocolatey freeze version
+  - windows package pinning
+  - choco block upgrade
+  - chocolatey version control
+  - package version manager
+  - windows choco pin
 features:
-- Pin packages to specific versions
-- Prevent automatic package upgrades
-- List all pinned packages
-- Remove package pins
-- Manage package versions via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pin packages to specific versions
+  - Prevent automatic package upgrades
+  - List all pinned packages
+  - Remove package pins
+  - Manage package versions via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # choco pin

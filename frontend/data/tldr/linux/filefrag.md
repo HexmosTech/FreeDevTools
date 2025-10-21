@@ -1,9 +1,9 @@
 ---
-title: "Filefrag - Analyze File Fragmentation | Online Free DevTools by Hexmos"
+title: 'Filefrag - Analyze File Fragmentation | Online Free DevTools by Hexmos'
 name: filefrag
-path: "/freedevtools/tldr/linux/filefrag/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/filefrag/"
-description: "Analyze file fragmentation with filefrag.  Identify and understand file fragmentation issues on your system using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/filefrag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/filefrag/'
+description: 'Analyze file fragmentation with filefrag.  Identify and understand file fragmentation issues on your system using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - file fragmentation analysis
@@ -22,8 +22,8 @@ features:
   - Provides verbose output for detailed information.
   - Offers the ability to synchronize files before analysis.
   - Displays mapping of extended attributes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # filefrag

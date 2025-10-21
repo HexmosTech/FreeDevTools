@@ -1,41 +1,41 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import HashGeneratorSkeleton from "./_HashGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import HashGeneratorSkeleton from './_HashGeneratorSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Hash generation utilities using Web Crypto API
 type Algorithm =
-  | "sha256"
-  | "sha512"
-  | "md5"
-  | "pbkdf2"
-  | "hmac-sha256"
-  | "hmac-sha512";
-type Encoding = "hex" | "base64";
+  | 'sha256'
+  | 'sha512'
+  | 'md5'
+  | 'pbkdf2'
+  | 'hmac-sha256'
+  | 'hmac-sha512';
+type Encoding = 'hex' | 'base64';
 
 const generateHash = async (
   algorithm: Algorithm,
   text: string,
-  encoding: Encoding = "hex",
+  encoding: Encoding = 'hex',
   options?: {
     salt?: string;
     iterations?: number;
@@ -50,55 +50,55 @@ const generateHash = async (
 
   try {
     switch (algorithm) {
-      case "sha256":
-        hash = await crypto.subtle.digest("SHA-256", data);
+      case 'sha256':
+        hash = await crypto.subtle.digest('SHA-256', data);
         break;
-      case "sha512":
-        hash = await crypto.subtle.digest("SHA-512", data);
+      case 'sha512':
+        hash = await crypto.subtle.digest('SHA-512', data);
         break;
-      case "md5":
+      case 'md5':
         // MD5 using a simple implementation since Web Crypto doesn't support it
         throw new Error(
-          "MD5 is deprecated due to security vulnerabilities. Please use SHA-256 or SHA-512."
+          'MD5 is deprecated due to security vulnerabilities. Please use SHA-256 or SHA-512.'
         );
-      case "pbkdf2":
+      case 'pbkdf2':
         if (!options?.salt || !options?.iterations || !options?.keyLength) {
-          throw new Error("PBKDF2 requires salt, iterations, and key length.");
+          throw new Error('PBKDF2 requires salt, iterations, and key length.');
         }
         const saltBuffer = encoder.encode(options.salt);
         const keyMaterial = await crypto.subtle.importKey(
-          "raw",
+          'raw',
           data,
-          { name: "PBKDF2" },
+          { name: 'PBKDF2' },
           false,
-          ["deriveBits"]
+          ['deriveBits']
         );
         hash = await crypto.subtle.deriveBits(
           {
-            name: "PBKDF2",
+            name: 'PBKDF2',
             salt: saltBuffer,
             iterations: options.iterations,
-            hash: "SHA-512",
+            hash: 'SHA-512',
           },
           keyMaterial,
           options.keyLength * 8
         );
         break;
-      case "hmac-sha256":
-      case "hmac-sha512":
+      case 'hmac-sha256':
+      case 'hmac-sha512':
         if (!options?.secretKey) {
-          throw new Error("HMAC requires a secret key.");
+          throw new Error('HMAC requires a secret key.');
         }
         const secretKeyBuffer = encoder.encode(options.secretKey);
-        const hashAlg = algorithm === "hmac-sha256" ? "SHA-256" : "SHA-512";
+        const hashAlg = algorithm === 'hmac-sha256' ? 'SHA-256' : 'SHA-512';
         const key = await crypto.subtle.importKey(
-          "raw",
+          'raw',
           secretKeyBuffer,
-          { name: "HMAC", hash: hashAlg },
+          { name: 'HMAC', hash: hashAlg },
           false,
-          ["sign"]
+          ['sign']
         );
-        hash = await crypto.subtle.sign("HMAC", key, data);
+        hash = await crypto.subtle.sign('HMAC', key, data);
         break;
       default:
         throw new Error(`Unsupported algorithm: ${algorithm}`);
@@ -106,33 +106,33 @@ const generateHash = async (
 
     // Convert to desired encoding
     const bytes = new Uint8Array(hash);
-    if (encoding === "hex") {
+    if (encoding === 'hex') {
       return Array.from(bytes, (byte) =>
-        byte.toString(16).padStart(2, "0")
-      ).join("");
-    } else if (encoding === "base64") {
+        byte.toString(16).padStart(2, '0')
+      ).join('');
+    } else if (encoding === 'base64') {
       return btoa(String.fromCharCode(...bytes));
     }
 
-    return "";
+    return '';
   } catch (error) {
     throw new Error(
-      `Hash generation failed: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Hash generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 };
 
 const HashGenerator: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
-  const [algorithm, setAlgorithm] = useState<Algorithm>("sha256");
-  const [encoding, setEncoding] = useState<Encoding>("hex");
-  const [salt, setSalt] = useState("");
+  const [algorithm, setAlgorithm] = useState<Algorithm>('sha256');
+  const [encoding, setEncoding] = useState<Encoding>('hex');
+  const [salt, setSalt] = useState('');
   const [iterations, setIterations] = useState(10000);
   const [keyLength, setKeyLength] = useState(32);
-  const [secretKey, setSecretKey] = useState("");
+  const [secretKey, setSecretKey] = useState('');
 
   useEffect(() => {
     // Simulate loading time
@@ -145,34 +145,34 @@ const HashGenerator: React.FC = () => {
   const handleInputChange = useCallback(
     async (value: string) => {
       setInput(value);
-      setError("");
+      setError('');
 
       if (!value.trim()) {
-        setOutput("");
+        setOutput('');
         return;
       }
 
       try {
         let options: any = {};
 
-        if (algorithm === "pbkdf2") {
+        if (algorithm === 'pbkdf2') {
           const generatedSalt =
             salt ||
             crypto
               .getRandomValues(new Uint8Array(16))
               .reduce(
-                (str, byte) => str + byte.toString(16).padStart(2, "0"),
-                ""
+                (str, byte) => str + byte.toString(16).padStart(2, '0'),
+                ''
               );
           options = { salt: generatedSalt, iterations, keyLength };
-        } else if (algorithm.startsWith("hmac")) {
+        } else if (algorithm.startsWith('hmac')) {
           const generatedKey =
             secretKey ||
             crypto
               .getRandomValues(new Uint8Array(32))
               .reduce(
-                (str, byte) => str + byte.toString(16).padStart(2, "0"),
-                ""
+                (str, byte) => str + byte.toString(16).padStart(2, '0'),
+                ''
               );
           options = { secretKey: generatedKey };
         }
@@ -186,29 +186,29 @@ const HashGenerator: React.FC = () => {
         setOutput(hashOutput);
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to generate hash";
+          err instanceof Error ? err.message : 'Failed to generate hash';
         setError(errorMessage);
-        setOutput("");
+        setOutput('');
       }
     },
     [algorithm, encoding, salt, iterations, keyLength, secretKey]
   );
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   const handleGenerate = () => {
     handleInputChange(input);
   };
 
-  const sampleText = "Hello World! This is a sample text for hash generation.";
+  const sampleText = 'Hello World! This is a sample text for hash generation.';
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -290,7 +290,7 @@ const HashGenerator: React.FC = () => {
                   </div>
 
                   {/* PBKDF2 Options */}
-                  {algorithm === "pbkdf2" && (
+                  {algorithm === 'pbkdf2' && (
                     <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                       <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-3">
                         PBKDF2 Configuration
@@ -343,8 +343,8 @@ const HashGenerator: React.FC = () => {
                   )}
 
                   {/* HMAC Options */}
-                  {(algorithm === "hmac-sha256" ||
-                    algorithm === "hmac-sha512") && (
+                  {(algorithm === 'hmac-sha256' ||
+                    algorithm === 'hmac-sha512') && (
                     <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                       <h4 className="font-medium text-green-900 dark:text-green-100 mb-3">
                         HMAC Configuration
@@ -407,8 +407,8 @@ const HashGenerator: React.FC = () => {
                     className="min-h-[50px] font-mono text-sm bg-muted/50"
                   />
                   <div className="mt-3 text-sm text-slate-600 dark:text-slate-400">
-                    <strong>Algorithm:</strong> {algorithm.toUpperCase()} |{" "}
-                    <strong>Encoding:</strong> {encoding.toUpperCase()} |{" "}
+                    <strong>Algorithm:</strong> {algorithm.toUpperCase()} |{' '}
+                    <strong>Encoding:</strong> {encoding.toUpperCase()} |{' '}
                     <strong>Length:</strong> {output.length} characters
                   </div>
                 </CardContent>
@@ -509,19 +509,19 @@ const HashGenerator: React.FC = () => {
                       <div className="text-slate-800 dark:text-slate-200">
                         <span className="text-blue-600 dark:text-blue-400">
                           Input:
-                        </span>{" "}
+                        </span>{' '}
                         "Hello World"
                       </div>
                       <div className="text-slate-800 dark:text-slate-200">
                         <span className="text-green-600 dark:text-green-400">
                           SHA-256:
-                        </span>{" "}
+                        </span>{' '}
                         a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e
                       </div>
                       <div className="text-slate-800 dark:text-slate-200">
                         <span className="text-purple-600 dark:text-purple-400">
                           SHA-512:
-                        </span>{" "}
+                        </span>{' '}
                         2c74fd17edafd80e8447b0d46741ee243b7eb74dd2149a0ab1b9246fb30382f2...
                       </div>
                     </div>

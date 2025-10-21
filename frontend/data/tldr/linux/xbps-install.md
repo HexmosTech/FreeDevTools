@@ -1,29 +1,29 @@
 ---
-title: "XBPS Install - Update Packages | Online Free DevTools by Hexmos"
+title: 'XBPS Install - Update Packages | Online Free DevTools by Hexmos'
 name: xbps-install
-path: "/freedevtools/tldr/linux/xbps-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xbps-install/"
-description: "Update packages with XBPS Install. Synchronize, upgrade, and manage software installations easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xbps-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xbps-install/'
+description: 'Update packages with XBPS Install. Synchronize, upgrade, and manage software installations easily. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux package manager
-- xbps package install
-- void linux packages
-- xbps update packages
-- xbps package synchronize
-- linux software update
-- xbps repository update
-- xbps command line
-- void linux xbps-install
-- linux xbps upgrade
+  - linux package manager
+  - xbps package install
+  - void linux packages
+  - xbps update packages
+  - xbps package synchronize
+  - linux software update
+  - xbps repository update
+  - xbps command line
+  - void linux xbps-install
+  - linux xbps upgrade
 features:
-- Install new packages from repositories
-- Synchronize and update all installed packages
-- Upgrade outdated packages
-- Manage software installations on Void Linux
-- Resolve package dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install new packages from repositories
+  - Synchronize and update all installed packages
+  - Upgrade outdated packages
+  - Manage software installations on Void Linux
+  - Resolve package dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xbps-install

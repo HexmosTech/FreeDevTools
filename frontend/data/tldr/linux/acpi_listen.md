@@ -1,9 +1,9 @@
 ---
-title: "Listen to ACPI Events - Monitor System Events | Online Free DevTools by Hexmos"
+title: 'Listen to ACPI Events - Monitor System Events | Online Free DevTools by Hexmos'
 name: acpi_listen
-path: "/freedevtools/tldr/linux/acpi_listen/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/acpi_listen/"
-description: "Monitor system events with acpi_listen.  This command-line tool provides real-time feedback on ACPI activity. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/acpi_listen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/acpi_listen/'
+description: 'Monitor system events with acpi_listen.  This command-line tool provides real-time feedback on ACPI activity. Free online tool, no registration required.'
 category: linux
 keywords:
   - acpi event listener
@@ -22,8 +22,8 @@ features:
   - Run continuously to monitor for events indefinitely.
   - Provide a command-line interface for easy use.
   - Simple and efficient event monitoring solution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # acpi_listen

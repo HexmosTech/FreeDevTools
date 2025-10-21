@@ -1,29 +1,29 @@
 ---
-title: "Validate UTF-8 - Check File Encoding | Online Free DevTools by Hexmos"
+title: 'Validate UTF-8 - Check File Encoding | Online Free DevTools by Hexmos'
 name: isutf8
-path: "/freedevtools/tldr/common/isutf8/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/isutf8/"
-description: "Validate UTF-8 encoding with isutf8. Check file encoding and identify invalid UTF-8 characters. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/isutf8/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/isutf8/'
+description: 'Validate UTF-8 encoding with isutf8. Check file encoding and identify invalid UTF-8 characters. Free online tool, no registration required.'
 category: common
 keywords:
-- UTF-8 validator
-- file encoding checker
-- character encoding validation
-- text file validator
-- linux UTF-8 check
-- macos UTF-8 validation
-- check UTF-8 compliance
-- validate file encoding
-- isutf8 command
-- command line UTF-8 tool
+  - UTF-8 validator
+  - file encoding checker
+  - character encoding validation
+  - text file validator
+  - linux UTF-8 check
+  - macos UTF-8 validation
+  - check UTF-8 compliance
+  - validate file encoding
+  - isutf8 command
+  - command line UTF-8 tool
 features:
-- Detect invalid UTF-8 sequences in files
-- Verify if a file is correctly encoded in UTF-8
-- List files with invalid UTF-8 encoding
-- Invert the output to list valid UTF-8 files
-- Run in quiet mode with exit code indicating status
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect invalid UTF-8 sequences in files
+  - Verify if a file is correctly encoded in UTF-8
+  - List files with invalid UTF-8 encoding
+  - Invert the output to list valid UTF-8 files
+  - Run in quiet mode with exit code indicating status
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # isutf8

@@ -1,29 +1,29 @@
 ---
-title: "Lint PHP Syntax - Parallel PHP Syntax Checker | Online Free DevTools by Hexmos"
+title: 'Lint PHP Syntax - Parallel PHP Syntax Checker | Online Free DevTools by Hexmos'
 name: parallel-lint
-path: "/freedevtools/tldr/common/parallel-lint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/parallel-lint/"
-description: "Check PHP syntax with parallel-lint. Detect errors efficiently in your PHP projects using parallel processing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/parallel-lint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/parallel-lint/'
+description: 'Check PHP syntax with parallel-lint. Detect errors efficiently in your PHP projects using parallel processing. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP syntax linter
-- parallel PHP linting
-- PHP code checker
-- PHP syntax validation
-- command-line PHP linter
-- linux PHP linter
-- macos PHP linter
-- PHP parallel processing
-- PHP error detection
-- parallel linting tool
+  - PHP syntax linter
+  - parallel PHP linting
+  - PHP code checker
+  - PHP syntax validation
+  - command-line PHP linter
+  - linux PHP linter
+  - macos PHP linter
+  - PHP parallel processing
+  - PHP error detection
+  - parallel linting tool
 features:
-- Checks PHP syntax in parallel
-- Supports excluding directories from linting
-- Allows specifying file extensions to lint
-- Outputs results in JSON format
-- Integrates with Git Blame to show error origins
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checks PHP syntax in parallel
+  - Supports excluding directories from linting
+  - Allows specifying file extensions to lint
+  - Outputs results in JSON format
+  - Integrates with Git Blame to show error origins
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # parallel-lint

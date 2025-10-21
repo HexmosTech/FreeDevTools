@@ -1,29 +1,29 @@
 ---
-title: "List Cloud Logging Logs - Analyze Logs | Online Free DevTools by Hexmos"
+title: 'List Cloud Logging Logs - Analyze Logs | Online Free DevTools by Hexmos'
 name: gcloud-logging-logs-list
-path: "/freedevtools/tldr/gcloud/gcloud-logging-logs-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-logging-logs-list/"
-description: "List cloud logging logs with gcloud. Analyze log data and troubleshoot issues using advanced filtering options. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-logging-logs-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-logging-logs-list/'
+description: 'List cloud logging logs with gcloud. Analyze log data and troubleshoot issues using advanced filtering options. Free online tool, no registration required.'
 category: common
 keywords:
-- Google Cloud Logging Logs
-- gcloud logging logs list
-- Cloud Logging Analysis
-- Google Cloud Logs Filter
-- gcloud logs command
-- GCP Logging
-- Cloud logging monitoring
-- gcloud logging commands
-- google cloud cli logging
-- Google Cloud Platform logging
+  - Google Cloud Logging Logs
+  - gcloud logging logs list
+  - Cloud Logging Analysis
+  - Google Cloud Logs Filter
+  - gcloud logs command
+  - GCP Logging
+  - Cloud logging monitoring
+  - gcloud logging commands
+  - google cloud cli logging
+  - Google Cloud Platform logging
 features:
-- List all logs in a Google Cloud project
-- Filter logs by bucket, location, and view
-- Sort logs by specific fields in ascending or descending order
-- Limit the number of logs listed
-- Display verbose output with additional details
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all logs in a Google Cloud project
+  - Filter logs by bucket, location, and view
+  - Sort logs by specific fields in ascending or descending order
+  - Limit the number of logs listed
+  - Display verbose output with additional details
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud logging logs list

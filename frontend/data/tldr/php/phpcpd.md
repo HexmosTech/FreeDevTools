@@ -1,29 +1,29 @@
 ---
-title: "PHP Copy Paste Detector - Analyze Duplicate PHP Code | Online Free DevTools by Hexmos"
+title: 'PHP Copy Paste Detector - Analyze Duplicate PHP Code | Online Free DevTools by Hexmos'
 name: phpcpd
-path: "/freedevtools/tldr/php/phpcpd/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpcpd/"
-description: "Analyze PHP code for duplicate blocks with PHPCPD, a copy/paste detector. Improve code quality and maintainability with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpcpd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpcpd/'
+description: 'Analyze PHP code for duplicate blocks with PHPCPD, a copy/paste detector. Improve code quality and maintainability with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP code duplication analysis
-- PHP copy paste detection
-- PHPCPD command line
-- Duplicate code detection PHP
-- PHP code clone detection
-- Code similarity analyzer
-- Software plagiarism detection
-- PHP code refactoring tool
-- Code quality analysis PHP
-- PHPCPD fuzzy matching
+  - PHP code duplication analysis
+  - PHP copy paste detection
+  - PHPCPD command line
+  - Duplicate code detection PHP
+  - PHP code clone detection
+  - Code similarity analyzer
+  - Software plagiarism detection
+  - PHP code refactoring tool
+  - Code quality analysis PHP
+  - PHPCPD fuzzy matching
 features:
-- Detect duplicated code blocks in PHP files
-- Analyze code using fuzzy matching for variable names
-- Customize minimum line and token thresholds for detection
-- Exclude specific directories from the analysis scope
-- Output results in PHP-CPD XML format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect duplicated code blocks in PHP files
+  - Analyze code using fuzzy matching for variable names
+  - Customize minimum line and token thresholds for detection
+  - Exclude specific directories from the analysis scope
+  - Output results in PHP-CPD XML format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpcpd

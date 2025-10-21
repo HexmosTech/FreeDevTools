@@ -1,9 +1,9 @@
 ---
-title: "Export Shell Variables - Control Environment | Online Free DevTools by Hexmos"
+title: 'Export Shell Variables - Control Environment | Online Free DevTools by Hexmos'
 name: export
-path: "/freedevtools/tldr/linux/export/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/export/"
-description: "Control environment variables with the export command.  Set, unset, and manage environment variables for child processes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/export/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/export/'
+description: 'Control environment variables with the export command.  Set, unset, and manage environment variables for child processes easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - shell variable export
@@ -22,8 +22,8 @@ features:
   - Export functions to child processes.
   - Modify the PATH environment variable.
   - Display all exported variables.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # export

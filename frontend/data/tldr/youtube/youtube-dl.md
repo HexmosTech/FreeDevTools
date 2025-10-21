@@ -1,29 +1,29 @@
 ---
-title: "Download YouTube Videos - youtube-dl | Online Free DevTools by Hexmos"
+title: 'Download YouTube Videos - youtube-dl | Online Free DevTools by Hexmos'
 name: youtube-dl
-path: "/freedevtools/tldr/youtube/youtube-dl/"
-canonical: "https://hexmos.com/freedevtools/tldr/youtube/youtube-dl/"
-description: "Download YouTube videos instantly with youtube-dl. Extract audio, download subtitles, and customize video quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/youtube/youtube-dl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/youtube/youtube-dl/'
+description: 'Download YouTube videos instantly with youtube-dl. Extract audio, download subtitles, and customize video quality. Free online tool, no registration required.'
 category: common
 keywords:
-- youtube video downloader
-- youtube-dl downloader
-- youtube-dl linux
-- youtube-dl windows
-- youtube-dl macos
-- youtube-dl playlist downloader
-- youtube-dl mp3 converter
-- youtube-dl subtitle downloader
-- video downloader command line
-- youtube downloader script
+  - youtube video downloader
+  - youtube-dl downloader
+  - youtube-dl linux
+  - youtube-dl windows
+  - youtube-dl macos
+  - youtube-dl playlist downloader
+  - youtube-dl mp3 converter
+  - youtube-dl subtitle downloader
+  - video downloader command line
+  - youtube downloader script
 features:
-- Download videos from YouTube and other websites
-- Extract audio from videos and convert to MP3
-- Download subtitles in various languages
-- Specify video quality and format
-- Download entire playlists with customized filenames
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download videos from YouTube and other websites
+  - Extract audio from videos and convert to MP3
+  - Download subtitles in various languages
+  - Specify video quality and format
+  - Download entire playlists with customized filenames
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # youtube-dl

@@ -1,29 +1,29 @@
 ---
-title: "Container Image Control - Manage Images with Crane | Online Free DevTools by Hexmos"
+title: 'Container Image Control - Manage Images with Crane | Online Free DevTools by Hexmos'
 name: crane
-path: "/freedevtools/tldr/crane/crane/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane/"
-description: "Control container images easily with Crane. Copy, push, and pull container images. Free online tool, no registration required. Manage images securely."
+path: '/freedevtools/tldr/crane/crane/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane/'
+description: 'Control container images easily with Crane. Copy, push, and pull container images. Free online tool, no registration required. Manage images securely.'
 category: common
 keywords:
-- container image manager
-- crane command line
-- docker image manipulation
-- container registry tool
-- image push and pull
-- container image copy
-- go container registry
-- crane tool usage
-- nondistributable artifacts
-- insecure image fetch
+  - container image manager
+  - crane command line
+  - docker image manipulation
+  - container registry tool
+  - image push and pull
+  - container image copy
+  - go container registry
+  - crane tool usage
+  - nondistributable artifacts
+  - insecure image fetch
 features:
-- Pull container images from a registry
-- Push container images to a registry
-- Copy container images between registries
-- Specify target platform for image operations
-- Allow pushing non-distributable layers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pull container images from a registry
+  - Push container images to a registry
+  - Copy container images between registries
+  - Specify target platform for image operations
+  - Allow pushing non-distributable layers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane

@@ -1,29 +1,29 @@
 ---
-title: "Translate Offline - Translate Text with Argos Translate | Online Free DevTools by Hexmos"
+title: 'Translate Offline - Translate Text with Argos Translate | Online Free DevTools by Hexmos'
 name: argos-translate
-path: "/freedevtools/tldr/common/argos-translate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/argos-translate/"
-description: "Translate text offline with Argos Translate. Perform language translation between multiple languages without an internet connection. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/argos-translate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/argos-translate/'
+description: 'Translate text offline with Argos Translate. Perform language translation between multiple languages without an internet connection. Free online tool, no registration required.'
 category: common
 keywords:
-- offline translation
-- language translation
-- text translation CLI
-- argos translate
-- command line translator
-- offline translator python
-- language package manager
-- translate es to en
-- translate en to hi
-- offline machine translation
+  - offline translation
+  - language translation
+  - text translation CLI
+  - argos translate
+  - command line translator
+  - offline translator python
+  - language package manager
+  - translate es to en
+  - translate en to hi
+  - offline machine translation
 features:
-- Translate text between multiple languages offline
-- Install and manage language translation pairs
-- Translate text directly from the command line
-- List available and installed translation pairs
-- Update installed language package pairs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Translate text between multiple languages offline
+  - Install and manage language translation pairs
+  - Translate text directly from the command line
+  - List available and installed translation pairs
+  - Update installed language package pairs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # argos-translate

@@ -1,9 +1,9 @@
 ---
-title: "Retrieve File Attributes - getfattr | Online Free DevTools by Hexmos"
+title: 'Retrieve File Attributes - getfattr | Online Free DevTools by Hexmos'
 name: getfattr
-path: "/freedevtools/tldr/linux/getfattr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/getfattr/"
-description: "Retrieve file attributes with getfattr. Inspect extended attributes, filenames, and file metadata efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/getfattr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/getfattr/'
+description: 'Retrieve file attributes with getfattr. Inspect extended attributes, filenames, and file metadata efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - extended attributes retrieval
@@ -22,8 +22,8 @@ features:
   - Dump file attribute information in a detailed format
   - Inspect file metadata via command line
   - View file names and their associated attributes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # getfattr

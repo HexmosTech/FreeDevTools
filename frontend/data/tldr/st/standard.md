@@ -1,29 +1,29 @@
 ---
-title: "Standard Lint - Validate JavaScript Code Style | Online Free DevTools by Hexmos"
+title: 'Standard Lint - Validate JavaScript Code Style | Online Free DevTools by Hexmos'
 name: standard
-path: "/freedevtools/tldr/st/standard/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/standard/"
-description: "Validate JavaScript code style with Standard Linter. Automatically fix code inconsistencies and maintain code quality using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/standard/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/standard/'
+description: 'Validate JavaScript code style with Standard Linter. Automatically fix code inconsistencies and maintain code quality using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript linting
-- javascript standard style
-- code style validation
-- javascript code fixer
-- eslint configuration
-- javascript best practices
-- javascript code analysis
-- command line linter
-- standardjs
-- javascript style guide
+  - javascript linting
+  - javascript standard style
+  - code style validation
+  - javascript code fixer
+  - eslint configuration
+  - javascript best practices
+  - javascript code analysis
+  - command line linter
+  - standardjs
+  - javascript style guide
 features:
-- Lints JavaScript code based on Standard Style guidelines.
-- Automatically fixes common style issues and inconsistencies.
-- Allows declaration of global variables to avoid linting errors.
-- Supports custom ESLint plugins for extended functionality.
-- Enables custom JavaScript parser usage for different code dialects.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lints JavaScript code based on Standard Style guidelines.
+  - Automatically fixes common style issues and inconsistencies.
+  - Allows declaration of global variables to avoid linting errors.
+  - Supports custom ESLint plugins for extended functionality.
+  - Enables custom JavaScript parser usage for different code dialects.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # standard

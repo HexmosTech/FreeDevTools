@@ -1,9 +1,9 @@
 ---
-title: "Record Audio - Control Audio Recording with arecord | Online Free DevTools by Hexmos"
+title: 'Record Audio - Control Audio Recording with arecord | Online Free DevTools by Hexmos'
 name: arecord
-path: "/freedevtools/tldr/linux/arecord/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/arecord/"
-description: "Control audio recording with arecord. Record WAV and MP3 formats using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/arecord/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/arecord/'
+description: 'Control audio recording with arecord. Record WAV and MP3 formats using command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - wav audio recording
@@ -22,8 +22,8 @@ features:
   - List available sound cards and audio devices.
   - Set recording duration.
   - Interact with the recording process using space or enter to pause.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arecord

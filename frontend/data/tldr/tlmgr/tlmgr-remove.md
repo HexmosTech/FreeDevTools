@@ -1,29 +1,29 @@
 ---
-title: "Remove TeX Live Packages - Uninstall TLMGR | Online Free DevTools by Hexmos"
+title: 'Remove TeX Live Packages - Uninstall TLMGR | Online Free DevTools by Hexmos'
 name: tlmgr-remove
-path: "/freedevtools/tldr/tlmgr/tlmgr-remove/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-remove/"
-description: "Uninstall TeX Live packages with TLMGR. Manage and remove packages, dependencies, and backups efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-remove/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-remove/'
+description: 'Uninstall TeX Live packages with TLMGR. Manage and remove packages, dependencies, and backups efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- tex live package removal
-- tlmgr package uninstall
-- tex live dependency management
-- tlmgr backup directory
-- tex live package manager
-- tlmgr command line
-- tex package remove
-- tlmgr remove all
-- tex live uninstall
-- tex live backup packages
+  - tex live package removal
+  - tlmgr package uninstall
+  - tex live dependency management
+  - tlmgr backup directory
+  - tex live package manager
+  - tlmgr command line
+  - tex package remove
+  - tlmgr remove all
+  - tex live uninstall
+  - tex live backup packages
 features:
-- Uninstall specific TeX Live packages
-- Simulate package removal without changes
-- Remove packages without dependencies
-- Backup packages to a specified directory
-- Uninstall the entire TeX Live distribution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Uninstall specific TeX Live packages
+  - Simulate package removal without changes
+  - Remove packages without dependencies
+  - Backup packages to a specified directory
+  - Uninstall the entire TeX Live distribution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr remove

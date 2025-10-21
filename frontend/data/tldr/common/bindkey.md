@@ -1,29 +1,29 @@
 ---
-title: "Bind Key - Add Zsh Keybindings | Online Free DevTools by Hexmos"
+title: 'Bind Key - Add Zsh Keybindings | Online Free DevTools by Hexmos'
 name: bindkey
-path: "/freedevtools/tldr/common/bindkey/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bindkey/"
-description: "Add keybindings with Bind Key for Zsh shells. Customize shell interactions and boost command-line efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bindkey/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bindkey/'
+description: 'Add keybindings with Bind Key for Zsh shells. Customize shell interactions and boost command-line efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- zsh keybinding
-- zsh shortcut
-- zsh customization
-- bindkey zsh
-- zsh hotkey
-- shell keybinding
-- command line shortcut
-- terminal keybinding
-- zsh config
-- bindkey example
+  - zsh keybinding
+  - zsh shortcut
+  - zsh customization
+  - bindkey zsh
+  - zsh hotkey
+  - shell keybinding
+  - command line shortcut
+  - terminal keybinding
+  - zsh config
+  - bindkey example
 features:
-- Bind specific keys to commands
-- Create custom keyboard shortcuts
-- List available keymaps
-- View hotkeys within specific keymaps
-- Define key sequences for complex commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Bind specific keys to commands
+  - Create custom keyboard shortcuts
+  - List available keymaps
+  - View hotkeys within specific keymaps
+  - Define key sequences for complex commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bindkey

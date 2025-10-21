@@ -1,29 +1,29 @@
 ---
-title: "Generate Dice Rolls - Custom Dice Sequences | Online Free DevTools by Hexmos"
+title: 'Generate Dice Rolls - Custom Dice Sequences | Online Free DevTools by Hexmos'
 name: roll
-path: "/freedevtools/tldr/common/roll/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/roll/"
-description: "Generate random dice rolls with Roll, a versatile dice roller. Simulate complex dice sequences and probabilities easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/roll/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/roll/'
+description: 'Generate random dice rolls with Roll, a versatile dice roller. Simulate complex dice sequences and probabilities easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Dice Roll Generator
-- Random Number Generator
-- Dice Roller Simulator
-- Probability Calculator
-- Command Line Dice Roll
-- Dice Sequence Generator
-- Dice Combinations
-- Random Number Generation
-- Bash Dice Roll
-- Shell Dice Roll
+  - Dice Roll Generator
+  - Random Number Generator
+  - Dice Roller Simulator
+  - Probability Calculator
+  - Command Line Dice Roll
+  - Dice Sequence Generator
+  - Dice Combinations
+  - Random Number Generation
+  - Bash Dice Roll
+  - Shell Dice Roll
 features:
-- Roll multiple dice with varying sides
-- Perform arithmetic operations on dice rolls (add, subtract)
-- Keep the highest or lowest results from multiple dice
-- Repeat dice rolls multiple times
-- Display results in verbose or summary format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Roll multiple dice with varying sides
+  - Perform arithmetic operations on dice rolls (add, subtract)
+  - Keep the highest or lowest results from multiple dice
+  - Repeat dice rolls multiple times
+  - Display results in verbose or summary format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # roll

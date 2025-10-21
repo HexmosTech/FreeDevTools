@@ -1,29 +1,29 @@
 ---
-title: "Create ASCII Images - Convert Images to ASCII Art | Online Free DevTools by Hexmos"
+title: 'Create ASCII Images - Convert Images to ASCII Art | Online Free DevTools by Hexmos'
 name: ascii-image-converter
-path: "/freedevtools/tldr/common/ascii-image-converter/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ascii-image-converter/"
-description: "Create ASCII images with ascii-image-converter. Convert image files or URLs to colorful or braille-based ASCII art. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ascii-image-converter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ascii-image-converter/'
+description: 'Create ASCII images with ascii-image-converter. Convert image files or URLs to colorful or braille-based ASCII art. Free online tool, no registration required.'
 category: common
 keywords:
-- image to ASCII converter
-- ASCII art generator
-- command line image converter
-- terminal image converter
-- image to text art
-- braille image converter
-- color ASCII art
-- ascii-image-converter linux
-- ascii-image-converter macos
-- ascii-image-converter common
+  - image to ASCII converter
+  - ASCII art generator
+  - command line image converter
+  - terminal image converter
+  - image to text art
+  - braille image converter
+  - color ASCII art
+  - ascii-image-converter linux
+  - ascii-image-converter macos
+  - ascii-image-converter common
 features:
-- Convert images to ASCII art from the command line
-- Colorize ASCII art output for visual appeal
-- Generate braille-based ASCII art for detailed representation
-- Dither images for smoother transitions in braille output
-- Create ASCII art with negative color schemes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert images to ASCII art from the command line
+  - Colorize ASCII art output for visual appeal
+  - Generate braille-based ASCII art for detailed representation
+  - Dither images for smoother transitions in braille output
+  - Create ASCII art with negative color schemes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ascii-image-converter

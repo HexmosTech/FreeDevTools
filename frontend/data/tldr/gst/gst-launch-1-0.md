@@ -1,29 +1,29 @@
 ---
-title: "GStreamer Launch - Build Pipelines | Online Free DevTools by Hexmos"
+title: 'GStreamer Launch - Build Pipelines | Online Free DevTools by Hexmos'
 name: gst-launch-1.0
-path: "/freedevtools/tldr/gst/gst-launch-1-0/"
-canonical: "https://hexmos-com/freedevtools/tldr/gst/gst-launch-1-0/"
-description: "Build GStreamer pipelines with gst-launch-1.0. Create multimedia processing workflows and stream media easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/gst/gst-launch-1-0/'
+canonical: 'https://hexmos-com/freedevtools/tldr/gst/gst-launch-1-0/'
+description: 'Build GStreamer pipelines with gst-launch-1.0. Create multimedia processing workflows and stream media easily. Free online tool, no registration required.'
 category: common
 keywords:
-- gstreamer pipeline builder
-- multimedia pipeline creator
-- gst-launch command
-- gstreamer command line
-- video stream encoder
-- audio stream encoder
-- linux multimedia processing
-- gstreamer debugging tool
-- gstreamer RTSP streaming
-- gstreamer mp4 muxer
+  - gstreamer pipeline builder
+  - multimedia pipeline creator
+  - gst-launch command
+  - gstreamer command line
+  - video stream encoder
+  - audio stream encoder
+  - linux multimedia processing
+  - gstreamer debugging tool
+  - gstreamer RTSP streaming
+  - gstreamer mp4 muxer
 features:
-- Build and run GStreamer pipelines from the command line
-- Play video and audio test streams
-- Re-encode multimedia files
-- Stream media content to an RTSP server
-- Multiplex video and audio streams into a single file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build and run GStreamer pipelines from the command line
+  - Play video and audio test streams
+  - Re-encode multimedia files
+  - Stream media content to an RTSP server
+  - Multiplex video and audio streams into a single file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gst-launch-1.0

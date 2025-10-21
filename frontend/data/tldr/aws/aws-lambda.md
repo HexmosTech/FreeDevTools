@@ -1,29 +1,29 @@
 ---
-title: "AWS Lambda - Run Serverless Functions | Online Free DevTools by Hexmos"
+title: 'AWS Lambda - Run Serverless Functions | Online Free DevTools by Hexmos'
 name: aws-lambda
-path: "/freedevtools/tldr/aws/aws-lambda/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-lambda/"
-description: "Run serverless functions easily with AWS Lambda. Deploy and manage compute services without servers. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-lambda/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-lambda/'
+description: 'Run serverless functions easily with AWS Lambda. Deploy and manage compute services without servers. Free online tool, no registration required.'
 category: common
 keywords:
-- aws lambda function
-- serverless computing
-- aws cloud functions
-- function as a service
-- aws lambda invoke
-- aws lambda configuration
-- lambda alias management
-- lambda concurrency control
-- aws lambda policy
-- aws command line interface
+  - aws lambda function
+  - serverless computing
+  - aws cloud functions
+  - function as a service
+  - aws lambda invoke
+  - aws lambda configuration
+  - lambda alias management
+  - lambda concurrency control
+  - aws lambda policy
+  - aws command line interface
 features:
-- Invoke AWS Lambda functions with custom payloads.
-- List available AWS Lambda functions in your account.
-- Get configuration details for a specific Lambda function.
-- Manage aliases for different versions of your Lambda functions.
-- Control concurrency settings to prevent function overload.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Invoke AWS Lambda functions with custom payloads.
+  - List available AWS Lambda functions in your account.
+  - Get configuration details for a specific Lambda function.
+  - Manage aliases for different versions of your Lambda functions.
+  - Control concurrency settings to prevent function overload.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws lambda

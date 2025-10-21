@@ -1,9 +1,9 @@
 ---
-title: "Base64 Encode & Decode - Convert Data Online | Online Free DevTools by Hexmos"
+title: 'Base64 Encode & Decode - Convert Data Online | Online Free DevTools by Hexmos'
 name: base64
-path: "/freedevtools/tldr/freebsd/base64/"
-canonical: "https://hexmos.com/freedevtools/tldr/freebsd/base64/"
-description: "Encode and decode data with Base64. Securely transform information for transmission or storage, online and free. Free online tool, no registration required."
+path: '/freedevtools/tldr/freebsd/base64/'
+canonical: 'https://hexmos.com/freedevtools/tldr/freebsd/base64/'
+description: 'Encode and decode data with Base64. Securely transform information for transmission or storage, online and free. Free online tool, no registration required.'
 category: freebsd
 keywords:
   - base64 encoding
@@ -22,8 +22,8 @@ features:
   - Wrap encoded output for readability
   - Encode data from standard input
   - Decode base64 from files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # base64

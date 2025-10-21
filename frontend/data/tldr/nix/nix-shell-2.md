@@ -1,29 +1,29 @@
 ---
-title: "Nix Shell - Generate Development Environments | Online Free DevTools by Hexmos"
+title: 'Nix Shell - Generate Development Environments | Online Free DevTools by Hexmos'
 name: nix-shell.2
-path: "/freedevtools/tldr/nix/nix-shell-2/"
-canonical: "https://hexmos-com/freedevtools/tldr/nix/nix-shell-2/"
-description: "Generate reproducible development environments with Nix Shell. Configure dependencies and create isolated shells for consistent builds. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-shell-2/'
+canonical: 'https://hexmos-com/freedevtools/tldr/nix/nix-shell-2/'
+description: 'Generate reproducible development environments with Nix Shell. Configure dependencies and create isolated shells for consistent builds. Free online tool, no registration required.'
 category: common
 keywords:
-- Nix environment
-- Nix shell
-- Nix package manager
-- Development environment generator
-- Reproducible builds
-- Functional package management
-- NixOS shell
-- Nix configuration
-- Isolated shell
-- Dependency management
+  - Nix environment
+  - Nix shell
+  - Nix package manager
+  - Development environment generator
+  - Reproducible builds
+  - Functional package management
+  - NixOS shell
+  - Nix configuration
+  - Isolated shell
+  - Dependency management
 features:
-- Create isolated development environments
-- Manage project dependencies using Nix expressions
-- Execute commands within a Nix-defined shell
-- Load packages from nixpkgs
-- Specify Nixpkgs revision for reproducibility
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create isolated development environments
+  - Manage project dependencies using Nix expressions
+  - Execute commands within a Nix-defined shell
+  - Load packages from nixpkgs
+  - Specify Nixpkgs revision for reproducibility
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix-shell

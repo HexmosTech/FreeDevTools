@@ -1,29 +1,29 @@
 ---
-title: "Brightness Control - Manage Display Brightness | Online Free DevTools by Hexmos"
+title: 'Brightness Control - Manage Display Brightness | Online Free DevTools by Hexmos'
 name: brightnessctl
-path: "/freedevtools/tldr/linux/brightnessctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/brightnessctl/"
-description: "Control display brightness with brightnessctl on Linux. Adjust screen luminosity and manage multiple displays from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/brightnessctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/brightnessctl/'
+description: 'Control display brightness with brightnessctl on Linux. Adjust screen luminosity and manage multiple displays from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- display brightness control
-- linux brightness manager
-- brightnessctl command
-- screen brightness adjust
-- command line brightness
-- linux display settings
-- brightness percentage control
-- monitor brightness tool
-- backlight brightness adjust
-- device brightness control
+  - display brightness control
+  - linux brightness manager
+  - brightnessctl command
+  - screen brightness adjust
+  - command line brightness
+  - linux display settings
+  - brightness percentage control
+  - monitor brightness tool
+  - backlight brightness adjust
+  - device brightness control
 features:
-- List available brightness devices
-- Get current brightness levels
-- Set brightness to a specific percentage
-- Increment or decrement brightness
-- Control brightness for specific devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available brightness devices
+  - Get current brightness levels
+  - Set brightness to a specific percentage
+  - Increment or decrement brightness
+  - Control brightness for specific devices
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brightnessctl

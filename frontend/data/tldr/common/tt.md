@@ -1,29 +1,29 @@
 ---
-title: "Terminal Typing Test - Improve Typing Skills | Online Free DevTools by Hexmos"
+title: 'Terminal Typing Test - Improve Typing Skills | Online Free DevTools by Hexmos'
 name: tt
-path: "/freedevtools/tldr/common/tt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tt/"
-description: "Improve typing skills with Terminal Typing Test (tt). Practice your typing, track your WPM, and customize your experience. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tt/'
+description: 'Improve typing skills with Terminal Typing Test (tt). Practice your typing, track your WPM, and customize your experience. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal typing test
-- command line typing
-- typing speed test
-- keyboard training
-- improve WPM
-- terminal typing practice
-- linux typing test
-- macos typing test
-- typing tutor
-- command line games
+  - terminal typing test
+  - command line typing
+  - typing speed test
+  - keyboard training
+  - improve WPM
+  - terminal typing practice
+  - linux typing test
+  - macos typing test
+  - typing tutor
+  - command line games
 features:
-- Start quote mode with built-in quote lists.
-- Customize test with random word generation.
-- Run timed typing tests for focused practice.
-- Display words-per-minute (WPM) as you type.
-- Disable theming for a clean typing interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start quote mode with built-in quote lists.
+  - Customize test with random word generation.
+  - Run timed typing tests for focused practice.
+  - Display words-per-minute (WPM) as you type.
+  - Disable theming for a clean typing interface.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tt

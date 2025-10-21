@@ -1,29 +1,29 @@
 ---
-title: "Generate Ninja Builds - Fast Compilation | Online Free DevTools by Hexmos"
+title: 'Generate Ninja Builds - Fast Compilation | Online Free DevTools by Hexmos'
 name: ninja
-path: "/freedevtools/tldr/common/ninja/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ninja/"
-description: "Generate optimized builds with Ninja, a fast and lightweight build system. Accelerate your software compilation process and improve development workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ninja/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ninja/'
+description: 'Generate optimized builds with Ninja, a fast and lightweight build system. Accelerate your software compilation process and improve development workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- ninja build generator
-- fast build system
-- cmake ninja integration
-- cross platform build tool
-- ninja build tool linux
-- ninja build tool windows
-- ninja build tool macos
-- high performance build
-- dependency graph builder
-- automated build process
+  - ninja build generator
+  - fast build system
+  - cmake ninja integration
+  - cross platform build tool
+  - ninja build tool linux
+  - ninja build tool windows
+  - ninja build tool macos
+  - high performance build
+  - dependency graph builder
+  - automated build process
 features:
-- Build projects in specified directories
-- Execute builds with parallel jobs
-- Display available build targets
-- Show detailed help information
-- Support cross-platform builds
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build projects in specified directories
+  - Execute builds with parallel jobs
+  - Display available build targets
+  - Show detailed help information
+  - Support cross-platform builds
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ninja

@@ -1,9 +1,9 @@
 ---
-title: "Lookup SELinux Context - Control Path Security | Online Free DevTools by Hexmos"
+title: 'Lookup SELinux Context - Control Path Security | Online Free DevTools by Hexmos'
 name: matchpathcon
-path: "/freedevtools/tldr/linux/matchpathcon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/matchpathcon/"
-description: "Lookup SELinux security context with Matchpathcon. Manage file security and verify SELinux settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/matchpathcon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/matchpathcon/'
+description: 'Lookup SELinux security context with Matchpathcon. Manage file security and verify SELinux settings. Free online tool, no registration required.'
 category: linux
 keywords:
   - SELinux context lookup
@@ -22,8 +22,8 @@ features:
   - Verify persistent and current security contexts
   - Manage file security attributes
   - Retrieve security settings for paths
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # matchpathcon

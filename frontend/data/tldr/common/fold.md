@@ -1,29 +1,29 @@
 ---
-title: "Format Text - Wrap Lines with Fold Command | Online Free DevTools by Hexmos"
+title: 'Format Text - Wrap Lines with Fold Command | Online Free DevTools by Hexmos'
 name: fold
-path: "/freedevtools/tldr/common/fold/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fold/"
-description: "Format text files by wrapping lines with the Fold command. Control text output for improved readability using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fold/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fold/'
+description: 'Format text files by wrapping lines with the Fold command. Control text output for improved readability using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- text wrap command
-- line wrap utility
-- fold text file
-- linux fold command
-- macos fold command
-- command line text formatting
-- terminal text wrapper
-- text width controller
-- fold command example
-- character limit text
+  - text wrap command
+  - line wrap utility
+  - fold text file
+  - linux fold command
+  - macos fold command
+  - command line text formatting
+  - terminal text wrapper
+  - text width controller
+  - fold command example
+  - character limit text
 features:
-- Wrap lines to a specified width
-- Break lines at whitespace
-- Control text formatting in terminal
-- Limit text to a maximum character width
-- Format text for readability
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Wrap lines to a specified width
+  - Break lines at whitespace
+  - Control text formatting in terminal
+  - Limit text to a maximum character width
+  - Format text for readability
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fold

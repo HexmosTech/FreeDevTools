@@ -1,29 +1,29 @@
 ---
-title: "Add Rust Dependencies - Manage Crates with Cargo Add | Online Free DevTools by Hexmos"
+title: 'Add Rust Dependencies - Manage Crates with Cargo Add | Online Free DevTools by Hexmos'
 name: cargo-add
-path: "/freedevtools/tldr/cargo/cargo-add/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-add/"
-description: "Add Rust dependencies effortlessly with Cargo Add. Manage crate versions, features, and paths for seamless project builds. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-add/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-add/'
+description: 'Add Rust dependencies effortlessly with Cargo Add. Manage crate versions, features, and paths for seamless project builds. Free online tool, no registration required.'
 category: common
 keywords:
-- rust dependency manager
-- cargo crate adder
-- rust package installer
-- rust add dependency command
-- cargo add tool
-- rust dependency versioning
-- rust feature management
-- cargo add local crate
-- rust build dependency
-- rust development dependency
+  - rust dependency manager
+  - cargo crate adder
+  - rust package installer
+  - rust add dependency command
+  - cargo add tool
+  - rust dependency versioning
+  - rust feature management
+  - cargo add local crate
+  - rust build dependency
+  - rust development dependency
 features:
-- Add latest crate versions
-- Specify exact crate versions
-- Enable specific crate features
-- Add optional dependencies
-- Include local crate paths
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add latest crate versions
+  - Specify exact crate versions
+  - Enable specific crate features
+  - Add optional dependencies
+  - Include local crate paths
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo add

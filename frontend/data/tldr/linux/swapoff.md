@@ -1,9 +1,9 @@
 ---
-title: "Disable Swap Area - Manage Memory with Swapoff | Online Free DevTools by Hexmos"
+title: 'Disable Swap Area - Manage Memory with Swapoff | Online Free DevTools by Hexmos'
 name: swapoff
-path: "/freedevtools/tldr/linux/swapoff/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/swapoff/"
-description: "Manage swap areas with Swapoff, disable or enable swap partitions and files to control memory usage. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/swapoff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/swapoff/'
+description: 'Manage swap areas with Swapoff, disable or enable swap partitions and files to control memory usage. Free online tool, no registration required.'
 category: linux
 keywords:
   - disable swap area
@@ -22,8 +22,8 @@ features:
   - Disable swap areas by their label
   - Manage virtual memory usage
   - Optimize disk space by disabling swap
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swapoff

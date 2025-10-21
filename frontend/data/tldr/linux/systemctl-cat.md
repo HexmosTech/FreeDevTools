@@ -1,9 +1,9 @@
 ---
-title: "Systemctl Cat - Show Unit File Contents | Online Free DevTools by Hexmos"
+title: 'Systemctl Cat - Show Unit File Contents | Online Free DevTools by Hexmos'
 name: systemctl-cat
-path: "/freedevtools/tldr/linux/systemctl-cat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemctl-cat/"
-description: "Show Unit file contents with Systemctl Cat. View configurations, templates, and user units with this command. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemctl-cat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemctl-cat/'
+description: 'Show Unit file contents with Systemctl Cat. View configurations, templates, and user units with this command. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemctl cat unit file
@@ -22,8 +22,8 @@ features:
   - Reveal the contents of templated systemd unit files.
   - Retrieve the contents of user-specific systemd unit files.
   - Display the absolute path of the unit file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemctl cat

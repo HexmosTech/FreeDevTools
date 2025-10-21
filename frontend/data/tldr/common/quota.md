@@ -1,29 +1,29 @@
 ---
-title: "Quota - Control Disk Space Usage | Online Free DevTools by Hexmos"
+title: 'Quota - Control Disk Space Usage | Online Free DevTools by Hexmos'
 name: quota
-path: "/freedevtools/tldr/common/quota/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/quota/"
-description: "Control disk space usage with Quota. Manage allocated limits and monitor storage for users and groups across different file systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/quota/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/quota/'
+description: 'Control disk space usage with Quota. Manage allocated limits and monitor storage for users and groups across different file systems. Free online tool, no registration required.'
 category: common
 keywords:
-- disk quota control
-- user disk space management
-- group quota monitoring
-- linux disk usage limits
-- macos quota command
-- file system quota check
-- disk space allocation
-- quota reporting tool
-- user storage quota
-- disk space limits management
+  - disk quota control
+  - user disk space management
+  - group quota monitoring
+  - linux disk usage limits
+  - macos quota command
+  - file system quota check
+  - disk space allocation
+  - quota reporting tool
+  - user storage quota
+  - disk space limits management
 features:
-- Display disk space usage for a specific user
-- Show disk quotas for groups a user belongs to
-- Provide verbose output, including quotas on all file systems
-- Offer quiet output, showing only exceeded quotas
-- Report disk quotas in human-readable format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display disk space usage for a specific user
+  - Show disk quotas for groups a user belongs to
+  - Provide verbose output, including quotas on all file systems
+  - Offer quiet output, showing only exceeded quotas
+  - Report disk quotas in human-readable format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # quota

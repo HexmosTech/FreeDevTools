@@ -1,9 +1,9 @@
 ---
-title: "Thunar File Manager - Manage Files in XFCE | Online Free DevTools by Hexmos"
+title: 'Thunar File Manager - Manage Files in XFCE | Online Free DevTools by Hexmos'
 name: thunar
-path: "/freedevtools/tldr/linux/thunar/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/thunar/"
-description: "Manage files efficiently with Thunar File Manager.  Open files, utilize bulk renaming, and manage multiple windows from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/thunar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/thunar/'
+description: 'Manage files efficiently with Thunar File Manager.  Open files, utilize bulk renaming, and manage multiple windows from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - file manager linux
@@ -22,8 +22,8 @@ features:
   - Offers a bulk rename utility for batch file renaming.
   - Allows for opening multiple windows to manage various directories concurrently.
   - Enables closing all open Thunar windows with a single command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # thunar

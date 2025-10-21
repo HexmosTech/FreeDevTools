@@ -1,29 +1,29 @@
 ---
-title: "Kahlan - Execute PHP Tests | Online Free DevTools by Hexmos"
+title: 'Kahlan - Execute PHP Tests | Online Free DevTools by Hexmos'
 name: kahlan
-path: "/freedevtools/tldr/common/kahlan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kahlan/"
-description: "Execute PHP tests efficiently with Kahlan. Run specifications, generate code coverage reports, and customize testing environments easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kahlan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kahlan/'
+description: 'Execute PHP tests efficiently with Kahlan. Run specifications, generate code coverage reports, and customize testing environments easily. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP test runner
-- PHP BDD testing
-- PHP unit testing
-- Kahlan test framework
-- PHP test execution
-- code coverage PHP
-- Kahlan configuration
-- specification runner PHP
-- PHP behavior driven development
-- command line testing PHP
+  - PHP test runner
+  - PHP BDD testing
+  - PHP unit testing
+  - Kahlan test framework
+  - PHP test execution
+  - code coverage PHP
+  - Kahlan configuration
+  - specification runner PHP
+  - PHP behavior driven development
+  - command line testing PHP
 features:
-- Run specifications from the command line
-- Customize test configurations
-- Generate code coverage reports
-- Specify output reporters for test results
-- Execute behavior driven development tests
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run specifications from the command line
+  - Customize test configurations
+  - Generate code coverage reports
+  - Specify output reporters for test results
+  - Execute behavior driven development tests
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kahlan

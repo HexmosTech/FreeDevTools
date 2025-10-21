@@ -1,29 +1,29 @@
 ---
-title: "Convert PAM to TIFF - Image Converter | Online Free DevTools by Hexmos"
+title: 'Convert PAM to TIFF - Image Converter | Online Free DevTools by Hexmos'
 name: pamtotiff
-path: "/freedevtools/tldr/common/pamtotiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamtotiff/"
-description: "Convert PAM to TIFF with pamtotiff. Effortlessly create TIFF images from PAM files using this powerful command-line image converter. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamtotiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamtotiff/'
+description: 'Convert PAM to TIFF with pamtotiff. Effortlessly create TIFF images from PAM files using this powerful command-line image converter. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM to TIFF converter
-- Image format conversion
-- PAM image processing
-- TIFF file creation
-- Netpbm tools
-- Command-line image converter
-- Linux image tools
-- macOS image conversion
-- Image compression methods
-- Graphics file converter
+  - PAM to TIFF converter
+  - Image format conversion
+  - PAM image processing
+  - TIFF file creation
+  - Netpbm tools
+  - Command-line image converter
+  - Linux image tools
+  - macOS image conversion
+  - Image compression methods
+  - Graphics file converter
 features:
-- Convert PAM images to TIFF format
-- Specify compression methods for TIFF output
-- Force color output for greyscale PAM images
-- Support for various TIFF compression algorithms (none, packbits, lzw, g3, g4, flate, adobeflate)
-- Command-line image manipulation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PAM images to TIFF format
+  - Specify compression methods for TIFF output
+  - Force color output for greyscale PAM images
+  - Support for various TIFF compression algorithms (none, packbits, lzw, g3, g4, flate, adobeflate)
+  - Command-line image manipulation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamtotiff

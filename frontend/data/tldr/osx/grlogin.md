@@ -1,29 +1,29 @@
 ---
-title: "Rlogin Control - Access Remote Systems | Online Free DevTools by Hexmos"
+title: 'Rlogin Control - Access Remote Systems | Online Free DevTools by Hexmos'
 name: grlogin
-path: "/freedevtools/tldr/osx/grlogin/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/grlogin/"
-description: "Control remote system access with Rlogin. Securely connect to remote machines, manage user sessions and execute commands remotely. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/grlogin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/grlogin/'
+description: 'Control remote system access with Rlogin. Securely connect to remote machines, manage user sessions and execute commands remotely. Free online tool, no registration required.'
 category: osx
 keywords:
-- remote login osx
-- secure shell osx
-- rlogin command macos
-- remote access macos
-- terminal access osx
-- shell access macos
-- network login osx
-- command line access macos
-- grlogin osx
-- remote system management osx
+  - remote login osx
+  - secure shell osx
+  - rlogin command macos
+  - remote access macos
+  - terminal access osx
+  - shell access macos
+  - network login osx
+  - command line access macos
+  - grlogin osx
+  - remote system management osx
 features:
-- Connect to remote systems securely
-- Execute commands on remote machines
-- Manage user sessions remotely
-- Access remote terminal interface
-- Authenticate users for secure access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to remote systems securely
+  - Execute commands on remote machines
+  - Manage user sessions remotely
+  - Access remote terminal interface
+  - Authenticate users for secure access
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grlogin

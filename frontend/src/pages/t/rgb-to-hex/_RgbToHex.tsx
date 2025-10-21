@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import RgbToHexSkeleton from "./_RgbToHexSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import RgbToHexSkeleton from './_RgbToHexSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // RGB to HEX conversion utility functions
 interface RGBValues {
@@ -22,7 +22,7 @@ interface RGBValues {
   b: string;
 }
 
-const DEFAULT_RGB: RGBValues = { r: "0", g: "0", b: "0" };
+const DEFAULT_RGB: RGBValues = { r: '0', g: '0', b: '0' };
 
 const isRGBValueValid = (value: number): boolean => {
   return !isNaN(value) && value >= 0 && value <= 255;
@@ -37,22 +37,22 @@ const convertToHex = (r: string, g: string, b: string): string => {
   const gNum = parseInt(g) || 0;
   const bNum = parseInt(b) || 0;
 
-  const rHex = rNum.toString(16).padStart(2, "0");
-  const gHex = gNum.toString(16).padStart(2, "0");
-  const bHex = bNum.toString(16).padStart(2, "0");
+  const rHex = rNum.toString(16).padStart(2, '0');
+  const gHex = gNum.toString(16).padStart(2, '0');
+  const bHex = bNum.toString(16).padStart(2, '0');
 
   return `#${rHex}${gHex}${bHex}`.toUpperCase();
 };
 
 const convertToRGB = (hex: string): RGBValues => {
-  let cleanHex = hex.replace("#", "");
+  let cleanHex = hex.replace('#', '');
 
   // Convert 3-digit hex to 6-digit
   if (cleanHex.length === 3) {
     cleanHex = cleanHex
-      .split("")
+      .split('')
       .map((char) => char + char)
-      .join("");
+      .join('');
   }
 
   const r = parseInt(cleanHex.substring(0, 2), 16);
@@ -104,16 +104,16 @@ const toHsl = (rgb: RGBValues): string => {
 };
 
 const toAndroidColor = (rgb: RGBValues): string => {
-  const hex = convertToHex(rgb.r, rgb.g, rgb.b).replace("#", "");
+  const hex = convertToHex(rgb.r, rgb.g, rgb.b).replace('#', '');
   return `Color.parseColor("#${hex}")`;
 };
 
-const toIOS = (rgb: RGBValues, type: "c" | "swift"): string => {
+const toIOS = (rgb: RGBValues, type: 'c' | 'swift'): string => {
   const r = parseInt(rgb.r) / 255;
   const g = parseInt(rgb.g) / 255;
   const b = parseInt(rgb.b) / 255;
 
-  if (type === "swift") {
+  if (type === 'swift') {
     return `UIColor(red: ${r.toFixed(3)}, green: ${g.toFixed(3)}, blue: ${b.toFixed(3)}, alpha: 1.0)`;
   } else {
     return `[UIColor colorWithRed:${r.toFixed(3)} green:${g.toFixed(3)} blue:${b.toFixed(3)} alpha:1.0]`;
@@ -142,7 +142,7 @@ const CodeSnippetRow: React.FC<CodeSnippetRowProps> = ({ label, value }) => {
 };
 
 const RgbToHex: React.FC = () => {
-  const [hex, setHex] = useState("#000000");
+  const [hex, setHex] = useState('#000000');
   const [rgb, setRgb] = useState<RGBValues>(DEFAULT_RGB);
   const [loaded, setLoaded] = useState(false);
 
@@ -159,7 +159,7 @@ const RgbToHex: React.FC = () => {
   ): void => {
     const value = event.target.value;
 
-    if (value === "" || isRGBValueValid(parseInt(value))) {
+    if (value === '' || isRGBValueValid(parseInt(value))) {
       setRgb((prevRgb: RGBValues) => {
         const newRgb = { ...prevRgb, [key]: value };
         const newHex = convertToHex(newRgb.r, newRgb.g, newRgb.b);
@@ -173,12 +173,12 @@ const RgbToHex: React.FC = () => {
     const invalidHexChars = /[^#0-9A-F]/gi;
     let value = event.target.value.trim().toUpperCase();
 
-    if (value && !value.startsWith("#")) {
-      value = "#" + value;
+    if (value && !value.startsWith('#')) {
+      value = '#' + value;
     }
 
-    value = value.replace(invalidHexChars, "");
-    if (value === "") {
+    value = value.replace(invalidHexChars, '');
+    if (value === '') {
       setRgb(DEFAULT_RGB);
     }
 
@@ -191,12 +191,12 @@ const RgbToHex: React.FC = () => {
   };
 
   const handleClear = () => {
-    setHex("#000000");
+    setHex('#000000');
     setRgb(DEFAULT_RGB);
   };
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -220,14 +220,14 @@ const RgbToHex: React.FC = () => {
                       RGB Values
                     </Label>
                     <div className="grid grid-cols-3 gap-4">
-                      {(["r", "g", "b"] as (keyof RGBValues)[]).map(
+                      {(['r', 'g', 'b'] as (keyof RGBValues)[]).map(
                         (colorKey) => {
                           const colorNameMap: {
                             [key in keyof RGBValues]: string;
                           } = {
-                            r: "Red",
-                            g: "Green",
-                            b: "Blue",
+                            r: 'Red',
+                            g: 'Green',
+                            b: 'Blue',
                           };
 
                           return (
@@ -270,7 +270,7 @@ const RgbToHex: React.FC = () => {
                       <div
                         className="w-12 h-12 border rounded-lg flex-shrink-0"
                         style={{
-                          backgroundColor: isValidHex(hex) ? hex : "#000000",
+                          backgroundColor: isValidHex(hex) ? hex : '#000000',
                         }}
                         title={`Color preview: ${hex}`}
                       ></div>
@@ -301,8 +301,8 @@ const RgbToHex: React.FC = () => {
                   <div className="space-y-3">
                     <CodeSnippetRow label="CSS" value={toCss(rgb)} />
                     <CodeSnippetRow label="HSL" value={toHsl(rgb)} />
-                    <CodeSnippetRow label="Swift" value={toIOS(rgb, "swift")} />
-                    <CodeSnippetRow label="Obj-C" value={toIOS(rgb, "c")} />
+                    <CodeSnippetRow label="Swift" value={toIOS(rgb, 'swift')} />
+                    <CodeSnippetRow label="Obj-C" value={toIOS(rgb, 'c')} />
                     <CodeSnippetRow
                       label="Android"
                       value={toAndroidColor(rgb)}
@@ -411,21 +411,21 @@ const RgbToHex: React.FC = () => {
                     </div>
                     <div className="text-slate-800 dark:text-slate-200 space-y-1">
                       <div>
-                        RGB(255, 0, 0) →{" "}
+                        RGB(255, 0, 0) →{' '}
                         <span className="text-red-600">#FF0000</span> (Pure Red)
                       </div>
                       <div>
-                        RGB(0, 255, 0) →{" "}
+                        RGB(0, 255, 0) →{' '}
                         <span className="text-green-600">#00FF00</span> (Pure
                         Green)
                       </div>
                       <div>
-                        RGB(0, 0, 255) →{" "}
+                        RGB(0, 0, 255) →{' '}
                         <span className="text-blue-600">#0000FF</span> (Pure
                         Blue)
                       </div>
                       <div>
-                        RGB(255, 255, 255) →{" "}
+                        RGB(255, 255, 255) →{' '}
                         <span className="text-gray-600">#FFFFFF</span> (White)
                       </div>
                     </div>
@@ -573,7 +573,7 @@ const RgbToHex: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Design System Implementation:</strong>{" "}
+                            <strong>Design System Implementation:</strong>{' '}
                             Maintain color consistency across mobile platforms
                             using HEX standards
                           </div>

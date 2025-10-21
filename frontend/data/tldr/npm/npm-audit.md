@@ -1,29 +1,29 @@
 ---
-title: "Audit NPM - Scan Vulnerabilities in Dependencies | Online Free DevTools by Hexmos"
+title: 'Audit NPM - Scan Vulnerabilities in Dependencies | Online Free DevTools by Hexmos'
 name: npm-audit
-path: "/freedevtools/tldr/npm/npm-audit/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-audit/"
-description: "Scan NPM package dependencies for vulnerabilities with NPM Audit. Detect security flaws and suggest remediation strategies. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-audit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-audit/'
+description: 'Scan NPM package dependencies for vulnerabilities with NPM Audit. Detect security flaws and suggest remediation strategies. Free online tool, no registration required.'
 category: common
 keywords:
-- npm audit
-- npm vulnerability scanner
-- npm security check
-- node package manager audit
-- javascript dependency audit
-- npm security vulnerabilities
-- npm audit fix
-- npm audit json
-- npm security analysis
-- npm dependencies security
+  - npm audit
+  - npm vulnerability scanner
+  - npm security check
+  - node package manager audit
+  - javascript dependency audit
+  - npm security vulnerabilities
+  - npm audit fix
+  - npm audit json
+  - npm security analysis
+  - npm dependencies security
 features:
-- Scan project dependencies for known vulnerabilities.
-- Automatically fix detected vulnerabilities.
-- Force vulnerability fixes in dependencies.
-- Update the lock file without modifying node_modules.
-- Output audit results in JSON format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan project dependencies for known vulnerabilities.
+  - Automatically fix detected vulnerabilities.
+  - Force vulnerability fixes in dependencies.
+  - Update the lock file without modifying node_modules.
+  - Output audit results in JSON format.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm audit

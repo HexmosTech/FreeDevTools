@@ -1,29 +1,29 @@
 ---
-title: "BC Calculator - Arbitrary Precision Calculation | Online Free DevTools by Hexmos"
+title: 'BC Calculator - Arbitrary Precision Calculation | Online Free DevTools by Hexmos'
 name: bc
-path: "/freedevtools/tldr/common/bc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bc/"
-description: "Calculate with BC arbitrary precision calculator. Perform complex math, execute scripts, and define custom functions effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bc/'
+description: 'Calculate with BC arbitrary precision calculator. Perform complex math, execute scripts, and define custom functions effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- arbitrary precision calculator
-- command line calculator
-- bc math calculator
-- linux calculator
-- unix calculator
-- bc scripting
-- bc factorial
-- bc sine cosine
-- bc mathlib
-- bc command
+  - arbitrary precision calculator
+  - command line calculator
+  - bc math calculator
+  - linux calculator
+  - unix calculator
+  - bc scripting
+  - bc factorial
+  - bc sine cosine
+  - bc mathlib
+  - bc command
 features:
-- Perform arbitrary precision calculations.
-- Execute bc scripts.
-- Utilize the standard math library.
-- Define custom functions.
-- Control calculation scale.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform arbitrary precision calculations.
+  - Execute bc scripts.
+  - Utilize the standard math library.
+  - Define custom functions.
+  - Control calculation scale.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bc

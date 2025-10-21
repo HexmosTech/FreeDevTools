@@ -1,29 +1,29 @@
 ---
-title: "Git Prune - Remove Unreachable Objects | Online Free DevTools by Hexmos"
+title: 'Git Prune - Remove Unreachable Objects | Online Free DevTools by Hexmos'
 name: git-prune
-path: "/freedevtools/tldr/git/git-prune/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-prune/"
-description: "Remove unreachable objects with Git Prune. Streamline your Git repository and optimize storage space. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-prune/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-prune/'
+description: 'Remove unreachable objects with Git Prune. Streamline your Git repository and optimize storage space. Free online tool, no registration required.'
 category: common
 keywords:
-- git prune
-- git object database
-- git garbage collection
-- git repository cleanup
-- prune unreachable objects
-- git command line
-- git maintenance
-- git storage optimization
-- git repository management
-- git cli
+  - git prune
+  - git object database
+  - git garbage collection
+  - git repository cleanup
+  - prune unreachable objects
+  - git command line
+  - git maintenance
+  - git storage optimization
+  - git repository management
+  - git cli
 features:
-- Delete unreachable objects from a Git repository.
-- Report objects that would be removed without actually deleting them.
-- Display verbose output of pruned objects.
-- Show progress during the pruning process.
-- Streamline Git repository storage space.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete unreachable objects from a Git repository.
+  - Report objects that would be removed without actually deleting them.
+  - Display verbose output of pruned objects.
+  - Show progress during the pruning process.
+  - Streamline Git repository storage space.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git prune

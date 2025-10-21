@@ -1,29 +1,29 @@
 ---
-title: "Create Borg Backups - Deduplicate Data | Online Free DevTools by Hexmos"
+title: 'Create Borg Backups - Deduplicate Data | Online Free DevTools by Hexmos'
 name: borg
-path: "/freedevtools/tldr/common/borg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/borg/"
-description: "Create backups with Borg, a deduplicating backup tool. Securely store and manage your data with efficient compression and encryption. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/borg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/borg/'
+description: 'Create backups with Borg, a deduplicating backup tool. Securely store and manage your data with efficient compression and encryption. Free online tool, no registration required.'
 category: common
 keywords:
-- Borg backup
-- Deduplicating backup
-- Data backup
-- Remote backup
-- Encrypted backup
-- Linux backup
-- MacOS backup
-- Command-line backup
-- Archive creation
-- Data recovery
+  - Borg backup
+  - Deduplicating backup
+  - Data backup
+  - Remote backup
+  - Encrypted backup
+  - Linux backup
+  - MacOS backup
+  - Command-line backup
+  - Archive creation
+  - Data recovery
 features:
-- Create deduplicated backups of directories and files
-- Mount backups as FUSE filesystems for easy access
-- Encrypt backups for secure storage
-- Prune backups based on age or retention policies
-- List and extract specific files from archives
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create deduplicated backups of directories and files
+  - Mount backups as FUSE filesystems for easy access
+  - Encrypt backups for secure storage
+  - Prune backups based on age or retention policies
+  - List and extract specific files from archives
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # borg

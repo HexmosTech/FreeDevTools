@@ -1,29 +1,29 @@
 ---
-title: "Git Init - Create New Git Repository | Online Free DevTools by Hexmos"
+title: 'Git Init - Create New Git Repository | Online Free DevTools by Hexmos'
 name: git-init
-path: "/freedevtools/tldr/git/git-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-init/"
-description: "Create a new Git repository with Git Init. Manage version control and track changes with this simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-init/'
+description: 'Create a new Git repository with Git Init. Manage version control and track changes with this simple command. Free online tool, no registration required.'
 category: common
 keywords:
-- git init repository
-- git init command
-- git version control
-- create git repo
-- initialize git repository
-- git initial branch
-- git sha256 hash
-- git bare repository
-- git linux
-- git macOS
+  - git init repository
+  - git init command
+  - git version control
+  - create git repo
+  - initialize git repository
+  - git initial branch
+  - git sha256 hash
+  - git bare repository
+  - git linux
+  - git macOS
 features:
-- Initialize a new local Git repository
-- Specify an initial branch name
-- Use SHA256 for object hashes
-- Initialize a barebones repository
-- Prepare a repository for remote use
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new local Git repository
+  - Specify an initial branch name
+  - Use SHA256 for object hashes
+  - Initialize a barebones repository
+  - Prepare a repository for remote use
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git init

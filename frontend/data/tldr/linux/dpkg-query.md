@@ -1,9 +1,9 @@
 ---
-title: "dpkg-query - Display Package Information | Online Free DevTools by Hexmos"
+title: 'dpkg-query - Display Package Information | Online Free DevTools by Hexmos'
 name: dpkg-query
-path: "/freedevtools/tldr/linux/dpkg-query/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dpkg-query/"
-description: "Display package information easily with dpkg-query. List installed packages, find files, and view status details using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dpkg-query/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dpkg-query/'
+description: 'Display package information easily with dpkg-query. List installed packages, find files, and view status details using command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - dpkg-query command
@@ -22,8 +22,8 @@ features:
   - List all files installed by a package
   - Show information about a package
   - Search for packages that own files matching a pattern
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dpkg-query

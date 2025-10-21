@@ -1,9 +1,9 @@
 ---
-title: "Control Firewall with firewall-cmd - Manage Network Security | Online Free DevTools by Hexmos"
+title: 'Control Firewall with firewall-cmd - Manage Network Security | Online Free DevTools by Hexmos'
 name: firewall-cmd
-path: "/freedevtools/tldr/linux/firewall-cmd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/firewall-cmd/"
-description: "Manage network security with firewall-cmd, the command-line firewall interface.  Configure firewall rules, zones, and services easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/firewall-cmd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/firewall-cmd/'
+description: 'Manage network security with firewall-cmd, the command-line firewall interface.  Configure firewall rules, zones, and services easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - firewall command line
@@ -22,8 +22,8 @@ features:
   - Control network interfaces and their access levels.
   - Configure port forwarding for incoming connections.
   - Implement emergency "panic" mode to block all traffic.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # firewall-cmd

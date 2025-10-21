@@ -1,29 +1,29 @@
 ---
-title: "Kubeseal - Encrypt Kubernetes Secrets | Online Free DevTools by Hexmos"
+title: 'Kubeseal - Encrypt Kubernetes Secrets | Online Free DevTools by Hexmos'
 name: kubeseal
-path: "/freedevtools/tldr/kube/kubeseal/"
-canonical: "https://hexmos.com/freedevtools/tldr/kube/kubeseal/"
-description: "Encrypt Kubernetes secrets with Kubeseal. Securely manage secrets in YAML files and SealedSecret resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/kube/kubeseal/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kube/kubeseal/'
+description: 'Encrypt Kubernetes secrets with Kubeseal. Securely manage secrets in YAML files and SealedSecret resources. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes secrets encryption
-- sealed secrets kubernetes
-- kubeseal command line
-- kubernetes secret management
-- yaml encryption tool
-- json encryption tool
-- kubernetes configuration security
-- sealedsecret generator
-- kubernetes secret sealing
-- kubernetes secret controller
+  - kubernetes secrets encryption
+  - sealed secrets kubernetes
+  - kubeseal command line
+  - kubernetes secret management
+  - yaml encryption tool
+  - json encryption tool
+  - kubernetes configuration security
+  - sealedsecret generator
+  - kubernetes secret sealing
+  - kubernetes secret controller
 features:
-- Encrypt Kubernetes secrets from YAML files to SealedSecret resources.
-- Seal secrets using a specific controller namespace and name.
-- Encrypt raw secret values from files with specified names and scopes.
-- Fetch the controller's public certificate for offline sealing.
-- Merge a secret into an existing SealedSecret file in-place.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encrypt Kubernetes secrets from YAML files to SealedSecret resources.
+  - Seal secrets using a specific controller namespace and name.
+  - Encrypt raw secret values from files with specified names and scopes.
+  - Fetch the controller's public certificate for offline sealing.
+  - Merge a secret into an existing SealedSecret file in-place.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubeseal

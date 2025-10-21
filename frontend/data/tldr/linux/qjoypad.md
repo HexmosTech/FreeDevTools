@@ -1,9 +1,9 @@
 ---
-title: "Control Gamepads - QJoypad Keyboard/Mouse Translator | Online Free DevTools by Hexmos"
+title: 'Control Gamepads - QJoypad Keyboard/Mouse Translator | Online Free DevTools by Hexmos'
 name: qjoypad
-path: "/freedevtools/tldr/linux/qjoypad/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qjoypad/"
-description: "Translate gamepad input into keyboard strokes and mouse actions with QJoypad.  Configure custom layouts and manage multiple devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qjoypad/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qjoypad/'
+description: 'Translate gamepad input into keyboard strokes and mouse actions with QJoypad.  Configure custom layouts and manage multiple devices. Free online tool, no registration required.'
 category: linux
 keywords:
   - gamepad keyboard translator
@@ -22,8 +22,8 @@ features:
   - Allows specifying input devices from a specific directory.
   - Offers options for managing system tray icon visibility.
   - Enables updating device and layout lists in a running instance.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qjoypad

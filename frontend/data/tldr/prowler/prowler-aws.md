@@ -1,29 +1,29 @@
 ---
-title: "Prowler AWS - Assess Cloud Security | Online Free DevTools by Hexmos"
+title: 'Prowler AWS - Assess Cloud Security | Online Free DevTools by Hexmos'
 name: prowler-aws
-path: "/freedevtools/tldr/prowler/prowler-aws/"
-canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-aws/"
-description: "Assess cloud security with Prowler AWS. Perform AWS audits, compliance checks, and generate security reports. Free online tool, no registration required."
+path: '/freedevtools/tldr/prowler/prowler-aws/'
+canonical: 'https://hexmos.com/freedevtools/tldr/prowler/prowler-aws/'
+description: 'Assess cloud security with Prowler AWS. Perform AWS audits, compliance checks, and generate security reports. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS security assessment
-- Cloud security audit
-- Prowler AWS compliance
-- AWS security best practices
-- AWS security reporting
-- Cloud security posture management
-- AWS configuration review
-- CIS AWS benchmark
-- Prowler security tool
-- AWS security scanner
+  - AWS security assessment
+  - Cloud security audit
+  - Prowler AWS compliance
+  - AWS security best practices
+  - AWS security reporting
+  - Cloud security posture management
+  - AWS configuration review
+  - CIS AWS benchmark
+  - Prowler security tool
+  - AWS security scanner
 features:
-- Assess AWS security best practices.
-- Perform AWS security audits.
-- Generate AWS compliance reports.
-- Filter audited AWS regions.
-- Exclude specific AWS security checks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Assess AWS security best practices.
+  - Perform AWS security audits.
+  - Generate AWS compliance reports.
+  - Filter audited AWS regions.
+  - Exclude specific AWS security checks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prowler aws

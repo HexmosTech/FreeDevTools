@@ -1,29 +1,29 @@
 ---
-title: "Search DuckDuckGo - Terminal Search | Online Free DevTools by Hexmos"
+title: 'Search DuckDuckGo - Terminal Search | Online Free DevTools by Hexmos'
 name: ddgr
-path: "/freedevtools/tldr/common/ddgr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ddgr/"
-description: "Search DuckDuckGo from your terminal with ddgr. Efficiently find information and open results in your browser. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ddgr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ddgr/'
+description: 'Search DuckDuckGo from your terminal with ddgr. Efficiently find information and open results in your browser. Free online tool, no registration required.'
 category: common
 keywords:
-- DuckDuckGo terminal search
-- command-line search engine
-- terminal web search
-- ddgr search tool
-- linux command search
-- macos command search
-- command line duckduckgo
-- privacy focused search
-- terminal based browser
-- text-based search
+  - DuckDuckGo terminal search
+  - command-line search engine
+  - terminal web search
+  - ddgr search tool
+  - linux command search
+  - macos command search
+  - command line duckduckgo
+  - privacy focused search
+  - terminal based browser
+  - text-based search
 features:
-- Perform DuckDuckGo searches from the command line
-- Limit the number of search results displayed
-- Open search results directly in your web browser
-- Conduct website-specific searches using a filter
-- Search for specific file types using keywords
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform DuckDuckGo searches from the command line
+  - Limit the number of search results displayed
+  - Open search results directly in your web browser
+  - Conduct website-specific searches using a filter
+  - Search for specific file types using keywords
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ddgr

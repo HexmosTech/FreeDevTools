@@ -1,29 +1,29 @@
 ---
-title: "Coprocess - Create Subshells Asynchronously | Online Free DevTools by Hexmos"
+title: 'Coprocess - Create Subshells Asynchronously | Online Free DevTools by Hexmos'
 name: coproc
-path: "/freedevtools/tldr/common/coproc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/coproc/"
-description: "Create asynchronous subshells with Coproc in Bash. Manage concurrent processes and streamline background tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/coproc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/coproc/'
+description: 'Create asynchronous subshells with Coproc in Bash. Manage concurrent processes and streamline background tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- bash coprocess creation
-- asynchronous subshell command
-- coproc shell scripting
-- linux background process
-- bash process management
-- command coproc example
-- interactive subshell bash
-- concurrent process shell
-- named coprocess bash
-- coproc redirection
+  - bash coprocess creation
+  - asynchronous subshell command
+  - coproc shell scripting
+  - linux background process
+  - bash process management
+  - command coproc example
+  - interactive subshell bash
+  - concurrent process shell
+  - named coprocess bash
+  - coproc redirection
 features:
-- Execute commands in an asynchronous subshell
-- Create coprocesses with specific names
-- Write to the stdin of a specific coprocess
-- Read from the stdout of a specific coprocess
-- Manage input and output streams for coprocesses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands in an asynchronous subshell
+  - Create coprocesses with specific names
+  - Write to the stdin of a specific coprocess
+  - Read from the stdout of a specific coprocess
+  - Manage input and output streams for coprocesses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # coproc

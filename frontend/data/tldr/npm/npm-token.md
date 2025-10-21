@@ -1,29 +1,29 @@
 ---
-title: "Generate npm Tokens - Manage npm Authentication | Online Free DevTools by Hexmos"
+title: 'Generate npm Tokens - Manage npm Authentication | Online Free DevTools by Hexmos'
 name: npm-token
-path: "/freedevtools/tldr/npm/npm-token/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-token/"
-description: "Generate npm tokens for secure package publishing with npm-token. Easily manage authentication, create read-only tokens, and revoke access. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-token/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-token/'
+description: 'Generate npm tokens for secure package publishing with npm-token. Easily manage authentication, create read-only tokens, and revoke access. Free online tool, no registration required.'
 category: common
 keywords:
-- npm token
-- npm authentication
-- npm registry token
-- npm access control
-- npm publish token
-- npm revoke token
-- npm login
-- npm configuration
-- npmrc file
-- node package manager
+  - npm token
+  - npm authentication
+  - npm registry token
+  - npm access control
+  - npm publish token
+  - npm revoke token
+  - npm login
+  - npm configuration
+  - npmrc file
+  - node package manager
 features:
-- Create new npm authentication tokens.
-- List all tokens associated with an npm account.
-- Delete a specific token using its token ID.
-- Create tokens with read-only or publish access.
-- Configure npm tokens automatically upon login.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new npm authentication tokens.
+  - List all tokens associated with an npm account.
+  - Delete a specific token using its token ID.
+  - Create tokens with read-only or publish access.
+  - Configure npm tokens automatically upon login.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm token

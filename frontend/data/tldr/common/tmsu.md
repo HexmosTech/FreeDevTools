@@ -1,29 +1,29 @@
 ---
-title: "Tag Files - Organize Files with tmsu | Online Free DevTools by Hexmos"
+title: 'Tag Files - Organize Files with tmsu | Online Free DevTools by Hexmos'
 name: tmsu
-path: "/freedevtools/tldr/common/tmsu/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tmsu/"
-description: "Tag files efficiently with tmsu. Organize your files using multiple tags and boolean expressions for advanced searching. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tmsu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tmsu/'
+description: 'Tag files efficiently with tmsu. Organize your files using multiple tags and boolean expressions for advanced searching. Free online tool, no registration required.'
 category: common
 keywords:
-- file tagging
-- tag files linux
-- tmsu tagger
-- command line file tagging
-- virtual file system
-- metadata tagging
-- organize files cli
-- tag files macos
-- tag files bash
-- file organization command
+  - file tagging
+  - tag files linux
+  - tmsu tagger
+  - command line file tagging
+  - virtual file system
+  - metadata tagging
+  - organize files cli
+  - tag files macos
+  - tag files bash
+  - file organization command
 features:
-- Tag files with multiple keywords simultaneously
-- List files by specific tags or tag combinations
-- Mount a tmsu virtual filesystem
-- Search files with boolean tag expressions
-- Manage file metadata from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Tag files with multiple keywords simultaneously
+  - List files by specific tags or tag combinations
+  - Mount a tmsu virtual filesystem
+  - Search files with boolean tag expressions
+  - Manage file metadata from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tmsu

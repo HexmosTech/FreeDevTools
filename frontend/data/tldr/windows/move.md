@@ -1,29 +1,29 @@
 ---
-title: "Move Files - Rename and Relocate Files on Windows | Online Free DevTools by Hexmos"
+title: 'Move Files - Rename and Relocate Files on Windows | Online Free DevTools by Hexmos'
 name: move
-path: "/freedevtools/tldr/windows/move/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/move/"
-description: "Move files easily with this Windows command-line tool. Rename and relocate files and directories within and across drives. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/move/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/move/'
+description: 'Move files easily with this Windows command-line tool. Rename and relocate files and directories within and across drives. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows move files
-- cmd move files
-- move files command prompt
-- windows rename files
-- cmd rename files
-- move directory windows
-- cmd move directory
-- move files across drives
-- windows file management
-- cmd file operations
+  - windows move files
+  - cmd move files
+  - move files command prompt
+  - windows rename files
+  - cmd rename files
+  - move directory windows
+  - cmd move directory
+  - move files across drives
+  - windows file management
+  - cmd file operations
 features:
-- Move files to a specified directory
-- Rename files and directories
-- Move files across different drives
-- Suppress overwrite prompts for existing files
-- Force overwrite prompts for file move operations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Move files to a specified directory
+  - Rename files and directories
+  - Move files across different drives
+  - Suppress overwrite prompts for existing files
+  - Force overwrite prompts for file move operations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # move

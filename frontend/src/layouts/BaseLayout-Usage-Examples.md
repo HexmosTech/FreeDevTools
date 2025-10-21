@@ -56,21 +56,21 @@ const { iconData } = Astro.props;
   title={`Free ${iconData.name} SVG Icon Download | Online Free DevTools by Hexmos`}
   description={`Download ${iconData.name} SVG icon for free. PNG icon. No registration required.`}
   canonical={`https://hexmos.com/freedevtools/svg_icons/${category}/${icon}`}
-
-  // Image-specific props
+  Image-specific
+  props
   imgWidth={svgDimensions.width}
   imgHeight={svgDimensions.height}
   thumbnailUrl={`https://hexmos.com/freedevtools/svg_icons/${category}/${icon}.svg`}
   encodingFormat="image/svg+xml"
-
-  // Icon-specific props
+  Icon-specific
+  props
   iconName={iconData.name}
   iconCategory={iconData.category}
   iconTags={iconData.tags}
   author={iconData.author}
   license={iconData.license}
-
-  // Hierarchical structure
+  Hierarchical
+  structure
   partOf={`${iconData.category} Icons`}
   partOfUrl={`https://hexmos.com/freedevtools/svg_icons/${category}`}
   category={iconData.category}
@@ -121,13 +121,14 @@ const { category, totalIcons } = Astro.props;
   title={`${category} SVG Icons - Free Download & Edit | Online Free DevTools by Hexmos`}
   description={`Download free ${category} SVG icons instantly. ${totalIcons} icons available.`}
   canonical={`https://hexmos.com/freedevtools/svg_icons/${category}`}
-
-  // Collection page props
+  Collection
+  page
+  props
   totalItems={totalIcons}
   category={category}
   partOf="SVG Icons"
   partOfUrl="https://hexmos.com/freedevtools/svg_icons/"
-  keywords={[category, "svg icons", "vector graphics", "free icons"]}
+  keywords={[category, 'svg icons', 'vector graphics', 'free icons']}
 >
   <!-- Page content -->
 </BaseLayout>
@@ -162,11 +163,23 @@ const tools = getAllUniqueTools();
   title="Free DevTools - Essential Developer Utilities Online | No Registration Required"
   description="Collection of free, open-source developer tools including Base64 converter, JSON prettifier, and more."
   canonical="https://hexmos.com/freedevtools/t/"
-
-  // Collection page props
+  Collection
+  page
+  props
   totalItems={tools.length}
-  keywords={["developer tools", "online tools", "free tools", "productivity", "utilities"]}
-  features={["No registration", "Free to use", "Online tools", "Developer utilities"]}
+  keywords={[
+    'developer tools',
+    'online tools',
+    'free tools',
+    'productivity',
+    'utilities',
+  ]}
+  features={[
+    'No registration',
+    'Free to use',
+    'Online tools',
+    'Developer utilities',
+  ]}
   toolCategory="Developer Tools"
 >
   <!-- Page content -->
@@ -187,8 +200,8 @@ const { toolData } = Astro.props;
   title={`${toolData.name} - Free Online Tool | Free DevTools by Hexmos`}
   description={toolData.description}
   canonical={`https://hexmos.com/freedevtools/t/${toolData.slug}`}
-
-  // Tool-specific props
+  Tool-specific
+  props
   toolType={toolData.type}
   toolCategory={toolData.category}
   features={toolData.features}
@@ -236,12 +249,12 @@ const { commandData } = Astro.props;
   title={`${commandData.name} Command - ${platform} Documentation | Free DevTools`}
   description={`Learn how to use the ${commandData.name} command on ${platform}. Examples and usage.`}
   canonical={`https://hexmos.com/freedevtools/tldr/${platform}/${command}`}
-
-  // Command-specific props
+  Command-specific
+  props
   commandName={commandData.name}
   platform={platform}
   commandCategory={commandData.category}
-  keywords={[commandData.name, platform, "command", "documentation", "cli"]}
+  keywords={[commandData.name, platform, 'command', 'documentation', 'cli']}
 >
   <!-- Page content -->
 </BaseLayout>

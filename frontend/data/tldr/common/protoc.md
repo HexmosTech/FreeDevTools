@@ -1,29 +1,29 @@
 ---
-title: "Generate Protobuf - Compile .proto Files | Online Free DevTools by Hexmos"
+title: 'Generate Protobuf - Compile .proto Files | Online Free DevTools by Hexmos'
 name: protoc
-path: "/freedevtools/tldr/common/protoc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/protoc/"
-description: "Generate Protobuf files with Protoc. Convert .proto files into code for various languages including Python and Java. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/protoc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/protoc/'
+description: 'Generate Protobuf files with Protoc. Convert .proto files into code for various languages including Python and Java. Free online tool, no registration required.'
 category: common
 keywords:
-- protobuf compiler
-- .proto to python
-- .proto to java
-- protobuf code generator
-- protocol buffer converter
-- .proto encoder
-- .proto decoder
-- protobuf message format
-- protobuf command line
-- proto file parser
+  - protobuf compiler
+  - .proto to python
+  - .proto to java
+  - protobuf code generator
+  - protocol buffer converter
+  - .proto encoder
+  - .proto decoder
+  - protobuf message format
+  - protobuf command line
+  - proto file parser
 features:
-- Generate code from .proto files in multiple languages
-- Encode text-format messages into protocol buffers
-- Decode protocol buffers into text-format
-- Convert .proto files to Python code
-- Convert .proto files to Java code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate code from .proto files in multiple languages
+  - Encode text-format messages into protocol buffers
+  - Decode protocol buffers into text-format
+  - Convert .proto files to Python code
+  - Convert .proto files to Java code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # protoc

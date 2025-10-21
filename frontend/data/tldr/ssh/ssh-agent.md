@@ -1,29 +1,29 @@
 ---
-title: "SSH Agent - Control SSH Key Management | Online Free DevTools by Hexmos"
+title: 'SSH Agent - Control SSH Key Management | Online Free DevTools by Hexmos'
 name: ssh-agent
-path: "/freedevtools/tldr/ssh/ssh-agent/"
-canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-agent/"
-description: "Control SSH key management with SSH Agent. Securely store and manage SSH keys in memory, enabling secure remote access. Free online tool, no registration required."
+path: '/freedevtools/tldr/ssh/ssh-agent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ssh/ssh-agent/'
+description: 'Control SSH key management with SSH Agent. Securely store and manage SSH keys in memory, enabling secure remote access. Free online tool, no registration required.'
 category: common
 keywords:
-- ssh key agent
-- ssh key management linux
-- ssh key manager
-- ssh agent macos
-- ssh agent bash
-- ssh key authentication
-- passwordless ssh
-- ssh key storage
-- ssh agent security
-- ssh agent forwarding
+  - ssh key agent
+  - ssh key management linux
+  - ssh key manager
+  - ssh agent macos
+  - ssh agent bash
+  - ssh key authentication
+  - passwordless ssh
+  - ssh key storage
+  - ssh agent security
+  - ssh agent forwarding
 features:
-- Securely store SSH keys in memory.
-- Automate SSH key loading and management.
-- Provide passwordless SSH authentication.
-- Enable SSH key forwarding for seamless access.
-- Kill and restart SSH agent processes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely store SSH keys in memory.
+  - Automate SSH key loading and management.
+  - Provide passwordless SSH authentication.
+  - Enable SSH key forwarding for seamless access.
+  - Kill and restart SSH agent processes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ssh-agent

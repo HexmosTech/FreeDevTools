@@ -1,29 +1,29 @@
 ---
-title: "Git Show - Display Commit Details | Online Free DevTools by Hexmos"
+title: 'Git Show - Display Commit Details | Online Free DevTools by Hexmos'
 name: git-show
-path: "/freedevtools/tldr/git/git-show/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-show/"
-description: "Display Git commit details with Git Show. Inspect commit messages, diffs, and file changes efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-show/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-show/'
+description: 'Display Git commit details with Git Show. Inspect commit messages, diffs, and file changes efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit details
-- git commit history
-- git object viewer
-- git diff viewer
-- git commit message
-- git file changes
-- git revision history
-- git show command
-- linux git
-- macos git
+  - git commit details
+  - git commit history
+  - git object viewer
+  - git diff viewer
+  - git commit message
+  - git file changes
+  - git revision history
+  - git show command
+  - linux git
+  - macos git
 features:
-- Show information about the latest commit
-- Display details for specific commits, tags, or branches
-- Show a commit's message in a single line
-- Display file changes statistics
-- Show the contents of a file at a given revision
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show information about the latest commit
+  - Display details for specific commits, tags, or branches
+  - Show a commit's message in a single line
+  - Display file changes statistics
+  - Show the contents of a file at a given revision
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git show

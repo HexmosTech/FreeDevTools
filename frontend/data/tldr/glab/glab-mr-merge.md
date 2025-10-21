@@ -1,29 +1,29 @@
 ---
-title: "Merge Requests - Merge with glab | Online Free DevTools by Hexmos"
+title: 'Merge Requests - Merge with glab | Online Free DevTools by Hexmos'
 name: glab-mr-merge
-path: "/freedevtools/tldr/glab/glab-mr-merge/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-mr-merge/"
-description: "Merge requests seamlessly with glab. Improve code review workflows by removing branches and managing commit messages. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-mr-merge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-mr-merge/'
+description: 'Merge requests seamlessly with glab. Improve code review workflows by removing branches and managing commit messages. Free online tool, no registration required.'
 category: common
 keywords:
-- glab merge request
-- gitlab merge request
-- command line merge
-- glab cli
-- gitlab cli
-- glab mr merge
-- gitlab mr merge
-- remove source branch
-- squash commit
-- git merge
+  - glab merge request
+  - gitlab merge request
+  - command line merge
+  - glab cli
+  - gitlab cli
+  - glab mr merge
+  - gitlab mr merge
+  - remove source branch
+  - squash commit
+  - git merge
 features:
-- Merge merge requests interactively
-- Remove source branches after merging
-- Squash merge requests into a single commit
-- Customize commit messages during merge
-- Display help information for merging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Merge merge requests interactively
+  - Remove source branches after merging
+  - Squash merge requests into a single commit
+  - Customize commit messages during merge
+  - Display help information for merging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab mr merge

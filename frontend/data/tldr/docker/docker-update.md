@@ -1,29 +1,29 @@
 ---
-title: "Docker Update - Control Container Configuration | Online Free DevTools by Hexmos"
+title: 'Docker Update - Control Container Configuration | Online Free DevTools by Hexmos'
 name: docker-update
-path: "/freedevtools/tldr/docker/docker-update/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-update/"
-description: "Control Docker container settings easily with Docker Update. Modify restart policies, CPU limits, and memory allocation. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-update/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-update/'
+description: 'Control Docker container settings easily with Docker Update. Modify restart policies, CPU limits, and memory allocation. Free online tool, no registration required.'
 category: common
 keywords:
-- docker container update
-- docker restart policy
-- docker cpu limit
-- docker memory limit
-- docker pids limit
-- docker memory swap
-- docker container configuration
-- docker command line
-- docker resource management
-- linux docker update
+  - docker container update
+  - docker restart policy
+  - docker cpu limit
+  - docker memory limit
+  - docker pids limit
+  - docker memory swap
+  - docker container configuration
+  - docker command line
+  - docker resource management
+  - linux docker update
 features:
-- Update container restart policies
-- Limit container CPU usage
-- Set container memory constraints
-- Restrict the number of processes
-- Configure container memory swapping
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update container restart policies
+  - Limit container CPU usage
+  - Set container memory constraints
+  - Restrict the number of processes
+  - Configure container memory swapping
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker update

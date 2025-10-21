@@ -1,29 +1,29 @@
 ---
-title: "Get Wikipedia Summary - Wikit Command | Online Free DevTools by Hexmos"
+title: 'Get Wikipedia Summary - Wikit Command | Online Free DevTools by Hexmos'
 name: wikit
-path: "/freedevtools/tldr/common/wikit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wikit/"
-description: "Get instant Wikipedia summaries with Wikit command. Retrieve concise information, specify languages, and open articles directly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wikit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wikit/'
+description: 'Get instant Wikipedia summaries with Wikit command. Retrieve concise information, specify languages, and open articles directly. Free online tool, no registration required.'
 category: common
 keywords:
-- wikipedia summary command
-- command line wikipedia
-- wikit linux
-- wikit macos
-- wikipedia summary tool
-- command line search
-- retrieve wikipedia info
-- quick wikipedia lookup
-- terminal wikipedia client
-- console wikipedia tool
+  - wikipedia summary command
+  - command line wikipedia
+  - wikit linux
+  - wikit macos
+  - wikipedia summary tool
+  - command line search
+  - retrieve wikipedia info
+  - quick wikipedia lookup
+  - terminal wikipedia client
+  - console wikipedia tool
 features:
-- Display short summaries of Wikipedia topics.
-- Specify languages for summaries using ISO codes.
-- Open full Wikipedia articles in a default browser.
-- Provide a disambiguation menu for ambiguous topics.
-- Retrieve information directly from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display short summaries of Wikipedia topics.
+  - Specify languages for summaries using ISO codes.
+  - Open full Wikipedia articles in a default browser.
+  - Provide a disambiguation menu for ambiguous topics.
+  - Retrieve information directly from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wikit

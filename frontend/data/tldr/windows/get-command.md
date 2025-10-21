@@ -1,29 +1,29 @@
 ---
-title: "Get-Command - List Commands in PowerShell | Online Free DevTools by Hexmos"
+title: 'Get-Command - List Commands in PowerShell | Online Free DevTools by Hexmos'
 name: get-command
-path: "/freedevtools/tldr/windows/get-command/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/get-command/"
-description: "List commands easily with Get-Command in PowerShell. Discover cmdlets, functions, and aliases for Windows automation tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/get-command/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/get-command/'
+description: 'List commands easily with Get-Command in PowerShell. Discover cmdlets, functions, and aliases for Windows automation tasks. Free online tool, no registration required.'
 category: windows
 keywords:
-- powershell commands
-- windows commands
-- cmdlet discovery
-- function listing
-- alias enumeration
-- powershell module commands
-- get-command powershell
-- powershell command explorer
-- command line search
-- path command discovery
+  - powershell commands
+  - windows commands
+  - cmdlet discovery
+  - function listing
+  - alias enumeration
+  - powershell module commands
+  - get-command powershell
+  - powershell command explorer
+  - command line search
+  - path command discovery
 features:
-- List all available PowerShell commands in the current session.
-- Filter commands by type (Alias, Cmdlet, Function, Application).
-- Discover commands within specific PowerShell modules.
-- Get detailed information about a specific command.
-- Find commands available on the system's PATH.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all available PowerShell commands in the current session.
+  - Filter commands by type (Alias, Cmdlet, Function, Application).
+  - Discover commands within specific PowerShell modules.
+  - Get detailed information about a specific command.
+  - Find commands available on the system's PATH.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Get-Command

@@ -1,29 +1,29 @@
 ---
-title: "Pueue Completions - Generate Shell Completions | Online Free DevTools by Hexmos"
+title: 'Pueue Completions - Generate Shell Completions | Online Free DevTools by Hexmos'
 name: pueue-completions
-path: "/freedevtools/tldr/pueue/pueue-completions/"
-canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-completions/"
-description: "Generate shell completions with Pueue for Bash, Zsh, and Fish. Automate command-line tasks and improve workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/pueue/pueue-completions/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pueue/pueue-completions/'
+description: 'Generate shell completions with Pueue for Bash, Zsh, and Fish. Automate command-line tasks and improve workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- shell completions generator
-- pueue shell completions
-- bash completions generator
-- zsh completions generator
-- fish completions generator
-- linux shell completions
-- command-line completion tool
-- pueue command autocompletion
-- shell script generator
-- task scheduler completions
+  - shell completions generator
+  - pueue shell completions
+  - bash completions generator
+  - zsh completions generator
+  - fish completions generator
+  - linux shell completions
+  - command-line completion tool
+  - pueue command autocompletion
+  - shell script generator
+  - task scheduler completions
 features:
-- Generate Bash completions for Pueue commands
-- Generate Zsh completions for Pueue commands
-- Generate Fish completions for Pueue commands
-- Automate shell completion file creation
-- Streamline command-line task scheduling
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate Bash completions for Pueue commands
+  - Generate Zsh completions for Pueue commands
+  - Generate Fish completions for Pueue commands
+  - Automate shell completion file creation
+  - Streamline command-line task scheduling
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pueue completions

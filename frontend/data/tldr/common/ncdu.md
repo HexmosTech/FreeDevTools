@@ -1,29 +1,29 @@
 ---
-title: "Analyze Disk Usage - ncdu | Online Free DevTools by Hexmos"
+title: 'Analyze Disk Usage - ncdu | Online Free DevTools by Hexmos'
 name: ncdu
-path: "/freedevtools/tldr/common/ncdu/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ncdu/"
-description: "Analyze disk usage efficiently with ncdu. Identify large files and directories, and reclaim disk space. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ncdu/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ncdu/'
+description: 'Analyze disk usage efficiently with ncdu. Identify large files and directories, and reclaim disk space. Free online tool, no registration required.'
 category: common
 keywords:
-- disk usage analyzer
-- ncdu disk space
-- terminal disk usage
-- ncurses disk analyzer
-- linux disk usage
-- macos disk usage
-- command line disk usage
-- disk space monitoring
-- file size analysis
-- directory size analysis
+  - disk usage analyzer
+  - ncdu disk space
+  - terminal disk usage
+  - ncurses disk analyzer
+  - linux disk usage
+  - macos disk usage
+  - command line disk usage
+  - disk space monitoring
+  - file size analysis
+  - directory size analysis
 features:
-- Analyze disk usage in interactive mode
-- Visualize disk space allocation
-- Exclude specific files or patterns from analysis
-- Save analysis results to a file
-- Colorize output based on file size
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze disk usage in interactive mode
+  - Visualize disk space allocation
+  - Exclude specific files or patterns from analysis
+  - Save analysis results to a file
+  - Colorize output based on file size
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ncdu

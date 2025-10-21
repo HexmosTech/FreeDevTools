@@ -1,29 +1,29 @@
 ---
-title: "Pi-hole Manager - Control Ad-Blocking DNS | Online Free DevTools by Hexmos"
+title: 'Pi-hole Manager - Control Ad-Blocking DNS | Online Free DevTools by Hexmos'
 name: pihole
-path: "/freedevtools/tldr/linux/pihole/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pihole/"
-description: "Control ad-blocking DNS server with Pi-hole Manager. Update lists, flush cache, and manage domains. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pihole/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pihole/'
+description: 'Control ad-blocking DNS server with Pi-hole Manager. Update lists, flush cache, and manage domains. Free online tool, no registration required.'
 category: linux
 keywords:
-- pihole manager
-- pihole ad blocking
-- pihole dns server
-- linux pihole
-- pihole gravity
-- pihole update
-- pihole allow deny
-- pihole query domain
-- pihole real-time log
-- pihole command line
+  - pihole manager
+  - pihole ad blocking
+  - pihole dns server
+  - linux pihole
+  - pihole gravity
+  - pihole update
+  - pihole allow deny
+  - pihole query domain
+  - pihole real-time log
+  - pihole command line
 features:
-- Check Pi-hole server status
-- Update Pi-hole software and gravity lists
-- Start or stop the Pi-hole daemon process
-- Reload DNS resolver without restarting the server
-- Allow or deny specific domains from accessing the internet
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check Pi-hole server status
+  - Update Pi-hole software and gravity lists
+  - Start or stop the Pi-hole daemon process
+  - Reload DNS resolver without restarting the server
+  - Allow or deny specific domains from accessing the internet
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pihole

@@ -1,29 +1,29 @@
 ---
-title: "NPM Test - Execute Project Tests | Online Free DevTools by Hexmos"
+title: 'NPM Test - Execute Project Tests | Online Free DevTools by Hexmos'
 name: npm-test
-path: "/freedevtools/tldr/npm/npm-test/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-test/"
-description: "Execute NPM project tests with NPM Test. Streamline your testing workflow and ensure code quality directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-test/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-test/'
+description: 'Execute NPM project tests with NPM Test. Streamline your testing workflow and ensure code quality directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- npm test command
-- npm run test alternative
-- javascript testing
-- node.js testing
-- npm test script
-- automated testing npm
-- command line testing
-- package.json test
-- npm test execution
-- project test runner
+  - npm test command
+  - npm run test alternative
+  - javascript testing
+  - node.js testing
+  - npm test script
+  - automated testing npm
+  - command line testing
+  - package.json test
+  - npm test execution
+  - project test runner
 features:
-- Run test suites defined in package.json
-- Execute tests with custom configurations
-- Integrate with various testing frameworks
-- Provide command-line test execution
-- Streamline the testing process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run test suites defined in package.json
+  - Execute tests with custom configurations
+  - Integrate with various testing frameworks
+  - Provide command-line test execution
+  - Streamline the testing process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm test

@@ -1,29 +1,29 @@
 ---
-title: "Calculate Sequence Composition - Compseq | Online Free DevTools by Hexmos"
+title: 'Calculate Sequence Composition - Compseq | Online Free DevTools by Hexmos'
 name: compseq
-path: "/freedevtools/tldr/linux/compseq/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/compseq/"
-description: "Calculate sequence composition with Compseq. Analyze DNA and protein sequences to determine word frequencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/compseq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/compseq/'
+description: 'Calculate sequence composition with Compseq. Analyze DNA and protein sequences to determine word frequencies. Free online tool, no registration required.'
 category: linux
 keywords:
-- DNA sequence analyzer
-- Protein sequence composition
-- FASTA file analyzer
-- Codon frequency counter
-- Amino acid sequence analysis
-- Nucleotide word frequency
-- Bioinformatics sequence tool
-- Compseq linux command
-- Sequence motif finder
-- Genome sequence analysis
+  - DNA sequence analyzer
+  - Protein sequence composition
+  - FASTA file analyzer
+  - Codon frequency counter
+  - Amino acid sequence analysis
+  - Nucleotide word frequency
+  - Bioinformatics sequence tool
+  - Compseq linux command
+  - Sequence motif finder
+  - Genome sequence analysis
 features:
-- Counts word frequencies in DNA sequences
-- Calculates composition of amino acid sequences
-- Analyzes sequences in FASTA format
-- Provides frame-shifted codon frequency analysis
-- Compares sequence composition against background frequencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Counts word frequencies in DNA sequences
+  - Calculates composition of amino acid sequences
+  - Analyzes sequences in FASTA format
+  - Provides frame-shifted codon frequency analysis
+  - Compares sequence composition against background frequencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # compseq

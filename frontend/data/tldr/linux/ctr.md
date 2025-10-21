@@ -1,9 +1,9 @@
 ---
-title: "Manage Containerd - Control Containers with ctr | Online Free DevTools by Hexmos"
+title: 'Manage Containerd - Control Containers with ctr | Online Free DevTools by Hexmos'
 name: ctr
-path: "/freedevtools/tldr/linux/ctr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ctr/"
-description: "Control and manage containerd containers and images with the ctr command.  List, pull, and tag images easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ctr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ctr/'
+description: 'Control and manage containerd containers and images with the ctr command.  List, pull, and tag images easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - containerd container management
@@ -22,8 +22,8 @@ features:
   - Pull new container images from registries
   - Tag existing container images with custom names
   - Manage containerd containers and images efficiently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ctr

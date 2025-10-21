@@ -1,29 +1,29 @@
 ---
-title: "SFDK Make - Execute Build Steps | Online Free DevTools by Hexmos"
+title: 'SFDK Make - Execute Build Steps | Online Free DevTools by Hexmos'
 name: sfdk-make
-path: "/freedevtools/tldr/sfdk/sfdk-make/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-make/"
-description: "Execute build steps with SFDK Make. Streamline your Sailfish OS application development workflow using command-line tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-make/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-make/'
+description: 'Execute build steps with SFDK Make. Streamline your Sailfish OS application development workflow using command-line tools. Free online tool, no registration required.'
 category: common
 keywords:
-- sailfishos build tool
-- sfdk build execution
-- qmake build system
-- make command line
-- linux build process
-- sailfishos sdk
-- command-line build
-- makefile generator
-- cross-platform build
-- sfdk application build
+  - sailfishos build tool
+  - sfdk build execution
+  - qmake build system
+  - make command line
+  - linux build process
+  - sailfishos sdk
+  - command-line build
+  - makefile generator
+  - cross-platform build
+  - sfdk application build
 features:
-- Execute make build steps
-- Pass custom arguments to make
-- Integrate with Sailfish OS SDK
-- Simplify application building process
-- Manage build configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute make build steps
+  - Pass custom arguments to make
+  - Integrate with Sailfish OS SDK
+  - Simplify application building process
+  - Manage build configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk make

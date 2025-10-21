@@ -1,29 +1,29 @@
 ---
-title: "Control Scala Apps - Manage Artifacts with cs | Online Free DevTools by Hexmos"
+title: 'Control Scala Apps - Manage Artifacts with cs | Online Free DevTools by Hexmos'
 name: cs
-path: "/freedevtools/tldr/cs/cs/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/cs/"
-description: "Manage Scala apps instantly with cs, the Scala artifact manager. Install, update, and setup Scala development environments quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/cs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/cs/'
+description: 'Manage Scala apps instantly with cs, the Scala artifact manager. Install, update, and setup Scala development environments quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- scala application manager
-- scala artifact manager
-- coursier command line
-- scala environment setup
-- scala package installer
-- scala dependency resolver
-- cs install command
-- cs update command
-- scala development tools
-- linux scala manager
+  - scala application manager
+  - scala artifact manager
+  - coursier command line
+  - scala environment setup
+  - scala package installer
+  - scala dependency resolver
+  - cs install command
+  - cs update command
+  - scala development tools
+  - linux scala manager
 features:
-- Install and manage Scala applications
-- Setup a Scala development environment
-- Update installed Scala applications
-- List installed Scala applications
-- Uninstall specific Scala applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and manage Scala applications
+  - Setup a Scala development environment
+  - Update installed Scala applications
+  - List installed Scala applications
+  - Uninstall specific Scala applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cs

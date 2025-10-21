@@ -1,29 +1,29 @@
 ---
-title: "List Directory - View Files with lsd | Online Free DevTools by Hexmos"
+title: 'List Directory - View Files with lsd | Online Free DevTools by Hexmos'
 name: lsd
-path: "/freedevtools/tldr/common/lsd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lsd/"
-description: "List directory contents with lsd, a next-generation `ls` command. Quickly view files, including hidden ones, sorted by various criteria. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lsd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lsd/'
+description: 'List directory contents with lsd, a next-generation `ls` command. Quickly view files, including hidden ones, sorted by various criteria. Free online tool, no registration required.'
 category: common
 keywords:
-- directory listing
-- file viewer
-- lsd command
-- ls replacement
-- rust ls
-- linux directory
-- macos directory
-- unix file system
-- command line file manager
-- recursive directory tree
+  - directory listing
+  - file viewer
+  - lsd command
+  - ls replacement
+  - rust ls
+  - linux directory
+  - macos directory
+  - unix file system
+  - command line file manager
+  - recursive directory tree
 features:
-- Display directory contents in a single line format
-- Show all files, including hidden files and directories
-- Classify file types by appending a trailing character
-- Output long format with permissions, ownership, and size
-- Recursively list directories in a tree structure
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display directory contents in a single line format
+  - Show all files, including hidden files and directories
+  - Classify file types by appending a trailing character
+  - Output long format with permissions, ownership, and size
+  - Recursively list directories in a tree structure
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsd

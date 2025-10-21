@@ -1,29 +1,29 @@
 ---
-title: "Git Count Objects - Analyze Disk Usage | Online Free DevTools by Hexmos"
+title: 'Git Count Objects - Analyze Disk Usage | Online Free DevTools by Hexmos'
 name: git-count-objects
-path: "/freedevtools/tldr/git/git-count-objects/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-count-objects/"
-description: "Analyze git repository disk usage with Git Count Objects. Track unpacked objects and optimize repository size using command line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-count-objects/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-count-objects/'
+description: 'Analyze git repository disk usage with Git Count Objects. Track unpacked objects and optimize repository size using command line options. Free online tool, no registration required.'
 category: common
 keywords:
-- git object count
-- git disk usage analysis
-- git repository size
-- git unpacked objects
-- git verbose output
-- git human-readable sizes
-- git optimization
-- git command line tool
-- git storage management
-- git repository health
+  - git object count
+  - git disk usage analysis
+  - git repository size
+  - git unpacked objects
+  - git verbose output
+  - git human-readable sizes
+  - git optimization
+  - git command line tool
+  - git storage management
+  - git repository health
 features:
-- Count unpacked Git objects.
-- Display total disk usage of Git objects.
-- Show sizes in human-readable format.
-- Provide verbose output with detailed information.
-- Analyze Git repository storage consumption.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Count unpacked Git objects.
+  - Display total disk usage of Git objects.
+  - Show sizes in human-readable format.
+  - Provide verbose output with detailed information.
+  - Analyze Git repository storage consumption.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git count-objects

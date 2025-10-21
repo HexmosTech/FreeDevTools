@@ -1,9 +1,9 @@
 ---
-title: "Nala Package Manager - Manage Packages Efficiently | Online Free DevTools by Hexmos"
+title: 'Nala Package Manager - Manage Packages Efficiently | Online Free DevTools by Hexmos'
 name: nala
-path: "/freedevtools/tldr/linux/nala/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nala/"
-description: "Manage packages efficiently with Nala, a powerful package manager.  Install, remove, update, and search packages with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nala/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nala/'
+description: 'Manage packages efficiently with Nala, a powerful package manager.  Install, remove, update, and search packages with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package manager
@@ -22,8 +22,8 @@ features:
   - Searches for packages by name or description.
   - Upgrades the entire system to the latest package versions.
   - Auto removes unused dependencies to keep your system clean.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nala

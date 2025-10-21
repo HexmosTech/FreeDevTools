@@ -1,9 +1,9 @@
 ---
-title: "Display Messages - Fullscreen Control with sm | Online Free DevTools by Hexmos"
+title: 'Display Messages - Fullscreen Control with sm | Online Free DevTools by Hexmos'
 name: sm
-path: "/freedevtools/tldr/linux/sm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sm/"
-description: "Control fullscreen messages instantly with sm. Customize colors, rotation, and input sources. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sm/'
+description: 'Control fullscreen messages instantly with sm. Customize colors, rotation, and input sources. Free online tool, no registration required.'
 category: linux
 keywords:
   - fullscreen message display
@@ -22,8 +22,8 @@ features:
   - Set custom foreground and background colors.
   - Rotate messages in 90-degree increments.
   - Display messages from other commands' output.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sm

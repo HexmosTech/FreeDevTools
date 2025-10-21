@@ -1,29 +1,29 @@
 ---
-title: "Exoscale IAM - Manage IAM Roles & API Keys | Online Free DevTools by Hexmos"
+title: 'Exoscale IAM - Manage IAM Roles & API Keys | Online Free DevTools by Hexmos'
 name: exo-iam
-path: "/freedevtools/tldr/exo/exo-iam/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-iam/"
-description: "Manage Exoscale IAM roles and API keys with exo-iam. Securely control access and permissions to your Exoscale resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo-iam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo-iam/'
+description: 'Manage Exoscale IAM roles and API keys with exo-iam. Securely control access and permissions to your Exoscale resources. Free online tool, no registration required.'
 category: common
 keywords:
-- exoscale iam roles
-- exoscale api keys
-- iam role management
-- api key creation
-- exoscale cloud security
-- iam policy management
-- cloud access control
-- exoscale cli
-- iam policy update
-- cloud role based access control
+  - exoscale iam roles
+  - exoscale api keys
+  - iam role management
+  - api key creation
+  - exoscale cloud security
+  - iam policy management
+  - cloud access control
+  - exoscale cli
+  - iam policy update
+  - cloud role based access control
 features:
-- List all IAM roles within your Exoscale account
-- Create new API keys with specific IAM role assignments
-- Create new IAM roles based on JSON policy definitions
-- Show the policy of an existing IAM role in JSON format
-- Update the default Organization IAM policy
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all IAM roles within your Exoscale account
+  - Create new API keys with specific IAM role assignments
+  - Create new IAM roles based on JSON policy definitions
+  - Show the policy of an existing IAM role in JSON format
+  - Update the default Organization IAM policy
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo iam

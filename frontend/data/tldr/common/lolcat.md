@@ -1,29 +1,29 @@
 ---
-title: "Rainbow Colorizer - Colorize Text with lolcat | Online Free DevTools by Hexmos"
+title: 'Rainbow Colorizer - Colorize Text with lolcat | Online Free DevTools by Hexmos'
 name: lolcat
-path: "/freedevtools/tldr/common/lolcat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lolcat/"
-description: "Colorize text with lolcat and add rainbow effects to your console output. Enhance command line text with vibrant truecolor. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lolcat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lolcat/'
+description: 'Colorize text with lolcat and add rainbow effects to your console output. Enhance command line text with vibrant truecolor. Free online tool, no registration required.'
 category: common
 keywords:
-- rainbow colorizer
-- terminal color
-- console colorizer
-- text colorizer
-- colorize text
-- linux colorizer
-- macos colorizer
-- command line color
-- animated text
-- truecolor text
+  - rainbow colorizer
+  - terminal color
+  - console colorizer
+  - text colorizer
+  - colorize text
+  - linux colorizer
+  - macos colorizer
+  - command line color
+  - animated text
+  - truecolor text
 features:
-- Print files to the console in rainbow colors
-- Animate rainbow colors for dynamic output
-- Render 24-bit truecolor rainbow effects
-- Pipe output from other commands through rainbow colors
-- Customize rainbow animation speed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print files to the console in rainbow colors
+  - Animate rainbow colors for dynamic output
+  - Render 24-bit truecolor rainbow effects
+  - Pipe output from other commands through rainbow colors
+  - Customize rainbow animation speed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lolcat

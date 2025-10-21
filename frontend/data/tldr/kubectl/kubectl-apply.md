@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Apply - Create K8s Resources | Online Free DevTools by Hexmos"
+title: 'Kubectl Apply - Create K8s Resources | Online Free DevTools by Hexmos'
 name: kubectl-apply
-path: "/freedevtools/tldr/kubectl/kubectl-apply/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-apply/"
-description: "Create and update Kubernetes resources with Kubectl Apply. Manage configurations, apply manifests, and automate deployments effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-apply/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-apply/'
+description: 'Create and update Kubernetes resources with Kubectl Apply. Manage configurations, apply manifests, and automate deployments effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes resource management
-- kubectl apply command
-- k8s deployment automation
-- declarative configuration apply
-- yaml manifest deployment
-- kubectl create resource
-- kubectl update resource
-- kubernetes command line tool
-- cluster resource management
-- apply kustomization yaml
+  - kubernetes resource management
+  - kubectl apply command
+  - k8s deployment automation
+  - declarative configuration apply
+  - yaml manifest deployment
+  - kubectl create resource
+  - kubectl update resource
+  - kubernetes command line tool
+  - cluster resource management
+  - apply kustomization yaml
 features:
-- Apply configurations from YAML files
-- Update resources based on manifest changes
-- Apply configurations using Kustomize directories
-- Manage Kubernetes resources via standard input
-- Update resources based on last-applied-configuration annotations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Apply configurations from YAML files
+  - Update resources based on manifest changes
+  - Apply configurations using Kustomize directories
+  - Manage Kubernetes resources via standard input
+  - Update resources based on last-applied-configuration annotations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl apply

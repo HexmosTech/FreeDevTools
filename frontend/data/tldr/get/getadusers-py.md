@@ -1,29 +1,29 @@
 ---
-title: "Get AD Users - Extract Active Directory Users | Online Free DevTools by Hexmos"
+title: 'Get AD Users - Extract Active Directory Users | Online Free DevTools by Hexmos'
 name: getadusers.py
-path: "/freedevtools/tldr/get/getadusers-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/get/getadusers-py/"
-description: "Extract Active Directory users with GetADUsers. Retrieve user attributes like last logon time, email, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/get/getadusers-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/get/getadusers-py/'
+description: 'Extract Active Directory users with GetADUsers. Retrieve user attributes like last logon time, email, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- active directory user enumeration
-- ad user attribute retrieval
-- windows active directory scanner
-- ldap user information extraction
-- active directory user details
-- getadusers.py impacket
-- impacket active directory
-- windows domain user list
-- user account auditing
-- active directory reporting
+  - active directory user enumeration
+  - ad user attribute retrieval
+  - windows active directory scanner
+  - ldap user information extraction
+  - active directory user details
+  - getadusers.py impacket
+  - impacket active directory
+  - windows domain user list
+  - user account auditing
+  - active directory reporting
 features:
-- Enumerate all Active Directory users
-- Retrieve specific user attributes
-- Support pass-the-hash authentication
-- Output data to a file
-- Target specific users for extraction
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate all Active Directory users
+  - Retrieve specific user attributes
+  - Support pass-the-hash authentication
+  - Output data to a file
+  - Target specific users for extraction
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # GetADUsers.py

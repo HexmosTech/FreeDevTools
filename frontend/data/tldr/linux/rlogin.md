@@ -1,9 +1,9 @@
 ---
-title: "Rlogin Command - Remote Login Access | Online Free DevTools by Hexmos"
+title: 'Rlogin Command - Remote Login Access | Online Free DevTools by Hexmos'
 name: rlogin
-path: "/freedevtools/tldr/linux/rlogin/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rlogin/"
-description: "Access remote hosts quickly with the rlogin command.  This secure shell command provides simple remote login functionality. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rlogin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rlogin/'
+description: 'Access remote hosts quickly with the rlogin command.  This secure shell command provides simple remote login functionality. Free online tool, no registration required.'
 category: linux
 keywords:
   - remote login command
@@ -22,8 +22,8 @@ features:
   - Provides simple, text-based remote access.
   - Enables quick remote command execution.
   - Facilitates remote file transfers (with limitations).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rlogin

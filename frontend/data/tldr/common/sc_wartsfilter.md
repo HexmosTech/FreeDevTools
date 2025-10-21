@@ -1,29 +1,29 @@
 ---
-title: "Warts Filter - Select Warts Records | Online Free DevTools by Hexmos"
+title: 'Warts Filter - Select Warts Records | Online Free DevTools by Hexmos'
 name: sc_wartsfilter
-path: "/freedevtools/tldr/common/sc_wartsfilter/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sc_wartsfilter/"
-description: "Select warts records with sc_wartsfilter. Filter specific data by destination or action and output to various formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sc_wartsfilter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sc_wartsfilter/'
+description: 'Select warts records with sc_wartsfilter. Filter specific data by destination or action and output to various formats. Free online tool, no registration required.'
 category: common
 keywords:
-- warts data filter
-- warts record selection
-- warts file analysis
-- scamper warts analysis
-- caida warts filtering
-- warts destination filtering
-- warts action filtering
-- warts to json conversion
-- network measurement data
-- warts data extraction
+  - warts data filter
+  - warts record selection
+  - warts file analysis
+  - scamper warts analysis
+  - caida warts filtering
+  - warts destination filtering
+  - warts action filtering
+  - warts to json conversion
+  - network measurement data
+  - warts data extraction
 features:
-- Filter warts data by destination address
-- Filter warts data by IP prefix
-- Filter warts data based on action type
-- Output filtered data to a new warts file
-- Convert filtered warts data to JSON format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Filter warts data by destination address
+  - Filter warts data by IP prefix
+  - Filter warts data based on action type
+  - Output filtered data to a new warts file
+  - Convert filtered warts data to JSON format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sc_wartsfilter

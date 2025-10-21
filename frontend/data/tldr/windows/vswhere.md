@@ -1,29 +1,29 @@
 ---
-title: "Locate VS Installations - Find Visual Studio with vswhere | Online Free DevTools by Hexmos"
+title: 'Locate VS Installations - Find Visual Studio with vswhere | Online Free DevTools by Hexmos'
 name: vswhere
-path: "/freedevtools/tldr/windows/vswhere/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/vswhere/"
-description: "Find Visual Studio installations with vswhere, a powerful command-line tool. Locate MSVC compilers, Clang tools, and MSBuild executables quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/vswhere/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/vswhere/'
+description: 'Find Visual Studio installations with vswhere, a powerful command-line tool. Locate MSVC compilers, Clang tools, and MSBuild executables quickly. Free online tool, no registration required.'
 category: windows
 keywords:
-- Visual Studio finder
-- VS installation locator
-- MSVC compiler path
-- Clang tools directory
-- MSBuild executable location
-- Windows development environment
-- vswhere command-line
-- Visual Studio version discovery
-- vcvarsall.bat path
-- C++ compiler location windows
+  - Visual Studio finder
+  - VS installation locator
+  - MSVC compiler path
+  - Clang tools directory
+  - MSBuild executable location
+  - Windows development environment
+  - vswhere command-line
+  - Visual Studio version discovery
+  - vcvarsall.bat path
+  - C++ compiler location windows
 features:
-- Locate Visual Studio 2017 and newer installations
-- Find the path to vcvarsall.bat
-- Discover the directory of the x64 MSVC compiler
-- Identify the Clang directory bundled with Visual Studio
-- Determine the path of MSBuild.exe
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Locate Visual Studio 2017 and newer installations
+  - Find the path to vcvarsall.bat
+  - Discover the directory of the x64 MSVC compiler
+  - Identify the Clang directory bundled with Visual Studio
+  - Determine the path of MSBuild.exe
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vswhere

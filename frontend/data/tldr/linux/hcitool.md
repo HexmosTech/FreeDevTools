@@ -1,9 +1,9 @@
 ---
-title: "Control Bluetooth Devices - hcitool Command | Online Free DevTools by Hexmos"
+title: 'Control Bluetooth Devices - hcitool Command | Online Free DevTools by Hexmos'
 name: hcitool
-path: "/freedevtools/tldr/linux/hcitool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hcitool/"
-description: "Control Bluetooth devices with hcitool. Monitor connections, configure settings, and send commands to Bluetooth devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hcitool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hcitool/'
+description: 'Control Bluetooth devices with hcitool. Monitor connections, configure settings, and send commands to Bluetooth devices. Free online tool, no registration required.'
 category: linux
 keywords:
   - bluetooth control linux
@@ -22,8 +22,8 @@ features:
   - Fetch detailed information about a remote Bluetooth device
   - Check the link quality to a Bluetooth device
   - Modify Bluetooth transmit power levels
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hcitool

@@ -1,29 +1,29 @@
 ---
-title: "Serve WSGI Apps - Run Python Apps with Waitress | Online Free DevTools by Hexmos"
+title: 'Serve WSGI Apps - Run Python Apps with Waitress | Online Free DevTools by Hexmos'
 name: waitress-serve
-path: "/freedevtools/tldr/common/waitress-serve/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/waitress-serve/"
-description: "Serve Python WSGI applications with Waitress-serve. Deploy Python web apps with customizable ports and threads. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/waitress-serve/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/waitress-serve/'
+description: 'Serve Python WSGI applications with Waitress-serve. Deploy Python web apps with customizable ports and threads. Free online tool, no registration required.'
 category: common
 keywords:
-- python wsgi server
-- waitress server deployment
-- python web app deployment
-- waitress command line
-- wsgi application runner
-- python server configuration
-- waitress threading
-- waitress unix socket
-- wsgi http server
-- python web server
+  - python wsgi server
+  - waitress server deployment
+  - python web app deployment
+  - waitress command line
+  - wsgi application runner
+  - python server configuration
+  - waitress threading
+  - waitress unix socket
+  - wsgi http server
+  - python web server
 features:
-- Serve Python WSGI applications.
-- Configure host and port for serving.
-- Deploy applications using Unix sockets.
-- Adjust the number of threads for request processing.
-- Call factory methods to return WSGI objects.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve Python WSGI applications.
+  - Configure host and port for serving.
+  - Deploy applications using Unix sockets.
+  - Adjust the number of threads for request processing.
+  - Call factory methods to return WSGI objects.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # waitress-serve

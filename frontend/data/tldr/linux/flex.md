@@ -1,9 +1,9 @@
 ---
-title: "Generate Lexical Analyzers with Flex | Online Free DevTools by Hexmos"
+title: 'Generate Lexical Analyzers with Flex | Online Free DevTools by Hexmos'
 name: flex
-path: "/freedevtools/tldr/linux/flex/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/flex/"
-description: "Generate C code for lexical analyzers with Flex.  This powerful tool simplifies the creation of scanners from Lex files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/flex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/flex/'
+description: 'Generate C code for lexical analyzers with Flex.  This powerful tool simplifies the creation of scanners from Lex files. Free online tool, no registration required.'
 category: linux
 keywords:
   - lex analyzer generator
@@ -22,8 +22,8 @@ features:
   - Allows specification of the output file name.
   - Enables generation of batch scanners.
   - Integrates with C compilers for executable creation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flex

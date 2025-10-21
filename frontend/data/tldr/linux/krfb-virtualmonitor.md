@@ -1,9 +1,9 @@
 ---
-title: "Create Virtual Monitor - VNC Control with krfb | Online Free DevTools by Hexmos"
+title: 'Create Virtual Monitor - VNC Control with krfb | Online Free DevTools by Hexmos'
 name: krfb-virtualmonitor
-path: "/freedevtools/tldr/linux/krfb-virtualmonitor/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/krfb-virtualmonitor/"
-description: "Create virtual monitor instances with krfb for VNC control. Access remote desktops seamlessly and manage multiple displays efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/krfb-virtualmonitor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/krfb-virtualmonitor/'
+description: 'Create virtual monitor instances with krfb for VNC control. Access remote desktops seamlessly and manage multiple displays efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - VNC virtual monitor creation
@@ -22,8 +22,8 @@ features:
   - Manage multiple virtual displays simultaneously
   - Control virtual monitors via the command line
   - Enable remote desktop access through VNC
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # krfb-virtualmonitor

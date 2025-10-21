@@ -1,9 +1,9 @@
 ---
-title: "Mokutil - Configure Secure Boot Keys | Online Free DevTools by Hexmos"
+title: 'Mokutil - Configure Secure Boot Keys | Online Free DevTools by Hexmos'
 name: mokutil
-path: "/freedevtools/tldr/linux/mokutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mokutil/"
-description: "Configure Secure Boot keys with Mokutil. Enable or disable Secure Boot validation, list and enroll keys using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mokutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mokutil/'
+description: 'Configure Secure Boot keys with Mokutil. Enable or disable Secure Boot validation, list and enroll keys using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - Secure Boot configuration
@@ -22,8 +22,8 @@ features:
   - Enroll new Secure Boot keys
   - List pending Secure Boot keys for enrollment
   - Set the verbosity level for shim output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mokutil

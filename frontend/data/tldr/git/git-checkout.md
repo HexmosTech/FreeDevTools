@@ -1,29 +1,29 @@
 ---
-title: "Git Checkout - Switch Branches and Restore Files | Online Free DevTools by Hexmos"
+title: 'Git Checkout - Switch Branches and Restore Files | Online Free DevTools by Hexmos'
 name: git-checkout
-path: "/freedevtools/tldr/git/git-checkout/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-checkout/"
-description: "Switch Git branches effortlessly with Git Checkout. Restore files, create new branches, and discard unstaged changes with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-checkout/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-checkout/'
+description: 'Switch Git branches effortlessly with Git Checkout. Restore files, create new branches, and discard unstaged changes with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- git checkout branch
-- git switch branch
-- git restore file
-- git discard changes
-- git create branch
-- git checkout remote branch
-- git revert file
-- git branch management
-- git command line
-- version control
+  - git checkout branch
+  - git switch branch
+  - git restore file
+  - git discard changes
+  - git create branch
+  - git checkout remote branch
+  - git revert file
+  - git branch management
+  - git command line
+  - version control
 features:
-- Switch to existing branches quickly
-- Create and switch to new branches efficiently
-- Discard unstaged changes in the working directory
-- Restore specific files to a previous state
-- Switch to the previously checked out branch
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Switch to existing branches quickly
+  - Create and switch to new branches efficiently
+  - Discard unstaged changes in the working directory
+  - Restore specific files to a previous state
+  - Switch to the previously checked out branch
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git checkout

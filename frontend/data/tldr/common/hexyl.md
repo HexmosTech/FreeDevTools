@@ -1,29 +1,29 @@
 ---
-title: "Hex Viewer - Inspect Files in Hex Format | Online Free DevTools by Hexmos"
+title: 'Hex Viewer - Inspect Files in Hex Format | Online Free DevTools by Hexmos'
 name: hexyl
-path: "/freedevtools/tldr/common/hexyl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hexyl/"
-description: "Inspect files in hex format with Hexyl. Analyze byte patterns, debug data structures, and understand file contents. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hexyl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hexyl/'
+description: 'Inspect files in hex format with Hexyl. Analyze byte patterns, debug data structures, and understand file contents. Free online tool, no registration required.'
 category: common
 keywords:
-- hexadecimal file viewer
-- hex dump analyzer
-- binary data inspector
-- colored hex output
-- terminal hex viewer
-- linux hex editor
-- macos hex viewer
-- windows hex analyzer
-- file format analysis
-- byte level inspection
+  - hexadecimal file viewer
+  - hex dump analyzer
+  - binary data inspector
+  - colored hex output
+  - terminal hex viewer
+  - linux hex editor
+  - macos hex viewer
+  - windows hex analyzer
+  - file format analysis
+  - byte level inspection
 features:
-- View file content in hexadecimal format
-- Colorize output to distinguish byte categories
-- Specify byte range for inspection
-- Read specific bytes starting at an offset
-- Display file data directly in the terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View file content in hexadecimal format
+  - Colorize output to distinguish byte categories
+  - Specify byte range for inspection
+  - Read specific bytes starting at an offset
+  - Display file data directly in the terminal
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hexyl

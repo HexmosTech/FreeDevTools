@@ -1,29 +1,29 @@
 ---
-title: "Manage Git Submodules - Update & Add Repos | Online Free DevTools by Hexmos"
+title: 'Manage Git Submodules - Update & Add Repos | Online Free DevTools by Hexmos'
 name: git-submodule
-path: "/freedevtools/tldr/git/git-submodule/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-submodule/"
-description: "Manage Git submodules with Git Submodule. Add repositories, update submodules, and keep dependencies current. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-submodule/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-submodule/'
+description: 'Manage Git submodules with Git Submodule. Add repositories, update submodules, and keep dependencies current. Free online tool, no registration required.'
 category: common
 keywords:
-- git submodule management
-- git submodule update
-- git submodule add repository
-- git submodule recursive update
-- git submodule dependency management
-- git submodule git pull
-- git submodule command line
-- git submodule repository integration
-- git submodule initialization
-- git submodule version control
+  - git submodule management
+  - git submodule update
+  - git submodule add repository
+  - git submodule recursive update
+  - git submodule dependency management
+  - git submodule git pull
+  - git submodule command line
+  - git submodule repository integration
+  - git submodule initialization
+  - git submodule version control
 features:
-- Recursively initializes and updates submodules
-- Adds a Git repository as a submodule to a project
-- Adds a submodule to a specific directory
-- Updates all submodules to their latest commits
-- Executes commands in each submodule
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively initializes and updates submodules
+  - Adds a Git repository as a submodule to a project
+  - Adds a submodule to a specific directory
+  - Updates all submodules to their latest commits
+  - Executes commands in each submodule
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git submodule

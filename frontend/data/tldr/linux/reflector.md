@@ -1,9 +1,9 @@
 ---
-title: "Reflector - Generate Mirrorlists | Online Free DevTools by Hexmos"
+title: 'Reflector - Generate Mirrorlists | Online Free DevTools by Hexmos'
 name: reflector
-path: "/freedevtools/tldr/linux/reflector/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/reflector/"
-description: "Generate optimized mirrorlists with Reflector for faster downloads. Sort mirrors, filter by country and protocol, and save configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/reflector/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/reflector/'
+description: 'Generate optimized mirrorlists with Reflector for faster downloads. Sort mirrors, filter by country and protocol, and save configurations. Free online tool, no registration required.'
 category: linux
 keywords:
   - mirrorlist generator
@@ -22,8 +22,8 @@ features:
   - Fetch the latest synchronized mirrors
   - Use configuration files for mirror selection
   - Display help information for command usage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # reflector

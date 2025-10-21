@@ -1,9 +1,9 @@
 ---
-title: "Eww Widget Manager - Control Window Manager Widgets | Online Free DevTools by Hexmos"
+title: 'Eww Widget Manager - Control Window Manager Widgets | Online Free DevTools by Hexmos'
 name: eww
-path: "/freedevtools/tldr/linux/eww/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eww/"
-description: "Control custom widgets in your window manager with Eww.  Manage and customize widgets easily using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eww/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eww/'
+description: 'Control custom widgets in your window manager with Eww.  Manage and customize widgets easily using command-line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - eww widget manager
@@ -22,8 +22,8 @@ features:
   - Reload Eww configuration without restarting the daemon.
   - View and monitor Eww logs for debugging purposes.
   - Control multiple widgets simultaneously from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eww

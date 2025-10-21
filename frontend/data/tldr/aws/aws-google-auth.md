@@ -1,29 +1,29 @@
 ---
-title: "Acquire AWS Credentials - Google SSO Auth | Online Free DevTools by Hexmos"
+title: 'Acquire AWS Credentials - Google SSO Auth | Online Free DevTools by Hexmos'
 name: aws-google-auth
-path: "/freedevtools/tldr/aws/aws-google-auth/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-google-auth/"
-description: "Acquire AWS credentials with aws-google-auth. Easily manage temporary STS credentials using Google Apps SSO. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-google-auth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-google-auth/'
+description: 'Acquire AWS credentials with aws-google-auth. Easily manage temporary STS credentials using Google Apps SSO. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS credentials acquisition
-- Google SSO authentication
-- STS credentials management
-- AWS temporary credentials
-- Google Apps federation
-- SAML role resolution
-- CLI authentication tool
-- aws-google-auth command line
-- Google identity provider
-- AWS security token service
+  - AWS credentials acquisition
+  - Google SSO authentication
+  - STS credentials management
+  - AWS temporary credentials
+  - Google Apps federation
+  - SAML role resolution
+  - CLI authentication tool
+  - aws-google-auth command line
+  - Google identity provider
+  - AWS security token service
 features:
-- Authenticate AWS via Google SSO
-- Acquire temporary AWS credentials
-- Resolve AWS account aliases
-- Specify credentials duration
-- Select AWS role interactively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate AWS via Google SSO
+  - Acquire temporary AWS credentials
+  - Resolve AWS account aliases
+  - Specify credentials duration
+  - Select AWS role interactively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws-google-auth

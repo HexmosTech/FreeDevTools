@@ -1,29 +1,29 @@
 ---
-title: "Index Filter - Modify Container Index with Crane | Online Free DevTools by Hexmos"
+title: 'Index Filter - Modify Container Index with Crane | Online Free DevTools by Hexmos'
 name: crane-index-filter
-path: "/freedevtools/tldr/crane/crane-index-filter/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-index-filter/"
-description: "Modify container index effortlessly with Crane Index Filter. Filter by platform, tag images, and streamline your container registry. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-index-filter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-index-filter/'
+description: 'Modify container index effortlessly with Crane Index Filter. Filter by platform, tag images, and streamline your container registry. Free online tool, no registration required.'
 category: common
 keywords:
-- container index filter
-- crane index tool
-- container image filter
-- platform specific index
-- docker index manipulation
-- oci index filtering
-- remote index modification
-- multi-platform image management
-- container registry tool
-- crane command line tool
+  - container index filter
+  - crane index tool
+  - container image filter
+  - platform specific index
+  - docker index manipulation
+  - oci index filtering
+  - remote index modification
+  - multi-platform image management
+  - container registry tool
+  - crane command line tool
 features:
-- Filter container index by platform
-- Tag resulting image after filtering
-- Modify remote container registries
-- Support multiple platforms
-- Display command line help
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Filter container index by platform
+  - Tag resulting image after filtering
+  - Modify remote container registries
+  - Support multiple platforms
+  - Display command line help
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane index filter

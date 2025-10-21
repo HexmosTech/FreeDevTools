@@ -1,29 +1,29 @@
 ---
-title: "Dotnet Run - Execute .NET Projects | Online Free DevTools by Hexmos"
+title: 'Dotnet Run - Execute .NET Projects | Online Free DevTools by Hexmos'
 name: dotnet-run
-path: "/freedevtools/tldr/dotnet/dotnet-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-run/"
-description: "Execute .NET projects effortlessly with Dotnet Run. Run, build, and debug your .NET applications directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/dotnet/dotnet-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dotnet/dotnet-run/'
+description: 'Execute .NET projects effortlessly with Dotnet Run. Run, build, and debug your .NET applications directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- dotnet run project
-- .net execute application
-- dotnet command line runner
-- cross-platform dotnet runner
-- .net core run command
-- dotnet sdk run
-- windows dotnet run
-- linux dotnet run
-- macos dotnet run
-- dotnet framework runner
+  - dotnet run project
+  - .net execute application
+  - dotnet command line runner
+  - cross-platform dotnet runner
+  - .net core run command
+  - dotnet sdk run
+  - windows dotnet run
+  - linux dotnet run
+  - macos dotnet run
+  - dotnet framework runner
 features:
-- Run .NET projects without compilation.
-- Specify a target framework moniker.
-- Execute projects with custom arguments.
-- Target specific architectures and operating systems.
-- Run a specific project by its project file path.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run .NET projects without compilation.
+  - Specify a target framework moniker.
+  - Execute projects with custom arguments.
+  - Target specific architectures and operating systems.
+  - Run a specific project by its project file path.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotnet run

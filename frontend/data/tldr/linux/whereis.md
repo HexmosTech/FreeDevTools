@@ -1,9 +1,9 @@
 ---
-title: "Locate Files - Find Commands with whereis | Online Free DevTools by Hexmos"
+title: 'Locate Files - Find Commands with whereis | Online Free DevTools by Hexmos'
 name: whereis
-path: "/freedevtools/tldr/linux/whereis/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/whereis/"
-description: "Locate binary, source, and manual page files quickly with whereis.  Find command locations easily and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/whereis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/whereis/'
+description: 'Locate binary, source, and manual page files quickly with whereis.  Find command locations easily and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - find command location
@@ -22,8 +22,8 @@ features:
   - Locates manual pages for commands.
   - Supports specifying file types (-b, -s, -m).
   - Allows searching within specific directories (-B).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # whereis

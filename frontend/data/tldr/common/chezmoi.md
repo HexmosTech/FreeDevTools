@@ -1,29 +1,29 @@
 ---
-title: "Manage Dotfiles - Control Configuration Files with Chezmoi | Online Free DevTools by Hexmos"
+title: 'Manage Dotfiles - Control Configuration Files with Chezmoi | Online Free DevTools by Hexmos'
 name: chezmoi
-path: "/freedevtools/tldr/common/chezmoi/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chezmoi/"
-description: "Manage dotfiles efficiently with Chezmoi. Track, update, and deploy configuration files across multiple machines seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chezmoi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chezmoi/'
+description: 'Manage dotfiles efficiently with Chezmoi. Track, update, and deploy configuration files across multiple machines seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- dotfile manager
-- configuration management
-- chezmoi dotfiles
-- version control dotfiles
-- multi-machine dotfiles
-- dotfiles sync
-- dotfile deployment
-- git dotfiles
-- linux dotfiles
-- macos dotfiles
+  - dotfile manager
+  - configuration management
+  - chezmoi dotfiles
+  - version control dotfiles
+  - multi-machine dotfiles
+  - dotfiles sync
+  - dotfile deployment
+  - git dotfiles
+  - linux dotfiles
+  - macos dotfiles
 features:
-- Initialize chezmoi repository from existing dotfiles
-- Track and manage dotfiles across multiple machines
-- Update repository with local dotfile changes
-- Edit source state of tracked dotfiles
-- Synchronize dotfiles with remote repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize chezmoi repository from existing dotfiles
+  - Track and manage dotfiles across multiple machines
+  - Update repository with local dotfile changes
+  - Edit source state of tracked dotfiles
+  - Synchronize dotfiles with remote repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chezmoi

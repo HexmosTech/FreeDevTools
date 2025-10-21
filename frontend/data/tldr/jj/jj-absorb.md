@@ -1,29 +1,29 @@
 ---
-title: "JJ Absorb - Split Changes | Online Free DevTools by Hexmos"
+title: 'JJ Absorb - Split Changes | Online Free DevTools by Hexmos'
 name: jj-absorb
-path: "/freedevtools/tldr/jj/jj-absorb/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-absorb/"
-description: "Split changes with JJ Absorb. Refactor your code effortlessly by moving changes to suitable ancestors. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-absorb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-absorb/'
+description: 'Split changes with JJ Absorb. Refactor your code effortlessly by moving changes to suitable ancestors. Free online tool, no registration required.'
 category: common
 keywords:
-- jj absorb changes
-- jj version control
-- jj code refactoring
-- jj revision control
-- jj VCS absorb
-- git absorb alternative
-- mercurial absorb alternative
-- jj command line
-- jj split changes
-- jj move changes
+  - jj absorb changes
+  - jj version control
+  - jj code refactoring
+  - jj revision control
+  - jj VCS absorb
+  - git absorb alternative
+  - mercurial absorb alternative
+  - jj command line
+  - jj split changes
+  - jj move changes
 features:
-- Move changes from one revision to multiple ancestors
-- Split changes automatically based on code history
-- Identify suitable ancestor revisions for change migration
-- Refactor code by distributing changes across revisions
-- Move changes only within specified files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Move changes from one revision to multiple ancestors
+  - Split changes automatically based on code history
+  - Identify suitable ancestor revisions for change migration
+  - Refactor code by distributing changes across revisions
+  - Move changes only within specified files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj absorb

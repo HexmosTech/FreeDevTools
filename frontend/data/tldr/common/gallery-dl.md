@@ -1,29 +1,29 @@
 ---
-title: "Download Image Galleries - with gallery-dl | Online Free DevTools by Hexmos"
+title: 'Download Image Galleries - with gallery-dl | Online Free DevTools by Hexmos'
 name: gallery-dl
-path: "/freedevtools/tldr/common/gallery-dl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gallery-dl/"
-description: "Download image galleries effortlessly with gallery-dl. Extract images from various image hosting sites and online collections. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gallery-dl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gallery-dl/'
+description: 'Download image galleries effortlessly with gallery-dl. Extract images from various image hosting sites and online collections. Free online tool, no registration required.'
 category: common
 keywords:
-- image gallery downloader
-- online image extractor
-- gallery-dl command line
-- image hosting scraper
-- gallery downloader Linux
-- gallery downloader macOS
-- gallery downloader Windows
-- image collection downloader
-- batch image downloader
-- website image scraper
+  - image gallery downloader
+  - online image extractor
+  - gallery-dl command line
+  - image hosting scraper
+  - gallery downloader Linux
+  - gallery downloader macOS
+  - gallery downloader Windows
+  - image collection downloader
+  - batch image downloader
+  - website image scraper
 features:
-- Download images from multiple image hosting sites.
-- Save downloaded images to a specified directory.
-- Retrieve cookies for authentication on websites.
-- Extract direct URLs of images from authenticated sites.
-- Filter manga chapters by number and language.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download images from multiple image hosting sites.
+  - Save downloaded images to a specified directory.
+  - Retrieve cookies for authentication on websites.
+  - Extract direct URLs of images from authenticated sites.
+  - Filter manga chapters by number and language.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gallery-dl

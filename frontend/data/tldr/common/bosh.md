@@ -1,29 +1,29 @@
 ---
-title: "BOSH Manager - Deploy BOSH Directors | Online Free DevTools by Hexmos"
+title: 'BOSH Manager - Deploy BOSH Directors | Online Free DevTools by Hexmos'
 name: bosh
-path: "/freedevtools/tldr/common/bosh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bosh/"
-description: "Deploy and manage BOSH directors with BOSH Manager. Simplify cloud deployment, configure stemcells, and manage virtual machines efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bosh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bosh/'
+description: 'Deploy and manage BOSH directors with BOSH Manager. Simplify cloud deployment, configure stemcells, and manage virtual machines efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- BOSH director deployment
-- cloud deployment manager
-- stemcell management
-- BOSH virtual machine management
-- BOSH CLI tool
-- cloud configuration tool
-- BOSH environment management
-- BOSH deployment automation
-- bosh
-- ubuntu
+  - BOSH director deployment
+  - cloud deployment manager
+  - stemcell management
+  - BOSH virtual machine management
+  - BOSH CLI tool
+  - cloud configuration tool
+  - BOSH environment management
+  - BOSH deployment automation
+  - bosh
+  - ubuntu
 features:
-- Deploy and manage BOSH directors in various environments.
-- Configure and manage stemcells for BOSH deployments.
-- Manage virtual machines within BOSH-managed deployments.
-- Upload stemcells from local files or URLs.
-- Display the current cloud configuration of a BOSH environment.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy and manage BOSH directors in various environments.
+  - Configure and manage stemcells for BOSH deployments.
+  - Manage virtual machines within BOSH-managed deployments.
+  - Upload stemcells from local files or URLs.
+  - Display the current cloud configuration of a BOSH environment.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bosh

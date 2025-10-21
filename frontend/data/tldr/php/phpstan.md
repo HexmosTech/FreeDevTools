@@ -1,29 +1,29 @@
 ---
-title: "PHP Static Analysis - Discover Bugs with PHPStan | Online Free DevTools by Hexmos"
+title: 'PHP Static Analysis - Discover Bugs with PHPStan | Online Free DevTools by Hexmos'
 name: phpstan
-path: "/freedevtools/tldr/php/phpstan/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpstan/"
-description: "Discover PHP bugs with PHPStan static analysis tool. Analyze code, find errors and improve code quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpstan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpstan/'
+description: 'Discover PHP bugs with PHPStan static analysis tool. Analyze code, find errors and improve code quality. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP static analysis
-- PHP code analysis
-- PHP bug detection
-- PHP code quality
-- PHP code review
-- PHP code verification
-- PHP linter
-- PHPStan analysis
-- static analysis tool
-- code quality checker
+  - PHP static analysis
+  - PHP code analysis
+  - PHP bug detection
+  - PHP code quality
+  - PHP code review
+  - PHP code verification
+  - PHP linter
+  - PHPStan analysis
+  - static analysis tool
+  - code quality checker
 features:
-- Analyze PHP code for potential errors
-- Detect bugs without executing the code
-- Enforce coding standards and best practices
-- Integrate with existing development workflows
-- Customize analysis rules with configuration files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze PHP code for potential errors
+  - Detect bugs without executing the code
+  - Enforce coding standards and best practices
+  - Integrate with existing development workflows
+  - Customize analysis rules with configuration files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpstan

@@ -1,29 +1,29 @@
 ---
-title: "Extract Data with Xidel - HTML/XML Parser | Online Free DevTools by Hexmos"
+title: 'Extract Data with Xidel - HTML/XML Parser | Online Free DevTools by Hexmos'
 name: xidel
-path: "/freedevtools/tldr/common/xidel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xidel/"
-description: "Extract data easily with Xidel, a powerful HTML/XML parser. Scrape web pages and APIs efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xidel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xidel/'
+description: 'Extract data easily with Xidel, a powerful HTML/XML parser. Scrape web pages and APIs efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- html data extraction
-- xml data extraction
-- json api parser
-- web scraping tool
-- command line scraper
-- xidel xpath
-- xidel css selector
-- xidel pattern matching
-- html parsing linux
-- xml parsing macos
+  - html data extraction
+  - xml data extraction
+  - json api parser
+  - web scraping tool
+  - command line scraper
+  - xidel xpath
+  - xidel css selector
+  - xidel pattern matching
+  - html parsing linux
+  - xml parsing macos
 features:
-- Extract data from HTML/XML using XPath expressions
-- Parse JSON APIs for structured data retrieval
-- Follow links on web pages for recursive scraping
-- Utilize CSS selectors for HTML element targeting
-- Employ pattern matching for flexible data extraction
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract data from HTML/XML using XPath expressions
+  - Parse JSON APIs for structured data retrieval
+  - Follow links on web pages for recursive scraping
+  - Utilize CSS selectors for HTML element targeting
+  - Employ pattern matching for flexible data extraction
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xidel

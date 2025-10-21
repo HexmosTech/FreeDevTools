@@ -1,29 +1,29 @@
 ---
-title: "Identify WAF - Fingerprint Web Application Firewalls | Online Free DevTools by Hexmos"
+title: 'Identify WAF - Fingerprint Web Application Firewalls | Online Free DevTools by Hexmos'
 name: wafw00f
-path: "/freedevtools/tldr/common/wafw00f/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wafw00f/"
-description: "Identify web application firewalls (WAF) with wafw00f. Detect security measures and fingerprint WAF products protecting websites. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wafw00f/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wafw00f/'
+description: 'Identify web application firewalls (WAF) with wafw00f. Detect security measures and fingerprint WAF products protecting websites. Free online tool, no registration required.'
 category: common
 keywords:
-- WAF identification
-- web application firewall detection
-- waf fingerprinting
-- security analysis
-- website security testing
-- penetration testing tool
-- cybersecurity scanner
-- firewall analyzer
-- wafw00f common
-- website defense mechanism
+  - WAF identification
+  - web application firewall detection
+  - waf fingerprinting
+  - security analysis
+  - website security testing
+  - penetration testing tool
+  - cybersecurity scanner
+  - firewall analyzer
+  - wafw00f common
+  - website defense mechanism
 features:
-- Identify WAF products protecting a website
-- Fingerprint specific WAF technologies
-- Test for a wide range of WAFs without stopping at the first match
-- Pass requests through a proxy for advanced analysis
-- Read target URLs from a file for batch processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify WAF products protecting a website
+  - Fingerprint specific WAF technologies
+  - Test for a wide range of WAFs without stopping at the first match
+  - Pass requests through a proxy for advanced analysis
+  - Read target URLs from a file for batch processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wafw00f

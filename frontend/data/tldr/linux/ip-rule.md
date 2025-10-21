@@ -1,9 +1,9 @@
 ---
-title: "IP Rule - Control Routing Policy Database | Online Free DevTools by Hexmos"
+title: 'IP Rule - Control Routing Policy Database | Online Free DevTools by Hexmos'
 name: ip-rule
-path: "/freedevtools/tldr/linux/ip-rule/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-rule/"
-description: "Control routing policy with IP Rule. Manage routing rules, prioritize traffic, and filter packets based on source/destination addresses. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ip-rule/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ip-rule/'
+description: 'Control routing policy with IP Rule. Manage routing rules, prioritize traffic, and filter packets based on source/destination addresses. Free online tool, no registration required.'
 category: linux
 keywords:
   - IP rule control
@@ -22,8 +22,8 @@ features:
   - Add rules based on source or destination addresses
   - Delete specific or all routing rules
   - Save and restore routing rules from a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ip rule

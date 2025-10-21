@@ -1,9 +1,9 @@
 ---
-title: "Synchronize Time - Set Date via NTP | Online Free DevTools by Hexmos"
+title: 'Synchronize Time - Set Date via NTP | Online Free DevTools by Hexmos'
 name: ntpdate
-path: "/freedevtools/tldr/linux/ntpdate/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ntpdate/"
-description: "Synchronize time with NTP using ntpdate. Correct system clock drift and ensure accurate timestamps across your network. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ntpdate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ntpdate/'
+description: 'Synchronize time with NTP using ntpdate. Correct system clock drift and ensure accurate timestamps across your network. Free online tool, no registration required.'
 category: linux
 keywords:
   - NTP time synchronization
@@ -22,8 +22,8 @@ features:
   - Force time update using settimeofday
   - Use unprivileged port for time synchronization
   - Correct time discrepancies on network
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ntpdate

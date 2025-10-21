@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Policy - Manage Cloud Resource Policies | Online Free DevTools by Hexmos"
+title: 'Pulumi Policy - Manage Cloud Resource Policies | Online Free DevTools by Hexmos'
 name: pulumi-policy
-path: "/freedevtools/tldr/pulumi/pulumi-policy/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-policy/"
-description: "Manage Pulumi cloud resource policies effectively with Pulumi Policy. Validate configurations, publish policies, and enforce governance. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-policy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-policy/'
+description: 'Manage Pulumi cloud resource policies effectively with Pulumi Policy. Validate configurations, publish policies, and enforce governance. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi policy management
-- infrastructure as code policy
-- cloud resource governance
-- policy validation tool
-- IaC policy enforcement
-- Pulumi policy as code
-- Pulumi cloud policy
-- policy pack validation
-- Pulumi organization policy
-- Pulumi compliance
+  - Pulumi policy management
+  - infrastructure as code policy
+  - cloud resource governance
+  - policy validation tool
+  - IaC policy enforcement
+  - Pulumi policy as code
+  - Pulumi cloud policy
+  - policy pack validation
+  - Pulumi organization policy
+  - Pulumi compliance
 features:
-- Validate Pulumi policy configurations
-- Publish policies to Pulumi Cloud
-- Enable and disable policies by version
-- List policies for an organization
-- Create new policy packs from templates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validate Pulumi policy configurations
+  - Publish policies to Pulumi Cloud
+  - Enable and disable policies by version
+  - List policies for an organization
+  - Create new policy packs from templates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi policy

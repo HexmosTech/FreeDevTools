@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ChmodCalculatorSkeleton from "./_ChmodCalculatorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Terminal, Shield, User, Users, Globe, RefreshCw } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useMemo } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ChmodCalculatorSkeleton from './_ChmodCalculatorSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Terminal, Shield, User, Users, Globe, RefreshCw } from 'lucide-react';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Types for chmod calculator
-type Scope = "read" | "write" | "execute";
-type Group = "owner" | "group" | "public";
+type Scope = 'read' | 'write' | 'execute';
+type Group = 'owner' | 'group' | 'public';
 
 interface GroupPermissions {
   read: boolean;
@@ -49,34 +49,34 @@ const computeChmodOctalRepresentation = (permissions: Permissions): string => {
     getGroupPermissionValue(permissions.owner),
     getGroupPermissionValue(permissions.group),
     getGroupPermissionValue(permissions.public),
-  ].join("");
+  ].join('');
 };
 
 const computeChmodSymbolicRepresentation = (
   permissions: Permissions
 ): string => {
-  const permissionValue = { read: "r", write: "w", execute: "x" };
+  const permissionValue = { read: 'r', write: 'w', execute: 'x' };
 
   const getGroupPermissionValue = (permission: GroupPermissions) =>
     Object.entries(permission).reduce(
       (acc, [key, isPermSet]) =>
-        acc + (isPermSet ? permissionValue[key as Scope] : "-"),
-      ""
+        acc + (isPermSet ? permissionValue[key as Scope] : '-'),
+      ''
     );
 
   return [
     getGroupPermissionValue(permissions.owner),
     getGroupPermissionValue(permissions.group),
     getGroupPermissionValue(permissions.public),
-  ].join("");
+  ].join('');
 };
 
 // Parse octal input to permissions
 const parseOctalToPermissions = (octal: string): Permissions | null => {
   if (!/^[0-7]{3}$/.test(octal)) return null;
 
-  const digits = octal.split("").map(Number);
-  const groups: Group[] = ["owner", "group", "public"];
+  const digits = octal.split('').map(Number);
+  const groups: Group[] = ['owner', 'group', 'public'];
 
   const permissions: Permissions = {
     owner: { read: false, write: false, execute: false },
@@ -101,8 +101,8 @@ const ChmodCalculator: React.FC = () => {
     public: { read: true, write: false, execute: false },
   });
 
-  const [octalInput, setOctalInput] = useState("644");
-  const [filename, setFilename] = useState("file.txt");
+  const [octalInput, setOctalInput] = useState('644');
+  const [filename, setFilename] = useState('file.txt');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -157,8 +157,8 @@ const ChmodCalculator: React.FC = () => {
       group: { read: true, write: false, execute: false },
       public: { read: true, write: false, execute: false },
     });
-    setFilename("file.txt");
-    toast.success("Reset to default permissions!");
+    setFilename('file.txt');
+    toast.success('Reset to default permissions!');
   };
 
   const handlePresetClick = (preset: Permissions, description: string) => {
@@ -169,8 +169,8 @@ const ChmodCalculator: React.FC = () => {
   // Common permission presets
   const presets = [
     {
-      name: "644",
-      description: "Read/Write for owner, Read for group and public",
+      name: '644',
+      description: 'Read/Write for owner, Read for group and public',
       permissions: {
         owner: { read: true, write: true, execute: false },
         group: { read: true, write: false, execute: false },
@@ -178,8 +178,8 @@ const ChmodCalculator: React.FC = () => {
       },
     },
     {
-      name: "755",
-      description: "Full for owner, Read/Execute for group and public",
+      name: '755',
+      description: 'Full for owner, Read/Execute for group and public',
       permissions: {
         owner: { read: true, write: true, execute: true },
         group: { read: true, write: false, execute: true },
@@ -187,8 +187,8 @@ const ChmodCalculator: React.FC = () => {
       },
     },
     {
-      name: "600",
-      description: "Read/Write for owner only",
+      name: '600',
+      description: 'Read/Write for owner only',
       permissions: {
         owner: { read: true, write: true, execute: false },
         group: { read: false, write: false, execute: false },
@@ -196,8 +196,8 @@ const ChmodCalculator: React.FC = () => {
       },
     },
     {
-      name: "700",
-      description: "Full permissions for owner only",
+      name: '700',
+      description: 'Full permissions for owner only',
       permissions: {
         owner: { read: true, write: true, execute: true },
         group: { read: false, write: false, execute: false },
@@ -207,12 +207,12 @@ const ChmodCalculator: React.FC = () => {
   ];
 
   const scopes: { scope: Scope; title: string; description: string }[] = [
-    { scope: "read", title: "Read (4)", description: "Can read file contents" },
-    { scope: "write", title: "Write (2)", description: "Can modify file" },
+    { scope: 'read', title: 'Read (4)', description: 'Can read file contents' },
+    { scope: 'write', title: 'Write (2)', description: 'Can modify file' },
     {
-      scope: "execute",
-      title: "Execute (1)",
-      description: "Can run as program",
+      scope: 'execute',
+      title: 'Execute (1)',
+      description: 'Can run as program',
     },
   ];
 
@@ -222,25 +222,25 @@ const ChmodCalculator: React.FC = () => {
     icon: React.ReactNode;
     description: string;
   }[] = [
-      {
-        group: "owner",
-        title: "Owner (u)",
-        icon: <User className="h-4 w-4" />,
-        description: "File owner",
-      },
-      {
-        group: "group",
-        title: "Group (g)",
-        icon: <Users className="h-4 w-4" />,
-        description: "File group",
-      },
-      {
-        group: "public",
-        title: "Others (o)",
-        icon: <Globe className="h-4 w-4" />,
-        description: "Everyone else",
-      },
-    ];
+    {
+      group: 'owner',
+      title: 'Owner (u)',
+      icon: <User className="h-4 w-4" />,
+      description: 'File owner',
+    },
+    {
+      group: 'group',
+      title: 'Group (g)',
+      icon: <Users className="h-4 w-4" />,
+      description: 'File group',
+    },
+    {
+      group: 'public',
+      title: 'Others (o)',
+      icon: <Globe className="h-4 w-4" />,
+      description: 'Everyone else',
+    },
+  ];
 
   return (
     <ToolContainer>
@@ -603,8 +603,8 @@ const ChmodCalculator: React.FC = () => {
                         Batch Operations
                       </h5>
                       <div className="bg-slate-100 dark:bg-slate-800 rounded p-3 font-mono text-sm">
-                        <div>find /path -type f -exec chmod 644 { } \;</div>
-                        <div>find /path -type d -exec chmod 755 { } \;</div>
+                        <div>find /path -type f -exec chmod 644 {} \;</div>
+                        <div>find /path -type d -exec chmod 755 {} \;</div>
                       </div>
                       <p className="text-xs text-slate-600 dark:text-slate-400">
                         Set permissions recursively for files and directories

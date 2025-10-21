@@ -1,35 +1,35 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import MacAddressGeneratorSkeleton from "./_MacAddressGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import MacAddressGeneratorSkeleton from './_MacAddressGeneratorSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const CASE_OPTIONS = [
-  { label: "Uppercase", value: "upper" },
-  { label: "Lowercase", value: "lower" },
+  { label: 'Uppercase', value: 'upper' },
+  { label: 'Lowercase', value: 'lower' },
 ];
 const SEPARATOR_OPTIONS = [
-  { label: ":", value: ":" },
-  { label: "-", value: "-" },
-  { label: ".", value: "." },
-  { label: "None", value: "none" },
+  { label: ':', value: ':' },
+  { label: '-', value: '-' },
+  { label: '.', value: '.' },
+  { label: 'None', value: 'none' },
 ];
 
 function generateRandomMacAddress(
@@ -38,7 +38,7 @@ function generateRandomMacAddress(
   caseType: string
 ) {
   // Clean prefix and split
-  let cleanPrefix = prefix.replace(/[^a-fA-F0-9]/g, "");
+  let cleanPrefix = prefix.replace(/[^a-fA-F0-9]/g, '');
   let prefixArr = [];
   for (let i = 0; i < cleanPrefix.length; i += 2) {
     prefixArr.push(cleanPrefix.slice(i, i + 2));
@@ -48,22 +48,22 @@ function generateRandomMacAddress(
     prefixArr.push(
       Math.floor(Math.random() * 256)
         .toString(16)
-        .padStart(2, "0")
+        .padStart(2, '0')
     );
   }
   // Use empty string if separator is "none"
-  const actualSeparator = separator === "none" ? "" : separator;
+  const actualSeparator = separator === 'none' ? '' : separator;
   let mac = prefixArr.slice(0, 6).join(actualSeparator);
-  if (caseType === "upper") return mac.toUpperCase();
+  if (caseType === 'upper') return mac.toUpperCase();
   return mac.toLowerCase();
 }
 
 const MacAddressGenerator: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
-  const [prefix, setPrefix] = useState("");
-  const [caseType, setCaseType] = useState("upper");
-  const [separator, setSeparator] = useState(":");
-  const [output, setOutput] = useState("");
+  const [prefix, setPrefix] = useState('');
+  const [caseType, setCaseType] = useState('upper');
+  const [separator, setSeparator] = useState(':');
+  const [output, setOutput] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -73,19 +73,19 @@ const MacAddressGenerator: React.FC = () => {
 
   const handleGenerate = () => {
     if (quantity < 1 || quantity > 100) {
-      toast.error("Quantity must be between 1 and 100");
+      toast.error('Quantity must be between 1 and 100');
       return;
     }
     let macs: string[] = [];
     for (let i = 0; i < quantity; i++) {
       macs.push(generateRandomMacAddress(prefix, separator, caseType));
     }
-    setOutput(macs.join("\n"));
-    toast.success("MAC addresses generated!");
+    setOutput(macs.join('\n'));
+    toast.success('MAC addresses generated!');
   };
 
   const handleClear = () => {
-    setOutput("");
+    setOutput('');
   };
 
   return (

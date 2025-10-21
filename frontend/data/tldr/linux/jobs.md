@@ -1,9 +1,9 @@
 ---
-title: "View Jobs - Manage Shell Processes | Online Free DevTools by Hexmos"
+title: 'View Jobs - Manage Shell Processes | Online Free DevTools by Hexmos'
 name: jobs
-path: "/freedevtools/tldr/linux/jobs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/jobs/"
-description: "Manage shell processes instantly with the jobs command. View, control, and list process information with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/jobs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/jobs/'
+description: 'Manage shell processes instantly with the jobs command. View, control, and list process information with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - shell process management
@@ -22,8 +22,8 @@ features:
   - Display jobs with changed status since the last check.
   - Show only process IDs for concise output.
   - Differentiate between running and stopped processes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jobs

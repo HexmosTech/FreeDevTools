@@ -1,29 +1,29 @@
 ---
-title: "Manage SSH Keys - Control GitHub Keys | Online Free DevTools by Hexmos"
+title: 'Manage SSH Keys - Control GitHub Keys | Online Free DevTools by Hexmos'
 name: gh-ssh-key
-path: "/freedevtools/tldr/gh/gh-ssh-key/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-ssh-key/"
-description: "Manage SSH keys with gh-ssh-key, enabling secure GitHub access. Add, list, and control your SSH keys for seamless development workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-ssh-key/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-ssh-key/'
+description: 'Manage SSH keys with gh-ssh-key, enabling secure GitHub access. Add, list, and control your SSH keys for seamless development workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- SSH key manager
-- GitHub SSH key management
-- SSH key adder
-- Command line SSH key tool
-- gh CLI SSH key
-- SSH key list tool
-- SSH key title editor
-- SSH key authentication
-- GitHub CLI tool
-- OpenSSH key control
+  - SSH key manager
+  - GitHub SSH key management
+  - SSH key adder
+  - Command line SSH key tool
+  - gh CLI SSH key
+  - SSH key list tool
+  - SSH key title editor
+  - SSH key authentication
+  - GitHub CLI tool
+  - OpenSSH key control
 features:
-- List existing SSH keys on a GitHub account
-- Add new SSH keys to a GitHub account via command line
-- Specify a custom title for a new SSH key
-- Secure GitHub access through SSH key management
-- Integrate with the GitHub CLI for simplified SSH key handling
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing SSH keys on a GitHub account
+  - Add new SSH keys to a GitHub account via command line
+  - Specify a custom title for a new SSH key
+  - Secure GitHub access through SSH key management
+  - Integrate with the GitHub CLI for simplified SSH key handling
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh ssh-key

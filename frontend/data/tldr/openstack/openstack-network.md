@@ -1,29 +1,29 @@
 ---
-title: "OpenStack Network - Manage Cloud Networks | Online Free DevTools by Hexmos"
+title: 'OpenStack Network - Manage Cloud Networks | Online Free DevTools by Hexmos'
 name: openstack-network
-path: "/freedevtools/tldr/openstack/openstack-network/"
-canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-network/"
-description: "Manage OpenStack networks efficiently with OpenStack Network tool. Create, delete, enable, and disable cloud networks effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/openstack/openstack-network/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openstack/openstack-network/'
+description: 'Manage OpenStack networks efficiently with OpenStack Network tool. Create, delete, enable, and disable cloud networks effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- openstack network management
-- cloud network control
-- openstack cli network
-- openstack network creation
-- openstack network deletion
-- openstack network configuration
-- openstack network list
-- openstack network show
-- openstack network enable
-- openstack network disable
+  - openstack network management
+  - cloud network control
+  - openstack cli network
+  - openstack network creation
+  - openstack network deletion
+  - openstack network configuration
+  - openstack network list
+  - openstack network show
+  - openstack network enable
+  - openstack network disable
 features:
-- List all available OpenStack networks
-- Display detailed information about a specific network
-- Create new networks with custom configurations
-- Delete existing OpenStack networks
-- Enable or disable network access and functionality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all available OpenStack networks
+  - Display detailed information about a specific network
+  - Create new networks with custom configurations
+  - Delete existing OpenStack networks
+  - Enable or disable network access and functionality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openstack network

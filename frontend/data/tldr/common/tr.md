@@ -1,29 +1,29 @@
 ---
-title: "Translate Characters - Replace Text | Online Free DevTools by Hexmos"
+title: 'Translate Characters - Replace Text | Online Free DevTools by Hexmos'
 name: tr
-path: "/freedevtools/tldr/common/tr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tr/"
-description: "Translate characters with tr. Replace characters in text strings or files using command-line utilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tr/'
+description: 'Translate characters with tr. Replace characters in text strings or files using command-line utilities. Free online tool, no registration required.'
 category: common
 keywords:
-- character translation
-- text replacement
-- string manipulation
-- character mapping
-- delete characters
-- squeeze characters
-- uppercase conversion
-- non-printable character removal
-- character set translation
-- linux tr command
+  - character translation
+  - text replacement
+  - string manipulation
+  - character mapping
+  - delete characters
+  - squeeze characters
+  - uppercase conversion
+  - non-printable character removal
+  - character set translation
+  - linux tr command
 features:
-- Replace specific characters in files
-- Translate characters from command output
-- Map characters between sets
-- Delete specified characters from input
-- Compress repeating characters in text
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Replace specific characters in files
+  - Translate characters from command output
+  - Map characters between sets
+  - Delete specified characters from input
+  - Compress repeating characters in text
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tr

@@ -1,29 +1,29 @@
 ---
-title: "Install Python Packages - Manage with pip3 | Online Free DevTools by Hexmos"
+title: 'Install Python Packages - Manage with pip3 | Online Free DevTools by Hexmos'
 name: pip3
-path: "/freedevtools/tldr/pip/pip3/"
-canonical: "https://hexmos.com/freedevtools/tldr/pip/pip3/"
-description: "Install Python packages easily with pip3, the Python package manager. Manage dependencies, upgrade packages, and create requirements files effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/pip/pip3/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pip/pip3/'
+description: 'Install Python packages easily with pip3, the Python package manager. Manage dependencies, upgrade packages, and create requirements files effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- python package manager
-- pip install package
-- pip upgrade package
-- pip uninstall package
-- python dependency management
-- pip freeze requirements
-- pip install requirements
-- python package info
-- python package installation
-- command line package manager
+  - python package manager
+  - pip install package
+  - pip upgrade package
+  - pip uninstall package
+  - python dependency management
+  - pip freeze requirements
+  - pip install requirements
+  - python package info
+  - python package installation
+  - command line package manager
 features:
-- Install Python packages from PyPI
-- Upgrade existing Python packages
-- Uninstall Python packages from your system
-- Generate a list of installed packages for reproducibility
-- Install packages from a requirements file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Python packages from PyPI
+  - Upgrade existing Python packages
+  - Uninstall Python packages from your system
+  - Generate a list of installed packages for reproducibility
+  - Install packages from a requirements file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pip3

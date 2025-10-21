@@ -1,9 +1,9 @@
 ---
-title: "Generate Random Identity - Rig | Online Free DevTools by Hexmos"
+title: 'Generate Random Identity - Rig | Online Free DevTools by Hexmos'
 name: rig
-path: "/freedevtools/tldr/linux/rig/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rig/"
-description: "Generate random identity data with Rig. Create realistic fake names, addresses, and geographical information for development and testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rig/'
+description: 'Generate random identity data with Rig. Create realistic fake names, addresses, and geographical information for development and testing. Free online tool, no registration required.'
 category: linux
 keywords:
   - random data generator
@@ -22,8 +22,8 @@ features:
   - Display male or female identities specifically
   - Use custom data files from a directory
   - Generate a specified number of identities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rig

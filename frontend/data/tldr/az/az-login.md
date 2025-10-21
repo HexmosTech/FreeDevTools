@@ -1,29 +1,29 @@
 ---
-title: "Azure Login - Authenticate Azure Accounts | Online Free DevTools by Hexmos"
+title: 'Azure Login - Authenticate Azure Accounts | Online Free DevTools by Hexmos'
 name: az-login
-path: "/freedevtools/tldr/az/az-login/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-login/"
-description: "Authenticate Azure accounts securely with Az Login. Manage Azure subscriptions and resources through the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-login/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-login/'
+description: 'Authenticate Azure accounts securely with Az Login. Manage Azure subscriptions and resources through the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- azure login
-- az cli login
-- azure authentication
-- command line login azure
-- azure service principal login
-- azure identity login
-- azure vm login
-- azure cli authentication
-- azure subscription login
-- azure ad login
+  - azure login
+  - az cli login
+  - azure authentication
+  - command line login azure
+  - azure service principal login
+  - azure identity login
+  - azure vm login
+  - azure cli authentication
+  - azure subscription login
+  - azure ad login
 features:
-- Log in to Azure interactively via the command line.
-- Authenticate using a service principal with a client secret.
-- Authenticate with a service principal and a client certificate.
-- Log in using a virtual machine's system assigned identity.
-- Log in with a user-assigned managed identity.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Log in to Azure interactively via the command line.
+  - Authenticate using a service principal with a client secret.
+  - Authenticate with a service principal and a client certificate.
+  - Log in using a virtual machine's system assigned identity.
+  - Log in with a user-assigned managed identity.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az login

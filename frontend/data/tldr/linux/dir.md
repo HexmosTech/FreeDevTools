@@ -1,29 +1,29 @@
 ---
-title: "List Directory - Manage Linux Files | Online Free DevTools by Hexmos"
+title: 'List Directory - Manage Linux Files | Online Free DevTools by Hexmos'
 name: dir
-path: "/freedevtools/tldr/linux/dir/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dir/"
-description: "List directory contents quickly with DIR command. Manage Linux files and directories efficiently, including hidden files and subdirectories. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dir/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dir/'
+description: 'List directory contents quickly with DIR command. Manage Linux files and directories efficiently, including hidden files and subdirectories. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux directory listing
-- linux file management
-- linux hidden files
-- linux subdirectories
-- linux escape sequences
-- linux command line tool
-- file listing linux
-- directory management linux
-- ls alternative linux
-- command line file explorer
+  - linux directory listing
+  - linux file management
+  - linux hidden files
+  - linux subdirectories
+  - linux escape sequences
+  - linux command line tool
+  - file listing linux
+  - directory management linux
+  - ls alternative linux
+  - command line file explorer
 features:
-- List all files including hidden files
-- List files with author information
-- Exclude files using a specified pattern
-- List subdirectories recursively
-- Display help information for the command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all files including hidden files
+  - List files with author information
+  - Exclude files using a specified pattern
+  - List subdirectories recursively
+  - Display help information for the command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dir

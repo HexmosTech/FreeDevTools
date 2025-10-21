@@ -1,29 +1,29 @@
 ---
-title: "Control BIRD Routing - Manage Network Routes | Online Free DevTools by Hexmos"
+title: 'Control BIRD Routing - Manage Network Routes | Online Free DevTools by Hexmos'
 name: bird
-path: "/freedevtools/tldr/common/bird/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bird/"
-description: "Control network routing with BIRD Routing Daemon. Manage BGP, OSPF, and Babel protocols. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bird/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bird/'
+description: 'Control network routing with BIRD Routing Daemon. Manage BGP, OSPF, and Babel protocols. Free online tool, no registration required.'
 category: common
 keywords:
-- BIRD routing daemon
-- network routing management
-- BGP configuration
-- OSPF configuration
-- Babel protocol setup
-- routing protocol control
-- linux routing configuration
-- command line routing
-- bird.conf configuration
-- network policy routing
+  - BIRD routing daemon
+  - network routing management
+  - BGP configuration
+  - OSPF configuration
+  - Babel protocol setup
+  - routing protocol control
+  - linux routing configuration
+  - command line routing
+  - bird.conf configuration
+  - network policy routing
 features:
-- Start BIRD with a specified configuration file
-- Run BIRD as a specific user
-- Run BIRD as a specific group
-- Control routing protocols like BGP, OSPF, and Babel
-- Manage network routes using command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start BIRD with a specified configuration file
+  - Run BIRD as a specific user
+  - Run BIRD as a specific group
+  - Control routing protocols like BGP, OSPF, and Babel
+  - Manage network routes using command-line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bird

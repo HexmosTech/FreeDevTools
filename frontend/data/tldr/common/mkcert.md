@@ -1,29 +1,29 @@
 ---
-title: "Generate Certificates - mkcert | Online Free DevTools by Hexmos"
+title: 'Generate Certificates - mkcert | Online Free DevTools by Hexmos'
 name: mkcert
-path: "/freedevtools/tldr/common/mkcert/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mkcert/"
-description: "Generate trusted development certificates with mkcert. Create localhost certificates and secure your development environment easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mkcert/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mkcert/'
+description: 'Generate trusted development certificates with mkcert. Create localhost certificates and secure your development environment easily. Free online tool, no registration required.'
 category: common
 keywords:
-- localhost certificate
-- development certificate
-- mkcert certificate
-- trusted certificate
-- SSL certificate
-- TLS certificate
-- certificate generator
-- certificate authority
-- CA installation
-- wildcard certificate
+  - localhost certificate
+  - development certificate
+  - mkcert certificate
+  - trusted certificate
+  - SSL certificate
+  - TLS certificate
+  - certificate generator
+  - certificate authority
+  - CA installation
+  - wildcard certificate
 features:
-- Generate locally-trusted development certificates
-- Install the local CA in the system trust store
-- Create certificates for single or multiple domains
-- Generate wildcard certificates for subdomains
-- Uninstall the local CA from the system trust store
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate locally-trusted development certificates
+  - Install the local CA in the system trust store
+  - Create certificates for single or multiple domains
+  - Generate wildcard certificates for subdomains
+  - Uninstall the local CA from the system trust store
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkcert

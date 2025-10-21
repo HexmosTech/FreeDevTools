@@ -1,29 +1,29 @@
 ---
-title: "VBoxManage - Control Virtual Machines | Online Free DevTools by Hexmos"
+title: 'VBoxManage - Control Virtual Machines | Online Free DevTools by Hexmos'
 name: vboxmanage
-path: "/freedevtools/tldr/vboxmanager/vboxmanage/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage/"
-description: "Control Virtual Machines with VBoxManage. Manage VirtualBox VMs via command line, including starting, cloning, and exporting. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage/'
+description: 'Control Virtual Machines with VBoxManage. Manage VirtualBox VMs via command line, including starting, cloning, and exporting. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine manager
-- vboxmanage command line
-- virtualbox control
-- vm start command
-- vm clone command
-- virtualbox export vm
-- virtualbox import vm
-- virtualbox linux
-- virtualbox macos
-- virtualbox windows
+  - virtual machine manager
+  - vboxmanage command line
+  - virtualbox control
+  - vm start command
+  - vm clone command
+  - virtualbox export vm
+  - virtualbox import vm
+  - virtualbox linux
+  - virtualbox macos
+  - virtualbox windows
 features:
-- Start and stop virtual machines
-- Clone virtual machine instances
-- Import and export virtual appliances
-- Display virtual machine information
-- Manage virtual machine settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and stop virtual machines
+  - Clone virtual machine instances
+  - Import and export virtual appliances
+  - Display virtual machine information
+  - Manage virtual machine settings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage

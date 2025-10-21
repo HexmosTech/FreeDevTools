@@ -1,29 +1,29 @@
 ---
-title: "Validate PPD Files - Test PPD Conformance | Online Free DevTools by Hexmos"
+title: 'Validate PPD Files - Test PPD Conformance | Online Free DevTools by Hexmos'
 name: cupstestppd
-path: "/freedevtools/tldr/common/cupstestppd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cupstestppd/"
-description: "Validate PPD files with cupstestppd. Test printer definition conformance and identify errors in PPD files for CUPS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cupstestppd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cupstestppd/'
+description: 'Validate PPD files with cupstestppd. Test printer definition conformance and identify errors in PPD files for CUPS. Free online tool, no registration required.'
 category: common
 keywords:
-- PPD file validation
-- CUPS PPD test
-- Printer definition conformance
-- PPD syntax checker
-- Linux PPD validator
-- macOS PPD tester
-- cupsd configuration
-- printer driver testing
-- postscript printer definition
-- PPD error checking
+  - PPD file validation
+  - CUPS PPD test
+  - Printer definition conformance
+  - PPD syntax checker
+  - Linux PPD validator
+  - macOS PPD tester
+  - cupsd configuration
+  - printer driver testing
+  - postscript printer definition
+  - PPD error checking
 features:
-- Test PPD files against CUPS standards
-- Identify syntax errors in PPD files
-- Perform quiet conformance testing
-- Validate PPD files from standard input
-- Analyze PPD files for printer compatibility
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Test PPD files against CUPS standards
+  - Identify syntax errors in PPD files
+  - Perform quiet conformance testing
+  - Validate PPD files from standard input
+  - Analyze PPD files for printer compatibility
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cupstestppd

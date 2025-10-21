@@ -1,29 +1,29 @@
 ---
-title: "PNPM Audit - Scan Dependencies for Vulnerabilities | Online Free DevTools by Hexmos"
+title: 'PNPM Audit - Scan Dependencies for Vulnerabilities | Online Free DevTools by Hexmos'
 name: pnpm-audit
-path: "/freedevtools/tldr/pnpm/pnpm-audit/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnpm/pnpm-audit/"
-description: "Scan dependencies for vulnerabilities with PNPM Audit. Secure your project by identifying security issues in packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnpm/pnpm-audit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnpm/pnpm-audit/'
+description: 'Scan dependencies for vulnerabilities with PNPM Audit. Secure your project by identifying security issues in packages. Free online tool, no registration required.'
 category: common
 keywords:
-- pnpm audit
-- pnpm security scan
-- node security audit
-- javascript vulnerability check
-- npm audit alternative
-- package security analysis
-- dependency vulnerability scan
-- pnpm dependency check
-- node package audit
-- fix package vulnerabilities
+  - pnpm audit
+  - pnpm security scan
+  - node security audit
+  - javascript vulnerability check
+  - npm audit alternative
+  - package security analysis
+  - dependency vulnerability scan
+  - pnpm dependency check
+  - node package audit
+  - fix package vulnerabilities
 features:
-- Detect security vulnerabilities in project dependencies
-- Automatically fix identified vulnerabilities
-- Generate security audit reports in JSON format
-- Audit only development or production dependencies
-- Filter advisories by severity level
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect security vulnerabilities in project dependencies
+  - Automatically fix identified vulnerabilities
+  - Generate security audit reports in JSON format
+  - Audit only development or production dependencies
+  - Filter advisories by severity level
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnpm audit

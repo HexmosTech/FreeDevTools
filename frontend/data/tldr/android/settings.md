@@ -1,9 +1,9 @@
 ---
-title: "Android Settings - Control System Configuration | Online Free DevTools by Hexmos"
+title: 'Android Settings - Control System Configuration | Online Free DevTools by Hexmos'
 name: settings
-path: "/freedevtools/tldr/android/settings/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/settings/"
-description: "Control Android settings with the settings command. Modify system configuration, retrieve settings values, and manage Android parameters. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/settings/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/settings/'
+description: 'Control Android settings with the settings command. Modify system configuration, retrieve settings values, and manage Android parameters. Free online tool, no registration required.'
 category: android
 keywords:
   - android settings control
@@ -22,8 +22,8 @@ features:
   - set a specific setting to a new value
   - delete a specific setting from the system
   - manage android system configurations through command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # settings

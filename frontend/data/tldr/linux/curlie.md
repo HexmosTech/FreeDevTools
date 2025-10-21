@@ -1,9 +1,9 @@
 ---
-title: "Send HTTP Requests - Curlie CLI | Online Free DevTools by Hexmos"
+title: 'Send HTTP Requests - Curlie CLI | Online Free DevTools by Hexmos'
 name: curlie
-path: "/freedevtools/tldr/linux/curlie/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/curlie/"
-description: "Send HTTP requests with Curlie, a command-line tool for simplified API interactions. Execute GET, POST requests and customize headers effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/curlie/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/curlie/'
+description: 'Send HTTP requests with Curlie, a command-line tool for simplified API interactions. Execute GET, POST requests and customize headers effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - HTTP request command line
@@ -22,8 +22,8 @@ features:
   - Customize request headers for advanced API interaction
   - Execute HTTP requests from the terminal
   - Simplify API testing and debugging with command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # curlie

@@ -1,29 +1,29 @@
 ---
-title: "Crunch - Generate Wordlists | Online Free DevTools by Hexmos"
+title: 'Crunch - Generate Wordlists | Online Free DevTools by Hexmos'
 name: crunch
-path: "/freedevtools/tldr/common/crunch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/crunch/"
-description: "Generate wordlists with Crunch. Create custom wordlists based on character sets, patterns and lengths. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/crunch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/crunch/'
+description: 'Generate wordlists with Crunch. Create custom wordlists based on character sets, patterns and lengths. Free online tool, no registration required.'
 category: common
 keywords:
-- wordlist generator
-- password list generator
-- custom wordlist
-- permutation generator
-- dictionary attack wordlist
-- Kali Linux wordlist
-- Linux password cracker
-- wordlist creator
-- Brute force wordlist generator
-- crunch wordlist
+  - wordlist generator
+  - password list generator
+  - custom wordlist
+  - permutation generator
+  - dictionary attack wordlist
+  - Kali Linux wordlist
+  - Linux password cracker
+  - wordlist creator
+  - Brute force wordlist generator
+  - crunch wordlist
 features:
-- Generate wordlists with specified character sets
-- Create wordlists of varying lengths and patterns
-- Generate permutations of characters and strings
-- Output wordlists to files with custom chunk sizes
-- Compress generated wordlists for efficient storage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate wordlists with specified character sets
+  - Create wordlists of varying lengths and patterns
+  - Generate permutations of characters and strings
+  - Output wordlists to files with custom chunk sizes
+  - Compress generated wordlists for efficient storage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crunch

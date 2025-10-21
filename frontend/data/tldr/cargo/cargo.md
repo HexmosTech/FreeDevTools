@@ -1,29 +1,29 @@
 ---
-title: "Cargo - Manage Rust Projects & Crates | Online Free DevTools by Hexmos"
+title: 'Cargo - Manage Rust Projects & Crates | Online Free DevTools by Hexmos'
 name: cargo
-path: "/freedevtools/tldr/cargo/cargo/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo/"
-description: "Manage Rust projects instantly with Cargo, the Rust package manager. Build, install, and manage dependencies effortlessly with this command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo/'
+description: 'Manage Rust projects instantly with Cargo, the Rust package manager. Build, install, and manage dependencies effortlessly with this command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- rust package manager
-- cargo build
-- cargo install
-- rust dependency management
-- crate management
-- rust projects
-- cargo add dependency
-- cargo search crates
-- rust nightly build
-- linux cargo
+  - rust package manager
+  - cargo build
+  - cargo install
+  - rust dependency management
+  - crate management
+  - rust projects
+  - cargo add dependency
+  - cargo search crates
+  - rust nightly build
+  - linux cargo
 features:
-- Build Rust projects with release profiles
-- Install binary crates from the command line
-- Manage project dependencies in Cargo.toml
-- Search for crates using specified search strings
-- Create new Rust binary or library projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Rust projects with release profiles
+  - Install binary crates from the command line
+  - Manage project dependencies in Cargo.toml
+  - Search for crates using specified search strings
+  - Create new Rust binary or library projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo

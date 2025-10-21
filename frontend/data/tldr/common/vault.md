@@ -1,29 +1,29 @@
 ---
-title: "Vault Control - Secure Data Storage | Online Free DevTools by Hexmos"
+title: 'Vault Control - Secure Data Storage | Online Free DevTools by Hexmos'
 name: vault
-path: "/freedevtools/tldr/common/vault/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vault/"
-description: "Control secure data storage with Vault. Encrypt, store, and manage sensitive information using command-line secrets management. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vault/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vault/'
+description: 'Control secure data storage with Vault. Encrypt, store, and manage sensitive information using command-line secrets management. Free online tool, no registration required.'
 category: common
 keywords:
-- vault data storage
-- vault secrets management
-- vault encryption control
-- vault command line tool
-- vault access control
-- vault server management
-- vault security automation
-- hashicorp vault cli
-- vault key management
-- vault secret backend
+  - vault data storage
+  - vault secrets management
+  - vault encryption control
+  - vault command line tool
+  - vault access control
+  - vault server management
+  - vault security automation
+  - hashicorp vault cli
+  - vault key management
+  - vault secret backend
 features:
-- Initialize and unseal Vault for secure operation
-- Authenticate Vault clients using tokens
-- Write secrets to secure storage with flexible backends
-- Read and extract specific fields from stored secrets
-- Seal the Vault to remove encryption keys from memory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize and unseal Vault for secure operation
+  - Authenticate Vault clients using tokens
+  - Write secrets to secure storage with flexible backends
+  - Read and extract specific fields from stored secrets
+  - Seal the Vault to remove encryption keys from memory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vault

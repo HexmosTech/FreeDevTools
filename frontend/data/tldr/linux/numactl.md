@@ -1,29 +1,29 @@
 ---
-title: "Control NUMA Policy - Processes and Memory | Online Free DevTools by Hexmos"
+title: 'Control NUMA Policy - Processes and Memory | Online Free DevTools by Hexmos'
 name: numactl
-path: "/freedevtools/tldr/linux/numactl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/numactl/"
-description: "Control NUMA policy for processes with numactl. Optimize memory allocation and CPU affinity for improved performance on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/numactl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/numactl/'
+description: 'Control NUMA policy for processes with numactl. Optimize memory allocation and CPU affinity for improved performance on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- numa control
-- numa policy
-- linux numa
-- memory affinity
-- cpu affinity
-- process control
-- numa node bind
-- memory interleaving
-- numa optimization
-- numa command line
+  - numa control
+  - numa policy
+  - linux numa
+  - memory affinity
+  - cpu affinity
+  - process control
+  - numa node bind
+  - memory interleaving
+  - numa optimization
+  - numa command line
 features:
-- Bind processes to specific NUMA nodes
-- Control memory allocation on specified NUMA nodes
-- Interleave memory allocation across multiple NUMA nodes
-- Bind processes to specific physical CPUs
-- Optimize application performance on NUMA systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Bind processes to specific NUMA nodes
+  - Control memory allocation on specified NUMA nodes
+  - Interleave memory allocation across multiple NUMA nodes
+  - Bind processes to specific physical CPUs
+  - Optimize application performance on NUMA systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # numactl

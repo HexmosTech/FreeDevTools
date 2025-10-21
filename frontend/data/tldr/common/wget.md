@@ -1,29 +1,29 @@
 ---
-title: "Download Files - Web Downloader with Wget | Online Free DevTools by Hexmos"
+title: 'Download Files - Web Downloader with Wget | Online Free DevTools by Hexmos'
 name: wget
-path: "/freedevtools/tldr/common/wget/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wget/"
-description: "Download files from the web with Wget, a powerful web downloader supporting HTTP, HTTPS, and FTP. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wget/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wget/'
+description: 'Download files from the web with Wget, a powerful web downloader supporting HTTP, HTTPS, and FTP. Free online tool, no registration required.'
 category: common
 keywords:
-- web file downloader
-- wget command line
-- http downloader
-- https downloader
-- ftp downloader
-- recursive download
-- download manager
-- linux wget
-- macos wget
-- wget mirror website
+  - web file downloader
+  - wget command line
+  - http downloader
+  - https downloader
+  - ftp downloader
+  - recursive download
+  - download manager
+  - linux wget
+  - macos wget
+  - wget mirror website
 features:
-- Download files from specified URLs
-- Mirror entire websites recursively
-- Limit download speed and connection retries
-- Authenticate with HTTP and FTP servers
-- Continue interrupted downloads
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download files from specified URLs
+  - Mirror entire websites recursively
+  - Limit download speed and connection retries
+  - Authenticate with HTTP and FTP servers
+  - Continue interrupted downloads
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wget

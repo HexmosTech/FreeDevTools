@@ -1,9 +1,9 @@
 ---
-title: "Create EROFS Filesystem - Format Image | Online Free DevTools by Hexmos"
+title: 'Create EROFS Filesystem - Format Image | Online Free DevTools by Hexmos'
 name: mkfs.erofs
-path: "/freedevtools/tldr/linux/mkfs-erofs/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mkfs-erofs/"
-description: "Create EROFS filesystem with mkfs.erofs. Generate compressed images and control file ownership. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkfs-erofs/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mkfs-erofs/'
+description: 'Create EROFS filesystem with mkfs.erofs. Generate compressed images and control file ownership. Free online tool, no registration required.'
 category: linux
 keywords:
   - erofs filesystem image
@@ -22,8 +22,8 @@ features:
   - Create a compressed EROFS filesystem image
   - Set all files in the EROFS image to be owned by root
   - Generate a read-only filesystem image
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfs.erofs

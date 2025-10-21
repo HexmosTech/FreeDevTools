@@ -1,29 +1,29 @@
 ---
-title: "Transpile JavaScript - Babel ES6 to ES5 | Online Free DevTools by Hexmos"
+title: 'Transpile JavaScript - Babel ES6 to ES5 | Online Free DevTools by Hexmos'
 name: babel
-path: "/freedevtools/tldr/common/babel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/babel/"
-description: "Transpile JavaScript code with Babel. Convert ES6/ES7 syntax to ES5 for broader browser compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/babel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/babel/'
+description: 'Transpile JavaScript code with Babel. Convert ES6/ES7 syntax to ES5 for broader browser compatibility. Free online tool, no registration required.'
 category: common
 keywords:
-- JavaScript transpiler
-- ES6 to ES5 converter
-- Babel transpiler
-- JavaScript compiler
-- JavaScript syntax converter
-- Babel CLI
-- Babel ES6
-- JavaScript ES5
-- JavaScript ES7
-- Node.js Babel
+  - JavaScript transpiler
+  - ES6 to ES5 converter
+  - Babel transpiler
+  - JavaScript compiler
+  - JavaScript syntax converter
+  - Babel CLI
+  - Babel ES6
+  - JavaScript ES5
+  - JavaScript ES7
+  - Node.js Babel
 features:
-- Transpile JavaScript files from ES6/ES7 to ES5 syntax
-- Watch files for changes and automatically re-transpile
-- Transpile an entire directory of JavaScript files
-- Ignore specific files during directory transpilation
-- Output minified JavaScript for smaller file sizes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Transpile JavaScript files from ES6/ES7 to ES5 syntax
+  - Watch files for changes and automatically re-transpile
+  - Transpile an entire directory of JavaScript files
+  - Ignore specific files during directory transpilation
+  - Output minified JavaScript for smaller file sizes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # babel

@@ -1,29 +1,29 @@
 ---
-title: "Manage JavaScript Projects - Lerna | Online Free DevTools by Hexmos"
+title: 'Manage JavaScript Projects - Lerna | Online Free DevTools by Hexmos'
 name: lerna
-path: "/freedevtools/tldr/common/lerna/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lerna/"
-description: "Manage JavaScript projects with Lerna, easily handling multi-package repositories and dependencies. Automate versioning, publishing, and boosting development workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lerna/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lerna/'
+description: 'Manage JavaScript projects with Lerna, easily handling multi-package repositories and dependencies. Automate versioning, publishing, and boosting development workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript monorepo management
-- lerna package manager
-- npm package management
-- yarn workspace management
-- javascript dependency management
-- lerna bootstrap command
-- lerna publish command
-- monorepo versioning tool
-- nodejs project management
-- javascript multi-package projects
+  - javascript monorepo management
+  - lerna package manager
+  - npm package management
+  - yarn workspace management
+  - javascript dependency management
+  - lerna bootstrap command
+  - lerna publish command
+  - monorepo versioning tool
+  - nodejs project management
+  - javascript multi-package projects
 features:
-- Initialize project files for multi-package repositories.
-- Install and symlink dependencies across multiple packages.
-- Run scripts across multiple packages simultaneously.
-- Execute arbitrary shell commands in each package.
-- Publish updated packages to a registry.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize project files for multi-package repositories.
+  - Install and symlink dependencies across multiple packages.
+  - Run scripts across multiple packages simultaneously.
+  - Execute arbitrary shell commands in each package.
+  - Publish updated packages to a registry.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lerna

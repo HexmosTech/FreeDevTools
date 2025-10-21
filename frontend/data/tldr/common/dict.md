@@ -1,29 +1,29 @@
 ---
-title: "Dictionary Lookup - Search DICT Databases | Online Free DevTools by Hexmos"
+title: 'Dictionary Lookup - Search DICT Databases | Online Free DevTools by Hexmos'
 name: dict
-path: "/freedevtools/tldr/common/dict/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dict/"
-description: "Search DICT databases easily with Dictionary Lookup, a command-line tool. Access definitions and information across various databases. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dict/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dict/'
+description: 'Search DICT databases easily with Dictionary Lookup, a command-line tool. Access definitions and information across various databases. Free online tool, no registration required.'
 category: common
 keywords:
-- DICT dictionary search
-- Command line dictionary
-- Network dictionary lookup
-- DICT protocol tool
-- Online dictionary search
-- Linux dictionary
-- macOS dictionary
-- Dictionary database query
-- DICT server information
-- Define word command
+  - DICT dictionary search
+  - Command line dictionary
+  - Network dictionary lookup
+  - DICT protocol tool
+  - Online dictionary search
+  - Linux dictionary
+  - macOS dictionary
+  - Dictionary database query
+  - DICT server information
+  - Define word command
 features:
-- List available DICT databases
-- Retrieve information about specific databases
-- Look up words in a specified database
-- Search for word definitions across all databases
-- Display DICT server information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available DICT databases
+  - Retrieve information about specific databases
+  - Look up words in a specified database
+  - Search for word definitions across all databases
+  - Display DICT server information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dict

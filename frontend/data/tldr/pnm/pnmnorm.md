@@ -1,29 +1,29 @@
 ---
-title: "Normalize PNM Image - Adjust Contrast | Online Free DevTools by Hexmos"
+title: 'Normalize PNM Image - Adjust Contrast | Online Free DevTools by Hexmos'
 name: pnmnorm
-path: "/freedevtools/tldr/pnm/pnmnorm/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmnorm/"
-description: "Adjust PNM image contrast with pnmnorm. Normalize images and enhance their visual appeal using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmnorm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmnorm/'
+description: 'Adjust PNM image contrast with pnmnorm. Normalize images and enhance their visual appeal using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image normalization
-- PNM contrast enhancement
-- image brightness adjustment
-- PNM image editor
-- Netpbm pnmnorm command
-- command-line image processing
-- pixel value normalization
-- contrast mapping tool
-- Linux image utilities
-- image color modification
+  - PNM image normalization
+  - PNM contrast enhancement
+  - image brightness adjustment
+  - PNM image editor
+  - Netpbm pnmnorm command
+  - command-line image processing
+  - pixel value normalization
+  - contrast mapping tool
+  - Linux image utilities
+  - image color modification
 features:
-- Normalize contrast in PNM images
-- Force brightest pixels to white and darkest to black
-- Linearly spread intermediate pixel values
-- Adjust brightness based on luminosity, color value, or saturation
-- Preserve pixel hues during normalization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Normalize contrast in PNM images
+  - Force brightest pixels to white and darkest to black
+  - Linearly spread intermediate pixel values
+  - Adjust brightness based on luminosity, color value, or saturation
+  - Preserve pixel hues during normalization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmnorm

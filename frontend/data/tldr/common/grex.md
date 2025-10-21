@@ -1,29 +1,29 @@
 ---
-title: "Generate Regex - Create Regular Expressions | Online Free DevTools by Hexmos"
+title: 'Generate Regex - Create Regular Expressions | Online Free DevTools by Hexmos'
 name: grex
-path: "/freedevtools/tldr/common/grex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/grex/"
-description: "Generate regular expressions with Grex. Create complex regex patterns effortlessly. Free online tool, no registration required. Perfect for developers and sysadmins."
+path: '/freedevtools/tldr/common/grex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/grex/'
+description: 'Generate regular expressions with Grex. Create complex regex patterns effortlessly. Free online tool, no registration required. Perfect for developers and sysadmins.'
 category: common
 keywords:
-- regular expression generator
-- regex generator
-- pattern matching tool
-- regular expression creator
-- regex pattern builder
-- string pattern generator
-- command line regex
-- linux regex tool
-- grex regex generator
-- automate regex creation
+  - regular expression generator
+  - regex generator
+  - pattern matching tool
+  - regular expression creator
+  - regex pattern builder
+  - string pattern generator
+  - command line regex
+  - linux regex tool
+  - grex regex generator
+  - automate regex creation
 features:
-- Generate simple regular expressions
-- Create case-insensitive regular expressions
-- Replace digits with '\d'
-- Replace Unicode word character with '\w'
-- Add quantifier representation for repeating substrings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate simple regular expressions
+  - Create case-insensitive regular expressions
+  - Replace digits with '\d'
+  - Replace Unicode word character with '\w'
+  - Add quantifier representation for repeating substrings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grex

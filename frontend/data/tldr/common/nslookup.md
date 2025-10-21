@@ -1,29 +1,29 @@
 ---
-title: "Nslookup - Query DNS Records | Online Free DevTools by Hexmos"
+title: 'Nslookup - Query DNS Records | Online Free DevTools by Hexmos'
 name: nslookup
-path: "/freedevtools/tldr/common/nslookup/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nslookup/"
-description: "Query DNS records with nslookup. Retrieve IP addresses, name server records, and other domain information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nslookup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nslookup/'
+description: 'Query DNS records with nslookup. Retrieve IP addresses, name server records, and other domain information. Free online tool, no registration required.'
 category: common
 keywords:
-- dns lookup
-- domain information query
-- nslookup command
-- name server lookup
-- dns record retrieval
-- reverse dns lookup
-- dns zone transfer
-- linux nslookup
-- macos nslookup
-- network troubleshooting
+  - dns lookup
+  - domain information query
+  - nslookup command
+  - name server lookup
+  - dns record retrieval
+  - reverse dns lookup
+  - dns zone transfer
+  - linux nslookup
+  - macos nslookup
+  - network troubleshooting
 features:
-- Query name servers for IP addresses
-- Retrieve NS records for domains
-- Perform reverse DNS lookups on IP addresses
-- Query for ANY available records using TCP
-- Initiate zone transfers from name servers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Query name servers for IP addresses
+  - Retrieve NS records for domains
+  - Perform reverse DNS lookups on IP addresses
+  - Query for ANY available records using TCP
+  - Initiate zone transfers from name servers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nslookup

@@ -1,29 +1,29 @@
 ---
-title: "C# IDE - Create C# Applications with MonoDevelop | Online Free DevTools by Hexmos"
+title: 'C# IDE - Create C# Applications with MonoDevelop | Online Free DevTools by Hexmos'
 name: monodevelop
-path: "/freedevtools/tldr/common/monodevelop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/monodevelop/"
-description: "Create C# applications effortlessly with MonoDevelop IDE. Develop, debug, and manage C#, F#, and .NET projects seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/monodevelop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/monodevelop/'
+description: 'Create C# applications effortlessly with MonoDevelop IDE. Develop, debug, and manage C#, F#, and .NET projects seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- c# ide
-- .net ide
-- f# ide
-- c# development environment
-- cross platform ide
-- monodevelop c#
-- monodevelop .net
-- linux c# ide
-- macos c# ide
-- windows c# ide
+  - c# ide
+  - .net ide
+  - f# ide
+  - c# development environment
+  - cross platform ide
+  - monodevelop c#
+  - monodevelop .net
+  - linux c# ide
+  - macos c# ide
+  - windows c# ide
 features:
-- Open and edit C#, F#, and .NET files
-- Start MonoDevelop from the command line
-- Open specific files at specific line and column numbers
-- Force MonoDevelop to open a new window
-- Disable `stdout` and `stderr` redirection
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit C#, F#, and .NET files
+  - Start MonoDevelop from the command line
+  - Open specific files at specific line and column numbers
+  - Force MonoDevelop to open a new window
+  - Disable `stdout` and `stderr` redirection
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # monodevelop

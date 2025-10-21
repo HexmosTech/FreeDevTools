@@ -1,29 +1,29 @@
 ---
-title: "Convert HTML to PDF - wkhtmltopdf | Online Free DevTools by Hexmos"
+title: 'Convert HTML to PDF - wkhtmltopdf | Online Free DevTools by Hexmos'
 name: wkhtmltopdf
-path: "/freedevtools/tldr/common/wkhtmltopdf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wkhtmltopdf/"
-description: "Convert HTML documents to PDF with wkhtmltopdf. Generate professional-quality PDFs from web pages or HTML files with customizable options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wkhtmltopdf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wkhtmltopdf/'
+description: 'Convert HTML documents to PDF with wkhtmltopdf. Generate professional-quality PDFs from web pages or HTML files with customizable options. Free online tool, no registration required.'
 category: common
 keywords:
-- HTML to PDF converter
-- Web page to PDF
-- wkhtmltopdf command
-- PDF generator
-- Command line PDF conversion
-- HTML to PDF Linux
-- HTML to PDF macOS
-- wkhtmltopdf options
-- PDF page size
-- PDF margins
+  - HTML to PDF converter
+  - Web page to PDF
+  - wkhtmltopdf command
+  - PDF generator
+  - Command line PDF conversion
+  - HTML to PDF Linux
+  - HTML to PDF macOS
+  - wkhtmltopdf options
+  - PDF page size
+  - PDF margins
 features:
-- Convert HTML files to PDF format
-- Customize PDF page size and orientation
-- Set specific margins for PDF output
-- Generate greyscale PDFs
-- Supports command-line PDF generation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert HTML files to PDF format
+  - Customize PDF page size and orientation
+  - Set specific margins for PDF output
+  - Generate greyscale PDFs
+  - Supports command-line PDF generation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wkhtmltopdf

@@ -1,9 +1,9 @@
 ---
-title: "Create Binary Packages - Manage CRUX Packages | Online Free DevTools by Hexmos"
+title: 'Create Binary Packages - Manage CRUX Packages | Online Free DevTools by Hexmos'
 name: pkgmk
-path: "/freedevtools/tldr/linux/pkgmk/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgmk/"
-description: "Create binary packages with pkgmk for CRUX package management. Build, install, and upgrade packages effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pkgmk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pkgmk/'
+description: 'Create binary packages with pkgmk for CRUX package management. Build, install, and upgrade packages effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - crux binary package
@@ -22,8 +22,8 @@ features:
   - Upgrade existing packages using pkgmk
   - Ignore footprint during package creation
   - Update package footprint using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkgmk

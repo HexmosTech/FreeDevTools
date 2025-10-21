@@ -1,29 +1,29 @@
 ---
-title: "Evil-WinRM Control - PowerShell Remote Access | Online Free DevTools by Hexmos"
+title: 'Evil-WinRM Control - PowerShell Remote Access | Online Free DevTools by Hexmos'
 name: evil-winrm
-path: "/freedevtools/tldr/common/evil-winrm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/evil-winrm/"
-description: "Control remote Windows machines with Evil-WinRM, a powerful PowerShell remote access tool. Gain shell access and manage systems effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/evil-winrm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/evil-winrm/'
+description: 'Control remote Windows machines with Evil-WinRM, a powerful PowerShell remote access tool. Gain shell access and manage systems effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- WinRM remote access
-- PowerShell remote shell
-- Windows remote management
-- Evil-WinRM penetration testing
-- pentesting WinRM
-- remote system control
-- Windows command line
-- pass-the-hash authentication
-- remote file upload
-- WinRM script execution
+  - WinRM remote access
+  - PowerShell remote shell
+  - Windows remote management
+  - Evil-WinRM penetration testing
+  - pentesting WinRM
+  - remote system control
+  - Windows command line
+  - pass-the-hash authentication
+  - remote file upload
+  - WinRM script execution
 features:
-- Establish remote PowerShell sessions on Windows systems
-- Execute commands and scripts remotely
-- Upload and download files to remote hosts
-- Utilize pass-the-hash authentication for secure access
-- Manage remote systems using a command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Establish remote PowerShell sessions on Windows systems
+  - Execute commands and scripts remotely
+  - Upload and download files to remote hosts
+  - Utilize pass-the-hash authentication for secure access
+  - Manage remote systems using a command-line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # evil-winrm

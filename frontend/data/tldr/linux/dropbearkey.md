@@ -1,9 +1,9 @@
 ---
-title: "Generate SSH Keys - Dropbear Key Generator | Online Free DevTools by Hexmos"
+title: 'Generate SSH Keys - Dropbear Key Generator | Online Free DevTools by Hexmos'
 name: dropbearkey
-path: "/freedevtools/tldr/linux/dropbearkey/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dropbearkey/"
-description: "Generate SSH keys with Dropbear Key Generator. Create ed25519, ecdsa, and RSA keys securely. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dropbearkey/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dropbearkey/'
+description: 'Generate SSH keys with Dropbear Key Generator. Create ed25519, ecdsa, and RSA keys securely. Free online tool, no registration required.'
 category: linux
 keywords:
   - ssh key generator
@@ -22,8 +22,8 @@ features:
   - Generate RSA SSH keys with custom key size
   - Print private key fingerprint
   - Output public key from private key file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dropbearkey

@@ -1,29 +1,29 @@
 ---
-title: "Create Backups - Manage Data with Rustic | Online Free DevTools by Hexmos"
+title: 'Create Backups - Manage Data with Rustic | Online Free DevTools by Hexmos'
 name: rustic
-path: "/freedevtools/tldr/common/rustic/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustic/"
-description: "Create backups quickly with Rustic. Encrypt, deduplicate, and manage your data using this powerful Rust-based backup tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rustic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rustic/'
+description: 'Create backups quickly with Rustic. Encrypt, deduplicate, and manage your data using this powerful Rust-based backup tool. Free online tool, no registration required.'
 category: common
 keywords:
-- data backup tool
-- encrypted backup
-- deduplicated backup tool
-- rust backup tool
-- cross-platform backup
-- command-line backup
-- repository management
-- incremental backup
-- backup and restore
-- data archive
+  - data backup tool
+  - encrypted backup
+  - deduplicated backup tool
+  - rust backup tool
+  - cross-platform backup
+  - command-line backup
+  - repository management
+  - incremental backup
+  - backup and restore
+  - data archive
 features:
-- Initialize a new backup repository
-- Create backups of files and directories
-- Manage backup repositories
-- Utilize encryption for data security
-- Perform data deduplication to reduce storage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new backup repository
+  - Create backups of files and directories
+  - Manage backup repositories
+  - Utilize encryption for data security
+  - Perform data deduplication to reduce storage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustic

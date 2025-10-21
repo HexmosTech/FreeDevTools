@@ -1,29 +1,29 @@
 ---
-title: "Control Google Cloud - Manage GCP Resources | Online Free DevTools by Hexmos"
+title: 'Control Google Cloud - Manage GCP Resources | Online Free DevTools by Hexmos'
 name: gcloud
-path: "/freedevtools/tldr/gcloud/gcloud/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud/"
-description: "Control Google Cloud resources with gcloud. Manage projects, instances, and deployments. Free online tool, no registration required. Simplify GCP management."
+path: '/freedevtools/tldr/gcloud/gcloud/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud/'
+description: 'Control Google Cloud resources with gcloud. Manage projects, instances, and deployments. Free online tool, no registration required. Simplify GCP management.'
 category: common
 keywords:
-- google cloud command line
-- gcloud cli tool
-- gcp resource management
-- cloud sdk gcloud
-- compute engine commands
-- kubernetes engine gcloud
-- gcloud project configuration
-- gcloud instance management
-- gcloud auth login
-- gcloud components update
+  - google cloud command line
+  - gcloud cli tool
+  - gcp resource management
+  - cloud sdk gcloud
+  - compute engine commands
+  - kubernetes engine gcloud
+  - gcloud project configuration
+  - gcloud instance management
+  - gcloud auth login
+  - gcloud components update
 features:
-- Manage Google Cloud projects from the command line.
-- Deploy and control virtual machine instances.
-- Update Kubernetes clusters via gcloud.
-- Configure the gcloud environment.
-- Authenticate with Google Cloud accounts using the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage Google Cloud projects from the command line.
+  - Deploy and control virtual machine instances.
+  - Update Kubernetes clusters via gcloud.
+  - Configure the gcloud environment.
+  - Authenticate with Google Cloud accounts using the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud

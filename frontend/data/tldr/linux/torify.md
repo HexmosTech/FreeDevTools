@@ -1,9 +1,9 @@
 ---
-title: "Torify - Route Network Traffic Through Tor | Online Free DevTools by Hexmos"
+title: 'Torify - Route Network Traffic Through Tor | Online Free DevTools by Hexmos'
 name: torify
-path: "/freedevtools/tldr/linux/torify/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/torify/"
-description: "Route network traffic securely with Torify.  This command-line tool provides anonymous browsing and enhances privacy. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/torify/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/torify/'
+description: 'Route network traffic securely with Torify.  This command-line tool provides anonymous browsing and enhances privacy. Free online tool, no registration required.'
 category: linux
 keywords:
   - tor network routing
@@ -22,8 +22,8 @@ features:
   - Allows toggling Tor access within a shell session.
   - Enables launching a Tor-enabled shell environment.
   - Supports specifying custom Tor configuration files and SOCKS proxies.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # torify

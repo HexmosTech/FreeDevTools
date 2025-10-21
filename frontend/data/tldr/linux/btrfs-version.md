@@ -1,9 +1,9 @@
 ---
-title: "Btrfs Version - Display File System Version | Online Free DevTools by Hexmos"
+title: 'Btrfs Version - Display File System Version | Online Free DevTools by Hexmos'
 name: btrfs-version
-path: "/freedevtools/tldr/linux/btrfs-version/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-version/"
-description: "Display Btrfs file system version with btrfs-version. Check installed version and verify compatibility instantly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/btrfs-version/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/btrfs-version/'
+description: 'Display Btrfs file system version with btrfs-version. Check installed version and verify compatibility instantly. Free online tool, no registration required.'
 category: linux
 keywords:
   - btrfs version
@@ -22,8 +22,8 @@ features:
   - Verify btrfs compatibility.
   - Output version details.
   - Show help information for version command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btrfs version

@@ -1,29 +1,29 @@
 ---
-title: "XML Linter - Validate & Format XML with xmllint | Online Free DevTools by Hexmos"
+title: 'XML Linter - Validate & Format XML with xmllint | Online Free DevTools by Hexmos'
 name: xmllint
-path: "/freedevtools/tldr/xml/xmllint/"
-canonical: "https://hexmos.com/freedevtools/tldr/xml/xmllint/"
-description: "Validate XML with xmllint, a powerful command-line XML linter.  Check syntax, format XML, and validate against DTDs, easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/xml/xmllint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/xml/xmllint/'
+description: 'Validate XML with xmllint, a powerful command-line XML linter.  Check syntax, format XML, and validate against DTDs, easily. Free online tool, no registration required.'
 category: common
 keywords:
-- XML validator
-- XML linter
-- XML parser
-- XML formatting
-- XML DTD validation
-- XPath evaluator
-- Command line XML tool
-- XML syntax checker
-- Linux XML tools
-- macOS XML tools
+  - XML validator
+  - XML linter
+  - XML parser
+  - XML formatting
+  - XML DTD validation
+  - XPath evaluator
+  - Command line XML tool
+  - XML syntax checker
+  - Linux XML tools
+  - macOS XML tools
 features:
-- Validate XML syntax and structure.
-- Format XML for readability.
-- Evaluate XPath expressions.
-- Validate XML against DTD schemas.
-- Parse and lint XML files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validate XML syntax and structure.
+  - Format XML for readability.
+  - Evaluate XPath expressions.
+  - Validate XML against DTD schemas.
+  - Parse and lint XML files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xmllint

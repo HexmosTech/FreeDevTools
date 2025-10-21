@@ -1,29 +1,29 @@
 ---
-title: "Hyprpm - Control Hyprland Plugins | Online Free DevTools by Hexmos"
+title: 'Hyprpm - Control Hyprland Plugins | Online Free DevTools by Hexmos'
 name: hyprpm
-path: "/freedevtools/tldr/linux/hyprpm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/hyprpm/"
-description: "Control Hyprland plugins effortlessly with Hyprpm. Manage, enable, disable, and update your Hyprland compositor plugins. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/hyprpm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/hyprpm/'
+description: 'Control Hyprland plugins effortlessly with Hyprpm. Manage, enable, disable, and update your Hyprland compositor plugins. Free online tool, no registration required.'
 category: linux
 keywords:
-- hyprland plugin manager
-- hyprland plugin control
-- hyprland plugin management
-- linux hyprpm
-- hyprland compositor plugin
-- hyprpm command line
-- hyprpm plugins
-- hyprland configuration
-- wayland plugin manager
-- hyprland plugin update
+  - hyprland plugin manager
+  - hyprland plugin control
+  - hyprland plugin management
+  - linux hyprpm
+  - hyprland compositor plugin
+  - hyprpm command line
+  - hyprpm plugins
+  - hyprland configuration
+  - wayland plugin manager
+  - hyprland plugin update
 features:
-- Add and remove Hyprland plugins
-- Enable and disable Hyprland plugins
-- Update all installed Hyprland plugins
-- List all installed Hyprland plugins
-- Force operations on Hyprland plugins
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add and remove Hyprland plugins
+  - Enable and disable Hyprland plugins
+  - Update all installed Hyprland plugins
+  - List all installed Hyprland plugins
+  - Force operations on Hyprland plugins
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hyprpm

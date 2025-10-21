@@ -1,29 +1,29 @@
 ---
-title: "Disown Process - Detach Background Jobs | Online Free DevTools by Hexmos"
+title: 'Disown Process - Detach Background Jobs | Online Free DevTools by Hexmos'
 name: disown
-path: "/freedevtools/tldr/common/disown/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/disown/"
-description: "Detach processes with Disown. Prevent sub-processes from terminating when the shell exits. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/disown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/disown/'
+description: 'Detach processes with Disown. Prevent sub-processes from terminating when the shell exits. Free online tool, no registration required.'
 category: common
 keywords:
-- disown process
-- detach background job
-- prevent process termination
-- linux disown
-- bash disown
-- shell process management
-- command line disown
-- job control
-- process detachment
-- background process control
+  - disown process
+  - detach background job
+  - prevent process termination
+  - linux disown
+  - bash disown
+  - shell process management
+  - command line disown
+  - job control
+  - process detachment
+  - background process control
 features:
-- Detach a specific background job from the shell
-- Prevent a process from receiving SIGHUP on shell exit
-- Disown all background jobs at once (Bash specific)
-- Allow background processes to continue running after logout
-- Manage background processes independently of the shell
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detach a specific background job from the shell
+  - Prevent a process from receiving SIGHUP on shell exit
+  - Disown all background jobs at once (Bash specific)
+  - Allow background processes to continue running after logout
+  - Manage background processes independently of the shell
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # disown

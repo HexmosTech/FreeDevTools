@@ -1,29 +1,29 @@
 ---
-title: "Pixi - Manage Project Environments | Online Free DevTools by Hexmos"
+title: 'Pixi - Manage Project Environments | Online Free DevTools by Hexmos'
 name: pixi
-path: "/freedevtools/tldr/pixi/pixi/"
-canonical: "https://hexmos.com/freedevtools/tldr/pixi/pixi/"
-description: "Manage project environments easily with Pixi. Streamline development workflows, add dependencies, and run tasks effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/pixi/pixi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pixi/pixi/'
+description: 'Manage project environments easily with Pixi. Streamline development workflows, add dependencies, and run tasks effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- pixi environment manager
-- project dependency manager
-- pixi task runner
-- developer workflow tool
-- pixi package manager
-- pixi shell environment
-- cross-platform environment management
-- pixi project setup
-- pixi clean cache
-- command-line environment tool
+  - pixi environment manager
+  - project dependency manager
+  - pixi task runner
+  - developer workflow tool
+  - pixi package manager
+  - pixi shell environment
+  - cross-platform environment management
+  - pixi project setup
+  - pixi clean cache
+  - command-line environment tool
 features:
-- Initialize new projects with ease
-- Add and manage project dependencies
-- Launch a pixi shell for development
-- Run tasks within the project environment
-- Clean environment and task cache quickly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new projects with ease
+  - Add and manage project dependencies
+  - Launch a pixi shell for development
+  - Run tasks within the project environment
+  - Clean environment and task cache quickly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pixi

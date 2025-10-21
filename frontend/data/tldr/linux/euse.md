@@ -1,9 +1,9 @@
 ---
-title: "euse - Manage Gentoo USE Flags | Online Free DevTools by Hexmos"
+title: 'euse - Manage Gentoo USE Flags | Online Free DevTools by Hexmos'
 name: euse
-path: "/freedevtools/tldr/linux/euse/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/euse/"
-description: "Manage Gentoo USE flags efficiently with euse. Enable, disable, and list global and local flags for customized package configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/euse/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/euse/'
+description: 'Manage Gentoo USE flags efficiently with euse. Enable, disable, and list global and local flags for customized package configurations. Free online tool, no registration required.'
 category: linux
 keywords:
   - gentoo use flags
@@ -22,8 +22,8 @@ features:
   - List active global and local USE flags for easy overview.
   - Prune global USE flags to clean up your configuration.
   - Manage Gentoo system packages effectively through command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # euse

@@ -1,28 +1,28 @@
-import React from "react";
+import React from 'react';
 
 interface LiveReviewBrandProps {
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
 }
 
-const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = "md" }) => {
+const LiveReviewBrand: React.FC<LiveReviewBrandProps> = ({ size = 'md' }) => {
   const sizeClasses = {
     sm: {
-      logo: "w-6 h-6",
-      title: "text-xs",
-      subtitle: "text-[10px]",
-      spacing: "space-x-1",
+      logo: 'w-6 h-6',
+      title: 'text-xs',
+      subtitle: 'text-[10px]',
+      spacing: 'space-x-1',
     },
     md: {
-      logo: "w-5 h-5",
-      title: "text-sm",
-      subtitle: "text-[10px]",
-      spacing: "space-x-1.5",
+      logo: 'w-5 h-5',
+      title: 'text-sm',
+      subtitle: 'text-[10px]',
+      spacing: 'space-x-1.5',
     },
     lg: {
-      logo: "w-8 h-8",
-      title: "text-sm",
-      subtitle: "text-[10px]",
-      spacing: "space-x-2",
+      logo: 'w-8 h-8',
+      title: 'text-sm',
+      subtitle: 'text-[10px]',
+      spacing: 'space-x-2',
     },
   };
 

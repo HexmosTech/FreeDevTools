@@ -1,29 +1,29 @@
 ---
-title: "Manage Key-Value Store - Skate | Online Free DevTools by Hexmos"
+title: 'Manage Key-Value Store - Skate | Online Free DevTools by Hexmos'
 name: skate
-path: "/freedevtools/tldr/common/skate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/skate/"
-description: "Manage key-value store data with Skate, a simple and powerful command-line tool. Quickly store, list, and delete data using a free online tool, no registration required."
+path: '/freedevtools/tldr/common/skate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/skate/'
+description: 'Manage key-value store data with Skate, a simple and powerful command-line tool. Quickly store, list, and delete data using a free online tool, no registration required.'
 category: common
 keywords:
-- key-value store manager
-- command-line database
-- skate k-v store
-- data storage common
-- kv store linux
-- kv store macos
-- charmbracelet skate tool
-- terminal key-value tool
-- database manager common
-- skate key-value database
+  - key-value store manager
+  - command-line database
+  - skate k-v store
+  - data storage common
+  - kv store linux
+  - kv store macos
+  - charmbracelet skate tool
+  - terminal key-value tool
+  - database manager common
+  - skate key-value database
 features:
-- Store key-value pairs in default or named databases
-- List keys stored in a specific database
-- Delete specific keys and values from the database
-- Reset and pull fresh copy from Charm Cloud
-- Manage multiple databases locally
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Store key-value pairs in default or named databases
+  - List keys stored in a specific database
+  - Delete specific keys and values from the database
+  - Reset and pull fresh copy from Charm Cloud
+  - Manage multiple databases locally
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # skate

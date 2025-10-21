@@ -1,29 +1,29 @@
 ---
-title: "Generate PGM Histogram - Analyze Image Values | Online Free DevTools by Hexmos"
+title: 'Generate PGM Histogram - Analyze Image Values | Online Free DevTools by Hexmos'
 name: pgmhist
-path: "/freedevtools/tldr/common/pgmhist/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pgmhist/"
-description: "Generate PGM histogram with pgmhist, analyze image grey values. Discover value distribution and forensic data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pgmhist/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pgmhist/'
+description: 'Generate PGM histogram with pgmhist, analyze image grey values. Discover value distribution and forensic data. Free online tool, no registration required.'
 category: common
 keywords:
-- PGM image histogram
-- PGM analysis
-- Grey value distribution
-- Image forensic data
-- Netpbm tools
-- Linux image analysis
-- PGM statistics
-- Image grey value quartiles
-- PGM image processing
-- Histogram visualization
+  - PGM image histogram
+  - PGM analysis
+  - Grey value distribution
+  - Image forensic data
+  - Netpbm tools
+  - Linux image analysis
+  - PGM statistics
+  - Image grey value quartiles
+  - PGM image processing
+  - Histogram visualization
 features:
-- Display histogram for visual analysis
-- Calculate median grey value of PGM image
-- Determine quartile grey values
-- Detect invalid grey values in PGM image
-- Output machine-readable histogram data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display histogram for visual analysis
+  - Calculate median grey value of PGM image
+  - Determine quartile grey values
+  - Detect invalid grey values in PGM image
+  - Output machine-readable histogram data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pgmhist

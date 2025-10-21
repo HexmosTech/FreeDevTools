@@ -1,29 +1,29 @@
 ---
-title: "Compile C++ Code - Create Executables with clang++ | Online Free DevTools by Hexmos"
+title: 'Compile C++ Code - Create Executables with clang++ | Online Free DevTools by Hexmos'
 name: clang++
-path: "/freedevtools/tldr/clang/clang++/"
-canonical: "https://hexmos.com/freedevtools/tldr/clang/clang++/"
-description: "Compile C++ source code with clang++. Create executables, optimize for performance and debug applications using this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/clang/clang++/'
+canonical: 'https://hexmos.com/freedevtools/tldr/clang/clang++/'
+description: 'Compile C++ source code with clang++. Create executables, optimize for performance and debug applications using this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- c++ compiler
-- cpp compiler
-- c++ code compilation
-- clang compiler
-- llvm clang++
-- c++ executable
-- compile c++ linux
-- compile c++ windows
-- c++ optimization
-- c++ debugging
+  - c++ compiler
+  - cpp compiler
+  - c++ code compilation
+  - clang compiler
+  - llvm clang++
+  - c++ executable
+  - compile c++ linux
+  - compile c++ windows
+  - c++ optimization
+  - c++ debugging
 features:
-- Compile C++ source files into executable binaries.
-- Enable all errors and warnings during compilation.
-- Optimize compiled programs for performance.
-- Generate LLVM Intermediate Representation (IR).
-- Specify language standards during compilation (e.g., c++20).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile C++ source files into executable binaries.
+  - Enable all errors and warnings during compilation.
+  - Optimize compiled programs for performance.
+  - Generate LLVM Intermediate Representation (IR).
+  - Specify language standards during compilation (e.g., c++20).
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clang++

@@ -1,29 +1,29 @@
 ---
-title: "Create Distrobox Containers - Linux Environment | Online Free DevTools by Hexmos"
+title: 'Create Distrobox Containers - Linux Environment | Online Free DevTools by Hexmos'
 name: distrobox
-path: "/freedevtools/tldr/linux/distrobox/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox/"
-description: "Create containers with Distrobox. Isolate environments and manage Linux distributions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/distrobox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/distrobox/'
+description: 'Create containers with Distrobox. Isolate environments and manage Linux distributions. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux distrobox container
-- container management linux
-- podman container linux
-- docker container linux
-- linux environment isolation
-- distrobox create container
-- distrobox export application
-- distrobox upgrade container
-- distrobox enter container
-- linux container environment
+  - linux distrobox container
+  - container management linux
+  - podman container linux
+  - docker container linux
+  - linux environment isolation
+  - distrobox create container
+  - distrobox export application
+  - distrobox upgrade container
+  - distrobox enter container
+  - linux container environment
 features:
-- Create isolated Linux environments within containers.
-- Export applications from containers to the host system.
-- Upgrade existing distrobox containers.
-- Execute commands on the host from inside a container.
-- Manage and stop created distrobox containers.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create isolated Linux environments within containers.
+  - Export applications from containers to the host system.
+  - Upgrade existing distrobox containers.
+  - Execute commands on the host from inside a container.
+  - Manage and stop created distrobox containers.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # distrobox

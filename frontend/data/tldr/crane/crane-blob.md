@@ -1,29 +1,29 @@
 ---
-title: "Crane Blob - Read Registry Blobs | Online Free DevTools by Hexmos"
+title: 'Crane Blob - Read Registry Blobs | Online Free DevTools by Hexmos'
 name: crane-blob
-path: "/freedevtools/tldr/crane/crane-blob/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-blob/"
-description: "Read container registry blobs with Crane Blob. Inspect layers, fetch content, and manage container images. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-blob/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-blob/'
+description: 'Read container registry blobs with Crane Blob. Inspect layers, fetch content, and manage container images. Free online tool, no registration required.'
 category: common
 keywords:
-- container registry blob
-- crane blob read
-- image layer extraction
-- blob content fetch
-- crane image tools
-- container image manifest
-- registry API access
-- go-containerregistry
-- linux container tools
-- crane command line
+  - container registry blob
+  - crane blob read
+  - image layer extraction
+  - blob content fetch
+  - crane image tools
+  - container image manifest
+  - registry API access
+  - go-containerregistry
+  - linux container tools
+  - crane command line
 features:
-- Read a blob from a container registry
-- Retrieve content by blob identifier
-- Inspect container image layers
-- Access registry via command line
-- Support for various container registries
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Read a blob from a container registry
+  - Retrieve content by blob identifier
+  - Inspect container image layers
+  - Access registry via command line
+  - Support for various container registries
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane blob

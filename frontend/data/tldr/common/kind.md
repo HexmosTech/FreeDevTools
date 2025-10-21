@@ -1,29 +1,29 @@
 ---
-title: "Kind - Create Kubernetes Clusters Locally | Online Free DevTools by Hexmos"
+title: 'Kind - Create Kubernetes Clusters Locally | Online Free DevTools by Hexmos'
 name: kind
-path: "/freedevtools/tldr/common/kind/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kind/"
-description: "Create Kubernetes clusters effortlessly with Kind. Deploy local Kubernetes environments using Docker containers for testing and development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kind/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kind/'
+description: 'Create Kubernetes clusters effortlessly with Kind. Deploy local Kubernetes environments using Docker containers for testing and development. Free online tool, no registration required.'
 category: common
 keywords:
-- Kubernetes cluster creation
-- Docker Kubernetes environment
-- local Kubernetes deployment
-- kind Kubernetes management
-- Kubernetes testing environment
-- Kubernetes development tool
-- Kubernetes command line
-- containerized Kubernetes cluster
-- Kubernetes local setup
-- Kubernetes kind tool
+  - Kubernetes cluster creation
+  - Docker Kubernetes environment
+  - local Kubernetes deployment
+  - kind Kubernetes management
+  - Kubernetes testing environment
+  - Kubernetes development tool
+  - Kubernetes command line
+  - containerized Kubernetes cluster
+  - Kubernetes local setup
+  - Kubernetes kind tool
 features:
-- Create local Kubernetes clusters
-- Delete Kubernetes clusters
-- Get cluster details and configurations
-- Export Kubernetes kubeconfig files
-- Export Kubernetes cluster logs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create local Kubernetes clusters
+  - Delete Kubernetes clusters
+  - Get cluster details and configurations
+  - Export Kubernetes kubeconfig files
+  - Export Kubernetes cluster logs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kind

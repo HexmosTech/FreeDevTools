@@ -1,25 +1,25 @@
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CopyButton from "@/components/ui/copy-button";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { getToolByKey, type Tool } from "@/config/tools";
-import React, { useCallback, useEffect, useState } from "react";
-import AdBanner from "../../../components/banner/AdBanner";
-import Base64EncoderSkeleton from "./_Base64EncoderSkeleton";
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolVideo from '@/components/tool/ToolVideo';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CopyButton from '@/components/ui/copy-button';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { getToolByKey, type Tool } from '@/config/tools';
+import React, { useCallback, useEffect, useState } from 'react';
+import AdBanner from '../../../components/banner/AdBanner';
+import Base64EncoderSkeleton from './_Base64EncoderSkeleton';
 // Base64 encoding/decoding utilities
 const toBase64 = (text: string): string => {
   try {
     return btoa(unescape(encodeURIComponent(text)));
   } catch (error) {
-    throw new Error("Failed to encode to Base64");
+    throw new Error('Failed to encode to Base64');
   }
 };
 
@@ -27,11 +27,11 @@ const fromBase64 = (base64: string): string => {
   try {
     return decodeURIComponent(escape(atob(base64)));
   } catch (error) {
-    throw new Error("Invalid Base64 string");
+    throw new Error('Invalid Base64 string');
   }
 };
 
-type OperationType = "encode" | "decode";
+type OperationType = 'encode' | 'decode';
 
 interface Base64EncoderProps {
   tool: string; // from Astro param
@@ -39,21 +39,21 @@ interface Base64EncoderProps {
 
 const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
   const toolConfig: Tool =
-    getToolByKey(tool) || getToolByKey("base64-utilities")!;
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+    getToolByKey(tool) || getToolByKey('base64-utilities')!;
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
-  const [activeTab, setActiveTab] = useState<OperationType>("encode");
+  const [activeTab, setActiveTab] = useState<OperationType>('encode');
 
   // Always show tabs, but set initial tab based on tool
   const shouldShowTabs = true;
 
   useEffect(() => {
-    if (tool === "base64-decoder") {
-      setActiveTab("decode");
+    if (tool === 'base64-decoder') {
+      setActiveTab('decode');
     } else {
-      setActiveTab("encode");
+      setActiveTab('encode');
     }
   }, [tool]);
 
@@ -67,24 +67,24 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
 
   const handleConversion = useCallback(
     (value: string, operation: OperationType) => {
-      setError("");
+      setError('');
 
       if (!value.trim()) {
-        setOutput("");
+        setOutput('');
         return;
       }
 
       try {
         const result =
-          operation === "encode" ? toBase64(value) : fromBase64(value);
+          operation === 'encode' ? toBase64(value) : fromBase64(value);
         setOutput(result);
       } catch (err) {
         const errorMessage =
-          operation === "encode"
-            ? "Failed to encode text to Base64"
-            : "Invalid Base64 string. Please check your input.";
+          operation === 'encode'
+            ? 'Failed to encode text to Base64'
+            : 'Invalid Base64 string. Please check your input.';
         setError(errorMessage);
-        setOutput("");
+        setOutput('');
       }
     },
     []
@@ -102,7 +102,7 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
     (tab: string) => {
       const newTab = tab as OperationType;
       setActiveTab(newTab);
-      setError("");
+      setError('');
 
       // Re-convert existing input with new operation
       if (input.trim()) {
@@ -113,14 +113,14 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
   );
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   const sampleTexts = {
-    encode: "Hello, World! This is a sample text to encode.",
-    decode: "SGVsbG8sIFdvcmxkISBUaGlzIGlzIGEgc2FtcGxlIHRleHQgdG8gZW5jb2RlLg==",
+    encode: 'Hello, World! This is a sample text to encode.',
+    decode: 'SGVsbG8sIFdvcmxkISBUaGlzIGlzIGEgc2FtcGxlIHRleHQgdG8gZW5jb2RlLg==',
   };
 
   const loadSample = () => {
@@ -260,7 +260,7 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
                           Size Change:
                         </span>
                         <span className="ml-2 font-mono text-blue-800 dark:text-blue-200">
-                          {activeTab === "encode"
+                          {activeTab === 'encode'
                             ? `+${Math.round(((output.length - input.length) / input.length) * 100)}%`
                             : `${Math.round(((output.length - input.length) / input.length) * 100)}%`}
                         </span>
@@ -562,10 +562,10 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
                       <strong>💡 Pro Tip:</strong> When working with Base64 in
                       production applications, always validate the input before
                       decoding and implement proper error handling. Consider
-                      using libraries like{" "}
+                      using libraries like{' '}
                       <code className="bg-blue-100 dark:bg-blue-900/30 px-1 rounded">
                         js-base64
-                      </code>{" "}
+                      </code>{' '}
                       for better Unicode support and additional features.
                     </p>
                   </div>

@@ -1,9 +1,9 @@
 ---
-title: "Share Filesystem - Control Network Shares on SunOS | Online Free DevTools by Hexmos"
+title: 'Share Filesystem - Control Network Shares on SunOS | Online Free DevTools by Hexmos'
 name: share
-path: "/freedevtools/tldr/sunos/share/"
-canonical: "https://hexmos.com/freedevtools/tldr/sunos/share/"
-description: "Control network shares on SunOS with Share command. Manage NFS exports, set permissions, and make resources available over the network. Free online tool, no registration required."
+path: '/freedevtools/tldr/sunos/share/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sunos/share/'
+description: 'Control network shares on SunOS with Share command. Manage NFS exports, set permissions, and make resources available over the network. Free online tool, no registration required.'
 category: sunos
 keywords:
   - network file sharing sunos
@@ -22,8 +22,8 @@ features:
   - configure share options for root access
   - list currently shared file systems on SunOS
   - make sharing persistent across reboots using dfstab
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # share

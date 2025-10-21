@@ -1,29 +1,29 @@
 ---
-title: "Gcloud Auth - Manage Credentials | Online Free DevTools by Hexmos"
+title: 'Gcloud Auth - Manage Credentials | Online Free DevTools by Hexmos'
 name: gcloud-auth
-path: "/freedevtools/tldr/gcloud/gcloud-auth/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-auth/"
-description: "Manage Gcloud Auth credentials with this online tool. Authenticate, list accounts, and revoke access easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-auth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-auth/'
+description: 'Manage Gcloud Auth credentials with this online tool. Authenticate, list accounts, and revoke access easily. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud auth credentials
-- gcloud login
-- gcloud service account
-- google cloud authentication
-- gcloud access token
-- gcloud revoke
-- google cloud sdk
-- gcloud cli
-- application default credentials
-- gcloud auth list
+  - gcloud auth credentials
+  - gcloud login
+  - gcloud service account
+  - google cloud authentication
+  - gcloud access token
+  - gcloud revoke
+  - google cloud sdk
+  - gcloud cli
+  - application default credentials
+  - gcloud auth list
 features:
-- Authenticate Gcloud CLI with user credentials
-- Activate Gcloud with service account credentials
-- Manage Application Default Credentials (ADC)
-- List authenticated Google Cloud accounts
-- Display the current account's access token
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate Gcloud CLI with user credentials
+  - Activate Gcloud with service account credentials
+  - Manage Application Default Credentials (ADC)
+  - List authenticated Google Cloud accounts
+  - Display the current account's access token
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud auth

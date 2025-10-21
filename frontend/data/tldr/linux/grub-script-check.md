@@ -1,9 +1,9 @@
 ---
-title: "Validate GRUB Scripts - Check Syntax | Online Free DevTools by Hexmos"
+title: 'Validate GRUB Scripts - Check Syntax | Online Free DevTools by Hexmos'
 name: grub-script-check
-path: "/freedevtools/tldr/linux/grub-script-check/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-script-check/"
-description: "Validate GRUB scripts with grub-script-check, ensuring error-free bootloader configurations. Check syntax and identify issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/grub-script-check/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/grub-script-check/'
+description: 'Validate GRUB scripts with grub-script-check, ensuring error-free bootloader configurations. Check syntax and identify issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - GRUB script validation
@@ -22,8 +22,8 @@ features:
   - Read GRUB scripts from standard input
   - Display verbose output during checking
   - Identify issues in GRUB bootloader scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grub-script-check

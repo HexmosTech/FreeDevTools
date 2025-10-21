@@ -1,29 +1,29 @@
 ---
-title: "MongoDB Restore - Import Data | Online Free DevTools by Hexmos"
+title: 'MongoDB Restore - Import Data | Online Free DevTools by Hexmos'
 name: mongorestore
-path: "/freedevtools/tldr/mongo/mongorestore/"
-canonical: "https://hexmos.com/freedevtools/tldr/mongo/mongorestore/"
-description: "Import MongoDB data with mongorestore. Restore databases and collections from binary dumps into MongoDB instances. Free online tool, no registration required."
+path: '/freedevtools/tldr/mongo/mongorestore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/mongo/mongorestore/'
+description: 'Import MongoDB data with mongorestore. Restore databases and collections from binary dumps into MongoDB instances. Free online tool, no registration required.'
 category: common
 keywords:
-- mongodb restore
-- mongodb import
-- bson import
-- mongodb database restore
-- mongodb collection restore
-- mongodb dump import
-- database restore tool
-- mongodb data recovery
-- mongodb command line tools
-- data migration
+  - mongodb restore
+  - mongodb import
+  - bson import
+  - mongodb database restore
+  - mongodb collection restore
+  - mongodb dump import
+  - database restore tool
+  - mongodb data recovery
+  - mongodb command line tools
+  - data migration
 features:
-- Restore MongoDB databases from binary dumps.
-- Restore individual collections from BSON files.
-- Authenticate with username and password.
-- Specify host and port for remote MongoDB servers.
-- Import data into a specific database.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restore MongoDB databases from binary dumps.
+  - Restore individual collections from BSON files.
+  - Authenticate with username and password.
+  - Specify host and port for remote MongoDB servers.
+  - Import data into a specific database.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mongorestore

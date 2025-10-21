@@ -1,8 +1,8 @@
 ---
-title: "Delete Fingerprints - Remove Fingerprint Data | Online Free DevTools by Hexmos"
+title: 'Delete Fingerprints - Remove Fingerprint Data | Online Free DevTools by Hexmos'
 name: fprintd-delete
-path: "/freedevtools/tldr/linux/fprintd-delete/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd-delete/"
+path: '/freedevtools/tldr/linux/fprintd-delete/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fprintd-delete/'
 description: "Remove fingerprint data with fprintd-delete.  Manage and delete fingerprint entries efficiently from your system's database. Free online tool, no registration required."
 category: linux
 keywords:
@@ -22,8 +22,8 @@ features:
   - Offers granular control over fingerprint removal.
   - Provides a command-line interface for easy access.
   - Maintains system security by managing fingerprint data.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fprintd-delete

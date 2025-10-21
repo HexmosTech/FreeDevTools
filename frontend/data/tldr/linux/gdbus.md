@@ -1,9 +1,9 @@
 ---
-title: "DBus Interact - Control D-Bus Objects | Online Free DevTools by Hexmos"
+title: 'DBus Interact - Control D-Bus Objects | Online Free DevTools by Hexmos'
 name: gdbus
-path: "/freedevtools/tldr/linux/gdbus/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gdbus/"
-description: "Interact with D-Bus objects using gdbus. Introspect interfaces, call methods, and monitor signals on the bus with this free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gdbus/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gdbus/'
+description: 'Interact with D-Bus objects using gdbus. Introspect interfaces, call methods, and monitor signals on the bus with this free online tool, no registration required.'
 category: linux
 keywords:
   - D-Bus object interaction
@@ -22,8 +22,8 @@ features:
   - Call specific methods on D-Bus objects with arguments
   - Emit signals from D-Bus objects with specified arguments
   - Monitor all messages on a D-Bus bus
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdbus

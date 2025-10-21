@@ -1,9 +1,9 @@
 ---
-title: "LXC Profile - Manage Container Profiles | Online Free DevTools by Hexmos"
+title: 'LXC Profile - Manage Container Profiles | Online Free DevTools by Hexmos'
 name: lxc-profile
-path: "/freedevtools/tldr/linux/lxc-profile/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lxc-profile/"
-description: "Manage LXD container profiles with LXC Profile. Configure, edit, and assign profiles to control container behavior. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lxc-profile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lxc-profile/'
+description: 'Manage LXD container profiles with LXC Profile. Configure, edit, and assign profiles to control container behavior. Free online tool, no registration required.'
 category: linux
 keywords:
   - lxc profile management
@@ -22,8 +22,8 @@ features:
   - Edit profiles directly in the default editor
   - Import profile configuration from a YAML file
   - Assign profiles to existing LXD containers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lxc profile

@@ -1,29 +1,29 @@
 ---
-title: "Cluster SSH - Control Multiple Servers on macOS | Online Free DevTools by Hexmos"
+title: 'Cluster SSH - Control Multiple Servers on macOS | Online Free DevTools by Hexmos'
 name: csshx
-path: "/freedevtools/tldr/osx/csshx/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/csshx/"
-description: "Control multiple SSH servers instantly with csshX, the cluster SSH tool for macOS. Manage server clusters and execute commands simultaneously. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/csshx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/csshx/'
+description: 'Control multiple SSH servers instantly with csshX, the cluster SSH tool for macOS. Manage server clusters and execute commands simultaneously. Free online tool, no registration required.'
 category: osx
 keywords:
-- cluster ssh tool
-- multiple ssh connections
-- macOS ssh management
-- csshX macOS
-- server cluster control
-- parallel ssh execution
-- remote server administration
-- macOS remote shell
-- batch ssh commands
-- osx ssh automation
+  - cluster ssh tool
+  - multiple ssh connections
+  - macOS ssh management
+  - csshX macOS
+  - server cluster control
+  - parallel ssh execution
+  - remote server administration
+  - macOS remote shell
+  - batch ssh commands
+  - osx ssh automation
 features:
-- Simultaneously execute commands across multiple SSH servers.
-- Connect to predefined clusters from configuration files.
-- Specify custom SSH keys for authentication.
-- Manage server connections through command-line interface.
-- Simplify remote server administration tasks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Simultaneously execute commands across multiple SSH servers.
+  - Connect to predefined clusters from configuration files.
+  - Specify custom SSH keys for authentication.
+  - Manage server connections through command-line interface.
+  - Simplify remote server administration tasks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csshX

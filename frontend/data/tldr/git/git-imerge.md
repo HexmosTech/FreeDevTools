@@ -1,29 +1,29 @@
 ---
-title: "Imerge Git - Merge Branches Incrementally | Online Free DevTools by Hexmos"
+title: 'Imerge Git - Merge Branches Incrementally | Online Free DevTools by Hexmos'
 name: git-imerge
-path: "/freedevtools/tldr/git/git-imerge/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-imerge/"
-description: "Merge Git branches incrementally with Imerge Git, tracking conflicts down to individual commits for simplified conflict resolution. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-imerge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-imerge/'
+description: 'Merge Git branches incrementally with Imerge Git, tracking conflicts down to individual commits for simplified conflict resolution. Free online tool, no registration required.'
 category: common
 keywords:
-- git incremental merge
-- git imerge rebase
-- git branch merge
-- git conflict resolution
-- git continuous integration
-- git workflow automation
-- git interactive merge
-- git commit tracking
-- linux git
-- macos git
+  - git incremental merge
+  - git imerge rebase
+  - git branch merge
+  - git conflict resolution
+  - git continuous integration
+  - git workflow automation
+  - git interactive merge
+  - git commit tracking
+  - linux git
+  - macos git
 features:
-- Rebase branches incrementally using imerge.
-- Merge branches incrementally using imerge.
-- Display an ASCII diagram of in-progress merge or rebase.
-- Continue an imerge operation after resolving conflicts.
-- Finalize the imerge operation upon completion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rebase branches incrementally using imerge.
+  - Merge branches incrementally using imerge.
+  - Display an ASCII diagram of in-progress merge or rebase.
+  - Continue an imerge operation after resolving conflicts.
+  - Finalize the imerge operation upon completion.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git imerge

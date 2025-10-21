@@ -1,29 +1,29 @@
 ---
-title: "Record Terminal - Log Sessions with Script | Online Free DevTools by Hexmos"
+title: 'Record Terminal - Log Sessions with Script | Online Free DevTools by Hexmos'
 name: script
-path: "/freedevtools/tldr/linux/script/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/script/"
-description: "Record terminal sessions with Script, capturing all output to a file for later review and analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/script/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/script/'
+description: 'Record terminal sessions with Script, capturing all output to a file for later review and analysis. Free online tool, no registration required.'
 category: linux
 keywords:
-- terminal recording
-- session logging
-- linux terminal script
-- typescript file generator
-- command line logging
-- bash script recorder
-- terminal output capture
-- record linux session
-- script command linux
-- shell session logging
+  - terminal recording
+  - session logging
+  - linux terminal script
+  - typescript file generator
+  - command line logging
+  - bash script recorder
+  - terminal output capture
+  - record linux session
+  - script command linux
+  - shell session logging
 features:
-- Record terminal sessions to a file
-- Append output to existing log files
-- Capture timing information during session recording
-- Flush output in real-time as it occurs
-- Execute quietly without start and end messages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Record terminal sessions to a file
+  - Append output to existing log files
+  - Capture timing information during session recording
+  - Flush output in real-time as it occurs
+  - Execute quietly without start and end messages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # script

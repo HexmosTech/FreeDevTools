@@ -1,29 +1,29 @@
 ---
-title: "Xcode Runtimes - Manage iOS Simulators | Online Free DevTools by Hexmos"
+title: 'Xcode Runtimes - Manage iOS Simulators | Online Free DevTools by Hexmos'
 name: xcodes-runtimes
-path: "/freedevtools/tldr/osx/xcodes-runtimes/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/xcodes-runtimes/"
-description: "Manage iOS Simulator runtimes with Xcode Runtimes. Download, install, and configure runtimes for different iOS versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/xcodes-runtimes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/xcodes-runtimes/'
+description: 'Manage iOS Simulator runtimes with Xcode Runtimes. Download, install, and configure runtimes for different iOS versions. Free online tool, no registration required.'
 category: osx
 keywords:
-- Xcode Simulator Runtimes
-- iOS Simulator Management
-- macOS Simulator Download
-- Xcode Runtime Installer
-- iOS SDK Management
-- WatchOS Simulator
-- TVOS Simulator
-- VisionOS Simulator
-- Xcodes CLI tool
-- Xcode Developer Tools
+  - Xcode Simulator Runtimes
+  - iOS Simulator Management
+  - macOS Simulator Download
+  - Xcode Runtime Installer
+  - iOS SDK Management
+  - WatchOS Simulator
+  - TVOS Simulator
+  - VisionOS Simulator
+  - Xcodes CLI tool
+  - Xcode Developer Tools
 features:
-- Download available Xcode Simulator runtimes.
-- Install Xcode Simulator runtimes for specified iOS versions.
-- Manage runtimes for iOS, watchOS, tvOS and visionOS.
-- Configure the download directory for runtime archives.
-- Preserve downloaded runtime archives after installation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download available Xcode Simulator runtimes.
+  - Install Xcode Simulator runtimes for specified iOS versions.
+  - Manage runtimes for iOS, watchOS, tvOS and visionOS.
+  - Configure the download directory for runtime archives.
+  - Preserve downloaded runtime archives after installation.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xcodes runtimes

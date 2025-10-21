@@ -1,29 +1,29 @@
 ---
-title: "Control Text Files - Edit Files with mg | Online Free DevTools by Hexmos"
+title: 'Control Text Files - Edit Files with mg | Online Free DevTools by Hexmos'
 name: mg
-path: "/freedevtools/tldr/common/mg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mg/"
-description: "Edit text files efficiently with mg, a lightweight `emacs`-based editor. Open, modify, and save files quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mg/'
+description: 'Edit text files efficiently with mg, a lightweight `emacs`-based editor. Open, modify, and save files quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- text file editor
-- command line editor
-- mg editor linux
-- mg editor macos
-- portable text editor
-- small text editor
-- emacs alternative
-- lightweight text editor
-- file editing cli
-- terminal text editor
+  - text file editor
+  - command line editor
+  - mg editor linux
+  - mg editor macos
+  - portable text editor
+  - small text editor
+  - emacs alternative
+  - lightweight text editor
+  - file editing cli
+  - terminal text editor
 features:
-- Open and edit text files from the command line
-- Open files at a specific line number
-- Open files in read-only mode
-- Disable backup file creation
-- Edit files quickly and efficiently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit text files from the command line
+  - Open files at a specific line number
+  - Open files in read-only mode
+  - Disable backup file creation
+  - Edit files quickly and efficiently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mg

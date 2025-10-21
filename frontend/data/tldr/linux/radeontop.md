@@ -1,9 +1,9 @@
 ---
-title: "Radeontop - Control AMD GPU Usage | Online Free DevTools by Hexmos"
+title: 'Radeontop - Control AMD GPU Usage | Online Free DevTools by Hexmos'
 name: radeontop
-path: "/freedevtools/tldr/linux/radeontop/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/radeontop/"
-description: "Control AMD GPU usage with Radeontop. Monitor performance metrics and identify bottlenecks in real-time. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/radeontop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/radeontop/'
+description: 'Control AMD GPU usage with Radeontop. Monitor performance metrics and identify bottlenecks in real-time. Free online tool, no registration required.'
 category: linux
 keywords:
   - AMD GPU utilization
@@ -22,8 +22,8 @@ features:
   - Select a specific GPU by bus number
   - Customize display refresh rate
   - Monitor performance metrics in a terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # radeontop

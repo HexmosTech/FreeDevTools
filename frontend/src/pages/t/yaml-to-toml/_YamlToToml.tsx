@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolVideo from "@/components/tool/ToolVideo";
-import YamlToTomlSkeleton from "./_YamlToTomlSkeleton";
-import CopyButton from "@/components/ui/copy-button";
+import React, { useState, useEffect } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolVideo from '@/components/tool/ToolVideo';
+import YamlToTomlSkeleton from './_YamlToTomlSkeleton';
+import CopyButton from '@/components/ui/copy-button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableHeader,
@@ -23,63 +23,63 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
-import { toast } from "@/components/ToastProvider";
-import { parse as parseYaml } from "yaml";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/table';
+import { toast } from '@/components/ToastProvider';
+import { parse as parseYaml } from 'yaml';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Browser-compatible TOML stringifier
 const stringifyToml = (obj: any, depth = 0): string => {
-  const indent = "  ".repeat(depth);
-  let result = "";
+  const indent = '  '.repeat(depth);
+  let result = '';
 
   const formatValue = (value: any): string => {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       // Escape special characters and wrap in quotes if needed
-      if (value.includes("\n") || value.includes('"') || value.includes("\\")) {
-        return `"""${value.replace(/\\/g, "\\\\").replace(/"""/g, '\\"""')}"""`;
+      if (value.includes('\n') || value.includes('"') || value.includes('\\')) {
+        return `"""${value.replace(/\\/g, '\\\\').replace(/"""/g, '\\"""')}"""`;
       }
       if (
-        value.includes(" ") ||
-        value.includes("#") ||
-        value === "" ||
+        value.includes(' ') ||
+        value.includes('#') ||
+        value === '' ||
         /^[0-9]/.test(value)
       ) {
-        return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+        return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
       }
       return value;
     }
-    if (typeof value === "number") {
+    if (typeof value === 'number') {
       return value.toString();
     }
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       return value.toString();
     }
     if (value instanceof Date) {
       return value.toISOString();
     }
     if (Array.isArray(value)) {
-      if (value.length === 0) return "[]";
+      if (value.length === 0) return '[]';
 
       // Check if all elements are primitives
       const allPrimitives = value.every(
         (item) =>
-          typeof item === "string" ||
-          typeof item === "number" ||
-          typeof item === "boolean" ||
+          typeof item === 'string' ||
+          typeof item === 'number' ||
+          typeof item === 'boolean' ||
           item instanceof Date
       );
 
       if (allPrimitives) {
-        return `[${value.map(formatValue).join(", ")}]`;
+        return `[${value.map(formatValue).join(', ')}]`;
       } else {
         // Array of tables
         return value
           .map((item) => `\n${stringifyToml(item, depth + 1)}`)
-          .join("");
+          .join('');
       }
     }
-    return "";
+    return '';
   };
 
   // Separate simple values from tables and arrays of tables
@@ -91,12 +91,12 @@ const stringifyToml = (obj: any, depth = 0): string => {
     if (
       Array.isArray(value) &&
       value.length > 0 &&
-      typeof value[0] === "object" &&
+      typeof value[0] === 'object' &&
       !Array.isArray(value[0])
     ) {
       arrayTables[key] = value;
     } else if (
-      typeof value === "object" &&
+      typeof value === 'object' &&
       value !== null &&
       !Array.isArray(value) &&
       !(value instanceof Date)
@@ -117,7 +117,7 @@ const stringifyToml = (obj: any, depth = 0): string => {
     Object.keys(simpleValues).length > 0 &&
     (Object.keys(tables).length > 0 || Object.keys(arrayTables).length > 0)
   ) {
-    result += "\n";
+    result += '\n';
   }
 
   // Add tables
@@ -128,7 +128,7 @@ const stringifyToml = (obj: any, depth = 0): string => {
       result += `${indent}[${key}]\n`;
     }
     result += stringifyToml(value, depth + 1);
-    result += "\n";
+    result += '\n';
   }
 
   // Add array of tables
@@ -140,7 +140,7 @@ const stringifyToml = (obj: any, depth = 0): string => {
         result += `${indent}[[${key}]]\n`;
       }
       result += stringifyToml(item, depth + 1);
-      result += "\n";
+      result += '\n';
     }
   }
 
@@ -148,9 +148,9 @@ const stringifyToml = (obj: any, depth = 0): string => {
 };
 
 const YamlToToml: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -159,28 +159,28 @@ const YamlToToml: React.FC = () => {
   }, []);
 
   const handleProcess = (showToast = true) => {
-    setError("");
-    if (showToast) toast.info("Processing your input...");
+    setError('');
+    if (showToast) toast.info('Processing your input...');
     try {
       if (!input.trim()) {
-        setOutput("");
+        setOutput('');
         return;
       }
       const obj = parseYaml(input);
-      if (typeof obj !== "object" || Array.isArray(obj) || obj === null) {
-        setError("Error: Failed to parse YAML! Is it valid YAML?");
-        setOutput("");
-        if (showToast) toast.error("Processing failed");
+      if (typeof obj !== 'object' || Array.isArray(obj) || obj === null) {
+        setError('Error: Failed to parse YAML! Is it valid YAML?');
+        setOutput('');
+        if (showToast) toast.error('Processing failed');
         return;
       }
       const tomlStr = stringifyToml(obj);
       setOutput(tomlStr.trim());
-      if (showToast) toast.success("Conversion completed!");
+      if (showToast) toast.success('Conversion completed!');
     } catch (err) {
-      console.error("Conversion error:", err);
-      setError("Error: Failed to parse YAML! Is it valid YAML?");
-      setOutput("");
-      if (showToast) toast.error("Processing failed");
+      console.error('Conversion error:', err);
+      setError('Error: Failed to parse YAML! Is it valid YAML?');
+      setOutput('');
+      if (showToast) toast.error('Processing failed');
     }
   };
 
@@ -190,8 +190,8 @@ const YamlToToml: React.FC = () => {
       if (input.trim()) {
         handleProcess(false); // Don't show toast for auto-conversion
       } else {
-        setOutput("");
-        setError("");
+        setOutput('');
+        setError('');
       }
     }, 500);
 
@@ -199,9 +199,9 @@ const YamlToToml: React.FC = () => {
   }, [input]);
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   return (

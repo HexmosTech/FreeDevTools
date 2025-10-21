@@ -1,29 +1,29 @@
 ---
-title: "Create ASCII Art Boxes - Draw Boxes | Online Free DevTools by Hexmos"
+title: 'Create ASCII Art Boxes - Draw Boxes | Online Free DevTools by Hexmos'
 name: boxes
-path: "/freedevtools/tldr/common/boxes/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/boxes/"
-description: "Draw ASCII art boxes with Boxes. Customize box designs and sizes for visually appealing command-line output. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/boxes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/boxes/'
+description: 'Draw ASCII art boxes with Boxes. Customize box designs and sizes for visually appealing command-line output. Free online tool, no registration required.'
 category: common
 keywords:
-- ASCII Art Generator
-- Box Drawing Tool
-- Command Line Boxes
-- Text Art Maker
-- Terminal Box Art
-- ASCII Box Design
-- Linux Box Command
-- macOS Boxes
-- Shell Scripting Art
-- String Art Converter
+  - ASCII Art Generator
+  - Box Drawing Tool
+  - Command Line Boxes
+  - Text Art Maker
+  - Terminal Box Art
+  - ASCII Box Design
+  - Linux Box Command
+  - macOS Boxes
+  - Shell Scripting Art
+  - String Art Converter
 features:
-- Draw boxes around text strings in the command line
-- Remove existing boxes from text
-- Customize the box design using various styles
-- Specify the box size in columns and lines
-- Align text within the box horizontally and vertically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Draw boxes around text strings in the command line
+  - Remove existing boxes from text
+  - Customize the box design using various styles
+  - Specify the box size in columns and lines
+  - Align text within the box horizontally and vertically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # boxes

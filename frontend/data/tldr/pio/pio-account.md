@@ -1,29 +1,29 @@
 ---
-title: "PlatformIO Account - Manage Accounts | Online Free DevTools by Hexmos"
+title: 'PlatformIO Account - Manage Accounts | Online Free DevTools by Hexmos'
 name: pio-account
-path: "/freedevtools/tldr/pio/pio-account/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-account/"
-description: "Manage PlatformIO accounts with pio-account. Securely register, login, update profiles, and reset passwords. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-account/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-account/'
+description: 'Manage PlatformIO accounts with pio-account. Securely register, login, update profiles, and reset passwords. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO account manager
-- PlatformIO account registration
-- PlatformIO profile update
-- PlatformIO password reset
-- PlatformIO account login
-- PlatformIO account logout
-- PlatformIO command-line interface
-- PlatformIO account deletion
-- PlatformIO account information
-- PlatformIO profile management
+  - PlatformIO account manager
+  - PlatformIO account registration
+  - PlatformIO profile update
+  - PlatformIO password reset
+  - PlatformIO account login
+  - PlatformIO account logout
+  - PlatformIO command-line interface
+  - PlatformIO account deletion
+  - PlatformIO account information
+  - PlatformIO profile management
 features:
-- Register new PlatformIO accounts with username and email.
-- Permanently delete PlatformIO accounts and associated data.
-- Authenticate PlatformIO account logins with username and password.
-- Update PlatformIO account profiles, including email and names.
-- Display detailed information about PlatformIO accounts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Register new PlatformIO accounts with username and email.
+  - Permanently delete PlatformIO accounts and associated data.
+  - Authenticate PlatformIO account logins with username and password.
+  - Update PlatformIO account profiles, including email and names.
+  - Display detailed information about PlatformIO accounts.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio account

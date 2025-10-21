@@ -1,29 +1,29 @@
 ---
-title: "Delete Files - Manage Files on Windows with DEL | Online Free DevTools by Hexmos"
+title: 'Delete Files - Manage Files on Windows with DEL | Online Free DevTools by Hexmos'
 name: del
-path: "/freedevtools/tldr/windows/del/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/del/"
-description: "Manage files efficiently with DEL, the Windows command-line tool. Delete, force removal, and recursively remove files with attribute control. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/del/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/del/'
+description: 'Manage files efficiently with DEL, the Windows command-line tool. Delete, force removal, and recursively remove files with attribute control. Free online tool, no registration required.'
 category: windows
 keywords:
-- file deletion windows
-- windows del command
-- cmd delete files
-- command line file removal
-- delete read-only files windows
-- batch file delete command
-- recursive file deletion windows
-- windows file management
-- del command examples
-- windows file attributes delete
+  - file deletion windows
+  - windows del command
+  - cmd delete files
+  - command line file removal
+  - delete read-only files windows
+  - batch file delete command
+  - recursive file deletion windows
+  - windows file management
+  - del command examples
+  - windows file attributes delete
 features:
-- Delete single or multiple files using patterns.
-- Force deletion of read-only files.
-- Recursively delete files in subdirectories.
-- Prompt for confirmation before deleting each file.
-- Delete files based on specified attributes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete single or multiple files using patterns.
+  - Force deletion of read-only files.
+  - Recursively delete files in subdirectories.
+  - Prompt for confirmation before deleting each file.
+  - Delete files based on specified attributes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # del

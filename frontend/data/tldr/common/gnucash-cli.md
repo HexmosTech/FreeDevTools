@@ -1,29 +1,29 @@
 ---
-title: "Generate Financial Reports - GnuCash-cli | Online Free DevTools by Hexmos"
+title: 'Generate Financial Reports - GnuCash-cli | Online Free DevTools by Hexmos'
 name: gnucash-cli
-path: "/freedevtools/tldr/common/gnucash-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gnucash-cli/"
-description: "Generate financial reports with GnuCash-cli. Analyze finances and get stock quotes using command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gnucash-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gnucash-cli/'
+description: 'Generate financial reports with GnuCash-cli. Analyze finances and get stock quotes using command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- GnuCash financial reports
-- GnuCash stock quotes
-- command line finance
-- gnucash-cli report generator
-- financial data analysis
-- GnuCash currency quotes
-- command-line accounting
-- ledger report generation
-- GnuCash automation
-- accounting command line tool
+  - GnuCash financial reports
+  - GnuCash stock quotes
+  - command line finance
+  - gnucash-cli report generator
+  - financial data analysis
+  - GnuCash currency quotes
+  - command-line accounting
+  - ledger report generation
+  - GnuCash automation
+  - accounting command line tool
 features:
-- Generate balance sheet reports from GnuCash files
-- Fetch real-time stock and currency quotes
-- Automate financial reporting tasks
-- Process financial data from the command line
-- Extract specific financial information programmatically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate balance sheet reports from GnuCash files
+  - Fetch real-time stock and currency quotes
+  - Automate financial reporting tasks
+  - Process financial data from the command line
+  - Extract specific financial information programmatically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnucash-cli

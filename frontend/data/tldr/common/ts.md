@@ -1,29 +1,29 @@
 ---
-title: "Timestamp Lines - Add Timestamps to Text | Online Free DevTools by Hexmos"
+title: 'Timestamp Lines - Add Timestamps to Text | Online Free DevTools by Hexmos'
 name: ts
-path: "/freedevtools/tldr/common/ts/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ts/"
-description: "Add timestamps to lines with ts, a powerful command-line utility.  Enhance log readability and track event timing with precision. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ts/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ts/'
+description: 'Add timestamps to lines with ts, a powerful command-line utility.  Enhance log readability and track event timing with precision. Free online tool, no registration required.'
 category: common
 keywords:
-- line timestamp adder
-- timestamp log analyzer
-- linux timestamp command
-- bash timestamp utility
-- command-line timestamping
-- stdin timestamp generator
-- incremental timestamping
-- relative timestamp conversion
-- text file timestamping
-- timestamp precision control
+  - line timestamp adder
+  - timestamp log analyzer
+  - linux timestamp command
+  - bash timestamp utility
+  - command-line timestamping
+  - stdin timestamp generator
+  - incremental timestamping
+  - relative timestamp conversion
+  - text file timestamping
+  - timestamp precision control
 features:
-- Add timestamps to standard input
-- Customize timestamp format with strftime
-- Generate incremental timestamps
-- Convert existing timestamps to relative time
-- Control timestamp precision up to microseconds
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add timestamps to standard input
+  - Customize timestamp format with strftime
+  - Generate incremental timestamps
+  - Convert existing timestamps to relative time
+  - Control timestamp precision up to microseconds
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ts

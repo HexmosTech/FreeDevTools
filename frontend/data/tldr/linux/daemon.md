@@ -1,9 +1,9 @@
 ---
-title: "Control Daemon Processes - Manage Background Tasks | Online Free DevTools by Hexmos"
+title: 'Control Daemon Processes - Manage Background Tasks | Online Free DevTools by Hexmos'
 name: daemon
-path: "/freedevtools/tldr/linux/daemon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/daemon/"
-description: "Control daemon processes easily with the Daemon command. Manage background tasks, restart crashed processes and log output effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/daemon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/daemon/'
+description: 'Control daemon processes easily with the Daemon command. Manage background tasks, restart crashed processes and log output effectively. Free online tool, no registration required.'
 category: linux
 keywords:
   - daemon process control
@@ -22,8 +22,8 @@ features:
   - Log daemon output to specific files
   - Stop running daemons gracefully
   - List all active daemon processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # daemon

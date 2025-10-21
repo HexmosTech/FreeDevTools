@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 // Global type declarations for @ aliases
-declare module "@/config/tools" {
+declare module '@/config/tools' {
   export interface Tool {
     title: string;
     name: string;
@@ -27,18 +27,18 @@ declare module "@/config/tools" {
   export function getToolsByCategory(category: string): Tool[];
 }
 
-declare module "@/layouts/BaseLayout.astro" {
+declare module '@/layouts/BaseLayout.astro' {
   const BaseLayout: any;
   export default BaseLayout;
 }
 
-declare module "@/components/*" {
+declare module '@/components/*' {
   const component: any;
   export default component;
 }
 
 // Path mapping for @ alias
-declare module "*" {
+declare module '*' {
   const value: any;
   export default value;
 }

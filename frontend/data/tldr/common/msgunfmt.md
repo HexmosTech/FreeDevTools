@@ -1,29 +1,29 @@
 ---
-title: "Format MO File - Decompile to PO | Online Free DevTools by Hexmos"
+title: 'Format MO File - Decompile to PO | Online Free DevTools by Hexmos'
 name: msgunfmt
-path: "/freedevtools/tldr/common/msgunfmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/msgunfmt/"
-description: "Format .mo files to .po with msgunfmt. Decompile binary message catalogs for translation editing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/msgunfmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/msgunfmt/'
+description: 'Format .mo files to .po with msgunfmt. Decompile binary message catalogs for translation editing. Free online tool, no registration required.'
 category: common
 keywords:
-- MO file decompiler
-- PO file generator
-- GNU gettext conversion
-- Message catalog decompile
-- Binary format converter
-- Linux MO to PO
-- MacOS MO to PO
-- Command line decompiler
-- Translation file converter
-- msgunfmt tool
+  - MO file decompiler
+  - PO file generator
+  - GNU gettext conversion
+  - Message catalog decompile
+  - Binary format converter
+  - Linux MO to PO
+  - MacOS MO to PO
+  - Command line decompiler
+  - Translation file converter
+  - msgunfmt tool
 features:
-- Decompile binary .mo files
-- Generate human-readable .po files
-- Support GNU gettext message catalogs
-- Convert message formats
-- Output decompiled messages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decompile binary .mo files
+  - Generate human-readable .po files
+  - Support GNU gettext message catalogs
+  - Convert message formats
+  - Output decompiled messages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msgunfmt

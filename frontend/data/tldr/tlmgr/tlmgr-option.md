@@ -1,29 +1,29 @@
 ---
-title: "TeX Live Manager - Control TeX Settings | Online Free DevTools by Hexmos"
+title: 'TeX Live Manager - Control TeX Settings | Online Free DevTools by Hexmos'
 name: tlmgr-option
-path: "/freedevtools/tldr/tlmgr/tlmgr-option/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-option/"
-description: "Control TeX Live settings easily with TeX Live Manager. Configure repositories, update packages, and manage installations through the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-option/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-option/'
+description: 'Control TeX Live settings easily with TeX Live Manager. Configure repositories, update packages, and manage installations through the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- tex live manager control
-- tex live settings manager
-- tex live package manager
-- tlmgr configuration linux
-- tlmgr repository management
-- tex distribution manager
-- latex package configuration
-- texlive update settings
-- tex live install options
-- command line tex control
+  - tex live manager control
+  - tex live settings manager
+  - tex live package manager
+  - tlmgr configuration linux
+  - tlmgr repository management
+  - tex distribution manager
+  - latex package configuration
+  - texlive update settings
+  - tex live install options
+  - command line tex control
 features:
-- Display all available TeX Live options
-- Show currently set configuration values
-- Output settings in JSON format
-- Modify the value of a specific option
-- Configure the update repository for TeX Live
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all available TeX Live options
+  - Show currently set configuration values
+  - Output settings in JSON format
+  - Modify the value of a specific option
+  - Configure the update repository for TeX Live
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr option

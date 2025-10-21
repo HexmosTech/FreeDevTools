@@ -1,29 +1,29 @@
 ---
-title: "Diff - Compare Files and Directories | Online Free DevTools by Hexmos"
+title: 'Diff - Compare Files and Directories | Online Free DevTools by Hexmos'
 name: diff
-path: "/freedevtools/tldr/common/diff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/diff/"
-description: "Compare files and directories with Diff. Identify changes, create patches, and analyze differences between files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/diff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/diff/'
+description: 'Compare files and directories with Diff. Identify changes, create patches, and analyze differences between files. Free online tool, no registration required.'
 category: common
 keywords:
-- file comparison
-- directory comparison
-- diff tool
-- text difference
-- patch creation
-- file analysis
-- linux diff
-- macos diff
-- command line diff
-- unified diff format
+  - file comparison
+  - directory comparison
+  - diff tool
+  - text difference
+  - patch creation
+  - file analysis
+  - linux diff
+  - macos diff
+  - command line diff
+  - unified diff format
 features:
-- Compare two files and show the differences.
-- Generate patch files for Git repositories.
-- Recursively compare directories to identify changed files.
-- Ignore whitespace when comparing files.
-- Display file differences side-by-side in a readable format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare two files and show the differences.
+  - Generate patch files for Git repositories.
+  - Recursively compare directories to identify changed files.
+  - Ignore whitespace when comparing files.
+  - Display file differences side-by-side in a readable format.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # diff

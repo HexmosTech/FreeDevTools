@@ -1,29 +1,29 @@
 ---
-title: "Bash Shell - Control Command-Line Processes | Online Free DevTools by Hexmos"
+title: 'Bash Shell - Control Command-Line Processes | Online Free DevTools by Hexmos'
 name: bash
-path: "/freedevtools/tldr/common/bash/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bash/"
-description: "Control command-line processes with Bash Shell. Execute commands, scripts, and manage shell sessions efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bash/'
+description: 'Control command-line processes with Bash Shell. Execute commands, scripts, and manage shell sessions efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- bash shell commands
-- shell script execution
-- command-line interpreter
-- linux bash scripting
-- macOS terminal commands
-- shell session management
-- interactive bash shell
-- restricted bash shell
-- bash environment variables
-- execute shell commands
+  - bash shell commands
+  - shell script execution
+  - command-line interpreter
+  - linux bash scripting
+  - macOS terminal commands
+  - shell session management
+  - interactive bash shell
+  - restricted bash shell
+  - bash environment variables
+  - execute shell commands
 features:
-- Start interactive shell sessions
-- Execute bash scripts
-- Control command execution
-- Manage shell environments
-- Run restricted shell sessions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start interactive shell sessions
+  - Execute bash scripts
+  - Control command execution
+  - Manage shell environments
+  - Run restricted shell sessions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bash

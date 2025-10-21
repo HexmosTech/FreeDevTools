@@ -1,29 +1,29 @@
 ---
-title: "Monodis Disassembler - Analyze CIL Assemblies | Online Free DevTools by Hexmos"
+title: 'Monodis Disassembler - Analyze CIL Assemblies | Online Free DevTools by Hexmos'
 name: monodis
-path: "/freedevtools/tldr/common/monodis/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/monodis/"
-description: "Analyze CIL assemblies with Monodis Disassembler. Inspect .NET bytecode and extract resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/monodis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/monodis/'
+description: 'Analyze CIL assemblies with Monodis Disassembler. Inspect .NET bytecode and extract resources. Free online tool, no registration required.'
 category: common
 keywords:
-- CIL disassembler
-- .NET assembly analyzer
-- Mono disassembler
-- Assembly metadata viewer
-- CIL bytecode inspector
-- .NET resource extractor
-- Mono assembly tool
-- Windows disassembler
-- Linux disassembler
-- macOS disassembler
+  - CIL disassembler
+  - .NET assembly analyzer
+  - Mono disassembler
+  - Assembly metadata viewer
+  - CIL bytecode inspector
+  - .NET resource extractor
+  - Mono assembly tool
+  - Windows disassembler
+  - Linux disassembler
+  - macOS disassembler
 features:
-- Disassemble .NET assemblies to CIL code
-- Extract embedded resources from assemblies
-- Display assembly metadata and references
-- List methods within an assembly
-- Save disassembled output to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Disassemble .NET assemblies to CIL code
+  - Extract embedded resources from assemblies
+  - Display assembly metadata and references
+  - List methods within an assembly
+  - Save disassembled output to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # monodis

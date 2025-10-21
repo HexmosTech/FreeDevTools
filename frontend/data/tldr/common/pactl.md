@@ -1,29 +1,29 @@
 ---
-title: "PulseAudio Control - Manage Sound Server with pactl | Online Free DevTools by Hexmos"
+title: 'PulseAudio Control - Manage Sound Server with pactl | Online Free DevTools by Hexmos'
 name: pactl
-path: "/freedevtools/tldr/common/pactl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pactl/"
-description: "Control PulseAudio sound server efficiently with pactl. Manage audio sinks, volume, and muting. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pactl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pactl/'
+description: 'Control PulseAudio sound server efficiently with pactl. Manage audio sinks, volume, and muting. Free online tool, no registration required.'
 category: common
 keywords:
-- PulseAudio control
-- pactl command
-- Linux audio control
-- Sound server management
-- Audio sink management
-- Volume control tool
-- Mute toggle command
-- PulseAudio configuration
-- Audio output routing
-- Linux sound settings
+  - PulseAudio control
+  - pactl command
+  - Linux audio control
+  - Sound server management
+  - Audio sink management
+  - Volume control tool
+  - Mute toggle command
+  - PulseAudio configuration
+  - Audio output routing
+  - Linux sound settings
 features:
-- Control PulseAudio sound server settings
-- Manage audio sinks and sources
-- Adjust volume levels for individual sinks
-- Route audio streams to different outputs
-- Toggle mute status for specific audio devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Control PulseAudio sound server settings
+  - Manage audio sinks and sources
+  - Adjust volume levels for individual sinks
+  - Route audio streams to different outputs
+  - Toggle mute status for specific audio devices
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pactl

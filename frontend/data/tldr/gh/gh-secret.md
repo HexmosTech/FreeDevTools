@@ -1,29 +1,29 @@
 ---
-title: "Manage GitHub Secrets - Secure Repositories | Online Free DevTools by Hexmos"
+title: 'Manage GitHub Secrets - Secure Repositories | Online Free DevTools by Hexmos'
 name: gh-secret
-path: "/freedevtools/tldr/gh/gh-secret/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-secret/"
-description: "Manage GitHub secrets securely with gh-secret. Protect sensitive data, control repository access, and automate deployments. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-secret/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-secret/'
+description: 'Manage GitHub secrets securely with gh-secret. Protect sensitive data, control repository access, and automate deployments. Free online tool, no registration required.'
 category: common
 keywords:
-- github secret management
-- repository secret control
-- github cli secret
-- gh secret command
-- github actions secrets
-- secret key rotation
-- organization secrets management
-- github secrets encryption
-- command line secrets
-- access control secrets
+  - github secret management
+  - repository secret control
+  - github cli secret
+  - gh secret command
+  - github actions secrets
+  - secret key rotation
+  - organization secrets management
+  - github secrets encryption
+  - command line secrets
+  - access control secrets
 features:
-- List secrets for repositories and organizations
-- Set secrets for current repository from command line
-- Set secrets from files securely
-- Assign organization secrets to specific repositories
-- Remove secrets from repositories and organizations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List secrets for repositories and organizations
+  - Set secrets for current repository from command line
+  - Set secrets from files securely
+  - Assign organization secrets to specific repositories
+  - Remove secrets from repositories and organizations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh secret

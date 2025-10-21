@@ -1,29 +1,29 @@
 ---
-title: "Ansible Pull - Execute Playbooks Locally | Online Free DevTools by Hexmos"
+title: 'Ansible Pull - Execute Playbooks Locally | Online Free DevTools by Hexmos'
 name: ansible-pull
-path: "/freedevtools/tldr/ansible/ansible-pull/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-pull/"
-description: "Execute Ansible playbooks locally with Ansible Pull. Automate configuration management and deployment tasks from a VCS repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible-pull/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible-pull/'
+description: 'Execute Ansible playbooks locally with Ansible Pull. Automate configuration management and deployment tasks from a VCS repository. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible playbook execution
-- ansible local automation
-- ansible configuration management
-- ansible pull from git
-- ansible declarative automation
-- ansible playbook deployment
-- linux ansible pull
-- macos ansible pull
-- ansible remote execution
-- ansible pull best practices
+  - ansible playbook execution
+  - ansible local automation
+  - ansible configuration management
+  - ansible pull from git
+  - ansible declarative automation
+  - ansible playbook deployment
+  - linux ansible pull
+  - macos ansible pull
+  - ansible remote execution
+  - ansible pull best practices
 features:
-- Pull Ansible playbooks from a VCS repository
-- Execute playbooks against the local host
-- Specify a particular branch to pull from
-- Define a specific playbook to execute
-- Use a custom inventory file for host variables
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Pull Ansible playbooks from a VCS repository
+  - Execute playbooks against the local host
+  - Specify a particular branch to pull from
+  - Define a specific playbook to execute
+  - Use a custom inventory file for host variables
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible-pull

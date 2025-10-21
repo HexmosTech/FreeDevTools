@@ -1,29 +1,29 @@
 ---
-title: "Systemsetup - Configure macOS Settings | Online Free DevTools by Hexmos"
+title: 'Systemsetup - Configure macOS Settings | Online Free DevTools by Hexmos'
 name: systemsetup
-path: "/freedevtools/tldr/osx/systemsetup/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/systemsetup/"
-description: "Configure macOS system settings with Systemsetup. Control timezone, sleep settings, and startup disks easily with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/systemsetup/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/systemsetup/'
+description: 'Configure macOS system settings with Systemsetup. Control timezone, sleep settings, and startup disks easily with this command line tool. Free online tool, no registration required.'
 category: osx
 keywords:
-- macos configuration
-- system setup macos
-- systemsetup command
-- macos settings configuration
-- configure startup disk macos
-- enable remote login macos
-- macos timezone configuration
-- macos sleep settings
-- macos power settings
-- system preferences command line
+  - macos configuration
+  - system setup macos
+  - systemsetup command
+  - macos settings configuration
+  - configure startup disk macos
+  - enable remote login macos
+  - macos timezone configuration
+  - macos sleep settings
+  - macos power settings
+  - system preferences command line
 features:
-- Configure macOS system timezone
-- Enable or disable remote login (SSH)
-- Manage system sleep settings
-- Set the startup disk for macOS
-- Configure automatic restart options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure macOS system timezone
+  - Enable or disable remote login (SSH)
+  - Manage system sleep settings
+  - Set the startup disk for macOS
+  - Configure automatic restart options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemsetup

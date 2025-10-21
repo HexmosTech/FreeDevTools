@@ -1,29 +1,29 @@
 ---
-title: "Bundletool - Generate Android APKs | Online Free DevTools by Hexmos"
+title: 'Bundletool - Generate Android APKs | Online Free DevTools by Hexmos'
 name: bundletool
-path: "/freedevtools/tldr/bundletool/bundletool/"
-canonical: "https://hexmos.com/freedevtools/tldr/bundletool/bundletool/"
-description: "Generate Android APKs with Bundletool. Build application bundles, estimate download sizes, and validate bundles using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/bundletool/bundletool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/bundletool/bundletool/'
+description: 'Generate Android APKs with Bundletool. Build application bundles, estimate download sizes, and validate bundles using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- android apk generator
-- application bundle builder
-- aab to apk converter
-- bundletool command line
-- android app packaging
-- apk download size estimator
-- android bundle validation
-- apk build automation
-- android application development
-- bundletool tutorial
+  - android apk generator
+  - application bundle builder
+  - aab to apk converter
+  - bundletool command line
+  - android app packaging
+  - apk download size estimator
+  - android bundle validation
+  - apk build automation
+  - android application development
+  - bundletool tutorial
 features:
-- Generate APKs from Android App Bundles (AAB)
-- Estimate the download size of Android applications
-- Validate Android App Bundles for errors
-- Create a device specification JSON file
-- Install APKs to an Android device or emulator
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate APKs from Android App Bundles (AAB)
+  - Estimate the download size of Android applications
+  - Validate Android App Bundles for errors
+  - Create a device specification JSON file
+  - Install APKs to an Android device or emulator
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bundletool

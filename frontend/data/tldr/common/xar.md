@@ -1,29 +1,29 @@
 ---
-title: "XAR Archive Manager - Create XAR Archives | Online Free DevTools by Hexmos"
+title: 'XAR Archive Manager - Create XAR Archives | Online Free DevTools by Hexmos'
 name: xar
-path: "/freedevtools/tldr/common/xar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xar/"
-description: "Create XAR archives easily with XAR Archive Manager. Compress and manage files with this archive utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xar/'
+description: 'Create XAR archives easily with XAR Archive Manager. Compress and manage files with this archive utility. Free online tool, no registration required.'
 category: common
 keywords:
-- xar archive manager
-- create xar archive
-- extract xar archive
-- list xar contents
-- xar compression tool
-- xar file utility
-- archive management command
-- xar file creation
-- macOS archive tool
-- common platform xar
+  - xar archive manager
+  - create xar archive
+  - extract xar archive
+  - list xar contents
+  - xar compression tool
+  - xar file utility
+  - archive management command
+  - xar file creation
+  - macOS archive tool
+  - common platform xar
 features:
-- Create XAR archives from directories
-- List the contents of existing XAR archives
-- Extract XAR archives to a specified location
-- Manage and compress files using XAR format
-- Inspect XAR archive metadata
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create XAR archives from directories
+  - List the contents of existing XAR archives
+  - Extract XAR archives to a specified location
+  - Manage and compress files using XAR format
+  - Inspect XAR archive metadata
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xar

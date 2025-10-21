@@ -1,29 +1,29 @@
 ---
-title: "Qt Creator - Develop Qt Applications | Online Free DevTools by Hexmos"
+title: 'Qt Creator - Develop Qt Applications | Online Free DevTools by Hexmos'
 name: qtcreator
-path: "/freedevtools/tldr/common/qtcreator/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qtcreator/"
-description: "Develop cross-platform applications with Qt Creator, the powerful Qt IDE. Debug code, design UIs, and manage projects efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/qtcreator/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qtcreator/'
+description: 'Develop cross-platform applications with Qt Creator, the powerful Qt IDE. Debug code, design UIs, and manage projects efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Qt Creator development
-- Qt application IDE
-- Cross-platform Qt development
-- Qt GUI builder
-- Qt code debugging
-- Qt project management
-- C++ Qt development
-- QML development
-- Qt Linux development
-- Qt Windows development
+  - Qt Creator development
+  - Qt application IDE
+  - Cross-platform Qt development
+  - Qt GUI builder
+  - Qt code debugging
+  - Qt project management
+  - C++ Qt development
+  - QML development
+  - Qt Linux development
+  - Qt Windows development
 features:
-- Launch the Qt Creator IDE
-- Restore previous Qt Creator sessions
-- Disable specific Qt Creator plugins
-- Execute Qt Creator in presentation mode
-- Display Git commit differences in Qt Creator
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch the Qt Creator IDE
+  - Restore previous Qt Creator sessions
+  - Disable specific Qt Creator plugins
+  - Execute Qt Creator in presentation mode
+  - Display Git commit differences in Qt Creator
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qtcreator

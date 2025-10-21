@@ -1,9 +1,9 @@
 ---
-title: "Apache2ctl - Control Web Server with Commands | Online Free DevTools by Hexmos"
+title: 'Apache2ctl - Control Web Server with Commands | Online Free DevTools by Hexmos'
 name: apache2ctl
-path: "/freedevtools/tldr/linux/apache2ctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apache2ctl/"
-description: "Control Apache web servers using apache2ctl commands. Start, stop, restart, and test your Apache configuration. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apache2ctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apache2ctl/'
+description: 'Control Apache web servers using apache2ctl commands. Start, stop, restart, and test your Apache configuration. Free online tool, no registration required.'
 category: linux
 keywords:
   - apache2ctl commands
@@ -22,8 +22,8 @@ features:
   - Test the syntax of the Apache configuration file.
   - List all loaded Apache modules.
   - Manage the Apache web server using command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apache2ctl

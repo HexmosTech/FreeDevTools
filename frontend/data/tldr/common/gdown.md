@@ -1,29 +1,29 @@
 ---
-title: "Download Files - Control Files with Gdown | Online Free DevTools by Hexmos"
+title: 'Download Files - Control Files with Gdown | Online Free DevTools by Hexmos'
 name: gdown
-path: "/freedevtools/tldr/common/gdown/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdown/"
-description: "Download files easily with Gdown. Control and retrieve files from Google Drive and URLs using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gdown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gdown/'
+description: 'Download files easily with Gdown. Control and retrieve files from Google Drive and URLs using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- Google Drive file downloader
-- URL file downloader
-- Command line file download
-- Gdown file download tool
-- File ID download utility
-- Archive file extraction
-- Linux file download
-- MacOS file download
-- Windows file download
-- Folder download manager
+  - Google Drive file downloader
+  - URL file downloader
+  - Command line file download
+  - Gdown file download tool
+  - File ID download utility
+  - Archive file extraction
+  - Linux file download
+  - MacOS file download
+  - Windows file download
+  - Folder download manager
 features:
-- Download files from Google Drive by ID or URL
-- Download entire folders from Google Drive
-- Extract tar archives directly from URLs
-- Perform fuzzy file ID extraction from URLs
-- Download files silently with the `--quiet` option
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download files from Google Drive by ID or URL
+  - Download entire folders from Google Drive
+  - Extract tar archives directly from URLs
+  - Perform fuzzy file ID extraction from URLs
+  - Download files silently with the `--quiet` option
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdown

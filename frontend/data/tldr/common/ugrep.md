@@ -1,29 +1,29 @@
 ---
-title: "Ugrep Search - Ultra Fast File Search TUI | Online Free DevTools by Hexmos"
+title: 'Ugrep Search - Ultra Fast File Search TUI | Online Free DevTools by Hexmos'
 name: ugrep
-path: "/freedevtools/tldr/common/ugrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ugrep/"
-description: "Perform ultra fast file search with Ugrep. Find text patterns, search compressed files, and filter by file type with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ugrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ugrep/'
+description: 'Perform ultra fast file search with Ugrep. Find text patterns, search compressed files, and filter by file type with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- ugrep file search
-- grep alternative
-- fast file search linux
-- terminal search tool
-- regular expression search
-- TUI search utility
-- compressed file search
-- glob pattern search
-- file type search
-- recursive file search
+  - ugrep file search
+  - grep alternative
+  - fast file search linux
+  - terminal search tool
+  - regular expression search
+  - TUI search utility
+  - compressed file search
+  - glob pattern search
+  - file type search
+  - recursive file search
 features:
-- Recursively search directories for files matching a pattern.
-- Search compressed files and archives (Zip, tar).
-- Filter search by file type.
-- Use glob patterns to include or exclude files.
-- Perform fuzzy search with configurable character mismatches.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search directories for files matching a pattern.
+  - Search compressed files and archives (Zip, tar).
+  - Filter search by file type.
+  - Use glob patterns to include or exclude files.
+  - Perform fuzzy search with configurable character mismatches.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ugrep

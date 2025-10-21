@@ -1,29 +1,29 @@
 ---
-title: "Install GRUB - Bootloader Configuration | Online Free DevTools by Hexmos"
+title: 'Install GRUB - Bootloader Configuration | Online Free DevTools by Hexmos'
 name: grub-install
-path: "/freedevtools/tldr/linux/grub-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/grub-install/"
-description: "Install GRUB bootloader with grub-install. Configure boot options and install to different systems, including BIOS and UEFI. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/grub-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/grub-install/'
+description: 'Install GRUB bootloader with grub-install. Configure boot options and install to different systems, including BIOS and UEFI. Free online tool, no registration required.'
 category: linux
 keywords:
-- GRUB bootloader install
-- Linux bootloader configuration
-- BIOS GRUB install
-- UEFI GRUB install
-- GRUB install Linux
-- GRUB bootloader setup
-- bootloader install command
-- linux GRUB configuration tool
-- GRUB install guide
-- GRUB install utility
+  - GRUB bootloader install
+  - Linux bootloader configuration
+  - BIOS GRUB install
+  - UEFI GRUB install
+  - GRUB install Linux
+  - GRUB bootloader setup
+  - bootloader install command
+  - linux GRUB configuration tool
+  - GRUB install guide
+  - GRUB install utility
 features:
-- Installs GRUB bootloader to a specified device
-- Supports both BIOS and UEFI systems
-- Allows specifying target architecture for installation
-- Configures EFI directory for UEFI installations
-- Enables pre-loading specific modules during installation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Installs GRUB bootloader to a specified device
+  - Supports both BIOS and UEFI systems
+  - Allows specifying target architecture for installation
+  - Configures EFI directory for UEFI installations
+  - Enables pre-loading specific modules during installation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grub-install

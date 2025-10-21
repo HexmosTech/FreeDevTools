@@ -1,29 +1,29 @@
 ---
-title: "Git Credential - Retrieve Credentials | Online Free DevTools by Hexmos"
+title: 'Git Credential - Retrieve Credentials | Online Free DevTools by Hexmos'
 name: git-credential
-path: "/freedevtools/tldr/git/git-credential/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-credential/"
+path: '/freedevtools/tldr/git/git-credential/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-credential/'
 description: "Retrieve user credentials with Git Credential. Store, approve, and reject credential information using Git's configured helpers. Free online tool, no registration required."
 category: common
 keywords:
-- git credential management
-- git credential storage
-- git credential retrieval
-- git username password
-- git authentication
-- git credential helper
-- git configuration
-- git security
-- git credential approve
-- git credential reject
+  - git credential management
+  - git credential storage
+  - git credential retrieval
+  - git username password
+  - git authentication
+  - git credential helper
+  - git configuration
+  - git security
+  - git credential approve
+  - git credential reject
 features:
-- Retrieve user credentials from configuration
-- Store credential information securely
-- Approve credentials for future use
-- Reject and erase stored credentials
-- Interact with multiple credential helpers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve user credentials from configuration
+  - Store credential information securely
+  - Approve credentials for future use
+  - Reject and erase stored credentials
+  - Interact with multiple credential helpers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git credential

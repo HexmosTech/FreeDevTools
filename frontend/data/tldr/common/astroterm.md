@@ -1,29 +1,29 @@
 ---
-title: "Astroterm - Render Star Maps in Terminal | Online Free DevTools by Hexmos"
+title: 'Astroterm - Render Star Maps in Terminal | Online Free DevTools by Hexmos'
 name: astroterm
-path: "/freedevtools/tldr/common/astroterm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/astroterm/"
-description: "Render star maps with Astroterm. Visualize celestial objects and constellations in your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/astroterm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/astroterm/'
+description: 'Render star maps with Astroterm. Visualize celestial objects and constellations in your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal star map
-- constellation viewer
-- real-time star positions
-- celestial simulation
-- command line astronomy
-- star chart terminal
-- planetarium software
-- astronomical visualization
-- command line planet positions
-- cli star map
+  - terminal star map
+  - constellation viewer
+  - real-time star positions
+  - celestial simulation
+  - command line astronomy
+  - star chart terminal
+  - planetarium software
+  - astronomical visualization
+  - command line planet positions
+  - cli star map
 features:
-- Display real-time star and planet positions
-- Render constellations with optional color
-- Simulate star movements based on location and time
-- Customize star brightness threshold for display
-- Use unicode characters for enhanced visuals
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display real-time star and planet positions
+  - Render constellations with optional color
+  - Simulate star movements based on location and time
+  - Customize star brightness threshold for display
+  - Use unicode characters for enhanced visuals
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # astroterm

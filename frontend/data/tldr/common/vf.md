@@ -1,29 +1,29 @@
 ---
-title: "Manage Virtual Environments - Control Python Env with VF | Online Free DevTools by Hexmos"
+title: 'Manage Virtual Environments - Control Python Env with VF | Online Free DevTools by Hexmos'
 name: vf
-path: "/freedevtools/tldr/common/vf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vf/"
-description: "Manage Python virtual environments with VF. Create, activate, deactivate, and remove environments effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vf/'
+description: 'Manage Python virtual environments with VF. Create, activate, deactivate, and remove environments effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- python virtual environment manager
-- virtualenv control
-- python environment manager
-- vf command
-- fish shell virtualenv
-- virtual fish tool
-- python environment activation
-- python environment creation
-- virtual environment list
-- virtual environment removal
+  - python virtual environment manager
+  - virtualenv control
+  - python environment manager
+  - vf command
+  - fish shell virtualenv
+  - virtual fish tool
+  - python environment activation
+  - python environment creation
+  - virtual environment list
+  - virtual environment removal
 features:
-- Create new Python virtual environments
-- Activate and deactivate virtual environments
-- Connect environments to directories for auto-activation
-- List available virtual environments
-- Remove Python virtual environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Python virtual environments
+  - Activate and deactivate virtual environments
+  - Connect environments to directories for auto-activation
+  - List available virtual environments
+  - Remove Python virtual environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vf

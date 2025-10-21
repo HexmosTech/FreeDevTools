@@ -1,29 +1,29 @@
 ---
-title: "Boot Builder - Build Clojure Projects | Online Free DevTools by Hexmos"
+title: 'Boot Builder - Build Clojure Projects | Online Free DevTools by Hexmos'
 name: boot
-path: "/freedevtools/tldr/common/boot/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/boot/"
-description: "Build Clojure projects effortlessly with Boot Builder. Streamline project setup, dependency management, and deployment using a single command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/boot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/boot/'
+description: 'Build Clojure projects effortlessly with Boot Builder. Streamline project setup, dependency management, and deployment using a single command. Free online tool, no registration required.'
 category: common
 keywords:
-- clojure project builder
-- boot clj build tool
-- clojure uberjar generator
-- boot repl session
-- clojure project scaffolding
-- clojure development environment
-- clojure production build
-- clojure dependency management
-- clojure build automation
-- boot clj repl
+  - clojure project builder
+  - boot clj build tool
+  - clojure uberjar generator
+  - boot repl session
+  - clojure project scaffolding
+  - clojure development environment
+  - clojure production build
+  - clojure dependency management
+  - clojure build automation
+  - boot clj repl
 features:
-- Build Clojure projects into executable JAR files.
-- Generate new Clojure project scaffolding from templates.
-- Start a Clojure REPL session for interactive development.
-- Build development-ready project environments.
-- Build production-ready project environments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Clojure projects into executable JAR files.
+  - Generate new Clojure project scaffolding from templates.
+  - Start a Clojure REPL session for interactive development.
+  - Build development-ready project environments.
+  - Build production-ready project environments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # boot

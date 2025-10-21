@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const SvgIconsSkeleton: React.FC = () => {
   return (
@@ -53,7 +53,7 @@ const SvgIconsSkeleton: React.FC = () => {
         </div>
         <div className="h-4 w-48 bg-slate-200 dark:bg-slate-700 rounded mx-auto"></div>
       </div>
-    </div >
+    </div>
   );
 };
 

@@ -1,29 +1,29 @@
 ---
-title: "Fstopgm - Convert FaceSaver Files to PGM | Online Free DevTools by Hexmos"
+title: 'Fstopgm - Convert FaceSaver Files to PGM | Online Free DevTools by Hexmos'
 name: fstopgm
-path: "/freedevtools/tldr/common/fstopgm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fstopgm/"
-description: "Convert Usenix FaceSaver files to PGM image format with Fstopgm. Manage image conversions with command-line ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fstopgm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fstopgm/'
+description: 'Convert Usenix FaceSaver files to PGM image format with Fstopgm. Manage image conversions with command-line ease. Free online tool, no registration required.'
 category: common
 keywords:
-- FaceSaver to PGM conversion
-- FS to PGM converter
-- Usenix FaceSaver conversion
-- PGM image generation
-- Command line image tools
-- Linux image conversion
-- MacOS image conversion
-- Image format converter
-- Raster image processing
-- fstopgm command
+  - FaceSaver to PGM conversion
+  - FS to PGM converter
+  - Usenix FaceSaver conversion
+  - PGM image generation
+  - Command line image tools
+  - Linux image conversion
+  - MacOS image conversion
+  - Image format converter
+  - Raster image processing
+  - fstopgm command
 features:
-- Convert Usenix FaceSaver files to PGM format.
-- Support command-line image processing.
-- Output PGM images from FS files.
-- Integrate with scripting workflows.
-- Manage image conversions effectively.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Usenix FaceSaver files to PGM format.
+  - Support command-line image processing.
+  - Output PGM images from FS files.
+  - Integrate with scripting workflows.
+  - Manage image conversions effectively.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fstopgm

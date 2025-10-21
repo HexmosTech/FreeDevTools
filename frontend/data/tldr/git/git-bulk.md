@@ -1,29 +1,29 @@
 ---
-title: "Git Bulk - Manage Multiple Git Repositories | Online Free DevTools by Hexmos"
+title: 'Git Bulk - Manage Multiple Git Repositories | Online Free DevTools by Hexmos'
 name: git-bulk
-path: "/freedevtools/tldr/git/git-bulk/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-bulk/"
-description: "Manage multiple Git repositories efficiently with Git Bulk. Automate Git commands across several repositories and streamline workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-bulk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-bulk/'
+description: 'Manage multiple Git repositories efficiently with Git Bulk. Automate Git commands across several repositories and streamline workflow. Free online tool, no registration required.'
 category: common
 keywords:
-- git bulk operations
-- git multi-repo management
-- git batch processing
-- git command automation
-- git repository manager
-- git workspace management
-- linux git bulk
-- macos git bulk
-- command line git
-- git repository automation
+  - git bulk operations
+  - git multi-repo management
+  - git batch processing
+  - git command automation
+  - git repository manager
+  - git workspace management
+  - linux git bulk
+  - macos git bulk
+  - command line git
+  - git repository automation
 features:
-- Execute commands across multiple Git repositories simultaneously
-- Register and manage workspaces for bulk Git operations
-- Clone repositories and register them as workspaces
-- List all registered workspaces
-- Remove specific or all registered workspaces
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands across multiple Git repositories simultaneously
+  - Register and manage workspaces for bulk Git operations
+  - Clone repositories and register them as workspaces
+  - List all registered workspaces
+  - Remove specific or all registered workspaces
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git bulk

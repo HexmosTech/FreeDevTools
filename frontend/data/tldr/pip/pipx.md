@@ -1,29 +1,29 @@
 ---
-title: "Install Python Applications - Control Environments with pipx | Online Free DevTools by Hexmos"
+title: 'Install Python Applications - Control Environments with pipx | Online Free DevTools by Hexmos'
 name: pipx
-path: "/freedevtools/tldr/pip/pipx/"
-canonical: "https://hexmos.com/freedevtools/tldr/pip/pipx/"
-description: "Install Python applications in isolated environments with pipx. Manage dependencies and execute Python tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/pip/pipx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pip/pipx/'
+description: 'Install Python applications in isolated environments with pipx. Manage dependencies and execute Python tools. Free online tool, no registration required.'
 category: common
 keywords:
-- Python application installer
-- Python virtual environment manager
-- pipx command line tool
-- Python package installer
-- Isolated environment installer
-- pipx dependency management
-- pipx environment control
-- Python command runner
-- Python environment manager linux
-- Python environment manager macos
+  - Python application installer
+  - Python virtual environment manager
+  - pipx command line tool
+  - Python package installer
+  - Isolated environment installer
+  - pipx dependency management
+  - pipx environment control
+  - Python command runner
+  - Python environment manager linux
+  - Python environment manager macos
 features:
-- Install Python applications in isolated virtual environments
-- Execute Python applications without environment conflicts
-- Inject dependencies into existing virtual environments
-- Manage Python packages and dependencies efficiently
-- Run Python applications with custom pip arguments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Python applications in isolated virtual environments
+  - Execute Python applications without environment conflicts
+  - Inject dependencies into existing virtual environments
+  - Manage Python packages and dependencies efficiently
+  - Run Python applications with custom pip arguments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pipx

@@ -1,29 +1,29 @@
 ---
-title: "Replace Text with git-sed - Edit Files | Online Free DevTools by Hexmos"
+title: 'Replace Text with git-sed - Edit Files | Online Free DevTools by Hexmos'
 name: git-sed
-path: "/freedevtools/tldr/git/git-sed/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-sed/"
-description: "Replace text effortlessly with git-sed. Edit files within your Git repository directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-sed/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-sed/'
+description: 'Replace text effortlessly with git-sed. Edit files within your Git repository directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- git text replace
-- sed text replace
-- git sed command
-- git file editor
-- git replace pattern
-- git find replace
-- linux sed git
-- bash git sed
-- git commit changes
-- git directory replace
+  - git text replace
+  - sed text replace
+  - git sed command
+  - git file editor
+  - git replace pattern
+  - git find replace
+  - linux sed git
+  - bash git sed
+  - git commit changes
+  - git directory replace
 features:
-- Replace text in files within a Git repository
-- Commit changes after text replacement
-- Use regular expressions for pattern matching
-- Replace text in files within a specified directory
-- Perform find and replace operations on Git controlled files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Replace text in files within a Git repository
+  - Commit changes after text replacement
+  - Use regular expressions for pattern matching
+  - Replace text in files within a specified directory
+  - Perform find and replace operations on Git controlled files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git sed

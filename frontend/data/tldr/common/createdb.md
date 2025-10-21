@@ -1,29 +1,29 @@
 ---
-title: "Create PostgreSQL Database - Create DB with createdb | Online Free DevTools by Hexmos"
+title: 'Create PostgreSQL Database - Create DB with createdb | Online Free DevTools by Hexmos'
 name: createdb
-path: "/freedevtools/tldr/common/createdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/createdb/"
-description: "Create PostgreSQL database effortlessly with createdb. Manage database ownership, templates, and descriptions with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/createdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/createdb/'
+description: 'Create PostgreSQL database effortlessly with createdb. Manage database ownership, templates, and descriptions with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- PostgreSQL database creation
-- createdb command
-- PostgreSQL database manager
-- database creation command line
-- PostgreSQL database owner
-- database template creation
-- createdb postgres
-- PostgreSQL database description
-- database command
-- linux createdb
+  - PostgreSQL database creation
+  - createdb command
+  - PostgreSQL database manager
+  - database creation command line
+  - PostgreSQL database owner
+  - database template creation
+  - createdb postgres
+  - PostgreSQL database description
+  - database command
+  - linux createdb
 features:
-- Create a PostgreSQL database with a specified name
-- Assign ownership of a database to a specific user
-- Create databases using existing templates
-- Add descriptions to databases for better organization
-- Manage database creation from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create a PostgreSQL database with a specified name
+  - Assign ownership of a database to a specific user
+  - Create databases using existing templates
+  - Add descriptions to databases for better organization
+  - Manage database creation from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # createdb

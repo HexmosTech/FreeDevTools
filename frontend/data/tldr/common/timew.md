@@ -1,29 +1,29 @@
 ---
-title: "Time Tracker - Measure Activity Duration | Online Free DevTools by Hexmos"
+title: 'Time Tracker - Measure Activity Duration | Online Free DevTools by Hexmos'
 name: timew
-path: "/freedevtools/tldr/common/timew/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/timew/"
-description: "Measure activity duration with Time Tracker. Track time spent on tasks, generate reports, and analyze productivity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/timew/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/timew/'
+description: 'Measure activity duration with Time Tracker. Track time spent on tasks, generate reports, and analyze productivity. Free online tool, no registration required.'
 category: common
 keywords:
-- time tracking
-- activity tracking
-- command line time tracker
-- duration measurement
-- timewarrior
-- timew command
-- productivity tracker
-- command-line activity manager
-- shell time tracker
-- task duration analysis
+  - time tracking
+  - activity tracking
+  - command line time tracker
+  - duration measurement
+  - timewarrior
+  - timew command
+  - productivity tracker
+  - command-line activity manager
+  - shell time tracker
+  - task duration analysis
 features:
-- Start and stop activity tracking with ease
-- Tag activities for detailed categorization
-- Generate summary reports of tracked time
-- Track activities retroactively with specific start and end times
-- View activity reports for different timeframes like day, week, month
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and stop activity tracking with ease
+  - Tag activities for detailed categorization
+  - Generate summary reports of tracked time
+  - Track activities retroactively with specific start and end times
+  - View activity reports for different timeframes like day, week, month
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # timew

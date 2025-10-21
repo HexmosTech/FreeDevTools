@@ -1,29 +1,29 @@
 ---
-title: "Control Gitea Server - Manage Git Repositories | Online Free DevTools by Hexmos"
+title: 'Control Gitea Server - Manage Git Repositories | Online Free DevTools by Hexmos'
 name: gitea
-path: "/freedevtools/tldr/git/gitea/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitea/"
-description: "Manage your Gitea server with Gitea CLI. Configure repositories, administer users, and migrate databases. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitea/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitea/'
+description: 'Manage your Gitea server with Gitea CLI. Configure repositories, administer users, and migrate databases. Free online tool, no registration required.'
 category: common
 keywords:
-- gitea server management
-- git repository administration
-- gitea command line tool
-- gitea database migration
-- gitea user management
-- git hosting server
-- command line git server
-- gitea configuration tool
-- linux gitea admin
-- command line git hosting
+  - gitea server management
+  - git repository administration
+  - gitea command line tool
+  - gitea database migration
+  - gitea user management
+  - git hosting server
+  - command line git server
+  - gitea configuration tool
+  - linux gitea admin
+  - command line git hosting
 features:
-- Manage Gitea server configurations via CLI.
-- Migrate Gitea databases from the command line.
-- Administer Gitea users and permissions.
-- Control Gitea instance with web server commands.
-- Display Gitea version information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage Gitea server configurations via CLI.
+  - Migrate Gitea databases from the command line.
+  - Administer Gitea users and permissions.
+  - Control Gitea instance with web server commands.
+  - Display Gitea version information.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitea

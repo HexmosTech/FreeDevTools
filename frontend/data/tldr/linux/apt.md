@@ -1,9 +1,9 @@
 ---
-title: "Apt Package Manager - Manage Debian Packages | Online Free DevTools by Hexmos"
+title: 'Apt Package Manager - Manage Debian Packages | Online Free DevTools by Hexmos'
 name: apt
-path: "/freedevtools/tldr/linux/apt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apt/"
-description: "Manage Debian packages efficiently with Apt Package Manager.  Update, install, remove, and upgrade packages easily using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apt/'
+description: 'Manage Debian packages efficiently with Apt Package Manager.  Update, install, remove, and upgrade packages easily using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - Debian package manager
@@ -22,8 +22,8 @@ features:
   - Remove unwanted packages, optionally purging configuration files
   - Search for packages by name or description
   - Display detailed information about a specific package
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apt

@@ -1,29 +1,29 @@
 ---
-title: "Generate Lexical Analyzers - Lex | Online Free DevTools by Hexmos"
+title: 'Generate Lexical Analyzers - Lex | Online Free DevTools by Hexmos'
 name: lex
-path: "/freedevtools/tldr/common/lex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lex/"
-description: "Generate lexical analyzers with Lex, a powerful compiler construction tool.  Create parsers and automate lexical analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lex/'
+description: 'Generate lexical analyzers with Lex, a powerful compiler construction tool.  Create parsers and automate lexical analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- Lexical analyzer generator
-- Lex file parser
-- Compiler construction tool
-- C code generator
-- Lex parser generator
-- Flex alias command
-- Lex for Linux
-- Lex for macOS
-- Lex for command-line
-- Lex for code generation
+  - Lexical analyzer generator
+  - Lex file parser
+  - Compiler construction tool
+  - C code generator
+  - Lex parser generator
+  - Flex alias command
+  - Lex for Linux
+  - Lex for macOS
+  - Lex for command-line
+  - Lex for code generation
 features:
-- Generate C code from Lex specifications
-- Create lexical analyzers
-- Parse input based on defined rules
-- Output analyzer code to a specified file
-- Compile generated analyzer code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate C code from Lex specifications
+  - Create lexical analyzers
+  - Parse input based on defined rules
+  - Output analyzer code to a specified file
+  - Compile generated analyzer code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lex

@@ -1,29 +1,29 @@
 ---
-title: "Notmuch - Index and Search Email | Online Free DevTools by Hexmos"
+title: 'Notmuch - Index and Search Email | Online Free DevTools by Hexmos'
 name: notmuch
-path: "/freedevtools/tldr/common/notmuch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/notmuch/"
-description: "Index email and perform lightning-fast email searches with Notmuch. Manage and tag large email collections with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/notmuch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/notmuch/'
+description: 'Index email and perform lightning-fast email searches with Notmuch. Manage and tag large email collections with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- notmuch email index
-- notmuch email search
-- notmuch email tag
-- notmuch maildir search
-- notmuch maildir index
-- notmuch email tagging tool
-- email search command line
-- email index linux
-- email tagging command line
-- notmuch command line tool
+  - notmuch email index
+  - notmuch email search
+  - notmuch email tag
+  - notmuch maildir search
+  - notmuch maildir index
+  - notmuch email tagging tool
+  - email search command line
+  - email index linux
+  - email tagging command line
+  - notmuch command line tool
 features:
-- Index large collections of email messages
-- Search emails using complex search terms
-- Tag emails for easy organization and retrieval
-- Count emails matching specified criteria
-- Create reply templates from search results
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Index large collections of email messages
+  - Search emails using complex search terms
+  - Tag emails for easy organization and retrieval
+  - Count emails matching specified criteria
+  - Create reply templates from search results
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # notmuch

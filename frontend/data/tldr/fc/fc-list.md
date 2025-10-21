@@ -1,29 +1,29 @@
 ---
-title: "List Fonts - View Installed Fonts with fc-list | Online Free DevTools by Hexmos"
+title: 'List Fonts - View Installed Fonts with fc-list | Online Free DevTools by Hexmos'
 name: fc-list
-path: "/freedevtools/tldr/fc/fc-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/fc/fc-list/"
-description: "List fonts installed on your system with fc-list. Quickly identify available fonts and their properties. Free online tool, no registration required."
+path: '/freedevtools/tldr/fc/fc-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/fc/fc-list/'
+description: 'List fonts installed on your system with fc-list. Quickly identify available fonts and their properties. Free online tool, no registration required.'
 category: common
 keywords:
-- font listing
-- font information
-- font inventory
-- linux fonts
-- fc-list command
-- list fonts linux
-- font management
-- command line fonts
-- font details
-- installed fonts
+  - font listing
+  - font information
+  - font inventory
+  - linux fonts
+  - fc-list command
+  - list fonts linux
+  - font management
+  - command line fonts
+  - font details
+  - installed fonts
 features:
-- Display all installed fonts
-- Filter fonts by name using grep
-- Count the number of installed fonts
-- List fonts supporting a specific language
-- List fonts containing a specific character
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all installed fonts
+  - Filter fonts by name using grep
+  - Count the number of installed fonts
+  - List fonts supporting a specific language
+  - List fonts containing a specific character
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fc-list

@@ -1,29 +1,29 @@
 ---
-title: "Create Flowcharts - with Calligraflow | Online Free DevTools by Hexmos"
+title: 'Create Flowcharts - with Calligraflow | Online Free DevTools by Hexmos'
 name: calligraflow
-path: "/freedevtools/tldr/common/calligraflow/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/calligraflow/"
-description: "Create flowcharts with Calligraflow. Design diagrams and visualize processes using this versatile application. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/calligraflow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/calligraflow/'
+description: 'Create flowcharts with Calligraflow. Design diagrams and visualize processes using this versatile application. Free online tool, no registration required.'
 category: common
 keywords:
-- flowchart designer
-- diagram creator
-- calligra flow
-- calligra flowchart
-- calligra diagram
-- linux flowchart tool
-- linux diagram tool
-- open source flowchart
-- open source diagram
-- vector graphics editor
+  - flowchart designer
+  - diagram creator
+  - calligra flow
+  - calligra flowchart
+  - calligra diagram
+  - linux flowchart tool
+  - linux diagram tool
+  - open source flowchart
+  - open source diagram
+  - vector graphics editor
 features:
-- Create flowcharts and diagrams.
-- Open existing Calligraflow files.
-- Display help documentation.
-- Show version information.
-- Design visual representations of processes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create flowcharts and diagrams.
+  - Open existing Calligraflow files.
+  - Display help documentation.
+  - Show version information.
+  - Design visual representations of processes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # calligraflow

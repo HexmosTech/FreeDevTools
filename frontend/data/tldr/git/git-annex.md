@@ -1,29 +1,29 @@
 ---
-title: "Manage Files with Git Annex - Version Control | Online Free DevTools by Hexmos"
+title: 'Manage Files with Git Annex - Version Control | Online Free DevTools by Hexmos'
 name: git-annex
-path: "/freedevtools/tldr/git/git-annex/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-annex/"
-description: "Manage files with Git Annex efficiently. Streamline version control and reduce repository size using symlinks and key-value stores. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-annex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-annex/'
+description: 'Manage files with Git Annex efficiently. Streamline version control and reduce repository size using symlinks and key-value stores. Free online tool, no registration required.'
 category: common
 keywords:
-- git annex file management
-- git annex version control
-- git annex large file handling
-- git annex symlink repository
-- git annex key-value store
-- git annex linux
-- git annex macos
-- git annex windows
-- git annex content tracking
-- git annex repository synchronization
+  - git annex file management
+  - git annex version control
+  - git annex large file handling
+  - git annex symlink repository
+  - git annex key-value store
+  - git annex linux
+  - git annex macos
+  - git annex windows
+  - git annex content tracking
+  - git annex repository synchronization
 features:
-- Store file contents outside Git repository
-- Create symlinks to annexed file contents
-- Synchronize annexed files with remote repositories
-- Retrieve annexed files on demand
-- Manage large files without bloating the Git repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Store file contents outside Git repository
+  - Create symlinks to annexed file contents
+  - Synchronize annexed files with remote repositories
+  - Retrieve annexed files on demand
+  - Manage large files without bloating the Git repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git annex

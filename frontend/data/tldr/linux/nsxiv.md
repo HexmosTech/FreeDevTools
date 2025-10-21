@@ -1,9 +1,9 @@
 ---
-title: "Control Images - View with nsxiv | Online Free DevTools by Hexmos"
+title: 'Control Images - View with nsxiv | Online Free DevTools by Hexmos'
 name: nsxiv
-path: "/freedevtools/tldr/linux/nsxiv/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nsxiv/"
-description: "View images instantly with nsxiv. Control image display and navigation with this simple command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nsxiv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nsxiv/'
+description: 'View images instantly with nsxiv. Control image display and navigation with this simple command line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - image viewer
@@ -22,8 +22,8 @@ features:
   - Search directories recursively for image files
   - Switch between image and thumbnail modes
   - Quickly navigate forward and backward through image lists
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nsxiv

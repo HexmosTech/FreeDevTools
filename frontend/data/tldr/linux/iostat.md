@@ -1,9 +1,9 @@
 ---
-title: "iostat Command - Monitor Disk & CPU | Online Free DevTools by Hexmos"
+title: 'iostat Command - Monitor Disk & CPU | Online Free DevTools by Hexmos'
 name: iostat
-path: "/freedevtools/tldr/linux/iostat/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/iostat/"
-description: "Monitor disk and CPU performance with the iostat command.  View detailed statistics, including I/O operations and CPU usage. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/iostat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/iostat/'
+description: 'Monitor disk and CPU performance with the iostat command.  View detailed statistics, including I/O operations and CPU usage. Free online tool, no registration required.'
 category: linux
 keywords:
   - iostat command linux
@@ -22,8 +22,8 @@ features:
   - Shows detailed CPU statistics with compact output option.
   - Displays disk statistics, including LVM volumes.
   - Generates incremental reports of CPU and disk statistics at specified intervals.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iostat

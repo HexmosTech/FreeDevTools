@@ -1,9 +1,9 @@
 ---
-title: "Manage Trust Policy - Control Security with trust | Online Free DevTools by Hexmos"
+title: 'Manage Trust Policy - Control Security with trust | Online Free DevTools by Hexmos'
 name: trust
-path: "/freedevtools/tldr/linux/trust/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/trust/"
-description: "Control and manage trust policy with the trust command.  List, add, remove, and extract trust anchors and certificates. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/trust/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/trust/'
+description: 'Control and manage trust policy with the trust command.  List, add, remove, and extract trust anchors and certificates. Free online tool, no registration required.'
 category: linux
 keywords:
   - trust policy management
@@ -22,8 +22,8 @@ features:
   - Remove anchors from the trust policy store.
   - Extract trust policy to a directory.
   - Manage CA anchors and certificates.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trust

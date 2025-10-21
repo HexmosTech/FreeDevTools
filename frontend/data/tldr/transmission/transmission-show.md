@@ -1,29 +1,29 @@
 ---
-title: "Transmission Show - Get Torrent Info | Online Free DevTools by Hexmos"
+title: 'Transmission Show - Get Torrent Info | Online Free DevTools by Hexmos'
 name: transmission-show
-path: "/freedevtools/tldr/transmission/transmission-show/"
-canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-show/"
-description: "Get torrent information with Transmission Show. Generate magnet links and scrape tracker data using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/transmission/transmission-show/'
+canonical: 'https://hexmos.com/freedevtools/tldr/transmission/transmission-show/'
+description: 'Get torrent information with Transmission Show. Generate magnet links and scrape tracker data using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- torrent metadata extraction
-- transmission torrent info
-- torrent magnet link generator
-- scrape torrent trackers
-- transmission-cli
-- torrent peer count
-- torrent file details
-- torrent tracker query
-- command line torrent tools
-- linux transmission
+  - torrent metadata extraction
+  - transmission torrent info
+  - torrent magnet link generator
+  - scrape torrent trackers
+  - transmission-cli
+  - torrent peer count
+  - torrent file details
+  - torrent tracker query
+  - command line torrent tools
+  - linux transmission
 features:
-- Display torrent metadata
-- Generate magnet links from torrent files
-- Query torrent trackers for peer counts
-- Show information about a specific torrent
-- Extract details from .torrent files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display torrent metadata
+  - Generate magnet links from torrent files
+  - Query torrent trackers for peer counts
+  - Show information about a specific torrent
+  - Extract details from .torrent files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transmission-show

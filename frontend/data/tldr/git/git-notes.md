@@ -1,29 +1,29 @@
 ---
-title: "Control Git Notes - Add & Inspect Object Notes | Online Free DevTools by Hexmos"
+title: 'Control Git Notes - Add & Inspect Object Notes | Online Free DevTools by Hexmos'
 name: git-notes
-path: "/freedevtools/tldr/git/git-notes/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-notes/"
-description: "Control git notes with this online tool. Add, inspect, and manage object notes in your Git repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-notes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-notes/'
+description: 'Control git notes with this online tool. Add, inspect, and manage object notes in your Git repository. Free online tool, no registration required.'
 category: common
 keywords:
-- git notes management
-- git object notes
-- git add notes
-- git inspect notes
-- git command line notes
-- git commit notes
-- git annotate commits
-- git notes append
-- git notes edit
-- git notes remove
+  - git notes management
+  - git object notes
+  - git add notes
+  - git inspect notes
+  - git command line notes
+  - git commit notes
+  - git annotate commits
+  - git notes append
+  - git notes edit
+  - git notes remove
 features:
-- List notes attached to objects
-- Append notes to specific commits
-- Edit existing notes
-- Copy notes between objects
-- Remove notes from objects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List notes attached to objects
+  - Append notes to specific commits
+  - Edit existing notes
+  - Copy notes between objects
+  - Remove notes from objects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git notes

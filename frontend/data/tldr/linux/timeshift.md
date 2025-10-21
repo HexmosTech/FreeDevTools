@@ -1,9 +1,9 @@
 ---
-title: "Timeshift - Restore System Snapshots | Online Free DevTools by Hexmos"
+title: 'Timeshift - Restore System Snapshots | Online Free DevTools by Hexmos'
 name: timeshift
-path: "/freedevtools/tldr/linux/timeshift/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/timeshift/"
-description: "Restore system snapshots with Timeshift. Back up and recover your Linux system with ease using this powerful utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/timeshift/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/timeshift/'
+description: 'Restore system snapshots with Timeshift. Back up and recover your Linux system with ease using this powerful utility. Free online tool, no registration required.'
 category: linux
 keywords:
   - system restore linux
@@ -22,8 +22,8 @@ features:
   - List available snapshots for review
   - Delete specific snapshots to manage disk space
   - Schedule automatic snapshot creation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # timeshift

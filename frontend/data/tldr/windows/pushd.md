@@ -1,9 +1,9 @@
 ---
-title: "Manage Directory Stack - Control Directory Changes | Online Free DevTools by Hexmos"
+title: 'Manage Directory Stack - Control Directory Changes | Online Free DevTools by Hexmos'
 name: pushd
-path: "/freedevtools/tldr/windows/pushd/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/pushd/"
-description: "Control directory changes with pushd, a command to manage directory stacks. Quickly switch and track directories in command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/pushd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/pushd/'
+description: 'Control directory changes with pushd, a command to manage directory stacks. Quickly switch and track directories in command line. Free online tool, no registration required.'
 category: windows
 keywords:
   - directory stack manager
@@ -22,8 +22,8 @@ features:
   - Preserve a history of visited directories
   - Simplify directory navigation in scripts
   - Revert to previously visited directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pushd

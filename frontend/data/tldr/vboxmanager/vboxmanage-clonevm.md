@@ -1,29 +1,29 @@
 ---
-title: "Create VM Clones - VBoxManage Clone VM | Online Free DevTools by Hexmos"
+title: 'Create VM Clones - VBoxManage Clone VM | Online Free DevTools by Hexmos'
 name: vboxmanage-clonevm
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-clonevm/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-clonevm/"
-description: "Create virtual machine clones with VBoxManage. Easily duplicate VMs with custom settings and configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-clonevm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-clonevm/'
+description: 'Create virtual machine clones with VBoxManage. Easily duplicate VMs with custom settings and configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- vm clone creation
-- virtualbox clone vm
-- vboxmanage clone vm command
-- vm duplicate tool
-- virtual machine cloning
-- vbox clone manager
-- windows vm clone
-- linux vm clone
-- macos vm clone
-- cross-platform vm clone
+  - vm clone creation
+  - virtualbox clone vm
+  - vboxmanage clone vm command
+  - vm duplicate tool
+  - virtual machine cloning
+  - vbox clone manager
+  - windows vm clone
+  - linux vm clone
+  - macos vm clone
+  - cross-platform vm clone
 features:
-- Clone existing virtual machines
-- Specify a new name for the cloned VM
-- Designate a custom directory for VM configuration files
-- Register cloned VMs directly in VirtualBox
-- Clone VMs across different platforms
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone existing virtual machines
+  - Specify a new name for the cloned VM
+  - Designate a custom directory for VM configuration files
+  - Register cloned VMs directly in VirtualBox
+  - Clone VMs across different platforms
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage clonevm

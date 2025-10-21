@@ -1,29 +1,29 @@
 ---
-title: "Manage Pulumi Stacks - View & Control State | Online Free DevTools by Hexmos"
+title: 'Manage Pulumi Stacks - View & Control State | Online Free DevTools by Hexmos'
 name: pulumi-stack
-path: "/freedevtools/tldr/pulumi/pulumi-stack/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-stack/"
-description: "Manage Pulumi stacks efficiently with this online Pulumi Stack tool. View state, create, list, select and delete stacks. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-stack/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-stack/'
+description: 'Manage Pulumi stacks efficiently with this online Pulumi Stack tool. View state, create, list, select and delete stacks. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi stack manager
-- Infrastructure as code management
-- IaC stack control
-- Pulumi state viewer
-- Cloud resource manager
-- Pulumi stack lister
-- Pulumi stack creator
-- Pulumi stack selector
-- Pulumi stack remover
-- Pulumi cloud deployment
+  - Pulumi stack manager
+  - Infrastructure as code management
+  - IaC stack control
+  - Pulumi state viewer
+  - Cloud resource manager
+  - Pulumi stack lister
+  - Pulumi stack creator
+  - Pulumi stack selector
+  - Pulumi stack remover
+  - Pulumi cloud deployment
 features:
-- Create and initialize new Pulumi stacks
-- List and view all stacks within a project or across projects
-- Select and switch between active stacks for management
-- Remove and delete existing Pulumi stacks
-- Export stack state to a JSON file for backup or analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and initialize new Pulumi stacks
+  - List and view all stacks within a project or across projects
+  - Select and switch between active stacks for management
+  - Remove and delete existing Pulumi stacks
+  - Export stack state to a JSON file for backup or analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi stack

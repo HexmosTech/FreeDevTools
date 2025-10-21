@@ -1,29 +1,29 @@
 ---
-title: "PNM Remap - Replace Image Colors | Online Free DevTools by Hexmos"
+title: 'PNM Remap - Replace Image Colors | Online Free DevTools by Hexmos'
 name: pnmremap
-path: "/freedevtools/tldr/pnm/pnmremap/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmremap/"
-description: "Replace image colors with PNM Remap. Convert image palettes and apply dithering techniques. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmremap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmremap/'
+description: 'Replace image colors with PNM Remap. Convert image palettes and apply dithering techniques. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM image remap
-- Image color replacement
-- PPM palette converter
-- Image dithering tool
-- PNM color palette
-- Floyd-Steinberg dithering
-- Color mapping utility
-- Linux image manipulation
-- Netpbm image tools
-- Image color remapping
+  - PNM image remap
+  - Image color replacement
+  - PPM palette converter
+  - Image dithering tool
+  - PNM color palette
+  - Floyd-Steinberg dithering
+  - Color mapping utility
+  - Linux image manipulation
+  - Netpbm image tools
+  - Image color remapping
 features:
-- Replace image colors with a specified palette
-- Apply Floyd-Steinberg dithering for color approximation
-- Use a default color for missing palette colors
-- Remap colors based on a PPM palette file
-- Convert image colors using Netpbm
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Replace image colors with a specified palette
+  - Apply Floyd-Steinberg dithering for color approximation
+  - Use a default color for missing palette colors
+  - Remap colors based on a PPM palette file
+  - Convert image colors using Netpbm
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmremap

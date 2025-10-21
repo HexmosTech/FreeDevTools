@@ -1,29 +1,29 @@
 ---
-title: "Install Python Packages - Manage Dependencies | Online Free DevTools by Hexmos"
+title: 'Install Python Packages - Manage Dependencies | Online Free DevTools by Hexmos'
 name: pip-install
-path: "/freedevtools/tldr/pip/pip-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/pip/pip-install/"
-description: "Install Python packages effortlessly with pip. Manage dependencies, specify versions, and install from requirements files using this simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/pip/pip-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pip/pip-install/'
+description: 'Install Python packages effortlessly with pip. Manage dependencies, specify versions, and install from requirements files using this simple command. Free online tool, no registration required.'
 category: common
 keywords:
-- python package installer
-- pip dependency management
-- python package installation
-- pip install requirements
-- python version control
-- pip install url
-- python editable install
-- pip package manager
-- python package command
-- pip install package
+  - python package installer
+  - pip dependency management
+  - python package installation
+  - pip install requirements
+  - python version control
+  - pip install url
+  - python editable install
+  - pip package manager
+  - python package command
+  - pip install package
 features:
-- Install packages by name
-- Install specific package versions
-- Install packages from requirements files
-- Install packages from URLs or local archives
-- Install local packages in editable mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages by name
+  - Install specific package versions
+  - Install packages from requirements files
+  - Install packages from URLs or local archives
+  - Install local packages in editable mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pip install

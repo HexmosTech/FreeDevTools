@@ -1,9 +1,9 @@
 ---
-title: "Control nologin - Prevent User Logins | Online Free DevTools by Hexmos"
+title: 'Control nologin - Prevent User Logins | Online Free DevTools by Hexmos'
 name: nologin
-path: "/freedevtools/tldr/linux/nologin/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nologin/"
-description: "Control user logins with nologin. Secure your system by preventing user access and customizing login messages. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nologin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nologin/'
+description: 'Control user logins with nologin. Secure your system by preventing user access and customizing login messages. Free online tool, no registration required.'
 category: linux
 keywords:
   - nologin shell
@@ -22,8 +22,8 @@ features:
   - Secure user accounts
   - Integrate with chsh for shell management
   - Restrict access to system resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nologin

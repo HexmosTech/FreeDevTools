@@ -1,29 +1,29 @@
 ---
-title: "Sudo - Execute Commands as Superuser | Online Free DevTools by Hexmos"
+title: 'Sudo - Execute Commands as Superuser | Online Free DevTools by Hexmos'
 name: sudo
-path: "/freedevtools/tldr/common/sudo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sudo/"
-description: "Execute commands as superuser with Sudo. Control system access and perform administrative tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sudo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sudo/'
+description: 'Execute commands as superuser with Sudo. Control system access and perform administrative tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- sudo command
-- execute as root
-- superuser privileges
-- linux sudo
-- macos sudo
-- command line sudo
-- administrator access
-- escalated privileges
-- user management
-- system administration
+  - sudo command
+  - execute as root
+  - superuser privileges
+  - linux sudo
+  - macos sudo
+  - command line sudo
+  - administrator access
+  - escalated privileges
+  - user management
+  - system administration
 features:
-- Execute commands with elevated privileges
-- Run commands as a different user
-- Edit files as the superuser
-- Launch a shell with superuser privileges
-- List allowed commands for a user
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands with elevated privileges
+  - Run commands as a different user
+  - Edit files as the superuser
+  - Launch a shell with superuser privileges
+  - List allowed commands for a user
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sudo

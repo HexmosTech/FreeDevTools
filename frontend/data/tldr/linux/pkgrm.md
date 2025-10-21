@@ -1,9 +1,9 @@
 ---
-title: "Remove Package - Manage CRUX Packages | Online Free DevTools by Hexmos"
+title: 'Remove Package - Manage CRUX Packages | Online Free DevTools by Hexmos'
 name: pkgrm
-path: "/freedevtools/tldr/linux/pkgrm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pkgrm/"
-description: "Remove packages efficiently with pkgrm on CRUX systems. Uninstall software, manage dependencies, and maintain system integrity. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pkgrm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pkgrm/'
+description: 'Remove packages efficiently with pkgrm on CRUX systems. Uninstall software, manage dependencies, and maintain system integrity. Free online tool, no registration required.'
 category: linux
 keywords:
   - CRUX package manager
@@ -22,8 +22,8 @@ features:
   - Uninstall software applications via the command line
   - Ensure system integrity after package removal
   - Simplify software management on CRUX systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkgrm

@@ -1,29 +1,29 @@
 ---
-title: "Nokogiri Parser - Parse XML and HTML | Online Free DevTools by Hexmos"
+title: 'Nokogiri Parser - Parse XML and HTML | Online Free DevTools by Hexmos'
 name: nokogiri
-path: "/freedevtools/tldr/common/nokogiri/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nokogiri/"
-description: "Parse XML and HTML documents with Nokogiri Parser. Validate XML, parse HTML, and handle SAX events with this versatile tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nokogiri/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nokogiri/'
+description: 'Parse XML and HTML documents with Nokogiri Parser. Validate XML, parse HTML, and handle SAX events with this versatile tool. Free online tool, no registration required.'
 category: common
 keywords:
-- XML parser
-- HTML parser
-- SAX parser
-- RELAX NG validator
-- Nokogiri XML
-- Nokogiri HTML
-- Document parser
-- XML validator
-- HTML validator
-- Command line parser
+  - XML parser
+  - HTML parser
+  - SAX parser
+  - RELAX NG validator
+  - Nokogiri XML
+  - Nokogiri HTML
+  - Document parser
+  - XML validator
+  - HTML validator
+  - Command line parser
 features:
-- Parse XML and HTML documents from URLs or files
-- Validate XML documents against RELAX NG schemas
-- Specify encoding for parsing documents
-- Parse documents as either XML or HTML
-- Load initialization files before parsing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Parse XML and HTML documents from URLs or files
+  - Validate XML documents against RELAX NG schemas
+  - Specify encoding for parsing documents
+  - Parse documents as either XML or HTML
+  - Load initialization files before parsing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nokogiri

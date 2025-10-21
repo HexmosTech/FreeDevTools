@@ -1,9 +1,9 @@
 ---
-title: "Android Input - Control Device via ADB | Online Free DevTools by Hexmos"
+title: 'Android Input - Control Device via ADB | Online Free DevTools by Hexmos'
 name: input
-path: "/freedevtools/tldr/android/input/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/input/"
-description: "Control Android device input seamlessly with ADB Input command. Simulate taps, swipes, and send key events using adb shell. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/input/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/input/'
+description: 'Control Android device input seamlessly with ADB Input command. Simulate taps, swipes, and send key events using adb shell. Free online tool, no registration required.'
 category: android
 keywords:
   - android input control
@@ -22,8 +22,8 @@ features:
   - simulate swipe gestures with customizable duration
   - inject text input into android devices
   - automate long press actions on android
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # input

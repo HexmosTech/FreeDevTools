@@ -1,29 +1,29 @@
 ---
-title: "Control Zsh Shell - Execute Commands | Online Free DevTools by Hexmos"
+title: 'Control Zsh Shell - Execute Commands | Online Free DevTools by Hexmos'
 name: zsh
-path: "/freedevtools/tldr/common/zsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zsh/"
-description: "Execute shell commands with Zsh Shell. Run scripts, check syntax, and customize your terminal environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zsh/'
+description: 'Execute shell commands with Zsh Shell. Run scripts, check syntax, and customize your terminal environment. Free online tool, no registration required.'
 category: common
 keywords:
-- zsh shell commands
-- zsh script execution
-- zsh command line interpreter
-- zsh syntax checker
-- bash compatible shell
-- shell scripting linux
-- shell scripting macOS
-- zsh interactive shell
-- zsh command pipeline
-- zsh globbing disable
+  - zsh shell commands
+  - zsh script execution
+  - zsh command line interpreter
+  - zsh syntax checker
+  - bash compatible shell
+  - shell scripting linux
+  - shell scripting macOS
+  - zsh interactive shell
+  - zsh command pipeline
+  - zsh globbing disable
 features:
-- Execute commands interactively
-- Run zsh scripts
-- Check script syntax without execution
-- Execute commands from stdin
-- Disable globbing for specific commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands interactively
+  - Run zsh scripts
+  - Check script syntax without execution
+  - Execute commands from stdin
+  - Disable globbing for specific commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zsh

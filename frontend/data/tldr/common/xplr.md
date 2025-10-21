@@ -1,29 +1,29 @@
 ---
-title: "xplr - Explore File Systems | Online Free DevTools by Hexmos"
+title: 'xplr - Explore File Systems | Online Free DevTools by Hexmos'
 name: xplr
-path: "/freedevtools/tldr/common/xplr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xplr/"
-description: "Explore file systems with xplr. Navigate directories, focus on specific files, and select multiple items efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xplr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xplr/'
+description: 'Explore file systems with xplr. Navigate directories, focus on specific files, and select multiple items efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- file system explorer
-- terminal file manager
-- command line file navigation
-- xplr file explorer
-- linux file manager
-- macos file manager
-- cross platform file explorer
-- tldr file manager
-- terminal directory navigation
-- command line directory explorer
+  - file system explorer
+  - terminal file manager
+  - command line file navigation
+  - xplr file explorer
+  - linux file manager
+  - macos file manager
+  - cross platform file explorer
+  - tldr file manager
+  - terminal directory navigation
+  - command line directory explorer
 features:
-- Open and explore any directory in the terminal
-- Focus on specific files within a directory
-- Force focus on a particular directory
-- Select multiple files or directories when opening
-- Navigate and manage file systems efficiently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and explore any directory in the terminal
+  - Focus on specific files within a directory
+  - Force focus on a particular directory
+  - Select multiple files or directories when opening
+  - Navigate and manage file systems efficiently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xplr

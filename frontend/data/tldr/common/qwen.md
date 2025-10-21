@@ -1,29 +1,29 @@
 ---
-title: "Generate Qwen Code - Interactive Chatbot | Online Free DevTools by Hexmos"
+title: 'Generate Qwen Code - Interactive Chatbot | Online Free DevTools by Hexmos'
 name: qwen
-path: "/freedevtools/tldr/common/qwen/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qwen/"
-description: "Generate Qwen code with an interactive chatbot. Use Qwen3-Coder to create and refine code solutions easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/qwen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qwen/'
+description: 'Generate Qwen code with an interactive chatbot. Use Qwen3-Coder to create and refine code solutions easily. Free online tool, no registration required.'
 category: common
 keywords:
-- qwen code generation
-- qwen chatbot interaction
-- qwen3-coder REPL session
-- code summarization with qwen
-- command line coding assistant
-- sandbox container coding environment
-- interactive coding prompt
-- qwen model override
-- context-aware coding tool
-- code development assistant
+  - qwen code generation
+  - qwen chatbot interaction
+  - qwen3-coder REPL session
+  - code summarization with qwen
+  - command line coding assistant
+  - sandbox container coding environment
+  - interactive coding prompt
+  - qwen model override
+  - context-aware coding tool
+  - code development assistant
 features:
-- Launch an interactive coding session
-- Send command output to Qwen for processing
-- Override the default coding model
-- Run Qwen in a sandbox environment
-- Include all files in context
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch an interactive coding session
+  - Send command output to Qwen for processing
+  - Override the default coding model
+  - Run Qwen in a sandbox environment
+  - Include all files in context
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qwen

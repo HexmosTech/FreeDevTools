@@ -1,29 +1,29 @@
 ---
-title: "Create Kubernetes Resources with Kustomize | Online Free DevTools by Hexmos"
+title: 'Create Kubernetes Resources with Kustomize | Online Free DevTools by Hexmos'
 name: kustomize
-path: "/freedevtools/tldr/common/kustomize/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kustomize/"
-description: "Create Kubernetes manifests with Kustomize. Define and manage your resources for streamlined deployments using overlays and patches. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kustomize/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kustomize/'
+description: 'Create Kubernetes manifests with Kustomize. Define and manage your resources for streamlined deployments using overlays and patches. Free online tool, no registration required.'
 category: common
 keywords:
-- Kubernetes manifest
-- Kubernetes resources
-- Kustomize Kubernetes
-- Kustomization yaml
-- Kubernetes deploy
-- Kubernetes overlays
-- Kubernetes patches
-- Kubernetes declarative
-- Kustomize build
-- Kustomize edit
+  - Kubernetes manifest
+  - Kubernetes resources
+  - Kustomize Kubernetes
+  - Kustomization yaml
+  - Kubernetes deploy
+  - Kubernetes overlays
+  - Kubernetes patches
+  - Kubernetes declarative
+  - Kustomize build
+  - Kustomize edit
 features:
-- Generate Kustomization files from existing resources
-- Build customized Kubernetes manifests from a directory
-- Set and modify image tags within Kustomization files
-- Autodetect resources for inclusion in Kustomization files
-- Deploy Kustomized manifests directly with kubectl
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate Kustomization files from existing resources
+  - Build customized Kubernetes manifests from a directory
+  - Set and modify image tags within Kustomization files
+  - Autodetect resources for inclusion in Kustomization files
+  - Deploy Kustomized manifests directly with kubectl
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kustomize

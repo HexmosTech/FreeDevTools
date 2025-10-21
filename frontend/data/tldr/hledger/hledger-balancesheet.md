@@ -1,29 +1,29 @@
 ---
-title: "Generate Hledger Balancesheet - Financial Summary | Online Free DevTools by Hexmos"
+title: 'Generate Hledger Balancesheet - Financial Summary | Online Free DevTools by Hexmos'
 name: hledger-balancesheet
-path: "/freedevtools/tldr/hledger/hledger-balancesheet/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-balancesheet/"
-description: "Generate financial summaries with Hledger Balancesheet. Analyze assets and liabilities using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-balancesheet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-balancesheet/'
+description: 'Generate financial summaries with Hledger Balancesheet. Analyze assets and liabilities using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- hledger balancesheet
-- financial balancesheet
-- hledger accounting
-- balancesheet generator
-- ledger balancesheet
-- hledger command
-- asset liability report
-- financial reporting
-- command line accounting
-- hledger finance
+  - hledger balancesheet
+  - financial balancesheet
+  - hledger accounting
+  - balancesheet generator
+  - ledger balancesheet
+  - hledger command
+  - asset liability report
+  - financial reporting
+  - command line accounting
+  - hledger finance
 features:
-- Show asset and liability account balances.
-- Filter balances by account type.
-- Include accounts with zero balances.
-- Display account hierarchy in a tree format.
-- Generate monthly or quarterly balance reports.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show asset and liability account balances.
+  - Filter balances by account type.
+  - Include accounts with zero balances.
+  - Display account hierarchy in a tree format.
+  - Generate monthly or quarterly balance reports.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger balancesheet

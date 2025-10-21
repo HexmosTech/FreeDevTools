@@ -1,29 +1,29 @@
 ---
-title: "Control NeoMutt - Manage Emails | Online Free DevTools by Hexmos"
+title: 'Control NeoMutt - Manage Emails | Online Free DevTools by Hexmos'
 name: neomutt
-path: "/freedevtools/tldr/common/neomutt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/neomutt/"
-description: "Control emails instantly with NeoMutt, a powerful command-line email client. Manage mailboxes, compose messages, and send attachments easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/neomutt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/neomutt/'
+description: 'Control emails instantly with NeoMutt, a powerful command-line email client. Manage mailboxes, compose messages, and send attachments easily. Free online tool, no registration required.'
 category: common
 keywords:
-- command-line email
-- neomutt email client
-- linux email
-- macos email
-- open source email
-- command line mail
-- email message composer
-- mail attachment sender
-- mailbox manager
-- email draft editor
+  - command-line email
+  - neomutt email client
+  - linux email
+  - macos email
+  - open source email
+  - command line mail
+  - email message composer
+  - mail attachment sender
+  - mailbox manager
+  - email draft editor
 features:
-- Open and manage specified mailboxes
-- Compose emails with subject and CC recipients
-- Send emails with multiple file attachments
-- Include a file as the email message body
-- Specify a draft file with header and body
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and manage specified mailboxes
+  - Compose emails with subject and CC recipients
+  - Send emails with multiple file attachments
+  - Include a file as the email message body
+  - Specify a draft file with header and body
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # neomutt

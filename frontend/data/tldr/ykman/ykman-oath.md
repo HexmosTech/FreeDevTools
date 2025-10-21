@@ -1,29 +1,29 @@
 ---
-title: "Manage YubiKey OATH - Control Authentication | Online Free DevTools by Hexmos"
+title: 'Manage YubiKey OATH - Control Authentication | Online Free DevTools by Hexmos'
 name: ykman-oath
-path: "/freedevtools/tldr/ykman/ykman-oath/"
-canonical: "https://hexmos.com/freedevtools/tldr/ykman/ykman-oath/"
-description: "Control YubiKey OATH authentication accounts with ykman. Manage secrets, generate TOTP codes, and reset OATH application easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/ykman/ykman-oath/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ykman/ykman-oath/'
+description: 'Control YubiKey OATH authentication accounts with ykman. Manage secrets, generate TOTP codes, and reset OATH application easily. Free online tool, no registration required.'
 category: common
 keywords:
-- YubiKey OATH manager
-- OATH authentication tool
-- TOTP code generator
-- HOTP code generator
-- ykman command line
-- Two-factor authentication
-- Hardware security key
-- OATH account management
-- Authentication secret manager
-- YubiKey password reset
+  - YubiKey OATH manager
+  - OATH authentication tool
+  - TOTP code generator
+  - HOTP code generator
+  - ykman command line
+  - Two-factor authentication
+  - Hardware security key
+  - OATH account management
+  - Authentication secret manager
+  - YubiKey password reset
 features:
-- List OATH accounts and generate TOTP/HOTP codes
-- Add, rename, and delete OATH accounts
-- Change or clear the access password
-- Reset the OATH application to factory settings
-- Display information about the OATH application
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List OATH accounts and generate TOTP/HOTP codes
+  - Add, rename, and delete OATH accounts
+  - Change or clear the access password
+  - Reset the OATH application to factory settings
+  - Display information about the OATH application
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ykman oath

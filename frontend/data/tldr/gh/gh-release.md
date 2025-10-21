@@ -1,29 +1,29 @@
 ---
-title: "GitHub Release - Manage Releases | Online Free DevTools by Hexmos"
+title: 'GitHub Release - Manage Releases | Online Free DevTools by Hexmos'
 name: gh-release
-path: "/freedevtools/tldr/gh/gh-release/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-release/"
-description: "Manage GitHub releases quickly with gh-release. Create, delete, download, and upload release assets directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-release/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-release/'
+description: 'Manage GitHub releases quickly with gh-release. Create, delete, download, and upload release assets directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- github release manager
-- github release command line
-- gh release create
-- gh release delete
-- gh release upload
-- gh release download
-- github release automation
-- git release tools
-- github release assets
-- command line github release
+  - github release manager
+  - github release command line
+  - gh release create
+  - gh release delete
+  - gh release upload
+  - gh release download
+  - github release automation
+  - git release tools
+  - github release assets
+  - command line github release
 features:
-- List releases in a GitHub repository.
-- Display information about a specific GitHub release.
-- Create new releases with custom tags.
-- Delete specific releases from the repository.
-- Download assets from existing releases.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List releases in a GitHub repository.
+  - Display information about a specific GitHub release.
+  - Create new releases with custom tags.
+  - Delete specific releases from the repository.
+  - Download assets from existing releases.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh release

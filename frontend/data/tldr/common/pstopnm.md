@@ -1,29 +1,29 @@
 ---
-title: "Convert PostScript to PNM - Generate Images | Online Free DevTools by Hexmos"
+title: 'Convert PostScript to PNM - Generate Images | Online Free DevTools by Hexmos'
 name: pstopnm
-path: "/freedevtools/tldr/common/pstopnm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pstopnm/"
-description: "Convert PostScript files to PNM images with pstopnm. Control resolution and output format with this file converter. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pstopnm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pstopnm/'
+description: 'Convert PostScript files to PNM images with pstopnm. Control resolution and output format with this file converter. Free online tool, no registration required.'
 category: common
 keywords:
-- PostScript to PNM converter
-- PS to PNM conversion
-- PNM image generator
-- Linux image tools
-- MacOS image conversion
-- Command line image converter
-- PostScript file processing
-- Image format conversion
-- Raster image generation
-- DPI control image tools
+  - PostScript to PNM converter
+  - PS to PNM conversion
+  - PNM image generator
+  - Linux image tools
+  - MacOS image conversion
+  - Command line image converter
+  - PostScript file processing
+  - Image format conversion
+  - Raster image generation
+  - DPI control image tools
 features:
-- Convert PostScript files to PNM image format
-- Specify the output format (PBM, PGM, PPM)
-- Control the resolution of the output image
-- Create PNM images from specific pages in PostScript files
-- Batch convert PostScript files to PNM images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PostScript files to PNM image format
+  - Specify the output format (PBM, PGM, PPM)
+  - Control the resolution of the output image
+  - Create PNM images from specific pages in PostScript files
+  - Batch convert PostScript files to PNM images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pstopnm

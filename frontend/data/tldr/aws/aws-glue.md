@@ -1,29 +1,29 @@
 ---
-title: "AWS Glue CLI - Manage ETL Jobs and Workflows | Online Free DevTools by Hexmos"
+title: 'AWS Glue CLI - Manage ETL Jobs and Workflows | Online Free DevTools by Hexmos'
 name: aws-glue
-path: "/freedevtools/tldr/aws/aws-glue/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-glue/"
-description: "Manage ETL jobs and workflows with AWS Glue CLI. Define public endpoints, list jobs, and start workflows with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-glue/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-glue/'
+description: 'Manage ETL jobs and workflows with AWS Glue CLI. Define public endpoints, list jobs, and start workflows with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- aws glue cli
-- aws glue etl
-- aws glue job
-- aws glue workflow
-- aws glue trigger
-- aws glue dev endpoint
-- aws glue command line
-- aws glue python
-- aws cloud cli
-- aws data catalog
+  - aws glue cli
+  - aws glue etl
+  - aws glue job
+  - aws glue workflow
+  - aws glue trigger
+  - aws glue dev endpoint
+  - aws glue command line
+  - aws glue python
+  - aws cloud cli
+  - aws data catalog
 features:
-- List AWS Glue jobs and triggers
-- Start AWS Glue job runs by name
-- Initiate AWS Glue workflow executions
-- Create AWS Glue development endpoints
-- Manage AWS Glue resources via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List AWS Glue jobs and triggers
+  - Start AWS Glue job runs by name
+  - Initiate AWS Glue workflow executions
+  - Create AWS Glue development endpoints
+  - Manage AWS Glue resources via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws glue

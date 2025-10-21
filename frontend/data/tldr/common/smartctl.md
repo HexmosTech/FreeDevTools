@@ -1,29 +1,29 @@
 ---
-title: "Smartctl - Monitor Disk Health & SMART Data | Online Free DevTools by Hexmos"
+title: 'Smartctl - Monitor Disk Health & SMART Data | Online Free DevTools by Hexmos'
 name: smartctl
-path: "/freedevtools/tldr/common/smartctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/smartctl/"
-description: "Monitor disk health with Smartctl, a command-line tool for checking SMART data and running self-tests. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/smartctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/smartctl/'
+description: 'Monitor disk health with Smartctl, a command-line tool for checking SMART data and running self-tests. Free online tool, no registration required.'
 category: common
 keywords:
-- disk health monitoring
-- SMART data analysis
-- hard drive diagnostics
-- SSD health check
-- smartctl command line
-- storage device test
-- disk failure prediction
-- linux disk monitoring
-- drive health report
-- SMART attribute check
+  - disk health monitoring
+  - SMART data analysis
+  - hard drive diagnostics
+  - SSD health check
+  - smartctl command line
+  - storage device test
+  - disk failure prediction
+  - linux disk monitoring
+  - drive health report
+  - SMART attribute check
 features:
-- Display SMART health summary of storage devices
-- Initiate short or long self-tests on drives
-- Report self-test logs for diagnostic information
-- Show current and last self-test statuses
-- Output exhaustive SMART data attributes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display SMART health summary of storage devices
+  - Initiate short or long self-tests on drives
+  - Report self-test logs for diagnostic information
+  - Show current and last self-test statuses
+  - Output exhaustive SMART data attributes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smartctl

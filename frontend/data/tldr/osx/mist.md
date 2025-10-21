@@ -1,9 +1,9 @@
 ---
-title: "macOS Installer Tool - Download macOS Installers | Online Free DevTools by Hexmos"
+title: 'macOS Installer Tool - Download macOS Installers | Online Free DevTools by Hexmos'
 name: mist
-path: "/freedevtools/tldr/osx/mist/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/mist/"
-description: "Download macOS Installers with MIST - macOS Installer Super Tool. Easily manage macOS versions and prepare installation media. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/mist/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/mist/'
+description: 'Download macOS Installers with MIST - macOS Installer Super Tool. Easily manage macOS versions and prepare installation media. Free online tool, no registration required.'
 category: osx
 keywords:
   - macOS Installer Download
@@ -22,8 +22,8 @@ features:
   - Export installer lists to CSV files.
   - Filter compatible installers for current hardware.
   - Include beta versions in installer listings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mist

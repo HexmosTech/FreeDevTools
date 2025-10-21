@@ -1,29 +1,29 @@
 ---
-title: "GDrive Manager - Control Google Drive Files | Online Free DevTools by Hexmos"
+title: 'GDrive Manager - Control Google Drive Files | Online Free DevTools by Hexmos'
 name: gdrive
-path: "/freedevtools/tldr/common/gdrive/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gdrive/"
-description: "Manage Google Drive files effortlessly with GDrive Manager. Upload, download, and update files directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gdrive/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gdrive/'
+description: 'Manage Google Drive files effortlessly with GDrive Manager. Upload, download, and update files directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Google Drive Manager
-- Google Drive command line
-- GDrive upload files
-- GDrive download files
-- GDrive update files
-- Google Drive Linux
-- Google Drive MacOS
-- Google Drive Windows
-- Google Drive CLI tool
-- Google Drive automation
+  - Google Drive Manager
+  - Google Drive command line
+  - GDrive upload files
+  - GDrive download files
+  - GDrive update files
+  - Google Drive Linux
+  - Google Drive MacOS
+  - Google Drive Windows
+  - Google Drive CLI tool
+  - Google Drive automation
 features:
-- Upload files and folders to Google Drive
-- Download files and folders from Google Drive
-- Update existing Google Drive files
-- Specify parent folder for uploads using ID
-- Automate Google Drive file management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload files and folders to Google Drive
+  - Download files and folders from Google Drive
+  - Update existing Google Drive files
+  - Specify parent folder for uploads using ID
+  - Automate Google Drive file management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdrive

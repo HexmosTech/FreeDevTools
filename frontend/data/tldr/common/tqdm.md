@@ -1,29 +1,29 @@
 ---
-title: "Create Progress Bars - Tqdm Command | Online Free DevTools by Hexmos"
+title: 'Create Progress Bars - Tqdm Command | Online Free DevTools by Hexmos'
 name: tqdm
-path: "/freedevtools/tldr/common/tqdm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tqdm/"
-description: "Create progress bars with Tqdm for command-line tools. Monitor execution time and track completion easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tqdm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tqdm/'
+description: 'Create progress bars with Tqdm for command-line tools. Monitor execution time and track completion easily. Free online tool, no registration required.'
 category: common
 keywords:
-- command line progress bar
-- console progress indicator
-- terminal progress monitoring
-- tqdm progress bar linux
-- python tqdm command
-- archive progress tracking
-- file transfer progress bar
-- loop progress visualization
-- bash progress indicator
-- stream processing progress
+  - command line progress bar
+  - console progress indicator
+  - terminal progress monitoring
+  - tqdm progress bar linux
+  - python tqdm command
+  - archive progress tracking
+  - file transfer progress bar
+  - loop progress visualization
+  - bash progress indicator
+  - stream processing progress
 features:
-- Display progress in terminal output
-- Estimate remaining time for commands
-- Monitor file transfer progress
-- Track iterations in loops
-- Integrate with shell scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display progress in terminal output
+  - Estimate remaining time for commands
+  - Monitor file transfer progress
+  - Track iterations in loops
+  - Integrate with shell scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tqdm

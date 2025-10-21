@@ -1,29 +1,29 @@
 ---
-title: "Create Archive - Manage Files with pax Utility | Online Free DevTools by Hexmos"
+title: 'Create Archive - Manage Files with pax Utility | Online Free DevTools by Hexmos'
 name: pax
-path: "/freedevtools/tldr/common/pax/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pax/"
-description: "Create archives with pax, a powerful archiving utility. Easily manage files, extract data, and copy directories while preserving metadata. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pax/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pax/'
+description: 'Create archives with pax, a powerful archiving utility. Easily manage files, extract data, and copy directories while preserving metadata. Free online tool, no registration required.'
 category: common
 keywords:
-- pax archive creator
-- pax file archiver
-- tar archive manager
-- gzip archive extractor
-- linux archive utility
-- unix pax command
-- archive compression tool
-- file backup pax
-- directory copier pax
-- posix archive format
+  - pax archive creator
+  - pax file archiver
+  - tar archive manager
+  - gzip archive extractor
+  - linux archive utility
+  - unix pax command
+  - archive compression tool
+  - file backup pax
+  - directory copier pax
+  - posix archive format
 features:
-- Create tar archives from files and directories
-- Extract files and directories from tar archives
-- Copy directory structures while preserving metadata
-- List the contents of various archive formats (tar, gzip)
-- Utilize output redirection for archive creation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create tar archives from files and directories
+  - Extract files and directories from tar archives
+  - Copy directory structures while preserving metadata
+  - List the contents of various archive formats (tar, gzip)
+  - Utilize output redirection for archive creation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pax

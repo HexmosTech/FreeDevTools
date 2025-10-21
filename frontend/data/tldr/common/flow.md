@@ -1,29 +1,29 @@
 ---
-title: "Flow Type Checker - Validate JavaScript Code | Online Free DevTools by Hexmos"
+title: 'Flow Type Checker - Validate JavaScript Code | Online Free DevTools by Hexmos'
 name: flow
-path: "/freedevtools/tldr/common/flow/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flow/"
-description: "Validate JavaScript code with Flow Type Checker. Enhance code quality and catch errors early with static typing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flow/'
+description: 'Validate JavaScript code with Flow Type Checker. Enhance code quality and catch errors early with static typing. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript type checker
-- flow static analysis
-- flow type validation
-- javascript code analysis
-- flow command line
-- javascript linting
-- flow type coverage
-- javascript static typing
-- common command
-- flow check
+  - javascript type checker
+  - flow static analysis
+  - flow type validation
+  - javascript code analysis
+  - flow command line
+  - javascript linting
+  - flow type coverage
+  - javascript static typing
+  - common command
+  - flow check
 features:
-- Check JavaScript code for type errors
-- List files being checked by Flow
-- Run batch type coverage checks
-- Display line-by-line type coverage statistics
-- Enhance JavaScript code quality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check JavaScript code for type errors
+  - List files being checked by Flow
+  - Run batch type coverage checks
+  - Display line-by-line type coverage statistics
+  - Enhance JavaScript code quality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flow

@@ -1,29 +1,29 @@
 ---
-title: "AWS Kendra - Manage Knowledge Base | Online Free DevTools by Hexmos"
+title: 'AWS Kendra - Manage Knowledge Base | Online Free DevTools by Hexmos'
 name: aws-kendra
-path: "/freedevtools/tldr/aws/aws-kendra/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kendra/"
-description: "Manage your knowledge base with AWS Kendra. Create indexes, list data sources, and describe resources using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-kendra/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-kendra/'
+description: 'Manage your knowledge base with AWS Kendra. Create indexes, list data sources, and describe resources using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- aws kendra cli
-- kendra index management
-- kendra data source configuration
-- aws knowledge base search
-- kendra query suggestions
-- aws kendra command line
-- kendra index creation
-- aws kendra describe index
-- kendra search configuration
-- aws kendra search queries
+  - aws kendra cli
+  - kendra index management
+  - kendra data source configuration
+  - aws knowledge base search
+  - kendra query suggestions
+  - aws kendra command line
+  - kendra index creation
+  - aws kendra describe index
+  - kendra search configuration
+  - aws kendra search queries
 features:
-- Create and manage AWS Kendra indexes
-- List available data sources within Kendra
-- Describe specific indexes in detail
-- Retrieve search query suggestions for improved search accuracy
-- Describe data sources configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage AWS Kendra indexes
+  - List available data sources within Kendra
+  - Describe specific indexes in detail
+  - Retrieve search query suggestions for improved search accuracy
+  - Describe data sources configuration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws kendra

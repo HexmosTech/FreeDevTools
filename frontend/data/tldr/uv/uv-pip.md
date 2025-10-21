@@ -1,29 +1,29 @@
 ---
-title: "UV Pip - Manage Python Packages | Online Free DevTools by Hexmos"
+title: 'UV Pip - Manage Python Packages | Online Free DevTools by Hexmos'
 name: uv-pip
-path: "/freedevtools/tldr/uv/uv-pip/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-pip/"
-description: "Manage Python packages effectively with UV Pip. Install, uninstall, and freeze dependencies for streamlined project management. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-pip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-pip/'
+description: 'Manage Python packages effectively with UV Pip. Install, uninstall, and freeze dependencies for streamlined project management. Free online tool, no registration required.'
 category: common
 keywords:
-- python package manager
-- uv pip installer
-- dependency management
-- python requirements file
-- pip alternative
-- uv package sync
-- python package freeze
-- uv install
-- uv uninstall
-- python package information
+  - python package manager
+  - uv pip installer
+  - dependency management
+  - python requirements file
+  - pip alternative
+  - uv package sync
+  - python package freeze
+  - uv install
+  - uv uninstall
+  - python package information
 features:
-- Install Python packages from PyPI.
-- Uninstall specified Python packages.
-- Freeze installed packages to a requirements file.
-- List installed Python packages.
-- Sync environment with a requirements file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Python packages from PyPI.
+  - Uninstall specified Python packages.
+  - Freeze installed packages to a requirements file.
+  - List installed Python packages.
+  - Sync environment with a requirements file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv pip

@@ -1,29 +1,29 @@
 ---
-title: "Git Switch - Switch Branches | Online Free DevTools by Hexmos"
+title: 'Git Switch - Switch Branches | Online Free DevTools by Hexmos'
 name: git-switch
-path: "/freedevtools/tldr/git/git-switch/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-switch/"
-description: "Switch branches with Git Switch. Quickly navigate between different versions, create new branches, and manage changes. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-switch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-switch/'
+description: 'Switch branches with Git Switch. Quickly navigate between different versions, create new branches, and manage changes. Free online tool, no registration required.'
 category: common
 keywords:
-- git switch command
-- git branch switch
-- git branch management
-- git branch create
-- git checkout alternative
-- git previous branch
-- git submodule update
-- git merge branch
-- git detach tag
-- git command line tool
+  - git switch command
+  - git branch switch
+  - git branch management
+  - git branch create
+  - git checkout alternative
+  - git previous branch
+  - git submodule update
+  - git merge branch
+  - git detach tag
+  - git command line tool
 features:
-- Switch between existing Git branches
-- Create and switch to new branches
-- Switch to previous branch quickly
-- Update submodules when switching
-- Merge current changes while switching
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Switch between existing Git branches
+  - Create and switch to new branches
+  - Switch to previous branch quickly
+  - Update submodules when switching
+  - Merge current changes while switching
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git switch

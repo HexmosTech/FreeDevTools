@@ -1,9 +1,9 @@
 ---
-title: "MV - Move Files and Directories | Online Free DevTools by Hexmos"
+title: 'MV - Move Files and Directories | Online Free DevTools by Hexmos'
 name: mv
-path: "/freedevtools/tldr/windows/mv/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/mv/"
-description: "Move files and directories with MV. Easily relocate files, rename items, and manage your file system from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/mv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/mv/'
+description: 'Move files and directories with MV. Easily relocate files, rename items, and manage your file system from the command line. Free online tool, no registration required.'
 category: windows
 keywords:
   - file move
@@ -22,8 +22,8 @@ features:
   - Move directories and subdirectories
   - Overwrite existing files with caution
   - Handle multiple files with wildcards
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mv

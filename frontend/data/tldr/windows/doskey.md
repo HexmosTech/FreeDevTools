@@ -1,29 +1,29 @@
 ---
-title: "Doskey - Manage Windows Commands | Online Free DevTools by Hexmos"
+title: 'Doskey - Manage Windows Commands | Online Free DevTools by Hexmos'
 name: doskey
-path: "/freedevtools/tldr/windows/doskey/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/doskey/"
-description: "Manage Windows commands with Doskey. Create macros, manage command-lines, and recall commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/doskey/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/doskey/'
+description: 'Manage Windows commands with Doskey. Create macros, manage command-lines, and recall commands. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows command macro
-- doskey macro management
-- command-line alias windows
-- windows command history
-- doskey command recall
-- windows batch script alias
-- doskey command substitution
-- windows macro definition
-- doskey macro creation
-- windows command-line editor
+  - windows command macro
+  - doskey macro management
+  - command-line alias windows
+  - windows command history
+  - doskey command recall
+  - windows batch script alias
+  - doskey command substitution
+  - windows macro definition
+  - doskey macro creation
+  - windows command-line editor
 features:
-- Define aliases for frequently used commands
-- Create macros with parameter substitution
-- Store and recall command history
-- Manage command-line editing
-- Execute complex command sequences with a single alias
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define aliases for frequently used commands
+  - Create macros with parameter substitution
+  - Store and recall command history
+  - Manage command-line editing
+  - Execute complex command sequences with a single alias
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doskey

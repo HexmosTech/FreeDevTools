@@ -1,9 +1,9 @@
 ---
-title: "Addr2line - Convert Addresses to Line Numbers | Online Free DevTools by Hexmos"
+title: 'Addr2line - Convert Addresses to Line Numbers | Online Free DevTools by Hexmos'
 name: addr2line
-path: "/freedevtools/tldr/linux/addr2line/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/addr2line/"
-description: "Convert addresses to file names and line numbers with Addr2line.  Debug binaries efficiently by mapping addresses to source code locations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/addr2line/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/addr2line/'
+description: 'Convert addresses to file names and line numbers with Addr2line.  Debug binaries efficiently by mapping addresses to source code locations. Free online tool, no registration required.'
 category: linux
 keywords:
   - address converter
@@ -22,8 +22,8 @@ features:
   - Supports demangling of C++ function names.
   - Works with various executable file formats.
   - Facilitates debugging and troubleshooting of binary code.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # addr2line

@@ -1,29 +1,29 @@
 ---
-title: "Name Hash - Identify Hash Types Instantly | Online Free DevTools by Hexmos"
+title: 'Name Hash - Identify Hash Types Instantly | Online Free DevTools by Hexmos'
 name: nth
-path: "/freedevtools/tldr/common/nth/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nth/"
-description: "Identify hash types instantly with Name Hash, a command-line tool. Supports MD5, SHA1, SHA256, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nth/'
+description: 'Identify hash types instantly with Name Hash, a command-line tool. Supports MD5, SHA1, SHA256, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- hash identifier
-- hash type identification
-- name that hash
-- nth command
-- hash algorithm recognition
-- cryptographic hash analysis
-- md5 identifier
-- sha256 identifier
-- hash reverse engineering
-- command line hash tool
+  - hash identifier
+  - hash type identification
+  - name that hash
+  - nth command
+  - hash algorithm recognition
+  - cryptographic hash analysis
+  - md5 identifier
+  - sha256 identifier
+  - hash reverse engineering
+  - command line hash tool
 features:
-- Identify hash types from text input
-- Identify hash types from file input
-- Decode Base64 encoded hashes
-- Output results in JSON format
-- Support for a wide range of hash algorithms
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify hash types from text input
+  - Identify hash types from file input
+  - Decode Base64 encoded hashes
+  - Output results in JSON format
+  - Support for a wide range of hash algorithms
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nth

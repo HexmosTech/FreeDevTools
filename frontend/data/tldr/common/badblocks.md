@@ -1,29 +1,29 @@
 ---
-title: "Find Bad Blocks - Scan Disks for Errors | Online Free DevTools by Hexmos"
+title: 'Find Bad Blocks - Scan Disks for Errors | Online Free DevTools by Hexmos'
 name: badblocks
-path: "/freedevtools/tldr/common/badblocks/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/badblocks/"
-description: "Find disk errors with badblocks. Scan storage devices for bad blocks using read-only, read-write, or destructive write tests. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/badblocks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/badblocks/'
+description: 'Find disk errors with badblocks. Scan storage devices for bad blocks using read-only, read-write, or destructive write tests. Free online tool, no registration required.'
 category: common
 keywords:
-- disk bad block scanner
-- storage device error check
-- hard drive diagnostics
-- ssd bad sector detection
-- linux disk check
-- command line disk scanner
-- badblocks command
-- disk error verification
-- file system corruption check
-- data recovery diagnostics
+  - disk bad block scanner
+  - storage device error check
+  - hard drive diagnostics
+  - ssd bad sector detection
+  - linux disk check
+  - command line disk scanner
+  - badblocks command
+  - disk error verification
+  - file system corruption check
+  - data recovery diagnostics
 features:
-- Scan disks for bad blocks using non-destructive read-only tests
-- Perform read-write tests to identify unreliable blocks
-- Execute destructive write tests to identify and mark bad blocks
-- Output found bad blocks to a file for later use
-- Customize block size and count for optimized scanning
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan disks for bad blocks using non-destructive read-only tests
+  - Perform read-write tests to identify unreliable blocks
+  - Execute destructive write tests to identify and mark bad blocks
+  - Output found bad blocks to a file for later use
+  - Customize block size and count for optimized scanning
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # badblocks

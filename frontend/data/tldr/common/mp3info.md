@@ -1,29 +1,29 @@
 ---
-title: "Edit MP3 Tags - Control ID3v1 Metadata | Online Free DevTools by Hexmos"
+title: 'Edit MP3 Tags - Control ID3v1 Metadata | Online Free DevTools by Hexmos'
 name: mp3info
-path: "/freedevtools/tldr/common/mp3info/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mp3info/"
-description: "Control MP3 metadata easily with mp3info. Edit ID3v1 tags, manage artist, title, and album information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mp3info/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mp3info/'
+description: 'Control MP3 metadata easily with mp3info. Edit ID3v1 tags, manage artist, title, and album information. Free online tool, no registration required.'
 category: common
 keywords:
-- mp3 tag editor
-- mp3 metadata editor
-- id3v1 tag editor
-- mp3 info tool
-- audio tag editor
-- linux mp3 editor
-- macos mp3 editor
-- command line mp3 editor
-- mp3 tagger
-- audio metadata tool
+  - mp3 tag editor
+  - mp3 metadata editor
+  - id3v1 tag editor
+  - mp3 info tool
+  - audio tag editor
+  - linux mp3 editor
+  - macos mp3 editor
+  - command line mp3 editor
+  - mp3 tagger
+  - audio metadata tool
 features:
-- Show all ID3v1 tags of an MP3 file
-- Interactively edit ID3v1 tags
-- Set artist, title, album, year, and comment
-- Set the track number in the album
-- Set the music genre by genre number
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show all ID3v1 tags of an MP3 file
+  - Interactively edit ID3v1 tags
+  - Set artist, title, album, year, and comment
+  - Set the track number in the album
+  - Set the music genre by genre number
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mp3info

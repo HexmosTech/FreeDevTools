@@ -1,29 +1,29 @@
 ---
-title: "ESLint - Validate JavaScript and JSX | Online Free DevTools by Hexmos"
+title: 'ESLint - Validate JavaScript and JSX | Online Free DevTools by Hexmos'
 name: eslint
-path: "/freedevtools/tldr/common/eslint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/eslint/"
-description: "Validate JavaScript with ESLint. Identify and fix code style and formatting errors in your JavaScript and JSX code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/eslint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/eslint/'
+description: 'Validate JavaScript with ESLint. Identify and fix code style and formatting errors in your JavaScript and JSX code. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript linter
-- jsx linter
-- code quality tool
-- eslint configuration
-- javascript style checker
-- linting rules
-- javascript code analysis
-- ecmascript linter
-- coding standards
-- commonjs
+  - javascript linter
+  - jsx linter
+  - code quality tool
+  - eslint configuration
+  - javascript style checker
+  - linting rules
+  - javascript code analysis
+  - ecmascript linter
+  - coding standards
+  - commonjs
 features:
-- Lint JavaScript and JSX code
-- Automatically fix code style issues
-- Customize linting rules with configuration files
-- Integrate with various IDEs and editors
-- Enforce consistent coding standards across projects
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lint JavaScript and JSX code
+  - Automatically fix code style issues
+  - Customize linting rules with configuration files
+  - Integrate with various IDEs and editors
+  - Enforce consistent coding standards across projects
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eslint

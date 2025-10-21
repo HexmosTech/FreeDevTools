@@ -1,9 +1,9 @@
 ---
-title: "RPC Service Control - Manage RPC Calls with rpcinfo | Online Free DevTools by Hexmos"
+title: 'RPC Service Control - Manage RPC Calls with rpcinfo | Online Free DevTools by Hexmos'
 name: rpcinfo
-path: "/freedevtools/tldr/linux/rpcinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpcinfo/"
-description: "Manage RPC calls effectively with rpcinfo.  Query and control RPC services, view service registrations, and troubleshoot network issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpcinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpcinfo/'
+description: 'Manage RPC calls effectively with rpcinfo.  Query and control RPC services, view service registrations, and troubleshoot network issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - rpc service control
@@ -22,8 +22,8 @@ features:
   - View statistics of rpcbind operations.
   - Query specific RPC service entries by name and version.
   - Delete RPC service registrations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpcinfo

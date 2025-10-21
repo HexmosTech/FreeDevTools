@@ -1,9 +1,9 @@
 ---
-title: "Docker Daemon - Manage Containers | Online Free DevTools by Hexmos"
+title: 'Docker Daemon - Manage Containers | Online Free DevTools by Hexmos'
 name: dockerd
-path: "/freedevtools/tldr/linux/dockerd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dockerd/"
-description: "Manage Docker containers efficiently with the dockerd daemon.  Start, stop, and configure Docker using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dockerd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dockerd/'
+description: 'Manage Docker containers efficiently with the dockerd daemon.  Start, stop, and configure Docker using command-line options. Free online tool, no registration required.'
 category: linux
 keywords:
   - docker daemon management
@@ -22,8 +22,8 @@ features:
   - Manage Docker daemon processes.
   - Specify custom socket locations (UNIX and TCP).
   - Enable debug logging for troubleshooting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dockerd

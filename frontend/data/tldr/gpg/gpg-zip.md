@@ -1,29 +1,29 @@
 ---
-title: "Encrypt Files - Create GPG Archive with gpg-zip | Online Free DevTools by Hexmos"
+title: 'Encrypt Files - Create GPG Archive with gpg-zip | Online Free DevTools by Hexmos'
 name: gpg-zip
-path: "/freedevtools/tldr/gpg/gpg-zip/"
-canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg-zip/"
-description: "Encrypt files with gpg-zip and create secure GPG archives. Protect sensitive data using encryption and decryption. Free online tool, no registration required."
+path: '/freedevtools/tldr/gpg/gpg-zip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gpg/gpg-zip/'
+description: 'Encrypt files with gpg-zip and create secure GPG archives. Protect sensitive data using encryption and decryption. Free online tool, no registration required.'
 category: common
 keywords:
-- GPG archive encryption
-- File encryption command
-- GPG file decryption
-- Symmetric encryption archive
-- Linux GPG command
-- MacOS GPG command
-- Command line encryption tool
-- Archive password protection
-- Encrypted directory archive
-- GPG archive list contents
+  - GPG archive encryption
+  - File encryption command
+  - GPG file decryption
+  - Symmetric encryption archive
+  - Linux GPG command
+  - MacOS GPG command
+  - Command line encryption tool
+  - Archive password protection
+  - Encrypted directory archive
+  - GPG archive list contents
 features:
-- Encrypt files into a GPG archive
-- Decrypt existing GPG archives
-- List the contents of a GPG archive
-- Use passphrase-based symmetric encryption
-- Specify output filename for encrypted archive
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encrypt files into a GPG archive
+  - Decrypt existing GPG archives
+  - List the contents of a GPG archive
+  - Use passphrase-based symmetric encryption
+  - Specify output filename for encrypted archive
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gpg-zip

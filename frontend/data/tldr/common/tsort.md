@@ -1,29 +1,29 @@
 ---
-title: "Generate Topological Sort - Dependency Order | Online Free DevTools by Hexmos"
+title: 'Generate Topological Sort - Dependency Order | Online Free DevTools by Hexmos'
 name: tsort
-path: "/freedevtools/tldr/common/tsort/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tsort/"
-description: "Generate a topological sort with tsort. Determine the dependency order in a directed acyclic graph using command line tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tsort/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tsort/'
+description: 'Generate a topological sort with tsort. Determine the dependency order in a directed acyclic graph using command line tools. Free online tool, no registration required.'
 category: common
 keywords:
-- topological sort
-- directed acyclic graph sort
-- dependency resolution
-- command line sort
-- linux topological sort
-- gnu coreutils sort
-- dependency order generator
-- graph dependency sort
-- sort algorithm
-- partial order sort
+  - topological sort
+  - directed acyclic graph sort
+  - dependency resolution
+  - command line sort
+  - linux topological sort
+  - gnu coreutils sort
+  - dependency order generator
+  - graph dependency sort
+  - sort algorithm
+  - partial order sort
 features:
-- Perform topological sorting from input data
-- Resolve dependencies in directed acyclic graphs
-- Determine the order of nodes based on dependencies
-- Process partial orderings specified by blanks
-- Read dependency data from a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform topological sorting from input data
+  - Resolve dependencies in directed acyclic graphs
+  - Determine the order of nodes based on dependencies
+  - Process partial orderings specified by blanks
+  - Read dependency data from a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tsort

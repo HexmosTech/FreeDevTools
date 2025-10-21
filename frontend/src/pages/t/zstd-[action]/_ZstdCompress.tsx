@@ -1,36 +1,36 @@
-import { toast } from "@/components/ToastProvider";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolVideo from "@/components/tool/ToolVideo"; // Assuming this component exists
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import * as zstd from "@oneidentity/zstd-js";
-import { Download, UploadCloud, X } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import AdBanner from "../../../components/banner/AdBanner";
-import ZstdCompressSkeleton from "./_ZstdCompressSkeleton";
+import { toast } from '@/components/ToastProvider';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolGridContainer from '@/components/tool/ToolGridContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolVideo from '@/components/tool/ToolVideo'; // Assuming this component exists
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import * as zstd from '@oneidentity/zstd-js';
+import { Download, UploadCloud, X } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import AdBanner from '../../../components/banner/AdBanner';
+import ZstdCompressSkeleton from './_ZstdCompressSkeleton';
 
 const { ZstdInit } = zstd;
 
-type Mode = "compress" | "decompress";
+type Mode = 'compress' | 'decompress';
 
 const ZstdCompress: React.FC = () => {
   // 1. UPDATED: State is now initialized with placeholder values
-  const [mode, setMode] = useState<Mode>("compress");
-  const [toolName, setToolName] = useState("Zstd Compressor");
+  const [mode, setMode] = useState<Mode>('compress');
+  const [toolName, setToolName] = useState('Zstd Compressor');
   const [toolDescription, setToolDescription] = useState(
-    "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
+    'Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required.'
   );
 
   const [inputFile, setInputFile] = useState<File | null>(null);
   const [outputData, setOutputData] = useState<Uint8Array | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [originalSize, setOriginalSize] = useState(0);
@@ -40,18 +40,18 @@ const ZstdCompress: React.FC = () => {
   const [isZstdReady, setIsZstdReady] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (window.location.pathname.includes("zstd-decompress")) {
-        setMode("decompress");
-        setToolName("Zstd Decompressor");
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname.includes('zstd-decompress')) {
+        setMode('decompress');
+        setToolName('Zstd Decompressor');
         setToolDescription(
-          "Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required."
+          'Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required.'
         );
       } else {
-        setMode("compress");
-        setToolName("Zstd Compressor");
+        setMode('compress');
+        setToolName('Zstd Compressor');
         setToolDescription(
-          "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
+          'Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required.'
         );
       }
     }
@@ -62,8 +62,8 @@ const ZstdCompress: React.FC = () => {
         setZstdApi(codec);
         setIsZstdReady(true);
       } catch (err) {
-        setError("Failed to load compression library.");
-        toast.error("Error: Could not initialize Zstd.");
+        setError('Failed to load compression library.');
+        toast.error('Error: Could not initialize Zstd.');
       }
     };
 
@@ -88,12 +88,12 @@ const ZstdCompress: React.FC = () => {
   const handleProcess = async () => {
     if (!inputFile || !isZstdReady || !zstdApi) return;
 
-    setError("");
+    setError('');
     setIsProcessing(true);
     const toastMessage =
-      mode === "compress"
-        ? "Compressing your file..."
-        : "Decompressing your file...";
+      mode === 'compress'
+        ? 'Compressing your file...'
+        : 'Decompressing your file...';
     toast.info(toastMessage);
 
     try {
@@ -102,7 +102,7 @@ const ZstdCompress: React.FC = () => {
       setOriginalSize(inputBytes.length);
 
       let resultBytes: Uint8Array;
-      if (mode === "compress") {
+      if (mode === 'compress') {
         resultBytes = zstdApi.ZstdSimple.compress(inputBytes);
       } else {
         resultBytes = zstdApi.ZstdSimple.decompress(inputBytes);
@@ -112,20 +112,20 @@ const ZstdCompress: React.FC = () => {
       setOutputData(resultBytes);
 
       const successMessage =
-        mode === "compress"
-          ? "Compression completed!"
-          : "Decompression completed!";
+        mode === 'compress'
+          ? 'Compression completed!'
+          : 'Decompression completed!';
       toast.success(successMessage);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "An unknown error occurred";
+        err instanceof Error ? err.message : 'An unknown error occurred';
       const failureMessage =
-        mode === "compress"
+        mode === 'compress'
           ? `Compression failed: ${errorMessage}`
           : `Decompression failed: ${errorMessage}. Is this a valid .zst file?`;
       setError(failureMessage);
       setOutputData(null);
-      toast.error("Processing failed");
+      toast.error('Processing failed');
     } finally {
       setIsProcessing(false);
     }
@@ -136,14 +136,14 @@ const ZstdCompress: React.FC = () => {
 
     const blob = new Blob([outputData]);
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
 
-    if (mode === "compress") {
+    if (mode === 'compress') {
       a.download = `${inputFile.name}.zst`;
     } else {
       a.download =
-        inputFile.name.replace(/\.zst$/i, "") || "decompresssed_file";
+        inputFile.name.replace(/\.zst$/i, '') || 'decompresssed_file';
     }
 
     document.body.appendChild(a);
@@ -155,32 +155,32 @@ const ZstdCompress: React.FC = () => {
   const handleClear = () => {
     setInputFile(null);
     setOutputData(null);
-    setError("");
+    setError('');
     setOriginalSize(0);
     setProcessedSize(0);
   };
 
   const formatBytes = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const handleTabChange = (value: string) => {
     const newMode = value as Mode;
     setMode(newMode);
     handleClear();
-    if (newMode === "decompress") {
-      setToolName("Zstd Decompressor");
+    if (newMode === 'decompress') {
+      setToolName('Zstd Decompressor');
       setToolDescription(
-        "Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required."
+        'Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required.'
       );
     } else {
-      setToolName("Zstd Compressor");
+      setToolName('Zstd Compressor');
       setToolDescription(
-        "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
+        'Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required.'
       );
     }
   };
@@ -222,7 +222,7 @@ const ZstdCompress: React.FC = () => {
                         <UploadCloud className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" />
                         {inputFile ? (
                           <p className="text-center text-slate-700 dark:text-slate-300">
-                            {inputFile.name}{" "}
+                            {inputFile.name}{' '}
                             <span className="block text-sm text-slate-500">
                               {formatBytes(inputFile.size)}
                             </span>
@@ -230,8 +230,8 @@ const ZstdCompress: React.FC = () => {
                         ) : (
                           <p className="text-center text-slate-500 dark:text-slate-400">
                             {isDragActive
-                              ? "Drop the file here..."
-                              : "Drag & drop a file here, or click to select"}
+                              ? 'Drop the file here...'
+                              : 'Drag & drop a file here, or click to select'}
                           </p>
                         )}
                       </div>
@@ -241,7 +241,7 @@ const ZstdCompress: React.FC = () => {
                           className="flex-1"
                           disabled={!inputFile || isProcessing || !isZstdReady}
                         >
-                          {isProcessing ? "Compressing..." : "Compress"}
+                          {isProcessing ? 'Compressing...' : 'Compress'}
                         </Button>
                         <Button
                           onClick={handleClear}
@@ -330,7 +330,7 @@ const ZstdCompress: React.FC = () => {
                         <UploadCloud className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" />
                         {inputFile ? (
                           <p className="text-center text-slate-700 dark:text-slate-300">
-                            {inputFile.name}{" "}
+                            {inputFile.name}{' '}
                             <span className="block text-sm text-slate-500">
                               {formatBytes(inputFile.size)}
                             </span>
@@ -338,8 +338,8 @@ const ZstdCompress: React.FC = () => {
                         ) : (
                           <p className="text-center text-slate-500 dark:text-slate-400">
                             {isDragActive
-                              ? "Drop the .zst file here..."
-                              : "Drag & drop a .zst file here, or click to select"}
+                              ? 'Drop the .zst file here...'
+                              : 'Drag & drop a .zst file here, or click to select'}
                           </p>
                         )}
                       </div>
@@ -349,7 +349,7 @@ const ZstdCompress: React.FC = () => {
                           className="flex-1"
                           disabled={!inputFile || isProcessing || !isZstdReady}
                         >
-                          {isProcessing ? "Decompressing..." : "Decompress"}
+                          {isProcessing ? 'Decompressing...' : 'Decompress'}
                         </Button>
                         <Button
                           onClick={handleClear}

@@ -1,9 +1,9 @@
 ---
-title: "Login - Initiate User Session | Online Free DevTools by Hexmos"
+title: 'Login - Initiate User Session | Online Free DevTools by Hexmos'
 name: login
-path: "/freedevtools/tldr/linux/login/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/login/"
-description: "Initiate user sessions with Login. Securely authenticate and manage user access on remote systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/login/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/login/'
+description: 'Initiate user sessions with Login. Securely authenticate and manage user access on remote systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - user login
@@ -22,8 +22,8 @@ features:
   - Preserve user environment variables during login.
   - Log in to a remote host.
   - Support pre-authenticated login scenarios.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # login

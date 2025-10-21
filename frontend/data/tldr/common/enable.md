@@ -1,29 +1,29 @@
 ---
-title: "Enable Builtins - Control Shell Features | Online Free DevTools by Hexmos"
+title: 'Enable Builtins - Control Shell Features | Online Free DevTools by Hexmos'
 name: enable
-path: "/freedevtools/tldr/common/enable/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/enable/"
-description: "Enable builtins with this command-line tool. Control shell features, manage functionality, and customize your environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/enable/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/enable/'
+description: 'Enable builtins with this command-line tool. Control shell features, manage functionality, and customize your environment. Free online tool, no registration required.'
 category: common
 keywords:
-- shell builtin enable
-- bash builtin enable
-- command-line shell control
-- terminal feature manager
-- shell functionality configuration
-- linux shell enable
-- macos shell enable
-- command line customization
-- shell scripting control
-- builtin function management
+  - shell builtin enable
+  - bash builtin enable
+  - command-line shell control
+  - terminal feature manager
+  - shell functionality configuration
+  - linux shell enable
+  - macos shell enable
+  - command line customization
+  - shell scripting control
+  - builtin function management
 features:
-- List available shell builtins
-- Enable specific shell builtins
-- Disable specific shell builtins
-- Customize shell environment
-- Manage shell functionality from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available shell builtins
+  - Enable specific shell builtins
+  - Disable specific shell builtins
+  - Customize shell environment
+  - Manage shell functionality from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # enable

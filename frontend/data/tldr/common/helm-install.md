@@ -1,29 +1,29 @@
 ---
-title: "Helm Install - Deploy Charts | Online Free DevTools by Hexmos"
+title: 'Helm Install - Deploy Charts | Online Free DevTools by Hexmos'
 name: helm-install
-path: "/freedevtools/tldr/common/helm-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/helm-install/"
-description: "Install Helm charts with Helm Install. Streamline Kubernetes deployments using package manager commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/helm-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/helm-install/'
+description: 'Install Helm charts with Helm Install. Streamline Kubernetes deployments using package manager commands. Free online tool, no registration required.'
 category: common
 keywords:
-- helm chart installation
-- kubernetes package management
-- helm deployment tool
-- helm chart deployment
-- helm package installer
-- install helm chart from url
-- helm dry run command
-- helm custom values
-- cli helm install
-- common helm commands
+  - helm chart installation
+  - kubernetes package management
+  - helm deployment tool
+  - helm chart deployment
+  - helm package installer
+  - install helm chart from url
+  - helm dry run command
+  - helm custom values
+  - cli helm install
+  - common helm commands
 features:
-- Installs Helm charts from repositories.
-- Deploys charts from local directories.
-- Installs charts from a URL.
-- Allows for dry run testing of deployments.
-- Overrides default values with custom values files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Installs Helm charts from repositories.
+  - Deploys charts from local directories.
+  - Installs charts from a URL.
+  - Allows for dry run testing of deployments.
+  - Overrides default values with custom values files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # helm install

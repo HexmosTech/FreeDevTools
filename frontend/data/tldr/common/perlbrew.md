@@ -1,29 +1,29 @@
 ---
-title: "Perlbrew - Manage Perl Versions | Online Free DevTools by Hexmos"
+title: 'Perlbrew - Manage Perl Versions | Online Free DevTools by Hexmos'
 name: perlbrew
-path: "/freedevtools/tldr/common/perlbrew/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/perlbrew/"
-description: "Manage Perl versions effectively with Perlbrew. Install, switch, and list Perl installations. Lightweight and easy to use. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/perlbrew/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/perlbrew/'
+description: 'Manage Perl versions effectively with Perlbrew. Install, switch, and list Perl installations. Lightweight and easy to use. Free online tool, no registration required.'
 category: common
 keywords:
-- perl version manager
-- perl installations manager
-- perlbrew install
-- perlbrew uninstall
-- perlbrew switch
-- perl cpan modules
-- perlbrew linux
-- perlbrew macos
-- perl environments
-- perlbrew list
+  - perl version manager
+  - perl installations manager
+  - perlbrew install
+  - perlbrew uninstall
+  - perlbrew switch
+  - perl cpan modules
+  - perlbrew linux
+  - perlbrew macos
+  - perl environments
+  - perlbrew list
 features:
-- Initialize a Perlbrew environment
-- List available Perl versions for installation
-- Switch between different Perl installations
-- List installed CPAN modules for the current installation
-- Clone CPAN modules between installations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a Perlbrew environment
+  - List available Perl versions for installation
+  - Switch between different Perl installations
+  - List installed CPAN modules for the current installation
+  - Clone CPAN modules between installations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # perlbrew

@@ -1,29 +1,29 @@
 ---
-title: "Clipboard Manager - Control Terminal Clipboard | Online Free DevTools by Hexmos"
+title: 'Clipboard Manager - Control Terminal Clipboard | Online Free DevTools by Hexmos'
 name: cb
-path: "/freedevtools/tldr/common/cb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cb/"
-description: "Control clipboard actions easily with Clipboard Manager. Copy, paste, and manage clipboard history directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cb/'
+description: 'Control clipboard actions easily with Clipboard Manager. Copy, paste, and manage clipboard history directly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- clipboard manager
-- terminal clipboard
-- command line clipboard
-- copy paste command line
-- clipboard history linux
-- clipboard manager macos
-- clipboard manager windows
-- shell clipboard
-- cb command
-- terminal copy paste
+  - clipboard manager
+  - terminal clipboard
+  - command line clipboard
+  - copy paste command line
+  - clipboard history linux
+  - clipboard manager macos
+  - clipboard manager windows
+  - shell clipboard
+  - cb command
+  - terminal copy paste
 features:
-- Copy files to the system clipboard.
-- Paste clipboard content to the terminal.
-- View and manage clipboard history.
-- Pipe data directly to the clipboard.
-- Show detailed clipboard information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy files to the system clipboard.
+  - Paste clipboard content to the terminal.
+  - View and manage clipboard history.
+  - Pipe data directly to the clipboard.
+  - Show detailed clipboard information.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cb

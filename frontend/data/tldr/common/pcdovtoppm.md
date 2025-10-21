@@ -1,29 +1,29 @@
 ---
-title: "Create PCD to PPM Image - Convert Photo CDs | Online Free DevTools by Hexmos"
+title: 'Create PCD to PPM Image - Convert Photo CDs | Online Free DevTools by Hexmos'
 name: pcdovtoppm
-path: "/freedevtools/tldr/common/pcdovtoppm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pcdovtoppm/"
-description: "Create PCD to PPM image with pcdovtoppm. Generate index images from Photo CD overview files using this free online tool, no registration required."
+path: '/freedevtools/tldr/common/pcdovtoppm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pcdovtoppm/'
+description: 'Create PCD to PPM image with pcdovtoppm. Generate index images from Photo CD overview files using this free online tool, no registration required.'
 category: common
 keywords:
-- PCD to PPM converter
-- Photo CD image creator
-- PPM image generator
-- PCD image index
-- Netpbm image conversion
-- Image format conversion
-- PCD to PPM tool
-- Photo CD extraction
-- Image manipulation command
-- Linux image tools
+  - PCD to PPM converter
+  - Photo CD image creator
+  - PPM image generator
+  - PCD image index
+  - Netpbm image conversion
+  - Image format conversion
+  - PCD to PPM tool
+  - Photo CD extraction
+  - Image manipulation command
+  - Linux image tools
 features:
-- Convert PCD overview files to PPM images
-- Specify output image width
-- Define size of images in the output
-- Customize number of images across
-- Set font and background color
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PCD overview files to PPM images
+  - Specify output image width
+  - Define size of images in the output
+  - Customize number of images across
+  - Set font and background color
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pcdovtoppm

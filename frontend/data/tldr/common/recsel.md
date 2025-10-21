@@ -1,29 +1,29 @@
 ---
-title: "Extract Recfile Records - Print Data | Online Free DevTools by Hexmos"
+title: 'Extract Recfile Records - Print Data | Online Free DevTools by Hexmos'
 name: recsel
-path: "/freedevtools/tldr/common/recsel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/recsel/"
-description: "Extract recfile records with recsel. Select, filter, and print data from recfile databases. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/recsel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/recsel/'
+description: 'Extract recfile records with recsel. Select, filter, and print data from recfile databases. Free online tool, no registration required.'
 category: common
 keywords:
-- recfile record extraction
-- recfile data selection
-- recfile database query
-- recfile field filtering
-- recfile data printing
-- gnu recutils
-- linux database
-- text database query
-- command line database
-- recfile data manipulation
+  - recfile record extraction
+  - recfile data selection
+  - recfile database query
+  - recfile field filtering
+  - recfile data printing
+  - gnu recutils
+  - linux database
+  - text database query
+  - command line database
+  - recfile data manipulation
 features:
-- Extract specific fields from recfiles
-- Filter records based on regular expressions
-- Print records matching complex predicates
-- Select records based on field values
-- Query recfile databases from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific fields from recfiles
+  - Filter records based on regular expressions
+  - Print records matching complex predicates
+  - Select records based on field values
+  - Query recfile databases from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # recsel

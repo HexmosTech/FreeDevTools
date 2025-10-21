@@ -1,9 +1,9 @@
 ---
-title: "Synchronize Time - SNTP Client | Online Free DevTools by Hexmos"
+title: 'Synchronize Time - SNTP Client | Online Free DevTools by Hexmos'
 name: sntp
-path: "/freedevtools/tldr/osx/sntp/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/sntp/"
-description: "Synchronize system time accurately with SNTP. Use Simple Network Time Protocol to query time servers and adjust the system clock. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/sntp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/sntp/'
+description: 'Synchronize system time accurately with SNTP. Use Simple Network Time Protocol to query time servers and adjust the system clock. Free online tool, no registration required.'
 category: osx
 keywords:
   - Network Time Protocol client
@@ -22,8 +22,8 @@ features:
   - Enable debug logging for SNTP client operations
   - Display the current time received from SNTP servers
   - Update system time based on SNTP server response
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sntp

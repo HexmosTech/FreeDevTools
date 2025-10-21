@@ -1,29 +1,29 @@
 ---
-title: "Control Files - Manage Files with nnn | Online Free DevTools by Hexmos"
+title: 'Control Files - Manage Files with nnn | Online Free DevTools by Hexmos'
 name: nnn
-path: "/freedevtools/tldr/common/nnn/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nnn/"
-description: "Manage files efficiently with nnn, an interactive terminal file manager. Analyze disk usage, sort files and open bookmarks in a terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nnn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nnn/'
+description: 'Manage files efficiently with nnn, an interactive terminal file manager. Analyze disk usage, sort files and open bookmarks in a terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal file manager
-- console file explorer
-- disk usage analyzer
-- nnn linux
-- nnn macos
-- command line file management
-- interactive file navigation
-- terminal disk space
-- file sorting tool
-- bookmark file opener
+  - terminal file manager
+  - console file explorer
+  - disk usage analyzer
+  - nnn linux
+  - nnn macos
+  - command line file management
+  - interactive file navigation
+  - terminal disk space
+  - file sorting tool
+  - bookmark file opener
 features:
-- Open directories in terminal
-- Show hidden files and directories
-- Open predefined bookmarks
-- Sort files by different criteria
-- Open selected files with external programs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open directories in terminal
+  - Show hidden files and directories
+  - Open predefined bookmarks
+  - Sort files by different criteria
+  - Open selected files with external programs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nnn

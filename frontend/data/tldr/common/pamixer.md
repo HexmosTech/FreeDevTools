@@ -1,29 +1,29 @@
 ---
-title: "Control Audio Volume - Pamixer Command | Online Free DevTools by Hexmos"
+title: 'Control Audio Volume - Pamixer Command | Online Free DevTools by Hexmos'
 name: pamixer
-path: "/freedevtools/tldr/common/pamixer/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamixer/"
-description: "Control audio volume effortlessly with Pamixer. Adjust PulseAudio settings, toggle mute, and manage audio streams with command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamixer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamixer/'
+description: 'Control audio volume effortlessly with Pamixer. Adjust PulseAudio settings, toggle mute, and manage audio streams with command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- PulseAudio volume control
-- linux audio mixer
-- command line audio
-- pamixer volume control
-- linux volume control
-- audio stream control
-- volume boost control
-- pulseaudio command
-- terminal audio control
-- audio mute toggle
+  - PulseAudio volume control
+  - linux audio mixer
+  - command line audio
+  - pamixer volume control
+  - linux volume control
+  - audio stream control
+  - volume boost control
+  - pulseaudio command
+  - terminal audio control
+  - audio mute toggle
 features:
-- Set audio volume to a specific percentage
-- Toggle mute for audio sinks and sources
-- Increase or decrease volume incrementally
-- Control volume beyond 100% with allow-boost
-- List available audio sinks and sources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set audio volume to a specific percentage
+  - Toggle mute for audio sinks and sources
+  - Increase or decrease volume incrementally
+  - Control volume beyond 100% with allow-boost
+  - List available audio sinks and sources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamixer

@@ -1,29 +1,29 @@
 ---
-title: "Ideviceinfo - Show iOS Device Info | Online Free DevTools by Hexmos"
+title: 'Ideviceinfo - Show iOS Device Info | Online Free DevTools by Hexmos'
 name: ideviceinfo
-path: "/freedevtools/tldr/common/ideviceinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ideviceinfo/"
-description: "Show iOS device information with Ideviceinfo. Get UDID, model, and more. Access device details quickly using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ideviceinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ideviceinfo/'
+description: 'Show iOS device information with Ideviceinfo. Get UDID, model, and more. Access device details quickly using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- iOS device information
-- Apple device details
-- Ideviceinfo command
-- iOS UDID lookup
-- Device model identifier
-- Mobile device data extraction
-- Ideviceinfo properties
-- Connected device info
-- iOS device specifications
-- Command-line device info
+  - iOS device information
+  - Apple device details
+  - Ideviceinfo command
+  - iOS UDID lookup
+  - Device model identifier
+  - Mobile device data extraction
+  - Ideviceinfo properties
+  - Connected device info
+  - iOS device specifications
+  - Command-line device info
 features:
-- Display comprehensive device information
-- Retrieve device UDID
-- Show connected iOS device details
-- Access device model identifier
-- List available device properties
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display comprehensive device information
+  - Retrieve device UDID
+  - Show connected iOS device details
+  - Access device model identifier
+  - List available device properties
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ideviceinfo

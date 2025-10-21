@@ -1,29 +1,29 @@
 ---
-title: "SWIG - Generate Bindings for Multiple Languages | Online Free DevTools by Hexmos"
+title: 'SWIG - Generate Bindings for Multiple Languages | Online Free DevTools by Hexmos'
 name: swig
-path: "/freedevtools/tldr/common/swig/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/swig/"
-description: "Generate language bindings with SWIG. Create wrappers for C/C++ code in Python, Java, Go, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/swig/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/swig/'
+description: 'Generate language bindings with SWIG. Create wrappers for C/C++ code in Python, Java, Go, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- C++ bindings generator
-- Python wrapper generator
-- Java native interface
-- Go language bindings
-- Ruby extension module
-- SWIG interface compiler
-- C++ to Python bridge
-- C/C++ code generator
-- Cross-language binding
-- Interface Definition Language
+  - C++ bindings generator
+  - Python wrapper generator
+  - Java native interface
+  - Go language bindings
+  - Ruby extension module
+  - SWIG interface compiler
+  - C++ to Python bridge
+  - C/C++ code generator
+  - Cross-language binding
+  - Interface Definition Language
 features:
-- Generate bindings between C/C++ and Python
-- Create wrappers for C/C++ code to interface with Java
-- Produce bindings for C/C++ code to be used in Go
-- Generate Ruby extension modules from C/C++ code
-- Create cross-language interfaces using SWIG directives
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate bindings between C/C++ and Python
+  - Create wrappers for C/C++ code to interface with Java
+  - Produce bindings for C/C++ code to be used in Go
+  - Generate Ruby extension modules from C/C++ code
+  - Create cross-language interfaces using SWIG directives
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swig

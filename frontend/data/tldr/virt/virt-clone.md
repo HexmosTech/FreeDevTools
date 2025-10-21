@@ -1,29 +1,29 @@
 ---
-title: "Clone Virtual Machine - Create VMs with virt-clone | Online Free DevTools by Hexmos"
+title: 'Clone Virtual Machine - Create VMs with virt-clone | Online Free DevTools by Hexmos'
 name: virt-clone
-path: "/freedevtools/tldr/virt/virt-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-clone/"
-description: "Create virtual machines easily with virt-clone. Automate VM cloning, specify storage paths, and manage MAC addresses. Free online tool, no registration required."
+path: '/freedevtools/tldr/virt/virt-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virt/virt-clone/'
+description: 'Create virtual machines easily with virt-clone. Automate VM cloning, specify storage paths, and manage MAC addresses. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine clone
-- vm cloning linux
-- libvirt vm clone
-- virtual machine management
-- clone virtual server
-- virt-clone command
-- linux virtual machines
-- kvm virtual machine
-- virtual machine migration
-- automated vm creation
+  - virtual machine clone
+  - vm cloning linux
+  - libvirt vm clone
+  - virtual machine management
+  - clone virtual server
+  - virt-clone command
+  - linux virtual machines
+  - kvm virtual machine
+  - virtual machine migration
+  - automated vm creation
 features:
-- Clone virtual machines with auto-generated settings
-- Specify new storage paths for cloned VMs
-- Define custom MAC addresses for cloned VMs
-- Automate the creation of new virtual machines
-- Clone VMs from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone virtual machines with auto-generated settings
+  - Specify new storage paths for cloned VMs
+  - Define custom MAC addresses for cloned VMs
+  - Automate the creation of new virtual machines
+  - Clone VMs from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virt-clone

@@ -1,29 +1,29 @@
 ---
-title: "Convert Mesh - Process 3D Meshes with MeshLabserver | Online Free DevTools by Hexmos"
+title: 'Convert Mesh - Process 3D Meshes with MeshLabserver | Online Free DevTools by Hexmos'
 name: meshlabserver
-path: "/freedevtools/tldr/common/meshlabserver/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/meshlabserver/"
-description: "Process 3D meshes with MeshLabserver, a powerful mesh processing tool. Convert file formats and apply complex filters with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/meshlabserver/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/meshlabserver/'
+description: 'Process 3D meshes with MeshLabserver, a powerful mesh processing tool. Convert file formats and apply complex filters with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- 3D Mesh Converter
-- MeshLabserver Command Line
-- STL to OBJ Converter
-- WRL to OFF Converter
-- 3D Model Processing
-- Mesh Filter Scripting
-- Mesh Normal Generation
-- Linux Mesh Conversion
-- macOS Mesh Processing
-- MeshLab automation
+  - 3D Mesh Converter
+  - MeshLabserver Command Line
+  - STL to OBJ Converter
+  - WRL to OFF Converter
+  - 3D Model Processing
+  - Mesh Filter Scripting
+  - Mesh Normal Generation
+  - Linux Mesh Conversion
+  - macOS Mesh Processing
+  - MeshLab automation
 features:
-- Convert between various 3D mesh file formats
-- Apply complex filter scripts to 3D models
-- Generate vertex and face normals for meshes
-- Automate mesh processing tasks via command line
-- Dump a list of available processing filters to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between various 3D mesh file formats
+  - Apply complex filter scripts to 3D models
+  - Generate vertex and face normals for meshes
+  - Automate mesh processing tasks via command line
+  - Dump a list of available processing filters to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # meshlabserver

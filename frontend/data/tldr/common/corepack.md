@@ -1,29 +1,29 @@
 ---
-title: "Corepack - Manage Package Managers | Online Free DevTools by Hexmos"
+title: 'Corepack - Manage Package Managers | Online Free DevTools by Hexmos'
 name: corepack
-path: "/freedevtools/tldr/common/corepack/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/corepack/"
-description: "Manage Node.js package managers with Corepack. Enable, disable, and prepare npm, pnpm, and yarn effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/corepack/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/corepack/'
+description: 'Manage Node.js package managers with Corepack. Enable, disable, and prepare npm, pnpm, and yarn effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- node package manager
-- corepack manager
-- npm management
-- pnpm management
-- yarn management
-- javascript package
-- nodejs package
-- package version control
-- package dependency manager
-- global package management
+  - node package manager
+  - corepack manager
+  - npm management
+  - pnpm management
+  - yarn management
+  - javascript package
+  - nodejs package
+  - package version control
+  - package dependency manager
+  - global package management
 features:
-- Enable corepack shims globally
-- Prepare specific package manager versions
-- Disable corepack shims
-- Use package managers without global installation
-- Hydrate package managers from archives
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enable corepack shims globally
+  - Prepare specific package manager versions
+  - Disable corepack shims
+  - Use package managers without global installation
+  - Hydrate package managers from archives
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # corepack

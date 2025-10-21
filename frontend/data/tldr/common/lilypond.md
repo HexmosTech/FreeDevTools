@@ -1,29 +1,29 @@
 ---
-title: "Lilypond - Typeset Music & Generate MIDI | Online Free DevTools by Hexmos"
+title: 'Lilypond - Typeset Music & Generate MIDI | Online Free DevTools by Hexmos'
 name: lilypond
-path: "/freedevtools/tldr/common/lilypond/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lilypond/"
-description: "Typeset music with Lilypond & generate MIDI files from your scores. Convert Lilypond files to PDF and other formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lilypond/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lilypond/'
+description: 'Typeset music with Lilypond & generate MIDI files from your scores. Convert Lilypond files to PDF and other formats. Free online tool, no registration required.'
 category: common
 keywords:
-- Lilypond music typesetting
-- Lilypond MIDI generation
-- Music notation compiler
-- Lilypond to PDF converter
-- Lilypond command line
-- Music score typesetting
-- Lilypond format conversion
-- Common music tools
-- Lilypond Linux
-- Lilypond macOS
+  - Lilypond music typesetting
+  - Lilypond MIDI generation
+  - Music notation compiler
+  - Lilypond to PDF converter
+  - Lilypond command line
+  - Music score typesetting
+  - Lilypond format conversion
+  - Common music tools
+  - Lilypond Linux
+  - Lilypond macOS
 features:
-- Compile Lilypond files to PDF format.
-- Generate MIDI files from Lilypond notation.
-- Convert Lilypond files to various output formats.
-- Suppress progress updates during compilation.
-- Specify the output filename for compiled files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Lilypond files to PDF format.
+  - Generate MIDI files from Lilypond notation.
+  - Convert Lilypond files to various output formats.
+  - Suppress progress updates during compilation.
+  - Specify the output filename for compiled files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lilypond

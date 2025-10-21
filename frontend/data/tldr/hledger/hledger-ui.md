@@ -1,29 +1,29 @@
 ---
-title: "Hledger-ui TUI - Manage Plain Text Accounting | Online Free DevTools by Hexmos"
+title: 'Hledger-ui TUI - Manage Plain Text Accounting | Online Free DevTools by Hexmos'
 name: hledger-ui
-path: "/freedevtools/tldr/hledger/hledger-ui/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-ui/"
-description: "Manage plain text accounting with Hledger-ui TUI. Analyze journal files, create balance sheets, and track transactions with this terminal interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-ui/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-ui/'
+description: 'Manage plain text accounting with Hledger-ui TUI. Analyze journal files, create balance sheets, and track transactions with this terminal interface. Free online tool, no registration required.'
 category: common
 keywords:
-- plain text accounting
-- hledger terminal interface
-- tui accounting tool
-- hledger command line
-- journal file analyzer
-- balance sheet generator
-- transaction tracker
-- accounting reporting
-- hledger ui
-- ledger cli
+  - plain text accounting
+  - hledger terminal interface
+  - tui accounting tool
+  - hledger command line
+  - journal file analyzer
+  - balance sheet generator
+  - transaction tracker
+  - accounting reporting
+  - hledger ui
+  - ledger cli
 features:
-- View accounting data through a terminal user interface (TUI)
-- Analyze balance sheets with customizable depth
-- Monitor specific accounts and cleared transactions in real-time
-- Read and combine multiple journal files for consolidated reporting
-- Display hledger manual in Info format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View accounting data through a terminal user interface (TUI)
+  - Analyze balance sheets with customizable depth
+  - Monitor specific accounts and cleared transactions in real-time
+  - Read and combine multiple journal files for consolidated reporting
+  - Display hledger manual in Info format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger-ui

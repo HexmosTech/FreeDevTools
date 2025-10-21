@@ -1,29 +1,29 @@
 ---
-title: "Control Commands - Betty Natural Language Interface | Online Free DevTools by Hexmos"
+title: 'Control Commands - Betty Natural Language Interface | Online Free DevTools by Hexmos'
 name: betty
-path: "/freedevtools/tldr/common/betty/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/betty/"
-description: "Control commands using natural language with Betty. Execute commands and download files easily with a user-friendly interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/betty/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/betty/'
+description: 'Control commands using natural language with Betty. Execute commands and download files easily with a user-friendly interface. Free online tool, no registration required.'
 category: common
 keywords:
-- natural language command execution
-- betty command line tool
-- command execution interface
-- archive extraction tool
-- file compression commands
-- spotify command control
-- betty natural language interpreter
-- command line automation
-- download file with command line
-- command line archive manager
+  - natural language command execution
+  - betty command line tool
+  - command execution interface
+  - archive extraction tool
+  - file compression commands
+  - spotify command control
+  - betty natural language interpreter
+  - command line automation
+  - download file with command line
+  - command line archive manager
 features:
-- Execute commands using natural language input
-- Download files directly from the command line
-- Compress files and directories to archive formats
-- Extract archives into specified directories
-- Control Spotify playback using spoken commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands using natural language input
+  - Download files directly from the command line
+  - Compress files and directories to archive formats
+  - Extract archives into specified directories
+  - Control Spotify playback using spoken commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # betty

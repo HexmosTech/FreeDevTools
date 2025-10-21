@@ -1,29 +1,29 @@
 ---
-title: "Reg Import - Import Registry Files | Online Free DevTools by Hexmos"
+title: 'Reg Import - Import Registry Files | Online Free DevTools by Hexmos'
 name: reg-import
-path: "/freedevtools/tldr/windows/reg-import/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-import/"
-description: "Import registry files effortlessly with Reg Import. Merge .reg files into the Windows registry, streamlining configuration and customization. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/reg-import/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/reg-import/'
+description: 'Import registry files effortlessly with Reg Import. Merge .reg files into the Windows registry, streamlining configuration and customization. Free online tool, no registration required.'
 category: windows
 keywords:
-- registry import
-- reg import windows
-- windows registry editor
-- .reg file merger
-- windows registry command line
-- registry key import
-- registry value import
-- reg file to registry
-- windows regedit tool
-- command line registry tool
+  - registry import
+  - reg import windows
+  - windows registry editor
+  - .reg file merger
+  - windows registry command line
+  - registry key import
+  - registry value import
+  - reg file to registry
+  - windows regedit tool
+  - command line registry tool
 features:
-- Import all keys and subkeys from a .reg file
-- Merge .reg file contents into the Windows registry
-- Apply registry modifications via the command line
-- Automate registry updates with .reg files
-- Import configuration settings stored in .reg format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Import all keys and subkeys from a .reg file
+  - Merge .reg file contents into the Windows registry
+  - Apply registry modifications via the command line
+  - Automate registry updates with .reg files
+  - Import configuration settings stored in .reg format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # reg import

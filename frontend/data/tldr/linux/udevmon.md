@@ -1,9 +1,9 @@
 ---
-title: "Monitor Input Devices - Intercept Events with udevmon | Online Free DevTools by Hexmos"
+title: 'Monitor Input Devices - Intercept Events with udevmon | Online Free DevTools by Hexmos'
 name: udevmon
-path: "/freedevtools/tldr/linux/udevmon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/udevmon/"
-description: "Intercept and monitor input device events with udevmon.  Filter and modify events using YAML configuration files for customized actions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/udevmon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/udevmon/'
+description: 'Intercept and monitor input device events with udevmon.  Filter and modify events using YAML configuration files for customized actions. Free online tool, no registration required.'
 category: linux
 keywords:
   - Linux input device monitor
@@ -22,8 +22,8 @@ features:
   - Launch tasks based on specific input device events.
   - Utilize a flexible and customizable configuration system.
   - Monitor input devices for debugging and automation purposes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # udevmon

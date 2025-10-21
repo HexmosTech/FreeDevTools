@@ -1,9 +1,9 @@
 ---
-title: "Ports - Update Ports Tree on CRUX Systems | Online Free DevTools by Hexmos"
+title: 'Ports - Update Ports Tree on CRUX Systems | Online Free DevTools by Hexmos'
 name: ports
-path: "/freedevtools/tldr/linux/ports/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ports/"
-description: "Update ports tree on CRUX systems with Ports. Manage package installations and dependencies with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ports/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ports/'
+description: 'Update ports tree on CRUX systems with Ports. Manage package installations and dependencies with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - CRUX ports tree
@@ -22,8 +22,8 @@ features:
   - Check differences between installed packages and ports tree
   - Synchronize installed packages with the ports tree
   - Manage software dependencies using ports
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ports

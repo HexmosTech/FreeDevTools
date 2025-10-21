@@ -1,9 +1,9 @@
 ---
-title: "Network Select - Choose Fastest Server | Online Free DevTools by Hexmos"
+title: 'Network Select - Choose Fastest Server | Online Free DevTools by Hexmos'
 name: netselect
-path: "/freedevtools/tldr/linux/netselect/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/netselect/"
-description: "Select fastest network server with Netselect. Test latency and resolve nameserver efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/netselect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/netselect/'
+description: 'Select fastest network server with Netselect. Test latency and resolve nameserver efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - network server selector
@@ -22,8 +22,8 @@ features:
   - Define a maximum TTL for network tests.
   - Print the n fastest servers.
   - Test network latency to different hosts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # netselect

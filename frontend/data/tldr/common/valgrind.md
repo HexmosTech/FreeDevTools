@@ -1,29 +1,29 @@
 ---
-title: "Valgrind Debugging - Analyze Memory Usage | Online Free DevTools by Hexmos"
+title: 'Valgrind Debugging - Analyze Memory Usage | Online Free DevTools by Hexmos'
 name: valgrind
-path: "/freedevtools/tldr/common/valgrind/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/valgrind/"
-description: "Analyze memory usage with Valgrind debugging tool for program optimization and error detection. Identify memory leaks and profile performance effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/valgrind/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/valgrind/'
+description: 'Analyze memory usage with Valgrind debugging tool for program optimization and error detection. Identify memory leaks and profile performance effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- memory debugging
-- valgrind memcheck
-- linux memory analysis
-- program profiling
-- cachegrind profiling
-- memory leak detection
-- heap memory analysis
-- massif heap profiler
-- helgrind race detection
-- drd memory errors
+  - memory debugging
+  - valgrind memcheck
+  - linux memory analysis
+  - program profiling
+  - cachegrind profiling
+  - memory leak detection
+  - heap memory analysis
+  - massif heap profiler
+  - helgrind race detection
+  - drd memory errors
 features:
-- Detect memory leaks and invalid memory access
-- Profile CPU cache usage for performance optimization
-- Analyze heap memory and stack usage over time
-- Identify potential race conditions in multithreaded programs
-- Simulate different CPU architectures for cross-platform development
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect memory leaks and invalid memory access
+  - Profile CPU cache usage for performance optimization
+  - Analyze heap memory and stack usage over time
+  - Identify potential race conditions in multithreaded programs
+  - Simulate different CPU architectures for cross-platform development
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # valgrind

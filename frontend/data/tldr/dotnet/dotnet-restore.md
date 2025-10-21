@@ -1,29 +1,29 @@
 ---
-title: "Dotnet Restore - Restore .NET Dependencies | Online Free DevTools by Hexmos"
+title: 'Dotnet Restore - Restore .NET Dependencies | Online Free DevTools by Hexmos'
 name: dotnet-restore
-path: "/freedevtools/tldr/dotnet/dotnet-restore/"
-canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-restore/"
-description: "Restore .NET project dependencies with Dotnet Restore. Manage package sources and control verbosity levels for efficient builds. Free online tool, no registration required."
+path: '/freedevtools/tldr/dotnet/dotnet-restore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dotnet/dotnet-restore/'
+description: 'Restore .NET project dependencies with Dotnet Restore. Manage package sources and control verbosity levels for efficient builds. Free online tool, no registration required.'
 category: common
 keywords:
-- dotnet restore dependencies
-- .net package manager
-- nuget restore command
-- dotnet build restore
-- cross-platform dependencies
-- .net core restore
-- csharp restore
-- vb.net restore
-- msbuild restore
-- dotnet sdk restore
+  - dotnet restore dependencies
+  - .net package manager
+  - nuget restore command
+  - dotnet build restore
+  - cross-platform dependencies
+  - .net core restore
+  - csharp restore
+  - vb.net restore
+  - msbuild restore
+  - dotnet sdk restore
 features:
-- Restore dependencies for .NET projects
-- Restore dependencies for .NET solutions
-- Specify project or solution path
-- Ignore failed package sources
-- Control verbosity level during restoration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restore dependencies for .NET projects
+  - Restore dependencies for .NET solutions
+  - Specify project or solution path
+  - Ignore failed package sources
+  - Control verbosity level during restoration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotnet restore

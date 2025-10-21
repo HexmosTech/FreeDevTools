@@ -1,9 +1,9 @@
 ---
-title: "Display Printer Status - Control Printing with lpstat | Online Free DevTools by Hexmos"
+title: 'Display Printer Status - Control Printing with lpstat | Online Free DevTools by Hexmos'
 name: lpstat
-path: "/freedevtools/tldr/osx/lpstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/lpstat/"
-description: "Display printer status information with lpstat. Monitor print jobs, manage printers, and diagnose printing issues efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/lpstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/lpstat/'
+description: 'Display printer status information with lpstat. Monitor print jobs, manage printers, and diagnose printing issues efficiently. Free online tool, no registration required.'
 category: osx
 keywords:
   - printer status
@@ -22,8 +22,8 @@ features:
   - Display the ranking of print jobs
   - Check if the CUPS server is running
   - Display all available status information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lpstat

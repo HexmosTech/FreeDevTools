@@ -1,29 +1,29 @@
 ---
-title: "Edit Plain Text - Control Files with CotEditor | Online Free DevTools by Hexmos"
+title: 'Edit Plain Text - Control Files with CotEditor | Online Free DevTools by Hexmos'
 name: cot
-path: "/freedevtools/tldr/osx/cot/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/cot/"
-description: "Control plain text files with CotEditor on macOS. Open, edit, and manage text files directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/cot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/cot/'
+description: 'Control plain text files with CotEditor on macOS. Open, edit, and manage text files directly from the command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- text editor macos
-- plain text editor osx
-- cot editor command line
-- macos text file editing
-- osx command line text
-- cot editor terminal
-- text editor command macos
-- plain text editor command
-- macos file editor cli
-- command line text editor
+  - text editor macos
+  - plain text editor osx
+  - cot editor command line
+  - macos text file editing
+  - osx command line text
+  - cot editor terminal
+  - text editor command macos
+  - plain text editor command
+  - macos file editor cli
+  - command line text editor
 features:
-- Open and edit text files from the command line
-- Create new blank text documents quickly
-- Open files with specific line and column numbers
-- Wait for the editor to close before returning to the terminal
-- Open multiple files simultaneously
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit text files from the command line
+  - Create new blank text documents quickly
+  - Open files with specific line and column numbers
+  - Wait for the editor to close before returning to the terminal
+  - Open multiple files simultaneously
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cot

@@ -1,29 +1,29 @@
 ---
-title: "BGP Filter - Analyze BGP Data | Online Free DevTools by Hexmos"
+title: 'BGP Filter - Analyze BGP Data | Online Free DevTools by Hexmos'
 name: bgpgrep
-path: "/freedevtools/tldr/common/bgpgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bgpgrep/"
-description: "Filter BGP data with bgpgrep. Analyze MRT dumps, filter by peer ASN or IP, and examine AS paths. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bgpgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bgpgrep/'
+description: 'Filter BGP data with bgpgrep. Analyze MRT dumps, filter by peer ASN or IP, and examine AS paths. Free online tool, no registration required.'
 category: common
 keywords:
-- BGP data analysis
-- MRT dump filter
-- BGP route filtering
-- ASN filter
-- IP address filter
-- AS path analysis
-- bgpgrep command
-- BGP data extraction
-- network route analysis
-- BGP community analysis
+  - BGP data analysis
+  - MRT dump filter
+  - BGP route filtering
+  - ASN filter
+  - IP address filter
+  - AS path analysis
+  - bgpgrep command
+  - BGP data extraction
+  - network route analysis
+  - BGP community analysis
 features:
-- Filter BGP data from MRT dumps
-- Filter routes by peer ASN or IP address
-- Analyze routes with specific ASNs in the AS path
-- List routes leading to a specific address
-- Filter routes based on BGP communities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Filter BGP data from MRT dumps
+  - Filter routes by peer ASN or IP address
+  - Analyze routes with specific ASNs in the AS path
+  - List routes leading to a specific address
+  - Filter routes based on BGP communities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bgpgrep

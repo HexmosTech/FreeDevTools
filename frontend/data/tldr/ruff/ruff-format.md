@@ -1,29 +1,29 @@
 ---
-title: "Ruff Format - Format Python Code | Online Free DevTools by Hexmos"
+title: 'Ruff Format - Format Python Code | Online Free DevTools by Hexmos'
 name: ruff-format
-path: "/freedevtools/tldr/ruff/ruff-format/"
-canonical: "https://hexmos.com/freedevtools/tldr/ruff/ruff-format/"
-description: "Format Python code with Ruff Format. Quickly reformat files or check for formatting issues.  Free online tool, no registration required."
+path: '/freedevtools/tldr/ruff/ruff-format/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ruff/ruff-format/'
+description: 'Format Python code with Ruff Format. Quickly reformat files or check for formatting issues.  Free online tool, no registration required.'
 category: common
 keywords:
-- python code formatter
-- ruff formatter
-- python formatting
-- linting tool
-- code style guide
-- pep8 compliance
-- ruff linter
-- code beautifier
-- command line formatter
-- python auto formatter
+  - python code formatter
+  - ruff formatter
+  - python formatting
+  - linting tool
+  - code style guide
+  - pep8 compliance
+  - ruff linter
+  - code beautifier
+  - command line formatter
+  - python auto formatter
 features:
-- Format Python files in-place
-- Check for formatting changes without applying them
-- Display a diff of changes that would be made
-- Reformat code to adhere to style conventions
-- Integrate with command-line workflows
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format Python files in-place
+  - Check for formatting changes without applying them
+  - Display a diff of changes that would be made
+  - Reformat code to adhere to style conventions
+  - Integrate with command-line workflows
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ruff format

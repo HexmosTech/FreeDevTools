@@ -1,9 +1,9 @@
 ---
-title: "Control KConfig - Write KDE Plasma Settings | Online Free DevTools by Hexmos"
+title: 'Control KConfig - Write KDE Plasma Settings | Online Free DevTools by Hexmos'
 name: kwriteconfig5
-path: "/freedevtools/tldr/linux/kwriteconfig5/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kwriteconfig5/"
-description: "Control KDE Plasma configuration settings with KWriteConfig5.  Modify KConfig entries and customize your desktop environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kwriteconfig5/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kwriteconfig5/'
+description: 'Control KDE Plasma configuration settings with KWriteConfig5.  Modify KConfig entries and customize your desktop environment. Free online tool, no registration required.'
 category: linux
 keywords:
   - kconfig writer
@@ -22,8 +22,8 @@ features:
   - Delete existing configuration keys
   - Configure systemd to start Plasma session
   - Customize window behavior in KWin
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kwriteconfig5

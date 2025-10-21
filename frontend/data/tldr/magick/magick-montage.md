@@ -1,29 +1,29 @@
 ---
-title: "Montage Images - Create Image Grids with Magick | Online Free DevTools by Hexmos"
+title: 'Montage Images - Create Image Grids with Magick | Online Free DevTools by Hexmos'
 name: magick-montage
-path: "/freedevtools/tldr/magick/magick-montage/"
-canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-montage/"
-description: "Create image grids with Magick Montage. Tile and resize images effortlessly to generate custom montages. Free online tool, no registration required."
+path: '/freedevtools/tldr/magick/magick-montage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/magick/magick-montage/'
+description: 'Create image grids with Magick Montage. Tile and resize images effortlessly to generate custom montages. Free online tool, no registration required.'
 category: common
 keywords:
-- Image Montage
-- Image Grid Generator
-- Magick Montage
-- ImageMagick Montage
-- Image Tiling
-- Image Resizing
-- Command Line Image Processing
-- Image Manipulation
-- Image Composition
-- Magick Image Combiner
+  - Image Montage
+  - Image Grid Generator
+  - Magick Montage
+  - ImageMagick Montage
+  - Image Tiling
+  - Image Resizing
+  - Command Line Image Processing
+  - Image Manipulation
+  - Image Composition
+  - Magick Image Combiner
 features:
-- Tile multiple images into a customizable grid.
-- Automatically resize images to fit grid cells.
-- Calculate grid cell size based on the largest image.
-- Crop and resize images to fill grid cells.
-- Limit the number of rows and columns in the grid.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Tile multiple images into a customizable grid.
+  - Automatically resize images to fit grid cells.
+  - Calculate grid cell size based on the largest image.
+  - Crop and resize images to fill grid cells.
+  - Limit the number of rows and columns in the grid.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # magick montage

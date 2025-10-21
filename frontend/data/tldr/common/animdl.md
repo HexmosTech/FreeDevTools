@@ -1,29 +1,29 @@
 ---
-title: "Anime Downloader - Download Anime Easily | Online Free DevTools by Hexmos"
+title: 'Anime Downloader - Download Anime Easily | Online Free DevTools by Hexmos'
 name: animdl
-path: "/freedevtools/tldr/common/animdl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/animdl/"
-description: "Download anime quickly with animdl, a powerful anime scraper. Effortlessly download episodes and manage your anime library. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/animdl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/animdl/'
+description: 'Download anime quickly with animdl, a powerful anime scraper. Effortlessly download episodes and manage your anime library. Free online tool, no registration required.'
 category: common
 keywords:
-- anime downloader
-- anime scraper
-- command line anime downloader
-- animdl download anime
-- anime episode downloader
-- anime stream url grabber
-- anime schedule viewer
-- anime search tool
-- anime streaming tool
-- linux anime downloader
+  - anime downloader
+  - anime scraper
+  - command line anime downloader
+  - animdl download anime
+  - anime episode downloader
+  - anime stream url grabber
+  - anime schedule viewer
+  - anime search tool
+  - anime streaming tool
+  - linux anime downloader
 features:
-- Download anime episodes by title
-- Download anime by specifying episode ranges
-- Specify a custom download directory
-- Grab the stream URL for specific anime episodes
-- Stream anime episodes directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download anime episodes by title
+  - Download anime by specifying episode ranges
+  - Specify a custom download directory
+  - Grab the stream URL for specific anime episodes
+  - Stream anime episodes directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # animdl

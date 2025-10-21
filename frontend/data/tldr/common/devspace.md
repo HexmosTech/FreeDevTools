@@ -1,29 +1,29 @@
 ---
-title: "Develop Kubernetes Apps - Control DevSpace Workflow | Online Free DevTools by Hexmos"
+title: 'Develop Kubernetes Apps - Control DevSpace Workflow | Online Free DevTools by Hexmos'
 name: devspace
-path: "/freedevtools/tldr/common/devspace/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/devspace/"
-description: "Develop Kubernetes applications efficiently with DevSpace. Deploy, debug and build images directly in Kubernetes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/devspace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/devspace/'
+description: 'Develop Kubernetes applications efficiently with DevSpace. Deploy, debug and build images directly in Kubernetes. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes development
-- devspace kubernetes
-- kubernetes deployment
-- kubernetes debugging
-- devspace cli
-- container development
-- microservice deployment
-- kubectl alternative
-- application deployment
-- kubernetes workflow
+  - kubernetes development
+  - devspace kubernetes
+  - kubernetes deployment
+  - kubernetes debugging
+  - devspace cli
+  - container development
+  - microservice deployment
+  - kubectl alternative
+  - application deployment
+  - kubernetes workflow
 features:
-- Initialize new DevSpace projects
-- Start development with port forwarding and file sync
-- Deploy projects to Kubernetes clusters
-- Build container images for deployment
-- Follow logs from pods in real-time
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new DevSpace projects
+  - Start development with port forwarding and file sync
+  - Deploy projects to Kubernetes clusters
+  - Build container images for deployment
+  - Follow logs from pods in real-time
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # devspace

@@ -1,29 +1,29 @@
 ---
-title: "Snakefmt - Format Snakemake Files | Online Free DevTools by Hexmos"
+title: 'Snakefmt - Format Snakemake Files | Online Free DevTools by Hexmos'
 name: snakefmt
-path: "/freedevtools/tldr/common/snakefmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/snakefmt/"
-description: "Format Snakemake files instantly with Snakefmt. Ensure consistent code style and improve readability for easier collaboration. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/snakefmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/snakefmt/'
+description: 'Format Snakemake files instantly with Snakefmt. Ensure consistent code style and improve readability for easier collaboration. Free online tool, no registration required.'
 category: common
 keywords:
-- Snakemake formatter
-- Snakefile formatting
-- Python workflow formatting
-- Snakemake code style
-- Workflow management system
-- Snakefmt command line
-- Snakemake linting
-- Snakemake best practices
-- Bioinformatics workflow tools
-- Data science pipeline
+  - Snakemake formatter
+  - Snakefile formatting
+  - Python workflow formatting
+  - Snakemake code style
+  - Workflow management system
+  - Snakefmt command line
+  - Snakemake linting
+  - Snakemake best practices
+  - Bioinformatics workflow tools
+  - Data science pipeline
 features:
-- Format a single Snakefile
-- Format all Snakefiles in a directory recursively
-- Use a specific configuration file for formatting
-- Enforce maximum line length constraints
-- Display changes without applying them (dry run)
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format a single Snakefile
+  - Format all Snakefiles in a directory recursively
+  - Use a specific configuration file for formatting
+  - Enforce maximum line length constraints
+  - Display changes without applying them (dry run)
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # snakefmt

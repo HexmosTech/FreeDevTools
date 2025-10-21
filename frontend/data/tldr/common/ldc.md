@@ -1,29 +1,29 @@
 ---
-title: "Compile D Code - LDC D Compiler with LLVM | Online Free DevTools by Hexmos"
+title: 'Compile D Code - LDC D Compiler with LLVM | Online Free DevTools by Hexmos'
 name: ldc
-path: "/freedevtools/tldr/common/ldc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ldc/"
-description: "Compile D code efficiently with LDC D Compiler, using LLVM backend for optimized performance. Cross-compile, link, and generate executables. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ldc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ldc/'
+description: 'Compile D code efficiently with LDC D Compiler, using LLVM backend for optimized performance. Cross-compile, link, and generate executables. Free online tool, no registration required.'
 category: common
 keywords:
-- D programming compiler
-- D language LLVM
-- LDC compiler command line
-- D code compilation
-- cross-compilation D
-- D executable generator
-- LDC compiler flags
-- compile D on linux
-- compile D on macos
-- compile D on windows
+  - D programming compiler
+  - D language LLVM
+  - LDC compiler command line
+  - D code compilation
+  - cross-compilation D
+  - D executable generator
+  - LDC compiler flags
+  - compile D on linux
+  - compile D on macos
+  - compile D on windows
 features:
-- Compile D source code into executable binaries
-- Compile D code without linking
-- Select target architecture and operating system
-- Display LDC compiler help information
-- Display complete LDC compiler help, including hidden options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile D source code into executable binaries
+  - Compile D code without linking
+  - Select target architecture and operating system
+  - Display LDC compiler help information
+  - Display complete LDC compiler help, including hidden options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ldc

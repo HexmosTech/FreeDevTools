@@ -1,29 +1,29 @@
 ---
-title: "Validate SemVer - Parse Semantic Version Strings | Online Free DevTools by Hexmos"
+title: 'Validate SemVer - Parse Semantic Version Strings | Online Free DevTools by Hexmos'
 name: semver
-path: "/freedevtools/tldr/common/semver/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/semver/"
-description: "Validate semantic version strings with SemVer. Parse, coerce, and test version ranges for compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/semver/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/semver/'
+description: 'Validate semantic version strings with SemVer. Parse, coerce, and test version ranges for compatibility. Free online tool, no registration required.'
 category: common
 keywords:
-- semver validator
-- semantic version parser
-- version range tester
-- semver coerce tool
-- semver command line
-- npm semver
-- version string analysis
-- semantic versioning check
-- version compatibility test
-- node semver
+  - semver validator
+  - semantic version parser
+  - version range tester
+  - semver coerce tool
+  - semver command line
+  - npm semver
+  - version string analysis
+  - semantic versioning check
+  - version compatibility test
+  - node semver
 features:
-- Validate semantic version string format
-- Coerce version strings to semver format
-- Test version string against specified ranges
-- Support multiple ranges for compatibility checks
-- Filter version strings based on range matches
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validate semantic version string format
+  - Coerce version strings to semver format
+  - Test version string against specified ranges
+  - Support multiple ranges for compatibility checks
+  - Filter version strings based on range matches
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # semver

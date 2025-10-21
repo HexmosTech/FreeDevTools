@@ -1,9 +1,9 @@
 ---
-title: "DNSrecon - Enumerate DNS Records | Online Free DevTools by Hexmos"
+title: 'DNSrecon - Enumerate DNS Records | Online Free DevTools by Hexmos'
 name: dnsrecon
-path: "/freedevtools/tldr/linux/dnsrecon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dnsrecon/"
-description: "Enumerate DNS records effectively with DNSrecon.  Perform zone transfers, brute-force attacks, and reverse lookups. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dnsrecon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dnsrecon/'
+description: 'Enumerate DNS records effectively with DNSrecon.  Perform zone transfers, brute-force attacks, and reverse lookups. Free online tool, no registration required.'
 category: linux
 keywords:
   - DNS enumeration tool
@@ -22,8 +22,8 @@ features:
   - Execute reverse lookups of IP addresses from SPF records.
   - Perform Google DNS enumeration for comprehensive data gathering.
   - Enable DNS cache snooping for insightful information retrieval.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnsrecon

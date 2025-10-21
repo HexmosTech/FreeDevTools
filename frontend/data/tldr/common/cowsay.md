@@ -1,29 +1,29 @@
 ---
-title: "Generate ASCII Art - Cowsay Command | Online Free DevTools by Hexmos"
+title: 'Generate ASCII Art - Cowsay Command | Online Free DevTools by Hexmos'
 name: cowsay
-path: "/freedevtools/tldr/common/cowsay/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cowsay/"
-description: "Generate ASCII art with Cowsay. Create customizable talking cows and other animals using this versatile command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cowsay/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cowsay/'
+description: 'Generate ASCII art with Cowsay. Create customizable talking cows and other animals using this versatile command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- ascii art generator
-- cowsay command
-- linux cowsay
-- terminal ascii art
-- command line art
-- customizable ascii
-- talking cow generator
-- ascii cow
-- cowsay alternatives
-- text to ascii art
+  - ascii art generator
+  - cowsay command
+  - linux cowsay
+  - terminal ascii art
+  - command line art
+  - customizable ascii
+  - talking cow generator
+  - ascii cow
+  - cowsay alternatives
+  - text to ascii art
 features:
-- Print ASCII art from the command line
-- Customize the animal displayed
-- Use standard input as message source
-- List available art types for selection
-- Customize eyes of the ASCII art character
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print ASCII art from the command line
+  - Customize the animal displayed
+  - Use standard input as message source
+  - List available art types for selection
+  - Customize eyes of the ASCII art character
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cowsay

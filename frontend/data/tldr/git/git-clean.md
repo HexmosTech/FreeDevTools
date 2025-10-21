@@ -1,29 +1,29 @@
 ---
-title: "Git Clean - Remove Untracked Files | Online Free DevTools by Hexmos"
+title: 'Git Clean - Remove Untracked Files | Online Free DevTools by Hexmos'
 name: git-clean
-path: "/freedevtools/tldr/git/git-clean/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-clean/"
-description: "Delete untracked files with Git Clean. Remove unwanted files and directories from your Git working directory effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-clean/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-clean/'
+description: 'Delete untracked files with Git Clean. Remove unwanted files and directories from your Git working directory effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- git untracked files
-- git clean command
-- git remove files
-- git delete untracked
-- git working directory
-- git ignore files
-- git force clean
-- git dry run clean
-- linux git clean
-- macos git clean
+  - git untracked files
+  - git clean command
+  - git remove files
+  - git delete untracked
+  - git working directory
+  - git ignore files
+  - git force clean
+  - git dry run clean
+  - linux git clean
+  - macos git clean
 features:
-- Remove untracked files from the working directory.
-- Interactively delete untracked files.
-- Preview files to be deleted with a dry run.
-- Forcefully remove untracked files and directories.
-- Delete untracked files, including excluded files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove untracked files from the working directory.
+  - Interactively delete untracked files.
+  - Preview files to be deleted with a dry run.
+  - Forcefully remove untracked files and directories.
+  - Delete untracked files, including excluded files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git clean

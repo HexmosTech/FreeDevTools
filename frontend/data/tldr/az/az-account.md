@@ -1,29 +1,29 @@
 ---
-title: "Manage Azure Accounts - Set Subscriptions | Online Free DevTools by Hexmos"
+title: 'Manage Azure Accounts - Set Subscriptions | Online Free DevTools by Hexmos'
 name: az-account
-path: "/freedevtools/tldr/az/az-account/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-account/"
-description: "Manage Azure accounts with az-account. Set subscriptions, list locations, and get access tokens for Azure resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-account/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-account/'
+description: 'Manage Azure accounts with az-account. Set subscriptions, list locations, and get access tokens for Azure resources. Free online tool, no registration required.'
 category: common
 keywords:
-- Azure account management
-- Azure subscription control
-- az account list
-- az account set
-- Azure CLI account
-- Azure access token
-- Azure subscription details
-- Azure resource management
-- Azure command line
-- cloud account manager
+  - Azure account management
+  - Azure subscription control
+  - az account list
+  - az account set
+  - Azure CLI account
+  - Azure access token
+  - Azure subscription details
+  - Azure resource management
+  - Azure command line
+  - cloud account manager
 features:
-- List all Azure subscriptions for a logged-in account
-- Set the currently active Azure subscription
-- List supported regions for the active Azure subscription
-- Print an access token for use with the MS Graph API
-- Display details of the active subscription in various formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all Azure subscriptions for a logged-in account
+  - Set the currently active Azure subscription
+  - List supported regions for the active Azure subscription
+  - Print an access token for use with the MS Graph API
+  - Display details of the active subscription in various formats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az account

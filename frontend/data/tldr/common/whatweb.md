@@ -1,29 +1,29 @@
 ---
-title: "Scan Websites - Identify Technologies with WhatWeb | Online Free DevTools by Hexmos"
+title: 'Scan Websites - Identify Technologies with WhatWeb | Online Free DevTools by Hexmos'
 name: whatweb
-path: "/freedevtools/tldr/common/whatweb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/whatweb/"
-description: "Scan websites and identify technologies with WhatWeb. Discover web server software, programming languages, and CMS versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/whatweb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/whatweb/'
+description: 'Scan websites and identify technologies with WhatWeb. Discover web server software, programming languages, and CMS versions. Free online tool, no registration required.'
 category: common
 keywords:
-- website scanner
-- web technology identifier
-- web server detection
-- cms version detection
-- whatweb scanner
-- web reconnaissance
-- web fingerprinting
-- website technology analysis
-- linux web scan
-- command line web scanner
+  - website scanner
+  - web technology identifier
+  - web server detection
+  - cms version detection
+  - whatweb scanner
+  - web reconnaissance
+  - web fingerprinting
+  - website technology analysis
+  - linux web scan
+  - command line web scanner
 features:
-- Identify web technologies used by a website
-- Scan multiple targets simultaneously
-- Read target websites from a file
-- Perform aggressive scans for detailed information
-- List available plugins and their details
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify web technologies used by a website
+  - Scan multiple targets simultaneously
+  - Read target websites from a file
+  - Perform aggressive scans for detailed information
+  - List available plugins and their details
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # whatweb

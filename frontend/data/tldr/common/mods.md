@@ -1,29 +1,29 @@
 ---
-title: "Generate AI Responses - Command-line AI with Mods | Online Free DevTools by Hexmos"
+title: 'Generate AI Responses - Command-line AI with Mods | Online Free DevTools by Hexmos'
 name: mods
-path: "/freedevtools/tldr/common/mods/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mods/"
-description: "Generate AI responses with Mods, a command-line AI tool designed for pipelines. Process data and automate tasks using natural language. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mods/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mods/'
+description: 'Generate AI responses with Mods, a command-line AI tool designed for pipelines. Process data and automate tasks using natural language. Free online tool, no registration required.'
 category: common
 keywords:
-- command-line AI
-- AI response generator
-- natural language processing
-- CLI AI tool
-- AI text summarizer
-- code comment generator
-- markdown formatter AI
-- data organization AI
-- linux AI tools
-- macos AI tools
+  - command-line AI
+  - AI response generator
+  - natural language processing
+  - CLI AI tool
+  - AI text summarizer
+  - code comment generator
+  - markdown formatter AI
+  - data organization AI
+  - linux AI tools
+  - macos AI tools
 features:
-- Answer questions using natural language input
-- Generate comments on code in markdown format
-- Summarize text from raw HTML
-- Organize data based on natural language instructions
-- Customize settings using a text editor
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Answer questions using natural language input
+  - Generate comments on code in markdown format
+  - Summarize text from raw HTML
+  - Organize data based on natural language instructions
+  - Customize settings using a text editor
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mods

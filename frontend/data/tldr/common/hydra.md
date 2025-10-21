@@ -1,29 +1,29 @@
 ---
-title: "Crack Passwords - Brute-Force with Hydra | Online Free DevTools by Hexmos"
+title: 'Crack Passwords - Brute-Force with Hydra | Online Free DevTools by Hexmos'
 name: hydra
-path: "/freedevtools/tldr/common/hydra/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hydra/"
-description: "Crack passwords instantly with Hydra. Identify weak credentials on various network services, supporting FTP, SSH, HTTP and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hydra/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hydra/'
+description: 'Crack passwords instantly with Hydra. Identify weak credentials on various network services, supporting FTP, SSH, HTTP and more. Free online tool, no registration required.'
 category: common
 keywords:
-- password cracker
-- brute-force attack
-- network login
-- hydra password
-- hydra ftp
-- hydra ssh
-- hydra http
-- password guessing
-- network security
-- credential hacking
+  - password cracker
+  - brute-force attack
+  - network login
+  - hydra password
+  - hydra ftp
+  - hydra ssh
+  - hydra http
+  - password guessing
+  - network security
+  - credential hacking
 features:
-- Guess passwords for multiple protocols
-- Test SSH credentials with wordlists
-- Crack HTTPS webform logins
-- Brute-force FTP authentication
-- Attack RDP server login
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Guess passwords for multiple protocols
+  - Test SSH credentials with wordlists
+  - Crack HTTPS webform logins
+  - Brute-force FTP authentication
+  - Attack RDP server login
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hydra

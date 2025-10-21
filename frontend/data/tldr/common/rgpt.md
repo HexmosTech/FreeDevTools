@@ -1,29 +1,29 @@
 ---
-title: "Review Code - Improve Code with GPT | Online Free DevTools by Hexmos"
+title: 'Review Code - Improve Code with GPT | Online Free DevTools by Hexmos'
 name: rgpt
-path: "/freedevtools/tldr/common/rgpt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rgpt/"
-description: "Improve code with rgpt, a GPT-powered code review tool. Analyze code changes and get suggestions directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rgpt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rgpt/'
+description: 'Improve code with rgpt, a GPT-powered code review tool. Analyze code changes and get suggestions directly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- code review
-- GPT code review
-- AI code analysis
-- terminal code reviewer
-- automated code improvement
-- code diff review
-- linux code review
-- macos code review
-- code quality analysis
-- command-line code review
+  - code review
+  - GPT code review
+  - AI code analysis
+  - terminal code reviewer
+  - automated code improvement
+  - code diff review
+  - linux code review
+  - macos code review
+  - code quality analysis
+  - command-line code review
 features:
-- Provides code improvement suggestions using GPT
-- Supports verbose output for detailed code analysis
-- Allows limiting GPT3 token usage for cost control
-- Enables customization of GPT result uniqueness
-- Supports specifying a specific GPT model for code review
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Provides code improvement suggestions using GPT
+  - Supports verbose output for detailed code analysis
+  - Allows limiting GPT3 token usage for cost control
+  - Enables customization of GPT result uniqueness
+  - Supports specifying a specific GPT model for code review
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rgpt

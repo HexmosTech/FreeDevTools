@@ -1,29 +1,29 @@
 ---
-title: "Generate Rainbow Images - ppmrainbow | Online Free DevTools by Hexmos"
+title: 'Generate Rainbow Images - ppmrainbow | Online Free DevTools by Hexmos'
 name: ppmrainbow
-path: "/freedevtools/tldr/ppm/ppmrainbow/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmrainbow/"
-description: "Generate rainbow images easily with ppmrainbow. Control color gradients and image dimensions for custom PPM files. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmrainbow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmrainbow/'
+description: 'Generate rainbow images easily with ppmrainbow. Control color gradients and image dimensions for custom PPM files. Free online tool, no registration required.'
 category: common
 keywords:
-- rainbow image generator
-- PPM image creator
-- color gradient generator
-- Netpbm image tool
-- command line image tools
-- image manipulation tool
-- PPM file generation
-- linux image utilities
-- color spectrum creator
-- image creation scripts
+  - rainbow image generator
+  - PPM image creator
+  - color gradient generator
+  - Netpbm image tool
+  - command line image tools
+  - image manipulation tool
+  - PPM file generation
+  - linux image utilities
+  - color spectrum creator
+  - image creation scripts
 features:
-- Generate rainbow images with custom colors
-- Control image width and height
-- Prevent color repetition
-- Output in PPM format
-- Create rainbow gradients from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate rainbow images with custom colors
+  - Control image width and height
+  - Prevent color repetition
+  - Output in PPM format
+  - Create rainbow gradients from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmrainbow

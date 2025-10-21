@@ -1,9 +1,9 @@
 ---
-title: "Away Command - Lock Terminal with Message | Online Free DevTools by Hexmos"
+title: 'Away Command - Lock Terminal with Message | Online Free DevTools by Hexmos'
 name: away
-path: "/freedevtools/tldr/linux/away/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/away/"
-description: "Lock your terminal and set an away message with the Away command.  Customize mail checking and background task sleeping options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/away/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/away/'
+description: 'Lock your terminal and set an away message with the Away command.  Customize mail checking and background task sleeping options. Free online tool, no registration required.'
 category: linux
 keywords:
   - terminal lock command
@@ -22,8 +22,8 @@ features:
   - Enables/disables automatic mail checking.
   - Allows pausing background tasks for a specified time.
   - Offers persistent or non-persistent mail checking options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # away

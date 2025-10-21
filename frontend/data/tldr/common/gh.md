@@ -1,29 +1,29 @@
 ---
-title: "GitHub Control - Manage Repositories with GH | Online Free DevTools by Hexmos"
+title: 'GitHub Control - Manage Repositories with GH | Online Free DevTools by Hexmos'
 name: gh
-path: "/freedevtools/tldr/common/gh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gh/"
-description: "Manage GitHub repositories with GH, a powerful CLI tool. Create issues, review pull requests, and clone repos locally. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gh/'
+description: 'Manage GitHub repositories with GH, a powerful CLI tool. Create issues, review pull requests, and clone repos locally. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub command line interface
-- GH repo management
-- GitHub issue creation
-- GH pull request review
-- GitHub clone repository
-- GH CLI commands
-- GitHub workflow automation
-- GH GitHub actions
-- GitHub version control
-- GH GitHub development
+  - GitHub command line interface
+  - GH repo management
+  - GitHub issue creation
+  - GH pull request review
+  - GitHub clone repository
+  - GH CLI commands
+  - GitHub workflow automation
+  - GH GitHub actions
+  - GitHub version control
+  - GH GitHub development
 features:
-- Clone remote GitHub repositories locally.
-- Create new issues directly from the command line.
-- View and filter open issues for a repository.
-- Create and manage pull requests for code contributions.
-- Checkout specific pull requests for local testing and review.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone remote GitHub repositories locally.
+  - Create new issues directly from the command line.
+  - View and filter open issues for a repository.
+  - Create and manage pull requests for code contributions.
+  - Checkout specific pull requests for local testing and review.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh

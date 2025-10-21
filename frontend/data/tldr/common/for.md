@@ -1,29 +1,29 @@
 ---
-title: "For Loop - Execute Commands Repeatedly | Online Free DevTools by Hexmos"
+title: 'For Loop - Execute Commands Repeatedly | Online Free DevTools by Hexmos'
 name: for
-path: "/freedevtools/tldr/common/for/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/for/"
-description: "Execute shell commands repeatedly with For Loop. Automate tasks, iterate through files/directories, and streamline workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/for/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/for/'
+description: 'Execute shell commands repeatedly with For Loop. Automate tasks, iterate through files/directories, and streamline workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- bash for loop
-- shell scripting for loop
-- linux for loop
-- command line for loop
-- iterate files bash
-- iterate directories bash
-- loop through arguments bash
-- bash scripting automation
-- script repetitive tasks
-- loop command execution
+  - bash for loop
+  - shell scripting for loop
+  - linux for loop
+  - command line for loop
+  - iterate files bash
+  - iterate directories bash
+  - loop through arguments bash
+  - bash scripting automation
+  - script repetitive tasks
+  - loop command execution
 features:
-- Iterate through command line arguments.
-- Execute commands for specified items.
-- Loop over a range of numbers.
-- Iterate over lists of files.
-- Perform commands in every directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Iterate through command line arguments.
+  - Execute commands for specified items.
+  - Loop over a range of numbers.
+  - Iterate over lists of files.
+  - Perform commands in every directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # for

@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Edit - Edit Kubernetes Resources | Online Free DevTools by Hexmos"
+title: 'Kubectl Edit - Edit Kubernetes Resources | Online Free DevTools by Hexmos'
 name: kubectl-edit
-path: "/freedevtools/tldr/kubectl/kubectl-edit/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-edit/"
-description: "Edit Kubernetes resources instantly with Kubectl Edit. Update pods, deployments, services, and more with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-edit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-edit/'
+description: 'Edit Kubernetes resources instantly with Kubectl Edit. Update pods, deployments, services, and more with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes resource editing
-- kubectl edit command
-- kubernetes deployment editing
-- kubernetes service editing
-- kubectl pod editing
-- kubernetes resource update
-- kubectl command-line tool
-- yaml editor kubernetes
-- kubectl edit namespace
-- kubernetes cluster management
+  - kubernetes resource editing
+  - kubectl edit command
+  - kubernetes deployment editing
+  - kubernetes service editing
+  - kubectl pod editing
+  - kubernetes resource update
+  - kubectl command-line tool
+  - yaml editor kubernetes
+  - kubectl edit namespace
+  - kubernetes cluster management
 features:
-- Edit Kubernetes resources from the command line
-- Update pods, deployments, and services configuration
-- Specify a particular editor to use
-- Edit all entries of a given resource in a namespace
-- Edit resources in JSON format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Edit Kubernetes resources from the command line
+  - Update pods, deployments, and services configuration
+  - Specify a particular editor to use
+  - Edit all entries of a given resource in a namespace
+  - Edit resources in JSON format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl edit

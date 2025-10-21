@@ -1,9 +1,9 @@
 ---
-title: "AppArmor Status - Check Modules | Online Free DevTools by Hexmos"
+title: 'AppArmor Status - Check Modules | Online Free DevTools by Hexmos'
 name: aa-status
-path: "/freedevtools/tldr/linux/aa-status/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-status/"
-description: "Check AppArmor module status with aa-status.  View loaded policies and their enforcement status. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aa-status/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aa-status/'
+description: 'Check AppArmor module status with aa-status.  View loaded policies and their enforcement status. Free online tool, no registration required.'
 category: linux
 keywords:
   - AppArmor status checker
@@ -22,8 +22,8 @@ features:
   - Show the number of enforced AppArmor policies.
   - Report the number of non-enforcing (complaining) AppArmor policies.
   - Identify the number of enforced AppArmor policies that kill tasks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aa-status

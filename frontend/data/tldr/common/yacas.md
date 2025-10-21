@@ -1,29 +1,29 @@
 ---
-title: "Control Yacas Algebra - Interactive Session | Online Free DevTools by Hexmos"
+title: 'Control Yacas Algebra - Interactive Session | Online Free DevTools by Hexmos'
 name: yacas
-path: "/freedevtools/tldr/common/yacas/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/yacas/"
-description: "Control symbolic mathematics with Yacas, a general-purpose computer algebra system. Execute statements, load scripts, and automate calculations with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/yacas/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/yacas/'
+description: 'Control symbolic mathematics with Yacas, a general-purpose computer algebra system. Execute statements, load scripts, and automate calculations with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- yacas algebra system
-- computer algebra system
-- symbolic computation
-- mathematical calculations
-- yacas script execution
-- command line algebra
-- automated math solver
-- yacas interactive session
-- algebra calculation tool
-- yacas expressions processing
+  - yacas algebra system
+  - computer algebra system
+  - symbolic computation
+  - mathematical calculations
+  - yacas script execution
+  - command line algebra
+  - automated math solver
+  - yacas interactive session
+  - algebra calculation tool
+  - yacas expressions processing
 features:
-- Start interactive Yacas sessions from the command line
-- Execute mathematical statements and display results
-- Load and execute Yacas scripts for automated calculations
-- Perform symbolic differentiation and integration
-- Automate complex mathematical operations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start interactive Yacas sessions from the command line
+  - Execute mathematical statements and display results
+  - Load and execute Yacas scripts for automated calculations
+  - Perform symbolic differentiation and integration
+  - Automate complex mathematical operations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yacas

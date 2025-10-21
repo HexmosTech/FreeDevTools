@@ -1,9 +1,9 @@
 ---
-title: "Links Browser - Control Web Navigation | Online Free DevTools by Hexmos"
+title: 'Links Browser - Control Web Navigation | Online Free DevTools by Hexmos'
 name: links
-path: "/freedevtools/tldr/linux/links/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/links/"
-description: "Control web navigation with Links Browser. Access websites, restrict accounts, and manage cookies using this text-based command-line browser. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/links/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/links/'
+description: 'Control web navigation with Links Browser. Access websites, restrict accounts, and manage cookies using this text-based command-line browser. Free online tool, no registration required.'
 category: linux
 keywords:
   - links command browser
@@ -22,8 +22,8 @@ features:
   - Enable or disable cookies
   - Navigate forward and backward through links
   - Navigate forward and backward through pages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # links

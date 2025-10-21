@@ -1,29 +1,29 @@
 ---
-title: "Git Lock - Control File Changes in Git | Online Free DevTools by Hexmos"
+title: 'Git Lock - Control File Changes in Git | Online Free DevTools by Hexmos'
 name: git-lock
-path: "/freedevtools/tldr/git/git-lock/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-lock/"
-description: "Control file changes with Git Lock. Prevent accidental commits and maintain file integrity with this essential Git extension. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-lock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-lock/'
+description: 'Control file changes with Git Lock. Prevent accidental commits and maintain file integrity with this essential Git extension. Free online tool, no registration required.'
 category: common
 keywords:
-- git file lock
-- git file protection
-- git prevent commit
-- git extras lock
-- git workflow control
-- git collaboration tool
-- git file integrity
-- linux git lock
-- macos git lock
-- version control lock
+  - git file lock
+  - git file protection
+  - git prevent commit
+  - git extras lock
+  - git workflow control
+  - git collaboration tool
+  - git file integrity
+  - linux git lock
+  - macos git lock
+  - version control lock
 features:
-- Prevent commits to specified files
-- Disable local file modification
-- Enhance Git workflow control
-- Maintain file integrity in repositories
-- Simplify collaboration on locked files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Prevent commits to specified files
+  - Disable local file modification
+  - Enhance Git workflow control
+  - Maintain file integrity in repositories
+  - Simplify collaboration on locked files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git lock

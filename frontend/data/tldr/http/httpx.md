@@ -1,29 +1,29 @@
 ---
-title: "HTTP Probe - Scan Hosts with HTTPX | Online Free DevTools by Hexmos"
+title: 'HTTP Probe - Scan Hosts with HTTPX | Online Free DevTools by Hexmos'
 name: httpx
-path: "/freedevtools/tldr/http/httpx/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/httpx/"
-description: "Probe hosts quickly with HTTPX. Perform HTTP scans and analyze server responses using this versatile Go-based tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/httpx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/httpx/'
+description: 'Probe hosts quickly with HTTPX. Perform HTTP scans and analyze server responses using this versatile Go-based tool. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP probe
-- host scan
-- HTTPX scan
-- server response analysis
-- network reconnaissance
-- Go-based scanner
-- content discovery
-- vulnerability scanner
-- network security
-- command-line HTTP scanner
+  - HTTP probe
+  - host scan
+  - HTTPX scan
+  - server response analysis
+  - network reconnaissance
+  - Go-based scanner
+  - content discovery
+  - vulnerability scanner
+  - network security
+  - command-line HTTP scanner
 features:
-- Probe URLs, hosts, IP addresses, and subnets
-- Detect technology and response times
-- Capture screenshots of web pages
-- Filter or match specific HTTP response codes
-- Customize ports and timeouts for scans
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Probe URLs, hosts, IP addresses, and subnets
+  - Detect technology and response times
+  - Capture screenshots of web pages
+  - Filter or match specific HTTP response codes
+  - Customize ports and timeouts for scans
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # httpx

@@ -1,29 +1,29 @@
 ---
-title: "Reg Export - Create Registry Backups | Online Free DevTools by Hexmos"
+title: 'Reg Export - Create Registry Backups | Online Free DevTools by Hexmos'
 name: reg-export
-path: "/freedevtools/tldr/windows/reg-export/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/reg-export/"
-description: "Create registry backups with Reg Export. Save and restore Windows registry keys for system recovery or configuration transfer. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/reg-export/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/reg-export/'
+description: 'Create registry backups with Reg Export. Save and restore Windows registry keys for system recovery or configuration transfer. Free online tool, no registration required.'
 category: windows
 keywords:
-- registry export
-- reg export windows
-- windows registry backup
-- registry key backup
-- registry file export
-- reg file generator
-- windows regedit export
-- registry export command line
-- registry configuration backup
-- windows registry editor
+  - registry export
+  - reg export windows
+  - windows registry backup
+  - registry key backup
+  - registry file export
+  - reg file generator
+  - windows regedit export
+  - registry export command line
+  - registry configuration backup
+  - windows registry editor
 features:
-- Export specific registry keys to a .reg file.
-- Forcefully overwrite existing .reg files during export.
-- Create complete backups of registry subkeys and values.
-- Automate registry backup processes via command line.
-- Save registry configurations for system restoration.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Export specific registry keys to a .reg file.
+  - Forcefully overwrite existing .reg files during export.
+  - Create complete backups of registry subkeys and values.
+  - Automate registry backup processes via command line.
+  - Save registry configurations for system restoration.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # reg export

@@ -1,29 +1,29 @@
 ---
-title: "Delay Execution - Control Delay with usleep | Online Free DevTools by Hexmos"
+title: 'Delay Execution - Control Delay with usleep | Online Free DevTools by Hexmos'
 name: usleep
-path: "/freedevtools/tldr/common/usleep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/usleep/"
-description: "Control delay execution with usleep. Microsecond time delay tool for scripts and commands, offering precision timing control. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/usleep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/usleep/'
+description: 'Control delay execution with usleep. Microsecond time delay tool for scripts and commands, offering precision timing control. Free online tool, no registration required.'
 category: common
 keywords:
-- microsecond delay
-- usleep command
-- shell script delay
-- linux sleep
-- posix delay
-- time delay control
-- precise timing
-- execution delay
-- command line delay
-- script execution control
+  - microsecond delay
+  - usleep command
+  - shell script delay
+  - linux sleep
+  - posix delay
+  - time delay control
+  - precise timing
+  - execution delay
+  - command line delay
+  - script execution control
 features:
-- Delay execution of shell scripts in microseconds.
-- Pause execution of commands with specified timing.
-- Control timing for shell scripts.
-- Achieve fine-grained control over program execution.
-- Integrate with other commands for delayed execution.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delay execution of shell scripts in microseconds.
+  - Pause execution of commands with specified timing.
+  - Control timing for shell scripts.
+  - Achieve fine-grained control over program execution.
+  - Integrate with other commands for delayed execution.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # usleep

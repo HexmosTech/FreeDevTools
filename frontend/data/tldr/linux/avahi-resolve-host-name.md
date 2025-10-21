@@ -1,9 +1,9 @@
 ---
-title: "Avahi Resolve Hostname - Discover Network Services | Online Free DevTools by Hexmos"
+title: 'Avahi Resolve Hostname - Discover Network Services | Online Free DevTools by Hexmos'
 name: avahi-resolve-host-name
-path: "/freedevtools/tldr/linux/avahi-resolve-host-name/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/avahi-resolve-host-name/"
-description: "Resolve Avahi hostnames to IP addresses with Avahi Resolve Hostname. Discover network services and troubleshoot connectivity issues on your local network. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/avahi-resolve-host-name/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/avahi-resolve-host-name/'
+description: 'Resolve Avahi hostnames to IP addresses with Avahi Resolve Hostname. Discover network services and troubleshoot connectivity issues on your local network. Free online tool, no registration required.'
 category: linux
 keywords:
   - avahi resolve hostname
@@ -22,8 +22,8 @@ features:
   - Query Avahi for specific DNS records
   - Retrieve the IP address of a service on the network
   - Convert mDNS hostnames to IP addresses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # avahi-resolve-host-name

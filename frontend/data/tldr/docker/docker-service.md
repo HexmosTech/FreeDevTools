@@ -1,29 +1,29 @@
 ---
-title: "Docker Service - Manage Container Services | Online Free DevTools by Hexmos"
+title: 'Docker Service - Manage Container Services | Online Free DevTools by Hexmos'
 name: docker-service
-path: "/freedevtools/tldr/docker/docker-service/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-service/"
-description: "Manage container services with Docker Service. Easily create, inspect, scale, and remove Docker services. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-service/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-service/'
+description: 'Manage container services with Docker Service. Easily create, inspect, scale, and remove Docker services. Free online tool, no registration required.'
 category: common
 keywords:
-- docker service management
-- container service control
-- docker swarm service
-- docker service scaling
-- docker service deployment
-- linux docker service
-- command line docker service
-- docker container orchestration
-- docker service update
-- docker service removal
+  - docker service management
+  - container service control
+  - docker swarm service
+  - docker service scaling
+  - docker service deployment
+  - linux docker service
+  - command line docker service
+  - docker container orchestration
+  - docker service update
+  - docker service removal
 features:
-- List existing Docker services
-- Create new Docker services from images
-- Inspect detailed service configurations
-- Scale service replicas for load balancing
-- Remove unwanted Docker services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing Docker services
+  - Create new Docker services from images
+  - Inspect detailed service configurations
+  - Scale service replicas for load balancing
+  - Remove unwanted Docker services
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker service

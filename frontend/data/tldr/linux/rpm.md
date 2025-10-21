@@ -1,9 +1,9 @@
 ---
-title: "RPM Package Manager - Manage Packages with rpm | Online Free DevTools by Hexmos"
+title: 'RPM Package Manager - Manage Packages with rpm | Online Free DevTools by Hexmos'
 name: rpm
-path: "/freedevtools/tldr/linux/rpm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpm/"
-description: "Manage Linux packages efficiently with the rpm Package Manager.  Install, upgrade, query, and verify packages with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpm/'
+description: 'Manage Linux packages efficiently with the rpm Package Manager.  Install, upgrade, query, and verify packages with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - rpm package manager
@@ -22,8 +22,8 @@ features:
   - Verify package integrity.
   - List files owned by a package.
   - Manage package scripts.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpm

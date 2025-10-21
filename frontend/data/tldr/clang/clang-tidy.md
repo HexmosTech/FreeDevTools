@@ -1,29 +1,29 @@
 ---
-title: "Clang-Tidy - Validate C/C++ Code | Online Free DevTools by Hexmos"
+title: 'Clang-Tidy - Validate C/C++ Code | Online Free DevTools by Hexmos'
 name: clang-tidy
-path: "/freedevtools/tldr/clang/clang-tidy/"
-canonical: "https://hexmos.com/freedevtools/tldr/clang/clang-tidy/"
-description: "Validate C/C++ code with Clang-Tidy. Find style violations, bugs, and security flaws using static analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/clang/clang-tidy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/clang/clang-tidy/'
+description: 'Validate C/C++ code with Clang-Tidy. Find style violations, bugs, and security flaws using static analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- C++ code linter
-- C static analyzer
-- Clang-Tidy style checker
-- C++ bug finder
-- C security vulnerability scanner
-- LLVM code analysis
-- C++ code validation
-- cross-platform linter
-- code quality assurance
-- C++ coding standards enforcement
+  - C++ code linter
+  - C static analyzer
+  - Clang-Tidy style checker
+  - C++ bug finder
+  - C security vulnerability scanner
+  - LLVM code analysis
+  - C++ code validation
+  - cross-platform linter
+  - code quality assurance
+  - C++ coding standards enforcement
 features:
-- Detect C++ code style violations
-- Identify potential bugs in C++ code
-- Scan for security vulnerabilities in C code
-- Enforce coding standards across projects
-- Perform static analysis on C/C++ source files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect C++ code style violations
+  - Identify potential bugs in C++ code
+  - Scan for security vulnerabilities in C code
+  - Enforce coding standards across projects
+  - Perform static analysis on C/C++ source files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clang-tidy

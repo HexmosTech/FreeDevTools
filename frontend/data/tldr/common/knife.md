@@ -1,29 +1,29 @@
 ---
-title: "Control Chef Server - Manage Nodes with Knife | Online Free DevTools by Hexmos"
+title: 'Control Chef Server - Manage Nodes with Knife | Online Free DevTools by Hexmos'
 name: knife
-path: "/freedevtools/tldr/common/knife/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/knife/"
-description: "Control your Chef server with Knife. Manage nodes, roles, and data bags easily using command-line interactions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/knife/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/knife/'
+description: 'Control your Chef server with Knife. Manage nodes, roles, and data bags easily using command-line interactions. Free online tool, no registration required.'
 category: common
 keywords:
-- Chef server management
-- Knife command line tool
-- Node bootstrap chef
-- Role editing chef
-- Data bag viewing chef
-- Cookbook uploading chef
-- Chef automation tool
-- Infrastructure as code
-- Configuration management
-- Chef command reference
+  - Chef server management
+  - Knife command line tool
+  - Node bootstrap chef
+  - Role editing chef
+  - Data bag viewing chef
+  - Cookbook uploading chef
+  - Chef automation tool
+  - Infrastructure as code
+  - Configuration management
+  - Chef command reference
 features:
-- Bootstrap new Chef nodes
-- List registered Chef nodes
-- Show details of a Chef node
-- Edit Chef node attributes
-- Upload cookbooks to the Chef server
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Bootstrap new Chef nodes
+  - List registered Chef nodes
+  - Show details of a Chef node
+  - Edit Chef node attributes
+  - Upload cookbooks to the Chef server
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # knife

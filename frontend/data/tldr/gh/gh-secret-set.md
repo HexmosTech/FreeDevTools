@@ -1,29 +1,29 @@
 ---
-title: "GitHub Secret Set - Create Secrets | Online Free DevTools by Hexmos"
+title: 'GitHub Secret Set - Create Secrets | Online Free DevTools by Hexmos'
 name: gh-secret-set
-path: "/freedevtools/tldr/gh/gh-secret-set/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-secret-set/"
-description: "Create GitHub secrets with gh-secret-set. Securely store sensitive information for repositories and organizations with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-secret-set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-secret-set/'
+description: 'Create GitHub secrets with gh-secret-set. Securely store sensitive information for repositories and organizations with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub secrets manager
-- GitHub secret set command
-- Repository secret management
-- Organization secret management
-- GitHub CLI secrets
-- gh secret set repository
-- gh secret set organization
-- GitHub secrets best practices
-- Secure GitHub workflows
-- GitHub actions secrets
+  - GitHub secrets manager
+  - GitHub secret set command
+  - Repository secret management
+  - Organization secret management
+  - GitHub CLI secrets
+  - gh secret set repository
+  - gh secret set organization
+  - GitHub secrets best practices
+  - Secure GitHub workflows
+  - GitHub actions secrets
 features:
-- Set secrets for GitHub repositories
-- Set secrets for GitHub organizations
-- Set secrets from files
-- Control secret visibility (private, selected, all)
-- Manage secrets via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set secrets for GitHub repositories
+  - Set secrets for GitHub organizations
+  - Set secrets from files
+  - Control secret visibility (private, selected, all)
+  - Manage secrets via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh secret set

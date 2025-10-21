@@ -1,29 +1,29 @@
 ---
-title: "Complete - Autocomplete Shell Commands | Online Free DevTools by Hexmos"
+title: 'Complete - Autocomplete Shell Commands | Online Free DevTools by Hexmos'
 name: complete
-path: "/freedevtools/tldr/common/complete/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/complete/"
-description: "Autocomplete shell commands with Complete. Configure command completion in Bash and improve your command-line efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/complete/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/complete/'
+description: 'Autocomplete shell commands with Complete. Configure command completion in Bash and improve your command-line efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- bash completion
-- command autocomplete
-- shell completion
-- bash complete command
-- autocomplete script
-- bash tab completion
-- command line completion
-- linux autocomplete
-- unix shell completion
-- custom bash completion
+  - bash completion
+  - command autocomplete
+  - shell completion
+  - bash complete command
+  - autocomplete script
+  - bash tab completion
+  - command line completion
+  - linux autocomplete
+  - unix shell completion
+  - custom bash completion
 features:
-- Define custom autocompletion rules for commands
-- Autocomplete arguments using functions in Bash
-- Complete commands based on shell builtins
-- Control whether a space is appended after completion
-- List all loaded completion specifications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define custom autocompletion rules for commands
+  - Autocomplete arguments using functions in Bash
+  - Complete commands based on shell builtins
+  - Control whether a space is appended after completion
+  - List all loaded completion specifications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # complete

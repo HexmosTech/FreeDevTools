@@ -1,9 +1,9 @@
 ---
-title: "Control Groups - Limit Resource Usage with Cgroups | Online Free DevTools by Hexmos"
+title: 'Control Groups - Limit Resource Usage with Cgroups | Online Free DevTools by Hexmos'
 name: cgroups
-path: "/freedevtools/tldr/linux/cgroups/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cgroups/"
-description: "Control Linux resource usage with Cgroups. Limit, measure and control CPU, memory and I/O usage of processes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cgroups/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cgroups/'
+description: 'Control Linux resource usage with Cgroups. Limit, measure and control CPU, memory and I/O usage of processes. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux control groups
@@ -22,8 +22,8 @@ features:
   - Measure resource consumption of processes
   - Manage I/O bandwidth for specific tasks
   - Classify processes into different control groups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cgroups

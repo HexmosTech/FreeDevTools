@@ -1,29 +1,29 @@
 ---
-title: "Control IPP Printer - Simple Server | Online Free DevTools by Hexmos"
+title: 'Control IPP Printer - Simple Server | Online Free DevTools by Hexmos'
 name: ippeveprinter
-path: "/freedevtools/tldr/common/ippeveprinter/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ippeveprinter/"
-description: "Control IPP Everywhere printers with ippeveprinter. Create a simple IPP server, manage print jobs, and customize printer attributes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ippeveprinter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ippeveprinter/'
+description: 'Control IPP Everywhere printers with ippeveprinter. Create a simple IPP server, manage print jobs, and customize printer attributes. Free online tool, no registration required.'
 category: common
 keywords:
-- IPP printer server
-- IPP print management
-- IPP Everywhere printer
-- CUPS printer server
-- Linux printer setup
-- macOS printer server
-- PPD file printing
-- Print spool directory
-- Command line printing
-- Network printer server
+  - IPP printer server
+  - IPP print management
+  - IPP Everywhere printer
+  - CUPS printer server
+  - Linux printer setup
+  - macOS printer server
+  - PPD file printing
+  - Print spool directory
+  - Command line printing
+  - Network printer server
 features:
-- Start a simple IPP Everywhere printer server
-- Load printer attributes from a PPD file
-- Execute commands upon receiving a print job
-- Customize the print spool directory
-- Specify printer speed in pages per minute
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a simple IPP Everywhere printer server
+  - Load printer attributes from a PPD file
+  - Execute commands upon receiving a print job
+  - Customize the print spool directory
+  - Specify printer speed in pages per minute
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ippeveprinter

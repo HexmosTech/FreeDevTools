@@ -1,9 +1,9 @@
 ---
-title: "Mesg Command - Control Terminal Messages | Online Free DevTools by Hexmos"
+title: 'Mesg Command - Control Terminal Messages | Online Free DevTools by Hexmos'
 name: mesg
-path: "/freedevtools/tldr/linux/mesg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mesg/"
-description: "Control terminal message reception with the mesg command.  Manage incoming messages from other users using simple options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mesg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mesg/'
+description: 'Control terminal message reception with the mesg command.  Manage incoming messages from other users using simple options. Free online tool, no registration required.'
 category: linux
 keywords:
   - terminal message control
@@ -22,8 +22,8 @@ features:
   - Disable message reception from other users
   - Provide verbose output for non-terminal executions
   - Integrate seamlessly with the `write` command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mesg

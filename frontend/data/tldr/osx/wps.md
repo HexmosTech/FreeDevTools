@@ -1,29 +1,29 @@
 ---
-title: "WPS Control - Manage WiFi Connections on macOS | Online Free DevTools by Hexmos"
+title: 'WPS Control - Manage WiFi Connections on macOS | Online Free DevTools by Hexmos'
 name: wps
-path: "/freedevtools/tldr/osx/wps/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/wps/"
-description: "Control WiFi connections with WPS (Wireless Protected Setup). Manage network access and assist AirPort on macOS using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/wps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/wps/'
+description: 'Control WiFi connections with WPS (Wireless Protected Setup). Manage network access and assist AirPort on macOS using command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- WPS macOS
-- WiFi Protected Setup macOS
-- macOS WiFi connection
-- Airport WiFi utility
-- macOS network configuration
-- WiFi connection tool
-- Wireless setup macOS
-- WPS daemon
-- macOS network tool
-- WiFi connection assistant
+  - WPS macOS
+  - WiFi Protected Setup macOS
+  - macOS WiFi connection
+  - Airport WiFi utility
+  - macOS network configuration
+  - WiFi connection tool
+  - Wireless setup macOS
+  - WPS daemon
+  - macOS network tool
+  - WiFi connection assistant
 features:
-- Start the WPS daemon
-- Assist AirPort in connecting to WiFi
-- Manage wireless network connections
-- Automate network setup on macOS
-- Simplify WiFi Protected Setup
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the WPS daemon
+  - Assist AirPort in connecting to WiFi
+  - Manage wireless network connections
+  - Automate network setup on macOS
+  - Simplify WiFi Protected Setup
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wps

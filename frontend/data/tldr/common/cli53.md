@@ -1,29 +1,29 @@
 ---
-title: "Control Route53 DNS - CLI53 Command | Online Free DevTools by Hexmos"
+title: 'Control Route53 DNS - CLI53 Command | Online Free DevTools by Hexmos'
 name: cli53
-path: "/freedevtools/tldr/common/cli53/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cli53/"
-description: "Control Route53 DNS zones with CLI53. Easily manage DNS records, create domains, and export zone files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cli53/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cli53/'
+description: 'Control Route53 DNS zones with CLI53. Easily manage DNS records, create domains, and export zone files. Free online tool, no registration required.'
 category: common
 keywords:
-- Route53 DNS Control
-- DNS Zone Management
-- AWS DNS Command Line
-- Route53 CLI Tool
-- CLI53 DNS Manager
-- AWS DNS Automation
-- Command Line DNS
-- Linux Route53
-- MacOS Route53
-- DNS Record Editor
+  - Route53 DNS Control
+  - DNS Zone Management
+  - AWS DNS Command Line
+  - Route53 CLI Tool
+  - CLI53 DNS Manager
+  - AWS DNS Automation
+  - Command Line DNS
+  - Linux Route53
+  - MacOS Route53
+  - DNS Record Editor
 features:
-- List existing Route53 domains
-- Create new Route53 DNS zones
-- Export Route53 zone files to stdout
-- Create and manage DNS records (A, CNAME)
-- Delete specific DNS records from Route53
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List existing Route53 domains
+  - Create new Route53 DNS zones
+  - Export Route53 zone files to stdout
+  - Create and manage DNS records (A, CNAME)
+  - Delete specific DNS records from Route53
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cli53

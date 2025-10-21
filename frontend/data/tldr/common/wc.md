@@ -1,29 +1,29 @@
 ---
-title: "Count Lines Words - Analyze Text with wc | Online Free DevTools by Hexmos"
+title: 'Count Lines Words - Analyze Text with wc | Online Free DevTools by Hexmos'
 name: wc
-path: "/freedevtools/tldr/common/wc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wc/"
-description: "Analyze text with wc, a command-line utility for counting lines, words, and bytes. Get accurate statistics and analyze text data quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wc/'
+description: 'Analyze text with wc, a command-line utility for counting lines, words, and bytes. Get accurate statistics and analyze text data quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- text line counter
-- word count analysis
-- byte count tool
-- character count command
-- wc linux
-- wc macos
-- wc command line
-- file statistics analyzer
-- text data analysis
-- line word byte count
+  - text line counter
+  - word count analysis
+  - byte count tool
+  - character count command
+  - wc linux
+  - wc macos
+  - wc command line
+  - file statistics analyzer
+  - text data analysis
+  - line word byte count
 features:
-- Count the number of lines in a file
-- Calculate the total word count
-- Determine the byte size of a file
-- Count the number of characters in a file
-- Measure the length of the longest line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Count the number of lines in a file
+  - Calculate the total word count
+  - Determine the byte size of a file
+  - Count the number of characters in a file
+  - Measure the length of the longest line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wc

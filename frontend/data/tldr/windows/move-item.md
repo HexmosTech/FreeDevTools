@@ -1,29 +1,29 @@
 ---
-title: "Move Files - Rename and Move Files in Windows | Online Free DevTools by Hexmos"
+title: 'Move Files - Rename and Move Files in Windows | Online Free DevTools by Hexmos'
 name: move-item
-path: "/freedevtools/tldr/windows/move-item/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/move-item/"
-description: "Move files easily with Move-Item. Rename files and directories on Windows. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/move-item/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/move-item/'
+description: 'Move files easily with Move-Item. Rename files and directories on Windows. Free online tool, no registration required.'
 category: windows
 keywords:
-- file move command
-- windows move files
-- powershell move-item
-- rename files windows
-- move directory windows
-- powershell file management
-- move-item parameters
-- windows powershell commands
-- move registry keys
-- powershell file operations
+  - file move command
+  - windows move files
+  - powershell move-item
+  - rename files windows
+  - move directory windows
+  - powershell file management
+  - move-item parameters
+  - windows powershell commands
+  - move registry keys
+  - powershell file operations
 features:
-- Move files to a different directory.
-- Rename files and directories.
-- Move multiple files at once.
-- Force overwrite existing files.
-- Perform dry-run to preview file movements.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Move files to a different directory.
+  - Rename files and directories.
+  - Move multiple files at once.
+  - Force overwrite existing files.
+  - Perform dry-run to preview file movements.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # Move-Item

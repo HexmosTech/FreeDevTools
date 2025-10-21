@@ -1,29 +1,29 @@
 ---
-title: "Shell Script Executor - Run Shell Scripts with Dash | Online Free DevTools by Hexmos"
+title: 'Shell Script Executor - Run Shell Scripts with Dash | Online Free DevTools by Hexmos'
 name: dash
-path: "/freedevtools/tldr/common/dash/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dash/"
-description: "Execute shell scripts quickly with Dash, a POSIX-compliant shell. Debug, run, and test your shell scripts efficiently using this free online tool, no registration required."
+path: '/freedevtools/tldr/common/dash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dash/'
+description: 'Execute shell scripts quickly with Dash, a POSIX-compliant shell. Debug, run, and test your shell scripts efficiently using this free online tool, no registration required.'
 category: common
 keywords:
-- shell script executor
-- posix shell interpreter
-- dash shell commands
-- linux shell scripting
-- debian almquist shell
-- command line shell
-- shell syntax checker
-- shell script debugger
-- sh script execution
-- dash shell tutorial
+  - shell script executor
+  - posix shell interpreter
+  - dash shell commands
+  - linux shell scripting
+  - debian almquist shell
+  - command line shell
+  - shell syntax checker
+  - shell script debugger
+  - sh script execution
+  - dash shell tutorial
 features:
-- Execute shell scripts from the command line
-- Check shell scripts for syntax errors
-- Execute commands with detailed tracing output
-- Stop script execution on the first error
-- Execute commands directly from standard input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute shell scripts from the command line
+  - Check shell scripts for syntax errors
+  - Execute commands with detailed tracing output
+  - Stop script execution on the first error
+  - Execute commands directly from standard input
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dash

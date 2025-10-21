@@ -1,29 +1,29 @@
 ---
-title: "AWS Kafka - Manage MSK Clusters | Online Free DevTools by Hexmos"
+title: 'AWS Kafka - Manage MSK Clusters | Online Free DevTools by Hexmos'
 name: aws-kafka
-path: "/freedevtools/tldr/aws/aws-kafka/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kafka/"
-description: "Manage Amazon MSK clusters with AWS Kafka CLI commands. Deploy, monitor, and configure Kafka resources efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-kafka/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-kafka/'
+description: 'Manage Amazon MSK clusters with AWS Kafka CLI commands. Deploy, monitor, and configure Kafka resources efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS Kafka cluster management
-- MSK cluster configuration
-- Kafka CLI commands
-- Amazon MSK deployment
-- AWS Kafka broker nodes
-- Kafka cluster creation
-- AWS Kafka monitoring
-- Kafka version control
-- AWS Kafka updates
-- MSK cluster deletion
+  - AWS Kafka cluster management
+  - MSK cluster configuration
+  - Kafka CLI commands
+  - Amazon MSK deployment
+  - AWS Kafka broker nodes
+  - Kafka cluster creation
+  - AWS Kafka monitoring
+  - Kafka version control
+  - AWS Kafka updates
+  - MSK cluster deletion
 features:
-- Create new Amazon MSK clusters
-- Describe existing MSK clusters
-- List available MSK clusters in a region
-- Update the configuration of MSK clusters
-- Delete existing MSK clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Amazon MSK clusters
+  - Describe existing MSK clusters
+  - List available MSK clusters in a region
+  - Update the configuration of MSK clusters
+  - Delete existing MSK clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws kafka

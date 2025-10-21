@@ -1,29 +1,29 @@
 ---
-title: "Manage Nix Channels - Update Software Packages | Online Free DevTools by Hexmos"
+title: 'Manage Nix Channels - Update Software Packages | Online Free DevTools by Hexmos'
 name: nix-channel
-path: "/freedevtools/tldr/nix/nix-channel/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-channel/"
-description: "Manage Nix software channels with nix-channel. Update package lists, add new channels, and control software sources effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-channel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-channel/'
+description: 'Manage Nix software channels with nix-channel. Update package lists, add new channels, and control software sources effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- nix channels management
-- nixos software updates
-- nix command line tool
-- nix package versions
-- nixos package repository
-- linux package management
-- declarative package management
-- software channel configuration
-- nix channel update
+  - nix package manager
+  - nix channels management
+  - nixos software updates
+  - nix command line tool
+  - nix package versions
+  - nixos package repository
+  - linux package management
+  - declarative package management
+  - software channel configuration
+  - nix channel update
 features:
-- List available Nix channels
-- Add new software update channels
-- Update package lists from configured channels
-- Configure software source repositories
-- Manage package versions declaratively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available Nix channels
+  - Add new software update channels
+  - Update package lists from configured channels
+  - Configure software source repositories
+  - Manage package versions declaratively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix-channel

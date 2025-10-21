@@ -1,29 +1,29 @@
 ---
-title: "Trace Kernel Events - Record with trace-cmd | Online Free DevTools by Hexmos"
+title: 'Trace Kernel Events - Record with trace-cmd | Online Free DevTools by Hexmos'
 name: trace-cmd-record
-path: "/freedevtools/tldr/linux/trace-cmd-record/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/trace-cmd-record/"
-description: "Record kernel trace events with trace-cmd. Capture system activities and debug performance issues on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/trace-cmd-record/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/trace-cmd-record/'
+description: 'Record kernel trace events with trace-cmd. Capture system activities and debug performance issues on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux trace events recording
-- kernel tracing commands
-- trace-cmd usage
-- system call tracing linux
-- process tracing linux
-- function tracing linux
-- debug linux performance
-- linux kernel analysis
-- trace-cmd record executable
-- trace-cmd record function
+  - linux trace events recording
+  - kernel tracing commands
+  - trace-cmd usage
+  - system call tracing linux
+  - process tracing linux
+  - function tracing linux
+  - debug linux performance
+  - linux kernel analysis
+  - trace-cmd record executable
+  - trace-cmd record function
 features:
-- Capture kernel trace events with specified plugins
-- Trace specific executable processes
-- Record function-level tracing
-- Exclude functions from the trace output
-- Limit function call graph depth
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture kernel trace events with specified plugins
+  - Trace specific executable processes
+  - Record function-level tracing
+  - Exclude functions from the trace output
+  - Limit function call graph depth
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trace-cmd record

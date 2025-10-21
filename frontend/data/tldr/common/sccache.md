@@ -1,29 +1,29 @@
 ---
-title: "SCCache - Compiler Cache Control | Online Free DevTools by Hexmos"
+title: 'SCCache - Compiler Cache Control | Online Free DevTools by Hexmos'
 name: sccache
-path: "/freedevtools/tldr/common/sccache/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sccache/"
-description: "Speed up compilations with SCCache, a fast C/C++/Rust compiler cache. Improve build times and developer productivity instantly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sccache/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sccache/'
+description: 'Speed up compilations with SCCache, a fast C/C++/Rust compiler cache. Improve build times and developer productivity instantly. Free online tool, no registration required.'
 category: common
 keywords:
-- compiler cache
-- c compiler cache
-- cpp compiler cache
-- rust compiler cache
-- distributed compilation
-- compilation statistics
-- sccache linux
-- sccache macos
-- sccache windows
-- compiler build optimization
+  - compiler cache
+  - c compiler cache
+  - cpp compiler cache
+  - rust compiler cache
+  - distributed compilation
+  - compilation statistics
+  - sccache linux
+  - sccache macos
+  - sccache windows
+  - compiler build optimization
 features:
-- Show compilation statistics for analysis
-- Run compiler commands through the cache
-- Start the sccache server in the foreground
-- Check status of distributed compilation scheduler
-- Stop the sccache server process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show compilation statistics for analysis
+  - Run compiler commands through the cache
+  - Start the sccache server in the foreground
+  - Check status of distributed compilation scheduler
+  - Stop the sccache server process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sccache

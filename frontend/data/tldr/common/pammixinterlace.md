@@ -1,29 +1,29 @@
 ---
-title: "PAM Mix Interlace - Merge Image Rows | Online Free DevTools by Hexmos"
+title: 'PAM Mix Interlace - Merge Image Rows | Online Free DevTools by Hexmos'
 name: pammixinterlace
-path: "/freedevtools/tldr/common/pammixinterlace/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pammixinterlace/"
-description: "Merge image rows with PAM Mix Interlace, a Netpbm image processing tool. Enhance image quality and reduce artifacts using various filters. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pammixinterlace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pammixinterlace/'
+description: 'Merge image rows with PAM Mix Interlace, a Netpbm image processing tool. Enhance image quality and reduce artifacts using various filters. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM image interlace
-- Netpbm image processing
-- Image row merging
-- Deinterlace image
-- PPM image filter
-- Image artifact reduction
-- Adaptive image filtering
-- Command-line image tools
-- Image processing utilities
-- Pammixinterlace command
+  - PAM image interlace
+  - Netpbm image processing
+  - Image row merging
+  - Deinterlace image
+  - PPM image filter
+  - Image artifact reduction
+  - Adaptive image filtering
+  - Command-line image tools
+  - Image processing utilities
+  - Pammixinterlace command
 features:
-- Merge image rows with neighboring rows
-- Apply linear, FIR, or FFmpeg filtering mechanisms
-- Enable adaptive filtering mode for comb pattern removal
-- Process PPM image files
-- Enhance image quality by reducing artifacts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Merge image rows with neighboring rows
+  - Apply linear, FIR, or FFmpeg filtering mechanisms
+  - Enable adaptive filtering mode for comb pattern removal
+  - Process PPM image files
+  - Enhance image quality by reducing artifacts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pammixinterlace

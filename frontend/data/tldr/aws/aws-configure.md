@@ -1,29 +1,29 @@
 ---
-title: "AWS Configure - Manage AWS CLI Configuration | Online Free DevTools by Hexmos"
+title: 'AWS Configure - Manage AWS CLI Configuration | Online Free DevTools by Hexmos'
 name: aws-configure
-path: "/freedevtools/tldr/aws/aws-configure/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-configure/"
-description: "Manage AWS CLI configurations with AWS Configure. Configure profiles, get configuration values, and list entries quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-configure/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-configure/'
+description: 'Manage AWS CLI configurations with AWS Configure. Configure profiles, get configuration values, and list entries quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- aws configure
-- aws cli configuration
-- aws profile configuration
-- aws credential management
-- aws cli named profile
-- configure aws access key
-- aws configure list profiles
-- aws cli environment variables
-- aws s3 configuration
-- aws identity and access management
+  - aws configure
+  - aws cli configuration
+  - aws profile configuration
+  - aws credential management
+  - aws cli named profile
+  - configure aws access key
+  - aws configure list profiles
+  - aws cli environment variables
+  - aws s3 configuration
+  - aws identity and access management
 features:
-- Configure AWS CLI interactively.
-- Manage AWS named profiles.
-- Display specific configuration values.
-- Set configuration variable values.
-- List all configuration entries.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure AWS CLI interactively.
+  - Manage AWS named profiles.
+  - Display specific configuration values.
+  - Set configuration variable values.
+  - List all configuration entries.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws configure

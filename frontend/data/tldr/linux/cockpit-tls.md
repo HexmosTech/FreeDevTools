@@ -1,9 +1,9 @@
 ---
-title: "Control Cockpit TLS - Encrypt Traffic | Online Free DevTools by Hexmos"
+title: 'Control Cockpit TLS - Encrypt Traffic | Online Free DevTools by Hexmos'
 name: cockpit-tls
-path: "/freedevtools/tldr/linux/cockpit-tls/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-tls/"
-description: "Control Cockpit TLS connections to encrypt traffic between client and cockpit-ws. Secure your cockpit server with this free tool, no registration required."
+path: '/freedevtools/tldr/linux/cockpit-tls/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cockpit-tls/'
+description: 'Control Cockpit TLS connections to encrypt traffic between client and cockpit-ws. Secure your cockpit server with this free tool, no registration required.'
 category: linux
 keywords:
   - cockpit tls encryption
@@ -22,8 +22,8 @@ features:
   - Serve HTTP requests on a custom port
   - Secure Cockpit web server communication
   - Provide a secure proxy for cockpit-ws
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cockpit-tls

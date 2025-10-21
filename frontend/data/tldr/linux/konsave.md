@@ -1,9 +1,9 @@
 ---
-title: "Konsave - Manage Linux Configurations | Online Free DevTools by Hexmos"
+title: 'Konsave - Manage Linux Configurations | Online Free DevTools by Hexmos'
 name: konsave
-path: "/freedevtools/tldr/linux/konsave/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/konsave/"
-description: "Manage Linux customizations easily with Konsave. Save, apply, and manage profiles for your system configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/konsave/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/konsave/'
+description: 'Manage Linux customizations easily with Konsave. Save, apply, and manage profiles for your system configurations. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux configuration manager
@@ -22,8 +22,8 @@ features:
   - Manage multiple configuration profiles simultaneously.
   - Export and import profiles for sharing and backup.
   - Force overwrite existing profiles during saving.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # konsave

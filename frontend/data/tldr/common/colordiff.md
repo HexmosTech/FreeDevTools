@@ -1,29 +1,29 @@
 ---
-title: "Colordiff - Highlight Diff Output | Online Free DevTools by Hexmos"
+title: 'Colordiff - Highlight Diff Output | Online Free DevTools by Hexmos'
 name: colordiff
-path: "/freedevtools/tldr/common/colordiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/colordiff/"
-description: "Highlight diff output with Colordiff. Visualize changes in files with syntax highlighting and customizable color schemes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/colordiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/colordiff/'
+description: 'Highlight diff output with Colordiff. Visualize changes in files with syntax highlighting and customizable color schemes. Free online tool, no registration required.'
 category: common
 keywords:
-- colored diff output
-- syntax highlighting diff
-- diff visualizer
-- colored text diff
-- command line diff highlighter
-- colordiff linux
-- colordiff macos
-- file comparison tool
-- whitespace diff
-- case insensitive diff
+  - colored diff output
+  - syntax highlighting diff
+  - diff visualizer
+  - colored text diff
+  - command line diff highlighter
+  - colordiff linux
+  - colordiff macos
+  - file comparison tool
+  - whitespace diff
+  - case insensitive diff
 features:
-- Compare files with syntax highlighting
-- Output diff in two columns
-- Ignore case differences during comparison
-- Report when files are identical
-- Ignore whitespace during comparison
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare files with syntax highlighting
+  - Output diff in two columns
+  - Ignore case differences during comparison
+  - Report when files are identical
+  - Ignore whitespace during comparison
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # colordiff

@@ -1,29 +1,29 @@
 ---
-title: "Redis Benchmark - Measure Redis Server Performance | Online Free DevTools by Hexmos"
+title: 'Redis Benchmark - Measure Redis Server Performance | Online Free DevTools by Hexmos'
 name: redis-benchmark
-path: "/freedevtools/tldr/redis/redis-benchmark/"
-canonical: "https://hexmos.com/freedevtools/tldr/redis/redis-benchmark/"
-description: "Benchmark Redis performance with Redis Benchmark. Measure server speed and identify bottlenecks. Free online tool, no registration required."
+path: '/freedevtools/tldr/redis/redis-benchmark/'
+canonical: 'https://hexmos.com/freedevtools/tldr/redis/redis-benchmark/'
+description: 'Benchmark Redis performance with Redis Benchmark. Measure server speed and identify bottlenecks. Free online tool, no registration required.'
 category: common
 keywords:
-- redis benchmark tool
-- redis performance test
-- redis speed test
-- redis load testing
-- redis latency test
-- redis server benchmark
-- redis command line benchmark
-- database benchmark tool
-- memory database benchmark
-- redis performance optimization
+  - redis benchmark tool
+  - redis performance test
+  - redis speed test
+  - redis load testing
+  - redis latency test
+  - redis server benchmark
+  - redis command line benchmark
+  - database benchmark tool
+  - memory database benchmark
+  - redis performance optimization
 features:
-- Measures Redis server speed and throughput
-- Simulates client requests to assess performance
-- Identifies performance bottlenecks in Redis configurations
-- Allows benchmarking of specific Redis commands
-- Customizes test parameters for targeted analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measures Redis server speed and throughput
+  - Simulates client requests to assess performance
+  - Identifies performance bottlenecks in Redis configurations
+  - Allows benchmarking of specific Redis commands
+  - Customizes test parameters for targeted analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # redis-benchmark

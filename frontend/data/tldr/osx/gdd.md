@@ -1,9 +1,9 @@
 ---
-title: "Control Data Duplication - gdd Command Tool | Online Free DevTools by Hexmos"
+title: 'Control Data Duplication - gdd Command Tool | Online Free DevTools by Hexmos'
 name: gdd
-path: "/freedevtools/tldr/osx/gdd/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/gdd/"
-description: "Control data duplication with gdd, an alias for GNU dd. Efficiently copy and convert data. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/gdd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/gdd/'
+description: 'Control data duplication with gdd, an alias for GNU dd. Efficiently copy and convert data. Free online tool, no registration required.'
 category: osx
 keywords:
   - data copier command
@@ -22,8 +22,8 @@ features:
   - Create disk images from physical drives
   - Perform low-level data manipulation
   - Backup and restore data from block devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gdd

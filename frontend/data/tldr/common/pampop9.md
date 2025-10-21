@@ -1,29 +1,29 @@
 ---
-title: "Generate Multi-Lens Images - pampop9 | Online Free DevTools by Hexmos"
+title: 'Generate Multi-Lens Images - pampop9 | Online Free DevTools by Hexmos'
 name: pampop9
-path: "/freedevtools/tldr/common/pampop9/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pampop9/"
-description: "Generate multi-lens images with pampop9. Simulate Pop9 camera effects by tiling and offsetting images. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pampop9/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pampop9/'
+description: 'Generate multi-lens images with pampop9. Simulate Pop9 camera effects by tiling and offsetting images. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM image tiling
-- Multi-lens image simulation
-- Image offset generation
-- Pop9 camera effect
-- PAM tiling utility
-- Image processing linux
-- Image manipulation command
-- Graphics generation tool
-- Pixel array manipulation
-- Image distortion effect
+  - PAM image tiling
+  - Multi-lens image simulation
+  - Image offset generation
+  - Pop9 camera effect
+  - PAM tiling utility
+  - Image processing linux
+  - Image manipulation command
+  - Graphics generation tool
+  - Pixel array manipulation
+  - Image distortion effect
 features:
-- Tile a PAM image multiple times
-- Control tiling offsets with xdelta and ydelta
-- Simulate multi-lens camera effects like Pop9
-- Create distorted image appearances
-- Generate a new PAM image with tiled content
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Tile a PAM image multiple times
+  - Control tiling offsets with xdelta and ydelta
+  - Simulate multi-lens camera effects like Pop9
+  - Create distorted image appearances
+  - Generate a new PAM image with tiled content
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pampop9

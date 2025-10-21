@@ -1,29 +1,29 @@
 ---
-title: "Validate Go Code - Check Source Files with go vet | Online Free DevTools by Hexmos"
+title: 'Validate Go Code - Check Source Files with go vet | Online Free DevTools by Hexmos'
 name: go-vet
-path: "/freedevtools/tldr/go/go-vet/"
-canonical: "https://hexmos.com/freedevtools/tldr/go/go-vet/"
-description: "Validate Go code with go vet. Detect suspicious constructs, enforce coding standards, and improve code quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/go/go-vet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/go/go-vet/'
+description: 'Validate Go code with go vet. Detect suspicious constructs, enforce coding standards, and improve code quality. Free online tool, no registration required.'
 category: common
 keywords:
-- go vet
-- go linter
-- go static analysis
-- go code analyzer
-- go code validation
-- go source code check
-- go best practices
-- go coding standards
-- golang vet
-- golang linter
+  - go vet
+  - go linter
+  - go static analysis
+  - go code analyzer
+  - go code validation
+  - go source code check
+  - go best practices
+  - go coding standards
+  - golang vet
+  - golang linter
 features:
-- Detect suspicious code constructs
-- Enforce coding standards
-- Report potential bugs and errors
-- Analyze Go source code for common mistakes
-- Provide suggestions for code improvement
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect suspicious code constructs
+  - Enforce coding standards
+  - Report potential bugs and errors
+  - Analyze Go source code for common mistakes
+  - Provide suggestions for code improvement
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go vet

@@ -1,29 +1,29 @@
 ---
-title: "Chmod - Control File Permissions | Online Free DevTools by Hexmos"
+title: 'Chmod - Control File Permissions | Online Free DevTools by Hexmos'
 name: chmod
-path: "/freedevtools/tldr/common/chmod/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chmod/"
-description: "Control file permissions with Chmod. Secure your files and directories by managing access rights. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chmod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chmod/'
+description: 'Control file permissions with Chmod. Secure your files and directories by managing access rights. Free online tool, no registration required.'
 category: common
 keywords:
-- chmod file permissions
-- file permissions management
-- linux chmod command
-- unix file security
-- chmod access rights
-- chmod recursive permissions
-- change file ownership
-- chmod octal mode
-- command line permissions
-- chmod setuid
+  - chmod file permissions
+  - file permissions management
+  - linux chmod command
+  - unix file security
+  - chmod access rights
+  - chmod recursive permissions
+  - change file ownership
+  - chmod octal mode
+  - command line permissions
+  - chmod setuid
 features:
-- Change file and directory access permissions
-- Set read, write, and execute permissions for users, groups, and others
-- Recursively modify permissions for directories and subdirectories
-- Remove specific permissions from users or groups
-- Set permissions based on octal mode or symbolic representation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Change file and directory access permissions
+  - Set read, write, and execute permissions for users, groups, and others
+  - Recursively modify permissions for directories and subdirectories
+  - Remove specific permissions from users or groups
+  - Set permissions based on octal mode or symbolic representation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chmod

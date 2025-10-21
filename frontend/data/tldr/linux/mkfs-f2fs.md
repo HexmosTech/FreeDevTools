@@ -1,9 +1,9 @@
 ---
-title: "Create F2FS Filesystem - Format Partitions with mkfs.f2fs | Online Free DevTools by Hexmos"
+title: 'Create F2FS Filesystem - Format Partitions with mkfs.f2fs | Online Free DevTools by Hexmos'
 name: mkfs.f2fs
-path: "/freedevtools/tldr/linux/mkfs-f2fs/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mkfs-f2fs/"
-description: "Format partitions with mkfs.f2fs to create F2FS filesystems easily.  Manage your storage efficiently using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkfs-f2fs/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mkfs-f2fs/'
+description: 'Format partitions with mkfs.f2fs to create F2FS filesystems easily.  Manage your storage efficiently using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - F2FS filesystem creation
@@ -22,8 +22,8 @@ features:
   - Supports formatting of block devices.
   - Provides command-line interface for easy integration with scripts.
   - Offers a robust and efficient method for F2FS filesystem creation.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfs.f2fs

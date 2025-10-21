@@ -1,29 +1,29 @@
 ---
-title: "Pueue Status - Check Task Status | Online Free DevTools by Hexmos"
+title: 'Pueue Status - Check Task Status | Online Free DevTools by Hexmos'
 name: pueue-status
-path: "/freedevtools/tldr/pueue/pueue-status/"
-canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-status/"
-description: "Check task status with Pueue, your command-line task manager. Monitor running, queued, and completed tasks effortlessly using the status command. Free online tool, no registration required."
+path: '/freedevtools/tldr/pueue/pueue-status/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pueue/pueue-status/'
+description: 'Check task status with Pueue, your command-line task manager. Monitor running, queued, and completed tasks effortlessly using the status command. Free online tool, no registration required.'
 category: common
 keywords:
-- pueue status
-- task status check
-- command-line task manager
-- background process manager
-- job queue monitor
-- pueue group status
-- process status viewer
-- task execution status
-- linux task manager
-- command-line process control
+  - pueue status
+  - task status check
+  - command-line task manager
+  - background process manager
+  - job queue monitor
+  - pueue group status
+  - process status viewer
+  - task execution status
+  - linux task manager
+  - command-line process control
 features:
-- Display the status of all tasks.
-- Show the status of a specific task group.
-- Provide an overview of running processes.
-- Monitor the progress of queued jobs.
-- List completed and failed tasks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the status of all tasks.
+  - Show the status of a specific task group.
+  - Provide an overview of running processes.
+  - Monitor the progress of queued jobs.
+  - List completed and failed tasks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pueue status

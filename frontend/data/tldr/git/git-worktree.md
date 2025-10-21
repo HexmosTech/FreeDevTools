@@ -1,29 +1,29 @@
 ---
-title: "Create Git Worktrees - Manage Branches | Online Free DevTools by Hexmos"
+title: 'Create Git Worktrees - Manage Branches | Online Free DevTools by Hexmos'
 name: git-worktree
-path: "/freedevtools/tldr/git/git-worktree/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-worktree/"
-description: "Create Git worktrees to manage multiple branches simultaneously. Easily switch between different versions without committing. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-worktree/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-worktree/'
+description: 'Create Git worktrees to manage multiple branches simultaneously. Easily switch between different versions without committing. Free online tool, no registration required.'
 category: common
 keywords:
-- git worktree manager
-- git multiple branches
-- git branch switcher
-- git context switching
-- git parallel development
-- git code isolation
-- git detached worktree
-- git development workflow
-- git repository manager
-- git command line tools
+  - git worktree manager
+  - git multiple branches
+  - git branch switcher
+  - git context switching
+  - git parallel development
+  - git code isolation
+  - git detached worktree
+  - git development workflow
+  - git repository manager
+  - git command line tools
 features:
-- Create new worktrees from existing branches
-- Create new branches directly in a worktree
-- List all active worktrees for a repository
-- Remove obsolete worktrees efficiently
-- Manage multiple branches concurrently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new worktrees from existing branches
+  - Create new branches directly in a worktree
+  - List all active worktrees for a repository
+  - Remove obsolete worktrees efficiently
+  - Manage multiple branches concurrently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git worktree

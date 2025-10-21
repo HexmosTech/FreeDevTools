@@ -1,29 +1,29 @@
 ---
-title: "Unlink File - Remove Links | Online Free DevTools by Hexmos"
+title: 'Unlink File - Remove Links | Online Free DevTools by Hexmos'
 name: unlink
-path: "/freedevtools/tldr/common/unlink/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/unlink/"
-description: "Unlink file quickly with Unlink Command. Remove file links, manage filesystem references and free up storage space. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/unlink/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/unlink/'
+description: 'Unlink file quickly with Unlink Command. Remove file links, manage filesystem references and free up storage space. Free online tool, no registration required.'
 category: common
 keywords:
-- unlink file command
-- remove file link
-- delete file link
-- linux unlink command
-- unix unlink command
-- macos unlink command
-- command line file removal
-- filesystem link management
-- remove inode link
-- file system utility
+  - unlink file command
+  - remove file link
+  - delete file link
+  - linux unlink command
+  - unix unlink command
+  - macos unlink command
+  - command line file removal
+  - filesystem link management
+  - remove inode link
+  - file system utility
 features:
-- Remove a specified file link.
-- Delete the last link to a file.
-- Free up storage space by unlinking.
-- Manage file system references via command line.
-- Safely remove file links from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove a specified file link.
+  - Delete the last link to a file.
+  - Free up storage space by unlinking.
+  - Manage file system references via command line.
+  - Safely remove file links from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # unlink

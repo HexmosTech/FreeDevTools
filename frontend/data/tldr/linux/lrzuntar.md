@@ -1,9 +1,9 @@
 ---
-title: "lrzuntar Command - Extract Files | Online Free DevTools by Hexmos"
+title: 'lrzuntar Command - Extract Files | Online Free DevTools by Hexmos'
 name: lrzuntar
-path: "/freedevtools/tldr/linux/lrzuntar/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lrzuntar/"
-description: "Extract files with lrzuntar command. This efficient command-line utility offers seamless file extraction. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lrzuntar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lrzuntar/'
+description: 'Extract files with lrzuntar command. This efficient command-line utility offers seamless file extraction. Free online tool, no registration required.'
 category: linux
 keywords:
   - lrzuntar command
@@ -22,8 +22,8 @@ features:
   - Offers efficient command-line file extraction.
   - Simplifies the process of accessing compressed data.
   - Works seamlessly with various archive formats.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lrzuntar

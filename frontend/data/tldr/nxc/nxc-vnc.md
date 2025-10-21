@@ -1,29 +1,29 @@
 ---
-title: "Control VNC Servers - Pentest with NXC VNC | Online Free DevTools by Hexmos"
+title: 'Control VNC Servers - Pentest with NXC VNC | Online Free DevTools by Hexmos'
 name: nxc-vnc
-path: "/freedevtools/tldr/nxc/nxc-vnc/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-vnc/"
-description: "Pentest VNC servers easily with NXC VNC. Exploit vulnerabilities and assess security using credential brute-forcing. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-vnc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-vnc/'
+description: 'Pentest VNC servers easily with NXC VNC. Exploit vulnerabilities and assess security using credential brute-forcing. Free online tool, no registration required.'
 category: common
 keywords:
-- VNC pentesting
-- VNC exploit
-- network hacking
-- password cracking
-- credential brute-forcing
-- security auditing
-- vulnerability scanning
-- remote access testing
-- penetration testing
-- common
+  - VNC pentesting
+  - VNC exploit
+  - network hacking
+  - password cracking
+  - credential brute-forcing
+  - security auditing
+  - vulnerability scanning
+  - remote access testing
+  - penetration testing
+  - common
 features:
-- Brute-force VNC credentials using username and password lists
-- Avoid rate limiting by implementing VNC sleep delays
-- Capture screenshots of remote VNC sessions
-- Customize screenshot delays
-- Perform targeted pentesting of VNC servers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute-force VNC credentials using username and password lists
+  - Avoid rate limiting by implementing VNC sleep delays
+  - Capture screenshots of remote VNC sessions
+  - Customize screenshot delays
+  - Perform targeted pentesting of VNC servers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc vnc

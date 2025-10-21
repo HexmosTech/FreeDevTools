@@ -1,29 +1,29 @@
 ---
-title: "Create GitHub Gists - Manage and Share Code | Online Free DevTools by Hexmos"
+title: 'Create GitHub Gists - Manage and Share Code | Online Free DevTools by Hexmos'
 name: gh-gist
-path: "/freedevtools/tldr/gh/gh-gist/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-gist/"
-description: "Create GitHub Gists easily with gh-gist. Share code snippets and manage your public or secret gists directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-gist/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-gist/'
+description: 'Create GitHub Gists easily with gh-gist. Share code snippets and manage your public or secret gists directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub Gist creator
-- Gist management tool
-- Command line gist
-- Code snippet sharing
-- GitHub CLI gist
-- Private Gist maker
-- Public Gist tool
-- Gist editor tool
-- GitHub Gist viewer
-- Terminal Gist manager
+  - GitHub Gist creator
+  - Gist management tool
+  - Command line gist
+  - Code snippet sharing
+  - GitHub CLI gist
+  - Private Gist maker
+  - Public Gist tool
+  - Gist editor tool
+  - GitHub Gist viewer
+  - Terminal Gist manager
 features:
-- Create new Gists from files.
-- Edit existing Gists.
-- List Gists owned by the logged-in user.
-- View Gists in a web browser or raw format.
-- Add descriptions to new Gists.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Gists from files.
+  - Edit existing Gists.
+  - List Gists owned by the logged-in user.
+  - View Gists in a web browser or raw format.
+  - Add descriptions to new Gists.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh gist

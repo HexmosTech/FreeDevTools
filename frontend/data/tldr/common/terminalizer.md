@@ -1,29 +1,29 @@
 ---
-title: "Generate Terminal GIFs - Terminalizer | Online Free DevTools by Hexmos"
+title: 'Generate Terminal GIFs - Terminalizer | Online Free DevTools by Hexmos'
 name: terminalizer
-path: "/freedevtools/tldr/common/terminalizer/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/terminalizer/"
-description: "Generate animated GIFs from terminal recordings with Terminalizer. Record terminal sessions, create GIF animations, and share them online. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/terminalizer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/terminalizer/'
+description: 'Generate animated GIFs from terminal recordings with Terminalizer. Record terminal sessions, create GIF animations, and share them online. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal recording GIF
-- terminal to GIF converter
-- command line GIF maker
-- shell recording animation
-- terminal session recorder
-- asciinema alternative
-- CLI GIF generator
-- terminal screen capture
-- animated GIF creation
-- record terminal activity
+  - terminal recording GIF
+  - terminal to GIF converter
+  - command line GIF maker
+  - shell recording animation
+  - terminal session recorder
+  - asciinema alternative
+  - CLI GIF generator
+  - terminal screen capture
+  - animated GIF creation
+  - record terminal activity
 features:
-- Record terminal sessions to a file.
-- Render terminal recordings as animated GIFs.
-- Play recorded terminal sessions in the terminal.
-- Share terminal recordings online via terminalizer.com.
-- Initialize a global configuration directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Record terminal sessions to a file.
+  - Render terminal recordings as animated GIFs.
+  - Play recorded terminal sessions in the terminal.
+  - Share terminal recordings online via terminalizer.com.
+  - Initialize a global configuration directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # terminalizer

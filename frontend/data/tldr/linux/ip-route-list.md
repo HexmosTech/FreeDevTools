@@ -1,9 +1,9 @@
 ---
-title: "IP Route - List Routing Tables | Online Free DevTools by Hexmos"
+title: 'IP Route - List Routing Tables | Online Free DevTools by Hexmos'
 name: ip-route-list
-path: "/freedevtools/tldr/linux/ip-route-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-route-list/"
-description: "List IP routes with this command line tool. Inspect routing tables and network paths quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ip-route-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ip-route-list/'
+description: 'List IP routes with this command line tool. Inspect routing tables and network paths quickly. Free online tool, no registration required.'
 category: linux
 keywords:
   - ip route list
@@ -22,8 +22,8 @@ features:
   - Filter routes by scope
   - Display the routing cache
   - Show IPv4 or IPv6 routes only
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ip route list

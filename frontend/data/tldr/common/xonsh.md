@@ -1,29 +1,29 @@
 ---
-title: "Xonsh Shell - Execute Python Commands | Online Free DevTools by Hexmos"
+title: 'Xonsh Shell - Execute Python Commands | Online Free DevTools by Hexmos'
 name: xonsh
-path: "/freedevtools/tldr/common/xonsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xonsh/"
-description: "Execute Python commands with Xonsh shell. Automate tasks and combine shell commands with Python scripts in a cross-platform environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xonsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xonsh/'
+description: 'Execute Python commands with Xonsh shell. Automate tasks and combine shell commands with Python scripts in a cross-platform environment. Free online tool, no registration required.'
 category: common
 keywords:
-- xonsh shell commands
-- python powered shell
-- cross platform shell
-- unix shell automation
-- shell scripting with python
-- xonsh environment variables
-- interactive xonsh session
-- execute shell script
-- xonsh configuration files
-- linux shell alternative
+  - xonsh shell commands
+  - python powered shell
+  - cross platform shell
+  - unix shell automation
+  - shell scripting with python
+  - xonsh environment variables
+  - interactive xonsh session
+  - execute shell script
+  - xonsh configuration files
+  - linux shell alternative
 features:
-- Start an interactive xonsh shell session.
-- Execute a single command from the command line.
-- Run xonsh scripts from a file.
-- Define environment variables for the shell process.
-- Load custom configuration files for shell settings.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive xonsh shell session.
+  - Execute a single command from the command line.
+  - Run xonsh scripts from a file.
+  - Define environment variables for the shell process.
+  - Load custom configuration files for shell settings.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xonsh

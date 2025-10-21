@@ -1,9 +1,9 @@
 ---
-title: "Dir - List Directory Contents | Online Free DevTools by Hexmos"
+title: 'Dir - List Directory Contents | Online Free DevTools by Hexmos'
 name: dir
-path: "/freedevtools/tldr/windows/dir/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/dir/"
-description: "List directory contents easily with Dir. Quickly explore files and folders, sort results and view hidden items using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/dir/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/dir/'
+description: 'List directory contents easily with Dir. Quickly explore files and folders, sort results and view hidden items using command line. Free online tool, no registration required.'
 category: windows
 keywords:
   - directory listing
@@ -22,8 +22,8 @@ features:
   - Display hidden files and directories
   - Sort directory listings by date/time
   - Output a bare list of files and directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dir

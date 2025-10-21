@@ -1,29 +1,29 @@
 ---
-title: "Push Directory - Manage Directory Stack | Online Free DevTools by Hexmos"
+title: 'Push Directory - Manage Directory Stack | Online Free DevTools by Hexmos'
 name: pushd
-path: "/freedevtools/tldr/common/pushd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pushd/"
-description: "Manage directory stacks with pushd. Navigate directories efficiently and easily switch between locations in the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pushd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pushd/'
+description: 'Manage directory stacks with pushd. Navigate directories efficiently and easily switch between locations in the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- directory stack manager
-- bash pushd command
-- linux directory navigation
-- command line directory stack
-- pushd popd dirs commands
-- shell directory stack
-- terminal directory history
-- directory stack manipulation
-- pushd directory rotation
-- command-line navigation tools
+  - directory stack manager
+  - bash pushd command
+  - linux directory navigation
+  - command line directory stack
+  - pushd popd dirs commands
+  - shell directory stack
+  - terminal directory history
+  - directory stack manipulation
+  - pushd directory rotation
+  - command-line navigation tools
 features:
-- Store and recall directory locations using a stack
-- Switch between directories and automatically save the previous one
-- Rotate the directory stack to quickly access different locations
-- Manipulate the order of directories within the stack
-- Navigate the filesystem efficiently with command-line shortcuts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Store and recall directory locations using a stack
+  - Switch between directories and automatically save the previous one
+  - Rotate the directory stack to quickly access different locations
+  - Manipulate the order of directories within the stack
+  - Navigate the filesystem efficiently with command-line shortcuts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pushd

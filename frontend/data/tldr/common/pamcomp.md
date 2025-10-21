@@ -1,29 +1,29 @@
 ---
-title: "PAM Overlay - Compose Images with PAMCOMP | Online Free DevTools by Hexmos"
+title: 'PAM Overlay - Compose Images with PAMCOMP | Online Free DevTools by Hexmos'
 name: pamcomp
-path: "/freedevtools/tldr/common/pamcomp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamcomp/"
-description: "Compose PAM images with PAMCOMP. Overlay, align, and set opacity to create complex image compositions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamcomp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamcomp/'
+description: 'Compose PAM images with PAMCOMP. Overlay, align, and set opacity to create complex image compositions. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM image overlay
-- PAM image composition
-- Netpbm image editor
-- PAM image alignment
-- PAM image opacity
-- Image blending tool
-- Image masking tool
-- Linux image processing
-- Command line image manipulation
-- Image overlay utility
+  - PAM image overlay
+  - PAM image composition
+  - Netpbm image editor
+  - PAM image alignment
+  - PAM image opacity
+  - Image blending tool
+  - Image masking tool
+  - Linux image processing
+  - Command line image manipulation
+  - Image overlay utility
 features:
-- Overlay one PAM image onto another.
-- Control horizontal and vertical alignment of the overlay image.
-- Adjust the opacity of the overlay to create transparency effects.
-- Block parts of underlay with the overlay.
-- Create sophisticated image compositions from the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Overlay one PAM image onto another.
+  - Control horizontal and vertical alignment of the overlay image.
+  - Adjust the opacity of the overlay to create transparency effects.
+  - Block parts of underlay with the overlay.
+  - Create sophisticated image compositions from the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamcomp

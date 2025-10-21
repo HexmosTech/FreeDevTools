@@ -1,29 +1,29 @@
 ---
-title: "Sonar Scanner - Analyze Code | Online Free DevTools by Hexmos"
+title: 'Sonar Scanner - Analyze Code | Online Free DevTools by Hexmos'
 name: sonar-scanner
-path: "/freedevtools/tldr/common/sonar-scanner/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sonar-scanner/"
-description: "Analyze code with Sonar Scanner. Scan projects for bugs, vulnerabilities, and code smells using a generic scanner. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sonar-scanner/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sonar-scanner/'
+description: 'Analyze code with Sonar Scanner. Scan projects for bugs, vulnerabilities, and code smells using a generic scanner. Free online tool, no registration required.'
 category: common
 keywords:
-- sonar scanner analysis
-- code analysis tool
-- static code analysis
-- SonarQube scanner
-- project quality analysis
-- vulnerability scanner
-- bug detection software
-- code smell detection
-- java code analysis
-- sonar project scanner
+  - sonar scanner analysis
+  - code analysis tool
+  - static code analysis
+  - SonarQube scanner
+  - project quality analysis
+  - vulnerability scanner
+  - bug detection software
+  - code smell detection
+  - java code analysis
+  - sonar project scanner
 features:
-- Scan projects without build tools
-- Analyze code quality and security
-- Customize analysis with properties files
-- Display debugging information during scan
-- Configure project settings via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan projects without build tools
+  - Analyze code quality and security
+  - Customize analysis with properties files
+  - Display debugging information during scan
+  - Configure project settings via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sonar-scanner

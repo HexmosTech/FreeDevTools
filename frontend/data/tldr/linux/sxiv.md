@@ -1,9 +1,9 @@
 ---
-title: "View Images - sxiv Image Viewer | Online Free DevTools by Hexmos"
+title: 'View Images - sxiv Image Viewer | Online Free DevTools by Hexmos'
 name: sxiv
-path: "/freedevtools/tldr/linux/sxiv/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/sxiv/"
-description: "View images quickly and easily with sxiv Image Viewer.  Open single images, slideshows, or thumbnails from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/sxiv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/sxiv/'
+description: 'View images quickly and easily with sxiv Image Viewer.  Open single images, slideshows, or thumbnails from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - image viewer command
@@ -22,8 +22,8 @@ features:
   - Create slideshows of multiple images with custom time delays.
   - Display images in thumbnail mode for quick browsing.
   - Process newline-separated lists of images from stdin.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sxiv

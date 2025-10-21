@@ -1,29 +1,29 @@
 ---
-title: "Combine Files - Perform Set Operations on Lines | Online Free DevTools by Hexmos"
+title: 'Combine Files - Perform Set Operations on Lines | Online Free DevTools by Hexmos'
 name: combine
-path: "/freedevtools/tldr/common/combine/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/combine/"
-description: "Combine lines with Combine: perform set operations on lines of two files. Quickly identify common, unique, or differing lines. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/combine/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/combine/'
+description: 'Combine lines with Combine: perform set operations on lines of two files. Quickly identify common, unique, or differing lines. Free online tool, no registration required.'
 category: common
 keywords:
-- file set operations
-- line comparison tool
-- combine files linux
-- combine files macos
-- combine files common
-- file intersection tool
-- file union tool
-- file difference tool
-- file XOR tool
-- command line file tools
+  - file set operations
+  - line comparison tool
+  - combine files linux
+  - combine files macos
+  - combine files common
+  - file intersection tool
+  - file union tool
+  - file difference tool
+  - file XOR tool
+  - command line file tools
 features:
-- Output lines present in both files
-- Output lines unique to the first file
-- Output lines present in either file
-- Output lines present in only one file
-- Perform set operations on lines of two files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Output lines present in both files
+  - Output lines unique to the first file
+  - Output lines present in either file
+  - Output lines present in only one file
+  - Perform set operations on lines of two files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # combine

@@ -1,29 +1,29 @@
 ---
-title: "WebStorm - Open Files & Directories | Online Free DevTools by Hexmos"
+title: 'WebStorm - Open Files & Directories | Online Free DevTools by Hexmos'
 name: webstorm
-path: "/freedevtools/tldr/common/webstorm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/webstorm/"
-description: "Open files and directories with WebStorm. Effortlessly launch projects, compare files, and perform merges using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/webstorm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/webstorm/'
+description: 'Open files and directories with WebStorm. Effortlessly launch projects, compare files, and perform merges using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript IDE
-- webstorm command line
-- jetbrains ide
-- webstorm file opener
-- webstorm directory opener
-- webstorm diff tool
-- webstorm merge tool
-- webstorm lightedit mode
-- webstorm specific line open
-- webstorm file compare
+  - javascript IDE
+  - webstorm command line
+  - jetbrains ide
+  - webstorm file opener
+  - webstorm directory opener
+  - webstorm diff tool
+  - webstorm merge tool
+  - webstorm lightedit mode
+  - webstorm specific line open
+  - webstorm file compare
 features:
-- Open directories in WebStorm
-- Open specific files in LightEdit mode
-- Compare files within WebStorm
-- Perform three-way merges
-- Open files at a specific line number
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open directories in WebStorm
+  - Open specific files in LightEdit mode
+  - Compare files within WebStorm
+  - Perform three-way merges
+  - Open files at a specific line number
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # webstorm

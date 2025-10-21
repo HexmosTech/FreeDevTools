@@ -1,9 +1,9 @@
 ---
-title: "Control Raspberry Pi Camera Stream - rpicam-hello | Online Free DevTools by Hexmos"
+title: 'Control Raspberry Pi Camera Stream - rpicam-hello | Online Free DevTools by Hexmos'
 name: rpicam-hello
-path: "/freedevtools/tldr/linux/rpicam-hello/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpicam-hello/"
-description: "Control Raspberry Pi camera stream with rpicam-hello. View live feeds and configure camera settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpicam-hello/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpicam-hello/'
+description: 'Control Raspberry Pi camera stream with rpicam-hello. View live feeds and configure camera settings. Free online tool, no registration required.'
 category: linux
 keywords:
   - Raspberry Pi camera control
@@ -22,8 +22,8 @@ features:
   - Adjust stream timeout duration
   - Control camera sensor configuration
   - View Raspberry Pi camera feed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpicam-hello

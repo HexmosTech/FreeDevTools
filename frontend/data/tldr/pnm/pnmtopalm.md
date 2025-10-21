@@ -1,29 +1,29 @@
 ---
-title: "Convert PNM to Palm - Create Palm Images | Online Free DevTools by Hexmos"
+title: 'Convert PNM to Palm - Create Palm Images | Online Free DevTools by Hexmos'
 name: pnmtopalm
-path: "/freedevtools/tldr/pnm/pnmtopalm/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtopalm/"
-description: "Convert PNM images to Palm bitmaps with Pnmtopalm. Generate Palm images with various color depths and compression methods. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmtopalm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmtopalm/'
+description: 'Convert PNM images to Palm bitmaps with Pnmtopalm. Generate Palm images with various color depths and compression methods. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM to Palm converter
-- Palm bitmap creator
-- Image format conversion
-- PNM image processing
-- Palm image generator
-- Netpbm tools
-- Linux image conversion
-- Command line image tool
-- Raster graphic conversion
-- Palm OS image
+  - PNM to Palm converter
+  - Palm bitmap creator
+  - Image format conversion
+  - PNM image processing
+  - Palm image generator
+  - Netpbm tools
+  - Linux image conversion
+  - Command line image tool
+  - Raster graphic conversion
+  - Palm OS image
 features:
-- Convert PNM images to Palm bitmaps.
-- Specify the color depth for Palm bitmaps.
-- Choose from multiple compression methods.
-- Build custom colormaps for Palm images.
-- Define the bitmap's density for optimal display.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNM images to Palm bitmaps.
+  - Specify the color depth for Palm bitmaps.
+  - Choose from multiple compression methods.
+  - Build custom colormaps for Palm images.
+  - Define the bitmap's density for optimal display.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmtopalm

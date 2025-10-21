@@ -1,9 +1,9 @@
 ---
-title: "Secret Tool - Manage Passwords Securely | Online Free DevTools by Hexmos"
+title: 'Secret Tool - Manage Passwords Securely | Online Free DevTools by Hexmos'
 name: secret-tool
-path: "/freedevtools/tldr/linux/secret-tool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/secret-tool/"
-description: "Manage passwords securely with Secret Tool. Store, retrieve, and delete secrets using command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/secret-tool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/secret-tool/'
+description: 'Manage passwords securely with Secret Tool. Store, retrieve, and delete secrets using command line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - password manager
@@ -22,8 +22,8 @@ features:
   - Search for secrets by key
   - Delete stored secrets
   - Communicate with Freedesktop secret service implementations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # secret-tool

@@ -1,29 +1,29 @@
 ---
-title: "Compress Files - Efficient Compression Tool | Online Free DevTools by Hexmos"
+title: 'Compress Files - Efficient Compression Tool | Online Free DevTools by Hexmos'
 name: ect
-path: "/freedevtools/tldr/common/ect/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ect/"
-description: "Compress files efficiently with Efficient Compression Tool (ECT). Optimize PNG, JPEG, gzip and Zip files seamlessly with multithreading. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ect/'
+description: 'Compress files efficiently with Efficient Compression Tool (ECT). Optimize PNG, JPEG, gzip and Zip files seamlessly with multithreading. Free online tool, no registration required.'
 category: common
 keywords:
-- file compression
-- efficient compression tool
-- png compressor
-- jpeg optimizer
-- gzip compressor
-- zip file optimizer
-- command line compression
-- lossless compression
-- image optimization
-- file size reduction
+  - file compression
+  - efficient compression tool
+  - png compressor
+  - jpeg optimizer
+  - gzip compressor
+  - zip file optimizer
+  - command line compression
+  - lossless compression
+  - image optimization
+  - file size reduction
 features:
   - Compress individual files via command-line interface.
   - Optimize PNG, JPEG, gzip, and Zip files with adjustable compression levels.
   - Utilize multithreading for significantly faster compression speeds.
   - Recursively compress all files within specified directories.
   - Preserve original file timestamps during compression for data integrity.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ect

@@ -1,29 +1,29 @@
 ---
-title: "NFSstat - Control NFS Server Calls | Online Free DevTools by Hexmos"
+title: 'NFSstat - Control NFS Server Calls | Online Free DevTools by Hexmos'
 name: nfsstat
-path: "/freedevtools/tldr/windows/nfsstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/nfsstat/"
-description: "Control NFS server calls with NFSstat. Display NFS statistics, reset counters, and monitor network file system performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/nfsstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/nfsstat/'
+description: 'Control NFS server calls with NFSstat. Display NFS statistics, reset counters, and monitor network file system performance. Free online tool, no registration required.'
 category: windows
 keywords:
-- nfs statistics
-- nfsstat windows
-- windows nfs monitoring
-- nfs server statistics
-- network file system statistics
-- nfs performance monitoring
-- nfs counters
-- nfs troubleshooting
-- windows nfsstat command
-- nfs server calls
+  - nfs statistics
+  - nfsstat windows
+  - windows nfs monitoring
+  - nfs server statistics
+  - network file system statistics
+  - nfs performance monitoring
+  - nfs counters
+  - nfs troubleshooting
+  - windows nfsstat command
+  - nfs server calls
 features:
-- Display current NFS server call statistics.
-- Reset NFS server call counters to zero.
-- Monitor NFS performance on Windows.
-- Analyze NFS server activity.
-- Identify potential NFS bottlenecks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current NFS server call statistics.
+  - Reset NFS server call counters to zero.
+  - Monitor NFS performance on Windows.
+  - Analyze NFS server activity.
+  - Identify potential NFS bottlenecks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nfsstat

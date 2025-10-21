@@ -1,29 +1,29 @@
 ---
-title: "XDG Settings - Manage Desktop Environment Settings | Online Free DevTools by Hexmos"
+title: 'XDG Settings - Manage Desktop Environment Settings | Online Free DevTools by Hexmos'
 name: xdg-settings
-path: "/freedevtools/tldr/linux/xdg-settings/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xdg-settings/"
-description: "Manage XDG desktop environment settings with xdg-settings. Configure default applications, URL handlers and more on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xdg-settings/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xdg-settings/'
+description: 'Manage XDG desktop environment settings with xdg-settings. Configure default applications, URL handlers and more on Linux. Free online tool, no registration required.'
 category: linux
 keywords:
-- xdg settings manager
-- desktop environment configuration
-- linux default application
-- url scheme handler linux
-- mime type association linux
-- xdg open settings
-- default web browser linux
-- default pdf viewer linux
-- freedesktop.org standards
-- linux configuration tool
+  - xdg settings manager
+  - desktop environment configuration
+  - linux default application
+  - url scheme handler linux
+  - mime type association linux
+  - xdg open settings
+  - default web browser linux
+  - default pdf viewer linux
+  - freedesktop.org standards
+  - linux configuration tool
 features:
-- Set the default web browser
-- Configure the default mail handler
-- Assign default application for specific file types
-- View current desktop environment settings
-- Manage URI scheme associations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set the default web browser
+  - Configure the default mail handler
+  - Assign default application for specific file types
+  - View current desktop environment settings
+  - Manage URI scheme associations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xdg-settings

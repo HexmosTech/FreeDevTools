@@ -1,29 +1,29 @@
 ---
-title: "Magick Mogrify - Transform Images | Online Free DevTools by Hexmos"
+title: 'Magick Mogrify - Transform Images | Online Free DevTools by Hexmos'
 name: magick-mogrify
-path: "/freedevtools/tldr/magick/magick-mogrify/"
-canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-mogrify/"
-description: "Transform images with Magick Mogrify. Resize, convert, and apply effects to multiple images simultaneously using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/magick/magick-mogrify/'
+canonical: 'https://hexmos.com/freedevtools/tldr/magick/magick-mogrify/'
+description: 'Transform images with Magick Mogrify. Resize, convert, and apply effects to multiple images simultaneously using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- image transformation
-- batch image processing
-- image resizing
-- image conversion
-- command line image tool
-- magick mogrify command
-- image effect application
-- linux image tools
-- macos image tools
-- image bulk processing
+  - image transformation
+  - batch image processing
+  - image resizing
+  - image conversion
+  - command line image tool
+  - magick mogrify command
+  - image effect application
+  - linux image tools
+  - macos image tools
+  - image bulk processing
 features:
-- Resize multiple images at once
-- Convert images between different formats
-- Apply image effects in batch
-- Adjust image brightness and saturation
-- Optimize GIF image file sizes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Resize multiple images at once
+  - Convert images between different formats
+  - Apply image effects in batch
+  - Adjust image brightness and saturation
+  - Optimize GIF image file sizes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # magick mogrify

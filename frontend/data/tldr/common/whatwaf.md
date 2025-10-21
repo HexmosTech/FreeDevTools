@@ -1,29 +1,29 @@
 ---
-title: "Detect WAF - Detect Web Application Firewalls | Online Free DevTools by Hexmos"
+title: 'Detect WAF - Detect Web Application Firewalls | Online Free DevTools by Hexmos'
 name: whatwaf
-path: "/freedevtools/tldr/common/whatwaf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/whatwaf/"
-description: "Detect web application firewalls with WhatWaf. Identify security systems protecting web applications. Analyze URLs & bypass common protections. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/whatwaf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/whatwaf/'
+description: 'Detect web application firewalls with WhatWaf. Identify security systems protecting web applications. Analyze URLs & bypass common protections. Free online tool, no registration required.'
 category: common
 keywords:
-- waf detection
-- web application firewall detection
-- security system identification
-- web security analysis
-- waf bypass tools
-- web application penetration testing
-- web security vulnerability scanner
-- network security analysis
-- whatwaf tool
-- web firewall scanner
+  - waf detection
+  - web application firewall detection
+  - security system identification
+  - web security analysis
+  - waf bypass tools
+  - web application penetration testing
+  - web security vulnerability scanner
+  - network security analysis
+  - whatwaf tool
+  - web firewall scanner
 features:
-- Detect web application firewalls and protection systems.
-- Test multiple URLs for WAF presence in parallel.
-- Utilize custom payloads and proxies for advanced detection.
-- Bypass WAF rules through tamper scripts.
-- Identify a wide range of WAF technologies.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Detect web application firewalls and protection systems.
+  - Test multiple URLs for WAF presence in parallel.
+  - Utilize custom payloads and proxies for advanced detection.
+  - Bypass WAF rules through tamper scripts.
+  - Identify a wide range of WAF technologies.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # whatwaf

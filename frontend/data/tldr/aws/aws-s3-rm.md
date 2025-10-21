@@ -1,29 +1,29 @@
 ---
-title: "Delete S3 Objects - Remove Data on AWS S3 | Online Free DevTools by Hexmos"
+title: 'Delete S3 Objects - Remove Data on AWS S3 | Online Free DevTools by Hexmos'
 name: aws-s3-rm
-path: "/freedevtools/tldr/aws/aws-s3-rm/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-s3-rm/"
-description: "Delete S3 objects with AWS S3 rm. Manage and remove data efficiently using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-s3-rm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-s3-rm/'
+description: 'Delete S3 objects with AWS S3 rm. Manage and remove data efficiently using command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- S3 object deletion
-- AWS S3 data removal
-- S3 bucket emptying
-- AWS S3 command line
-- S3 access point deletion
-- AWS cloud storage management
-- Recursive S3 deletion
-- AWS S3 dry run
-- Linux S3 object removal
-- MacOS S3 data management
+  - S3 object deletion
+  - AWS S3 data removal
+  - S3 bucket emptying
+  - AWS S3 command line
+  - S3 access point deletion
+  - AWS cloud storage management
+  - Recursive S3 deletion
+  - AWS S3 dry run
+  - Linux S3 object removal
+  - MacOS S3 data management
 features:
-- Delete specific S3 objects
-- Preview S3 object deletion with dry-run
-- Remove objects from specific S3 access points
-- Recursively delete all objects from an S3 bucket
-- Display help documentation for the command
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete specific S3 objects
+  - Preview S3 object deletion with dry-run
+  - Remove objects from specific S3 access points
+  - Recursively delete all objects from an S3 bucket
+  - Display help documentation for the command
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws s3 rm

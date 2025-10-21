@@ -1,29 +1,29 @@
 ---
-title: "Download Manager - Control Downloads with aria2c | Online Free DevTools by Hexmos"
+title: 'Download Manager - Control Downloads with aria2c | Online Free DevTools by Hexmos'
 name: aria2c
-path: "/freedevtools/tldr/common/aria2c/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/aria2c/"
-description: "Control downloads effortlessly with aria2c, a powerful download manager. Supports HTTP, FTP, SFTP, BitTorrent, and Metalink protocols. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/aria2c/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/aria2c/'
+description: 'Control downloads effortlessly with aria2c, a powerful download manager. Supports HTTP, FTP, SFTP, BitTorrent, and Metalink protocols. Free online tool, no registration required.'
 category: common
 keywords:
-- download manager
-- command line downloader
-- aria2c download
-- http downloader
-- ftp downloader
-- torrent downloader
-- metalink downloader
-- sftp downloader
-- linux download utility
-- macos download utility
+  - download manager
+  - command line downloader
+  - aria2c download
+  - http downloader
+  - ftp downloader
+  - torrent downloader
+  - metalink downloader
+  - sftp downloader
+  - linux download utility
+  - macos download utility
 features:
-- Download files from HTTP, HTTPS, FTP, SFTP.
-- Download torrents and Metalink files.
-- Download multiple files concurrently.
-- Verify file integrity using checksums.
-- Limit download speed to a specified value.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download files from HTTP, HTTPS, FTP, SFTP.
+  - Download torrents and Metalink files.
+  - Download multiple files concurrently.
+  - Verify file integrity using checksums.
+  - Limit download speed to a specified value.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aria2c

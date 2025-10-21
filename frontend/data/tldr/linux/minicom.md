@@ -1,9 +1,9 @@
 ---
-title: "Control Serial Port - minicom Communication | Online Free DevTools by Hexmos"
+title: 'Control Serial Port - minicom Communication | Online Free DevTools by Hexmos'
 name: minicom
-path: "/freedevtools/tldr/linux/minicom/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/minicom/"
-description: "Control serial port communication with minicom. Configure baud rates, capture output, and interact with serial devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/minicom/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/minicom/'
+description: 'Control serial port communication with minicom. Configure baud rates, capture output, and interact with serial devices. Free online tool, no registration required.'
 category: linux
 keywords:
   - serial port communication
@@ -22,8 +22,8 @@ features:
   - Enter interactive configuration menu before communication
   - Communicate with various serial devices via the command line
   - Exit minicom using a keyboard shortcut
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # minicom

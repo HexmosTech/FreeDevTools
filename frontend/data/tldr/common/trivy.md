@@ -1,29 +1,29 @@
 ---
-title: "Scan Vulnerabilities - Trivy Security Scanner | Online Free DevTools by Hexmos"
+title: 'Scan Vulnerabilities - Trivy Security Scanner | Online Free DevTools by Hexmos'
 name: trivy
-path: "/freedevtools/tldr/common/trivy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/trivy/"
-description: "Scan vulnerabilities with Trivy, a comprehensive security scanner for container images and file systems. Identify and fix security issues quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/trivy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/trivy/'
+description: 'Scan vulnerabilities with Trivy, a comprehensive security scanner for container images and file systems. Identify and fix security issues quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- container image scanner
-- vulnerability scanning
-- security scanner
-- trivy scan
-- docker image vulnerability scan
-- filesystem vulnerability scan
-- git repository vulnerability scan
-- configuration misconfiguration scan
-- iac security scan
-- sarif report generation
+  - container image scanner
+  - vulnerability scanning
+  - security scanner
+  - trivy scan
+  - docker image vulnerability scan
+  - filesystem vulnerability scan
+  - git repository vulnerability scan
+  - configuration misconfiguration scan
+  - iac security scan
+  - sarif report generation
 features:
-- Scan Docker images for vulnerabilities and secrets
-- Scan file systems for vulnerabilities and misconfigurations
-- Scan IaC configurations for misconfigurations
-- Scan Git repositories for vulnerabilities up to specific commit
-- Generate SARIF reports for detailed vulnerability analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan Docker images for vulnerabilities and secrets
+  - Scan file systems for vulnerabilities and misconfigurations
+  - Scan IaC configurations for misconfigurations
+  - Scan Git repositories for vulnerabilities up to specific commit
+  - Generate SARIF reports for detailed vulnerability analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trivy

@@ -1,29 +1,29 @@
 ---
-title: "Create JAR Archive - Package Java Applications | Online Free DevTools by Hexmos"
+title: 'Create JAR Archive - Package Java Applications | Online Free DevTools by Hexmos'
 name: jar
-path: "/freedevtools/tldr/common/jar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jar/"
-description: "Create JAR archives with JAR. Package Java applications and libraries efficiently for distribution. Free online tool, no registration required. Easily compress files."
+path: '/freedevtools/tldr/common/jar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jar/'
+description: 'Create JAR archives with JAR. Package Java applications and libraries efficiently for distribution. Free online tool, no registration required. Easily compress files.'
 category: common
 keywords:
-- jar archive creator
-- java package manager
-- war file extractor
-- jar file archiver
-- compress java files
-- java application packager
-- jar file viewer
-- jar file listing
-- java library packager
-- archive files
+  - jar archive creator
+  - java package manager
+  - war file extractor
+  - jar file archiver
+  - compress java files
+  - java application packager
+  - jar file viewer
+  - jar file listing
+  - java library packager
+  - archive files
 features:
-- Create JAR archives from directory contents.
-- Extract JAR and WAR files to the current directory.
-- List the contents of a JAR or WAR file.
-- View JAR/WAR file contents with verbose output.
-- Recursively archive all files in a directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create JAR archives from directory contents.
+  - Extract JAR and WAR files to the current directory.
+  - List the contents of a JAR or WAR file.
+  - View JAR/WAR file contents with verbose output.
+  - Recursively archive all files in a directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jar

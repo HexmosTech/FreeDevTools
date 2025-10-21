@@ -1,29 +1,29 @@
 ---
-title: "Go Install - Compile and Install Go Packages | Online Free DevTools by Hexmos"
+title: 'Go Install - Compile and Install Go Packages | Online Free DevTools by Hexmos'
 name: go-install
-path: "/freedevtools/tldr/go/go-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/go/go-install/"
-description: "Compile Go packages instantly with Go Install. Easily manage dependencies and install specific versions of programs using the go command. Free online tool, no registration required."
+path: '/freedevtools/tldr/go/go-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/go/go-install/'
+description: 'Compile Go packages instantly with Go Install. Easily manage dependencies and install specific versions of programs using the go command. Free online tool, no registration required.'
 category: common
 keywords:
-- Go package installer
-- Go install command
-- Go dependency management
-- Go version control
-- Go program compiler
-- Go package compilation
-- Go application installer
-- Go modules
-- Go build tool
-- Go package manager
+  - Go package installer
+  - Go install command
+  - Go dependency management
+  - Go version control
+  - Go program compiler
+  - Go package compilation
+  - Go application installer
+  - Go modules
+  - Go build tool
+  - Go package manager
 features:
-- Compile and install Go packages from import paths
-- Install the latest version of a program, ignoring go.mod
-- Install a specific local Go package
-- Install a program at the version selected by go.mod
-- Manage Go dependencies with command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile and install Go packages from import paths
+  - Install the latest version of a program, ignoring go.mod
+  - Install a specific local Go package
+  - Install a program at the version selected by go.mod
+  - Manage Go dependencies with command-line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go install

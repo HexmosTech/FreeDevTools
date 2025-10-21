@@ -1,29 +1,29 @@
 ---
-title: "Control SSH Shell - Xxh | Online Free DevTools by Hexmos"
+title: 'Control SSH Shell - Xxh | Online Free DevTools by Hexmos'
 name: xxh
-path: "/freedevtools/tldr/common/xxh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xxh/"
-description: "Control SSH shells with Xxh. Securely manage and customize your shell environment across SSH sessions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xxh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xxh/'
+description: 'Control SSH shells with Xxh. Securely manage and customize your shell environment across SSH sessions. Free online tool, no registration required.'
 category: common
 keywords:
-- ssh shell manager
-- remote shell customization
-- xxh ssh configuration
-- portable shell environment
-- secure ssh session
-- linux shell management
-- macos ssh control
-- cross platform shell
-- ssh session persistence
-- remote command execution
+  - ssh shell manager
+  - remote shell customization
+  - xxh ssh configuration
+  - portable shell environment
+  - secure ssh session
+  - linux shell management
+  - macos ssh control
+  - cross platform shell
+  - ssh session persistence
+  - remote command execution
 features:
-- Securely connect to remote hosts with shell customizations
-- Install custom shell environments on target machines
-- Execute commands within customized SSH sessions
-- Manage shell configurations across multiple hosts
-- Set environment variables for remote shell processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Securely connect to remote hosts with shell customizations
+  - Install custom shell environments on target machines
+  - Execute commands within customized SSH sessions
+  - Manage shell configurations across multiple hosts
+  - Set environment variables for remote shell processes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xxh

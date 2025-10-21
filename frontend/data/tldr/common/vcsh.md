@@ -1,29 +1,29 @@
 ---
-title: "Control Version Control - Manage Repositories with vcsh | Online Free DevTools by Hexmos"
+title: 'Control Version Control - Manage Repositories with vcsh | Online Free DevTools by Hexmos'
 name: vcsh
-path: "/freedevtools/tldr/common/vcsh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vcsh/"
-description: "Control your version control with vcsh, a home directory version management tool. Clone, list, and execute Git commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vcsh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vcsh/'
+description: 'Control your version control with vcsh, a home directory version management tool. Clone, list, and execute Git commands. Free online tool, no registration required.'
 category: common
 keywords:
-- version control system
-- vcsh repository management
-- home directory versioning
-- git repository manager
-- dotfiles management tool
-- config file version control
-- command-line version control
-- repository cloning tool
-- linux version control
-- macos version control
+  - version control system
+  - vcsh repository management
+  - home directory versioning
+  - git repository manager
+  - dotfiles management tool
+  - config file version control
+  - command-line version control
+  - repository cloning tool
+  - linux version control
+  - macos version control
 features:
-- Initialize new Git repositories
-- Clone existing Git repositories
-- List managed repositories
-- Execute custom Git commands
-- Write custom .gitignore files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new Git repositories
+  - Clone existing Git repositories
+  - List managed repositories
+  - Execute custom Git commands
+  - Write custom .gitignore files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vcsh

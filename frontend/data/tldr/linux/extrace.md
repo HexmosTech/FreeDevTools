@@ -1,9 +1,9 @@
 ---
-title: "Trace Exec Calls - Control Process Execution | Online Free DevTools by Hexmos"
+title: 'Trace Exec Calls - Control Process Execution | Online Free DevTools by Hexmos'
 name: extrace
-path: "/freedevtools/tldr/linux/extrace/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/extrace/"
-description: "Control process execution with extrace, a powerful command-line tool for tracing exec() calls.  Monitor system activity and debug applications easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/extrace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/extrace/'
+description: 'Control process execution with extrace, a powerful command-line tool for tracing exec() calls.  Monitor system activity and debug applications easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - process tracing command
@@ -22,8 +22,8 @@ features:
   - Display the working directory of each process.
   - Resolve the full path of each executable.
   - Show the user running each process.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # extrace

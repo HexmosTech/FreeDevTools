@@ -1,29 +1,29 @@
 ---
-title: "Git Stash - Manage Local Changes | Online Free DevTools by Hexmos"
+title: 'Git Stash - Manage Local Changes | Online Free DevTools by Hexmos'
 name: git-stash
-path: "/freedevtools/tldr/git/git-stash/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-stash/"
-description: "Manage Git stashes with Git Stash command. Stash changes, list stashes, and apply stashes. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-stash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-stash/'
+description: 'Manage Git stashes with Git Stash command. Stash changes, list stashes, and apply stashes. Free online tool, no registration required.'
 category: common
 keywords:
-- git stash changes
-- stash local changes git
-- git temporary stash
-- git stash list
-- git stash apply
-- git stash pop
-- git stash untracked
-- git stash patch
-- git stash message
-- git stash clear
+  - git stash changes
+  - stash local changes git
+  - git temporary stash
+  - git stash list
+  - git stash apply
+  - git stash pop
+  - git stash untracked
+  - git stash patch
+  - git stash message
+  - git stash clear
 features:
-- Stash changes with a custom message.
-- Include untracked files in a stash.
-- Stash changes interactively using a patch.
-- List and view available stashes.
-- Apply or drop stashed changes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Stash changes with a custom message.
+  - Include untracked files in a stash.
+  - Stash changes interactively using a patch.
+  - List and view available stashes.
+  - Apply or drop stashed changes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git stash

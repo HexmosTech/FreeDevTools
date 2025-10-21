@@ -1,29 +1,29 @@
 ---
-title: "Index Crane Images - Modify Container Registries | Online Free DevTools by Hexmos"
+title: 'Index Crane Images - Modify Container Registries | Online Free DevTools by Hexmos'
 name: crane-index
-path: "/freedevtools/tldr/crane/crane-index/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-index/"
-description: "Index Crane images easily to modify container registries with crane-index. Append or filter images within your index for improved efficiency. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-index/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-index/'
+description: 'Index Crane images easily to modify container registries with crane-index. Append or filter images within your index for improved efficiency. Free online tool, no registration required.'
 category: common
 keywords:
-- crane image index
-- container registry manipulation
-- docker image management
-- oci index modification
-- crane append image
-- crane filter image
-- go-containerregistry index
-- command line container tools
-- container image indexer
-- crane image tools
+  - crane image index
+  - container registry manipulation
+  - docker image management
+  - oci index modification
+  - crane append image
+  - crane filter image
+  - go-containerregistry index
+  - command line container tools
+  - container image indexer
+  - crane image tools
 features:
-- Append images to an existing index
-- Filter images from a container index
-- Modify OCI compliant image indexes
-- Manage container registries via CLI
-- Simplify container image organization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Append images to an existing index
+  - Filter images from a container index
+  - Modify OCI compliant image indexes
+  - Manage container registries via CLI
+  - Simplify container image organization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane index

@@ -1,29 +1,29 @@
 ---
-title: "Manage S3 Buckets - Control S3 Storage with S3cmd | Online Free DevTools by Hexmos"
+title: 'Manage S3 Buckets - Control S3 Storage with S3cmd | Online Free DevTools by Hexmos'
 name: s3cmd
-path: "/freedevtools/tldr/common/s3cmd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/s3cmd/"
-description: "Manage S3 buckets and objects effectively with S3cmd. Upload, download, and control your S3 compatible object storage from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/s3cmd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/s3cmd/'
+description: 'Manage S3 buckets and objects effectively with S3cmd. Upload, download, and control your S3 compatible object storage from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- S3 bucket manager
-- S3 object storage control
-- S3cmd command line tool
-- AWS S3 manager
-- Command line S3 client
-- S3 data uploader
-- S3 file downloader
-- Object storage management
-- s3cmd linux
-- s3cmd windows
+  - S3 bucket manager
+  - S3 object storage control
+  - S3cmd command line tool
+  - AWS S3 manager
+  - Command line S3 client
+  - S3 data uploader
+  - S3 file downloader
+  - Object storage management
+  - s3cmd linux
+  - s3cmd windows
 features:
-- List S3 buckets and objects
-- Create and delete S3 buckets
-- Upload files to S3
-- Download files from S3
-- Move objects between S3 buckets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List S3 buckets and objects
+  - Create and delete S3 buckets
+  - Upload files to S3
+  - Download files from S3
+  - Move objects between S3 buckets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # s3cmd

@@ -1,29 +1,29 @@
 ---
-title: "Control MQTT Topics - mosquitto_sub | Online Free DevTools by Hexmos"
+title: 'Control MQTT Topics - mosquitto_sub | Online Free DevTools by Hexmos'
 name: mosquitto_sub
-path: "/freedevtools/tldr/common/mosquitto_sub/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mosquitto_sub/"
-description: "Control MQTT topics with mosquitto_sub. Subscribe to topics, filter messages, and monitor broker status. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mosquitto_sub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mosquitto_sub/'
+description: 'Control MQTT topics with mosquitto_sub. Subscribe to topics, filter messages, and monitor broker status. Free online tool, no registration required.'
 category: common
 keywords:
-- MQTT subscriber
-- MQTT topic listener
-- mosquitto_sub command
-- MQTT client
-- Broker status monitor
-- MQTT message filter
-- MQTT topic subscription
-- Command-line MQTT
-- MQTT debug tool
-- IoT message listener
+  - MQTT subscriber
+  - MQTT topic listener
+  - mosquitto_sub command
+  - MQTT client
+  - Broker status monitor
+  - MQTT message filter
+  - MQTT topic subscription
+  - Command-line MQTT
+  - MQTT debug tool
+  - IoT message listener
 features:
-- Subscribe to specific MQTT topics
-- Filter messages based on topic patterns
-- Monitor MQTT broker status
-- Control Quality of Service (QoS) levels
-- Display published messages verbosely
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Subscribe to specific MQTT topics
+  - Filter messages based on topic patterns
+  - Monitor MQTT broker status
+  - Control Quality of Service (QoS) levels
+  - Display published messages verbosely
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mosquitto_sub

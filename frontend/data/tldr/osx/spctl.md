@@ -1,29 +1,29 @@
 ---
-title: "SPCtl - Control Security Policy | Online Free DevTools by Hexmos"
+title: 'SPCtl - Control Security Policy | Online Free DevTools by Hexmos'
 name: spctl
-path: "/freedevtools/tldr/osx/spctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/spctl/"
-description: "Control macOS security policy with SPCtl. Manage Gatekeeper settings, add rules for application execution and enhance system security. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/spctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/spctl/'
+description: 'Control macOS security policy with SPCtl. Manage Gatekeeper settings, add rules for application execution and enhance system security. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS security policy control
-- SPCtl Gatekeeper management
-- Application security assessment macOS
-- macOS security rule configuration
-- Gatekeeper disable macOS
-- Security policy list macOS
-- Application execution authorization macOS
-- macOS code signing management
-- Command line security tool macOS
-- SPCtl security bypass macOS
+  - macOS security policy control
+  - SPCtl Gatekeeper management
+  - Application security assessment macOS
+  - macOS security rule configuration
+  - Gatekeeper disable macOS
+  - Security policy list macOS
+  - Application execution authorization macOS
+  - macOS code signing management
+  - Command line security tool macOS
+  - SPCtl security bypass macOS
 features:
-- Disable or enable Gatekeeper security checks
-- Add rules to allow specific applications to run
-- List all security rules currently active
-- Manage security assessment policies in macOS
-- Configure application security settings via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Disable or enable Gatekeeper security checks
+  - Add rules to allow specific applications to run
+  - List all security rules currently active
+  - Manage security assessment policies in macOS
+  - Configure application security settings via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # spctl

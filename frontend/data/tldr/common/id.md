@@ -1,29 +1,29 @@
 ---
-title: "Display User ID - Manage User Identity | Online Free DevTools by Hexmos"
+title: 'Display User ID - Manage User Identity | Online Free DevTools by Hexmos'
 name: id
-path: "/freedevtools/tldr/common/id/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/id/"
-description: "Display user identity with the id command. Manage user and group IDs, and retrieve user information efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/id/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/id/'
+description: 'Display user identity with the id command. Manage user and group IDs, and retrieve user information efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- display user ID
-- user ID lookup
-- group ID lookup
-- linux user identity
-- macos user identity
-- display user groups
-- command line user info
-- user account details
-- unix user identity
-- posix user info
+  - display user ID
+  - user ID lookup
+  - group ID lookup
+  - linux user identity
+  - macos user identity
+  - display user groups
+  - command line user info
+  - user account details
+  - unix user identity
+  - posix user info
 features:
-- Display current user's UID, GID, and groups.
-- Display user identity by name or number.
-- Display primary group identity.
-- Retrieve user information for a specified user.
-- Show user and group IDs numerically.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display current user's UID, GID, and groups.
+  - Display user identity by name or number.
+  - Display primary group identity.
+  - Retrieve user information for a specified user.
+  - Show user and group IDs numerically.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # id

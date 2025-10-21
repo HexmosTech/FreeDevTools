@@ -1,29 +1,29 @@
 ---
-title: "Generate Website Screenshots - Pageres | Online Free DevTools by Hexmos"
+title: 'Generate Website Screenshots - Pageres | Online Free DevTools by Hexmos'
 name: pageres
-path: "/freedevtools/tldr/common/pageres/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pageres/"
-description: "Generate website screenshots with Pageres. Capture responsive designs across various resolutions and devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pageres/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pageres/'
+description: 'Generate website screenshots with Pageres. Capture responsive designs across various resolutions and devices. Free online tool, no registration required.'
 category: common
 keywords:
-- website screenshot generator
-- responsive screenshot capture
-- pageres command line
-- cross-browser testing
-- webpage image export
-- screenshot resolution tool
-- website snapshot tool
-- HTML screenshot tool
-- command line screenshot
-- headless browser screenshot
+  - website screenshot generator
+  - responsive screenshot capture
+  - pageres command line
+  - cross-browser testing
+  - webpage image export
+  - screenshot resolution tool
+  - website snapshot tool
+  - HTML screenshot tool
+  - command line screenshot
+  - headless browser screenshot
 features:
-- Capture screenshots of multiple URLs at different resolutions.
-- Customize the filename template for saved screenshots.
-- Target and capture specific elements within a webpage.
-- Hide elements on a webpage before capturing the screenshot.
-- Capture screenshots of local HTML files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture screenshots of multiple URLs at different resolutions.
+  - Customize the filename template for saved screenshots.
+  - Target and capture specific elements within a webpage.
+  - Hide elements on a webpage before capturing the screenshot.
+  - Capture screenshots of local HTML files.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pageres

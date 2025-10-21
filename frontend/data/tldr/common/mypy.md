@@ -1,29 +1,29 @@
 ---
-title: "Mypy - Type Check Python Code | Online Free DevTools by Hexmos"
+title: 'Mypy - Type Check Python Code | Online Free DevTools by Hexmos'
 name: mypy
-path: "/freedevtools/tldr/common/mypy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mypy/"
-description: "Type check Python code with Mypy. Improve code quality and catch errors early with static type analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mypy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mypy/'
+description: 'Type check Python code with Mypy. Improve code quality and catch errors early with static type analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- python type checker
-- mypy type hints
-- static type analysis python
-- python code analysis
-- mypy command line
-- type checking python code
-- python static analysis tool
-- mypy configuration
-- python type annotations
-- mypy ignore missing imports
+  - python type checker
+  - mypy type hints
+  - static type analysis python
+  - python code analysis
+  - mypy command line
+  - type checking python code
+  - python static analysis tool
+  - mypy configuration
+  - python type annotations
+  - mypy ignore missing imports
 features:
-- Type check Python files
-- Type check Python modules
-- Type check Python packages
-- Ignore missing imports in Python code
-- Specify custom configuration files for type checking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Type check Python files
+  - Type check Python modules
+  - Type check Python packages
+  - Ignore missing imports in Python code
+  - Specify custom configuration files for type checking
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mypy

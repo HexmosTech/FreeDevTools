@@ -1,9 +1,9 @@
 ---
-title: "BTRFS Rescue - Recover Filesystem | Online Free DevTools by Hexmos"
+title: 'BTRFS Rescue - Recover Filesystem | Online Free DevTools by Hexmos'
 name: btrfs-rescue
-path: "/freedevtools/tldr/linux/btrfs-rescue/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-rescue/"
-description: "Recover damaged BTRFS filesystems with btrfs-rescue.  Repair superblocks, fix device size issues, and recover from interrupted transactions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/btrfs-rescue/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/btrfs-rescue/'
+description: 'Recover damaged BTRFS filesystems with btrfs-rescue.  Repair superblocks, fix device size issues, and recover from interrupted transactions. Free online tool, no registration required.'
 category: linux
 keywords:
   - btrfs filesystem recovery
@@ -22,8 +22,8 @@ features:
   - Recovers corrupted superblocks from backups.
   - Recovers from interrupted transactions.
   - Creates a `/dev/btrfs-control` control device if needed.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btrfs rescue

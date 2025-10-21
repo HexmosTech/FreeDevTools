@@ -1,9 +1,9 @@
 ---
-title: "Create Datashader Visualizations - CLI Tool | Online Free DevTools by Hexmos"
+title: 'Create Datashader Visualizations - CLI Tool | Online Free DevTools by Hexmos'
 name: datashader_cli
-path: "/freedevtools/tldr/common/datashader_cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/datashader_cli/"
-description: "Create datashader visualizations with datashader_cli. Generate shaded scatter plots and geospatial data visualizations easily via the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/datashader_cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/datashader_cli/'
+description: 'Create datashader visualizations with datashader_cli. Generate shaded scatter plots and geospatial data visualizations easily via the command line. Free online tool, no registration required.'
 category: common
 keywords:
   - datashader visualization
@@ -22,8 +22,8 @@ features:
   - Render images using matplotlib
   - Customize background colors for visualizations
   - Generate visualizations from command line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # datashader_cli

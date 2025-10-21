@@ -1,28 +1,28 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import QrcodeGeneratorSkeleton from "./_QrcodeGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import QrcodeGeneratorSkeleton from './_QrcodeGeneratorSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { getToolByKey, type Tool } from "@/config/tools";
-import QRCode from "qrcode";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { getToolByKey, type Tool } from '@/config/tools';
+import QRCode from 'qrcode';
+import AdBanner from '../../../components/banner/AdBanner';
 
-type ErrorCorrectionLevel = "low" | "medium" | "quartile" | "high";
+type ErrorCorrectionLevel = 'low' | 'medium' | 'quartile' | 'high';
 
 const generateQRCode = async (
   text: string,
@@ -31,28 +31,28 @@ const generateQRCode = async (
   const qrOptions = {
     errorCorrectionLevel: options.errorCorrectionLevel
       .charAt(0)
-      .toUpperCase() as "L" | "M" | "Q" | "H",
+      .toUpperCase() as 'L' | 'M' | 'Q' | 'H',
     scale: options.scale,
     margin: 2,
     color: {
-      dark: "#000000",
-      light: "#FFFFFF",
+      dark: '#000000',
+      light: '#FFFFFF',
     },
   };
 
   // Map error correction levels
   switch (options.errorCorrectionLevel) {
-    case "low":
-      qrOptions.errorCorrectionLevel = "L";
+    case 'low':
+      qrOptions.errorCorrectionLevel = 'L';
       break;
-    case "medium":
-      qrOptions.errorCorrectionLevel = "M";
+    case 'medium':
+      qrOptions.errorCorrectionLevel = 'M';
       break;
-    case "quartile":
-      qrOptions.errorCorrectionLevel = "Q";
+    case 'quartile':
+      qrOptions.errorCorrectionLevel = 'Q';
       break;
-    case "high":
-      qrOptions.errorCorrectionLevel = "H";
+    case 'high':
+      qrOptions.errorCorrectionLevel = 'H';
       break;
   }
 
@@ -60,14 +60,14 @@ const generateQRCode = async (
 };
 
 const QrcodeGenerator: React.FC = () => {
-  const toolConfig: Tool = getToolByKey("qrcode-generator")!;
-  const [input, setInput] = useState("https://hexmos.com/freedevtools");
-  const [qrCodeUrl, setQrCodeUrl] = useState("");
-  const [error, setError] = useState("");
+  const toolConfig: Tool = getToolByKey('qrcode-generator')!;
+  const [input, setInput] = useState('https://hexmos.com/freedevtools');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [errorCorrectionLevel, setErrorCorrectionLevel] =
-    useState<ErrorCorrectionLevel>("medium");
-  const [scale, setScale] = useState("4");
+    useState<ErrorCorrectionLevel>('medium');
+  const [scale, setScale] = useState('4');
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
@@ -79,12 +79,12 @@ const QrcodeGenerator: React.FC = () => {
 
   const generateQR = useCallback(async () => {
     if (!input.trim()) {
-      setQrCodeUrl("");
+      setQrCodeUrl('');
       return;
     }
 
     setIsGenerating(true);
-    setError("");
+    setError('');
 
     try {
       const dataUrl = await generateQRCode(input, {
@@ -93,9 +93,9 @@ const QrcodeGenerator: React.FC = () => {
       });
       setQrCodeUrl(dataUrl);
     } catch (err: any) {
-      setError(err.message || "Failed to generate QR code");
-      setQrCodeUrl("");
-      toast.error("Failed to generate QR code");
+      setError(err.message || 'Failed to generate QR code');
+      setQrCodeUrl('');
+      toast.error('Failed to generate QR code');
     } finally {
       setIsGenerating(false);
     }
@@ -110,30 +110,30 @@ const QrcodeGenerator: React.FC = () => {
   };
 
   const handleClear = () => {
-    setInput("");
-    setQrCodeUrl("");
-    setError("");
+    setInput('');
+    setQrCodeUrl('');
+    setError('');
   };
 
   const handleDownload = () => {
     if (!qrCodeUrl) return;
 
-    const link = document.createElement("a");
-    link.download = "qrcode.png";
+    const link = document.createElement('a');
+    link.download = 'qrcode.png';
     link.href = qrCodeUrl;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success("QR code downloaded successfully!");
+    toast.success('QR code downloaded successfully!');
   };
 
   const loadSample = () => {
     const samples = [
-      "https://hexmos.com/freedevtools",
-      "Hello, World! This is a QR code.",
-      "mailto:contact@example.com",
-      "tel:+1234567890",
-      "Contact: John Doe\nPhone: +1234567890\nEmail: john@example.com",
+      'https://hexmos.com/freedevtools',
+      'Hello, World! This is a QR code.',
+      'mailto:contact@example.com',
+      'tel:+1234567890',
+      'Contact: John Doe\nPhone: +1234567890\nEmail: john@example.com',
     ];
     const randomSample = samples[Math.floor(Math.random() * samples.length)];
     setInput(randomSample);
@@ -141,7 +141,7 @@ const QrcodeGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead name={toolConfig.name} description={toolConfig.description} />
@@ -277,7 +277,7 @@ const QrcodeGenerator: React.FC = () => {
                             src={qrCodeUrl}
                             alt="Generated QR Code"
                             className="max-w-full max-h-[280px] mx-auto rounded-lg"
-                            style={{ imageRendering: "pixelated" }}
+                            style={{ imageRendering: 'pixelated' }}
                           />
                           <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                             Click download to save as PNG
@@ -407,25 +407,25 @@ const QrcodeGenerator: React.FC = () => {
                       <div>
                         <span className="text-blue-600 dark:text-blue-400">
                           URL:
-                        </span>{" "}
+                        </span>{' '}
                         https://example.com
                       </div>
                       <div>
                         <span className="text-green-600 dark:text-green-400">
                           Email:
-                        </span>{" "}
+                        </span>{' '}
                         mailto:contact@example.com
                       </div>
                       <div>
                         <span className="text-purple-600 dark:text-purple-400">
                           Phone:
-                        </span>{" "}
+                        </span>{' '}
                         tel:+1234567890
                       </div>
                       <div>
                         <span className="text-orange-600 dark:text-orange-400">
                           WiFi:
-                        </span>{" "}
+                        </span>{' '}
                         WIFI:T:WPA;S:NetworkName;P:Password;;
                       </div>
                     </div>

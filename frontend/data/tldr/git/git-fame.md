@@ -1,29 +1,29 @@
 ---
-title: "Git Fame - Analyze Code Contributions | Online Free DevTools by Hexmos"
+title: 'Git Fame - Analyze Code Contributions | Online Free DevTools by Hexmos'
 name: git-fame
-path: "/freedevtools/tldr/git/git-fame/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-fame/"
-description: "Analyze code contributions with Git Fame, providing insights into developer activity and effort within your Git repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-fame/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-fame/'
+description: 'Analyze code contributions with Git Fame, providing insights into developer activity and effort within your Git repository. Free online tool, no registration required.'
 category: common
 keywords:
-- git contribution analyzer
-- git authorship tracking
-- code contribution metrics
-- repository activity analysis
-- git code ownership
-- git blame alternative
-- command line git tool
-- git developer statistics
-- code authorship attribution
-- git contribution summary
+  - git contribution analyzer
+  - git authorship tracking
+  - code contribution metrics
+  - repository activity analysis
+  - git code ownership
+  - git blame alternative
+  - command line git tool
+  - git developer statistics
+  - code authorship attribution
+  - git contribution summary
 features:
-- Calculate contributions per file and author
-- Exclude specific files or directories from analysis
-- Filter contributions by date range
-- Display results in multiple formats (pipe, YAML, JSON, CSV, TSV)
-- Identify code moved or copied within the repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate contributions per file and author
+  - Exclude specific files or directories from analysis
+  - Filter contributions by date range
+  - Display results in multiple formats (pipe, YAML, JSON, CSV, TSV)
+  - Identify code moved or copied within the repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git fame

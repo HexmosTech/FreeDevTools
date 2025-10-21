@@ -1,29 +1,29 @@
 ---
-title: "Texdoc Search - Find LaTeX Documentation | Online Free DevTools by Hexmos"
+title: 'Texdoc Search - Find LaTeX Documentation | Online Free DevTools by Hexmos'
 name: texdoc
-path: "/freedevtools/tldr/common/texdoc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/texdoc/"
-description: "Search LaTeX documentation with Texdoc. Quickly find relevant guides and package information for TeX and LaTeX commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/texdoc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/texdoc/'
+description: 'Search LaTeX documentation with Texdoc. Quickly find relevant guides and package information for TeX and LaTeX commands. Free online tool, no registration required.'
 category: common
 keywords:
-- LaTeX documentation search
-- TeX documentation finder
-- Texdoc command line
-- LaTeX package documentation
-- TeX command reference
-- Find LaTeX help
-- LaTeX documentation viewer
-- TeX user guide
-- LaTeX tutorial
-- Command line documentation tool
+  - LaTeX documentation search
+  - TeX documentation finder
+  - Texdoc command line
+  - LaTeX package documentation
+  - TeX command reference
+  - Find LaTeX help
+  - LaTeX documentation viewer
+  - TeX user guide
+  - LaTeX tutorial
+  - Command line documentation tool
 features:
-- Search for LaTeX documentation by name
-- List potential documentation matches
-- Open documentation in the default PDF viewer
-- Access full texdoc documentation
-- Find information on LaTeX packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for LaTeX documentation by name
+  - List potential documentation matches
+  - Open documentation in the default PDF viewer
+  - Access full texdoc documentation
+  - Find information on LaTeX packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # texdoc

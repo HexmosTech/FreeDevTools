@@ -1,29 +1,29 @@
 ---
-title: "Cargo Rustc - Compile Rust Packages | Online Free DevTools by Hexmos"
+title: 'Cargo Rustc - Compile Rust Packages | Online Free DevTools by Hexmos'
 name: cargo-rustc
-path: "/freedevtools/tldr/cargo/cargo-rustc/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-rustc/"
-description: "Compile Rust packages efficiently with Cargo Rustc. Customize build options and optimize for size or speed. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-rustc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-rustc/'
+description: 'Compile Rust packages efficiently with Cargo Rustc. Customize build options and optimize for size or speed. Free online tool, no registration required.'
 category: common
 keywords:
-- rust package compiler
-- cargo build options
-- rustc flags
-- rust optimization tool
-- rust release build
-- rust unsafe code check
-- rust target cpu native
-- rust opt level control
-- rust size optimization
-- rust binary build
+  - rust package compiler
+  - cargo build options
+  - rustc flags
+  - rust optimization tool
+  - rust release build
+  - rust unsafe code check
+  - rust target cpu native
+  - rust opt level control
+  - rust size optimization
+  - rust binary build
 features:
-- Compile Rust packages with custom rustc options.
-- Optimize Rust builds for release mode.
-- Compile Rust code with architecture-specific optimizations.
-- Enable size or speed optimizations for Rust projects.
-- Check Rust packages for unsafe code usage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Rust packages with custom rustc options.
+  - Optimize Rust builds for release mode.
+  - Compile Rust code with architecture-specific optimizations.
+  - Enable size or speed optimizations for Rust projects.
+  - Check Rust packages for unsafe code usage.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo rustc

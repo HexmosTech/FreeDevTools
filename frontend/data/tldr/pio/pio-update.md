@@ -1,29 +1,29 @@
 ---
-title: "PlatformIO Update - Control Core Packages | Online Free DevTools by Hexmos"
+title: 'PlatformIO Update - Control Core Packages | Online Free DevTools by Hexmos'
 name: pio-update
-path: "/freedevtools/tldr/pio/pio-update/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-update/"
-description: "Control PlatformIO core packages, platforms, and libraries with PlatformIO Update. Manage dependencies and ensure your environment is up-to-date. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-update/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-update/'
+description: 'Control PlatformIO core packages, platforms, and libraries with PlatformIO Update. Manage dependencies and ensure your environment is up-to-date. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO package update
-- PlatformIO library update
-- PlatformIO core update
-- PIO package manager
-- PlatformIO dependency management
-- Embedded system update
-- IoT development update
-- PIO platform update
-- PlatformIO CLI update
-- PlatformIO environment management
+  - PlatformIO package update
+  - PlatformIO library update
+  - PlatformIO core update
+  - PIO package manager
+  - PlatformIO dependency management
+  - Embedded system update
+  - IoT development update
+  - PIO platform update
+  - PlatformIO CLI update
+  - PlatformIO environment management
 features:
-- Update all PlatformIO packages, platforms, and libraries
-- Update only PlatformIO core packages
-- Check for available updates without installing
-- Manage embedded development environment
-- Keep PlatformIO environment up-to-date
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update all PlatformIO packages, platforms, and libraries
+  - Update only PlatformIO core packages
+  - Check for available updates without installing
+  - Manage embedded development environment
+  - Keep PlatformIO environment up-to-date
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio update

@@ -1,29 +1,29 @@
 ---
-title: "Flash Rockchip Devices - Control Boot Firmware | Online Free DevTools by Hexmos"
+title: 'Flash Rockchip Devices - Control Boot Firmware | Online Free DevTools by Hexmos'
 name: rkdeveloptool
-path: "/freedevtools/tldr/common/rkdeveloptool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rkdeveloptool/"
-description: "Flash Rockchip devices with rkdeveloptool. Program bootloaders, update firmware, and manage partitions on Rockchip-based devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rkdeveloptool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rkdeveloptool/'
+description: 'Flash Rockchip devices with rkdeveloptool. Program bootloaders, update firmware, and manage partitions on Rockchip-based devices. Free online tool, no registration required.'
 category: common
 keywords:
-- Rockchip flash tool
-- Rockchip firmware update
-- Rockchip bootloader
-- Rockchip device programming
-- Rockchip image writing
-- Maskrom tool
-- Bootrom tool
-- Linux flash tool
-- USB flash tool
-- Rockchip partition manager
+  - Rockchip flash tool
+  - Rockchip firmware update
+  - Rockchip bootloader
+  - Rockchip device programming
+  - Rockchip image writing
+  - Maskrom tool
+  - Bootrom tool
+  - Linux flash tool
+  - USB flash tool
+  - Rockchip partition manager
 features:
-- Flash bootloaders to Rockchip devices
-- Update boot firmware via USB
-- Write images to GPT partitions
-- List connected Rockchip devices
-- Reset and reboot Rockchip devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Flash bootloaders to Rockchip devices
+  - Update boot firmware via USB
+  - Write images to GPT partitions
+  - List connected Rockchip devices
+  - Reset and reboot Rockchip devices
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rkdeveloptool

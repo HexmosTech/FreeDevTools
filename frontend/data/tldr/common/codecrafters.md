@@ -1,29 +1,29 @@
 ---
-title: "Codecrafters - Practice Software Development | Online Free DevTools by Hexmos"
+title: 'Codecrafters - Practice Software Development | Online Free DevTools by Hexmos'
 name: codecrafters
-path: "/freedevtools/tldr/common/codecrafters/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/codecrafters/"
-description: "Practice software development with Codecrafters, a CLI tool for hands-on coding challenges. Learn new languages and frameworks interactively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/codecrafters/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/codecrafters/'
+description: 'Practice software development with Codecrafters, a CLI tool for hands-on coding challenges. Learn new languages and frameworks interactively. Free online tool, no registration required.'
 category: common
 keywords:
-- codecrafters challenges
-- software development practice
-- coding exercise tool
-- learn coding interactively
-- command-line coding
-- software craftsmanship
-- coding skill improvement
-- interactive learning platform
-- coding challenge platform
-- test driven development
+  - codecrafters challenges
+  - software development practice
+  - coding exercise tool
+  - learn coding interactively
+  - command-line coding
+  - software craftsmanship
+  - coding skill improvement
+  - interactive learning platform
+  - coding challenge platform
+  - test driven development
 features:
-- Run tests without committing changes
-- Test all stages of a Codecrafters project
-- Submit changes to advance to the next stage
-- Practice software development using command-line
-- Improve coding skills through interactive challenges
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run tests without committing changes
+  - Test all stages of a Codecrafters project
+  - Submit changes to advance to the next stage
+  - Practice software development using command-line
+  - Improve coding skills through interactive challenges
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # codecrafters

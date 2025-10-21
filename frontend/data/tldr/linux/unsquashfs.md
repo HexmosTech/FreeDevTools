@@ -1,9 +1,9 @@
 ---
-title: "Unsquashfs - Extract Squashfs Filesystems | Online Free DevTools by Hexmos"
+title: 'Unsquashfs - Extract Squashfs Filesystems | Online Free DevTools by Hexmos'
 name: unsquashfs
-path: "/freedevtools/tldr/linux/unsquashfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/unsquashfs/"
-description: "Extract Squashfs filesystems with unsquashfs.  List and inspect files within Squashfs archives without extraction. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/unsquashfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/unsquashfs/'
+description: 'Extract Squashfs filesystems with unsquashfs.  List and inspect files within Squashfs archives without extraction. Free online tool, no registration required.'
 category: linux
 keywords:
   - squashfs extraction
@@ -22,8 +22,8 @@ features:
   - Display detailed file information during extraction.
   - Support for various extraction options and parameters.
   - Efficiently handle large Squashfs archives.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # unsquashfs

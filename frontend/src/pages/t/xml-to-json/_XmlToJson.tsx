@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import XmlToJsonSkeleton from "./_XmlToJsonSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolVideo from "@/components/tool/ToolVideo";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import XmlToJsonSkeleton from './_XmlToJsonSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolVideo from '@/components/tool/ToolVideo';
 import {
   Download,
   FileText,
@@ -16,18 +16,18 @@ import {
   RefreshCw,
   AlertCircle,
   CheckCircle2,
-} from "lucide-react";
-import AdBanner from "../../../components/banner/AdBanner";
+} from 'lucide-react';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const XmlToJson: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [validationStatus, setValidationStatus] = useState<
-    "idle" | "valid" | "invalid"
-  >("idle");
+    'idle' | 'valid' | 'invalid'
+  >('idle');
 
   useEffect(() => {
     // Simulate loading time
@@ -40,27 +40,27 @@ const XmlToJson: React.FC = () => {
   // Real-time validation
   useEffect(() => {
     if (!input.trim()) {
-      setValidationStatus("idle");
-      setError("");
+      setValidationStatus('idle');
+      setError('');
       return;
     }
 
     const validateTimer = setTimeout(() => {
       try {
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(input, "text/xml");
-        const parseError = xmlDoc.querySelector("parsererror");
+        const xmlDoc = parser.parseFromString(input, 'text/xml');
+        const parseError = xmlDoc.querySelector('parsererror');
 
         if (parseError || !xmlDoc.documentElement) {
-          setValidationStatus("invalid");
-          setError("Invalid XML format");
+          setValidationStatus('invalid');
+          setError('Invalid XML format');
         } else {
-          setValidationStatus("valid");
-          setError("");
+          setValidationStatus('valid');
+          setError('');
         }
       } catch (err) {
-        setValidationStatus("invalid");
-        setError("Invalid XML format");
+        setValidationStatus('invalid');
+        setError('Invalid XML format');
       }
     }, 500);
 
@@ -69,11 +69,11 @@ const XmlToJson: React.FC = () => {
 
   const xmlToJson = useCallback((xmlString: string): any => {
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-    const parseError = xmlDoc.querySelector("parsererror");
+    const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+    const parseError = xmlDoc.querySelector('parsererror');
 
     if (parseError) {
-      throw new Error("Invalid XML format");
+      throw new Error('Invalid XML format');
     }
 
     const convertNode = (node: Node): any => {
@@ -88,10 +88,10 @@ const XmlToJson: React.FC = () => {
 
         // Handle attributes
         if (element.attributes.length > 0) {
-          result["@attributes"] = {};
+          result['@attributes'] = {};
           for (let i = 0; i < element.attributes.length; i++) {
             const attr = element.attributes[i];
-            result["@attributes"][attr.name] = attr.value;
+            result['@attributes'][attr.name] = attr.value;
           }
         }
 
@@ -100,7 +100,7 @@ const XmlToJson: React.FC = () => {
           .filter((child) => child.nodeType === Node.TEXT_NODE)
           .map((child) => child.textContent?.trim())
           .filter((text) => text)
-          .join("");
+          .join('');
 
         const elementChildren = children.filter(
           (child) => child.nodeType === Node.ELEMENT_NODE
@@ -112,7 +112,7 @@ const XmlToJson: React.FC = () => {
             if (Object.keys(result).length === 0) {
               return textContent;
             } else {
-              result["#text"] = textContent;
+              result['#text'] = textContent;
             }
           }
         } else {
@@ -140,7 +140,7 @@ const XmlToJson: React.FC = () => {
           });
 
           if (textContent) {
-            result["#text"] = textContent;
+            result['#text'] = textContent;
           }
         }
 
@@ -152,7 +152,7 @@ const XmlToJson: React.FC = () => {
 
     const rootElement = xmlDoc.documentElement;
     if (!rootElement) {
-      throw new Error("No root element found");
+      throw new Error('No root element found');
     }
 
     return {
@@ -162,12 +162,12 @@ const XmlToJson: React.FC = () => {
 
   const handleProcess = useCallback(async () => {
     if (!input.trim()) {
-      setOutput("");
+      setOutput('');
       return;
     }
 
     setIsProcessing(true);
-    setError("");
+    setError('');
 
     try {
       // Add small delay for better UX
@@ -176,26 +176,26 @@ const XmlToJson: React.FC = () => {
       const parsed = xmlToJson(input);
       const jsonString = JSON.stringify(parsed, null, 2);
       setOutput(jsonString);
-      toast.success("XML converted to JSON successfully!");
+      toast.success('XML converted to JSON successfully!');
     } catch (err) {
       const errorMessage =
         err instanceof Error
           ? err.message
-          : "Invalid XML format. Please check your input.";
+          : 'Invalid XML format. Please check your input.';
       setError(errorMessage);
-      setOutput("");
-      toast.error("Conversion failed: " + errorMessage);
+      setOutput('');
+      toast.error('Conversion failed: ' + errorMessage);
     } finally {
       setIsProcessing(false);
     }
   }, [input, xmlToJson]);
 
   const handleClear = useCallback(() => {
-    setInput("");
-    setOutput("");
-    setError("");
-    setValidationStatus("idle");
-    toast.info("Cleared all inputs");
+    setInput('');
+    setOutput('');
+    setError('');
+    setValidationStatus('idle');
+    toast.info('Cleared all inputs');
   }, []);
 
   const handleCopy = useCallback(() => {
@@ -204,10 +204,10 @@ const XmlToJson: React.FC = () => {
     navigator.clipboard
       .writeText(output)
       .then(() => {
-        toast.success("JSON copied to clipboard!");
+        toast.success('JSON copied to clipboard!');
       })
       .catch(() => {
-        toast.error("Failed to copy to clipboard");
+        toast.error('Failed to copy to clipboard');
       });
   }, [output]);
 
@@ -215,18 +215,18 @@ const XmlToJson: React.FC = () => {
     if (!output) return;
 
     try {
-      const blob = new Blob([output], { type: "application/json" });
+      const blob = new Blob([output], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download = `converted_${Date.now()}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success("JSON file downloaded!");
+      toast.success('JSON file downloaded!');
     } catch (err) {
-      toast.error("Failed to download file");
+      toast.error('Failed to download file');
     }
   }, [output]);
 
@@ -248,14 +248,14 @@ const XmlToJson: React.FC = () => {
 </bookstore>`;
 
     setInput(exampleXml);
-    toast.info("Example XML loaded!");
+    toast.info('Example XML loaded!');
   }, []);
 
   const getValidationIcon = () => {
     switch (validationStatus) {
-      case "valid":
+      case 'valid':
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case "invalid":
+      case 'invalid':
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
         return <FileText className="h-4 w-4 text-slate-400" />;
@@ -264,12 +264,12 @@ const XmlToJson: React.FC = () => {
 
   const getValidationColor = () => {
     switch (validationStatus) {
-      case "valid":
-        return "border-green-300 focus:ring-green-500 focus:border-green-500";
-      case "invalid":
-        return "border-red-300 focus:ring-red-500 focus:border-red-500";
+      case 'valid':
+        return 'border-green-300 focus:ring-green-500 focus:border-green-500';
+      case 'invalid':
+        return 'border-red-300 focus:ring-red-500 focus:border-red-500';
       default:
-        return "border-slate-300 focus:ring-blue-500 focus:border-transparent";
+        return 'border-slate-300 focus:ring-blue-500 focus:border-transparent';
     }
   };
 
@@ -314,16 +314,17 @@ const XmlToJson: React.FC = () => {
                           placeholder={`<?xml version="1.0" encoding="UTF-8"?>\n<root>\n  <name>John Doe</name>\n  <age>30</age>\n  <address>\n    <city>New York</city>\n    <country>USA</country>\n  </address>\n</root>`}
                           className={`w-full h-60 p-3 border rounded-lg resize-none font-mono text-sm transition-colors duration-200 dark:bg-slate-800 dark:text-slate-100 ${getValidationColor()} dark:border-slate-600`}
                         />
-                        {validationStatus !== "idle" && (
+                        {validationStatus !== 'idle' && (
                           <div
-                            className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${validationStatus === "valid"
-                                ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                                : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                              }`}
+                            className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${
+                              validationStatus === 'valid'
+                                ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                                : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                            }`}
                           >
-                            {validationStatus === "valid"
-                              ? "Valid XML"
-                              : "Invalid XML"}
+                            {validationStatus === 'valid'
+                              ? 'Valid XML'
+                              : 'Invalid XML'}
                           </div>
                         )}
                       </div>
@@ -333,7 +334,7 @@ const XmlToJson: React.FC = () => {
                         onClick={handleProcess}
                         disabled={
                           !input.trim() ||
-                          validationStatus === "invalid" ||
+                          validationStatus === 'invalid' ||
                           isProcessing
                         }
                         className="flex items-center gap-2"
@@ -343,7 +344,7 @@ const XmlToJson: React.FC = () => {
                         ) : (
                           <Code2 className="h-4 w-4" />
                         )}
-                        {isProcessing ? "Converting..." : "Convert to JSON"}
+                        {isProcessing ? 'Converting...' : 'Convert to JSON'}
                       </Button>
                       <Button onClick={handleClear} variant="outline">
                         Clear All
@@ -362,7 +363,7 @@ const XmlToJson: React.FC = () => {
                           JSON Output
                           {output && (
                             <span className="text-xs text-slate-500 dark:text-slate-400">
-                              ({output.split("\n").length} lines)
+                              ({output.split('\n').length} lines)
                             </span>
                           )}
                         </label>
@@ -434,14 +435,14 @@ const XmlToJson: React.FC = () => {
                     <strong>XML (eXtensible Markup Language)</strong> is a
                     markup language designed for storing and transporting
                     structured data with support for attributes and hierarchical
-                    relationships.{" "}
+                    relationships.{' '}
                     <strong>JSON (JavaScript Object Notation)</strong> is a
                     lightweight, text-based data interchange format that's easy
                     to read and parse.
                   </p>
                   <p>
                     This converter transforms XML documents into JSON format
-                    while preserving the data structure, attributes (as{" "}
+                    while preserving the data structure, attributes (as{' '}
                     <code>@attributes</code>), and text content. It handles
                     complex nested structures, arrays, and mixed content
                     scenarios.
@@ -539,7 +540,7 @@ const XmlToJson: React.FC = () => {
                         </strong>
                         <br />
                         <span>
-                          A: Attributes are placed under the{" "}
+                          A: Attributes are placed under the{' '}
                           <code>@attributes</code> key for each element.
                         </span>
                       </div>

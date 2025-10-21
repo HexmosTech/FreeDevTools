@@ -1,9 +1,9 @@
 ---
-title: "Check Filesystem Fragmentation - e2freefrag | Online Free DevTools by Hexmos"
+title: 'Check Filesystem Fragmentation - e2freefrag | Online Free DevTools by Hexmos'
 name: e2freefrag
-path: "/freedevtools/tldr/linux/e2freefrag/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/e2freefrag/"
-description: "Check filesystem fragmentation with e2freefrag command. Analyze disk space and optimize filesystem performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/e2freefrag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/e2freefrag/'
+description: 'Check filesystem fragmentation with e2freefrag command. Analyze disk space and optimize filesystem performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - filesystem fragmentation check
@@ -22,8 +22,8 @@ features:
   - Specify chunk size for detailed fragmentation analysis.
   - Identify fragmented free space areas.
   - Provide insights for filesystem optimization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # e2freefrag

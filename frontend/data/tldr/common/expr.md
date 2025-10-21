@@ -1,29 +1,29 @@
 ---
-title: "Evaluate Expression - Manipulate Strings with Expr | Online Free DevTools by Hexmos"
+title: 'Evaluate Expression - Manipulate Strings with Expr | Online Free DevTools by Hexmos'
 name: expr
-path: "/freedevtools/tldr/common/expr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/expr/"
-description: "Evaluate expressions and manipulate strings with Expr. Perform arithmetic operations, substring extractions, and pattern matching. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/expr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/expr/'
+description: 'Evaluate expressions and manipulate strings with Expr. Perform arithmetic operations, substring extractions, and pattern matching. Free online tool, no registration required.'
 category: common
 keywords:
-- string evaluation
-- expression evaluation
-- substring extraction
-- pattern matching
-- arithmetic operations
-- linux expr
-- shell script expr
-- command line expr
-- text manipulation
-- coreutils expr
+  - string evaluation
+  - expression evaluation
+  - substring extraction
+  - pattern matching
+  - arithmetic operations
+  - linux expr
+  - shell script expr
+  - command line expr
+  - text manipulation
+  - coreutils expr
 features:
-- Evaluate arithmetic expressions
-- Extract substrings from strings
-- Match strings against regular expressions
-- Find the index of characters in a string
-- Perform string manipulation tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Evaluate arithmetic expressions
+  - Extract substrings from strings
+  - Match strings against regular expressions
+  - Find the index of characters in a string
+  - Perform string manipulation tasks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # expr

@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CsvToJsonSkeleton from "./_CsvToJsonSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import CsvToJsonSkeleton from './_CsvToJsonSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // CSV to JSON conversion utility
 const convertCsvToJson = (
@@ -21,19 +21,19 @@ const convertCsvToJson = (
   lowercaseKeys: boolean = false
 ): string => {
   if (!csvData.trim()) {
-    return "";
+    return '';
   }
 
   try {
-    const lines = csvData.trim().split("\n");
+    const lines = csvData.trim().split('\n');
     if (lines.length < 2) {
-      throw new Error("CSV must have at least a header row and one data row");
+      throw new Error('CSV must have at least a header row and one data row');
     }
 
     // Parse header row
     const headers = parseCSVLine(lines[0]);
     if (headers.length === 0) {
-      throw new Error("Invalid CSV header row");
+      throw new Error('Invalid CSV header row');
     }
 
     // Process headers (lowercase if requested)
@@ -52,7 +52,7 @@ const convertCsvToJson = (
 
       // Map values to headers
       for (let j = 0; j < processedHeaders.length; j++) {
-        const value = values[j] || ""; // Use empty string for missing values
+        const value = values[j] || ''; // Use empty string for missing values
         rowObject[processedHeaders[j]] = value.trim();
       }
 
@@ -62,7 +62,7 @@ const convertCsvToJson = (
     return JSON.stringify(jsonData, null, 2);
   } catch (error) {
     throw new Error(
-      `CSV parsing error: ${error instanceof Error ? error.message : "Unknown error"}`
+      `CSV parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 };
@@ -70,7 +70,7 @@ const convertCsvToJson = (
 // Parse a single CSV line handling quoted values
 const parseCSVLine = (line: string): string[] => {
   const result = [];
-  let current = "";
+  let current = '';
   let inQuotes = false;
   let i = 0;
 
@@ -88,10 +88,10 @@ const parseCSVLine = (line: string): string[] => {
         inQuotes = !inQuotes;
         i++;
       }
-    } else if (char === "," && !inQuotes) {
+    } else if (char === ',' && !inQuotes) {
       // Field separator
       result.push(current);
-      current = "";
+      current = '';
       i++;
     } else {
       current += char;
@@ -105,9 +105,9 @@ const parseCSVLine = (line: string): string[] => {
 };
 
 const CsvToJson: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [lowercaseKeys, setLowercaseKeys] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -124,10 +124,10 @@ const CsvToJson: React.FC = () => {
   const handleInputChange = useCallback(
     (value: string) => {
       setInput(value);
-      setError("");
+      setError('');
 
       if (!value.trim()) {
-        setOutput("");
+        setOutput('');
         return;
       }
 
@@ -136,9 +136,9 @@ const CsvToJson: React.FC = () => {
         setOutput(jsonOutput);
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to convert CSV to JSON";
+          err instanceof Error ? err.message : 'Failed to convert CSV to JSON';
         setError(errorMessage);
-        setOutput("");
+        setOutput('');
       }
     },
     [lowercaseKeys]
@@ -157,12 +157,12 @@ const CsvToJson: React.FC = () => {
   const handleFileUpload = useCallback(
     (file: File) => {
       if (
-        !file.name.endsWith(".csv") &&
-        !file.type.includes("csv") &&
-        !file.type.includes("text")
+        !file.name.endsWith('.csv') &&
+        !file.type.includes('csv') &&
+        !file.type.includes('text')
       ) {
-        setError("Please upload a valid CSV file");
-        toast.error("Invalid file type. Please upload a CSV file.");
+        setError('Please upload a valid CSV file');
+        toast.error('Invalid file type. Please upload a CSV file.');
         return;
       }
 
@@ -170,11 +170,11 @@ const CsvToJson: React.FC = () => {
       reader.onload = (e) => {
         const content = e.target?.result as string;
         handleInputChange(content);
-        toast.success("CSV file uploaded successfully");
+        toast.success('CSV file uploaded successfully');
       };
       reader.onerror = () => {
-        setError("Failed to read the file");
-        toast.error("Failed to read the file");
+        setError('Failed to read the file');
+        toast.error('Failed to read the file');
       };
       reader.readAsText(file);
     },
@@ -205,9 +205,9 @@ const CsvToJson: React.FC = () => {
   }, []);
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   const sampleCsv = `Name,Age,Country,Email
@@ -219,7 +219,7 @@ David Wilson,32,Australia,david@example.com`;
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -270,8 +270,8 @@ David Wilson,32,Australia,david@example.com`;
                       onDragLeave={handleDragLeave}
                       className={`relative border-2 border-dashed rounded-lg p-3 transition-colors ${
                         isDragging
-                          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                          : "border-gray-300 dark:border-gray-600"
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-gray-300 dark:border-gray-600'
                       }`}
                     >
                       <Textarea

@@ -1,29 +1,29 @@
 ---
-title: "Git Maintenance - Optimize Repository Data | Online Free DevTools by Hexmos"
+title: 'Git Maintenance - Optimize Repository Data | Online Free DevTools by Hexmos'
 name: git-maintenance
-path: "/freedevtools/tldr/git/git-maintenance/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-maintenance/"
-description: "Optimize Git repository data with Git Maintenance. Run tasks to improve repository performance, reduce size, and ensure data integrity. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-maintenance/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-maintenance/'
+description: 'Optimize Git repository data with Git Maintenance. Run tasks to improve repository performance, reduce size, and ensure data integrity. Free online tool, no registration required.'
 category: common
 keywords:
-- git maintenance commands
-- git repository optimization
-- git data integrity
-- git maintenance tasks
-- git repository cleanup
-- git commit graph
-- git gc
-- git incremental repack
-- git loose objects
-- git pack refs
+  - git maintenance commands
+  - git repository optimization
+  - git data integrity
+  - git maintenance tasks
+  - git repository cleanup
+  - git commit graph
+  - git gc
+  - git incremental repack
+  - git loose objects
+  - git pack refs
 features:
-- Register repositories for scheduled maintenance
-- Start background maintenance schedules
-- Stop background maintenance schedules
-- Unregister repositories from maintenance lists
-- Run specific maintenance tasks on demand
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Register repositories for scheduled maintenance
+  - Start background maintenance schedules
+  - Stop background maintenance schedules
+  - Unregister repositories from maintenance lists
+  - Run specific maintenance tasks on demand
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git maintenance

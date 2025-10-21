@@ -23,7 +23,7 @@ const HtmlToMarkdownSkeleton: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-end">
-            <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-16" />
         </div>
       </div>
     </div>

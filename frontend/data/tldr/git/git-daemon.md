@@ -1,29 +1,29 @@
 ---
-title: "Launch Git Daemon - Share Repositories | Online Free DevTools by Hexmos"
+title: 'Launch Git Daemon - Share Repositories | Online Free DevTools by Hexmos'
 name: git-daemon
-path: "/freedevtools/tldr/git/git-daemon/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-daemon/"
-description: "Launch Git daemon with Git repository hosting, allowing sharing and access control. Securely manage Git access using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-daemon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-daemon/'
+description: 'Launch Git daemon with Git repository hosting, allowing sharing and access control. Securely manage Git access using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- git repository server
-- git daemon configuration
-- git access control
-- git repository hosting
-- git read-only server
-- git network server
-- git directory sharing
-- linux git server
-- macos git server
-- git remote access
+  - git repository server
+  - git daemon configuration
+  - git access control
+  - git repository hosting
+  - git read-only server
+  - git network server
+  - git directory sharing
+  - linux git server
+  - macos git server
+  - git remote access
 features:
-- Launch Git daemon with directory whitelisting
-- Serve Git repositories from a base directory
-- Enable write access for Git clients
-- Display informative errors in the Git daemon log
-- Reuse addresses for faster Git daemon restarts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch Git daemon with directory whitelisting
+  - Serve Git repositories from a base directory
+  - Enable write access for Git clients
+  - Display informative errors in the Git daemon log
+  - Reuse addresses for faster Git daemon restarts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git daemon

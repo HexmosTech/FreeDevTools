@@ -1,29 +1,29 @@
 ---
-title: "Bzgrep - Search Bzip2 Files with Grep | Online Free DevTools by Hexmos"
+title: 'Bzgrep - Search Bzip2 Files with Grep | Online Free DevTools by Hexmos'
 name: bzgrep
-path: "/freedevtools/tldr/common/bzgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bzgrep/"
-description: "Search bzip2 compressed files with Bzgrep. Quickly find patterns and extract relevant information from archived data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bzgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bzgrep/'
+description: 'Search bzip2 compressed files with Bzgrep. Quickly find patterns and extract relevant information from archived data. Free online tool, no registration required.'
 category: common
 keywords:
-- bzip2 search
-- compressed file grep
-- bz2 grep command
-- bzip2 file search
-- grep bzip2 archive
-- linux bzgrep
-- macos bzgrep
-- command line grep
-- file content search
-- compressed text search
+  - bzip2 search
+  - compressed file grep
+  - bz2 grep command
+  - bzip2 file search
+  - grep bzip2 archive
+  - linux bzgrep
+  - macos bzgrep
+  - command line grep
+  - file content search
+  - compressed text search
 features:
-- Search for patterns within bzip2 compressed files.
-- Use extended regular expressions for complex pattern matching.
-- Display context lines around matching patterns.
-- Print file names and line numbers of matched lines.
-- Recursively search files in a bzip2 compressed tar archive.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for patterns within bzip2 compressed files.
+  - Use extended regular expressions for complex pattern matching.
+  - Display context lines around matching patterns.
+  - Print file names and line numbers of matched lines.
+  - Recursively search files in a bzip2 compressed tar archive.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bzgrep

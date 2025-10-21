@@ -1,29 +1,29 @@
 ---
-title: "Zipgrep - Search Zip Files with Regex | Online Free DevTools by Hexmos"
+title: 'Zipgrep - Search Zip Files with Regex | Online Free DevTools by Hexmos'
 name: zipgrep
-path: "/freedevtools/tldr/common/zipgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zipgrep/"
-description: "Search Zip files effectively with Zipgrep, using regex patterns for precise matching. Extract specific data from archives. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zipgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zipgrep/'
+description: 'Search Zip files effectively with Zipgrep, using regex patterns for precise matching. Extract specific data from archives. Free online tool, no registration required.'
 category: common
 keywords:
-- zip file search
-- zipgrep regex search
-- command line zipgrep
-- zip archive pattern matching
-- linux zipgrep
-- macos zipgrep
-- common commands zipgrep
-- find text in zip files
-- zip file content extraction
-- grep zip archive
+  - zip file search
+  - zipgrep regex search
+  - command line zipgrep
+  - zip archive pattern matching
+  - linux zipgrep
+  - macos zipgrep
+  - common commands zipgrep
+  - find text in zip files
+  - zip file content extraction
+  - grep zip archive
 features:
-- Search for patterns within Zip archives using regular expressions.
-- Print file names and line numbers for each match.
-- Search for lines that do not match a specified pattern.
-- Specify individual files inside a Zip archive for searching.
-- Exclude specified files inside a Zip archive from the search.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for patterns within Zip archives using regular expressions.
+  - Print file names and line numbers for each match.
+  - Search for lines that do not match a specified pattern.
+  - Specify individual files inside a Zip archive for searching.
+  - Exclude specified files inside a Zip archive from the search.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zipgrep

@@ -1,29 +1,29 @@
 ---
-title: "Convert Image to PDF - a2ping | Online Free DevTools by Hexmos"
+title: 'Convert Image to PDF - a2ping | Online Free DevTools by Hexmos'
 name: a2ping
-path: "/freedevtools/tldr/common/a2ping/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/a2ping/"
-description: "Convert images to PDF files with a2ping. Efficiently manage image formats for document creation and archiving. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/a2ping/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/a2ping/'
+description: 'Convert images to PDF files with a2ping. Efficiently manage image formats for document creation and archiving. Free online tool, no registration required.'
 category: common
 keywords:
-- Image to PDF converter
-- EPS to PDF converter
-- Image conversion tool
-- PDF compression
-- Ghostscript PDF conversion
-- Command line image converter
-- PDF generation tool
-- a2ping image conversion
-- Linux image to PDF
-- MacOS image to PDF
+  - Image to PDF converter
+  - EPS to PDF converter
+  - Image conversion tool
+  - PDF compression
+  - Ghostscript PDF conversion
+  - Command line image converter
+  - PDF generation tool
+  - a2ping image conversion
+  - Linux image to PDF
+  - MacOS image to PDF
 features:
-- Convert images to PDF format
-- Compress PDF documents using various methods
-- Control HiResBoundingBox scanning
-- Allow page content below the origin
-- Pass arguments to Ghostscript and external programs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert images to PDF format
+  - Compress PDF documents using various methods
+  - Control HiResBoundingBox scanning
+  - Allow page content below the origin
+  - Pass arguments to Ghostscript and external programs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # a2ping

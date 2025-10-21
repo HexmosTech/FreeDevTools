@@ -1,9 +1,9 @@
 ---
-title: "Asterisk Server - Manage Phone Instances | Online Free DevTools by Hexmos"
+title: 'Asterisk Server - Manage Phone Instances | Online Free DevTools by Hexmos'
 name: asterisk
-path: "/freedevtools/tldr/linux/asterisk/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/asterisk/"
-description: "Manage Asterisk phone server instances with this command line tool. Configure SIP clients, monitor channels, and control voicemail boxes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/asterisk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/asterisk/'
+description: 'Manage Asterisk phone server instances with this command line tool. Configure SIP clients, monitor channels, and control voicemail boxes. Free online tool, no registration required.'
 category: linux
 keywords:
   - asterisk server management
@@ -22,8 +22,8 @@ features:
   - Terminate active call channels
   - Display connected SIP clients (phones)
   - Show active call and channel information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # asterisk

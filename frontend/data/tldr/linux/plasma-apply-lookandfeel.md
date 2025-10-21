@@ -1,9 +1,9 @@
 ---
-title: "Plasma Theme Manager - Apply KDE Plasma Themes | Online Free DevTools by Hexmos"
+title: 'Plasma Theme Manager - Apply KDE Plasma Themes | Online Free DevTools by Hexmos'
 name: plasma-apply-lookandfeel
-path: "/freedevtools/tldr/linux/plasma-apply-lookandfeel/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/plasma-apply-lookandfeel/"
-description: "Manage and apply KDE Plasma global themes with plasma-apply-lookandfeel.  List available themes, apply specific themes, and operate without a display server. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/plasma-apply-lookandfeel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/plasma-apply-lookandfeel/'
+description: 'Manage and apply KDE Plasma global themes with plasma-apply-lookandfeel.  List available themes, apply specific themes, and operate without a display server. Free online tool, no registration required.'
 category: linux
 keywords:
   - Plasma theme manager
@@ -22,8 +22,8 @@ features:
   - Operate without an active display server (offscreen mode).
   - Provides command-line interface for theme management.
   - Simple and efficient theme switching for KDE Plasma.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # plasma-apply-lookandfeel

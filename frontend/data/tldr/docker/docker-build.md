@@ -1,29 +1,29 @@
 ---
-title: "Docker Build - Create Images from Dockerfile | Online Free DevTools by Hexmos"
+title: 'Docker Build - Create Images from Dockerfile | Online Free DevTools by Hexmos'
 name: docker-build
-path: "/freedevtools/tldr/docker/docker-build/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-build/"
-description: "Create Docker images instantly with Docker Build. Customize build arguments, disable cache, and specify Dockerfile locations. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-build/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-build/'
+description: 'Create Docker images instantly with Docker Build. Customize build arguments, disable cache, and specify Dockerfile locations. Free online tool, no registration required.'
 category: common
 keywords:
-- docker image build
-- dockerfile builder
-- container image creation
-- docker build arguments
-- docker build no cache
-- docker build context
-- linux docker build
-- windows docker build
-- macos docker build
-- docker build tag
+  - docker image build
+  - dockerfile builder
+  - container image creation
+  - docker build arguments
+  - docker build no cache
+  - docker build context
+  - linux docker build
+  - windows docker build
+  - macos docker build
+  - docker build tag
 features:
-- Build Docker images from Dockerfiles in various locations
-- Tag Docker images with custom names
-- Disable caching during the image build process
-- Define custom build-time variables
-- Build images without a build context
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build Docker images from Dockerfiles in various locations
+  - Tag Docker images with custom names
+  - Disable caching during the image build process
+  - Define custom build-time variables
+  - Build images without a build context
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker build

@@ -1,29 +1,29 @@
 ---
-title: "Run QEMU Virtual Machines - Create VMs Easily | Online Free DevTools by Hexmos"
+title: 'Run QEMU Virtual Machines - Create VMs Easily | Online Free DevTools by Hexmos'
 name: virt-qemu-run
-path: "/freedevtools/tldr/virt/virt-qemu-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/virt/virt-qemu-run/"
-description: "Run QEMU virtual machines with virt-qemu-run. Streamline VM creation and management on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/virt/virt-qemu-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virt/virt-qemu-run/'
+description: 'Run QEMU virtual machines with virt-qemu-run. Streamline VM creation and management on Linux. Free online tool, no registration required.'
 category: common
 keywords:
-- QEMU virtual machine
-- Virtual machine runner
-- QEMU guest manager
-- Linux virtualization
-- KVM guest launcher
-- Command line VM
-- XML configuration VM
-- Verbose VM startup
-- VM state management
-- Libvirt alternative
+  - QEMU virtual machine
+  - Virtual machine runner
+  - QEMU guest manager
+  - Linux virtualization
+  - KVM guest launcher
+  - Command line VM
+  - XML configuration VM
+  - Verbose VM startup
+  - VM state management
+  - Libvirt alternative
 features:
-- Run QEMU virtual machines from XML configuration files
-- Specify a directory to store VM state
-- Display verbose information during VM startup
-- Manage virtual machine lifecycle without libvirtd
-- Execute QEMU VMs from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run QEMU virtual machines from XML configuration files
+  - Specify a directory to store VM state
+  - Display verbose information during VM startup
+  - Manage virtual machine lifecycle without libvirtd
+  - Execute QEMU VMs from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virt-qemu-run

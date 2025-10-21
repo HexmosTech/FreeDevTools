@@ -1,9 +1,9 @@
 ---
-title: "Split Files - csplit Command | Online Free DevTools by Hexmos"
+title: 'Split Files - csplit Command | Online Free DevTools by Hexmos'
 name: csplit
-path: "/freedevtools/tldr/linux/csplit/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/csplit/"
-description: "Split files efficiently with the csplit command.  Manage large files, customize splits by line numbers or regex, and generate multiple output files easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/csplit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/csplit/'
+description: 'Split files efficiently with the csplit command.  Manage large files, customize splits by line numbers or regex, and generate multiple output files easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - file splitter command
@@ -22,8 +22,8 @@ features:
   - Allows custom prefixes for output files.
   - Handles files with a large number of lines.
   - Provides options to preserve files during splitting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csplit

@@ -1,29 +1,29 @@
 ---
-title: "Hg Log - Display Repository History | Online Free DevTools by Hexmos"
+title: 'Hg Log - Display Repository History | Online Free DevTools by Hexmos'
 name: hg-log
-path: "/freedevtools/tldr/hg/hg-log/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-log/"
-description: "Display repository history with Hg Log. Review commit logs, view diffs, and analyze code changes efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-log/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-log/'
+description: 'Display repository history with Hg Log. Review commit logs, view diffs, and analyze code changes efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- hg log command
-- mercurial log
-- repository history
-- revision history
-- hg branch log
-- hg commit log
-- version control log
-- hg log graph
-- mercurial log filter
-- hg log by date
+  - hg log command
+  - mercurial log
+  - repository history
+  - revision history
+  - hg branch log
+  - hg commit log
+  - version control log
+  - hg log graph
+  - mercurial log filter
+  - hg log by date
 features:
-- Display the entire Mercurial revision history.
-- Visualize history with an ASCII graph.
-- Filter revisions based on file name patterns.
-- Show revisions for a specific branch.
-- Display revisions by date or user.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the entire Mercurial revision history.
+  - Visualize history with an ASCII graph.
+  - Filter revisions based on file name patterns.
+  - Show revisions for a specific branch.
+  - Display revisions by date or user.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg log

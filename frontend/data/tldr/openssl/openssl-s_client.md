@@ -1,29 +1,29 @@
 ---
-title: "OpenSSL Client - Create TLS Connections | Online Free DevTools by Hexmos"
+title: 'OpenSSL Client - Create TLS Connections | Online Free DevTools by Hexmos'
 name: openssl-s_client
-path: "/freedevtools/tldr/openssl/openssl-s_client/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-s_client/"
-description: "Create TLS client connections with OpenSSL s_client. Verify certificates and establish secure communication channels using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-s_client/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-s_client/'
+description: 'Create TLS client connections with OpenSSL s_client. Verify certificates and establish secure communication channels using command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- TLS client creation
-- SSL connection establishment
-- OpenSSL certificate verification
-- Secure communication channel
-- HTTPS server certificate chain
-- Server Name Indication (SNI)
-- OpenSSL client command
-- TLS/SSL debugging
-- Command line TLS client
-- OpenSSL Linux
+  - TLS client creation
+  - SSL connection establishment
+  - OpenSSL certificate verification
+  - Secure communication channel
+  - HTTPS server certificate chain
+  - Server Name Indication (SNI)
+  - OpenSSL client command
+  - TLS/SSL debugging
+  - Command line TLS client
+  - OpenSSL Linux
 features:
-- Establish secure TLS client connections
-- Verify server SSL/TLS certificates
-- Set Server Name Indication (SNI)
-- Display the complete certificate chain
-- Output certificate start and expiry dates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Establish secure TLS client connections
+  - Verify server SSL/TLS certificates
+  - Set Server Name Indication (SNI)
+  - Display the complete certificate chain
+  - Output certificate start and expiry dates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl s_client

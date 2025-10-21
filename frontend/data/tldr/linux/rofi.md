@@ -1,9 +1,9 @@
 ---
-title: "Control Rofi - Application Launcher | Online Free DevTools by Hexmos"
+title: 'Control Rofi - Application Launcher | Online Free DevTools by Hexmos'
 name: rofi
-path: "/freedevtools/tldr/linux/rofi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rofi/"
-description: "Control applications with Rofi, a versatile application launcher. Quickly switch windows and execute commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rofi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rofi/'
+description: 'Control applications with Rofi, a versatile application launcher. Quickly switch windows and execute commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - rofi application launcher
@@ -22,8 +22,8 @@ features:
   - Execute shell commands
   - Pipe input to `stdin` and print the selected output
   - Create custom menus with selectable items
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rofi

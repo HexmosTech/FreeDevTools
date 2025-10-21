@@ -1,29 +1,29 @@
 ---
-title: "Email Account Checker - Check Email Availability | Online Free DevTools by Hexmos"
+title: 'Email Account Checker - Check Email Availability | Online Free DevTools by Hexmos'
 name: holehe
-path: "/freedevtools/tldr/common/holehe/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/holehe/"
-description: "Check email account availability with Email Account Checker (holehe). Verify if an email is registered across multiple websites and platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/holehe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/holehe/'
+description: 'Check email account availability with Email Account Checker (holehe). Verify if an email is registered across multiple websites and platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- email checker
-- email availability checker
-- online email verification
-- social media email check
-- username lookup tool
-- email account finder
-- website account check
-- email platform lookup
-- domain account checker
-- email registration status
+  - email checker
+  - email availability checker
+  - online email verification
+  - social media email check
+  - username lookup tool
+  - email account finder
+  - website account check
+  - email platform lookup
+  - domain account checker
+  - email registration status
 features:
-- Check email registration status across multiple websites.
-- Identify sites using a specific email address.
-- Verify account existence without logging in.
-- Quickly assess platform availability.
-- Determine if an email is linked to a social media profile.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check email registration status across multiple websites.
+  - Identify sites using a specific email address.
+  - Verify account existence without logging in.
+  - Quickly assess platform availability.
+  - Determine if an email is linked to a social media profile.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # holehe

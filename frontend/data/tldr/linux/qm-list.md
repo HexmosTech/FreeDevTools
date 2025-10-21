@@ -1,9 +1,9 @@
 ---
-title: "Proxmox VM List - Manage Virtual Machines with qm | Online Free DevTools by Hexmos"
+title: 'Proxmox VM List - Manage Virtual Machines with qm | Online Free DevTools by Hexmos'
 name: qm-list
-path: "/freedevtools/tldr/linux/qm-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-list/"
-description: "List and manage Proxmox virtual machines with the qm command.  View detailed status of running VMs and easily control your server infrastructure. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-list/'
+description: 'List and manage Proxmox virtual machines with the qm command.  View detailed status of running VMs and easily control your server infrastructure. Free online tool, no registration required.'
 category: linux
 keywords:
   - proxmox vm list
@@ -22,8 +22,8 @@ features:
   - Utilize the powerful qm command-line interface.
   - Manage Proxmox virtual machine infrastructure efficiently.
   - Gain quick overview of virtual machine states.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm list

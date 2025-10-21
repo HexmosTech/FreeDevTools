@@ -1,29 +1,29 @@
 ---
-title: "Dictionary Lookup - Search Dictionaries with sdcv | Online Free DevTools by Hexmos"
+title: 'Dictionary Lookup - Search Dictionaries with sdcv | Online Free DevTools by Hexmos'
 name: sdcv
-path: "/freedevtools/tldr/common/sdcv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sdcv/"
-description: "Lookup dictionary definitions with sdcv. Search online dictionaries and retrieve definitions using the command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sdcv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sdcv/'
+description: 'Lookup dictionary definitions with sdcv. Search online dictionaries and retrieve definitions using the command line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- command line dictionary
-- sdcv dictionary lookup
-- star dict client
-- linux dictionary search
-- text dictionary
-- online dictionary
-- dictionary definition
-- command line interface
-- thesaurus search
-- word definition
+  - command line dictionary
+  - sdcv dictionary lookup
+  - star dict client
+  - linux dictionary search
+  - text dictionary
+  - online dictionary
+  - dictionary definition
+  - command line interface
+  - thesaurus search
+  - word definition
 features:
-- Search for dictionary definitions from the command line
-- List installed dictionaries
-- Specify a dictionary to use for the search
-- Perform fuzzy searches for definitions
-- Format output as JSON
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for dictionary definitions from the command line
+  - List installed dictionaries
+  - Specify a dictionary to use for the search
+  - Perform fuzzy searches for definitions
+  - Format output as JSON
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sdcv

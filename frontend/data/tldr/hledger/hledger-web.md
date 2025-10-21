@@ -1,29 +1,29 @@
 ---
-title: "Hledger-web - Manage Accounts | Online Free DevTools by Hexmos"
+title: 'Hledger-web - Manage Accounts | Online Free DevTools by Hexmos'
 name: hledger-web
-path: "/freedevtools/tldr/hledger/hledger-web/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-web/"
-description: "Manage accounts easily with hledger-web, a powerful accounting tool. View financial data, track expenses, and create insightful reports. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-web/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-web/'
+description: 'Manage accounts easily with hledger-web, a powerful accounting tool. View financial data, track expenses, and create insightful reports. Free online tool, no registration required.'
 category: common
 keywords:
-- hledger web interface
-- hledger accounting
-- plain text accounting
-- ledger web app
-- finance management
-- expense tracking
-- ledger reporting
-- financial data analysis
-- command-line accounting
-- journal accounting
+  - hledger web interface
+  - hledger accounting
+  - plain text accounting
+  - ledger web app
+  - finance management
+  - expense tracking
+  - ledger reporting
+  - financial data analysis
+  - command-line accounting
+  - journal accounting
 features:
-- Start a local hledger-web instance with browser integration
-- Serve the hledger-web application with specified host and port
-- Serve hledger-web JSON API with read-only access
-- Convert amounts to current market value using inferred prices
-- Display hledger manual in Info format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a local hledger-web instance with browser integration
+  - Serve the hledger-web application with specified host and port
+  - Serve hledger-web JSON API with read-only access
+  - Convert amounts to current market value using inferred prices
+  - Display hledger manual in Info format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger-web

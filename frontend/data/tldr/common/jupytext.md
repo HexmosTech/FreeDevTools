@@ -1,29 +1,29 @@
 ---
-title: "Convert Jupyter Notebooks - Jupytext | Online Free DevTools by Hexmos"
+title: 'Convert Jupyter Notebooks - Jupytext | Online Free DevTools by Hexmos'
 name: jupytext
-path: "/freedevtools/tldr/common/jupytext/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jupytext/"
-description: "Convert Jupyter notebooks to various formats with Jupytext. Sync notebooks, update cells, and preserve outputs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jupytext/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jupytext/'
+description: 'Convert Jupyter notebooks to various formats with Jupytext. Sync notebooks, update cells, and preserve outputs. Free online tool, no registration required.'
 category: common
 keywords:
-- Jupyter Notebook converter
-- ipynb to py converter
-- py to notebook converter
-- Markdown to notebook
-- Notebook synchronization
-- Jupyter Notebook text format
-- Jupyter notebook export
-- Python notebook conversion
-- Jupyter notebook management
-- Jupytext command line
+  - Jupyter Notebook converter
+  - ipynb to py converter
+  - py to notebook converter
+  - Markdown to notebook
+  - Notebook synchronization
+  - Jupyter Notebook text format
+  - Jupyter notebook export
+  - Python notebook conversion
+  - Jupyter notebook management
+  - Jupytext command line
 features:
-- Convert Jupyter notebooks to plain text formats
-- Synchronize notebook representations
-- Update input cells while preserving outputs
-- Convert notebooks to Python scripts
-- Execute Markdown notebooks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Jupyter notebooks to plain text formats
+  - Synchronize notebook representations
+  - Update input cells while preserving outputs
+  - Convert notebooks to Python scripts
+  - Execute Markdown notebooks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jupytext

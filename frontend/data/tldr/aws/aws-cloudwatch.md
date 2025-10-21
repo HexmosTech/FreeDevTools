@@ -1,29 +1,29 @@
 ---
-title: "AWS CloudWatch - Monitor AWS Resources | Online Free DevTools by Hexmos"
+title: 'AWS CloudWatch - Monitor AWS Resources | Online Free DevTools by Hexmos'
 name: aws-cloudwatch
-path: "/freedevtools/tldr/aws/aws-cloudwatch/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cloudwatch/"
-description: "Monitor AWS resources with AWS CloudWatch. Gain system-wide visibility and optimize application performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-cloudwatch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-cloudwatch/'
+description: 'Monitor AWS resources with AWS CloudWatch. Gain system-wide visibility and optimize application performance. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS CloudWatch Monitoring
-- Cloud Resource Utilization
-- Application Performance Monitoring
-- Operational Health Insights
-- CloudWatch Alarms Configuration
-- AWS Metric Analysis
-- CloudWatch Dashboard Management
-- AWS Resource Monitoring
-- CloudWatch Metrics Listing
-- AWS Cloud Alarms
+  - AWS CloudWatch Monitoring
+  - Cloud Resource Utilization
+  - Application Performance Monitoring
+  - Operational Health Insights
+  - CloudWatch Alarms Configuration
+  - AWS Metric Analysis
+  - CloudWatch Dashboard Management
+  - AWS Resource Monitoring
+  - CloudWatch Metrics Listing
+  - AWS Cloud Alarms
 features:
-- List AWS CloudWatch dashboards.
-- Display details for specific dashboards.
-- List metrics and alarms.
-- Create or update CloudWatch alarms.
-- Delete specified dashboards and alarms.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List AWS CloudWatch dashboards.
+  - Display details for specific dashboards.
+  - List metrics and alarms.
+  - Create or update CloudWatch alarms.
+  - Delete specified dashboards and alarms.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws cloudwatch

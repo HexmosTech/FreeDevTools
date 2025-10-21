@@ -1,29 +1,29 @@
 ---
-title: "PlatformIO Build - Create Projects with pio-ci | Online Free DevTools by Hexmos"
+title: 'PlatformIO Build - Create Projects with pio-ci | Online Free DevTools by Hexmos'
 name: pio-ci
-path: "/freedevtools/tldr/pio/pio-ci/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-ci/"
-description: "Build PlatformIO projects quickly with pio-ci. Automate project creation and library integration for embedded development. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-ci/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-ci/'
+description: 'Build PlatformIO projects quickly with pio-ci. Automate project creation and library integration for embedded development. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO build
-- PlatformIO CI
-- PlatformIO project creation
-- PlatformIO library integration
-- PlatformIO embedded development
-- PlatformIO command-line interface
-- PlatformIO configuration
-- PlatformIO boards
-- PlatformIO build automation
-- pio-ci command
+  - PlatformIO build
+  - PlatformIO CI
+  - PlatformIO project creation
+  - PlatformIO library integration
+  - PlatformIO embedded development
+  - PlatformIO command-line interface
+  - PlatformIO configuration
+  - PlatformIO boards
+  - PlatformIO build automation
+  - pio-ci command
 features:
-- Build PlatformIO projects from any source code structure
-- Integrate custom libraries into PlatformIO projects
-- Build projects for specific boards using command-line options
-- Specify custom build directories for PlatformIO projects
-- Use custom configuration files with PlatformIO
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build PlatformIO projects from any source code structure
+  - Integrate custom libraries into PlatformIO projects
+  - Build projects for specific boards using command-line options
+  - Specify custom build directories for PlatformIO projects
+  - Use custom configuration files with PlatformIO
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio ci

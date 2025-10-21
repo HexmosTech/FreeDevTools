@@ -1,29 +1,29 @@
 ---
-title: "Benchmark HTTP - Analyze Server Performance with AB | Online Free DevTools by Hexmos"
+title: 'Benchmark HTTP - Analyze Server Performance with AB | Online Free DevTools by Hexmos'
 name: ab
-path: "/freedevtools/tldr/common/ab/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ab/"
-description: "Analyze HTTP server performance with AB. Measure response times, concurrency, and overall efficiency using this command-line benchmarking tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ab/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ab/'
+description: 'Analyze HTTP server performance with AB. Measure response times, concurrency, and overall efficiency using this command-line benchmarking tool. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP benchmark analysis
-- AB server performance test
-- Apache benchmark tool
-- website load testing
-- web server stress test
-- URL performance analysis
-- command-line benchmarking
-- concurrent request testing
-- HTTP GET request analysis
-- HTTP POST request testing
+  - HTTP benchmark analysis
+  - AB server performance test
+  - Apache benchmark tool
+  - website load testing
+  - web server stress test
+  - URL performance analysis
+  - command-line benchmarking
+  - concurrent request testing
+  - HTTP GET request analysis
+  - HTTP POST request testing
 features:
-- Execute HTTP GET and POST requests to a specified URL.
-- Simulate concurrent user load with configurable concurrency levels.
-- Measure server response times and throughput under different loads.
-- Customize requests with headers, payloads, and request methods.
-- Generate CSV output for detailed performance analysis and reporting.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute HTTP GET and POST requests to a specified URL.
+  - Simulate concurrent user load with configurable concurrency levels.
+  - Measure server response times and throughput under different loads.
+  - Customize requests with headers, payloads, and request methods.
+  - Generate CSV output for detailed performance analysis and reporting.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ab

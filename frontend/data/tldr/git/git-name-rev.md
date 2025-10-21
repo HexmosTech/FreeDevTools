@@ -1,29 +1,29 @@
 ---
-title: "Git Name-Rev - Describe Commits | Online Free DevTools by Hexmos"
+title: 'Git Name-Rev - Describe Commits | Online Free DevTools by Hexmos'
 name: git-name-rev
-path: "/freedevtools/tldr/git/git-name-rev/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-name-rev/"
-description: "Describe Git commits with Git Name-Rev. Identify commits using ref names, tags, and branches in your repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-name-rev/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-name-rev/'
+description: 'Describe Git commits with Git Name-Rev. Identify commits using ref names, tags, and branches in your repository. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit name
-- git ref name
-- git identify commit
-- git tag lookup
-- git branch identifier
-- git commit description
-- git name rev command
-- git revision naming
-- git commit aliasing
-- git commit reference
+  - git commit name
+  - git ref name
+  - git identify commit
+  - git tag lookup
+  - git branch identifier
+  - git commit description
+  - git name rev command
+  - git revision naming
+  - git commit aliasing
+  - git commit reference
 features:
-- Identify commits by ref names
-- Enumerate matching ref names
-- Restrict names to specific refs
-- Show names for multiple commits
-- Read commit IDs from standard input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Identify commits by ref names
+  - Enumerate matching ref names
+  - Restrict names to specific refs
+  - Show names for multiple commits
+  - Read commit IDs from standard input
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git name-rev

@@ -1,29 +1,29 @@
 ---
-title: "Devenv - Create Development Environments | Online Free DevTools by Hexmos"
+title: 'Devenv - Create Development Environments | Online Free DevTools by Hexmos'
 name: devenv
-path: "/freedevtools/tldr/common/devenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/devenv/"
-description: "Create reproducible development environments with Devenv. Manage dependencies and configurations for consistent development across platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/devenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/devenv/'
+description: 'Create reproducible development environments with Devenv. Manage dependencies and configurations for consistent development across platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- nix development environment
-- declarative environment configuration
-- reproducible build environment
-- devenv shell management
-- environment variable cleaner
-- offline devenv usage
-- devenv garbage collection
-- nix environment management
-- cross platform development
-- fast development workflow
+  - nix development environment
+  - declarative environment configuration
+  - reproducible build environment
+  - devenv shell management
+  - environment variable cleaner
+  - offline devenv usage
+  - devenv garbage collection
+  - nix environment management
+  - cross platform development
+  - fast development workflow
 features:
-- Initialize a new development environment with devenv
-- Enter a development shell with relaxed hermeticity
-- Display detailed information about the current environment
-- Start processes using devenv configuration files
-- Clean environment variables and enter the shell in offline mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a new development environment with devenv
+  - Enter a development shell with relaxed hermeticity
+  - Display detailed information about the current environment
+  - Start processes using devenv configuration files
+  - Clean environment variables and enter the shell in offline mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # devenv

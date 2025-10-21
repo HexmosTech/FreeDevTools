@@ -1,29 +1,29 @@
 ---
-title: "Filter CSV Data - csvgrep | Online Free DevTools by Hexmos"
+title: 'Filter CSV Data - csvgrep | Online Free DevTools by Hexmos'
 name: csvgrep
-path: "/freedevtools/tldr/cs/csvgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csvgrep/"
-description: "Filter CSV data with csvgrep, a command-line tool for pattern matching and data extraction. Quickly find and extract relevant information. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csvgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csvgrep/'
+description: 'Filter CSV data with csvgrep, a command-line tool for pattern matching and data extraction. Quickly find and extract relevant information. Free online tool, no registration required.'
 category: common
 keywords:
-- CSV filter
-- CSV grep
-- CSV data extraction
-- command line CSV tool
-- CSV pattern matching
-- CSV search
-- CSV data filtering
-- CSV row filtering
-- csvgrep command
-- csvkit csvgrep
+  - CSV filter
+  - CSV grep
+  - CSV data extraction
+  - command line CSV tool
+  - CSV pattern matching
+  - CSV search
+  - CSV data filtering
+  - CSV row filtering
+  - csvgrep command
+  - csvkit csvgrep
 features:
-- Filter CSV rows based on string matches
-- Filter CSV rows using regular expressions
-- Invert match to exclude rows
-- Select specific columns for filtering
-- Extract data matching complex patterns
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Filter CSV rows based on string matches
+  - Filter CSV rows using regular expressions
+  - Invert match to exclude rows
+  - Select specific columns for filtering
+  - Extract data matching complex patterns
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csvgrep

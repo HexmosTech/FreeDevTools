@@ -1,29 +1,29 @@
 ---
-title: "Git Browser - Browse Git Repos Graphically | Online Free DevTools by Hexmos"
+title: 'Git Browser - Browse Git Repos Graphically | Online Free DevTools by Hexmos'
 name: gitk
-path: "/freedevtools/tldr/git/gitk/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitk/"
-description: "Browse Git repositories graphically with Gitk, a visual Git history browser. Examine commit history, branches, and file changes effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitk/'
+description: 'Browse Git repositories graphically with Gitk, a visual Git history browser. Examine commit history, branches, and file changes effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- git repository browser
-- gitk visual history
-- git commit viewer
-- git branch explorer
-- git file change browser
-- git gui linux
-- gitk macos
-- gitk windows
-- git history analysis
-- git commit comparison
+  - git repository browser
+  - gitk visual history
+  - git commit viewer
+  - git branch explorer
+  - git file change browser
+  - git gui linux
+  - gitk macos
+  - gitk windows
+  - git history analysis
+  - git commit comparison
 features:
-- Display commit history visually for easy navigation
-- Browse branches and tags within a Git repository
-- Inspect file changes within specific commits
-- Filter commits by date, author, or commit message
-- View the commit graph for multiple branches simultaneously
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display commit history visually for easy navigation
+  - Browse branches and tags within a Git repository
+  - Inspect file changes within specific commits
+  - Filter commits by date, author, or commit message
+  - View the commit graph for multiple branches simultaneously
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitk

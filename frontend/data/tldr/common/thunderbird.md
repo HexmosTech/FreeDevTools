@@ -1,29 +1,29 @@
 ---
-title: "Control Thunderbird - Email Client | Online Free DevTools by Hexmos"
+title: 'Control Thunderbird - Email Client | Online Free DevTools by Hexmos'
 name: thunderbird
-path: "/freedevtools/tldr/common/thunderbird/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/thunderbird/"
-description: "Control Thunderbird email client with this tool. Manage profiles and launch Thunderbird via command line for efficient email management. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/thunderbird/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/thunderbird/'
+description: 'Control Thunderbird email client with this tool. Manage profiles and launch Thunderbird via command line for efficient email management. Free online tool, no registration required.'
 category: common
 keywords:
-- thunderbird email client
-- email client configuration
-- thunderbird profile manager
-- rss reader command line
-- mozilla thunderbird options
-- thunderbird command line arguments
-- email management tool
-- profile selection thunderbird
-- cross platform email
-- desktop email client
+  - thunderbird email client
+  - email client configuration
+  - thunderbird profile manager
+  - rss reader command line
+  - mozilla thunderbird options
+  - thunderbird command line arguments
+  - email management tool
+  - profile selection thunderbird
+  - cross platform email
+  - desktop email client
 features:
-- Launch Thunderbird email client
-- Specify a user profile
-- Define a custom profile directory
-- Manage multiple email profiles
-- Access RSS feeds via the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch Thunderbird email client
+  - Specify a user profile
+  - Define a custom profile directory
+  - Manage multiple email profiles
+  - Access RSS feeds via the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # thunderbird

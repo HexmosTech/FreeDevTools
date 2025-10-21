@@ -1,9 +1,9 @@
 ---
-title: "xhost - Control X Server Access | Online Free DevTools by Hexmos"
+title: 'xhost - Control X Server Access | Online Free DevTools by Hexmos'
 name: xhost
-path: "/freedevtools/tldr/linux/xhost/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xhost/"
-description: "Control X server access lists with the xhost command. Manage connections from specific hosts or allow/deny all. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xhost/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xhost/'
+description: 'Control X server access lists with the xhost command. Manage connections from specific hosts or allow/deny all. Free online tool, no registration required.'
 category: linux
 keywords:
   - xhost command
@@ -22,8 +22,8 @@ features:
   - Deny specific hosts from connecting to the X server.
   - Allow all hosts to connect (disable access control).
   - Deny all hosts except those explicitly allowed (enable access control).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xhost

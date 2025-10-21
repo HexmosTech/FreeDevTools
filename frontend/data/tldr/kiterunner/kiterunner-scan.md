@@ -1,29 +1,29 @@
 ---
-title: "Kiterunner Scan - Discover API Endpoints | Online Free DevTools by Hexmos"
+title: 'Kiterunner Scan - Discover API Endpoints | Online Free DevTools by Hexmos'
 name: kiterunner-scan
-path: "/freedevtools/tldr/kiterunner/kiterunner-scan/"
-canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-scan/"
-description: "Discover API endpoints with Kiterunner Scan. Uncover hidden routes and potential vulnerabilities through contextual web scanning. Free online tool, no registration required."
+path: '/freedevtools/tldr/kiterunner/kiterunner-scan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-scan/'
+description: 'Discover API endpoints with Kiterunner Scan. Uncover hidden routes and potential vulnerabilities through contextual web scanning. Free online tool, no registration required.'
 category: common
 keywords:
-- API endpoint discovery
-- web scanner
-- contextual scanner
-- Kiterunner scanner
-- API route scanner
-- web directory enumeration
-- kitebuilder wordlist scanning
-- vulnerability scanning
-- API security testing
-- web application reconnaissance
+  - API endpoint discovery
+  - web scanner
+  - contextual scanner
+  - Kiterunner scanner
+  - API route scanner
+  - web directory enumeration
+  - kitebuilder wordlist scanning
+  - vulnerability scanning
+  - API security testing
+  - web application reconnaissance
 features:
-- Scan web endpoints using Kitebuilder wordlists.
-- Concurrently scan multiple hosts for API paths.
-- Customize scan concurrency for optimized performance.
-- Ignore specific content length responses for focused results.
-- Perform full Kitebuilder scans without phase scanning.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan web endpoints using Kitebuilder wordlists.
+  - Concurrently scan multiple hosts for API paths.
+  - Customize scan concurrency for optimized performance.
+  - Ignore specific content length responses for focused results.
+  - Perform full Kitebuilder scans without phase scanning.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kiterunner scan

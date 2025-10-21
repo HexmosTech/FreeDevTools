@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Describe - Show Kubernetes Resource Details | Online Free DevTools by Hexmos"
+title: 'Kubectl Describe - Show Kubernetes Resource Details | Online Free DevTools by Hexmos'
 name: kubectl-describe
-path: "/freedevtools/tldr/kubectl/kubectl-describe/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-describe/"
-description: "Show Kubernetes resource details with Kubectl Describe. Inspect pods, nodes, and other objects. Streamline cluster management. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-describe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-describe/'
+description: 'Show Kubernetes resource details with Kubectl Describe. Inspect pods, nodes, and other objects. Streamline cluster management. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes describe
-- kubectl describe pod
-- kubectl describe node
-- kubernetes resource inspector
-- kubectl resource details
-- kubernetes cluster debugging
-- kubernetes yaml inspection
-- kubectl object analysis
-- kubernetes troubleshooting
-- kubectl get details
+  - kubernetes describe
+  - kubectl describe pod
+  - kubectl describe node
+  - kubernetes resource inspector
+  - kubectl resource details
+  - kubernetes cluster debugging
+  - kubernetes yaml inspection
+  - kubectl object analysis
+  - kubernetes troubleshooting
+  - kubectl get details
 features:
-- Display detailed information about Kubernetes resources
-- Inspect pod configurations and status
-- Examine node properties and capacity
-- Analyze Kubernetes objects from YAML manifests
-- Troubleshoot cluster issues by viewing resource specifics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display detailed information about Kubernetes resources
+  - Inspect pod configurations and status
+  - Examine node properties and capacity
+  - Analyze Kubernetes objects from YAML manifests
+  - Troubleshoot cluster issues by viewing resource specifics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl describe

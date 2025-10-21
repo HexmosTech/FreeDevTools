@@ -1,29 +1,29 @@
 ---
-title: "nf-core - Create Nextflow Pipelines | Online Free DevTools by Hexmos"
+title: 'nf-core - Create Nextflow Pipelines | Online Free DevTools by Hexmos'
 name: nf-core
-path: "/freedevtools/tldr/common/nf-core/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nf-core/"
-description: "Create Nextflow pipelines easily with nf-core. Lint pipeline code, bump software versions, and launch pipelines. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nf-core/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nf-core/'
+description: 'Create Nextflow pipelines easily with nf-core. Lint pipeline code, bump software versions, and launch pipelines. Free online tool, no registration required.'
 category: common
 keywords:
-- Nextflow pipeline creation
-- nf-core pipeline linting
-- nf-core pipeline launch
-- Nextflow version bumping
-- nf-core offline download
-- Bioinformatics pipeline creation
-- DSL2 Nextflow pipeline
-- Workflow management system
-- nf-core community pipelines
-- Nextflow best practices
+  - Nextflow pipeline creation
+  - nf-core pipeline linting
+  - nf-core pipeline launch
+  - Nextflow version bumping
+  - nf-core offline download
+  - Bioinformatics pipeline creation
+  - DSL2 Nextflow pipeline
+  - Workflow management system
+  - nf-core community pipelines
+  - Nextflow best practices
 features:
-- Create new nf-core pipeline skeletons
-- Lint existing nf-core pipeline code
-- Bump software versions in pipeline recipes
-- Launch nf-core pipelines directly
-- Download nf-core pipelines for offline use
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new nf-core pipeline skeletons
+  - Lint existing nf-core pipeline code
+  - Bump software versions in pipeline recipes
+  - Launch nf-core pipelines directly
+  - Download nf-core pipelines for offline use
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nf-core

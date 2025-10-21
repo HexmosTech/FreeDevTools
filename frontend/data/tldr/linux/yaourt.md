@@ -1,9 +1,9 @@
 ---
-title: "Yaourt Package Manager - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
+title: 'Yaourt Package Manager - Manage Arch Linux Packages | Online Free DevTools by Hexmos'
 name: yaourt
-path: "/freedevtools/tldr/linux/yaourt/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/yaourt/"
-description: "Manage Arch Linux packages easily with Yaourt.  Install, update, remove, and search AUR packages efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/yaourt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/yaourt/'
+description: 'Manage Arch Linux packages easily with Yaourt.  Install, update, remove, and search AUR packages efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package manager
@@ -22,8 +22,8 @@ features:
   - Removes packages and their dependencies, including AUR packages.
   - Searches the package database (including AUR) for specific keywords.
   - Lists installed packages with versions and repositories.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yaourt

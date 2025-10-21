@@ -1,9 +1,9 @@
 ---
-title: "Inputattach - Attach Devices to Input System | Online Free DevTools by Hexmos"
+title: 'Inputattach - Attach Devices to Input System | Online Free DevTools by Hexmos'
 name: inputattach
-path: "/freedevtools/tldr/linux/inputattach/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/inputattach/"
-description: "Attach devices to the Linux input system with Inputattach. Configure and manage input devices using the command line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/inputattach/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/inputattach/'
+description: 'Attach devices to the Linux input system with Inputattach. Configure and manage input devices using the command line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux input attach
@@ -22,8 +22,8 @@ features:
   - Manage /dev/input/ devices
   - Attach Pulse8 CEC devices
   - Display command line help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # inputattach

@@ -1,29 +1,29 @@
 ---
-title: "AWS Amplify - Manage Web and Mobile Apps | Online Free DevTools by Hexmos"
+title: 'AWS Amplify - Manage Web and Mobile Apps | Online Free DevTools by Hexmos'
 name: aws-amplify
-path: "/freedevtools/tldr/aws/aws-amplify/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-amplify/"
-description: "Manage web and mobile apps effortlessly with AWS Amplify. Deploy secure and scalable applications using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-amplify/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-amplify/'
+description: 'Manage web and mobile apps effortlessly with AWS Amplify. Deploy secure and scalable applications using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS Amplify manager
-- Web app deployment
-- Mobile app deployment
-- Amplify backend management
-- AWS Amplify command line
-- Cloud application manager
-- Amplify environment control
-- Amplify app configuration
-- AWS cloud deployment
-- Serverless application manager
+  - AWS Amplify manager
+  - Web app deployment
+  - Mobile app deployment
+  - Amplify backend management
+  - AWS Amplify command line
+  - Cloud application manager
+  - Amplify environment control
+  - Amplify app configuration
+  - AWS cloud deployment
+  - Serverless application manager
 features:
-- Create new Amplify applications via command line
-- Delete existing Amplify applications easily
-- Manage and list all AWS Amplify backend environments
-- Update application configurations and settings swiftly
-- Retrieve detailed information about Amplify apps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Amplify applications via command line
+  - Delete existing Amplify applications easily
+  - Manage and list all AWS Amplify backend environments
+  - Update application configurations and settings swiftly
+  - Retrieve detailed information about Amplify apps
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws amplify

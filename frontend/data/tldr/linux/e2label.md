@@ -1,9 +1,9 @@
 ---
-title: "Change Ext Label - Format ext Filesystem | Online Free DevTools by Hexmos"
+title: 'Change Ext Label - Format ext Filesystem | Online Free DevTools by Hexmos'
 name: e2label
-path: "/freedevtools/tldr/linux/e2label/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/e2label/"
-description: "Change ext filesystem labels quickly with e2label. Modify ext2, ext3, and ext4 volume labels on Linux partitions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/e2label/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/e2label/'
+description: 'Change ext filesystem labels quickly with e2label. Modify ext2, ext3, and ext4 volume labels on Linux partitions. Free online tool, no registration required.'
 category: linux
 keywords:
   - ext label changer
@@ -22,8 +22,8 @@ features:
   - Format the volume label for ext4 partitions
   - Update filesystem identification metadata
   - Support for common ext filesystems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # e2label

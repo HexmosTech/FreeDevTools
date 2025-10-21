@@ -1,29 +1,29 @@
 ---
-title: "Java Debugger - Analyze Java Processes | Online Free DevTools by Hexmos"
+title: 'Java Debugger - Analyze Java Processes | Online Free DevTools by Hexmos'
 name: jhsdb
-path: "/freedevtools/tldr/common/jhsdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jhsdb/"
-description: "Analyze Java processes with jhsdb. Debug core dumps, examine JVM state, and troubleshoot issues using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jhsdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jhsdb/'
+description: 'Analyze Java processes with jhsdb. Debug core dumps, examine JVM state, and troubleshoot issues using this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- java debugger
-- java process analysis
-- jvm debugger
-- core dump analyzer
-- java troubleshooting
-- java debug server
-- jhsdb command line
-- java stack analysis
-- deadlock detection
-- postmortem debugging
+  - java debugger
+  - java process analysis
+  - jvm debugger
+  - core dump analyzer
+  - java troubleshooting
+  - java debug server
+  - jhsdb command line
+  - java stack analysis
+  - deadlock detection
+  - postmortem debugging
 features:
-- Analyze the stack and locks of a running Java process.
-- Debug a Java core dump in interactive mode.
-- Start a remote debug server for Java applications.
-- Connect to a Java process for interactive debugging.
-- Examine JVM state and troubleshoot application issues.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze the stack and locks of a running Java process.
+  - Debug a Java core dump in interactive mode.
+  - Start a remote debug server for Java applications.
+  - Connect to a Java process for interactive debugging.
+  - Examine JVM state and troubleshoot application issues.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jhsdb

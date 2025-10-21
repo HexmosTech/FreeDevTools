@@ -1,29 +1,29 @@
 ---
-title: "Control Bash Scripts - Manage Bash-it | Online Free DevTools by Hexmos"
+title: 'Control Bash Scripts - Manage Bash-it | Online Free DevTools by Hexmos'
 name: bash-it
-path: "/freedevtools/tldr/common/bash-it/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bash-it/"
-description: "Control your Bash scripts with Bash-it. Update, reload, and restart your Bash environment with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bash-it/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bash-it/'
+description: 'Control your Bash scripts with Bash-it. Update, reload, and restart your Bash environment with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- bash script manager
-- bash configuration tool
-- bash environment update
-- bash it reload profile
-- bash command search
-- linux bash alias
-- macos bash completion
-- bash it plugin manager
-- shell script update tool
-- bash it doctor check
+  - bash script manager
+  - bash configuration tool
+  - bash environment update
+  - bash it reload profile
+  - bash command search
+  - linux bash alias
+  - macos bash completion
+  - bash it plugin manager
+  - shell script update tool
+  - bash it doctor check
 features:
-- Update Bash-it to the latest version
-- Reload the Bash profile for immediate changes
-- Restart the Bash shell with a single command
-- Diagnose Bash configuration errors
-- Search and manage Bash-it components
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update Bash-it to the latest version
+  - Reload the Bash profile for immediate changes
+  - Restart the Bash shell with a single command
+  - Diagnose Bash configuration errors
+  - Search and manage Bash-it components
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bash-it

@@ -1,9 +1,9 @@
 ---
-title: "Virt-What - Detect Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Virt-What - Detect Virtual Machines | Online Free DevTools by Hexmos'
 name: virt-what
-path: "/freedevtools/tldr/linux/virt-what/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/virt-what/"
-description: "Detect virtual machines instantly with virt-what. Identify virtualization technologies and improve system security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/virt-what/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/virt-what/'
+description: 'Detect virtual machines instantly with virt-what. Identify virtualization technologies and improve system security. Free online tool, no registration required.'
 category: linux
 keywords:
   - virtual machine detection
@@ -22,8 +22,8 @@ features:
   - Offers a simple command-line interface for easy usage.
   - Enables quick assessment of system virtualization status.
   - Supports logging output to a file for further analysis.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virt-what

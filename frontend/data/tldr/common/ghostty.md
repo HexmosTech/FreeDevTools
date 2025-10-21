@@ -1,29 +1,29 @@
 ---
-title: "Ghostty Terminal - Control Cross-Platform Terminal | Online Free DevTools by Hexmos"
+title: 'Ghostty Terminal - Control Cross-Platform Terminal | Online Free DevTools by Hexmos'
 name: ghostty
-path: "/freedevtools/tldr/common/ghostty/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ghostty/"
-description: "Control terminal sessions with Ghostty Terminal, a fast, GPU-accelerated cross-platform terminal emulator. Configure keybindings and browse themes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ghostty/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ghostty/'
+description: 'Control terminal sessions with Ghostty Terminal, a fast, GPU-accelerated cross-platform terminal emulator. Configure keybindings and browse themes easily. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal emulator
-- cross-platform terminal
-- gpu accelerated terminal
-- terminal configuration
-- command line terminal
-- terminal themes
-- keybinding configuration
-- ghostty configuration
-- linux terminal
-- macos terminal
+  - terminal emulator
+  - cross-platform terminal
+  - gpu accelerated terminal
+  - terminal configuration
+  - command line terminal
+  - terminal themes
+  - keybinding configuration
+  - ghostty configuration
+  - linux terminal
+  - macos terminal
 features:
-- Open a new Ghostty window
-- Execute commands in a new Ghostty window
-- List default and configured keybindings
-- List available actions
-- Browse interactive themes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open a new Ghostty window
+  - Execute commands in a new Ghostty window
+  - List default and configured keybindings
+  - List available actions
+  - Browse interactive themes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ghostty

@@ -1,29 +1,29 @@
 ---
-title: "Swagger Codegen - Generate REST API Code & Docs | Online Free DevTools by Hexmos"
+title: 'Swagger Codegen - Generate REST API Code & Docs | Online Free DevTools by Hexmos'
 name: swagger-codegen
-path: "/freedevtools/tldr/common/swagger-codegen/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/swagger-codegen/"
-description: "Generate REST API code and documentation with Swagger Codegen. Define APIs using OpenAPI/Swagger, automate code generation, and simplify API development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/swagger-codegen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/swagger-codegen/'
+description: 'Generate REST API code and documentation with Swagger Codegen. Define APIs using OpenAPI/Swagger, automate code generation, and simplify API development. Free online tool, no registration required.'
 category: common
 keywords:
-- Swagger Codegen
-- OpenAPI code generator
-- REST API documentation generator
-- API client generator
-- API server stub generator
-- Swagger API tools
-- API definition tools
-- Java code generation
-- Python code generation
-- YAML API definition
+  - Swagger Codegen
+  - OpenAPI code generator
+  - REST API documentation generator
+  - API client generator
+  - API server stub generator
+  - Swagger API tools
+  - API definition tools
+  - Java code generation
+  - Python code generation
+  - YAML API definition
 features:
-- Generate server stubs from OpenAPI definitions
-- Generate client SDKs for multiple languages
-- Automate API documentation creation
-- Support various templating engines for customization
-- Configure code generation options using command-line arguments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate server stubs from OpenAPI definitions
+  - Generate client SDKs for multiple languages
+  - Automate API documentation creation
+  - Support various templating engines for customization
+  - Configure code generation options using command-line arguments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swagger-codegen

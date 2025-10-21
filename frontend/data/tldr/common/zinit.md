@@ -1,29 +1,29 @@
 ---
-title: "Manage Zsh Plugins - Control Zinit Configuration | Online Free DevTools by Hexmos"
+title: 'Manage Zsh Plugins - Control Zinit Configuration | Online Free DevTools by Hexmos'
 name: zinit
-path: "/freedevtools/tldr/common/zinit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zinit/"
-description: "Manage Zsh plugins easily with Zinit plugin manager. Install, update, and uninstall Zsh plugins to customize your shell environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zinit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zinit/'
+description: 'Manage Zsh plugins easily with Zinit plugin manager. Install, update, and uninstall Zsh plugins to customize your shell environment. Free online tool, no registration required.'
 category: common
 keywords:
-- zsh plugin manager
-- zsh plugins
-- zinit plugins
-- zsh package manager
-- zinit configuration
-- zsh completions
-- zinit self-update
-- shell plugin management
-- terminal plugin manager
-- zsh environment
+  - zsh plugin manager
+  - zsh plugins
+  - zinit plugins
+  - zsh package manager
+  - zinit configuration
+  - zsh completions
+  - zinit self-update
+  - shell plugin management
+  - terminal plugin manager
+  - zsh environment
 features:
-- Install and manage Zsh plugins
-- Update Zinit to the latest version
-- Manage Zsh completions for plugins
-- Navigate to plugin directories easily
-- List the status of installed completions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and manage Zsh plugins
+  - Update Zinit to the latest version
+  - Manage Zsh completions for plugins
+  - Navigate to plugin directories easily
+  - List the status of installed completions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zinit

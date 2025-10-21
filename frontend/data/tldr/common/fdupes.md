@@ -1,29 +1,29 @@
 ---
-title: "Find Duplicate Files - Identify & Remove Duplicates | Online Free DevTools by Hexmos"
+title: 'Find Duplicate Files - Identify & Remove Duplicates | Online Free DevTools by Hexmos'
 name: fdupes
-path: "/freedevtools/tldr/common/fdupes/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fdupes/"
-description: "Identify duplicate files with fdupes. Efficiently manage disk space and remove redundant data across directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fdupes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fdupes/'
+description: 'Identify duplicate files with fdupes. Efficiently manage disk space and remove redundant data across directories. Free online tool, no registration required.'
 category: common
 keywords:
-- duplicate file finder
-- find duplicate files linux
-- remove duplicate files
-- disk space management
-- file comparison tool
-- linux command line tools
-- fdupes command examples
-- identify redundant files
-- delete duplicate files linux
-- file system optimization
+  - duplicate file finder
+  - find duplicate files linux
+  - remove duplicate files
+  - disk space management
+  - file comparison tool
+  - linux command line tools
+  - fdupes command examples
+  - identify redundant files
+  - delete duplicate files linux
+  - file system optimization
 features:
-- Recursively search directories for duplicate files
-- Interactively delete duplicate files with prompt
-- Delete duplicate files without prompting
-- Consider hardlinks as duplicates during search
-- Compare files based on content, not just name
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search directories for duplicate files
+  - Interactively delete duplicate files with prompt
+  - Delete duplicate files without prompting
+  - Consider hardlinks as duplicates during search
+  - Compare files based on content, not just name
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fdupes

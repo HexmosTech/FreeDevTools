@@ -1,29 +1,29 @@
 ---
-title: "Rubocop - Lint Ruby Code | Online Free DevTools by Hexmos"
+title: 'Rubocop - Lint Ruby Code | Online Free DevTools by Hexmos'
 name: rubocop
-path: "/freedevtools/tldr/common/rubocop/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rubocop/"
-description: "Lint Ruby code effortlessly with Rubocop. Analyze code quality, enforce coding standards, and automatically correct style issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rubocop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rubocop/'
+description: 'Lint Ruby code effortlessly with Rubocop. Analyze code quality, enforce coding standards, and automatically correct style issues. Free online tool, no registration required.'
 category: common
 keywords:
-- Ruby code linter
-- Ruby code style checker
-- Ruby static analysis
-- Ruby code quality tool
-- Ruby coding standards
-- Rubocop Ruby linting
-- Ruby code formatter
-- Ruby auto-correction
-- Code linting command line
-- Code analysis tool
+  - Ruby code linter
+  - Ruby code style checker
+  - Ruby static analysis
+  - Ruby code quality tool
+  - Ruby coding standards
+  - Rubocop Ruby linting
+  - Ruby code formatter
+  - Ruby auto-correction
+  - Code linting command line
+  - Code analysis tool
 features:
-- Analyze Ruby code for style violations
-- Enforce consistent coding standards
-- Automatically correct code style issues
-- Integrate with editors and CI systems
-- Customize linting rules and configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze Ruby code for style violations
+  - Enforce consistent coding standards
+  - Automatically correct code style issues
+  - Integrate with editors and CI systems
+  - Customize linting rules and configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rubocop

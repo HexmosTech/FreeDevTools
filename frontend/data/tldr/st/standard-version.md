@@ -1,29 +1,29 @@
 ---
-title: "Generate Changelog - standard-version for Automated Releases | Online Free DevTools by Hexmos"
+title: 'Generate Changelog - standard-version for Automated Releases | Online Free DevTools by Hexmos'
 name: standard-version
-path: "/freedevtools/tldr/st/standard-version/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/standard-version/"
-description: "Automate changelog generation with standard-version, leveraging SemVer for automated releases. Enhance workflow with Conventional Commits. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/standard-version/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/standard-version/'
+description: 'Automate changelog generation with standard-version, leveraging SemVer for automated releases. Enhance workflow with Conventional Commits. Free online tool, no registration required.'
 category: common
 keywords:
-- changelog generator
-- automated release tool
-- semantic versioning
-- standard-version CLI
-- conventional commits
-- version bump automation
-- release tagging
-- changelog management
-- git release automation
-- semver automation
+  - changelog generator
+  - automated release tool
+  - semantic versioning
+  - standard-version CLI
+  - conventional commits
+  - version bump automation
+  - release tagging
+  - changelog management
+  - git release automation
+  - semver automation
 features:
-- Automates version bumping based on commit messages.
-- Generates changelogs following Conventional Commits.
-- Creates git tags for releases.
-- Supports pre-release versions like alpha and beta.
-- Allows dry-run mode to preview changes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automates version bumping based on commit messages.
+  - Generates changelogs following Conventional Commits.
+  - Creates git tags for releases.
+  - Supports pre-release versions like alpha and beta.
+  - Allows dry-run mode to preview changes.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # standard-version

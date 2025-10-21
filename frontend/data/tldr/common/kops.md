@@ -1,29 +1,29 @@
 ---
-title: "Create Kubernetes Clusters - Manage kops | Online Free DevTools by Hexmos"
+title: 'Create Kubernetes Clusters - Manage kops | Online Free DevTools by Hexmos'
 name: kops
-path: "/freedevtools/tldr/common/kops/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kops/"
-description: "Create Kubernetes clusters instantly with kops. Provision, manage, and scale your Kubernetes infrastructure effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kops/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kops/'
+description: 'Create Kubernetes clusters instantly with kops. Provision, manage, and scale your Kubernetes infrastructure effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Kubernetes cluster creation
-- kops cluster management
-- Kubernetes provisioning tool
-- kops infrastructure automation
-- cloud Kubernetes deployment
-- kops cluster validation
-- Kubernetes cluster upgrade
-- kops command-line tool
-- k8s cluster management
-- Kubernetes cluster configuration
+  - Kubernetes cluster creation
+  - kops cluster management
+  - Kubernetes provisioning tool
+  - kops infrastructure automation
+  - cloud Kubernetes deployment
+  - kops cluster validation
+  - Kubernetes cluster upgrade
+  - kops command-line tool
+  - k8s cluster management
+  - Kubernetes cluster configuration
 features:
-- Create Kubernetes clusters from specifications
-- Generate SSH public keys for secure access
-- Export cluster configuration to kubeconfig
-- Validate cluster health and readiness
-- Delete Kubernetes clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Kubernetes clusters from specifications
+  - Generate SSH public keys for secure access
+  - Export cluster configuration to kubeconfig
+  - Validate cluster health and readiness
+  - Delete Kubernetes clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kops

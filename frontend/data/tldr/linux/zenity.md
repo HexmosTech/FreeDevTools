@@ -1,9 +1,9 @@
 ---
-title: "Display Dialogs with Zenity - Command-Line Tool | Online Free DevTools by Hexmos"
+title: 'Display Dialogs with Zenity - Command-Line Tool | Online Free DevTools by Hexmos'
 name: zenity
-path: "/freedevtools/tldr/linux/zenity/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/zenity/"
-description: "Display dialogs instantly with Zenity, the command-line dialog tool. Create interactive shell scripts and forms easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/zenity/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/zenity/'
+description: 'Display dialogs instantly with Zenity, the command-line dialog tool. Create interactive shell scripts and forms easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - command-line dialog
@@ -22,8 +22,8 @@ features:
   - Create and display interactive forms
   - Select files and directories through a dialog
   - Display progress bars with dynamic updates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zenity

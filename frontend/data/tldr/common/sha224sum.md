@@ -1,29 +1,29 @@
 ---
-title: "Calculate SHA224 Checksums - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Calculate SHA224 Checksums - Verify File Integrity | Online Free DevTools by Hexmos'
 name: sha224sum
-path: "/freedevtools/tldr/common/sha224sum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sha224sum/"
-description: "Calculate SHA224 checksums with sha224sum to verify file integrity. Ensure data authenticity and detect file modifications. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sha224sum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sha224sum/'
+description: 'Calculate SHA224 checksums with sha224sum to verify file integrity. Ensure data authenticity and detect file modifications. Free online tool, no registration required.'
 category: common
 keywords:
-- SHA224 checksum generator
-- File integrity verification
-- Cryptographic checksum calculator
-- SHA224 hash utility
-- Linux SHA224 command
-- macOS SHA224 checksum
-- Data authenticity checker
-- File integrity checker
-- SHA224 checksum verification
-- Hash value generation
+  - SHA224 checksum generator
+  - File integrity verification
+  - Cryptographic checksum calculator
+  - SHA224 hash utility
+  - Linux SHA224 command
+  - macOS SHA224 checksum
+  - Data authenticity checker
+  - File integrity checker
+  - SHA224 checksum verification
+  - Hash value generation
 features:
-- Calculate SHA224 checksums for files
-- Verify file integrity using SHA224 checksums
-- Calculate SHA224 checksums from stdin input
-- Check SHA224 checksums against known values
-- Ignore missing files during verification
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate SHA224 checksums for files
+  - Verify file integrity using SHA224 checksums
+  - Calculate SHA224 checksums from stdin input
+  - Check SHA224 checksums against known values
+  - Ignore missing files during verification
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sha224sum

@@ -1,4 +1,4 @@
-import { toast } from "@/components/ToastProvider";
+import { toast } from '@/components/ToastProvider';
 import { useState } from 'react';
 import type { EmojiData, EmojiImageVariants } from '../lib/emojis';
 
@@ -12,9 +12,14 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
   const [copiedShortcode, setCopiedShortcode] = useState<string | null>(null);
 
   // Prefer primary code, then Fluent UI glyph, then top-level glyph found in some sources
-  const emojiChar = emoji.code || emoji.fluentui_metadata?.glyph || (emoji as any).glyph || '';
+  const emojiChar =
+    emoji.code || emoji.fluentui_metadata?.glyph || (emoji as any).glyph || '';
 
-  const copyToClipboard = async (text: string, type: 'code' | 'shortcode', shortcode?: string) => {
+  const copyToClipboard = async (
+    text: string,
+    type: 'code' | 'shortcode',
+    shortcode?: string
+  ) => {
     const onSuccess = () => {
       if (type === 'code') {
         setCopiedCode(true);
@@ -26,7 +31,10 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
     };
 
     try {
-      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      if (
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === 'function'
+      ) {
         await navigator.clipboard.writeText(text);
         onSuccess();
         return;
@@ -86,10 +94,15 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
               (val as unknown[]).forEach((item) => {
                 if (typeof item === 'string') results.push(item);
                 else if (item && typeof item === 'object') {
-                  Object.values(item as Record<string, unknown>).forEach((v) => {
-                    if (Array.isArray(v)) (v as unknown[]).forEach((s) => { if (typeof s === 'string') results.push(s); });
-                    else if (typeof v === 'string') results.push(v);
-                  });
+                  Object.values(item as Record<string, unknown>).forEach(
+                    (v) => {
+                      if (Array.isArray(v))
+                        (v as unknown[]).forEach((s) => {
+                          if (typeof s === 'string') results.push(s);
+                        });
+                      else if (typeof v === 'string') results.push(v);
+                    }
+                  );
                 }
               });
             } else if (typeof val === 'string') {
@@ -115,7 +128,8 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
     if (images['3d']) variants.push({ type: '3D', url: images['3d'] });
     if (images['color']) variants.push({ type: 'Color', url: images['color'] });
     if (images['flat']) variants.push({ type: 'Flat', url: images['flat'] });
-    if (images['high_contrast']) variants.push({ type: 'High Contrast', url: images['high_contrast'] });
+    if (images['high_contrast'])
+      variants.push({ type: 'High Contrast', url: images['high_contrast'] });
     return variants;
   };
 
@@ -125,14 +139,16 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 mb-6 shadow-sm">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           {/* Large Emoji Display */}
-          <div className="text-8xl md:text-9xl flex-shrink-0">
-            {emojiChar}
-          </div>
+          <div className="text-8xl md:text-9xl flex-shrink-0">{emojiChar}</div>
 
           {/* Emoji Info */}
           <div className="flex-1">
             <p className="mb-2">
-              {emoji.code || (emoji as any).glyph} {emoji.title || emoji.fluentui_metadata?.cldr || emoji.slug || 'Unknown'}
+              {emoji.code || (emoji as any).glyph}{' '}
+              {emoji.title ||
+                emoji.fluentui_metadata?.cldr ||
+                emoji.slug ||
+                'Unknown'}
             </p>
 
             {emoji.alsoKnownAs && emoji.alsoKnownAs.length > 0 && (
@@ -145,10 +161,11 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
             <div className="flex flex-wrap gap-3 mb-4">
               <button
                 onClick={() => copyToClipboard(emojiChar, 'code')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${copiedCode
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                  : 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30'
-                  }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  copiedCode
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30'
+                }`}
               >
                 {copiedCode ? '✓ Copied!' : `Copy ${emojiChar}`}
               </button>
@@ -156,21 +173,32 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
               {emoji.shortcodes && emoji.shortcodes.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {emoji.shortcodes
-                    .filter((shortcode, index, array) =>
-                      array.findIndex(s => s.code === shortcode.code) === index
+                    .filter(
+                      (shortcode, index, array) =>
+                        array.findIndex((s) => s.code === shortcode.code) ===
+                        index
                     )
                     .slice(0, 3)
                     .map((shortcode) => (
                       <button
                         key={shortcode.code}
-                        onClick={() => copyToClipboard(shortcode.code, 'shortcode', shortcode.code)}
-                        className={`px-3 py-1 rounded text-xs font-medium transition-colors ${copiedShortcode === shortcode.code
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-                          }`}
+                        onClick={() =>
+                          copyToClipboard(
+                            shortcode.code,
+                            'shortcode',
+                            shortcode.code
+                          )
+                        }
+                        className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                          copiedShortcode === shortcode.code
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
+                        }`}
                         title={`${shortcode.code} (${shortcode.vendor.title})`}
                       >
-                        {copiedShortcode === shortcode.code ? '✓' : `${shortcode.code} (${shortcode.vendor.title})`}
+                        {copiedShortcode === shortcode.code
+                          ? '✓'
+                          : `${shortcode.code} (${shortcode.vendor.title})`}
                       </button>
                     ))}
                 </div>
@@ -194,40 +222,42 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {getImageVariants().map((variant) => {
-
               const copySvgAsPng = async (svgUrl: string) => {
                 try {
                   const response = await fetch(svgUrl);
                   const svgText = await response.text();
 
-                  const svgBlob = new Blob([svgText], { type: "image/svg+xml" });
+                  const svgBlob = new Blob([svgText], {
+                    type: 'image/svg+xml',
+                  });
                   const svgUrlBlob = URL.createObjectURL(svgBlob);
 
                   const img = new Image();
                   img.src = svgUrlBlob;
 
                   img.onload = async () => {
-                    const canvas = document.createElement("canvas");
+                    const canvas = document.createElement('canvas');
                     canvas.width = img.width * 5 || 1024; // fallback size
                     canvas.height = img.height * 5 || 1024;
 
-                    const ctx = canvas.getContext("2d");
+                    const ctx = canvas.getContext('2d');
                     if (!ctx) return;
 
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                     canvas.toBlob(async (blob) => {
                       if (!blob) return;
-                      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
-                      toast.success("Image copied to clipboard!");
-                    }, "image/png");
+                      await navigator.clipboard.write([
+                        new ClipboardItem({ [blob.type]: blob }),
+                      ]);
+                      toast.success('Image copied to clipboard!');
+                    }, 'image/png');
                   };
                 } catch (err) {
-                  console.error("Failed to copy SVG:", err);
-                  toast.error("Failed to copy image.");
+                  console.error('Failed to copy SVG:', err);
+                  toast.error('Failed to copy image.');
                 }
               };
-
 
               const copyRasterImage = async () => {
                 try {
@@ -236,25 +266,23 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
 
                   // Copy the actual image to clipboard
                   await navigator.clipboard.write([
-                    new ClipboardItem({ [blob.type]: blob })
+                    new ClipboardItem({ [blob.type]: blob }),
                   ]);
 
-                  toast.success("Image copied to clipboard!");
+                  toast.success('Image copied to clipboard!');
                 } catch (err) {
-                  console.error("Failed to copy image:", err);
-                  toast.error("Failed to copy image.");
+                  console.error('Failed to copy image:', err);
+                  toast.error('Failed to copy image.');
                 }
               };
 
-
               const handleCopy = () => {
-                if (variant.url.endsWith(".svg")) {
+                if (variant.url.endsWith('.svg')) {
                   copySvgAsPng(variant.url);
                 } else {
                   copyRasterImage();
                 }
               };
-
 
               return (
                 <div key={variant.type} className="text-center">
@@ -290,14 +318,22 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
             <div className="space-y-2 text-sm">
               {emoji.emojiVersion && (
                 <div>
-                  <span className="font-medium text-slate-600 dark:text-slate-400">Emoji Version:</span>
-                  <span className="ml-2 text-slate-900 dark:text-slate-100">{emoji.emojiVersion.name}</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-400">
+                    Emoji Version:
+                  </span>
+                  <span className="ml-2 text-slate-900 dark:text-slate-100">
+                    {emoji.emojiVersion.name}
+                  </span>
                 </div>
               )}
               {emoji.version && (
                 <div>
-                  <span className="font-medium text-slate-600 dark:text-slate-400">Unicode Version:</span>
-                  <span className="ml-2 text-slate-900 dark:text-slate-100">{emoji.version.name}</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-400">
+                    Unicode Version:
+                  </span>
+                  <span className="ml-2 text-slate-900 dark:text-slate-100">
+                    {emoji.version.name}
+                  </span>
                 </div>
               )}
             </div>
@@ -305,23 +341,24 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
         )}
 
         {/* Keywords */}
-        {emoji.fluentui_metadata?.keywords && emoji.fluentui_metadata.keywords.length > 0 && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-              Keywords
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {emoji.fluentui_metadata.keywords.map((keyword) => (
-                <span
-                  key={keyword}
-                  className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full dark:bg-blue-900/20 dark:text-blue-400"
-                >
-                  {keyword}
-                </span>
-              ))}
+        {emoji.fluentui_metadata?.keywords &&
+          emoji.fluentui_metadata.keywords.length > 0 && (
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                Keywords
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {emoji.fluentui_metadata.keywords.map((keyword) => (
+                  <span
+                    key={keyword}
+                    className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full dark:bg-blue-900/20 dark:text-blue-400"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* Shortcodes Table */}
@@ -334,18 +371,29 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">Platform</th>
-                  <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">Shortcode</th>
-                  <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">Action</th>
+                  <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">
+                    Platform
+                  </th>
+                  <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">
+                    Shortcode
+                  </th>
+                  <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {emoji.shortcodes
-                  .filter((shortcode, index, array) =>
-                    array.findIndex(s => s.code === shortcode.code) === index
+                  .filter(
+                    (shortcode, index, array) =>
+                      array.findIndex((s) => s.code === shortcode.code) ===
+                      index
                   )
                   .map((shortcode, index) => (
-                    <tr key={index} className="border-b border-slate-100 dark:border-slate-800">
+                    <tr
+                      key={index}
+                      className="border-b border-slate-100 dark:border-slate-800"
+                    >
                       <td className="py-3 text-slate-900 dark:text-slate-100">
                         {shortcode.vendor.title}
                       </td>
@@ -354,13 +402,22 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
                       </td>
                       <td className="py-3">
                         <button
-                          onClick={() => copyToClipboard(shortcode.code, 'shortcode', shortcode.code)}
-                          className={`px-3 py-1 rounded text-xs font-medium transition-colors ${copiedShortcode === shortcode.code
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-                            }`}
+                          onClick={() =>
+                            copyToClipboard(
+                              shortcode.code,
+                              'shortcode',
+                              shortcode.code
+                            )
+                          }
+                          className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                            copiedShortcode === shortcode.code
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
+                          }`}
                         >
-                          {copiedShortcode === shortcode.code ? 'Copied!' : 'Copy'}
+                          {copiedShortcode === shortcode.code
+                            ? 'Copied!'
+                            : 'Copy'}
                         </button>
                       </td>
                     </tr>
@@ -380,46 +437,69 @@ export default function EmojiPage({ emoji, images }: EmojiPageProps) {
           <div className="space-y-3 text-sm">
             {emoji.emoji_net_data.category && (
               <div>
-                <span className="font-medium text-slate-600 dark:text-slate-400">Category:</span>
-                <span className="ml-2 text-slate-900 dark:text-slate-100">{emoji.emoji_net_data.category}</span>
+                <span className="font-medium text-slate-600 dark:text-slate-400">
+                  Category:
+                </span>
+                <span className="ml-2 text-slate-900 dark:text-slate-100">
+                  {emoji.emoji_net_data.category}
+                </span>
               </div>
             )}
             {emoji.emoji_net_data.definition && (
               <div>
-                <span className="font-medium text-slate-600 dark:text-slate-400">Definition:</span>
+                <span className="font-medium text-slate-600 dark:text-slate-400">
+                  Definition:
+                </span>
                 <p className="mt-1 text-slate-700 dark:text-slate-300">
                   {cleanDescription(emoji.emoji_net_data.definition)}
                 </p>
               </div>
             )}
             {/* Parts of speech from senses */}
-            {collectNestedStrings(emoji.emoji_net_data?.senses, ['adjectives']).length > 0 && (
+            {collectNestedStrings(emoji.emoji_net_data?.senses, ['adjectives'])
+              .length > 0 && (
               <div>
-                <span className="font-medium text-slate-600 dark:text-slate-400">Adjectives:</span>
+                <span className="font-medium text-slate-600 dark:text-slate-400">
+                  Adjectives:
+                </span>
                 <ul className="mt-2 list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
-                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['adjectives']).slice(0, 12).map((desc: string, idx: number) => (
-                    <li key={`adj-${idx}`}>{desc}</li>
-                  ))}
+                  {collectNestedStrings(emoji.emoji_net_data?.senses, [
+                    'adjectives',
+                  ])
+                    .slice(0, 12)
+                    .map((desc: string, idx: number) => (
+                      <li key={`adj-${idx}`}>{desc}</li>
+                    ))}
                 </ul>
               </div>
             )}
-            {collectNestedStrings(emoji.emoji_net_data?.senses, ['verbs']).length > 0 && (
+            {collectNestedStrings(emoji.emoji_net_data?.senses, ['verbs'])
+              .length > 0 && (
               <div>
-                <span className="font-medium text-slate-600 dark:text-slate-400">Verbs:</span>
+                <span className="font-medium text-slate-600 dark:text-slate-400">
+                  Verbs:
+                </span>
                 <ul className="mt-2 list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
-                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['verbs']).slice(0, 12).map((desc: string, idx: number) => (
-                    <li key={`verb-${idx}`}>{desc}</li>
-                  ))}
+                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['verbs'])
+                    .slice(0, 12)
+                    .map((desc: string, idx: number) => (
+                      <li key={`verb-${idx}`}>{desc}</li>
+                    ))}
                 </ul>
               </div>
             )}
-            {collectNestedStrings(emoji.emoji_net_data?.senses, ['nouns']).length > 0 && (
+            {collectNestedStrings(emoji.emoji_net_data?.senses, ['nouns'])
+              .length > 0 && (
               <div>
-                <span className="font-medium text-slate-600 dark:text-slate-400">Nouns:</span>
+                <span className="font-medium text-slate-600 dark:text-slate-400">
+                  Nouns:
+                </span>
                 <ul className="mt-2 list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
-                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['nouns']).slice(0, 12).map((desc: string, idx: number) => (
-                    <li key={`noun-${idx}`}>{desc}</li>
-                  ))}
+                  {collectNestedStrings(emoji.emoji_net_data?.senses, ['nouns'])
+                    .slice(0, 12)
+                    .map((desc: string, idx: number) => (
+                      <li key={`noun-${idx}`}>{desc}</li>
+                    ))}
                 </ul>
               </div>
             )}

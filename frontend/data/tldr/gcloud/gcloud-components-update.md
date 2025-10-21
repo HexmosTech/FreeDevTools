@@ -1,29 +1,29 @@
 ---
-title: "Update gcloud Components - Manage Google Cloud SDK | Online Free DevTools by Hexmos"
+title: 'Update gcloud Components - Manage Google Cloud SDK | Online Free DevTools by Hexmos'
 name: gcloud-components-update
-path: "/freedevtools/tldr/gcloud/gcloud-components-update/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-components-update/"
-description: "Update gcloud components effortlessly with this online tool. Manage your Google Cloud SDK installation, upgrade versions, and automate updates. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-components-update/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-components-update/'
+description: 'Update gcloud components effortlessly with this online tool. Manage your Google Cloud SDK installation, upgrade versions, and automate updates. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud component update
-- Google Cloud SDK update
-- gcloud SDK manager
-- gcloud update components version
-- gcloud automation update
-- Google Cloud CLI update
-- gcloud components manager
-- gcloud silent update
-- common gcloud commands
-- linux gcloud update
+  - gcloud component update
+  - Google Cloud SDK update
+  - gcloud SDK manager
+  - gcloud update components version
+  - gcloud automation update
+  - Google Cloud CLI update
+  - gcloud components manager
+  - gcloud silent update
+  - common gcloud commands
+  - linux gcloud update
 features:
-- Update all installed gcloud components to the latest version
-- Update gcloud components to a specific version
-- Perform updates without user confirmation for automation
-- Manage Google Cloud SDK components efficiently
-- Streamline the gcloud component update process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update all installed gcloud components to the latest version
+  - Update gcloud components to a specific version
+  - Perform updates without user confirmation for automation
+  - Manage Google Cloud SDK components efficiently
+  - Streamline the gcloud component update process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud components update

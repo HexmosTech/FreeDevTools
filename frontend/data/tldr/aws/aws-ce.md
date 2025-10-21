@@ -1,29 +1,29 @@
 ---
-title: "AWS Cost Explorer - Manage AWS Costs | Online Free DevTools by Hexmos"
+title: 'AWS Cost Explorer - Manage AWS Costs | Online Free DevTools by Hexmos'
 name: aws-ce
-path: "/freedevtools/tldr/aws/aws-ce/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-ce/"
-description: "Manage AWS costs effectively with AWS Cost Explorer. Analyze usage, forecast expenses and optimize spending using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-ce/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-ce/'
+description: 'Manage AWS costs effectively with AWS Cost Explorer. Analyze usage, forecast expenses and optimize spending using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS cost management
-- AWS cost explorer CLI
-- Cloud cost optimization
-- AWS cost analysis
-- Cost and usage reports
-- AWS billing management
-- AWS CE commands
-- Cost anomaly detection
-- AWS budget control
-- AWS resource tagging
+  - AWS cost management
+  - AWS cost explorer CLI
+  - Cloud cost optimization
+  - AWS cost analysis
+  - Cost and usage reports
+  - AWS billing management
+  - AWS CE commands
+  - Cost anomaly detection
+  - AWS budget control
+  - AWS resource tagging
 features:
-- Create AWS cost anomaly monitors
-- Generate cost and usage reports
-- Forecast future AWS costs
-- Get reservation utilization data
-- Tag AWS resources for cost tracking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create AWS cost anomaly monitors
+  - Generate cost and usage reports
+  - Forecast future AWS costs
+  - Get reservation utilization data
+  - Tag AWS resources for cost tracking
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws ce

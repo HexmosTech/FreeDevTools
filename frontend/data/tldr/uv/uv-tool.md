@@ -1,29 +1,29 @@
 ---
-title: "UV Tool - Run Python Packages | Online Free DevTools by Hexmos"
+title: 'UV Tool - Run Python Packages | Online Free DevTools by Hexmos'
 name: uv-tool
-path: "/freedevtools/tldr/uv/uv-tool/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-tool/"
-description: "Run Python packages instantly with UV Tool. Install, upgrade, and uninstall packages system-wide from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-tool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-tool/'
+description: 'Run Python packages instantly with UV Tool. Install, upgrade, and uninstall packages system-wide from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- python package runner
-- uv package installer
-- python dependency manager
-- command line package tool
-- uv tool upgrade
-- uv tool uninstall
-- python environment tool
-- system-wide python tool
-- pip alternative
-- astral uv tool
+  - python package runner
+  - uv package installer
+  - python dependency manager
+  - command line package tool
+  - uv tool upgrade
+  - uv tool uninstall
+  - python environment tool
+  - system-wide python tool
+  - pip alternative
+  - astral uv tool
 features:
-- Run Python package commands without installation
-- Install Python packages system-wide
-- Upgrade existing Python packages
-- Uninstall Python packages from the system
-- List all installed Python packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run Python package commands without installation
+  - Install Python packages system-wide
+  - Upgrade existing Python packages
+  - Uninstall Python packages from the system
+  - List all installed Python packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv tool

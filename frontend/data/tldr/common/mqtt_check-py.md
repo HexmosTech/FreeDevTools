@@ -1,29 +1,29 @@
 ---
-title: "Validate MQTT Credentials - Verify Login Details | Online Free DevTools by Hexmos"
+title: 'Validate MQTT Credentials - Verify Login Details | Online Free DevTools by Hexmos'
 name: mqtt_check.py
-path: "/freedevtools/tldr/common/mqtt_check-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/mqtt_check-py/"
-description: "Validate MQTT credentials with mqtt_check.py. Verify login information, enable SSL connections, and test client authentication. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mqtt_check-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/mqtt_check-py/'
+description: 'Validate MQTT credentials with mqtt_check.py. Verify login information, enable SSL connections, and test client authentication. Free online tool, no registration required.'
 category: common
 keywords:
-- mqtt credentials validation
-- mqtt login check
-- mqtt authentication test
-- mqtt connection verification
-- mqtt broker security
-- mqtt security audit
-- impacket mqtt check
-- python mqtt scanner
-- network mqtt security
-- common mqtt tool
+  - mqtt credentials validation
+  - mqtt login check
+  - mqtt authentication test
+  - mqtt connection verification
+  - mqtt broker security
+  - mqtt security audit
+  - impacket mqtt check
+  - python mqtt scanner
+  - network mqtt security
+  - common mqtt tool
 features:
-- Verify MQTT broker login credentials
-- Test MQTT connection security
-- Enable SSL for secure MQTT communication
-- Specify a custom client ID for authentication
-- Connect to MQTT broker on a custom port
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Verify MQTT broker login credentials
+  - Test MQTT connection security
+  - Enable SSL for secure MQTT communication
+  - Specify a custom client ID for authentication
+  - Connect to MQTT broker on a custom port
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mqtt_check.py

@@ -1,29 +1,29 @@
 ---
-title: "Control cert-manager - Manage Certificates | Online Free DevTools by Hexmos"
+title: 'Control cert-manager - Manage Certificates | Online Free DevTools by Hexmos'
 name: cmctl
-path: "/freedevtools/tldr/common/cmctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cmctl/"
-description: "Control cert-manager resources with cmctl. Approve certificate requests, check certificate status, and issue new requests. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cmctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cmctl/'
+description: 'Control cert-manager resources with cmctl. Approve certificate requests, check certificate status, and issue new requests. Free online tool, no registration required.'
 category: common
 keywords:
-- cert-manager control
-- certificate management
-- kubernetes certificate
-- cmctl command line
-- cert signing status
-- certificate request tool
-- cluster resource management
-- certificate approval tool
-- k8s certificate manager
-- cmctl certificate manager
+  - cert-manager control
+  - certificate management
+  - kubernetes certificate
+  - cmctl command line
+  - cert signing status
+  - certificate request tool
+  - cluster resource management
+  - certificate approval tool
+  - k8s certificate manager
+  - cmctl certificate manager
 features:
-- Check cert-manager API readiness
-- Display certificate status
-- Create certificate requests from files
-- Fetch signed certificates with timeout
-- Manage cert-manager resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check cert-manager API readiness
+  - Display certificate status
+  - Create certificate requests from files
+  - Fetch signed certificates with timeout
+  - Manage cert-manager resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cmctl

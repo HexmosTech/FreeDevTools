@@ -1,9 +1,9 @@
 ---
-title: "ISO Image Validator - Verify and Inspect ISO Files | Online Free DevTools by Hexmos"
+title: 'ISO Image Validator - Verify and Inspect ISO Files | Online Free DevTools by Hexmos'
 name: isoinfo
-path: "/freedevtools/tldr/linux/isoinfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/isoinfo/"
-description: "Validate and inspect ISO disk images with isoinfo. List files, extract specific files, and view header information. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/isoinfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/isoinfo/'
+description: 'Validate and inspect ISO disk images with isoinfo. List files, extract specific files, and view header information. Free online tool, no registration required.'
 category: linux
 keywords:
   - iso image validator
@@ -22,8 +22,8 @@ features:
   - Displays header information of an ISO disk image.
   - Verifies the integrity of ISO image structure (implicitly).
   - Supports various ISO image standards.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # isoinfo

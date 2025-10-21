@@ -1,29 +1,29 @@
 ---
-title: "Conda Install - Manage Packages | Online Free DevTools by Hexmos"
+title: 'Conda Install - Manage Packages | Online Free DevTools by Hexmos'
 name: conda-install
-path: "/freedevtools/tldr/conda/conda-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/conda/conda-install/"
-description: "Manage Conda packages with Conda Install. Quickly install, update, and specify versions for different environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/conda/conda-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/conda/conda-install/'
+description: 'Manage Conda packages with Conda Install. Quickly install, update, and specify versions for different environments. Free online tool, no registration required.'
 category: common
 keywords:
-- conda package manager
-- conda install package
-- conda environment management
-- conda install specific version
-- conda channel install
-- conda update package
-- conda install dependencies
-- python package manager
-- anaconda package install
-- cross-platform package install
+  - conda package manager
+  - conda install package
+  - conda environment management
+  - conda install specific version
+  - conda channel install
+  - conda update package
+  - conda install dependencies
+  - python package manager
+  - anaconda package install
+  - cross-platform package install
 features:
-- Install packages into specific Conda environments.
-- Specify package versions during installation.
-- Install packages from specific Conda channels.
-- Update existing packages within an environment.
-- Perform unattended installations by accepting transactions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages into specific Conda environments.
+  - Specify package versions during installation.
+  - Install packages from specific Conda channels.
+  - Update existing packages within an environment.
+  - Perform unattended installations by accepting transactions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # conda install

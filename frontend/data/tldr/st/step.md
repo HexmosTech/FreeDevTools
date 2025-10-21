@@ -1,29 +1,29 @@
 ---
-title: "Step PKI - Create Certificates & Keys | Online Free DevTools by Hexmos"
+title: 'Step PKI - Create Certificates & Keys | Online Free DevTools by Hexmos'
 name: step
-path: "/freedevtools/tldr/st/step/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/step/"
-description: "Create certificates easily with Step PKI. Generate root CAs, leaf certificates, and verify certificate chains. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/step/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/step/'
+description: 'Create certificates easily with Step PKI. Generate root CAs, leaf certificates, and verify certificate chains. Free online tool, no registration required.'
 category: common
 keywords:
-- PKI certificate generator
-- X.509 certificate creation
-- Root CA key generation
-- Certificate chain verification
-- PEM to DER conversion
-- System trust store management
-- RSA keypair generation
-- EC keypair generation
-- CLI certificate authority
-- smallstep CLI tool
+  - PKI certificate generator
+  - X.509 certificate creation
+  - Root CA key generation
+  - Certificate chain verification
+  - PEM to DER conversion
+  - System trust store management
+  - RSA keypair generation
+  - EC keypair generation
+  - CLI certificate authority
+  - smallstep CLI tool
 features:
-- Generate root certificate authorities (CAs).
-- Create leaf certificates signed by a CA.
-- Verify the validity of certificate chains.
-- Convert certificates between PEM and DER formats.
-- Install and uninstall root certificates in system trust stores.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate root certificate authorities (CAs).
+  - Create leaf certificates signed by a CA.
+  - Verify the validity of certificate chains.
+  - Convert certificates between PEM and DER formats.
+  - Install and uninstall root certificates in system trust stores.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # step

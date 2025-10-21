@@ -1,29 +1,29 @@
 ---
-title: "Ruby Interpreter - Execute Ruby Code | Online Free DevTools by Hexmos"
+title: 'Ruby Interpreter - Execute Ruby Code | Online Free DevTools by Hexmos'
 name: ruby
-path: "/freedevtools/tldr/common/ruby/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ruby/"
-description: "Execute Ruby code effortlessly with Ruby Interpreter. Run scripts, check syntax, and start local servers instantly using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ruby/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ruby/'
+description: 'Execute Ruby code effortlessly with Ruby Interpreter. Run scripts, check syntax, and start local servers instantly using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- ruby interpreter
-- ruby script execution
-- ruby command line
-- ruby syntax checker
-- ruby http server
-- ruby gem dependency
-- ruby rake task
-- ruby irb interactive shell
-- ruby version check
-- common linux ruby
+  - ruby interpreter
+  - ruby script execution
+  - ruby command line
+  - ruby syntax checker
+  - ruby http server
+  - ruby gem dependency
+  - ruby rake task
+  - ruby irb interactive shell
+  - ruby version check
+  - common linux ruby
 features:
-- Execute Ruby scripts from the command line.
-- Check Ruby script syntax for errors.
-- Start a local HTTP server using Ruby.
-- Execute single Ruby commands directly.
-- Display the installed Ruby version.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Ruby scripts from the command line.
+  - Check Ruby script syntax for errors.
+  - Start a local HTTP server using Ruby.
+  - Execute single Ruby commands directly.
+  - Display the installed Ruby version.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ruby

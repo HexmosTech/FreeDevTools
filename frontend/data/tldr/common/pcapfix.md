@@ -1,29 +1,29 @@
 ---
-title: "Repair PCAP Files - Fix Corrupted Captures | Online Free DevTools by Hexmos"
+title: 'Repair PCAP Files - Fix Corrupted Captures | Online Free DevTools by Hexmos'
 name: pcapfix
-path: "/freedevtools/tldr/common/pcapfix/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pcapfix/"
-description: "Repair corrupted PCAP files with Pcapfix. Recover and fix damaged packet captures and PcapNG files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pcapfix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pcapfix/'
+description: 'Repair corrupted PCAP files with Pcapfix. Recover and fix damaged packet captures and PcapNG files. Free online tool, no registration required.'
 category: common
 keywords:
-- pcap file repair
-- pcapng repair
-- packet capture fix
-- corrupted pcap recovery
-- network analysis repair
-- linux pcap repair
-- windows pcap repair
-- macos pcap repair
-- pcap data recovery
-- network traffic analysis repair
+  - pcap file repair
+  - pcapng repair
+  - packet capture fix
+  - corrupted pcap recovery
+  - network analysis repair
+  - linux pcap repair
+  - windows pcap repair
+  - macos pcap repair
+  - pcap data recovery
+  - network traffic analysis repair
 features:
-- Repair damaged PCAP and PcapNG files.
-- Perform deep scan repair on PCAP files.
-- Output repaired file to a specified location.
-- Force treat a file as PcapNG, bypassing auto-detection.
-- Display detailed repair process with verbose output.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Repair damaged PCAP and PcapNG files.
+  - Perform deep scan repair on PCAP files.
+  - Output repaired file to a specified location.
+  - Force treat a file as PcapNG, bypassing auto-detection.
+  - Display detailed repair process with verbose output.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pcapfix

@@ -1,9 +1,9 @@
 ---
-title: "Manage Gentoo News - eselect news Control | Online Free DevTools by Hexmos"
+title: 'Manage Gentoo News - eselect news Control | Online Free DevTools by Hexmos'
 name: eselect-news
-path: "/freedevtools/tldr/linux/eselect-news/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect-news/"
-description: "Control Gentoo news items with eselect news.  Read, mark as read/unread, and manage news efficiently using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eselect-news/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eselect-news/'
+description: 'Control Gentoo news items with eselect news.  Read, mark as read/unread, and manage news efficiently using command-line interface. Free online tool, no registration required.'
 category: linux
 keywords:
   - Gentoo news manager
@@ -22,8 +22,8 @@ features:
   - Mark Gentoo news items as read or unread.
   - Delete all read Gentoo news items.
   - Count available (new or all) Gentoo news items.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eselect news

@@ -1,29 +1,29 @@
 ---
-title: "Qmake Builder - Execute Qmake Builds | Online Free DevTools by Hexmos"
+title: 'Qmake Builder - Execute Qmake Builds | Online Free DevTools by Hexmos'
 name: sfdk-qmake
-path: "/freedevtools/tldr/sfdk/sfdk-qmake/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk-qmake/"
-description: "Execute qmake builds quickly with sfdk-qmake. Streamline Sailfish OS development with shadow building and custom arguments. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk-qmake/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk-qmake/'
+description: 'Execute qmake builds quickly with sfdk-qmake. Streamline Sailfish OS development with shadow building and custom arguments. Free online tool, no registration required.'
 category: common
 keywords:
-- Sailfish OS qmake build
-- qmake project build
-- sfdk build tool
-- shadow qmake build
-- command line qmake
-- cross platform qmake
-- Sailfish SDK qmake
-- Qt project builder
-- application build process
-- Sailfish application build
+  - Sailfish OS qmake build
+  - qmake project build
+  - sfdk build tool
+  - shadow qmake build
+  - command line qmake
+  - cross platform qmake
+  - Sailfish SDK qmake
+  - Qt project builder
+  - application build process
+  - Sailfish application build
 features:
-- Execute qmake build process
-- Perform shadow builds in projects
-- Pass custom arguments to qmake
-- Build Sailfish OS applications
-- Utilize Sailfish SDK for building
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute qmake build process
+  - Perform shadow builds in projects
+  - Pass custom arguments to qmake
+  - Build Sailfish OS applications
+  - Utilize Sailfish SDK for building
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk qmake

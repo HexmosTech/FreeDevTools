@@ -1,29 +1,29 @@
 ---
-title: "Generate hledger Incomestatement - Analyze Finances | Online Free DevTools by Hexmos"
+title: 'Generate hledger Incomestatement - Analyze Finances | Online Free DevTools by Hexmos'
 name: hledger-incomestatement
-path: "/freedevtools/tldr/hledger/hledger-incomestatement/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-incomestatement/"
-description: "Generate hledger incomestatements for financial analysis with hledger-incomestatement. Analyze revenue and expenses with command-line reporting. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-incomestatement/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-incomestatement/'
+description: 'Generate hledger incomestatements for financial analysis with hledger-incomestatement. Analyze revenue and expenses with command-line reporting. Free online tool, no registration required.'
 category: common
 keywords:
-- hledger incomestatement
-- financial reporting
-- revenue expenses report
-- hledger finance command
-- command line accounting
-- income statement analysis
-- hledger report generation
-- account balance reporting
-- ledger file analysis
-- hledger accounting tool
+  - hledger incomestatement
+  - financial reporting
+  - revenue expenses report
+  - hledger finance command
+  - command line accounting
+  - income statement analysis
+  - hledger report generation
+  - account balance reporting
+  - ledger file analysis
+  - hledger accounting tool
 features:
-- Generate revenue and expense reports
-- Display monthly financial data
-- Summarize data to specified levels
-- Sort output by amount
-- Output to HTML for reporting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate revenue and expense reports
+  - Display monthly financial data
+  - Summarize data to specified levels
+  - Sort output by amount
+  - Output to HTML for reporting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger incomestatement

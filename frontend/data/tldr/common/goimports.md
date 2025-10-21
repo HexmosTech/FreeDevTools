@@ -1,29 +1,29 @@
 ---
-title: "Format Go Imports - Organize Code | Online Free DevTools by Hexmos"
+title: 'Format Go Imports - Organize Code | Online Free DevTools by Hexmos'
 name: goimports
-path: "/freedevtools/tldr/common/goimports/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/goimports/"
-description: "Format Go import statements automatically with goimports. Add missing imports, remove unused ones, and organize your Go code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/goimports/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/goimports/'
+description: 'Format Go import statements automatically with goimports. Add missing imports, remove unused ones, and organize your Go code. Free online tool, no registration required.'
 category: common
 keywords:
-- Go import formatter
-- Go import organizer
-- Go code formatting
-- Go dependency management
-- Go package manager
-- Go code cleaner
-- Go import auto-fix
-- Go import helper
-- Go code style guide
-- Go import optimization
+  - Go import formatter
+  - Go import organizer
+  - Go code formatting
+  - Go dependency management
+  - Go package manager
+  - Go code cleaner
+  - Go import auto-fix
+  - Go import helper
+  - Go code style guide
+  - Go import optimization
 features:
-- Automatically adds missing Go import statements
-- Removes unreferenced Go import statements
-- Organizes Go import blocks according to standard conventions
-- Writes formatted Go code directly back to the source file
-- Displays diffs of import changes before writing to file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically adds missing Go import statements
+  - Removes unreferenced Go import statements
+  - Organizes Go import blocks according to standard conventions
+  - Writes formatted Go code directly back to the source file
+  - Displays diffs of import changes before writing to file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # goimports

@@ -1,29 +1,29 @@
 ---
-title: "GH Alias - Create CLI Aliases for GitHub Commands | Online Free DevTools by Hexmos"
+title: 'GH Alias - Create CLI Aliases for GitHub Commands | Online Free DevTools by Hexmos'
 name: gh-alias
-path: "/freedevtools/tldr/gh/gh-alias/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-alias/"
-description: "Create custom command aliases with GH Alias for enhanced GitHub CLI efficiency. Streamline workflows and improve productivity using this free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-alias/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-alias/'
+description: 'Create custom command aliases with GH Alias for enhanced GitHub CLI efficiency. Streamline workflows and improve productivity using this free online tool, no registration required.'
 category: common
 keywords:
-- gh alias manager
-- github cli alias
-- command alias creation
-- cli shortcut tool
-- github workflow automation
-- command line alias tool
-- gh alias configuration
-- custom github commands
-- github cli productivity
-- terminal alias manager
+  - gh alias manager
+  - github cli alias
+  - command alias creation
+  - cli shortcut tool
+  - github workflow automation
+  - command line alias tool
+  - gh alias configuration
+  - custom github commands
+  - github cli productivity
+  - terminal alias manager
 features:
-- Define custom shortcuts for GitHub CLI commands
-- Manage and list existing GitHub CLI aliases
-- Set shell commands as GitHub CLI subcommands
-- Delete existing command aliases
-- Display help information for the GH alias subcommand
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define custom shortcuts for GitHub CLI commands
+  - Manage and list existing GitHub CLI aliases
+  - Set shell commands as GitHub CLI subcommands
+  - Delete existing command aliases
+  - Display help information for the GH alias subcommand
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh alias

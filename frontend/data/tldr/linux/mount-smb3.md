@@ -1,9 +1,9 @@
 ---
-title: "Mount SMB3 - Access Network Shares | Online Free DevTools by Hexmos"
+title: 'Mount SMB3 - Access Network Shares | Online Free DevTools by Hexmos'
 name: mount.smb3
-path: "/freedevtools/tldr/linux/mount-smb3/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mount-smb3/"
-description: "Access network file shares with Mount SMB3. Connect to Windows and Samba servers. Command line tool for mounting SMB shares. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mount-smb3/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mount-smb3/'
+description: 'Access network file shares with Mount SMB3. Connect to Windows and Samba servers. Command line tool for mounting SMB shares. Free online tool, no registration required.'
 category: linux
 keywords:
   - smb mount
@@ -22,8 +22,8 @@ features:
   - Connect to Samba servers
   - Utilize CIFS protocol for compatibility
   - Access network filesystems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mount.smb3

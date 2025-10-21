@@ -1,29 +1,29 @@
 ---
-title: "Generate System Information - macchina | Online Free DevTools by Hexmos"
+title: 'Generate System Information - macchina | Online Free DevTools by Hexmos'
 name: macchina
-path: "/freedevtools/tldr/common/macchina/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/macchina/"
+path: '/freedevtools/tldr/common/macchina/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/macchina/'
 description: "Generate system information with macchina. Retrieve detailed specifications about your computer's hardware and software configurations. Free online tool, no registration required."
 category: common
 keywords:
-- system information generator
-- hardware information tool
-- software configuration details
-- system specifications tool
-- linux system info
-- macos system info
-- windows system info
-- command-line system info
-- macchina system information
-- computer information tool
+  - system information generator
+  - hardware information tool
+  - software configuration details
+  - system specifications tool
+  - linux system info
+  - macos system info
+  - windows system info
+  - command-line system info
+  - macchina system information
+  - computer information tool
 features:
-- Display system information based on configuration
-- Customize output with specified configuration file
-- Lengthen uptime, shell, and kernel output details
-- Check for system errors and failures
-- List artists of ASCII art used in output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display system information based on configuration
+  - Customize output with specified configuration file
+  - Lengthen uptime, shell, and kernel output details
+  - Check for system errors and failures
+  - List artists of ASCII art used in output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # macchina

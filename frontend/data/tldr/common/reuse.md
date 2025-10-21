@@ -1,29 +1,29 @@
 ---
-title: "Validate REUSE Compliance - Manage License and Copyright Info | Online Free DevTools by Hexmos"
+title: 'Validate REUSE Compliance - Manage License and Copyright Info | Online Free DevTools by Hexmos'
 name: reuse
-path: "/freedevtools/tldr/common/reuse/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/reuse/"
-description: "Validate REUSE compliance with REUSE. Manage license and copyright information efficiently for your projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/reuse/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/reuse/'
+description: 'Validate REUSE compliance with REUSE. Manage license and copyright information efficiently for your projects. Free online tool, no registration required.'
 category: common
 keywords:
-- REUSE compliance validation
-- SPDX license identifier
-- Copyright statement generator
-- Software license manager
-- Open source licensing
-- Metadata verification
-- License compliance checker
-- REUSE lint command
-- Project license downloader
-- Software copyright management
+  - REUSE compliance validation
+  - SPDX license identifier
+  - Copyright statement generator
+  - Software license manager
+  - Open source licensing
+  - Metadata verification
+  - License compliance checker
+  - REUSE lint command
+  - Project license downloader
+  - Software copyright management
 features:
-- Lint projects for REUSE compliance
-- Annotate files with copyright statements
-- Add license information to files
-- Download licenses by SPDX identifier
-- Download all missing licenses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lint projects for REUSE compliance
+  - Annotate files with copyright statements
+  - Add license information to files
+  - Download licenses by SPDX identifier
+  - Download all missing licenses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # reuse

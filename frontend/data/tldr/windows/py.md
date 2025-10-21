@@ -1,29 +1,29 @@
 ---
-title: "Python Launcher - Run Python Versions | Online Free DevTools by Hexmos"
+title: 'Python Launcher - Run Python Versions | Online Free DevTools by Hexmos'
 name: py
-path: "/freedevtools/tldr/windows/py/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/py/"
-description: "Run Python versions with Python Launcher for Windows. Execute scripts, start REPL sessions, and specify Python versions directly. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/py/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/py/'
+description: 'Run Python versions with Python Launcher for Windows. Execute scripts, start REPL sessions, and specify Python versions directly. Free online tool, no registration required.'
 category: windows
 keywords:
-- python launcher
-- windows python
-- python version manager
-- py launcher command
-- python repl windows
-- python script executor
-- pylauncher install
-- py --list
-- python windows command line
-- python launcher windows
+  - python launcher
+  - windows python
+  - python version manager
+  - py launcher command
+  - python repl windows
+  - python script executor
+  - pylauncher install
+  - py --list
+  - python windows command line
+  - python launcher windows
 features:
-- Execute Python scripts with specified versions.
-- Launch interactive Python REPL sessions.
-- List all installed Python versions.
-- Auto-install missing Python versions.
-- Run Python with custom arguments.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Python scripts with specified versions.
+  - Launch interactive Python REPL sessions.
+  - List all installed Python versions.
+  - Auto-install missing Python versions.
+  - Run Python with custom arguments.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # py

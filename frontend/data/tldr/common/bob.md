@@ -1,29 +1,29 @@
 ---
-title: "Manage Neovim Versions - Switch Neovim Versions | Online Free DevTools by Hexmos"
+title: 'Manage Neovim Versions - Switch Neovim Versions | Online Free DevTools by Hexmos'
 name: bob
-path: "/freedevtools/tldr/common/bob/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bob/"
-description: "Manage Neovim versions easily with Bob. Install, switch, and uninstall different Neovim versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bob/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bob/'
+description: 'Manage Neovim versions easily with Bob. Install, switch, and uninstall different Neovim versions. Free online tool, no registration required.'
 category: common
 keywords:
-- neovim version manager
-- neovim version switcher
-- neovim install manager
-- neovim nightly build manager
-- neovim stable version
-- neovim rollback tool
-- neovim version control
-- neovim version installer
-- bob neovim manager
-- neovim commit hash manager
+  - neovim version manager
+  - neovim version switcher
+  - neovim install manager
+  - neovim nightly build manager
+  - neovim stable version
+  - neovim rollback tool
+  - neovim version control
+  - neovim version installer
+  - bob neovim manager
+  - neovim commit hash manager
 features:
-- Install specific versions of Neovim, including nightly, stable, or commit hashes.
-- List installed Neovim versions and the currently used version.
-- Uninstall specific versions of Neovim.
-- Completely remove Neovim and all associated changes.
-- Roll back to a previous nightly build of Neovim.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific versions of Neovim, including nightly, stable, or commit hashes.
+  - List installed Neovim versions and the currently used version.
+  - Uninstall specific versions of Neovim.
+  - Completely remove Neovim and all associated changes.
+  - Roll back to a previous nightly build of Neovim.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bob

@@ -1,9 +1,9 @@
 ---
-title: "Display Disk Information - Format Disk Usage | Online Free DevTools by Hexmos"
+title: 'Display Disk Information - Format Disk Usage | Online Free DevTools by Hexmos'
 name: dysk
-path: "/freedevtools/tldr/linux/dysk/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dysk/"
-description: "Format disk usage information with dysk. Analyze disk space and filesystem details, sort, and filter by disk type. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dysk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dysk/'
+description: 'Format disk usage information with dysk. Analyze disk space and filesystem details, sort, and filter by disk type. Free online tool, no registration required.'
 category: linux
 keywords:
   - disk information display
@@ -22,8 +22,8 @@ features:
   - Filter disks based on type (HDD, SSD).
   - Monitor disk utilization percentage.
   - Check available free space on disks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dysk

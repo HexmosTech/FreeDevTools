@@ -1,29 +1,29 @@
 ---
-title: "Conan - Manage Native Binaries | Online Free DevTools by Hexmos"
+title: 'Conan - Manage Native Binaries | Online Free DevTools by Hexmos'
 name: conan
-path: "/freedevtools/tldr/common/conan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/conan/"
-description: "Manage native binaries with Conan, the open-source package manager. Install, search, and list remote packages for efficient development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/conan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/conan/'
+description: 'Manage native binaries with Conan, the open-source package manager. Install, search, and list remote packages for efficient development. Free online tool, no registration required.'
 category: common
 keywords:
-- conan package manager
-- native binary management
-- c++ package manager
-- cross platform packaging
-- package dependency management
-- conan install command
-- conan search command
-- conan remote list
-- decentralized package management
-- build from source
+  - conan package manager
+  - native binary management
+  - c++ package manager
+  - cross platform packaging
+  - package dependency management
+  - conan install command
+  - conan search command
+  - conan remote list
+  - decentralized package management
+  - build from source
 features:
-- Install packages based on conanfile.txt
-- Create configuration files for specific generators
-- Build packages from source code
-- Search for locally and remotely installed packages
-- List available remote package repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages based on conanfile.txt
+  - Create configuration files for specific generators
+  - Build packages from source code
+  - Search for locally and remotely installed packages
+  - List available remote package repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # conan

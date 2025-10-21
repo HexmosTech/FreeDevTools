@@ -1,29 +1,29 @@
 ---
-title: "A2query - Retrieve Apache Configuration | Online Free DevTools by Hexmos"
+title: 'A2query - Retrieve Apache Configuration | Online Free DevTools by Hexmos'
 name: a2query
-path: "/freedevtools/tldr/linux/a2query/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/a2query/"
-description: "Retrieve Apache configuration details with A2query. Inspect modules, virtual hosts, and versions for efficient server management. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/a2query/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/a2query/'
+description: 'Retrieve Apache configuration details with A2query. Inspect modules, virtual hosts, and versions for efficient server management. Free online tool, no registration required.'
 category: linux
 keywords:
-- apache configuration retrieve
-- a2query apache modules
-- linux apache version
-- debian apache vhosts
-- apache server configuration
-- a2query module status
-- linux a2query command
-- apache runtime configuration
-- a2query apache mpm
-- apache configuration details
+  - apache configuration retrieve
+  - a2query apache modules
+  - linux apache version
+  - debian apache vhosts
+  - apache server configuration
+  - a2query module status
+  - linux a2query command
+  - apache runtime configuration
+  - a2query apache mpm
+  - apache configuration details
 features:
-- List enabled Apache modules
-- Check module installation status
-- List enabled virtual hosts
-- Display the active MPM (Multi Processing Module)
-- Display Apache version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List enabled Apache modules
+  - Check module installation status
+  - List enabled virtual hosts
+  - Display the active MPM (Multi Processing Module)
+  - Display Apache version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # a2query

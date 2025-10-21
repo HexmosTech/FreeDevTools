@@ -1,29 +1,29 @@
 ---
-title: "Control Spotify Music - ncspot TUI Client | Online Free DevTools by Hexmos"
+title: 'Control Spotify Music - ncspot TUI Client | Online Free DevTools by Hexmos'
 name: ncspot
-path: "/freedevtools/tldr/common/ncspot/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ncspot/"
-description: "Control Spotify music with ncspot, a cross-platform terminal user interface client. Manage playlists, search songs, and enjoy ad-free listening. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ncspot/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ncspot/'
+description: 'Control Spotify music with ncspot, a cross-platform terminal user interface client. Manage playlists, search songs, and enjoy ad-free listening. Free online tool, no registration required.'
 category: common
 keywords:
-- Spotify client command line
-- TUI Spotify player
-- ncspot music control
-- Linux Spotify terminal
-- macOS Spotify TUI
-- Cross-platform Spotify client
-- Terminal music player
-- Spotify playlist manager
-- Spotify command line interface
-- ncspot configuration settings
+  - Spotify client command line
+  - TUI Spotify player
+  - ncspot music control
+  - Linux Spotify terminal
+  - macOS Spotify TUI
+  - Cross-platform Spotify client
+  - Terminal music player
+  - Spotify playlist manager
+  - Spotify command line interface
+  - ncspot configuration settings
 features:
-- Play Spotify music from the terminal
-- Manage Spotify playlists and queue songs
-- Search for artists, albums, and tracks
-- Configure logging and debug settings
-- Display available keybindings for navigation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Play Spotify music from the terminal
+  - Manage Spotify playlists and queue songs
+  - Search for artists, albums, and tracks
+  - Configure logging and debug settings
+  - Display available keybindings for navigation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ncspot

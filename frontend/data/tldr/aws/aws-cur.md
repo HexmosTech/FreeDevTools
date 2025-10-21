@@ -1,29 +1,29 @@
 ---
-title: "Create AWS CUR - Query Usage Reports | Online Free DevTools by Hexmos"
+title: 'Create AWS CUR - Query Usage Reports | Online Free DevTools by Hexmos'
 name: aws-cur
-path: "/freedevtools/tldr/aws/aws-cur/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-cur/"
-description: "Create AWS Cost Usage Reports (CUR) with aws-cur. Analyze spending, identify trends, and optimize cloud expenses. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-cur/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-cur/'
+description: 'Create AWS Cost Usage Reports (CUR) with aws-cur. Analyze spending, identify trends, and optimize cloud expenses. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS cost usage report
-- AWS CUR
-- AWS billing analysis
-- AWS cost optimization
-- AWS report definition
-- AWS cloud spending
-- AWS usage tracking
-- CUR report generation
-- AWS cost management
-- AWS account analysis
+  - AWS cost usage report
+  - AWS CUR
+  - AWS billing analysis
+  - AWS cost optimization
+  - AWS report definition
+  - AWS cloud spending
+  - AWS usage tracking
+  - CUR report generation
+  - AWS cost management
+  - AWS account analysis
 features:
-- Define AWS cost and usage reports from JSON files
-- List existing cost and usage report definitions
-- Delete specified cost and usage report definitions
-- Configure report parameters, delivery options, and data aggregation
-- Manage and analyze AWS spending trends effectively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Define AWS cost and usage reports from JSON files
+  - List existing cost and usage report definitions
+  - Delete specified cost and usage report definitions
+  - Configure report parameters, delivery options, and data aggregation
+  - Manage and analyze AWS spending trends effectively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws cur

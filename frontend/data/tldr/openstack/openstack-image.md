@@ -1,29 +1,29 @@
 ---
-title: "OpenStack Image - Manage Cloud Images | Online Free DevTools by Hexmos"
+title: 'OpenStack Image - Manage Cloud Images | Online Free DevTools by Hexmos'
 name: openstack-image
-path: "/freedevtools/tldr/openstack/openstack-image/"
-canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-image/"
-description: "Manage cloud images efficiently with OpenStack Image command. Upload, delete, list, and download images for your OpenStack cloud infrastructure. Free online tool, no registration required."
+path: '/freedevtools/tldr/openstack/openstack-image/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openstack/openstack-image/'
+description: 'Manage cloud images efficiently with OpenStack Image command. Upload, delete, list, and download images for your OpenStack cloud infrastructure. Free online tool, no registration required.'
 category: common
 keywords:
-- OpenStack image management
-- Cloud image upload
-- OpenStack Glance CLI
-- OpenStack image download
-- Virtual machine images
-- OpenStack image list
-- OpenStack command line
-- Image repository management
-- OpenStack cloud tools
-- CLI image tool
+  - OpenStack image management
+  - Cloud image upload
+  - OpenStack Glance CLI
+  - OpenStack image download
+  - Virtual machine images
+  - OpenStack image list
+  - OpenStack command line
+  - Image repository management
+  - OpenStack cloud tools
+  - CLI image tool
 features:
-- List available OpenStack images with filtering options
-- Display detailed information about a specific image
-- Create and upload new images to the OpenStack cloud
-- Delete unwanted images from the OpenStack environment
-- Save OpenStack images locally to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available OpenStack images with filtering options
+  - Display detailed information about a specific image
+  - Create and upload new images to the OpenStack cloud
+  - Delete unwanted images from the OpenStack environment
+  - Save OpenStack images locally to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openstack image

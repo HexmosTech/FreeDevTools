@@ -1,29 +1,29 @@
 ---
-title: "Hledger Print - Show Journal Entries | Online Free DevTools by Hexmos"
+title: 'Hledger Print - Show Journal Entries | Online Free DevTools by Hexmos'
 name: hledger-print
-path: "/freedevtools/tldr/hledger/hledger-print/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-print/"
-description: "Show journal entries with Hledger Print. Display transactions, control output format, and filter by criteria. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-print/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-print/'
+description: 'Show journal entries with Hledger Print. Display transactions, control output format, and filter by criteria. Free online tool, no registration required.'
 category: common
 keywords:
-- hledger print transactions
-- hledger journal entries
-- hledger command line
-- accounting ledger print
-- financial data print
-- transaction reporting
-- hledger query
-- hledger ledger format
-- hledger export
-- ledger data analysis
+  - hledger print transactions
+  - hledger journal entries
+  - hledger command line
+  - accounting ledger print
+  - financial data print
+  - transaction reporting
+  - hledger query
+  - hledger ledger format
+  - hledger export
+  - ledger data analysis
 features:
-- Display full journal entries
-- Filter transactions by criteria
-- Export transactions to CSV
-- Convert amounts to cost
-- Round amounts with decimal commas
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display full journal entries
+  - Filter transactions by criteria
+  - Export transactions to CSV
+  - Convert amounts to cost
+  - Round amounts with decimal commas
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger print

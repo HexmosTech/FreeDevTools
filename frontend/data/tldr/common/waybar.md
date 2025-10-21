@@ -1,29 +1,29 @@
 ---
-title: "Waybar - Control Wayland Bar Customization | Online Free DevTools by Hexmos"
+title: 'Waybar - Control Wayland Bar Customization | Online Free DevTools by Hexmos'
 name: waybar
-path: "/freedevtools/tldr/common/waybar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/waybar/"
-description: "Control Wayland bar customization with Waybar. Configure and style your Sway and Wlroots-based compositor bar. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/waybar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/waybar/'
+description: 'Control Wayland bar customization with Waybar. Configure and style your Sway and Wlroots-based compositor bar. Free online tool, no registration required.'
 category: common
 keywords:
-- wayland bar customization
-- sway wayland bar
-- wlroots wayland bar
-- waybar configuration
-- waybar styling
-- wayland system tray
-- linux wayland compositor
-- wayland status bar
-- custom wayland bar
-- wayland desktop environment
+  - wayland bar customization
+  - sway wayland bar
+  - wlroots wayland bar
+  - waybar configuration
+  - waybar styling
+  - wayland system tray
+  - linux wayland compositor
+  - wayland status bar
+  - custom wayland bar
+  - wayland desktop environment
 features:
-- Customize Wayland bar appearance
-- Configure Wayland bar modules
-- Set Wayland bar logging level
-- Apply custom stylesheets to Wayland bar
-- Launch Wayland bar with specific configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Customize Wayland bar appearance
+  - Configure Wayland bar modules
+  - Set Wayland bar logging level
+  - Apply custom stylesheets to Wayland bar
+  - Launch Wayland bar with specific configuration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # waybar

@@ -1,29 +1,29 @@
 ---
-title: "Query Package Info - Manage CRUX Packages | Online Free DevTools by Hexmos"
+title: 'Query Package Info - Manage CRUX Packages | Online Free DevTools by Hexmos'
 name: pkginfo
-path: "/freedevtools/tldr/linux/pkginfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pkginfo/"
-description: "Query package information with pkginfo. Manage installed software and dependencies on CRUX systems efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pkginfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pkginfo/'
+description: 'Query package information with pkginfo. Manage installed software and dependencies on CRUX systems efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
-- CRUX package query
-- Linux package management
-- pkginfo CRUX
-- CRUX software versions
-- Package file listing
-- Software ownership lookup
-- CRUX package footprint
-- Linux package database
-- CRUX package information
-- Linux installed packages
+  - CRUX package query
+  - Linux package management
+  - pkginfo CRUX
+  - CRUX software versions
+  - Package file listing
+  - Software ownership lookup
+  - CRUX package footprint
+  - Linux package database
+  - CRUX package information
+  - Linux installed packages
 features:
-- List installed CRUX packages with versions
-- Display files owned by a specific package
-- Find owners of files matching a pattern
-- Print the footprint of a file
-- Query the package database on CRUX systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List installed CRUX packages with versions
+  - Display files owned by a specific package
+  - Find owners of files matching a pattern
+  - Print the footprint of a file
+  - Query the package database on CRUX systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkginfo

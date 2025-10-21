@@ -1,9 +1,9 @@
 ---
-title: "Start X Session - Control X11 Display | Online Free DevTools by Hexmos"
+title: 'Start X Session - Control X11 Display | Online Free DevTools by Hexmos'
 name: startx
-path: "/freedevtools/tldr/linux/startx/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/startx/"
-description: "Control X11 display sessions with startx. Start X sessions with custom depths and dpi settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/startx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/startx/'
+description: 'Control X11 display sessions with startx. Start X sessions with custom depths and dpi settings. Free online tool, no registration required.'
 category: linux
 keywords:
   - X11 session manager
@@ -22,8 +22,8 @@ features:
   - Configure DPI settings for X sessions
   - Override .xinitrc settings to start specific environments
   - Start a graphical environment using a specified window manager
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # startx

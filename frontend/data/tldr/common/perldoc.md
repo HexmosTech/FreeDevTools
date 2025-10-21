@@ -1,29 +1,29 @@
 ---
-title: "Perldoc - View Perl Documentation | Online Free DevTools by Hexmos"
+title: 'Perldoc - View Perl Documentation | Online Free DevTools by Hexmos'
 name: perldoc
-path: "/freedevtools/tldr/common/perldoc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/perldoc/"
-description: "View Perl documentation with Perldoc. Access documentation for built-in functions, search Perl FAQ, and specify language translations. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/perldoc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/perldoc/'
+description: 'View Perl documentation with Perldoc. Access documentation for built-in functions, search Perl FAQ, and specify language translations. Free online tool, no registration required.'
 category: common
 keywords:
-- perl documentation viewer
-- perl pod viewer
-- perl module documentation
-- perl api documentation
-- perl faq search
-- perl command line documentation
-- perl language code specification
-- perl function lookup
-- perl variable lookup
-- common perldoc commands
+  - perl documentation viewer
+  - perl pod viewer
+  - perl module documentation
+  - perl api documentation
+  - perl faq search
+  - perl command line documentation
+  - perl language code specification
+  - perl function lookup
+  - perl variable lookup
+  - common perldoc commands
 features:
-- View documentation for Perl built-in functions.
-- Search within the question headings of Perl FAQ.
-- Send output directly to stdout, bypassing the pager.
-- Specify the language code for documentation translation.
-- Access documentation for Perl modules and programs.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View documentation for Perl built-in functions.
+  - Search within the question headings of Perl FAQ.
+  - Send output directly to stdout, bypassing the pager.
+  - Specify the language code for documentation translation.
+  - Access documentation for Perl modules and programs.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # perldoc

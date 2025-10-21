@@ -1,9 +1,9 @@
 ---
-title: "Parted - Manage Partitions | Online Free DevTools by Hexmos"
+title: 'Parted - Manage Partitions | Online Free DevTools by Hexmos'
 name: parted.interactive
-path: "/freedevtools/tldr/linux/parted-interactive/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/parted-interactive/"
-description: "Manage disk partitions with the powerful parted command. Create, resize, and delete partitions with ease using this Linux command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/parted-interactive/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/parted-interactive/'
+description: 'Manage disk partitions with the powerful parted command. Create, resize, and delete partitions with ease using this Linux command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - partition management linux
@@ -22,8 +22,8 @@ features:
   - Delete partitions to reclaim disk space.
   - Manage GPT and MBR partition tables.
   - Display detailed partition information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # parted

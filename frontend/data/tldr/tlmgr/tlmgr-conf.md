@@ -1,29 +1,29 @@
 ---
-title: "TeX Live Manager - Control TeX Configuration | Online Free DevTools by Hexmos"
+title: 'TeX Live Manager - Control TeX Configuration | Online Free DevTools by Hexmos'
 name: tlmgr-conf
-path: "/freedevtools/tldr/tlmgr/tlmgr-conf/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-conf/"
-description: "Control TeX Live configuration with TeX Live Manager (tlmgr). Customize texmf trees, updmap settings, and manage shell escapes effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-conf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-conf/'
+description: 'Control TeX Live configuration with TeX Live Manager (tlmgr). Customize texmf trees, updmap settings, and manage shell escapes effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- tex live configuration
-- tlmgr configuration
-- texmf configuration
-- updmap configuration
-- tex live manager
-- command line latex
-- latex configuration
-- tex system management
-- tex configuration settings
-- tex live command line
+  - tex live configuration
+  - tlmgr configuration
+  - texmf configuration
+  - updmap configuration
+  - tex live manager
+  - command line latex
+  - latex configuration
+  - tex system management
+  - tex configuration settings
+  - tex live command line
 features:
-- Show current TeX Live configuration
-- Set specific configuration options
-- Delete configuration options
-- Manage texmf trees
-- Disable system calls via \write18
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show current TeX Live configuration
+  - Set specific configuration options
+  - Delete configuration options
+  - Manage texmf trees
+  - Disable system calls via \write18
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr conf

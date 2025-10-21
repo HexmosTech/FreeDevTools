@@ -1,29 +1,29 @@
 ---
-title: "Crane Digest - Get Image Digest | Online Free DevTools by Hexmos"
+title: 'Crane Digest - Get Image Digest | Online Free DevTools by Hexmos'
 name: crane-digest
-path: "/freedevtools/tldr/crane/crane-digest/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-digest/"
-description: "Get container image digests with Crane Digest. Retrieve image references and verify image integrity effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-digest/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-digest/'
+description: 'Get container image digests with Crane Digest. Retrieve image references and verify image integrity effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- container image digest
-- image reference getter
-- crane digest command
-- docker image digest
-- oci image digest
-- container registry digest
-- crane tool
-- image verification
-- digest calculation
-- tarball image digest
+  - container image digest
+  - image reference getter
+  - crane digest command
+  - docker image digest
+  - oci image digest
+  - container registry digest
+  - crane tool
+  - image verification
+  - digest calculation
+  - tarball image digest
 features:
-- Retrieve the digest of a container image.
-- Print the full image reference by digest.
-- Specify a path to a tarball containing the image.
-- Get the digest of local or remote images.
-- Verify image integrity through digest comparison.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve the digest of a container image.
+  - Print the full image reference by digest.
+  - Specify a path to a tarball containing the image.
+  - Get the digest of local or remote images.
+  - Verify image integrity through digest comparison.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane digest

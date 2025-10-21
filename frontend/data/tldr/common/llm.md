@@ -1,29 +1,29 @@
 ---
-title: "Interact with LLMs - Generate Text | Online Free DevTools by Hexmos"
+title: 'Interact with LLMs - Generate Text | Online Free DevTools by Hexmos'
 name: llm
-path: "/freedevtools/tldr/common/llm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/llm/"
-description: "Generate text with Large Language Models (LLMs) using llm. Interact with remote APIs and local models. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/llm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/llm/'
+description: 'Generate text with Large Language Models (LLMs) using llm. Interact with remote APIs and local models. Free online tool, no registration required.'
 category: common
 keywords:
-- LLM text generation
-- Large language model API
-- Command line LLM tool
-- Local LLM model
-- Prompt engineering tool
-- Open AI API interaction
-- Text completion CLI
-- Machine learning inference
-- Natural language processing tool
-- Datasette LLM
+  - LLM text generation
+  - Large language model API
+  - Command line LLM tool
+  - Local LLM model
+  - Prompt engineering tool
+  - Open AI API interaction
+  - Text completion CLI
+  - Machine learning inference
+  - Natural language processing tool
+  - Datasette LLM
 features:
-- Generate text from prompts
-- Interact with remote LLM APIs
-- Run LLMs on local machines
-- Install LLM packages from PyPI
-- Save and reuse system prompts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate text from prompts
+  - Interact with remote LLM APIs
+  - Run LLMs on local machines
+  - Install LLM packages from PyPI
+  - Save and reuse system prompts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # llm

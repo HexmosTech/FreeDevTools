@@ -1,9 +1,9 @@
 ---
-title: "Control X11 Actions with xdotool | Online Free DevTools by Hexmos"
+title: 'Control X11 Actions with xdotool | Online Free DevTools by Hexmos'
 name: xdotool
-path: "/freedevtools/tldr/linux/xdotool/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xdotool/"
-description: "Automate X11 actions with xdotool.  Control mouse clicks, keyboard input, and window management efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xdotool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xdotool/'
+description: 'Automate X11 actions with xdotool.  Control mouse clicks, keyboard input, and window management efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - xdotool window control
@@ -22,8 +22,8 @@ features:
   - Automate complex sequences of actions.
   - Interact with applications programmatically.
   - Retrieve window IDs and active window information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xdotool

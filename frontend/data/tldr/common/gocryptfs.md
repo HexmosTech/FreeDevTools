@@ -1,29 +1,29 @@
 ---
-title: "Encrypt Filesystem - Manage Files with gocryptfs | Online Free DevTools by Hexmos"
+title: 'Encrypt Filesystem - Manage Files with gocryptfs | Online Free DevTools by Hexmos'
 name: gocryptfs
-path: "/freedevtools/tldr/common/gocryptfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gocryptfs/"
-description: "Encrypt filesystems with gocryptfs, a secure overlay filesystem. Manage encrypted data, create snapshots, and change passwords with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gocryptfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gocryptfs/'
+description: 'Encrypt filesystems with gocryptfs, a secure overlay filesystem. Manage encrypted data, create snapshots, and change passwords with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- encrypted filesystem manager
-- gocryptfs file encryption
-- linux filesystem security
-- encrypted overlay filesystem
-- gocryptfs password manager
-- gocryptfs snapshot tool
-- data encryption tool
-- command-line encryption utility
-- file privacy manager
-- secure file storage
+  - encrypted filesystem manager
+  - gocryptfs file encryption
+  - linux filesystem security
+  - encrypted overlay filesystem
+  - gocryptfs password manager
+  - gocryptfs snapshot tool
+  - data encryption tool
+  - command-line encryption utility
+  - file privacy manager
+  - secure file storage
 features:
-- Initialize an encrypted filesystem
-- Mount an encrypted directory
-- Change gocryptfs password securely
-- Create encrypted snapshots of directories
-- Utilize master key for mounting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize an encrypted filesystem
+  - Mount an encrypted directory
+  - Change gocryptfs password securely
+  - Create encrypted snapshots of directories
+  - Utilize master key for mounting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gocryptfs

@@ -1,29 +1,29 @@
 ---
-title: "Socat Relay - Create Network Connections | Online Free DevTools by Hexmos"
+title: 'Socat Relay - Create Network Connections | Online Free DevTools by Hexmos'
 name: socat
-path: "/freedevtools/tldr/common/socat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/socat/"
-description: "Create network connections with Socat Relay. Transfer data, forward ports, and listen for connections with this versatile tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/socat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/socat/'
+description: 'Create network connections with Socat Relay. Transfer data, forward ports, and listen for connections with this versatile tool. Free online tool, no registration required.'
 category: common
 keywords:
-- socket relay
-- network connection
-- port forwarding
-- data transfer
-- linux socat
-- socat command
-- tcp relay
-- udp relay
-- ssl connection
-- multicast send receive
+  - socket relay
+  - network connection
+  - port forwarding
+  - data transfer
+  - linux socat
+  - socat command
+  - tcp relay
+  - udp relay
+  - ssl connection
+  - multicast send receive
 features:
-- Listen for incoming network connections
-- Transfer data between two endpoints
-- Forward local ports to remote hosts
-- Send data using multicast
-- Receive data from multicast groups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Listen for incoming network connections
+  - Transfer data between two endpoints
+  - Forward local ports to remote hosts
+  - Send data using multicast
+  - Receive data from multicast groups
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # socat

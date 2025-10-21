@@ -1,29 +1,29 @@
 ---
-title: "Node.js Version Manager - Manage Node.js Versions | Online Free DevTools by Hexmos"
+title: 'Node.js Version Manager - Manage Node.js Versions | Online Free DevTools by Hexmos'
 name: ps-nvm
-path: "/freedevtools/tldr/common/ps-nvm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ps-nvm/"
-description: "Manage Node.js versions easily with ps-nvm, a PowerShell Node Version Manager. Install, uninstall and switch between multiple Node.js versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ps-nvm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ps-nvm/'
+description: 'Manage Node.js versions easily with ps-nvm, a PowerShell Node Version Manager. Install, uninstall and switch between multiple Node.js versions. Free online tool, no registration required.'
 category: common
 keywords:
-- Node.js version manager
-- PowerShell Node version manager
-- ps-nvm
-- Node.js runtime manager
-- Windows Node version control
-- Node.js installation manager
-- Node.js version switcher
-- Install Node.js versions
-- Uninstall Node.js versions
-- Set default Node.js version
+  - Node.js version manager
+  - PowerShell Node version manager
+  - ps-nvm
+  - Node.js runtime manager
+  - Windows Node version control
+  - Node.js installation manager
+  - Node.js version switcher
+  - Install Node.js versions
+  - Uninstall Node.js versions
+  - Set default Node.js version
 features:
-- Install specific Node.js runtime versions
-- List available and installed Node.js versions
-- Set the default Node.js version for the system
-- Remove existing Node.js installations
-- Manage Node.js installation location
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Node.js runtime versions
+  - List available and installed Node.js versions
+  - Set the default Node.js version for the system
+  - Remove existing Node.js installations
+  - Manage Node.js installation location
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ps-nvm

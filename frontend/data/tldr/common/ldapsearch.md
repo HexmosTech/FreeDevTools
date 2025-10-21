@@ -1,29 +1,29 @@
 ---
-title: "LDAP Search - Query Directories | Online Free DevTools by Hexmos"
+title: 'LDAP Search - Query Directories | Online Free DevTools by Hexmos'
 name: ldapsearch
-path: "/freedevtools/tldr/common/ldapsearch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ldapsearch/"
-description: "Query LDAP directories effectively with LDAP Search. Retrieve user data and manage directory services through command-line tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ldapsearch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ldapsearch/'
+description: 'Query LDAP directories effectively with LDAP Search. Retrieve user data and manage directory services through command-line tools. Free online tool, no registration required.'
 category: common
 keywords:
-- LDAP directory search
-- query LDAP server
-- LDAP command line tool
-- Active Directory query
-- LDAP filter syntax
-- LDAP attribute retrieval
-- LDAP group membership
-- LDAP object search
-- LDAP user lookup
-- LDAP data extraction
+  - LDAP directory search
+  - query LDAP server
+  - LDAP command line tool
+  - Active Directory query
+  - LDAP filter syntax
+  - LDAP attribute retrieval
+  - LDAP group membership
+  - LDAP object search
+  - LDAP user lookup
+  - LDAP data extraction
 features:
-- Query LDAP directories with specified filters.
-- Retrieve specific attributes from LDAP entries.
-- Search for users and groups based on membership.
-- Limit search results based on size and time.
-- Perform complex boolean logic filtering.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Query LDAP directories with specified filters.
+  - Retrieve specific attributes from LDAP entries.
+  - Search for users and groups based on membership.
+  - Limit search results based on size and time.
+  - Perform complex boolean logic filtering.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ldapsearch

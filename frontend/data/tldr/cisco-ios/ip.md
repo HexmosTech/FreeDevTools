@@ -1,29 +1,29 @@
 ---
-title: "Cisco IP Command - Manage Network Configurations | Online Free DevTools by Hexmos"
+title: 'Cisco IP Command - Manage Network Configurations | Online Free DevTools by Hexmos'
 name: ip
-path: "/freedevtools/tldr/cisco-ios/ip/"
-canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/ip/"
-description: "Manage network configurations with Cisco IP Command. Configure IP addresses, DHCP, and domain names on Cisco devices. Free online tool, no registration required."
+path: '/freedevtools/tldr/cisco-ios/ip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cisco-ios/ip/'
+description: 'Manage network configurations with Cisco IP Command. Configure IP addresses, DHCP, and domain names on Cisco devices. Free online tool, no registration required.'
 category: cisco-ios
 keywords:
-- cisco ios ip configuration
-- cisco ip address assignment
-- cisco dhcp configuration
-- cisco domain name setup
-- ios ip ssh version
-- cisco interface ip address
-- cisco ip routing configuration
-- cisco network address translation
-- cisco ip access lists
-- cisco ip parameter map
+  - cisco ios ip configuration
+  - cisco ip address assignment
+  - cisco dhcp configuration
+  - cisco domain name setup
+  - ios ip ssh version
+  - cisco interface ip address
+  - cisco ip routing configuration
+  - cisco network address translation
+  - cisco ip access lists
+  - cisco ip parameter map
 features:
-- Configure static IP addresses on interfaces
-- Enable DHCP for dynamic IP address assignment
-- Define a domain name for the device
-- Set the SSH version for secure access
-- Manage IP configurations on Cisco IOS devices
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure static IP addresses on interfaces
+  - Enable DHCP for dynamic IP address assignment
+  - Define a domain name for the device
+  - Set the SSH version for secure access
+  - Manage IP configurations on Cisco IOS devices
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ip

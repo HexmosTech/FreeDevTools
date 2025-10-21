@@ -1,29 +1,29 @@
 ---
-title: "Brew Autoremove - Remove Unused Packages | Online Free DevTools by Hexmos"
+title: 'Brew Autoremove - Remove Unused Packages | Online Free DevTools by Hexmos'
 name: brew-autoremove
-path: "/freedevtools/tldr/brew/brew-autoremove/"
-canonical: "https://hexmos.com/freedevtools/tldr/brew/brew-autoremove/"
-description: "Remove unused brew packages with Brew Autoremove. Clean up your system and free up disk space after uninstalling software. Free online tool, no registration required."
+path: '/freedevtools/tldr/brew/brew-autoremove/'
+canonical: 'https://hexmos.com/freedevtools/tldr/brew/brew-autoremove/'
+description: 'Remove unused brew packages with Brew Autoremove. Clean up your system and free up disk space after uninstalling software. Free online tool, no registration required.'
 category: common
 keywords:
-- brew package manager
-- brew autoremove command
-- macos package cleaner
-- homebrew cleanup
-- brew dependency removal
-- brew orphan package removal
-- unused package remover
-- macos dependency management
-- brew disk space recovery
-- command line package cleanup
+  - brew package manager
+  - brew autoremove command
+  - macos package cleaner
+  - homebrew cleanup
+  - brew dependency removal
+  - brew orphan package removal
+  - unused package remover
+  - macos dependency management
+  - brew disk space recovery
+  - command line package cleanup
 features:
-- Remove unused brew packages automatically
-- Identify and list orphaned dependencies
-- Perform a dry-run before removing packages
-- Free up disk space by removing outdated packages
-- Simplify brew package management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove unused brew packages automatically
+  - Identify and list orphaned dependencies
+  - Perform a dry-run before removing packages
+  - Free up disk space by removing outdated packages
+  - Simplify brew package management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brew autoremove

@@ -1,9 +1,9 @@
 ---
-title: "Edit Files - View Files with Mailcap | Online Free DevTools by Hexmos"
+title: 'Edit Files - View Files with Mailcap | Online Free DevTools by Hexmos'
 name: edit
-path: "/freedevtools/tldr/linux/edit/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/edit/"
-description: "Edit files effortlessly with Mailcap using this command alias. View files with the default mailcap explorer and streamline file processing. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/edit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/edit/'
+description: 'Edit files effortlessly with Mailcap using this command alias. View files with the default mailcap explorer and streamline file processing. Free online tool, no registration required.'
 category: linux
 keywords:
   - file edit
@@ -22,8 +22,8 @@ features:
   - Utilize `run-mailcap` to process files with specific mime types.
   - Open files from the command line.
   - Provide a simplified alias for the `run-mailcap --action=edit` command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # edit

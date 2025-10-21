@@ -1,29 +1,29 @@
 ---
-title: "Convert MDA to PBM - Image Converter | Online Free DevTools by Hexmos"
+title: 'Convert MDA to PBM - Image Converter | Online Free DevTools by Hexmos'
 name: mdatopbm
-path: "/freedevtools/tldr/common/mdatopbm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mdatopbm/"
-description: "Convert MDA image files with mdatopbm, an image converter. Easily convert and manipulate image formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mdatopbm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mdatopbm/'
+description: 'Convert MDA image files with mdatopbm, an image converter. Easily convert and manipulate image formats. Free online tool, no registration required.'
 category: common
 keywords:
-- MDA to PBM converter
-- PBM image generator
-- Convert MDA image file
-- Microdesign MDA conversion
-- Netpbm image tools
-- Command line image converter
-- Image format conversion
-- MDA image manipulation
-- Linux image utilities
-- Common platform image tool
+  - MDA to PBM converter
+  - PBM image generator
+  - Convert MDA image file
+  - Microdesign MDA conversion
+  - Netpbm image tools
+  - Command line image converter
+  - Image format conversion
+  - MDA image manipulation
+  - Linux image utilities
+  - Common platform image tool
 features:
-- Convert Microdesign MDA files to PBM image format
-- Invert colors within the input MDA image during conversion
-- Double the height of the input image
-- Process MDA images from the command line
-- Generate PBM images compatible with other Netpbm tools
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert Microdesign MDA files to PBM image format
+  - Invert colors within the input MDA image during conversion
+  - Double the height of the input image
+  - Process MDA images from the command line
+  - Generate PBM images compatible with other Netpbm tools
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mdatopbm

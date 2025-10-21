@@ -1,29 +1,29 @@
 ---
-title: "AUR Package Manager - Control AUR Packages | Online Free DevTools by Hexmos"
+title: 'AUR Package Manager - Control AUR Packages | Online Free DevTools by Hexmos'
 name: auracle
-path: "/freedevtools/tldr/linux/auracle/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/auracle/"
-description: "Control AUR packages easily with AUR Package Manager. Search packages, display info, show PKGBUILD and check for updates. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/auracle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/auracle/'
+description: 'Control AUR packages easily with AUR Package Manager. Search packages, display info, show PKGBUILD and check for updates. Free online tool, no registration required.'
 category: linux
 keywords:
-- aur package manager
-- arch linux aur
-- aur helper linux
-- aur package search
-- aur package info
-- aur pkgbuild viewer
-- aur update checker
-- linux package manager
-- arch linux packages
-- command line aur
+  - aur package manager
+  - arch linux aur
+  - aur helper linux
+  - aur package search
+  - aur package info
+  - aur pkgbuild viewer
+  - aur update checker
+  - linux package manager
+  - arch linux packages
+  - command line aur
 features:
-- Search for AUR packages using regular expressions.
-- Display detailed information about specific AUR packages.
-- Show the PKGBUILD file for AUR packages.
-- Check for available updates for installed AUR packages.
-- Interact with the Arch User Repository.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for AUR packages using regular expressions.
+  - Display detailed information about specific AUR packages.
+  - Show the PKGBUILD file for AUR packages.
+  - Check for available updates for installed AUR packages.
+  - Interact with the Arch User Repository.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # auracle

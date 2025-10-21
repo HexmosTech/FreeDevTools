@@ -1,29 +1,29 @@
 ---
-title: "VBoxManage Export - Export Virtual Machines | Online Free DevTools by Hexmos"
+title: 'VBoxManage Export - Export Virtual Machines | Online Free DevTools by Hexmos'
 name: vboxmanage-export
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-export/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-export/"
-description: "Export Virtual Machines with VBoxManage. Create virtual appliances (OVA) for backup and portability. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-export/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-export/'
+description: 'Export Virtual Machines with VBoxManage. Create virtual appliances (OVA) for backup and portability. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine export
-- vboxmanage export ova
-- virtual appliance creation
-- vm backup
-- ovf format export
-- virtualbox command line
-- virtual machine migration
-- vboxmanage cloud export
-- virtual machine image
-- virtualbox export tool
+  - virtual machine export
+  - vboxmanage export ova
+  - virtual appliance creation
+  - vm backup
+  - ovf format export
+  - virtualbox command line
+  - virtual machine migration
+  - vboxmanage cloud export
+  - virtual machine image
+  - virtualbox export tool
 features:
-- Export VMs to OVA format
-- Export in OVF legacy mode
-- Create manifests for exported files
-- Specify VM descriptions during export
-- Export to different OVF versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Export VMs to OVA format
+  - Export in OVF legacy mode
+  - Create manifests for exported files
+  - Specify VM descriptions during export
+  - Export to different OVF versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage export

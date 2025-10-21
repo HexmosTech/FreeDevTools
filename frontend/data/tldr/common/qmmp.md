@@ -1,29 +1,29 @@
 ---
-title: "Control QMMP Audio - Play Music | Online Free DevTools by Hexmos"
+title: 'Control QMMP Audio - Play Music | Online Free DevTools by Hexmos'
 name: qmmp
-path: "/freedevtools/tldr/common/qmmp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qmmp/"
-description: "Control QMMP audio playback with command-line tools. Manage music, adjust volume, and seek through tracks quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/qmmp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qmmp/'
+description: 'Control QMMP audio playback with command-line tools. Manage music, adjust volume, and seek through tracks quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- qmmp audio control
-- qmmp command line
-- music player control
-- audio playback manager
-- linux audio player
-- winamp alternative
-- xmms alternative
-- qmmp volume control
-- qmmp seek command
-- qmmp play pause
+  - qmmp audio control
+  - qmmp command line
+  - music player control
+  - audio playback manager
+  - linux audio player
+  - winamp alternative
+  - xmms alternative
+  - qmmp volume control
+  - qmmp seek command
+  - qmmp play pause
 features:
-- Play or pause audio tracks via command line
-- Seek forward or backward in a track by specific time
-- Adjust volume incrementally via command line
-- Play the next or previous audio file in a playlist
-- Display current volume status in the terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Play or pause audio tracks via command line
+  - Seek forward or backward in a track by specific time
+  - Adjust volume incrementally via command line
+  - Play the next or previous audio file in a playlist
+  - Display current volume status in the terminal
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qmmp

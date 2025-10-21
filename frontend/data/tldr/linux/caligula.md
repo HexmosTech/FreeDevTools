@@ -1,9 +1,9 @@
 ---
-title: "Image Flasher - Flash Disk Images with Caligula | Online Free DevTools by Hexmos"
+title: 'Image Flasher - Flash Disk Images with Caligula | Online Free DevTools by Hexmos'
 name: caligula
-path: "/freedevtools/tldr/linux/caligula/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/caligula/"
-description: "Flash disk images quickly with Caligula, a user-friendly TUI disk imager. Burn ISOs and manage hashes effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/caligula/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/caligula/'
+description: 'Flash disk images quickly with Caligula, a user-friendly TUI disk imager. Burn ISOs and manage hashes effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - disk image flasher
@@ -22,8 +22,8 @@ features:
   - Verify image hashes interactively
   - Bypass hash verification with a specific hash
   - Provide a text-based user interface for ease of use
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # caligula

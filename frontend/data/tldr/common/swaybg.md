@@ -1,9 +1,9 @@
 ---
-title: "Control Wallpaper - Swaybg Tool | Online Free DevTools by Hexmos"
+title: 'Control Wallpaper - Swaybg Tool | Online Free DevTools by Hexmos'
 name: swaybg
-path: "/freedevtools/tldr/common/swaybg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/swaybg/"
-description: "Control Wayland wallpaper with Swaybg. Set images, modes, and colors easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/swaybg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/swaybg/'
+description: 'Control Wayland wallpaper with Swaybg. Set images, modes, and colors easily. Free online tool, no registration required.'
 category: common
 keywords:
   - Wayland wallpaper manager
@@ -22,8 +22,8 @@ features:
   - Set a solid color as the wallpaper
   - Control wallpaper via the command line
   - Configure wallpaper for Wayland compositors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swaybg

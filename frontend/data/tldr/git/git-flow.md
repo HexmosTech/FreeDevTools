@@ -1,29 +1,29 @@
 ---
-title: "Git Flow - Manage Git Repositories | Online Free DevTools by Hexmos"
+title: 'Git Flow - Manage Git Repositories | Online Free DevTools by Hexmos'
 name: git-flow
-path: "/freedevtools/tldr/git/git-flow/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-flow/"
-description: "Manage Git repositories with Git Flow extensions for simplified branching and releases. Automate complex Git workflows efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-flow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-flow/'
+description: 'Manage Git repositories with Git Flow extensions for simplified branching and releases. Automate complex Git workflows efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git flow management
-- git branching strategy
-- git release management
-- git feature branch workflow
-- git hotfix workflow
-- git develop branch
-- git command line workflow
-- git version control system
-- git collaborative workflow
-- git repository automation
+  - git flow management
+  - git branching strategy
+  - git release management
+  - git feature branch workflow
+  - git hotfix workflow
+  - git develop branch
+  - git command line workflow
+  - git version control system
+  - git collaborative workflow
+  - git repository automation
 features:
-- Initialize Git Flow within a Git repository.
-- Start development on a new feature branch.
-- Finish and merge a feature branch into the develop branch.
-- Publish a feature branch to a remote server.
-- Pull a feature branch published by another user from the origin.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Git Flow within a Git repository.
+  - Start development on a new feature branch.
+  - Finish and merge a feature branch into the develop branch.
+  - Publish a feature branch to a remote server.
+  - Pull a feature branch published by another user from the origin.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git flow

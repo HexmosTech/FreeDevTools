@@ -1,29 +1,29 @@
 ---
-title: "ImageMagick Capture - Screen Capture | Online Free DevTools by Hexmos"
+title: 'ImageMagick Capture - Screen Capture | Online Free DevTools by Hexmos'
 name: magick-import
-path: "/freedevtools/tldr/magick/magick-import/"
-canonical: "https://hexmos.com/freedevtools/tldr/magick/magick-import/"
-description: "Capture screens with ImageMagick Import! Grab screenshots of your X server with specific window selection. Free online tool, no registration required."
+path: '/freedevtools/tldr/magick/magick-import/'
+canonical: 'https://hexmos.com/freedevtools/tldr/magick/magick-import/'
+description: 'Capture screens with ImageMagick Import! Grab screenshots of your X server with specific window selection. Free online tool, no registration required.'
 category: common
 keywords:
-- ImageMagick capture
-- screen capture tool
-- X server screenshot
-- window capture Imagemagick
-- PNG screenshot
-- JPEG screenshot
-- PostScript export
-- command line screen capture
-- linux screen grab
-- ImageMagick import
+  - ImageMagick capture
+  - screen capture tool
+  - X server screenshot
+  - window capture Imagemagick
+  - PNG screenshot
+  - JPEG screenshot
+  - PostScript export
+  - command line screen capture
+  - linux screen grab
+  - ImageMagick import
 features:
-- Capture the entire X server screen
-- Capture contents from a remote X server
-- Capture a specific window using its ID
-- Save captures to PNG, JPEG, or PostScript formats
-- Capture X server display using command-line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture the entire X server screen
+  - Capture contents from a remote X server
+  - Capture a specific window using its ID
+  - Save captures to PNG, JPEG, or PostScript formats
+  - Capture X server display using command-line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # magick import

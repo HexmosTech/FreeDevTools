@@ -1,29 +1,29 @@
 ---
-title: "FIO - Control Disk I/O Performance | Online Free DevTools by Hexmos"
+title: 'FIO - Control Disk I/O Performance | Online Free DevTools by Hexmos'
 name: fio
-path: "/freedevtools/tldr/common/fio/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fio/"
-description: "Control disk I/O performance with FIO. Analyze throughput and latency using customizable workloads for storage benchmarking. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fio/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fio/'
+description: 'Control disk I/O performance with FIO. Analyze throughput and latency using customizable workloads for storage benchmarking. Free online tool, no registration required.'
 category: common
 keywords:
-- disk I/O tester
-- storage benchmark tool
-- performance analysis tool
-- random read test
-- sequential write test
-- fio command line
-- linux storage io
-- block device benchmark
-- iops measurement
-- latency testing tool
+  - disk I/O tester
+  - storage benchmark tool
+  - performance analysis tool
+  - random read test
+  - sequential write test
+  - fio command line
+  - linux storage io
+  - block device benchmark
+  - iops measurement
+  - latency testing tool
 features:
-- Execute random and sequential I/O operations.
-- Simulate various workload patterns.
-- Measure disk throughput and latency.
-- Generate detailed performance reports.
-- Convert job files to command-line options.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute random and sequential I/O operations.
+  - Simulate various workload patterns.
+  - Measure disk throughput and latency.
+  - Generate detailed performance reports.
+  - Convert job files to command-line options.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fio

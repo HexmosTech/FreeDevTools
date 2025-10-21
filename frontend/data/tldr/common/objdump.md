@@ -1,29 +1,29 @@
 ---
-title: "Objdump - View Object File Information | Online Free DevTools by Hexmos"
+title: 'Objdump - View Object File Information | Online Free DevTools by Hexmos'
 name: objdump
-path: "/freedevtools/tldr/common/objdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/objdump/"
-description: "View object file information with Objdump. Analyze binaries, examine headers, and disassemble code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/objdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/objdump/'
+description: 'View object file information with Objdump. Analyze binaries, examine headers, and disassemble code. Free online tool, no registration required.'
 category: common
 keywords:
-- object file analyzer
-- binary file analysis
-- disassembly tool
-- executable header viewer
-- symbol table reader
-- linux object dump
-- macos object dump
-- elf file analysis
-- pe file analysis
-- object code disassembler
+  - object file analyzer
+  - binary file analysis
+  - disassembly tool
+  - executable header viewer
+  - symbol table reader
+  - linux object dump
+  - macos object dump
+  - elf file analysis
+  - pe file analysis
+  - object code disassembler
 features:
-- Display file header information
-- Disassemble executable sections
-- Show symbol tables
-- Provide hex dumps of binary sections
-- Display disassembled code in Intel syntax
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display file header information
+  - Disassemble executable sections
+  - Show symbol tables
+  - Provide hex dumps of binary sections
+  - Display disassembled code in Intel syntax
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # objdump

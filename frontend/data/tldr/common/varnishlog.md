@@ -1,29 +1,29 @@
 ---
-title: "Varnishlog - Display Varnish Logs | Online Free DevTools by Hexmos"
+title: 'Varnishlog - Display Varnish Logs | Online Free DevTools by Hexmos'
 name: varnishlog
-path: "/freedevtools/tldr/common/varnishlog/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/varnishlog/"
-description: "Display Varnish logs in real-time with Varnishlog. Analyze website traffic and debug caching issues using advanced filtering. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/varnishlog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/varnishlog/'
+description: 'Display Varnish logs in real-time with Varnishlog. Analyze website traffic and debug caching issues using advanced filtering. Free online tool, no registration required.'
 category: common
 keywords:
-- varnish cache logs
-- varnishlog analysis
-- varnish cache monitoring
-- varnishlog filtering
-- varnish cache debugging
-- varnish access logs
-- varnish performance analysis
-- varnish cache statistics
-- varnish query language
-- varnish cache command line
+  - varnish cache logs
+  - varnishlog analysis
+  - varnish cache monitoring
+  - varnishlog filtering
+  - varnish cache debugging
+  - varnish access logs
+  - varnish performance analysis
+  - varnish cache statistics
+  - varnish query language
+  - varnish cache command line
 features:
-- Display logs in real-time
-- Filter logs by request headers
-- Filter logs by HTTP method
-- Filter logs by URL path
-- Filter logs using regular expressions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display logs in real-time
+  - Filter logs by request headers
+  - Filter logs by HTTP method
+  - Filter logs by URL path
+  - Filter logs using regular expressions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # varnishlog

@@ -1,29 +1,29 @@
 ---
-title: "QPDF - Control PDF Files | Online Free DevTools by Hexmos"
+title: 'QPDF - Control PDF Files | Online Free DevTools by Hexmos'
 name: qpdf
-path: "/freedevtools/tldr/common/qpdf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qpdf/"
-description: "Control PDF files with QPDF, a versatile PDF transformation software. Merge, split, rotate, and decrypt PDFs effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/qpdf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qpdf/'
+description: 'Control PDF files with QPDF, a versatile PDF transformation software. Merge, split, rotate, and decrypt PDFs effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF control
-- PDF manipulation
-- PDF merger
-- PDF splitter
-- PDF rotator
-- PDF decryption
-- PDF editor command line
-- PDF converter command line
-- PDF page extractor
-- PDF password remover
+  - PDF control
+  - PDF manipulation
+  - PDF merger
+  - PDF splitter
+  - PDF rotator
+  - PDF decryption
+  - PDF editor command line
+  - PDF converter command line
+  - PDF page extractor
+  - PDF password remover
 features:
-- Extract specific pages from PDF documents
-- Merge multiple PDF files into a single PDF
-- Split PDF files into individual pages
-- Rotate pages within a PDF at specified angles
-- Remove password protection from PDF files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific pages from PDF documents
+  - Merge multiple PDF files into a single PDF
+  - Split PDF files into individual pages
+  - Rotate pages within a PDF at specified angles
+  - Remove password protection from PDF files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qpdf

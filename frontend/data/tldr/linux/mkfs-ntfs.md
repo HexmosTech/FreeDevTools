@@ -1,9 +1,9 @@
 ---
-title: "Create NTFS Filesystem - mkfs.ntfs Command | Online Free DevTools by Hexmos"
+title: 'Create NTFS Filesystem - mkfs.ntfs Command | Online Free DevTools by Hexmos'
 name: mkfs.ntfs
-path: "/freedevtools/tldr/linux/mkfs-ntfs/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mkfs-ntfs/"
-description: "Create NTFS filesystems with mkfs.ntfs. Format partitions, assign volume labels, and specify UUIDs using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkfs-ntfs/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mkfs-ntfs/'
+description: 'Create NTFS filesystems with mkfs.ntfs. Format partitions, assign volume labels, and specify UUIDs using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - NTFS filesystem creation
@@ -22,8 +22,8 @@ features:
   - Specifies a unique UUID for the filesystem.
   - Creates NTFS filesystems on specified devices.
   - Supports various command-line options for customization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfs.ntfs

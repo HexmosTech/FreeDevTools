@@ -1,9 +1,9 @@
 ---
-title: "Manage Locales with localedef - Create Locale Definitions | Online Free DevTools by Hexmos"
+title: 'Manage Locales with localedef - Create Locale Definitions | Online Free DevTools by Hexmos'
 name: localedef
-path: "/freedevtools/tldr/linux/localedef/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/localedef/"
-description: "Create and manage locale definitions with localedef.  List compiled locales and generate new ones easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/localedef/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/localedef/'
+description: 'Create and manage locale definitions with localedef.  List compiled locales and generate new ones easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - locale definition creation
@@ -22,8 +22,8 @@ features:
   - Manage system locale settings.
   - Generate locale definition files from scratch.
   - Compile and install custom locales.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # localedef

@@ -1,29 +1,29 @@
 ---
-title: "HTTP Server Upload - Create a Simple File Upload Server | Online Free DevTools by Hexmos"
+title: 'HTTP Server Upload - Create a Simple File Upload Server | Online Free DevTools by Hexmos'
 name: http-server-upload
-path: "/freedevtools/tldr/http/http-server-upload/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/http-server-upload/"
-description: "Create a simple file upload server with HTTP Server Upload. Quickly share files through a lightweight interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/http-server-upload/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/http-server-upload/'
+description: 'Create a simple file upload server with HTTP Server Upload. Quickly share files through a lightweight interface. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP Server upload
-- file upload server
-- simple HTTP server
-- command line file server
-- local file sharing
-- zero configuration server
-- HTTP file upload
-- lightweight file server
-- web server upload
-- command line uploader
+  - HTTP Server upload
+  - file upload server
+  - simple HTTP server
+  - command line file server
+  - local file sharing
+  - zero configuration server
+  - HTTP file upload
+  - lightweight file server
+  - web server upload
+  - command line uploader
 features:
-- Start a server for uploading files via HTTP.
-- Configure the maximum file size allowed for uploads.
-- Specify the port on which the HTTP server will listen.
-- Define a directory to store uploaded files.
-- Use a temporary directory for upload processing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a server for uploading files via HTTP.
+  - Configure the maximum file size allowed for uploads.
+  - Specify the port on which the HTTP server will listen.
+  - Define a directory to store uploaded files.
+  - Use a temporary directory for upload processing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # http-server-upload

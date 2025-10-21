@@ -1,29 +1,29 @@
 ---
-title: "Microsoft Edge - Control Web Browser with CLI | Online Free DevTools by Hexmos"
+title: 'Microsoft Edge - Control Web Browser with CLI | Online Free DevTools by Hexmos'
 name: microsoft-edge
-path: "/freedevtools/tldr/common/microsoft-edge/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/microsoft-edge/"
-description: "Control Microsoft Edge web browser with command-line interface. Automate browsing tasks, launch in private mode, and configure proxy settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/microsoft-edge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/microsoft-edge/'
+description: 'Control Microsoft Edge web browser with command-line interface. Automate browsing tasks, launch in private mode, and configure proxy settings. Free online tool, no registration required.'
 category: common
 keywords:
-- Edge browser control
-- Web browser automation
-- Chromium command line
-- Microsoft Edge CLI
-- Windows browser command
-- InPrivate mode launch
-- Proxy server configuration
-- Web security disabling
-- Application mode browsing
-- Custom Edge profile
+  - Edge browser control
+  - Web browser automation
+  - Chromium command line
+  - Microsoft Edge CLI
+  - Windows browser command
+  - InPrivate mode launch
+  - Proxy server configuration
+  - Web security disabling
+  - Application mode browsing
+  - Custom Edge profile
 features:
-- Open URLs or files in Microsoft Edge
-- Launch Edge in InPrivate browsing mode
-- Start Edge in application mode without toolbars
-- Configure a proxy server for browsing sessions
-- Open Edge with a custom user profile directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open URLs or files in Microsoft Edge
+  - Launch Edge in InPrivate browsing mode
+  - Start Edge in application mode without toolbars
+  - Configure a proxy server for browsing sessions
+  - Open Edge with a custom user profile directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # microsoft-edge

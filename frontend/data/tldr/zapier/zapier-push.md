@@ -1,29 +1,29 @@
 ---
-title: "Create Zapier Integration - Build and Upload with CLI | Online Free DevTools by Hexmos"
+title: 'Create Zapier Integration - Build and Upload with CLI | Online Free DevTools by Hexmos'
 name: zapier-push
-path: "/freedevtools/tldr/zapier/zapier-push/"
-canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-push/"
-description: "Create Zapier integrations quickly with zapier-push. Build, upload, and manage your Zapier integration from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/zapier/zapier-push/'
+canonical: 'https://hexmos.com/freedevtools/tldr/zapier/zapier-push/'
+description: 'Create Zapier integrations quickly with zapier-push. Build, upload, and manage your Zapier integration from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- zapier integration
-- zapier cli
-- zapier build
-- zapier upload
-- zapier deploy
-- zapier command line
-- zapier push command
-- integration development
-- zapier automation
-- zapier platform
+  - zapier integration
+  - zapier cli
+  - zapier build
+  - zapier upload
+  - zapier deploy
+  - zapier command line
+  - zapier push command
+  - integration development
+  - zapier automation
+  - zapier platform
 features:
-- Build and upload Zapier integrations
-- Disable smart file inclusion for controlled deployments
-- Enable debug output for enhanced troubleshooting
-- Manage integration files with CLI
-- Deploy Zapier integrations from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build and upload Zapier integrations
+  - Disable smart file inclusion for controlled deployments
+  - Enable debug output for enhanced troubleshooting
+  - Manage integration files with CLI
+  - Deploy Zapier integrations from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zapier push

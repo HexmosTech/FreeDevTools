@@ -1,29 +1,29 @@
 ---
-title: "Blockdev - Manage Block Devices | Online Free DevTools by Hexmos"
+title: 'Blockdev - Manage Block Devices | Online Free DevTools by Hexmos'
 name: blockdev
-path: "/freedevtools/tldr/linux/blockdev/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/blockdev/"
-description: "Manage block devices with blockdev, a powerful Linux command-line tool. Query device sizes and modify read/write permissions. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/blockdev/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/blockdev/'
+description: 'Manage block devices with blockdev, a powerful Linux command-line tool. Query device sizes and modify read/write permissions. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux block device manager
-- block device manipulation linux
-- disk management linux command
-- block size query linux
-- read-only block device linux
-- read-write block device linux
-- flush disk buffers linux
-- physical block size linux
-- set read-ahead linux
-- blockdev command examples
+  - linux block device manager
+  - block device manipulation linux
+  - disk management linux command
+  - block size query linux
+  - read-only block device linux
+  - read-write block device linux
+  - flush disk buffers linux
+  - physical block size linux
+  - set read-ahead linux
+  - blockdev command examples
 features:
-- Query the size of block devices
-- Set block device to read-only mode
-- Set block device to read-write mode
-- Flush buffers for a block device
-- Get the physical block size of a device
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Query the size of block devices
+  - Set block device to read-only mode
+  - Set block device to read-write mode
+  - Flush buffers for a block device
+  - Get the physical block size of a device
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blockdev

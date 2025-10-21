@@ -1,29 +1,29 @@
 ---
-title: "GPGV Signature Verify - Validate OpenPGP Signatures | Online Free DevTools by Hexmos"
+title: 'GPGV Signature Verify - Validate OpenPGP Signatures | Online Free DevTools by Hexmos'
 name: gpgv
-path: "/freedevtools/tldr/gpg/gpgv/"
-canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpgv/"
-description: "Verify OpenPGP signatures with GPGV, ensuring data integrity. Validate detached signatures and manage keyrings using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/gpg/gpgv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gpg/gpgv/'
+description: 'Verify OpenPGP signatures with GPGV, ensuring data integrity. Validate detached signatures and manage keyrings using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- OpenPGP signature verification
-- GPGV signature check
-- Detached signature validation
-- Keyring management
-- Cryptographic signature
-- Data integrity verification
-- Signature validation linux
-- GPGV command line
-- Secure data validation
-- Digital signature verification
+  - OpenPGP signature verification
+  - GPGV signature check
+  - Detached signature validation
+  - Keyring management
+  - Cryptographic signature
+  - Data integrity verification
+  - Signature validation linux
+  - GPGV command line
+  - Secure data validation
+  - Digital signature verification
 features:
-- Verify OpenPGP signatures of files.
-- Validate files using detached signatures.
-- Manage and utilize custom keyrings for verification.
-- Ensure data integrity through signature validation.
-- Support secure communication via signature verification.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Verify OpenPGP signatures of files.
+  - Validate files using detached signatures.
+  - Manage and utilize custom keyrings for verification.
+  - Ensure data integrity through signature validation.
+  - Support secure communication via signature verification.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gpgv

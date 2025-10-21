@@ -1,29 +1,29 @@
 ---
-title: "SV - Control runsv Services | Online Free DevTools by Hexmos"
+title: 'SV - Control runsv Services | Online Free DevTools by Hexmos'
 name: sv
-path: "/freedevtools/tldr/common/sv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sv/"
-description: "Control services with SV, a command-line tool for managing runsv services. Start, stop, reload, and check the status of your services easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sv/'
+description: 'Control services with SV, a command-line tool for managing runsv services. Start, stop, reload, and check the status of your services easily. Free online tool, no registration required.'
 category: common
 keywords:
-- runsv service control
-- service management linux
-- sv command line tool
-- linux service manager
-- systemd alternative
-- process supervision tool
-- runit service control
-- daemon management tool
-- unix service utilities
-- service status checker
+  - runsv service control
+  - service management linux
+  - sv command line tool
+  - linux service manager
+  - systemd alternative
+  - process supervision tool
+  - runit service control
+  - daemon management tool
+  - unix service utilities
+  - service status checker
 features:
-- Start and stop services efficiently
-- Check the status of running services
-- Reload service configurations on-the-fly
-- Run a service only once and avoid restarts
-- Manage services from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and stop services efficiently
+  - Check the status of running services
+  - Reload service configurations on-the-fly
+  - Run a service only once and avoid restarts
+  - Manage services from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sv

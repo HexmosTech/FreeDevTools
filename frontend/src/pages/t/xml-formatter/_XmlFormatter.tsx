@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import XmlFormatterSkeleton from "./_XmlFormatterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import React, { useState, useEffect, useMemo } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import XmlFormatterSkeleton from './_XmlFormatterSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { AlertTriangle, CheckIcon, XIcon, MinusIcon } from "lucide-react";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { AlertTriangle, CheckIcon, XIcon, MinusIcon } from 'lucide-react';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // XML formatting logic based on reference implementation
 interface XMLFormatterOptions {
@@ -46,17 +46,17 @@ const cleanRawXml = (rawXml: string): string => {
 const isValidXML = (rawXml: string): boolean => {
   const cleanedRawXml = cleanRawXml(rawXml);
 
-  if (cleanedRawXml === "") {
+  if (cleanedRawXml === '') {
     return true;
   }
 
   try {
     // Basic XML parsing validation using DOMParser
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(cleanedRawXml, "text/xml");
+    const xmlDoc = parser.parseFromString(cleanedRawXml, 'text/xml');
 
     // Check for parsing errors
-    const errorNode = xmlDoc.querySelector("parsererror");
+    const errorNode = xmlDoc.querySelector('parsererror');
     return !errorNode;
   } catch (error) {
     return false;
@@ -70,29 +70,29 @@ const formatXml = (
 ): string => {
   const cleanedXml = cleanRawXml(rawXml);
 
-  if (!cleanedXml) return "";
+  if (!cleanedXml) return '';
 
   try {
     // Parse the XML
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(cleanedXml, "text/xml");
+    const xmlDoc = parser.parseFromString(cleanedXml, 'text/xml');
 
     // Check for parsing errors
-    const errorNode = xmlDoc.querySelector("parsererror");
+    const errorNode = xmlDoc.querySelector('parsererror');
     if (errorNode) {
-      throw new Error("Invalid XML structure");
+      throw new Error('Invalid XML structure');
     }
 
     // Format the XML with indentation
     const indentChar =
-      typeof options.indentation === "string"
+      typeof options.indentation === 'string'
         ? options.indentation
-        : "  ".repeat(options.indentation || 2);
+        : '  '.repeat(options.indentation || 2);
 
     return formatXmlNode(xmlDoc, indentChar, 0);
   } catch (error) {
     throw new Error(
-      `XML formatting failed: ${error instanceof Error ? error.message : "Unknown error"}`
+      `XML formatting failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 };
@@ -108,11 +108,11 @@ const formatXmlNode = (
 
   if (node.nodeType === Node.DOCUMENT_NODE) {
     const doc = node as Document;
-    let result = "";
+    let result = '';
 
     // Check if original XML had declaration by looking at the source
     const xmlString = new XMLSerializer().serializeToString(doc);
-    if (xmlString.includes("<?xml")) {
+    if (xmlString.includes('<?xml')) {
       result += '<?xml version="1.0" encoding="UTF-8"?>\n';
     }
 
@@ -140,7 +140,7 @@ const formatXmlNode = (
       return `${result} />\n`;
     }
 
-    result += ">";
+    result += '>';
 
     // Check if element contains only text
     const hasOnlyText =
@@ -148,11 +148,11 @@ const formatXmlNode = (
       element.firstChild?.nodeType === Node.TEXT_NODE;
 
     if (hasOnlyText) {
-      const textContent = element.textContent?.trim() || "";
+      const textContent = element.textContent?.trim() || '';
       return `${result}${textContent}</${element.tagName}>\n`;
     }
 
-    result += "\n";
+    result += '\n';
 
     // Format child nodes
     for (const child of Array.from(element.childNodes)) {
@@ -172,21 +172,21 @@ const formatXmlNode = (
 
   if (node.nodeType === Node.TEXT_NODE) {
     const text = node.textContent?.trim();
-    return text ? `${indent}${text}\n` : "";
+    return text ? `${indent}${text}\n` : '';
   }
 
   if (node.nodeType === Node.COMMENT_NODE) {
     return `${indent}<!--${node.textContent}-->\n`;
   }
 
-  return "";
+  return '';
 };
 
 // Minify XML by removing unnecessary whitespace
 const minifyXml = (xml: string): string => {
   return xml
-    .replace(/>\s+</g, "><") // Remove whitespace between tags
-    .replace(/\s+/g, " ") // Replace multiple spaces with single space
+    .replace(/>\s+</g, '><') // Remove whitespace between tags
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
     .trim();
 };
 
@@ -205,8 +205,8 @@ const XmlFormatter: React.FC = () => {
 <price>15.99</price>
 </book>
 </bookstore>`);
-  const [indentType, setIndentType] = useState<"spaces" | "tabs">("spaces");
-  const [indentSize, setIndentSize] = useState("2");
+  const [indentType, setIndentType] = useState<'spaces' | 'tabs'>('spaces');
+  const [indentSize, setIndentSize] = useState('2');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -221,14 +221,14 @@ const XmlFormatter: React.FC = () => {
     if (!xmlInput.trim() || !loaded) {
       return {
         isValid: true,
-        formatted: "",
+        formatted: '',
         original: xmlInput,
       };
     }
 
     try {
       const indentChar =
-        indentType === "tabs" ? "\t" : " ".repeat(parseInt(indentSize));
+        indentType === 'tabs' ? '\t' : ' '.repeat(parseInt(indentSize));
 
       const options: XMLFormatterOptions = {
         indentation: indentChar,
@@ -239,8 +239,8 @@ const XmlFormatter: React.FC = () => {
       if (!isValid) {
         return {
           isValid: false,
-          formatted: "",
-          error: "Invalid XML structure. Please check your XML syntax.",
+          formatted: '',
+          error: 'Invalid XML structure. Please check your XML syntax.',
           original: xmlInput,
         };
       }
@@ -255,22 +255,22 @@ const XmlFormatter: React.FC = () => {
     } catch (error) {
       return {
         isValid: false,
-        formatted: "",
-        error: error instanceof Error ? error.message : "Failed to format XML",
+        formatted: '',
+        error: error instanceof Error ? error.message : 'Failed to format XML',
         original: xmlInput,
       };
     }
   }, [xmlInput, indentType, indentSize, loaded]);
 
   const handleClear = () => {
-    setXmlInput("");
+    setXmlInput('');
   };
 
   const handleMinify = () => {
     if (formattingResult.isValid && formattingResult.formatted) {
       const minified = minifyXml(formattingResult.formatted);
       setXmlInput(minified);
-      toast.success("XML minified successfully!");
+      toast.success('XML minified successfully!');
     }
   };
 
@@ -288,12 +288,12 @@ const XmlFormatter: React.FC = () => {
 <price>15.99</price>
 </book>
 </bookstore>`);
-    toast.success("Sample XML loaded!");
+    toast.success('Sample XML loaded!');
   };
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -331,7 +331,7 @@ const XmlFormatter: React.FC = () => {
                       <Label className="text-sm">Indentation Type</Label>
                       <Select
                         value={indentType}
-                        onValueChange={(value: "spaces" | "tabs") =>
+                        onValueChange={(value: 'spaces' | 'tabs') =>
                           setIndentType(value)
                         }
                       >
@@ -345,7 +345,7 @@ const XmlFormatter: React.FC = () => {
                       </Select>
                     </div>
 
-                    {indentType === "spaces" && (
+                    {indentType === 'spaces' && (
                       <div className="space-y-2">
                         <Label className="text-sm">Indent Size</Label>
                         <Select

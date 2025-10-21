@@ -1,29 +1,29 @@
 ---
-title: "Create Files - Control File Timestamps with Touch | Online Free DevTools by Hexmos"
+title: 'Create Files - Control File Timestamps with Touch | Online Free DevTools by Hexmos'
 name: touch
-path: "/freedevtools/tldr/common/touch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/touch/"
-description: "Create files instantly with Touch and control file timestamps with ease. Manage file access and modification times with this free online tool, no registration required."
+path: '/freedevtools/tldr/common/touch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/touch/'
+description: 'Create files instantly with Touch and control file timestamps with ease. Manage file access and modification times with this free online tool, no registration required.'
 category: common
 keywords:
-- file creation
-- file timestamp management
-- linux touch command
-- macos touch command
-- file access control
-- file modification time
-- touch file utility
-- command line file tool
-- set file time
-- reference file timestamp
+  - file creation
+  - file timestamp management
+  - linux touch command
+  - macos touch command
+  - file access control
+  - file modification time
+  - touch file utility
+  - command line file tool
+  - set file time
+  - reference file timestamp
 features:
-- Create multiple files simultaneously
-- Modify file access and modification timestamps
-- Set timestamps to specific dates and times
-- Use a reference file's timestamp for other files
-- Parse date strings for timestamp setting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create multiple files simultaneously
+  - Modify file access and modification timestamps
+  - Set timestamps to specific dates and times
+  - Use a reference file's timestamp for other files
+  - Parse date strings for timestamp setting
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # touch

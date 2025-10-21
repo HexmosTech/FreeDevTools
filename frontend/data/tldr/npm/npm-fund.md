@@ -1,29 +1,29 @@
 ---
-title: "Retrieve NPM Funding - Manage Package Funding | Online Free DevTools by Hexmos"
+title: 'Retrieve NPM Funding - Manage Package Funding | Online Free DevTools by Hexmos'
 name: npm-fund
-path: "/freedevtools/tldr/npm/npm-fund/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-fund/"
-description: "Retrieve NPM package funding information with npm-fund. Discover package funding URLs and open them directly in your browser. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-fund/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-fund/'
+description: 'Retrieve NPM package funding information with npm-fund. Discover package funding URLs and open them directly in your browser. Free online tool, no registration required.'
 category: common
 keywords:
-- npm funding
-- npm package funding
-- javascript funding
-- node funding
-- npm dependencies
-- npm fund command
-- node package manager
-- npm workspace funding
-- open source funding
-- javascript dependencies
+  - npm funding
+  - npm package funding
+  - javascript funding
+  - node funding
+  - npm dependencies
+  - npm fund command
+  - node package manager
+  - npm workspace funding
+  - open source funding
+  - javascript dependencies
 features:
-- Lists dependencies with funding URLs
-- Opens funding URLs in the browser
-- Supports specific package selection
-- Works with npm workspaces
-- Retrieves funding information from packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lists dependencies with funding URLs
+  - Opens funding URLs in the browser
+  - Supports specific package selection
+  - Works with npm workspaces
+  - Retrieves funding information from packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm fund

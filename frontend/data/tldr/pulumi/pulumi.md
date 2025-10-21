@@ -1,29 +1,29 @@
 ---
-title: "Create Infrastructure - Pulumi Cloud Deployment | Online Free DevTools by Hexmos"
+title: 'Create Infrastructure - Pulumi Cloud Deployment | Online Free DevTools by Hexmos'
 name: pulumi
-path: "/freedevtools/tldr/pulumi/pulumi/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi/"
-description: "Create infrastructure with Pulumi, define cloud resources using code. Provision, deploy, and manage infrastructure on any cloud platform. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi/'
+description: 'Create infrastructure with Pulumi, define cloud resources using code. Provision, deploy, and manage infrastructure on any cloud platform. Free online tool, no registration required.'
 category: common
 keywords:
-- infrastructure as code
-- pulumi infrastructure
-- cloud deployment
-- infrastructure automation
-- cloud resource management
-- pulumi CLI
-- infrastructure definition
-- pulumi stack
-- pulumi config
-- yaml infrastructure
+  - infrastructure as code
+  - pulumi infrastructure
+  - cloud deployment
+  - infrastructure automation
+  - cloud resource management
+  - pulumi CLI
+  - infrastructure definition
+  - pulumi stack
+  - pulumi config
+  - yaml infrastructure
 features:
-- Deploy infrastructure across multiple cloud providers
-- Manage infrastructure configurations with version control
-- Preview changes before deployment
-- Destroy entire infrastructures with a single command
-- Initialize new Pulumi projects from templates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy infrastructure across multiple cloud providers
+  - Manage infrastructure configurations with version control
+  - Preview changes before deployment
+  - Destroy entire infrastructures with a single command
+  - Initialize new Pulumi projects from templates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi

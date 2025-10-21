@@ -1,29 +1,29 @@
 ---
-title: "Manage AWS Secrets - Secrets Manager | Online Free DevTools by Hexmos"
+title: 'Manage AWS Secrets - Secrets Manager | Online Free DevTools by Hexmos'
 name: aws-secretsmanager
-path: "/freedevtools/tldr/aws/aws-secretsmanager/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-secretsmanager/"
-description: "Manage your AWS secrets securely with AWS Secrets Manager. Store, retrieve, and rotate secrets efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-secretsmanager/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-secretsmanager/'
+description: 'Manage your AWS secrets securely with AWS Secrets Manager. Store, retrieve, and rotate secrets efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS Secrets Manager
-- Secrets Management
-- AWS Secret Rotation
-- AWS Credentials
-- AWS CLI Secrets
-- Cloud Secrets Management
-- Secrets Manager API
-- Serverless Secrets
-- IAM Secrets Policy
-- AWS Secret Store
+  - AWS Secrets Manager
+  - Secrets Management
+  - AWS Secret Rotation
+  - AWS Credentials
+  - AWS CLI Secrets
+  - Cloud Secrets Management
+  - Secrets Manager API
+  - Serverless Secrets
+  - IAM Secrets Policy
+  - AWS Secret Store
 features:
-- Store and manage sensitive secrets centrally
-- Rotate secrets automatically using Lambda functions
-- Retrieve secret values programmatically
-- Delete secrets with or without a recovery period
-- Integrate with other AWS services securely
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Store and manage sensitive secrets centrally
+  - Rotate secrets automatically using Lambda functions
+  - Retrieve secret values programmatically
+  - Delete secrets with or without a recovery period
+  - Integrate with other AWS services securely
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws secretsmanager

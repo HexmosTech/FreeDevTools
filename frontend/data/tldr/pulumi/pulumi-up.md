@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Up - Create Infrastructure with Pulumi | Online Free DevTools by Hexmos"
+title: 'Pulumi Up - Create Infrastructure with Pulumi | Online Free DevTools by Hexmos'
 name: pulumi-up
-path: "/freedevtools/tldr/pulumi/pulumi-up/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-up/"
-description: "Create infrastructure with Pulumi Up, a command-line tool to deploy and update resources. Manage cloud infrastructure effortlessly with Pulumi. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-up/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-up/'
+description: 'Create infrastructure with Pulumi Up, a command-line tool to deploy and update resources. Manage cloud infrastructure effortlessly with Pulumi. Free online tool, no registration required.'
 category: common
 keywords:
-- pulumi infrastructure as code
-- pulumi cloud deployment
-- pulumi stack update
-- pulumi infrastructure automation
-- pulumi command line interface
-- pulumi resource management
-- pulumi infrastructure provisioning
-- pulumi aws deployment
-- pulumi azure deployment
-- pulumi gcp deployment
+  - pulumi infrastructure as code
+  - pulumi cloud deployment
+  - pulumi stack update
+  - pulumi infrastructure automation
+  - pulumi command line interface
+  - pulumi resource management
+  - pulumi infrastructure provisioning
+  - pulumi aws deployment
+  - pulumi azure deployment
+  - pulumi gcp deployment
 features:
-- Deploy infrastructure using Pulumi stacks
-- Preview changes before deployment
-- Automatically approve updates
-- Suppress stack outputs during deployment
-- Continue updates even if errors occur
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy infrastructure using Pulumi stacks
+  - Preview changes before deployment
+  - Automatically approve updates
+  - Suppress stack outputs during deployment
+  - Continue updates even if errors occur
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi up

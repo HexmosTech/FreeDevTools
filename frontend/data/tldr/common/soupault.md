@@ -1,29 +1,29 @@
 ---
-title: "Generate Static Websites - soupault | Online Free DevTools by Hexmos"
+title: 'Generate Static Websites - soupault | Online Free DevTools by Hexmos'
 name: soupault
-path: "/freedevtools/tldr/common/soupault/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/soupault/"
-description: "Generate static websites quickly with soupault. Use HTML element tree rewriting for flexible website creation and metadata extraction. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/soupault/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/soupault/'
+description: 'Generate static websites quickly with soupault. Use HTML element tree rewriting for flexible website creation and metadata extraction. Free online tool, no registration required.'
 category: common
 keywords:
-- static website generator
-- HTML post-processor
-- metadata extractor
-- HTML element rewriting
-- website builder
-- soupault configuration
-- TOML configuration
-- static site generator
-- command-line website
-- website development
+  - static website generator
+  - HTML post-processor
+  - metadata extractor
+  - HTML element rewriting
+  - website builder
+  - soupault configuration
+  - TOML configuration
+  - static site generator
+  - command-line website
+  - website development
 features:
-- Generate static websites from HTML files
-- Rewrite HTML element trees for customization
-- Extract metadata from HTML content
-- Initialize website projects with minimal configuration
-- Build websites with custom configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate static websites from HTML files
+  - Rewrite HTML element trees for customization
+  - Extract metadata from HTML content
+  - Initialize website projects with minimal configuration
+  - Build websites with custom configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # soupault

@@ -1,9 +1,9 @@
 ---
-title: "Read Arch News - Check Package Updates | Online Free DevTools by Hexmos"
+title: 'Read Arch News - Check Package Updates | Online Free DevTools by Hexmos'
 name: informant
-path: "/freedevtools/tldr/linux/informant/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/informant/"
-description: "Read Arch Linux package news with informant. Stay informed about updates, security advisories, and bug fixes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/informant/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/informant/'
+description: 'Read Arch Linux package news with informant. Stay informed about updates, security advisories, and bug fixes. Free online tool, no registration required.'
 category: linux
 keywords:
   - arch linux news reader
@@ -22,8 +22,8 @@ features:
   - List the latest Arch Linux news
   - Display informant help information
   - Supports sudo for reading root-owned news
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # informant

@@ -1,29 +1,29 @@
 ---
-title: "Convert Geospatial Data with ogr2ogr | Online Free DevTools by Hexmos"
+title: 'Convert Geospatial Data with ogr2ogr | Online Free DevTools by Hexmos'
 name: ogr2ogr
-path: "/freedevtools/tldr/common/ogr2ogr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ogr2ogr/"
-description: "Convert geospatial data formats with ogr2ogr. Transform shapefiles, GeoJSON, and CSV to GeoPackage and PostGIS effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ogr2ogr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ogr2ogr/'
+description: 'Convert geospatial data formats with ogr2ogr. Transform shapefiles, GeoJSON, and CSV to GeoPackage and PostGIS effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Shapefile converter
-- GeoJSON converter
-- CSV to GeoPackage
-- Geospatial data conversion
-- ogr2ogr command
-- Vector data transformation
-- PostGIS data loader
-- Coordinate reference system conversion
-- Geospatial CLI tool
-- GDAL ogr2ogr
+  - Shapefile converter
+  - GeoJSON converter
+  - CSV to GeoPackage
+  - Geospatial data conversion
+  - ogr2ogr command
+  - Vector data transformation
+  - PostGIS data loader
+  - Coordinate reference system conversion
+  - Geospatial CLI tool
+  - GDAL ogr2ogr
 features:
-- Convert between various geospatial vector data formats
-- Change coordinate reference systems of geospatial data
-- Filter geospatial features based on property conditions
-- Load GeoPackage data into a PostGIS database
-- Clip geospatial layers to a specified bounding box
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between various geospatial vector data formats
+  - Change coordinate reference systems of geospatial data
+  - Filter geospatial features based on property conditions
+  - Load GeoPackage data into a PostGIS database
+  - Clip geospatial layers to a specified bounding box
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ogr2ogr

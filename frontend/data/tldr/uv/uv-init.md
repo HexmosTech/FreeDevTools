@@ -1,29 +1,29 @@
 ---
-title: "UV Init - Create Python Projects | Online Free DevTools by Hexmos"
+title: 'UV Init - Create Python Projects | Online Free DevTools by Hexmos'
 name: uv-init
-path: "/freedevtools/tldr/uv/uv-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/uv/uv-init/"
-description: "Create Python projects quickly with UV Init. Easily initialize projects, manage build systems, and generate pyproject.toml files. Free online tool, no registration required."
+path: '/freedevtools/tldr/uv/uv-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/uv/uv-init/'
+description: 'Create Python projects quickly with UV Init. Easily initialize projects, manage build systems, and generate pyproject.toml files. Free online tool, no registration required.'
 category: common
 keywords:
-- python project initialization
-- uv project creation
-- python build backend
-- pyproject.toml generator
-- uv init command
-- python package manager
-- project initialization tool
-- python library creation
-- venv management
-- uv virtual environment
+  - python project initialization
+  - uv project creation
+  - python build backend
+  - pyproject.toml generator
+  - uv init command
+  - python package manager
+  - project initialization tool
+  - python library creation
+  - venv management
+  - uv virtual environment
 features:
-- Initialize Python projects in specified directories
-- Specify build systems like setuptools or flit
-- Generate pyproject.toml files with minimal configuration
-- Create Python libraries with library support
-- Set project descriptions during initialization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize Python projects in specified directories
+  - Specify build systems like setuptools or flit
+  - Generate pyproject.toml files with minimal configuration
+  - Create Python libraries with library support
+  - Set project descriptions during initialization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uv init

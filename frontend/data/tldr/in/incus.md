@@ -1,29 +1,29 @@
 ---
-title: "Incus - Manage Containers & VMs | Online Free DevTools by Hexmos"
+title: 'Incus - Manage Containers & VMs | Online Free DevTools by Hexmos'
 name: incus
-path: "/freedevtools/tldr/in/incus/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/incus/"
-description: "Manage containers and virtual machines with Incus. Quickly create, start, stop, and delete containers with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/incus/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/incus/'
+description: 'Manage containers and virtual machines with Incus. Quickly create, start, stop, and delete containers with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- incus container management
-- incus virtual machine management
-- linux container manager
-- command line container tool
-- incus image repository
-- system container management
-- incus command reference
-- linux vm manager
-- incus container cli
-- incus virtual machine cli
+  - incus container management
+  - incus virtual machine management
+  - linux container manager
+  - command line container tool
+  - incus image repository
+  - system container management
+  - incus command reference
+  - linux vm manager
+  - incus container cli
+  - incus virtual machine cli
 features:
-- List containers and virtual machines
-- Create containers from images
-- Start and stop containers
-- Access containers via shell
-- Copy images from remote repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List containers and virtual machines
+  - Create containers from images
+  - Start and stop containers
+  - Access containers via shell
+  - Copy images from remote repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # incus

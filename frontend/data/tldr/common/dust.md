@@ -1,29 +1,29 @@
 ---
-title: "Analyze Disk Usage - Instantly View Directories with Dust | Online Free DevTools by Hexmos"
+title: 'Analyze Disk Usage - Instantly View Directories with Dust | Online Free DevTools by Hexmos'
 name: dust
-path: "/freedevtools/tldr/common/dust/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dust/"
-description: "Analyze disk usage instantly with Dust. Discover directory sizes and reclaim wasted space on Linux and macOS systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dust/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dust/'
+description: 'Analyze disk usage instantly with Dust. Discover directory sizes and reclaim wasted space on Linux and macOS systems. Free online tool, no registration required.'
 category: common
 keywords:
-- disk space analyzer
-- directory size viewer
-- disk usage statistics
-- command line disk usage
-- linux disk usage
-- macos disk usage
-- terminal disk analyzer
-- disk space management
-- file system analysis
-- dust command
+  - disk space analyzer
+  - directory size viewer
+  - disk usage statistics
+  - command line disk usage
+  - linux disk usage
+  - macos disk usage
+  - terminal disk analyzer
+  - disk space management
+  - file system analysis
+  - dust command
 features:
-- Display directory sizes in a visually appealing format
-- Analyze disk usage from the command line
-- Sort directories by size for easy identification of largest consumers
-- Filter directories to ignore specific files or paths
-- Control depth of directory traversal for detailed or summary views
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display directory sizes in a visually appealing format
+  - Analyze disk usage from the command line
+  - Sort directories by size for easy identification of largest consumers
+  - Filter directories to ignore specific files or paths
+  - Control depth of directory traversal for detailed or summary views
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dust

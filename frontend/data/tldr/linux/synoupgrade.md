@@ -1,9 +1,9 @@
 ---
-title: "Synology DSM Upgrade - Manage Updates | Online Free DevTools by Hexmos"
+title: 'Synology DSM Upgrade - Manage Updates | Online Free DevTools by Hexmos'
 name: synoupgrade
-path: "/freedevtools/tldr/linux/synoupgrade/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/synoupgrade/"
-description: "Manage Synology DSM updates efficiently with synoupgrade. Check for updates, download, and install the latest DSM version or patches. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/synoupgrade/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/synoupgrade/'
+description: 'Manage Synology DSM updates efficiently with synoupgrade. Check for updates, download, and install the latest DSM version or patches. Free online tool, no registration required.'
 category: linux
 keywords:
   - Synology DSM upgrade
@@ -22,8 +22,8 @@ features:
   - Installs DSM updates and patches.
   - Allows for automatic or manual upgrades.
   - Supports applying updates from a patch file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # synoupgrade

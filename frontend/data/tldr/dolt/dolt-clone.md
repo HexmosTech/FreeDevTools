@@ -1,29 +1,29 @@
 ---
-title: "Dolt Clone - Copy Databases Locally | Online Free DevTools by Hexmos"
+title: 'Dolt Clone - Copy Databases Locally | Online Free DevTools by Hexmos'
 name: dolt-clone
-path: "/freedevtools/tldr/dolt/dolt-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-clone/"
-description: "Clone Dolt repositories locally with Dolt Clone. Quickly copy databases, specify branches, and manage AWS credentials for seamless data replication. Free online tool, no registration required."
+path: '/freedevtools/tldr/dolt/dolt-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dolt/dolt-clone/'
+description: 'Clone Dolt repositories locally with Dolt Clone. Quickly copy databases, specify branches, and manage AWS credentials for seamless data replication. Free online tool, no registration required.'
 category: common
 keywords:
-- Dolt database clone
-- Dolt repository copy
-- Dolt clone command
-- Dolt local clone
-- Dolt branch clone
-- Dolt AWS clone
-- Dolt data version control
-- Dolt database replication
-- Dolt command line tool
-- Git-compatible database clone
+  - Dolt database clone
+  - Dolt repository copy
+  - Dolt clone command
+  - Dolt local clone
+  - Dolt branch clone
+  - Dolt AWS clone
+  - Dolt data version control
+  - Dolt database replication
+  - Dolt command line tool
+  - Git-compatible database clone
 features:
-- Clone Dolt repositories to a local directory
-- Specify a remote name during cloning
-- Clone only a specific branch of a repository
-- Configure AWS credentials for cloning
-- Replicate data version control for offline use
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone Dolt repositories to a local directory
+  - Specify a remote name during cloning
+  - Clone only a specific branch of a repository
+  - Configure AWS credentials for cloning
+  - Replicate data version control for offline use
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dolt clone

@@ -1,29 +1,29 @@
 ---
-title: "Execute AppleScript - Automate macOS Tasks | Online Free DevTools by Hexmos"
+title: 'Execute AppleScript - Automate macOS Tasks | Online Free DevTools by Hexmos'
 name: osascript
-path: "/freedevtools/tldr/osx/osascript/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/osascript/"
-description: "Execute AppleScript commands with osascript. Automate macOS tasks, interact with applications, and streamline workflows effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/osascript/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/osascript/'
+description: 'Execute AppleScript commands with osascript. Automate macOS tasks, interact with applications, and streamline workflows effortlessly. Free online tool, no registration required.'
 category: osx
 keywords:
-- applescript executor
-- macos automation script
-- javascript for automation
-- osascript command line
-- applescript terminal
-- execute applescript mac
-- run javascript osx
-- osascript application control
-- apple event scripting
-- macos script execution
+  - applescript executor
+  - macos automation script
+  - javascript for automation
+  - osascript command line
+  - applescript terminal
+  - execute applescript mac
+  - run javascript osx
+  - osascript application control
+  - apple event scripting
+  - macos script execution
 features:
-- Execute AppleScript commands from the command line
-- Run JavaScript for Automation (JXA) scripts
-- Execute compiled AppleScript files (.scpt)
-- Get application bundle identifiers
-- Automate macOS tasks and application interactions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute AppleScript commands from the command line
+  - Run JavaScript for Automation (JXA) scripts
+  - Execute compiled AppleScript files (.scpt)
+  - Get application bundle identifiers
+  - Automate macOS tasks and application interactions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # osascript

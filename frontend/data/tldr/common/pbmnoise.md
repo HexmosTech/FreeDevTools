@@ -1,29 +1,29 @@
 ---
-title: "Generate PBM Noise - Create White Noise Images | Online Free DevTools by Hexmos"
+title: 'Generate PBM Noise - Create White Noise Images | Online Free DevTools by Hexmos'
 name: pbmnoise
-path: "/freedevtools/tldr/common/pbmnoise/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmnoise/"
-description: "Generate PBM noise with pbmnoise. Easily create white noise images and control randomness using custom seeds and ratios. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmnoise/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmnoise/'
+description: 'Generate PBM noise with pbmnoise. Easily create white noise images and control randomness using custom seeds and ratios. Free online tool, no registration required.'
 category: common
 keywords:
-- pbm noise generator
-- white noise image creation
-- pbm image manipulation
-- command line image tool
-- linux image generation
-- pbm random noise
-- netpbm tools
-- image generation tool
-- pbm image editor
-- noise texture generator
+  - pbm noise generator
+  - white noise image creation
+  - pbm image manipulation
+  - command line image tool
+  - linux image generation
+  - pbm random noise
+  - netpbm tools
+  - image generation tool
+  - pbm image editor
+  - noise texture generator
 features:
-- Generate PBM images with white noise patterns.
-- Control the randomness of noise generation using a seed.
-- Adjust the ratio of white to black pixels in the noise.
-- Create images of specific dimensions.
-- Output generated PBM images to a specified file path.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate PBM images with white noise patterns.
+  - Control the randomness of noise generation using a seed.
+  - Adjust the ratio of white to black pixels in the noise.
+  - Create images of specific dimensions.
+  - Output generated PBM images to a specified file path.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmnoise

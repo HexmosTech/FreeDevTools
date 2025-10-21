@@ -1,29 +1,29 @@
 ---
-title: "Unregister VM - Remove Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Unregister VM - Remove Virtual Machines | Online Free DevTools by Hexmos'
 name: vboxmanage-unregistervm
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-unregistervm/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-unregistervm/"
-description: "Unregister a virtual machine with VBoxManage. Permanently remove VMs, delete associated files, and reclaim storage space. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-unregistervm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-unregistervm/'
+description: 'Unregister a virtual machine with VBoxManage. Permanently remove VMs, delete associated files, and reclaim storage space. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine unregister
-- vm removal tool
-- vboxmanage unregister vm
-- virtualbox vm delete
-- unregister virtual machine
-- vbox vm management
-- vm disk deletion
-- virtualbox cleanup
-- windows vm removal
-- linux vm delete
+  - virtual machine unregister
+  - vm removal tool
+  - vboxmanage unregister vm
+  - virtualbox vm delete
+  - unregister virtual machine
+  - vbox vm management
+  - vm disk deletion
+  - virtualbox cleanup
+  - windows vm removal
+  - linux vm delete
 features:
-- Unregister a virtual machine by UUID or name
-- Delete hard disk image files associated with the VM
-- Remove all saved state files and VM logs
-- Delete XML machine configuration files
-- Completely remove all files associated with a VM
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Unregister a virtual machine by UUID or name
+  - Delete hard disk image files associated with the VM
+  - Remove all saved state files and VM logs
+  - Delete XML machine configuration files
+  - Completely remove all files associated with a VM
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage unregistervm

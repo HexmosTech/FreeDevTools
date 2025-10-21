@@ -1,29 +1,29 @@
 ---
-title: "Git Bundle - Package Git Objects into Archives | Online Free DevTools by Hexmos"
+title: 'Git Bundle - Package Git Objects into Archives | Online Free DevTools by Hexmos'
 name: git-bundle
-path: "/freedevtools/tldr/git/git-bundle/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-bundle/"
-description: "Package Git objects into archives with Git Bundle. Create, verify, and unbundle Git repositories for offline transfer and backup. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-bundle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-bundle/'
+description: 'Package Git objects into archives with Git Bundle. Create, verify, and unbundle Git repositories for offline transfer and backup. Free online tool, no registration required.'
 category: common
 keywords:
-- git bundle create
-- git bundle verify
-- git bundle unbundle
-- git repository archive
-- git offline transfer
-- git backup bundle
-- git bundle command
-- git bundle management
-- git bundle branch
-- git clone from bundle
+  - git bundle create
+  - git bundle verify
+  - git bundle unbundle
+  - git repository archive
+  - git offline transfer
+  - git backup bundle
+  - git bundle command
+  - git bundle management
+  - git bundle branch
+  - git clone from bundle
 features:
-- Package Git objects and references into a single file
-- Verify the integrity of a Git bundle file
-- Extract references from a Git bundle
-- Clone a new repository from a Git bundle file
-- Transfer Git repositories offline without a network connection
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Package Git objects and references into a single file
+  - Verify the integrity of a Git bundle file
+  - Extract references from a Git bundle
+  - Clone a new repository from a Git bundle file
+  - Transfer Git repositories offline without a network connection
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git bundle

@@ -1,29 +1,29 @@
 ---
-title: "Wezterm Emulator - Create Terminal Windows | Online Free DevTools by Hexmos"
+title: 'Wezterm Emulator - Create Terminal Windows | Online Free DevTools by Hexmos'
 name: wezterm
-path: "/freedevtools/tldr/common/wezterm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wezterm/"
-description: "Create terminal windows with Wezterm Emulator, a cross-platform terminal multiplexer. Enhance your command-line workflow with session recording and image output. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wezterm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wezterm/'
+description: 'Create terminal windows with Wezterm Emulator, a cross-platform terminal multiplexer. Enhance your command-line workflow with session recording and image output. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal emulator
-- cross platform terminal
-- wezterm multiplexer
-- terminal session recording
-- wezterm configuration
-- ssh terminal
-- terminal image output
-- terminal window manager
-- terminal emulator linux
-- terminal emulator macos
+  - terminal emulator
+  - cross platform terminal
+  - wezterm multiplexer
+  - terminal session recording
+  - wezterm configuration
+  - ssh terminal
+  - terminal image output
+  - terminal window manager
+  - terminal emulator linux
+  - terminal emulator macos
 features:
-- Create new wezterm terminal windows
-- Establish SSH sessions in new windows
-- Connect to the wezterm multiplexer server
-- Output images directly to the terminal
-- Record and replay terminal sessions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new wezterm terminal windows
+  - Establish SSH sessions in new windows
+  - Connect to the wezterm multiplexer server
+  - Output images directly to the terminal
+  - Record and replay terminal sessions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wezterm

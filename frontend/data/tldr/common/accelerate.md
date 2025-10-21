@@ -1,29 +1,29 @@
 ---
-title: "Accelerate - Run PyTorch Models Easily | Online Free DevTools by Hexmos"
+title: 'Accelerate - Run PyTorch Models Easily | Online Free DevTools by Hexmos'
 name: accelerate
-path: "/freedevtools/tldr/common/accelerate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/accelerate/"
-description: "Accelerate PyTorch model training with Accelerate. Distribute your models across CPUs and GPUs effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/accelerate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/accelerate/'
+description: 'Accelerate PyTorch model training with Accelerate. Distribute your models across CPUs and GPUs effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- accelerate pytorch training
-- distributed pytorch training
-- pytorch multi GPU
-- pytorch cpu training
-- accelerate config file
-- accelerate estimate memory
-- pytorch accelerate launch
-- accelerate environment information
-- accelerate distributed training
-- accelerate pytorch library
+  - accelerate pytorch training
+  - distributed pytorch training
+  - pytorch multi GPU
+  - pytorch cpu training
+  - accelerate config file
+  - accelerate estimate memory
+  - pytorch accelerate launch
+  - accelerate environment information
+  - accelerate distributed training
+  - accelerate pytorch library
 features:
-- Distribute PyTorch models across various hardware configurations.
-- Estimate GPU memory requirements for Hugging Face models.
-- Configure Accelerate settings interactively via command line.
-- Test Accelerate configurations for proper functionality.
-- Launch and run PyTorch models using the Accelerate library.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Distribute PyTorch models across various hardware configurations.
+  - Estimate GPU memory requirements for Hugging Face models.
+  - Configure Accelerate settings interactively via command line.
+  - Test Accelerate configurations for proper functionality.
+  - Launch and run PyTorch models using the Accelerate library.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # accelerate

@@ -1,29 +1,29 @@
 ---
-title: "Control Cockpit - Secure Linux Sessions | Online Free DevTools by Hexmos"
+title: 'Control Cockpit - Secure Linux Sessions | Online Free DevTools by Hexmos'
 name: cockpit-desktop
-path: "/freedevtools/tldr/linux/cockpit-desktop/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cockpit-desktop/"
-description: "Control Cockpit sessions securely with Cockpit-desktop. Access Cockpit pages in an isolated environment for enhanced security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cockpit-desktop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cockpit-desktop/'
+description: 'Control Cockpit sessions securely with Cockpit-desktop. Access Cockpit pages in an isolated environment for enhanced security. Free online tool, no registration required.'
 category: linux
 keywords:
-- cockpit session manager
-- linux remote access
-- secure cockpit access
-- cockpit web interface
-- remote server management linux
-- cockpit-desktop linux command
-- browser isolation linux
-- linux session security
-- remote server cockpit
-- cockpit bridge manager
+  - cockpit session manager
+  - linux remote access
+  - secure cockpit access
+  - cockpit web interface
+  - remote server management linux
+  - cockpit-desktop linux command
+  - browser isolation linux
+  - linux session security
+  - remote server cockpit
+  - cockpit bridge manager
 features:
-- Launch Cockpit pages in an isolated network space.
-- Start Cockpit-ws for secure web access.
-- Execute cockpit-bridge in a user session.
-- Securely access Cockpit pages through SSH.
-- Open specific storage pages within Cockpit.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch Cockpit pages in an isolated network space.
+  - Start Cockpit-ws for secure web access.
+  - Execute cockpit-bridge in a user session.
+  - Securely access Cockpit pages through SSH.
+  - Open specific storage pages within Cockpit.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cockpit-desktop

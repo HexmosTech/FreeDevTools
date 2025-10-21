@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to ICR - Image Format Conversion | Online Free DevTools by Hexmos"
+title: 'Convert PPM to ICR - Image Format Conversion | Online Free DevTools by Hexmos'
 name: ppmtoicr
-path: "/freedevtools/tldr/ppm/ppmtoicr/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoicr/"
-description: "Convert PPM images to ICR format with ppmtoicr. Fast image format conversion using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmtoicr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtoicr/'
+description: 'Convert PPM images to ICR format with ppmtoicr. Fast image format conversion using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to ICR conversion
-- Image format converter
-- Command line image tool
-- PPM image processing
-- ICR file generation
-- Netpbm image tools
-- Linux image conversion
-- macOS image conversion
-- Convert raster images
-- PPM to ICR command
+  - PPM to ICR conversion
+  - Image format converter
+  - Command line image tool
+  - PPM image processing
+  - ICR file generation
+  - Netpbm image tools
+  - Linux image conversion
+  - macOS image conversion
+  - Convert raster images
+  - PPM to ICR command
 features:
-- Convert PPM images to ICR format
-- Display ICR output with specified window name
-- Expand image by a specified factor
-- Display output on screen with a number
-- Support for command-line image conversion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to ICR format
+  - Display ICR output with specified window name
+  - Expand image by a specified factor
+  - Display output on screen with a number
+  - Support for command-line image conversion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtoicr

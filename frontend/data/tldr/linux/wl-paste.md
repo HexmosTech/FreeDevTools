@@ -1,9 +1,9 @@
 ---
-title: "Paste Clipboard - Control Wayland Clipboard | Online Free DevTools by Hexmos"
+title: 'Paste Clipboard - Control Wayland Clipboard | Online Free DevTools by Hexmos'
 name: wl-paste
-path: "/freedevtools/tldr/linux/wl-paste/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/wl-paste/"
-description: "Control content pasting with wl-paste. Manage Wayland clipboard access and pipe output to other commands efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/wl-paste/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/wl-paste/'
+description: 'Control content pasting with wl-paste. Manage Wayland clipboard access and pipe output to other commands efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - wayland clipboard paste
@@ -22,8 +22,8 @@ features:
   - Write clipboard content to a specified file.
   - Pipe clipboard data to another command.
   - Access clipboard via command-line interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wl-paste

@@ -1,29 +1,29 @@
 ---
-title: "Share Websites - Expose Local Sites with Tunnel | Online Free DevTools by Hexmos"
+title: 'Share Websites - Expose Local Sites with Tunnel | Online Free DevTools by Hexmos'
 name: expose
-path: "/freedevtools/tldr/common/expose/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/expose/"
-description: "Share websites instantly with Expose, an open-source tunnel application. Expose your local development servers and preview your work online. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/expose/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/expose/'
+description: 'Share websites instantly with Expose, an open-source tunnel application. Expose your local development servers and preview your work online. Free online tool, no registration required.'
 category: common
 keywords:
-- website sharing
-- local tunnel
-- expose tunnel
-- expose local site
-- localhost sharing
-- development server share
-- expose subdomain
-- expose share URL
-- open source tunnel
-- expose server
+  - website sharing
+  - local tunnel
+  - expose tunnel
+  - expose local site
+  - localhost sharing
+  - development server share
+  - expose subdomain
+  - expose share URL
+  - open source tunnel
+  - expose server
 features:
-- Share local directories over the internet
-- Assign custom subdomains for shared directories
-- Share specific local URLs for immediate access
-- Run a local Expose server instance
-- Authenticate using a personal API token
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Share local directories over the internet
+  - Assign custom subdomains for shared directories
+  - Share specific local URLs for immediate access
+  - Run a local Expose server instance
+  - Authenticate using a personal API token
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # expose

@@ -1,29 +1,29 @@
 ---
-title: "Generate Code Statistics - Tokei Code Analyzer | Online Free DevTools by Hexmos"
+title: 'Generate Code Statistics - Tokei Code Analyzer | Online Free DevTools by Hexmos'
 name: tokei
-path: "/freedevtools/tldr/common/tokei/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tokei/"
-description: "Generate code statistics with Tokei. Analyze codebase complexity, identify language distribution, and improve code quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tokei/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tokei/'
+description: 'Generate code statistics with Tokei. Analyze codebase complexity, identify language distribution, and improve code quality. Free online tool, no registration required.'
 category: common
 keywords:
-- code statistics analyzer
-- software metrics tool
-- code analysis tool
-- language distribution report
-- codebase complexity analysis
-- source code statistics
-- tokei code analyzer
-- cli code metrics
-- linux code analysis
-- cross-platform code statistics
+  - code statistics analyzer
+  - software metrics tool
+  - code analysis tool
+  - language distribution report
+  - codebase complexity analysis
+  - source code statistics
+  - tokei code analyzer
+  - cli code metrics
+  - linux code analysis
+  - cross-platform code statistics
 features:
-- Analyze codebases for statistical insights
-- Generate detailed reports on language distribution
-- Exclude specific files or patterns from analysis
-- Analyze code in multiple directories and subdirectories
-- Identify code complexity metrics at file level
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze codebases for statistical insights
+  - Generate detailed reports on language distribution
+  - Exclude specific files or patterns from analysis
+  - Analyze code in multiple directories and subdirectories
+  - Identify code complexity metrics at file level
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tokei

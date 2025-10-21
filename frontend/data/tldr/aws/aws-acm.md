@@ -1,29 +1,29 @@
 ---
-title: "Manage AWS Certificates - Control ACM | Online Free DevTools by Hexmos"
+title: 'Manage AWS Certificates - Control ACM | Online Free DevTools by Hexmos'
 name: aws-acm
-path: "/freedevtools/tldr/aws/aws-acm/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-acm/"
-description: "Manage AWS certificates with ACM. Automate certificate lifecycle management, and improve security using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-acm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-acm/'
+description: 'Manage AWS certificates with ACM. Automate certificate lifecycle management, and improve security using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- aws certificate manager
-- aws acm certificate
-- aws ssl certificate
-- aws certificate import
-- aws certificate request
-- aws certificate delete
-- aws acm cli
-- aws certificate validation
-- aws certificate arn
-- aws certificate details
+  - aws certificate manager
+  - aws acm certificate
+  - aws ssl certificate
+  - aws certificate import
+  - aws certificate request
+  - aws certificate delete
+  - aws acm cli
+  - aws certificate validation
+  - aws certificate arn
+  - aws certificate details
 features:
-- Import SSL/TLS certificates into ACM.
-- List and describe existing AWS certificates.
-- Request new certificates from AWS Certificate Manager.
-- Delete unwanted or expired certificates.
-- Update certificate options within AWS ACM.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Import SSL/TLS certificates into ACM.
+  - List and describe existing AWS certificates.
+  - Request new certificates from AWS Certificate Manager.
+  - Delete unwanted or expired certificates.
+  - Update certificate options within AWS ACM.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws acm

@@ -1,29 +1,29 @@
 ---
-title: "Vimdiff - Compare Files | Online Free DevTools by Hexmos"
+title: 'Vimdiff - Compare Files | Online Free DevTools by Hexmos'
 name: vimdiff
-path: "/freedevtools/tldr/common/vimdiff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vimdiff/"
-description: "Compare files with Vimdiff. This free online tool quickly finds and highlights differences between text files directly in your browser. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vimdiff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vimdiff/'
+description: 'Compare files with Vimdiff. This free online tool quickly finds and highlights differences between text files directly in your browser. Free online tool, no registration required.'
 category: common
 keywords:
-- vimdiff compare files
-- vimdiff diff tool
-- text comparison tool
-- file comparison utility
-- command line diff
-- vim text editor
-- vimdiff windows
-- vimdiff navigation
-- code difference viewer
-- file merge tool
+  - vimdiff compare files
+  - vimdiff diff tool
+  - text comparison tool
+  - file comparison utility
+  - command line diff
+  - vim text editor
+  - vimdiff windows
+  - vimdiff navigation
+  - code difference viewer
+  - file merge tool
 features:
-- Compare two or more files in Vim
-- Navigate between differences using keyboard shortcuts
-- Copy highlighted differences between windows
-- Update diff highlights and folds
-- Toggle code folds for better readability
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compare two or more files in Vim
+  - Navigate between differences using keyboard shortcuts
+  - Copy highlighted differences between windows
+  - Update diff highlights and folds
+  - Toggle code folds for better readability
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vimdiff

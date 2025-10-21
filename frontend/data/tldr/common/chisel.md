@@ -1,29 +1,29 @@
 ---
-title: "Create Secure Tunnels - Chisel | Online Free DevTools by Hexmos"
+title: 'Create Secure Tunnels - Chisel | Online Free DevTools by Hexmos'
 name: chisel
-path: "/freedevtools/tldr/common/chisel/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chisel/"
-description: "Create secure tunnels with Chisel, transporting data over HTTP and securing it with SSH. Free online tool, no registration required. Ideal for port forwarding."
+path: '/freedevtools/tldr/common/chisel/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chisel/'
+description: 'Create secure tunnels with Chisel, transporting data over HTTP and securing it with SSH. Free online tool, no registration required. Ideal for port forwarding.'
 category: common
 keywords:
-- secure tunnel creation
-- chisel port forwarding
-- http tunnel over ssh
-- tcp tunnel tool
-- udp tunnel utility
-- ssh tunneling software
-- reverse ssh tunnel
-- socks5 proxy tunneling
-- chisel server configuration
-- chisel client connection
+  - secure tunnel creation
+  - chisel port forwarding
+  - http tunnel over ssh
+  - tcp tunnel tool
+  - udp tunnel utility
+  - ssh tunneling software
+  - reverse ssh tunnel
+  - socks5 proxy tunneling
+  - chisel server configuration
+  - chisel client connection
 features:
-- Create TCP/UDP tunnels over HTTP.
-- Secure tunnels with SSH encryption.
-- Configure reverse tunnels for secure access.
-- Enable SOCKS5 proxy for anonymized connections.
-- Authenticate connections with username and password.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create TCP/UDP tunnels over HTTP.
+  - Secure tunnels with SSH encryption.
+  - Configure reverse tunnels for secure access.
+  - Enable SOCKS5 proxy for anonymized connections.
+  - Authenticate connections with username and password.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chisel

@@ -1,9 +1,9 @@
 ---
-title: "View File - Control Files with pg Command | Online Free DevTools by Hexmos"
+title: 'View File - Control Files with pg Command | Online Free DevTools by Hexmos'
 name: pg
-path: "/freedevtools/tldr/linux/pg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pg/"
-description: "Control files one page at a time with pg. Easily view large text files and display help information. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pg/'
+description: 'Control files one page at a time with pg. Easily view large text files and display help information. Free online tool, no registration required.'
 category: linux
 keywords:
   - File viewer
@@ -22,8 +22,8 @@ features:
   - Navigate through large text files
   - Display help information for pg
   - Read file content from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pg

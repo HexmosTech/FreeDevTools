@@ -1,29 +1,29 @@
 ---
-title: "Etcd Control - Manage Distributed Key-Value Stores | Online Free DevTools by Hexmos"
+title: 'Etcd Control - Manage Distributed Key-Value Stores | Online Free DevTools by Hexmos'
 name: etcd
-path: "/freedevtools/tldr/common/etcd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/etcd/"
-description: "Control distributed key-value stores with Etcd. Manage critical data, configure clusters, and enable extensive metrics. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/etcd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/etcd/'
+description: 'Control distributed key-value stores with Etcd. Manage critical data, configure clusters, and enable extensive metrics. Free online tool, no registration required.'
 category: common
 keywords:
-- etcd control
-- distributed key-value store
-- etcd cluster management
-- etcd data management
-- etcd configuration
-- etcd metrics
-- etcd api
-- etcd command line
-- etcd distributed system
-- etcd monitoring
+  - etcd control
+  - distributed key-value store
+  - etcd cluster management
+  - etcd data management
+  - etcd configuration
+  - etcd metrics
+  - etcd api
+  - etcd command line
+  - etcd distributed system
+  - etcd monitoring
 features:
-- Start a single-node etcd cluster
-- Configure client URLs for etcd
-- Customize the etcd cluster name
-- Enable extensive metrics for debugging
-- Control etcd behavior through command-line options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a single-node etcd cluster
+  - Configure client URLs for etcd
+  - Customize the etcd cluster name
+  - Enable extensive metrics for debugging
+  - Control etcd behavior through command-line options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # etcd

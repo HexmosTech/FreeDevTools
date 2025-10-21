@@ -1,29 +1,29 @@
 ---
-title: "Optimize JPEG Images - Reduce File Size | Online Free DevTools by Hexmos"
+title: 'Optimize JPEG Images - Reduce File Size | Online Free DevTools by Hexmos'
 name: jpegoptim
-path: "/freedevtools/tldr/common/jpegoptim/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jpegoptim/"
-description: "Optimize JPEG images with jpegoptim. Reduce file size and improve website performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jpegoptim/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jpegoptim/'
+description: 'Optimize JPEG images with jpegoptim. Reduce file size and improve website performance. Free online tool, no registration required.'
 category: common
 keywords:
-- JPEG image optimization
-- Image compression tool
-- Reduce JPEG size
-- Optimize images for web
-- Command line JPEG optimizer
-- Lossless JPEG compression
-- Image file size reduction
-- Batch JPEG processing
-- JPEG quality optimization
-- Progressive JPEG conversion
+  - JPEG image optimization
+  - Image compression tool
+  - Reduce JPEG size
+  - Optimize images for web
+  - Command line JPEG optimizer
+  - Lossless JPEG compression
+  - Image file size reduction
+  - Batch JPEG processing
+  - JPEG quality optimization
+  - Progressive JPEG conversion
 features:
-- Optimize JPEG images to reduce file size
-- Strip non-essential data from JPEG images
-- Force output images to be progressive
-- Set a fixed maximum file size for output images
-- Batch process multiple JPEG images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Optimize JPEG images to reduce file size
+  - Strip non-essential data from JPEG images
+  - Force output images to be progressive
+  - Set a fixed maximum file size for output images
+  - Batch process multiple JPEG images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jpegoptim

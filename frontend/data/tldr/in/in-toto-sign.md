@@ -1,29 +1,29 @@
 ---
-title: "Sign in-toto Metadata - Secure Software Supply Chains | Online Free DevTools by Hexmos"
+title: 'Sign in-toto Metadata - Secure Software Supply Chains | Online Free DevTools by Hexmos'
 name: in-toto-sign
-path: "/freedevtools/tldr/in/in-toto-sign/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/in-toto-sign/"
-description: "Sign in-toto metadata with in-toto-sign for robust software supply chain security. Ensure code integrity and prevent tampering with verifiable signatures. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/in-toto-sign/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/in-toto-sign/'
+description: 'Sign in-toto metadata with in-toto-sign for robust software supply chain security. Ensure code integrity and prevent tampering with verifiable signatures. Free online tool, no registration required.'
 category: common
 keywords:
-- in-toto signing
-- in-toto metadata
-- supply chain security
-- software attestation
-- key management
-- GPG signing
-- in-toto layout
-- in-toto link metadata
-- metadata verification
-- digital signatures
+  - in-toto signing
+  - in-toto metadata
+  - supply chain security
+  - software attestation
+  - key management
+  - GPG signing
+  - in-toto layout
+  - in-toto link metadata
+  - metadata verification
+  - digital signatures
 features:
-- Sign in-toto layout and link metadata
-- Verify signatures of in-toto metadata
-- Support multiple signing keys
-- Integrate with GPG for signing
-- Replace existing signatures in metadata files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Sign in-toto layout and link metadata
+  - Verify signatures of in-toto metadata
+  - Support multiple signing keys
+  - Integrate with GPG for signing
+  - Replace existing signatures in metadata files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # in-toto-sign

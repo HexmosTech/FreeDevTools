@@ -1,29 +1,29 @@
 ---
-title: "Exercism - Download Coding Exercises | Online Free DevTools by Hexmos"
+title: 'Exercism - Download Coding Exercises | Online Free DevTools by Hexmos'
 name: exercism
-path: "/freedevtools/tldr/common/exercism/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/exercism/"
-description: "Download coding exercises easily with Exercism. Solve coding challenges in various languages, submit solutions, and get feedback. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/exercism/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/exercism/'
+description: 'Download coding exercises easily with Exercism. Solve coding challenges in various languages, submit solutions, and get feedback. Free online tool, no registration required.'
 category: common
 keywords:
-- coding exercises download
-- exercism command line
-- programming challenges online
-- exercism cli tool
-- code solution submit
-- exercism workspace
-- learn programming exercism
-- exercism tutorial
-- programming mentor support
-- command line coding tool
+  - coding exercises download
+  - exercism command line
+  - programming challenges online
+  - exercism cli tool
+  - code solution submit
+  - exercism workspace
+  - learn programming exercism
+  - exercism tutorial
+  - programming mentor support
+  - command line coding tool
 features:
-- Download exercises in multiple programming languages.
-- Submit solutions for evaluation.
-- Open exercise directories on the Exercism website.
-- Test solutions before submitting.
-- Configure Exercism with API token for access.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download exercises in multiple programming languages.
+  - Submit solutions for evaluation.
+  - Open exercise directories on the Exercism website.
+  - Test solutions before submitting.
+  - Configure Exercism with API token for access.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exercism

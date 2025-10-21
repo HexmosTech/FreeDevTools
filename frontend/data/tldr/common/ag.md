@@ -1,29 +1,29 @@
 ---
-title: "Search Files with Ag - Fast Code Search | Online Free DevTools by Hexmos"
+title: 'Search Files with Ag - Fast Code Search | Online Free DevTools by Hexmos'
 name: ag
-path: "/freedevtools/tldr/common/ag/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ag/"
-description: "Search files quickly with Ag, the Silver Searcher. Find code efficiently across directories with advanced regex and filename pattern matching. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ag/'
+description: 'Search files quickly with Ag, the Silver Searcher. Find code efficiently across directories with advanced regex and filename pattern matching. Free online tool, no registration required.'
 category: common
 keywords:
-- code search
-- file search
-- silver searcher
-- ag command
-- regex search
-- filename search
-- ack alternative
-- command line search
-- linux search
-- macos search
+  - code search
+  - file search
+  - silver searcher
+  - ag command
+  - regex search
+  - filename search
+  - ack alternative
+  - command line search
+  - linux search
+  - macos search
 features:
-- Recursively search directories for matching files
-- Filter search by filename patterns
-- Search case-insensitively
-- Output only the matching part of the line
-- Utilize regex for content matching
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search directories for matching files
+  - Filter search by filename patterns
+  - Search case-insensitively
+  - Output only the matching part of the line
+  - Utilize regex for content matching
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ag

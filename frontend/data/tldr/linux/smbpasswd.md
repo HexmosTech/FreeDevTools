@@ -1,29 +1,29 @@
 ---
-title: "SMB Password Control - Manage Samba User Passwords | Online Free DevTools by Hexmos"
+title: 'SMB Password Control - Manage Samba User Passwords | Online Free DevTools by Hexmos'
 name: smbpasswd
-path: "/freedevtools/tldr/linux/smbpasswd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/smbpasswd/"
-description: "Control SMB passwords with smbpasswd. Manage Samba user accounts, add users, change passwords, and delete accounts effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/smbpasswd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/smbpasswd/'
+description: 'Control SMB passwords with smbpasswd. Manage Samba user accounts, add users, change passwords, and delete accounts effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
-- samba password manager
-- smb user control
-- linux password utility
-- samba account management
-- smbpasswd command
-- windows network authentication
-- samba security tool
-- samba user password reset
-- linux smbpasswd utility
-- smb login control
+  - samba password manager
+  - smb user control
+  - linux password utility
+  - samba account management
+  - smbpasswd command
+  - windows network authentication
+  - samba security tool
+  - samba user password reset
+  - linux smbpasswd utility
+  - smb login control
 features:
-- Add new Samba users
-- Modify existing Samba passwords
-- Delete Samba user accounts
-- Manage Samba authentication on Linux
-- Synchronize Samba passwords with Unix accounts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add new Samba users
+  - Modify existing Samba passwords
+  - Delete Samba user accounts
+  - Manage Samba authentication on Linux
+  - Synchronize Samba passwords with Unix accounts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # smbpasswd

@@ -1,29 +1,29 @@
 ---
-title: "Ledger Accounting - Track Finances | Online Free DevTools by Hexmos"
+title: 'Ledger Accounting - Track Finances | Online Free DevTools by Hexmos'
 name: ledger
-path: "/freedevtools/tldr/common/ledger/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ledger/"
-description: "Track finances efficiently with Ledger Accounting, a powerful double-entry accounting system. Analyze transactions and generate comprehensive reports. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ledger/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ledger/'
+description: 'Track finances efficiently with Ledger Accounting, a powerful double-entry accounting system. Analyze transactions and generate comprehensive reports. Free online tool, no registration required.'
 category: common
 keywords:
-- Ledger accounting
-- Double-entry accounting
-- Financial reporting
-- Balance sheet generator
-- Transaction analysis
-- Budget tracking
-- Command line accounting
-- Journal entry analysis
-- Ledger cli
-- Ledger linux
+  - Ledger accounting
+  - Double-entry accounting
+  - Financial reporting
+  - Balance sheet generator
+  - Transaction analysis
+  - Budget tracking
+  - Command line accounting
+  - Journal entry analysis
+  - Ledger cli
+  - Ledger linux
 features:
-- Generate balance reports with totals
-- List expenses sorted by amount
-- Calculate expenses excluding specific categories
-- Print budget reports for financial planning
-- Display summary statistics of postings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate balance reports with totals
+  - List expenses sorted by amount
+  - Calculate expenses excluding specific categories
+  - Print budget reports for financial planning
+  - Display summary statistics of postings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ledger

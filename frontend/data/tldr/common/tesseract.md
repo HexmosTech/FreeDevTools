@@ -1,29 +1,29 @@
 ---
-title: "Tesseract OCR - Extract Text from Images | Online Free DevTools by Hexmos"
+title: 'Tesseract OCR - Extract Text from Images | Online Free DevTools by Hexmos'
 name: tesseract
-path: "/freedevtools/tldr/common/tesseract/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tesseract/"
-description: "Extract text from images with Tesseract OCR. Quickly convert image to text using command-line interface for various languages and formats. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tesseract/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tesseract/'
+description: 'Extract text from images with Tesseract OCR. Quickly convert image to text using command-line interface for various languages and formats. Free online tool, no registration required.'
 category: common
 keywords:
-- image to text converter
-- tesseract OCR online
-- command line OCR
-- optical character recognition
-- image text extraction
-- tesseract language support
-- image to text linux
-- image to text macos
-- tesseract page segmentation
-- OCR command-line tool
+  - image to text converter
+  - tesseract OCR online
+  - command line OCR
+  - optical character recognition
+  - image text extraction
+  - tesseract language support
+  - image to text linux
+  - image to text macos
+  - tesseract page segmentation
+  - OCR command-line tool
 features:
-- Recognize text from images in multiple languages
-- Convert images to text files via command line
-- Specify page segmentation modes for improved accuracy
-- List available languages for OCR processing
-- Customize language settings for text recognition
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recognize text from images in multiple languages
+  - Convert images to text files via command line
+  - Specify page segmentation modes for improved accuracy
+  - List available languages for OCR processing
+  - Customize language settings for text recognition
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tesseract

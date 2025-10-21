@@ -1,29 +1,29 @@
 ---
-title: "Yadm Decrypt - Decrypt Files Securely | Online Free DevTools by Hexmos"
+title: 'Yadm Decrypt - Decrypt Files Securely | Online Free DevTools by Hexmos'
 name: yadm-decrypt
-path: "/freedevtools/tldr/yadm/yadm-decrypt/"
-canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-decrypt/"
-description: "Decrypt files easily with Yadm Decrypt, ensuring your secrets are safe. Secure file management and simplified encryption process. Free online tool, no registration required."
+path: '/freedevtools/tldr/yadm/yadm-decrypt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/yadm/yadm-decrypt/'
+description: 'Decrypt files easily with Yadm Decrypt, ensuring your secrets are safe. Secure file management and simplified encryption process. Free online tool, no registration required.'
 category: common
 keywords:
-- yadm decrypt
-- file decryption
-- yadm encryption
-- password protected files
-- secret management
-- dotfiles decryption
-- linux decrypt
-- macos decrypt
-- cross-platform decryption
-- configuration decryption
+  - yadm decrypt
+  - file decryption
+  - yadm encryption
+  - password protected files
+  - secret management
+  - dotfiles decryption
+  - linux decrypt
+  - macos decrypt
+  - cross-platform decryption
+  - configuration decryption
 features:
-- Decrypts files encrypted by yadm
-- Prompts for password to unlock files
-- Supports multiple file decryption
-- Integrates seamlessly with yadm workflows
-- Secures sensitive data within dotfiles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Decrypts files encrypted by yadm
+  - Prompts for password to unlock files
+  - Supports multiple file decryption
+  - Integrates seamlessly with yadm workflows
+  - Secures sensitive data within dotfiles
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yadm decrypt

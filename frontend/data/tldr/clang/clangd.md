@@ -1,29 +1,29 @@
 ---
-title: "clangd - Generate Code Insights | Online Free DevTools by Hexmos"
+title: 'clangd - Generate Code Insights | Online Free DevTools by Hexmos'
 name: clangd
-path: "/freedevtools/tldr/clang/clangd/"
-canonical: "https://hexmos.com/freedevtools/tldr/clang/clangd/"
-description: "Generate code insights with clangd language server. Enhance your coding experience with real-time diagnostics and auto-completion using clangd. Free online tool, no registration required."
+path: '/freedevtools/tldr/clang/clangd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/clang/clangd/'
+description: 'Generate code insights with clangd language server. Enhance your coding experience with real-time diagnostics and auto-completion using clangd. Free online tool, no registration required.'
 category: common
 keywords:
-- clangd language server
-- C++ code completion
-- C code analysis
-- code diagnostics
-- IDE integration
-- language server protocol
-- code linting
-- macOS clangd
-- Linux clangd
-- code navigation
+  - clangd language server
+  - C++ code completion
+  - C code analysis
+  - code diagnostics
+  - IDE integration
+  - language server protocol
+  - code linting
+  - macOS clangd
+  - Linux clangd
+  - code navigation
 features:
-- Provides real-time code diagnostics
-- Offers auto-completion suggestions
-- Enables code navigation features
-- Integrates with various code editors
-- Supports C and C++ languages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Provides real-time code diagnostics
+  - Offers auto-completion suggestions
+  - Enables code navigation features
+  - Integrates with various code editors
+  - Supports C and C++ languages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clangd

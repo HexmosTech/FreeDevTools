@@ -1,29 +1,29 @@
 ---
-title: "PNPM Outdated - Check Package Updates | Online Free DevTools by Hexmos"
+title: 'PNPM Outdated - Check Package Updates | Online Free DevTools by Hexmos'
 name: pnpm-outdated
-path: "/freedevtools/tldr/pnpm/pnpm-outdated/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnpm/pnpm-outdated/"
-description: "Check PNPM package updates with PNPM Outdated. Identify and manage outdated dependencies in your project. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnpm/pnpm-outdated/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnpm/pnpm-outdated/'
+description: 'Check PNPM package updates with PNPM Outdated. Identify and manage outdated dependencies in your project. Free online tool, no registration required.'
 category: common
 keywords:
-- PNPM package updates
-- PNPM dependency checker
-- Outdated package finder
-- Package version manager
-- PNPM outdated command
-- Node package update
-- Dependency management tool
-- Software update checker
-- JavaScript dependency update
-- PNPM global outdated
+  - PNPM package updates
+  - PNPM dependency checker
+  - Outdated package finder
+  - Package version manager
+  - PNPM outdated command
+  - Node package update
+  - Dependency management tool
+  - Software update checker
+  - JavaScript dependency update
+  - PNPM global outdated
 features:
-- Checks for outdated packages in a PNPM project.
-- Filters outdated packages using package selectors.
-- Lists outdated packages globally.
-- Prints details of outdated packages in a specific format.
-- Checks only outdated dev dependencies.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checks for outdated packages in a PNPM project.
+  - Filters outdated packages using package selectors.
+  - Lists outdated packages globally.
+  - Prints details of outdated packages in a specific format.
+  - Checks only outdated dev dependencies.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnpm outdated

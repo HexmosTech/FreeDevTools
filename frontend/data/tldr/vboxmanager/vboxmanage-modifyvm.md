@@ -1,29 +1,29 @@
 ---
-title: "VBoxManage ModifyVM - Control Virtual Machine Settings | Online Free DevTools by Hexmos"
+title: 'VBoxManage ModifyVM - Control Virtual Machine Settings | Online Free DevTools by Hexmos'
 name: vboxmanage-modifyvm
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-modifyvm/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-modifyvm/"
-description: "Control virtual machine settings with VBoxManage ModifyVM. Adjust memory, CPU, VRDE, and recording options. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-modifyvm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-modifyvm/'
+description: 'Control virtual machine settings with VBoxManage ModifyVM. Adjust memory, CPU, VRDE, and recording options. Free online tool, no registration required.'
 category: common
 keywords:
-- virtualbox modifyvm
-- vm configuration
-- virtual machine settings
-- vboxmanage command
-- virtualbox command line
-- virtualbox vm rename
-- virtualbox vm memory
-- virtualbox vrde enable
-- virtualbox vm recording
-- virtualbox vm cpu
+  - virtualbox modifyvm
+  - vm configuration
+  - virtual machine settings
+  - vboxmanage command
+  - virtualbox command line
+  - virtualbox vm rename
+  - virtualbox vm memory
+  - virtualbox vrde enable
+  - virtualbox vm recording
+  - virtualbox vm cpu
 features:
-- Rename existing virtual machines
-- Adjust virtual machine memory allocation
-- Configure CPU core assignments for VMs
-- Enable or disable VirtualBox Remote Display Extension (VRDE)
-- Control session recording functionality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rename existing virtual machines
+  - Adjust virtual machine memory allocation
+  - Configure CPU core assignments for VMs
+  - Enable or disable VirtualBox Remote Display Extension (VRDE)
+  - Control session recording functionality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage modifyvm

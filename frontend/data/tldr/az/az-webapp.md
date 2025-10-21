@@ -1,29 +1,29 @@
 ---
-title: "Create Azure Web Apps - Manage Cloud Services | Online Free DevTools by Hexmos"
+title: 'Create Azure Web Apps - Manage Cloud Services | Online Free DevTools by Hexmos'
 name: az-webapp
-path: "/freedevtools/tldr/az/az-webapp/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-webapp/"
-description: "Create Azure Web Apps with az-webapp. Easily manage, list, and delete web applications hosted in Azure Cloud. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-webapp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-webapp/'
+description: 'Create Azure Web Apps with az-webapp. Easily manage, list, and delete web applications hosted in Azure Cloud. Free online tool, no registration required.'
 category: common
 keywords:
-- azure web apps
-- azure cloud services management
-- az webapp commands
-- azure cli web apps
-- linux web app deployment
-- windows web app creation
-- cloud app resource management
-- azure web app automation
-- web app deployment tools
-- azure web app delete
+  - azure web apps
+  - azure cloud services management
+  - az webapp commands
+  - azure cli web apps
+  - linux web app deployment
+  - windows web app creation
+  - cloud app resource management
+  - azure web app automation
+  - web app deployment tools
+  - azure web app delete
 features:
-- List available runtimes for Azure web applications.
-- Create new Azure web applications with custom names and locations.
-- List all web applications within an Azure subscription.
-- Delete specific web applications by name and resource group.
-- Manage web apps hosted in Azure Cloud Services.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available runtimes for Azure web applications.
+  - Create new Azure web applications with custom names and locations.
+  - List all web applications within an Azure subscription.
+  - Delete specific web applications by name and resource group.
+  - Manage web apps hosted in Azure Cloud Services.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az webapp

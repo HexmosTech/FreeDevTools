@@ -1,29 +1,29 @@
 ---
-title: "Anime Browser - Watch Anime from Command Line | Online Free DevTools by Hexmos"
+title: 'Anime Browser - Watch Anime from Command Line | Online Free DevTools by Hexmos'
 name: ani-cli
-path: "/freedevtools/tldr/common/ani-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ani-cli/"
-description: "Browse anime instantly with ani-cli. Download episodes and watch anime from the command line on Linux and macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ani-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ani-cli/'
+description: 'Browse anime instantly with ani-cli. Download episodes and watch anime from the command line on Linux and macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- anime cli browser
-- anime downloader cli
-- command line anime
-- linux anime streaming
-- macOS anime streaming
-- watch anime command line
-- ani-cli download
-- ani-cli search
-- anime episode downloader
-- command line video player
+  - anime cli browser
+  - anime downloader cli
+  - command line anime
+  - linux anime streaming
+  - macOS anime streaming
+  - watch anime command line
+  - ani-cli download
+  - ani-cli search
+  - anime episode downloader
+  - command line video player
 features:
-- Search for anime by name from the command line.
-- Download individual anime episodes quickly.
-- Download a range of anime episodes sequentially.
-- Stream anime directly using VLC media player.
-- Continue watching anime from your viewing history.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for anime by name from the command line.
+  - Download individual anime episodes quickly.
+  - Download a range of anime episodes sequentially.
+  - Stream anime directly using VLC media player.
+  - Continue watching anime from your viewing history.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ani-cli

@@ -1,9 +1,9 @@
 ---
-title: "Fluidsynth Synthesizer - Play MIDI Files | Online Free DevTools by Hexmos"
+title: 'Fluidsynth Synthesizer - Play MIDI Files | Online Free DevTools by Hexmos'
 name: fluidsynth
-path: "/freedevtools/tldr/linux/fluidsynth/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fluidsynth/"
-description: "Synthesize audio from MIDI files with Fluidsynth.  Easily play MIDI files using command-line options and specify audio drivers like PulseAudio or Pipewire. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fluidsynth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fluidsynth/'
+description: 'Synthesize audio from MIDI files with Fluidsynth.  Easily play MIDI files using command-line options and specify audio drivers like PulseAudio or Pipewire. Free online tool, no registration required.'
 category: linux
 keywords:
   - midi synthesizer
@@ -22,8 +22,8 @@ features:
   - Supports various soundfont formats (.sf2).
   - Provides command-line interface for easy use.
   - Enables control over audio playback parameters (indirectly through soundfont settings).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fluidsynth

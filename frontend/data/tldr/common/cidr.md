@@ -1,29 +1,29 @@
 ---
-title: "CIDR Management - Control Network Prefixes | Online Free DevTools by Hexmos"
+title: 'CIDR Management - Control Network Prefixes | Online Free DevTools by Hexmos'
 name: cidr
-path: "/freedevtools/tldr/common/cidr/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cidr/"
-description: "Control IPv4/IPv6 CIDR network prefixes with CIDR Management. Simplify counting, overlap checking, and subdivision tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cidr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cidr/'
+description: 'Control IPv4/IPv6 CIDR network prefixes with CIDR Management. Simplify counting, overlap checking, and subdivision tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- ipv4/ipv6 cidr management
-- network prefix calculator
-- cidr range overlap checker
-- cidr address count
-- subnet divider
-- cidr explain linux
-- cidr contains command
-- cidr divide example
-- cidr subnetting tool
-- network address management
+  - ipv4/ipv6 cidr management
+  - network prefix calculator
+  - cidr range overlap checker
+  - cidr address count
+  - subnet divider
+  - cidr explain linux
+  - cidr contains command
+  - cidr divide example
+  - cidr subnetting tool
+  - network address management
 features:
-- Explain CIDR ranges for easy understanding.
-- Check if an address belongs to a CIDR range.
-- Count the total number of addresses within a CIDR range.
-- Determine if two CIDR ranges have overlapping address spaces.
-- Divide a CIDR range into a specified number of smaller networks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Explain CIDR ranges for easy understanding.
+  - Check if an address belongs to a CIDR range.
+  - Count the total number of addresses within a CIDR range.
+  - Determine if two CIDR ranges have overlapping address spaces.
+  - Divide a CIDR range into a specified number of smaller networks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cidr

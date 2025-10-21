@@ -1,29 +1,29 @@
 ---
-title: "DNS Drill - Perform DNS Queries | Online Free DevTools by Hexmos"
+title: 'DNS Drill - Perform DNS Queries | Online Free DevTools by Hexmos'
 name: drill
-path: "/freedevtools/tldr/common/drill/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/drill/"
-description: "Perform DNS queries with DNS Drill. Lookup IP addresses, MX records, and more for any domain. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/drill/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/drill/'
+description: 'Perform DNS queries with DNS Drill. Lookup IP addresses, MX records, and more for any domain. Free online tool, no registration required.'
 category: common
 keywords:
-- DNS queries
-- DNS lookup
-- domain name resolution
-- DNS record analysis
-- reverse DNS lookup
-- DNSSEC trace
-- command line DNS
-- Linux DNS tools
-- MacOS DNS tools
-- network troubleshooting
+  - DNS queries
+  - DNS lookup
+  - domain name resolution
+  - DNS record analysis
+  - reverse DNS lookup
+  - DNSSEC trace
+  - command line DNS
+  - Linux DNS tools
+  - MacOS DNS tools
+  - network troubleshooting
 features:
-- Lookup IP addresses associated with hostnames (A records).
-- Query mail servers associated with a domain (MX records).
-- Retrieve all record types for a domain.
-- Specify alternate DNS servers to query.
-- Perform reverse DNS lookups on IP addresses (PTR records).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lookup IP addresses associated with hostnames (A records).
+  - Query mail servers associated with a domain (MX records).
+  - Retrieve all record types for a domain.
+  - Specify alternate DNS servers to query.
+  - Perform reverse DNS lookups on IP addresses (PTR records).
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # drill

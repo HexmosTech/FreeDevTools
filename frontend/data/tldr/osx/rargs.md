@@ -1,29 +1,29 @@
 ---
-title: "Execute Command Rargs - Pattern Matching Command Exec | Online Free DevTools by Hexmos"
+title: 'Execute Command Rargs - Pattern Matching Command Exec | Online Free DevTools by Hexmos'
 name: rargs
-path: "/freedevtools/tldr/osx/rargs/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/rargs/"
-description: "Execute commands with Rargs for pattern matching. Automate complex command execution workflows with text manipulation. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/rargs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/rargs/'
+description: 'Execute commands with Rargs for pattern matching. Automate complex command execution workflows with text manipulation. Free online tool, no registration required.'
 category: osx
 keywords:
-- rargs command
-- pattern matching command execution
-- command-line argument generator
-- standard input command executor
-- text processing rargs
-- osx command line tools
-- parallel command execution
-- nul character separated input
-- batch command processor
-- mass file renamer
+  - rargs command
+  - pattern matching command execution
+  - command-line argument generator
+  - standard input command executor
+  - text processing rargs
+  - osx command line tools
+  - parallel command execution
+  - nul character separated input
+  - batch command processor
+  - mass file renamer
 features:
-- Execute commands for each line of input
-- Perform dry runs to preview commands
-- Rename files using pattern matching
-- Execute commands in parallel for faster processing
-- Handle input separated by NUL characters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands for each line of input
+  - Perform dry runs to preview commands
+  - Rename files using pattern matching
+  - Execute commands in parallel for faster processing
+  - Handle input separated by NUL characters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rargs

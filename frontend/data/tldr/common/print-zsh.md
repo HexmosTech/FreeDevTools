@@ -1,29 +1,29 @@
 ---
-title: "Print Text - Format Text Output with Zsh | Online Free DevTools by Hexmos"
+title: 'Print Text - Format Text Output with Zsh | Online Free DevTools by Hexmos'
 name: print.zsh
-path: "/freedevtools/tldr/common/print-zsh/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/print-zsh/"
-description: "Format text output quickly with Zsh Print. Control text formatting, add newlines, and enable backslash escapes for enhanced shell scripting. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/print-zsh/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/print-zsh/'
+description: 'Format text output quickly with Zsh Print. Control text formatting, add newlines, and enable backslash escapes for enhanced shell scripting. Free online tool, no registration required.'
 category: common
 keywords:
-- zsh print command
-- shell text formatting
-- zsh string output
-- zsh command line print
-- zsh echo alternative
-- zsh escape sequences
-- zsh newline control
-- linux print formatting
-- macos print command
-- zsh scripting output
+  - zsh print command
+  - shell text formatting
+  - zsh string output
+  - zsh command line print
+  - zsh echo alternative
+  - zsh escape sequences
+  - zsh newline control
+  - linux print formatting
+  - macos print command
+  - zsh scripting output
 features:
-- Print text with specified formatting
-- Control newline characters in output
-- Enable backslash escapes for special characters
-- Print arguments using printf-style formatting
-- Suppress trailing newline in printed output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print text with specified formatting
+  - Control newline characters in output
+  - Enable backslash escapes for special characters
+  - Print arguments using printf-style formatting
+  - Suppress trailing newline in printed output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # print

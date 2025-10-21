@@ -1,9 +1,9 @@
 ---
-title: "Ebuild - Manage Gentoo Packages | Online Free DevTools by Hexmos"
+title: 'Ebuild - Manage Gentoo Packages | Online Free DevTools by Hexmos'
 name: ebuild
-path: "/freedevtools/tldr/linux/ebuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ebuild/"
-description: "Manage Gentoo packages efficiently with the ebuild command.  Build, install, and update packages using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ebuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ebuild/'
+description: 'Manage Gentoo packages efficiently with the ebuild command.  Build, install, and update packages using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - ebuild package manager
@@ -22,8 +22,8 @@ features:
   - Fetch source code for packages
   - Extract and compile source packages
   - Install packages to the system
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ebuild

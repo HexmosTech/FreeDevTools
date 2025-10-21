@@ -1,9 +1,9 @@
 ---
-title: "List Distrobox Containers - Manage Linux Containers | Online Free DevTools by Hexmos"
+title: 'List Distrobox Containers - Manage Linux Containers | Online Free DevTools by Hexmos'
 name: distrobox-list
-path: "/freedevtools/tldr/linux/distrobox-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/distrobox-list/"
-description: "Manage Linux containers with Distrobox list command.  View and list all your Distrobox containers easily and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/distrobox-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/distrobox-list/'
+description: 'Manage Linux containers with Distrobox list command.  View and list all your Distrobox containers easily and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - distrobox container list
@@ -22,8 +22,8 @@ features:
   - Differentiates Distrobox containers from Podman or Docker containers.
   - Simplifies container management within the Distrobox environment.
   - Offers a clear and concise way to inspect container status.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # distrobox-list

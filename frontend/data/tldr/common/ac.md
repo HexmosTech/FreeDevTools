@@ -1,29 +1,29 @@
 ---
-title: "AC Command - Monitor User Connection Time | Online Free DevTools by Hexmos"
+title: 'AC Command - Monitor User Connection Time | Online Free DevTools by Hexmos'
 name: ac
-path: "/freedevtools/tldr/common/ac/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ac/"
-description: "Monitor user connection time with the AC command. Analyze user activity and system usage with this powerful Linux tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ac/'
+description: 'Monitor user connection time with the AC command. Analyze user activity and system usage with this powerful Linux tool. Free online tool, no registration required.'
 category: common
 keywords:
-- user connection time
-- ac command
-- linux user statistics
-- system activity monitor
-- session duration analysis
-- user login history
-- connection time reporting
-- linux connection analysis
-- user activity logging
-- terminal session monitor
+  - user connection time
+  - ac command
+  - linux user statistics
+  - system activity monitor
+  - session duration analysis
+  - user login history
+  - connection time reporting
+  - linux connection analysis
+  - user activity logging
+  - terminal session monitor
 features:
-- Print total connection time for the current user
-- Print connection time for all users
-- Print connection time for a specific user
-- Print daily connection time for a specific user
-- Analyze user activity and system usage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print total connection time for the current user
+  - Print connection time for all users
+  - Print connection time for a specific user
+  - Print daily connection time for a specific user
+  - Analyze user activity and system usage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ac

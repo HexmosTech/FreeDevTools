@@ -1,29 +1,29 @@
 ---
-title: "JupyterLab - Develop Interactive Notebooks | Online Free DevTools by Hexmos"
+title: 'JupyterLab - Develop Interactive Notebooks | Online Free DevTools by Hexmos'
 name: jupyter-lab
-path: "/freedevtools/tldr/common/jupyter-lab/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jupyter-lab/"
-description: "Develop interactive notebooks with JupyterLab. Create, edit, and run Jupyter notebooks seamlessly using this development environment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jupyter-lab/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jupyter-lab/'
+description: 'Develop interactive notebooks with JupyterLab. Create, edit, and run Jupyter notebooks seamlessly using this development environment. Free online tool, no registration required.'
 category: common
 keywords:
-- jupyter notebook development
-- interactive notebook environment
-- jupyter lab IDE
-- python notebook editor
-- data science notebook
-- jupyterlab linux
-- jupyterlab windows
-- jupyterlab macos
-- jupyterlab debugging
-- jupyterlab command line
+  - jupyter notebook development
+  - interactive notebook environment
+  - jupyter lab IDE
+  - python notebook editor
+  - data science notebook
+  - jupyterlab linux
+  - jupyterlab windows
+  - jupyterlab macos
+  - jupyterlab debugging
+  - jupyterlab command line
 features:
-- Start JupyterLab server for interactive development.
-- Open specific Jupyter notebooks from the command line.
-- Specify a working directory for JupyterLab sessions.
-- Run JupyterLab in debug mode for troubleshooting.
-- Manage and organize Jupyter notebooks within the lab interface.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start JupyterLab server for interactive development.
+  - Open specific Jupyter notebooks from the command line.
+  - Specify a working directory for JupyterLab sessions.
+  - Run JupyterLab in debug mode for troubleshooting.
+  - Manage and organize Jupyter notebooks within the lab interface.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jupyter lab

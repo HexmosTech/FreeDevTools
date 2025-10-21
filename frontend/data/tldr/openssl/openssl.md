@@ -1,29 +1,29 @@
 ---
-title: "OpenSSL Toolkit - Generate Certificates | Online Free DevTools by Hexmos"
+title: 'OpenSSL Toolkit - Generate Certificates | Online Free DevTools by Hexmos'
 name: openssl
-path: "/freedevtools/tldr/openssl/openssl/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl/"
-description: "Generate secure certificates with OpenSSL cryptographic toolkit. Manage keys and encrypt data for web servers, email clients, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl/'
+description: 'Generate secure certificates with OpenSSL cryptographic toolkit. Manage keys and encrypt data for web servers, email clients, and more. Free online tool, no registration required.'
 category: common
 keywords:
-- OpenSSL certificate generation
-- SSL/TLS key management
-- Cryptographic toolkit OpenSSL
-- Secure socket layer configuration
-- Digital certificate creation
-- OpenSSL command-line tools
-- Linux OpenSSL commands
-- macOS OpenSSL utility
-- X.509 certificate management
-- OpenSSL private key generation
+  - OpenSSL certificate generation
+  - SSL/TLS key management
+  - Cryptographic toolkit OpenSSL
+  - Secure socket layer configuration
+  - Digital certificate creation
+  - OpenSSL command-line tools
+  - Linux OpenSSL commands
+  - macOS OpenSSL utility
+  - X.509 certificate management
+  - OpenSSL private key generation
 features:
-- Generate SSL/TLS certificates and keys
-- Manage certificate signing requests (CSRs)
-- Encrypt and decrypt data using various algorithms
-- Verify certificate validity and chain of trust
-- Configure and troubleshoot secure connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate SSL/TLS certificates and keys
+  - Manage certificate signing requests (CSRs)
+  - Encrypt and decrypt data using various algorithms
+  - Verify certificate validity and chain of trust
+  - Configure and troubleshoot secure connections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl

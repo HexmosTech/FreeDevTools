@@ -1,9 +1,9 @@
 ---
-title: "Generate Code with sgpt - OpenAI Command Line Tool | Online Free DevTools by Hexmos"
+title: 'Generate Code with sgpt - OpenAI Command Line Tool | Online Free DevTools by Hexmos'
 name: sgpt
-path: "/freedevtools/tldr/common/sgpt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sgpt/"
-description: "Generate code with sgpt using OpenAI models from your command line interface. Solve problems, execute commands, and start chat sessions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sgpt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sgpt/'
+description: 'Generate code with sgpt using OpenAI models from your command line interface. Solve problems, execute commands, and start chat sessions. Free online tool, no registration required.'
 category: common
 keywords:
   - OpenAI command line tool
@@ -22,8 +22,8 @@ features:
   - Start interactive chat sessions with a session name
   - Use it as a search engine through command line
   - Start a Read-Eval-Print Loop (REPL) session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sgpt

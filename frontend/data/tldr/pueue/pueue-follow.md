@@ -1,29 +1,29 @@
 ---
-title: "Pueue Follow - Monitor Task Output | Online Free DevTools by Hexmos"
+title: 'Pueue Follow - Monitor Task Output | Online Free DevTools by Hexmos'
 name: pueue-follow
-path: "/freedevtools/tldr/pueue/pueue-follow/"
-canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-follow/"
-description: "Monitor task output with Pueue Follow. Stream stdout and stderr of running tasks for real-time debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/pueue/pueue-follow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pueue/pueue-follow/'
+description: 'Monitor task output with Pueue Follow. Stream stdout and stderr of running tasks for real-time debugging. Free online tool, no registration required.'
 category: common
 keywords:
-- pueue follow task output
-- pueue stream logs
-- pueue real-time monitoring
-- pueue command line logger
-- linux task monitoring
-- macos process logging
-- pueue asynchronous logging
-- pueue background process output
-- task stdout monitoring
-- task stderr monitoring
+  - pueue follow task output
+  - pueue stream logs
+  - pueue real-time monitoring
+  - pueue command line logger
+  - linux task monitoring
+  - macos process logging
+  - pueue asynchronous logging
+  - pueue background process output
+  - task stdout monitoring
+  - task stderr monitoring
 features:
-- Stream stdout of a running task
-- Stream stderr of a running task
-- Monitor combined stdout and stderr
-- Filter output by task ID
-- Get immediate feedback from running processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Stream stdout of a running task
+  - Stream stderr of a running task
+  - Monitor combined stdout and stderr
+  - Filter output by task ID
+  - Get immediate feedback from running processes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pueue follow

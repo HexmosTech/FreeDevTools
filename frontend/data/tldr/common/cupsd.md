@@ -1,29 +1,29 @@
 ---
-title: "Control CUPS Daemon - Manage Print Server | Online Free DevTools by Hexmos"
+title: 'Control CUPS Daemon - Manage Print Server | Online Free DevTools by Hexmos'
 name: cupsd
-path: "/freedevtools/tldr/common/cupsd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cupsd/"
-description: "Control the CUPS daemon with cupsd. Manage print queues, configure printers, and troubleshoot printing issues with this command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cupsd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cupsd/'
+description: 'Control the CUPS daemon with cupsd. Manage print queues, configure printers, and troubleshoot printing issues with this command. Free online tool, no registration required.'
 category: common
 keywords:
-- CUPS daemon control
-- Print server management
-- CUPS configuration
-- Printer queue administration
-- cupsd command-line
-- Linux printing
-- macOS printing
-- CUPS troubleshooting
-- Print job management
-- CUPS print server
+  - CUPS daemon control
+  - Print server management
+  - CUPS configuration
+  - Printer queue administration
+  - cupsd command-line
+  - Linux printing
+  - macOS printing
+  - CUPS troubleshooting
+  - Print job management
+  - CUPS print server
 features:
-- Start CUPS daemon in background mode
-- Run CUPS daemon in foreground mode for debugging
-- Launch CUPS daemon on demand via launchd or systemd
-- Load CUPS daemon configuration from a specific file
-- Test CUPS configuration files for syntax errors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start CUPS daemon in background mode
+  - Run CUPS daemon in foreground mode for debugging
+  - Launch CUPS daemon on demand via launchd or systemd
+  - Load CUPS daemon configuration from a specific file
+  - Test CUPS configuration files for syntax errors
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cupsd

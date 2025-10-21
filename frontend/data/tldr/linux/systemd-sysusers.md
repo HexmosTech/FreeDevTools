@@ -1,9 +1,9 @@
 ---
-title: "Create System Users - Manage User Accounts | Online Free DevTools by Hexmos"
+title: 'Create System Users - Manage User Accounts | Online Free DevTools by Hexmos'
 name: systemd-sysusers
-path: "/freedevtools/tldr/linux/systemd-sysusers/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-sysusers/"
-description: "Create system users with systemd-sysusers. Configure user accounts and groups efficiently using configuration files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-sysusers/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-sysusers/'
+description: 'Create system users with systemd-sysusers. Configure user accounts and groups efficiently using configuration files. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd user creation
@@ -22,8 +22,8 @@ features:
   - Print contents of configuration files
   - Manage system users using systemd
   - Automate user account creation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-sysusers

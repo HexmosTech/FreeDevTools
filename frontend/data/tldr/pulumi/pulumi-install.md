@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Install - Manage Packages and Plugins | Online Free DevTools by Hexmos"
+title: 'Pulumi Install - Manage Packages and Plugins | Online Free DevTools by Hexmos'
 name: pulumi-install
-path: "/freedevtools/tldr/pulumi/pulumi-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-install/"
-description: "Manage Pulumi packages and plugins easily with Pulumi Install. Install missing dependencies, reinstall existing plugins, and skip dependency checks. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-install/'
+description: 'Manage Pulumi packages and plugins easily with Pulumi Install. Install missing dependencies, reinstall existing plugins, and skip dependency checks. Free online tool, no registration required.'
 category: common
 keywords:
-- Pulumi package manager
-- Pulumi plugin installer
-- Infrastructure as code plugins
-- Pulumi dependencies install
-- Pulumi CLI install
-- Pulumi reinstall plugins
-- Pulumi skip dependencies
-- Pulumi IaC packages
-- Pulumi project install
-- Pulumi cross-platform install
+  - Pulumi package manager
+  - Pulumi plugin installer
+  - Infrastructure as code plugins
+  - Pulumi dependencies install
+  - Pulumi CLI install
+  - Pulumi reinstall plugins
+  - Pulumi skip dependencies
+  - Pulumi IaC packages
+  - Pulumi project install
+  - Pulumi cross-platform install
 features:
-- Install packages for Pulumi projects
-- Reinstall existing Pulumi plugins
-- Skip dependency installation during setup
-- Install Pulumi plugins from command line
-- Manage Pulumi dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install packages for Pulumi projects
+  - Reinstall existing Pulumi plugins
+  - Skip dependency installation during setup
+  - Install Pulumi plugins from command line
+  - Manage Pulumi dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi install

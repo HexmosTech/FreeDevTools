@@ -1,9 +1,9 @@
 ---
-title: "Write Message - Send Terminal Messages | Online Free DevTools by Hexmos"
+title: 'Write Message - Send Terminal Messages | Online Free DevTools by Hexmos'
 name: write
-path: "/freedevtools/tldr/linux/write/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/write/"
-description: "Write messages to users on specific terminals with the Write command. Send instant alerts and communicate via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/write/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/write/'
+description: 'Write messages to users on specific terminals with the Write command. Send instant alerts and communicate via command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - terminal message writer
@@ -22,8 +22,8 @@ features:
   - Communicate with users through their active terminal sessions
   - Allows real-time terminal interaction and messaging
   - Supports both TTY and PTS terminal types
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # write

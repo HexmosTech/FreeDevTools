@@ -1,29 +1,29 @@
 ---
-title: "Convert 3D Models - Assimp File Converter | Online Free DevTools by Hexmos"
+title: 'Convert 3D Models - Assimp File Converter | Online Free DevTools by Hexmos'
 name: assimp
-path: "/freedevtools/tldr/common/assimp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/assimp/"
-description: "Convert 3D models effortlessly with Assimp File Converter. Easily transform between 40+ formats for Linux, macOS, and Windows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/assimp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/assimp/'
+description: 'Convert 3D models effortlessly with Assimp File Converter. Easily transform between 40+ formats for Linux, macOS, and Windows. Free online tool, no registration required.'
 category: common
 keywords:
-- 3D model converter
-- Assimp file conversion
-- 3D file format transformation
-- STL to OBJ conversion
-- 3D model import
-- 3D model export
-- 3D file analyzer
-- Linux 3D conversion
-- macOS 3D conversion
-- Open Asset Import Library
+  - 3D model converter
+  - Assimp file conversion
+  - 3D file format transformation
+  - STL to OBJ conversion
+  - 3D model import
+  - 3D model export
+  - 3D file analyzer
+  - Linux 3D conversion
+  - macOS 3D conversion
+  - Open Asset Import Library
 features:
-- Convert between 40+ 3D file formats
-- List supported import and export formats
-- Display a summary of a 3D file's contents
-- Convert files using custom parameters
-- Provide help documentation for subcommands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert between 40+ 3D file formats
+  - List supported import and export formats
+  - Display a summary of a 3D file's contents
+  - Convert files using custom parameters
+  - Provide help documentation for subcommands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # assimp

@@ -1,29 +1,29 @@
 ---
-title: "Manage PlatformIO Teams - Create & Control | Online Free DevTools by Hexmos"
+title: 'Manage PlatformIO Teams - Create & Control | Online Free DevTools by Hexmos'
 name: pio-team
-path: "/freedevtools/tldr/pio/pio-team/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-team/"
-description: "Manage PlatformIO teams efficiently with pio-team. Create, delete, add users, and update team details effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-team/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-team/'
+description: 'Manage PlatformIO teams efficiently with pio-team. Create, delete, add users, and update team details effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- PlatformIO team management
-- PlatformIO team create
-- PlatformIO team add user
-- PlatformIO team delete
-- PlatformIO team list
-- PlatformIO team update
-- pio organization team
-- PlatformIO collaboration tool
-- PlatformIO team access control
-- PlatformIO user management
+  - PlatformIO team management
+  - PlatformIO team create
+  - PlatformIO team add user
+  - PlatformIO team delete
+  - PlatformIO team list
+  - PlatformIO team update
+  - pio organization team
+  - PlatformIO collaboration tool
+  - PlatformIO team access control
+  - PlatformIO user management
 features:
-- Create new PlatformIO teams with descriptions
-- Add and remove users from existing teams
-- List all teams the user belongs to
-- Update team names and descriptions
-- Delete PlatformIO teams within an organization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new PlatformIO teams with descriptions
+  - Add and remove users from existing teams
+  - List all teams the user belongs to
+  - Update team names and descriptions
+  - Delete PlatformIO teams within an organization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio team

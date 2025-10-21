@@ -1,29 +1,29 @@
 ---
-title: "Generate System Report - system_profiler | Online Free DevTools by Hexmos"
+title: 'Generate System Report - system_profiler | Online Free DevTools by Hexmos'
 name: system_profiler
-path: "/freedevtools/tldr/osx/system_profiler/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/system_profiler/"
-description: "Generate detailed system reports with system_profiler. Retrieve hardware and software configurations, serial numbers, and system overviews on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/system_profiler/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/system_profiler/'
+description: 'Generate detailed system reports with system_profiler. Retrieve hardware and software configurations, serial numbers, and system overviews on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- macOS system report
-- system configuration generator
-- hardware information viewer
-- software details retriever
-- macOS serial number lookup
-- system profiler command
-- system diagnostics macOS
-- SPX report generator
-- system information exporter
-- macOS hardware overview
+  - macOS system report
+  - system configuration generator
+  - hardware information viewer
+  - software details retriever
+  - macOS serial number lookup
+  - system profiler command
+  - system diagnostics macOS
+  - SPX report generator
+  - system information exporter
+  - macOS hardware overview
 features:
-- Generate a detailed system profile report in XML format
-- Display a concise hardware overview including model and serial number
-- Retrieve software data such as system version and kernel version
-- Customize report detail level (mini, basic, full)
-- Extract the system serial number from hardware information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate a detailed system profile report in XML format
+  - Display a concise hardware overview including model and serial number
+  - Retrieve software data such as system version and kernel version
+  - Customize report detail level (mini, basic, full)
+  - Extract the system serial number from hardware information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # system_profiler

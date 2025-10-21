@@ -1,29 +1,29 @@
 ---
-title: "Read RSS Feeds - Control Newsboat from Terminal | Online Free DevTools by Hexmos"
+title: 'Read RSS Feeds - Control Newsboat from Terminal | Online Free DevTools by Hexmos'
 name: newsboat
-path: "/freedevtools/tldr/common/newsboat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/newsboat/"
-description: "Read RSS feeds efficiently with Newsboat, a text-based terminal feed reader. Subscribe, refresh, and manage feeds directly from your command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/newsboat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/newsboat/'
+description: 'Read RSS feeds efficiently with Newsboat, a text-based terminal feed reader. Subscribe, refresh, and manage feeds directly from your command line. Free online tool, no registration required.'
 category: common
 keywords:
-- rss feed reader
-- atom feed reader
-- terminal feed reader
-- command line rss
-- newsboat rss
-- newsboat atom
-- opml import
-- newsboat config
-- linux rss reader
-- console feed reader
+  - rss feed reader
+  - atom feed reader
+  - terminal feed reader
+  - command line rss
+  - newsboat rss
+  - newsboat atom
+  - opml import
+  - newsboat config
+  - linux rss reader
+  - console feed reader
 features:
-- Import feed URLs from OPML files
-- Manually add and subscribe to feeds
-- Refresh all feeds on startup
-- Execute commands in non-interactive mode
-- Display keyboard shortcuts for easy navigation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Import feed URLs from OPML files
+  - Manually add and subscribe to feeds
+  - Refresh all feeds on startup
+  - Execute commands in non-interactive mode
+  - Display keyboard shortcuts for easy navigation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # newsboat

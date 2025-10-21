@@ -1,29 +1,29 @@
 ---
-title: "Crane Tag - Tag Remote Container Images | Online Free DevTools by Hexmos"
+title: 'Crane Tag - Tag Remote Container Images | Online Free DevTools by Hexmos'
 name: crane-tag
-path: "/freedevtools/tldr/crane/crane-tag/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-tag/"
-description: "Tag container images remotely with Crane Tag. Streamline image management and deployment without downloads. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-tag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-tag/'
+description: 'Tag container images remotely with Crane Tag. Streamline image management and deployment without downloads. Free online tool, no registration required.'
 category: common
 keywords:
-- container image tagging
-- crane tag command
-- remote image tagging
-- docker image tagging
-- container registry management
-- go-containerregistry crane
-- crane command line tool
-- oci image tagging
-- container image deployment
-- image repository tagging
+  - container image tagging
+  - crane tag command
+  - remote image tagging
+  - docker image tagging
+  - container registry management
+  - go-containerregistry crane
+  - crane command line tool
+  - oci image tagging
+  - container image deployment
+  - image repository tagging
 features:
-- Tag remote container images without downloading
-- Efficiently manage container image versions
-- Quickly update image tags in remote registries
-- Streamline container image deployment workflows
-- Skip layer existence checks for faster tagging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Tag remote container images without downloading
+  - Efficiently manage container image versions
+  - Quickly update image tags in remote registries
+  - Streamline container image deployment workflows
+  - Skip layer existence checks for faster tagging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane tag

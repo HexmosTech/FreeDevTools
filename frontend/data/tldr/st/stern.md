@@ -1,29 +1,29 @@
 ---
-title: "Stern - Tail Kubernetes Pod Logs | Online Free DevTools by Hexmos"
+title: 'Stern - Tail Kubernetes Pod Logs | Online Free DevTools by Hexmos'
 name: stern
-path: "/freedevtools/tldr/st/stern/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/stern/"
-description: "Tail Kubernetes pod logs with Stern, a powerful command-line tool for monitoring multiple pods and containers. Quickly debug applications and filter logs using regular expressions. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/stern/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/stern/'
+description: 'Tail Kubernetes pod logs with Stern, a powerful command-line tool for monitoring multiple pods and containers. Quickly debug applications and filter logs using regular expressions. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes pod logs
-- kubectl tail logs
-- container logs
-- microservices logs
-- kubernetes debugging
-- distributed tracing
-- stern kubernetes
-- stern command
-- pod monitoring
-- kubernetes log aggregation
+  - kubernetes pod logs
+  - kubectl tail logs
+  - container logs
+  - microservices logs
+  - kubernetes debugging
+  - distributed tracing
+  - stern kubernetes
+  - stern command
+  - pod monitoring
+  - kubernetes log aggregation
 features:
-- Tail logs from multiple pods simultaneously
-- Filter logs using regular expressions
-- Monitor specific containers within pods
-- Tail logs across all namespaces
-- View logs from a specific timeframe
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Tail logs from multiple pods simultaneously
+  - Filter logs using regular expressions
+  - Monitor specific containers within pods
+  - Tail logs across all namespaces
+  - View logs from a specific timeframe
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # stern

@@ -1,29 +1,29 @@
 ---
-title: "NPM Install - Manage Node Packages | Online Free DevTools by Hexmos"
+title: 'NPM Install - Manage Node Packages | Online Free DevTools by Hexmos'
 name: npm-install
-path: "/freedevtools/tldr/npm/npm-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-install/"
-description: "Install Node packages efficiently with NPM Install. Manage project dependencies, download specific versions, and update global packages. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-install/'
+description: 'Install Node packages efficiently with NPM Install. Manage project dependencies, download specific versions, and update global packages. Free online tool, no registration required.'
 category: common
 keywords:
-- npm install
-- node package manager
-- npm dependencies
-- install npm package
-- npm install global
-- package.json dependencies
-- node modules
-- javascript packages
-- npm dev dependencies
-- node package install
+  - npm install
+  - node package manager
+  - npm dependencies
+  - install npm package
+  - npm install global
+  - package.json dependencies
+  - node modules
+  - javascript packages
+  - npm dev dependencies
+  - node package install
 features:
-- Install dependencies from package.json
-- Download specific package versions
-- Add packages to dev dependencies
-- Install packages globally
-- Update existing node packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install dependencies from package.json
+  - Download specific package versions
+  - Add packages to dev dependencies
+  - Install packages globally
+  - Update existing node packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm install

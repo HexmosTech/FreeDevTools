@@ -1,29 +1,29 @@
 ---
-title: "Telnet - Connect to Remote Host | Online Free DevTools by Hexmos"
+title: 'Telnet - Connect to Remote Host | Online Free DevTools by Hexmos'
 name: telnet
-path: "/freedevtools/tldr/common/telnet/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/telnet/"
-description: "Connect with Telnet to manage remote connections on various hosts. Access systems and transmit data using the Telnet protocol. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/telnet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/telnet/'
+description: 'Connect with Telnet to manage remote connections on various hosts. Access systems and transmit data using the Telnet protocol. Free online tool, no registration required.'
 category: common
 keywords:
-- telnet connection
-- remote access telnet
-- network telnet
-- telnet client
-- linux telnet
-- macos telnet
-- windows telnet
-- terminal telnet
-- command line telnet
-- telnet protocol
+  - telnet connection
+  - remote access telnet
+  - network telnet
+  - telnet client
+  - linux telnet
+  - macos telnet
+  - windows telnet
+  - terminal telnet
+  - command line telnet
+  - telnet protocol
 features:
-- Establish connections to remote hosts via Telnet.
-- Specify custom ports for Telnet connections.
-- Terminate Telnet sessions gracefully.
-- Use custom escape characters for session control.
-- Access Star Wars ASCII animations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Establish connections to remote hosts via Telnet.
+  - Specify custom ports for Telnet connections.
+  - Terminate Telnet sessions gracefully.
+  - Use custom escape characters for session control.
+  - Access Star Wars ASCII animations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # telnet

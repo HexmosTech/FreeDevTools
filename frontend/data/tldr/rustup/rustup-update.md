@@ -1,29 +1,29 @@
 ---
-title: "Rust Update - Manage Rust Toolchains | Online Free DevTools by Hexmos"
+title: 'Rust Update - Manage Rust Toolchains | Online Free DevTools by Hexmos'
 name: rustup-update
-path: "/freedevtools/tldr/rustup/rustup-update/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-update/"
-description: "Update Rust toolchains and manage Rust installations with Rust Update. Easily keep your development environment current and stable. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-update/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-update/'
+description: 'Update Rust toolchains and manage Rust installations with Rust Update. Easily keep your development environment current and stable. Free online tool, no registration required.'
 category: common
 keywords:
-- rust update
-- rust toolchain manager
-- rust installation update
-- rust compiler update
-- rust environment update
-- rust development tools update
-- cargo update
-- rustup command line
-- rust version manager
-- rust development environment
+  - rust update
+  - rust toolchain manager
+  - rust installation update
+  - rust compiler update
+  - rust environment update
+  - rust development tools update
+  - cargo update
+  - rustup command line
+  - rust version manager
+  - rust development environment
 features:
-- Updates installed Rust toolchains
-- Manages rustup itself
-- Installs specific toolchains
-- Keeps Rust environment current
-- Simplifies Rust development workflow
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Updates installed Rust toolchains
+  - Manages rustup itself
+  - Installs specific toolchains
+  - Keeps Rust environment current
+  - Simplifies Rust development workflow
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup update

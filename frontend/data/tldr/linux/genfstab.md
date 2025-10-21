@@ -1,9 +1,9 @@
 ---
-title: "Generate fstab - Create Linux fstab Entries | Online Free DevTools by Hexmos"
+title: 'Generate fstab - Create Linux fstab Entries | Online Free DevTools by Hexmos'
 name: genfstab
-path: "/freedevtools/tldr/linux/genfstab/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/genfstab/"
-description: "Generate fstab entries with genfstab.  Easily create and manage Linux filesystem entries using UUIDs or labels. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/genfstab/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/genfstab/'
+description: 'Generate fstab entries with genfstab.  Easily create and manage Linux filesystem entries using UUIDs or labels. Free online tool, no registration required.'
 category: linux
 keywords:
   - fstab generator
@@ -22,8 +22,8 @@ features:
   - Supports specifying identifiers (LABEL, UUID, PARTLABEL, PARTUUID).
   - Appends entries to `/etc/fstab` for automatic mounting.
   - Creates fstab-compatible output for various mount points.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # genfstab

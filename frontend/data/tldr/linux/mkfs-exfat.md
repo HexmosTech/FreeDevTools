@@ -1,9 +1,9 @@
 ---
-title: "Create exFAT Filesystem - Format Partitions | Online Free DevTools by Hexmos"
+title: 'Create exFAT Filesystem - Format Partitions | Online Free DevTools by Hexmos'
 name: mkfs.exfat
-path: "/freedevtools/tldr/linux/mkfs-exfat/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mkfs-exfat/"
-description: "Create exFAT filesystem with mkfs.exfat. Format partitions and set volume labels for optimal data storage and compatibility. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mkfs-exfat/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mkfs-exfat/'
+description: 'Create exFAT filesystem with mkfs.exfat. Format partitions and set volume labels for optimal data storage and compatibility. Free online tool, no registration required.'
 category: linux
 keywords:
   - exFAT filesystem creation
@@ -22,8 +22,8 @@ features:
   - Define a unique volume ID (GUID) for the filesystem
   - Format partitions for data storage
   - Manage disk partitions via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mkfs.exfat

@@ -1,29 +1,29 @@
 ---
-title: "Search Files with rgrep - Find Patterns Recursively | Online Free DevTools by Hexmos"
+title: 'Search Files with rgrep - Find Patterns Recursively | Online Free DevTools by Hexmos'
 name: rgrep
-path: "/freedevtools/tldr/common/rgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rgrep/"
-description: "Search files with rgrep command across directories. Find patterns, regular expressions, and exact strings recursively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rgrep/'
+description: 'Search files with rgrep command across directories. Find patterns, regular expressions, and exact strings recursively. Free online tool, no registration required.'
 category: common
 keywords:
-- recursive file search
-- grep command line
-- regex file finder
-- directory pattern search
-- linux grep recursive
-- macos rgrep command
-- file content search
-- text pattern locator
-- search files with regex
-- find files by content
+  - recursive file search
+  - grep command line
+  - regex file finder
+  - directory pattern search
+  - linux grep recursive
+  - macos rgrep command
+  - file content search
+  - text pattern locator
+  - search files with regex
+  - find files by content
 features:
-- Recursively search for patterns in files
-- Perform case-insensitive file searches
-- Search using extended regular expressions
-- Find exact strings in files
-- Search specific directories or files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search for patterns in files
+  - Perform case-insensitive file searches
+  - Search using extended regular expressions
+  - Find exact strings in files
+  - Search specific directories or files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rgrep

@@ -1,9 +1,9 @@
 ---
-title: "Backlight Control - Manage Linux Screen Brightness | Online Free DevTools by Hexmos"
+title: 'Backlight Control - Manage Linux Screen Brightness | Online Free DevTools by Hexmos'
 name: backlight_control
-path: "/freedevtools/tldr/linux/backlight_control/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/backlight_control/"
-description: "Control Linux backlight brightness with the backlight_control command.  Adjust screen brightness by percentage, increase, decrease or set exact values. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/backlight_control/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/backlight_control/'
+description: 'Control Linux backlight brightness with the backlight_control command.  Adjust screen brightness by percentage, increase, decrease or set exact values. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux backlight control
@@ -22,8 +22,8 @@ features:
   - Set backlight brightness to a specific percentage value.
   - Provides simple command-line interface for backlight control.
   - Works seamlessly with Linux systems.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # backlight_control

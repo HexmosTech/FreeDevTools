@@ -1,29 +1,29 @@
 ---
-title: "Loginctl - Manage Systemd Login Sessions | Online Free DevTools by Hexmos"
+title: 'Loginctl - Manage Systemd Login Sessions | Online Free DevTools by Hexmos'
 name: loginctl
-path: "/freedevtools/tldr/linux/loginctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/loginctl/"
-description: "Manage systemd login sessions easily with Loginctl. Control user sessions, display properties, and execute operations on remote hosts. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/loginctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/loginctl/'
+description: 'Manage systemd login sessions easily with Loginctl. Control user sessions, display properties, and execute operations on remote hosts. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux session manager
-- systemd login control
-- loginctl command
-- linux user session
-- terminate user session linux
-- show user properties linux
-- linux remote host management
-- systemd login manager
-- linux user session control
-- linux user management
+  - linux session manager
+  - systemd login control
+  - loginctl command
+  - linux user session
+  - terminate user session linux
+  - show user properties linux
+  - linux remote host management
+  - systemd login manager
+  - linux user session control
+  - linux user management
 features:
-- List all current systemd sessions.
-- Display properties of specific sessions and users.
-- Terminate user sessions remotely.
-- Execute operations on remote hosts.
-- Manage user logins and sessions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all current systemd sessions.
+  - Display properties of specific sessions and users.
+  - Terminate user sessions remotely.
+  - Execute operations on remote hosts.
+  - Manage user logins and sessions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # loginctl

@@ -1,29 +1,29 @@
 ---
-title: "Download Files - Wget2 File Downloader | Online Free DevTools by Hexmos"
+title: 'Download Files - Wget2 File Downloader | Online Free DevTools by Hexmos'
 name: wget2
-path: "/freedevtools/tldr/common/wget2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wget2/"
-description: "Download files quickly with Wget2, an enhanced command-line file downloader. Enjoy multithreaded downloads, HTTP/2 support and improved performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wget2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wget2/'
+description: 'Download files quickly with Wget2, an enhanced command-line file downloader. Enjoy multithreaded downloads, HTTP/2 support and improved performance. Free online tool, no registration required.'
 category: common
 keywords:
-- file downloader
-- wget2 downloader
-- command line downloader
-- multithreaded download
-- http downloader
-- https downloader
-- linux downloader
-- macos downloader
-- url downloader
-- web file downloader
+  - file downloader
+  - wget2 downloader
+  - command line downloader
+  - multithreaded download
+  - http downloader
+  - https downloader
+  - linux downloader
+  - macos downloader
+  - url downloader
+  - web file downloader
 features:
-- Download files using multiple threads for faster speeds.
-- Mirror entire websites including all resources.
-- Limit download speed and connection retries for efficient bandwidth usage.
-- Continue interrupted downloads seamlessly.
-- Download URLs from a text file to a specified directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download files using multiple threads for faster speeds.
+  - Mirror entire websites including all resources.
+  - Limit download speed and connection retries for efficient bandwidth usage.
+  - Continue interrupted downloads seamlessly.
+  - Download URLs from a text file to a specified directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wget2

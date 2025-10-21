@@ -1,8 +1,8 @@
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import React from 'react';
 
 const McpSkeleton: React.FC = () => {
   return (
@@ -89,7 +89,7 @@ const McpSkeleton: React.FC = () => {
           <Skeleton className="h-10 w-48" />
         </div>
       </div>
-    </ToolContainer >
+    </ToolContainer>
   );
 };
 

@@ -1,29 +1,29 @@
 ---
-title: "Control Filesystem Parameters with tune2fs | Online Free DevTools by Hexmos"
+title: 'Control Filesystem Parameters with tune2fs | Online Free DevTools by Hexmos'
 name: tune2fs
-path: "/freedevtools/tldr/linux/tune2fs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tune2fs/"
-description: "Control filesystem parameters with tune2fs. Optimize disk performance and manage ext2/ext3/ext4 filesystems effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tune2fs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tune2fs/'
+description: 'Control filesystem parameters with tune2fs. Optimize disk performance and manage ext2/ext3/ext4 filesystems effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
-- ext4 filesystem control
-- linux filesystem tune
-- tune2fs parameters
-- ext2/ext3/ext4 manager
-- linux disk optimization
-- filesystem label editor
-- disk journaling enable
-- tune2fs discard option
-- linux storage tuning
-- file system check interval
+  - ext4 filesystem control
+  - linux filesystem tune
+  - tune2fs parameters
+  - ext2/ext3/ext4 manager
+  - linux disk optimization
+  - filesystem label editor
+  - disk journaling enable
+  - tune2fs discard option
+  - linux storage tuning
+  - file system check interval
 features:
-- Modify filesystem check interval
-- Set filesystem labels easily
-- Enable or disable discard option
-- Enable journaling for performance
-- Control user-specified extended attributes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Modify filesystem check interval
+  - Set filesystem labels easily
+  - Enable or disable discard option
+  - Enable journaling for performance
+  - Control user-specified extended attributes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tune2fs

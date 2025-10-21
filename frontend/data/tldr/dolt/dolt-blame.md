@@ -1,29 +1,29 @@
 ---
-title: "Dolt Blame - Track Row Changes | Online Free DevTools by Hexmos"
+title: 'Dolt Blame - Track Row Changes | Online Free DevTools by Hexmos'
 name: dolt-blame
-path: "/freedevtools/tldr/dolt/dolt-blame/"
-canonical: "https://hexmos.com/freedevtools/tldr/dolt/dolt-blame/"
-description: "Track row changes with Dolt Blame. Investigate data lineage and audit trails in Dolt databases, identifying commit information for each row. Free online tool, no registration required."
+path: '/freedevtools/tldr/dolt/dolt-blame/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dolt/dolt-blame/'
+description: 'Track row changes with Dolt Blame. Investigate data lineage and audit trails in Dolt databases, identifying commit information for each row. Free online tool, no registration required.'
 category: common
 keywords:
-- Dolt blame
-- Dolt data lineage
-- Dolt row history
-- Database blame tool
-- Version control blame
-- Dolt audit trail
-- SQL blame
-- Dolt command line
-- Data version control
-- Git-like blame for data
+  - Dolt blame
+  - Dolt data lineage
+  - Dolt row history
+  - Database blame tool
+  - Version control blame
+  - Dolt audit trail
+  - SQL blame
+  - Dolt command line
+  - Data version control
+  - Git-like blame for data
 features:
-- Display commit information for specific rows
-- Identify the last commit affecting a row
-- Track changes in a Dolt table over time
-- Examine data lineage within Dolt databases
-- Pinpoint when a specific row was modified
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display commit information for specific rows
+  - Identify the last commit affecting a row
+  - Track changes in a Dolt table over time
+  - Examine data lineage within Dolt databases
+  - Pinpoint when a specific row was modified
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dolt blame

@@ -1,9 +1,9 @@
 ---
-title: "Navi Cheatsheet - Browse Commands Interactively | Online Free DevTools by Hexmos"
+title: 'Navi Cheatsheet - Browse Commands Interactively | Online Free DevTools by Hexmos'
 name: navi
-path: "/freedevtools/tldr/linux/navi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/navi/"
-description: "Browse commands interactively with Navi cheatsheet. Quickly access and execute commands from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/navi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/navi/'
+description: 'Browse commands interactively with Navi cheatsheet. Quickly access and execute commands from your terminal. Free online tool, no registration required.'
 category: linux
 keywords:
   - command-line cheatsheet
@@ -22,8 +22,8 @@ features:
   - Print commands without execution
   - Generate shell widget source code
   - Autoselect and execute commands based on query
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # navi

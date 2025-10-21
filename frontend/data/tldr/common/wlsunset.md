@@ -1,29 +1,29 @@
 ---
-title: "Control Screen Temperature with wlsunset | Online Free DevTools by Hexmos"
+title: 'Control Screen Temperature with wlsunset | Online Free DevTools by Hexmos'
 name: wlsunset
-path: "/freedevtools/tldr/common/wlsunset/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wlsunset/"
-description: "Control screen temperature with wlsunset to adjust color based on sunrise/sunset times. Optimize eye comfort and reduce blue light. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wlsunset/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wlsunset/'
+description: 'Control screen temperature with wlsunset to adjust color based on sunrise/sunset times. Optimize eye comfort and reduce blue light. Free online tool, no registration required.'
 category: common
 keywords:
-- screen temperature controller
-- Wayland compositor color adjustment
-- wlsunset command line tool
-- sunset sunrise time based color
-- display color temperature control
-- blue light filter Wayland
-- Linux screen color management
-- ambient lighting screen adjustment
-- monitor temperature automation
-- color calibration command
+  - screen temperature controller
+  - Wayland compositor color adjustment
+  - wlsunset command line tool
+  - sunset sunrise time based color
+  - display color temperature control
+  - blue light filter Wayland
+  - Linux screen color management
+  - ambient lighting screen adjustment
+  - monitor temperature automation
+  - color calibration command
 features:
-- Adjust screen color temperature based on sunset/sunrise times
-- Manually set specific sunset and sunrise times
-- Define custom high and low color temperatures
-- Set animation duration for temperature transitions
-- Adjust the gamma value for color correction
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Adjust screen color temperature based on sunset/sunrise times
+  - Manually set specific sunset and sunrise times
+  - Define custom high and low color temperatures
+  - Set animation duration for temperature transitions
+  - Adjust the gamma value for color correction
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wlsunset

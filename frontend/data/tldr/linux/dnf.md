@@ -1,9 +1,9 @@
 ---
-title: "DNF Package Manager - Manage Linux Packages | Online Free DevTools by Hexmos"
+title: 'DNF Package Manager - Manage Linux Packages | Online Free DevTools by Hexmos'
 name: dnf
-path: "/freedevtools/tldr/linux/dnf/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf/"
-description: "Manage Linux packages efficiently with DNF. Upgrade, install, remove, and search packages easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dnf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dnf/'
+description: 'Manage Linux packages efficiently with DNF. Upgrade, install, remove, and search packages easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package manager
@@ -22,8 +22,8 @@ features:
   - Install new packages with automatic confirmation.
   - Remove unwanted packages from the system.
   - List all installed packages on the system.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnf

@@ -1,29 +1,29 @@
 ---
-title: "Generate Fortune - Print Random Quotations | Online Free DevTools by Hexmos"
+title: 'Generate Fortune - Print Random Quotations | Online Free DevTools by Hexmos'
 name: fortune
-path: "/freedevtools/tldr/common/fortune/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fortune/"
-description: "Generate random quotations with Fortune. Retrieve classic, offensive, or specified length fortunes with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fortune/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fortune/'
+description: 'Generate random quotations with Fortune. Retrieve classic, offensive, or specified length fortunes with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Random quotation generator
-- Fortune cookie generator
-- Text fortune printer
-- Linux fortune command
-- Unix fortune tool
-- Command line fortune
-- Offensive fortune generator
-- Short fortune generator
-- Long fortune generator
-- Quotation database list
+  - Random quotation generator
+  - Fortune cookie generator
+  - Text fortune printer
+  - Linux fortune command
+  - Unix fortune tool
+  - Command line fortune
+  - Offensive fortune generator
+  - Short fortune generator
+  - Long fortune generator
+  - Quotation database list
 features:
-- Print a random quotation
-- Print an offensive quotation
-- Print a quotation of specified length
-- List available quotation database files
-- Print a quotation from a specific database file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print a random quotation
+  - Print an offensive quotation
+  - Print a quotation of specified length
+  - List available quotation database files
+  - Print a quotation from a specific database file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fortune

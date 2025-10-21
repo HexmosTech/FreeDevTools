@@ -1,10 +1,10 @@
-import React from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import React from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import ToolGridContainer from '@/components/tool/ToolGridContainer';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 const ZstdCompressSkeleton: React.FC = () => {
   return (

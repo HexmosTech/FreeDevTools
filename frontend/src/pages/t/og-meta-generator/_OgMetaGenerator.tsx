@@ -1,24 +1,36 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import OgMetaGeneratorSkeleton from "./_OgMetaGeneratorSkeleton";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import CopyButton from "@/components/ui/copy-button";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import OgMetaGeneratorSkeleton from './_OgMetaGeneratorSkeleton';
+import ToolVideo from '@/components/tool/ToolVideo';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import CopyButton from '@/components/ui/copy-button';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const PAGE_TYPES = [
-  { value: "website", label: "Website" },
-  { value: "article", label: "Article" },
-  { value: "book", label: "Book" },
-  { value: "profile", label: "Profile" },
-  { value: "music", label: "Music" },
-  { value: "video", label: "Video" },
+  { value: 'website', label: 'Website' },
+  { value: 'article', label: 'Article' },
+  { value: 'book', label: 'Book' },
+  { value: 'profile', label: 'Profile' },
+  { value: 'music', label: 'Music' },
+  { value: 'video', label: 'Video' },
 ];
 
 function generateMetaTags({
@@ -44,15 +56,15 @@ function generateMetaTags({
 }) {
   let ogMeta = `<!-- og meta -->\n<meta property="og:type" value="${pageType}" />\n<meta property="og:title" value="${title}" />\n<meta property="og:description" value="${description}" />\n<meta property="og:url" value="${url}" />\n<meta property="og:image" value="${image}" />\n<meta property="og:image:alt" value="${imageAlt}" />`;
 
-  if (pageType === "article") {
+  if (pageType === 'article') {
     ogMeta += `\n<meta property="article:author" value="${twitterCreator}" />`;
-  } else if (pageType === "book") {
+  } else if (pageType === 'book') {
     ogMeta += `\n<meta property="book:author" value="${twitterCreator}" />`;
-  } else if (pageType === "profile") {
+  } else if (pageType === 'profile') {
     ogMeta += `\n<meta property="profile:username" value="${twitterSite}" />`;
-  } else if (pageType === "music") {
+  } else if (pageType === 'music') {
     ogMeta += `\n<meta property="music:musician" value="${twitterCreator}" />`;
-  } else if (pageType === "video") {
+  } else if (pageType === 'video') {
     ogMeta += `\n<meta property="video:actor" value="${twitterCreator}" />`;
   }
 
@@ -63,15 +75,15 @@ function generateMetaTags({
 
 const OgMetaGenerator: React.FC = () => {
   const [meta, setMeta] = useState({
-    pageType: "website",
-    title: "",
-    description: "",
-    url: "",
-    image: "",
-    imageAlt: "",
-    twitterCard: "summary_large_image",
-    twitterSite: "",
-    twitterCreator: "",
+    pageType: 'website',
+    title: '',
+    description: '',
+    url: '',
+    image: '',
+    imageAlt: '',
+    twitterCard: 'summary_large_image',
+    twitterSite: '',
+    twitterCreator: '',
   });
   const [loaded, setLoaded] = useState(false);
 
@@ -110,7 +122,7 @@ const OgMetaGenerator: React.FC = () => {
                       </label>
                       <Select
                         value={meta.pageType}
-                        onValueChange={(v) => handleMetaChange("pageType", v)}
+                        onValueChange={(v) => handleMetaChange('pageType', v)}
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -131,7 +143,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Input
                         value={meta.title}
                         onChange={(e) =>
-                          handleMetaChange("title", e.target.value)
+                          handleMetaChange('title', e.target.value)
                         }
                         placeholder="Page title"
                       />
@@ -143,7 +155,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Input
                         value={meta.description}
                         onChange={(e) =>
-                          handleMetaChange("description", e.target.value)
+                          handleMetaChange('description', e.target.value)
                         }
                         placeholder="Page description"
                       />
@@ -155,7 +167,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Input
                         value={meta.url}
                         onChange={(e) =>
-                          handleMetaChange("url", e.target.value)
+                          handleMetaChange('url', e.target.value)
                         }
                         placeholder="https://yourdomain.com/page"
                       />
@@ -167,7 +179,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Input
                         value={meta.image}
                         onChange={(e) =>
-                          handleMetaChange("image", e.target.value)
+                          handleMetaChange('image', e.target.value)
                         }
                         placeholder="https://yourdomain.com/image.png"
                       />
@@ -179,7 +191,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Input
                         value={meta.imageAlt}
                         onChange={(e) =>
-                          handleMetaChange("imageAlt", e.target.value)
+                          handleMetaChange('imageAlt', e.target.value)
                         }
                         placeholder="Image alt text"
                       />
@@ -191,7 +203,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Select
                         value={meta.twitterCard}
                         onValueChange={(v) =>
-                          handleMetaChange("twitterCard", v)
+                          handleMetaChange('twitterCard', v)
                         }
                       >
                         <SelectTrigger>
@@ -212,7 +224,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Input
                         value={meta.twitterSite}
                         onChange={(e) =>
-                          handleMetaChange("twitterSite", e.target.value)
+                          handleMetaChange('twitterSite', e.target.value)
                         }
                         placeholder="@site_account"
                       />
@@ -224,7 +236,7 @@ const OgMetaGenerator: React.FC = () => {
                       <Input
                         value={meta.twitterCreator}
                         onChange={(e) =>
-                          handleMetaChange("twitterCreator", e.target.value)
+                          handleMetaChange('twitterCreator', e.target.value)
                         }
                         placeholder="@creator_account"
                       />

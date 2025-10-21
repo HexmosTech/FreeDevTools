@@ -1,29 +1,29 @@
 ---
-title: "Cloud Instance Control - Manage VirtualBox Cloud Instances | Online Free DevTools by Hexmos"
+title: 'Cloud Instance Control - Manage VirtualBox Cloud Instances | Online Free DevTools by Hexmos'
 name: vboxmanage-cloud
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-cloud/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-cloud/"
-description: "Control VirtualBox Cloud instances with VBoxManage Cloud. Manage images, instances, and cloud resources easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-cloud/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-cloud/'
+description: 'Control VirtualBox Cloud instances with VBoxManage Cloud. Manage images, instances, and cloud resources easily. Free online tool, no registration required.'
 category: common
 keywords:
-- VirtualBox cloud control
-- VBoxManage cloud instance management
-- Cloud resource management
-- VirtualBox image management
-- Command line cloud interface
-- Instance lifecycle management
-- Cloud image creation
-- VirtualBox cloud provider tools
-- Compartment resource management
-- VBoxManage cloud CLI
+  - VirtualBox cloud control
+  - VBoxManage cloud instance management
+  - Cloud resource management
+  - VirtualBox image management
+  - Command line cloud interface
+  - Instance lifecycle management
+  - Cloud image creation
+  - VirtualBox cloud provider tools
+  - Compartment resource management
+  - VBoxManage cloud CLI
 features:
-- List cloud instances by state and compartment
-- Create and terminate VirtualBox cloud instances
-- Manage VirtualBox cloud images
-- Retrieve information about cloud instances and images
-- Create new VirtualBox cloud images from instances
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List cloud instances by state and compartment
+  - Create and terminate VirtualBox cloud instances
+  - Manage VirtualBox cloud images
+  - Retrieve information about cloud instances and images
+  - Create new VirtualBox cloud images from instances
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage cloud

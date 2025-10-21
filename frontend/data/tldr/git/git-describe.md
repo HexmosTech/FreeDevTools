@@ -1,29 +1,29 @@
 ---
-title: "Git Describe - Generate Names from Git Refs | Online Free DevTools by Hexmos"
+title: 'Git Describe - Generate Names from Git Refs | Online Free DevTools by Hexmos'
 name: git-describe
-path: "/freedevtools/tldr/git/git-describe/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-describe/"
-description: "Generate human-readable names from Git references with Git Describe. Identify commits and tags easily within your repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-describe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-describe/'
+description: 'Generate human-readable names from Git references with Git Describe. Identify commits and tags easily within your repository. Free online tool, no registration required.'
 category: common
 keywords:
-- git describe
-- git reference name
-- git annotated tag
-- git commit hash
-- git abbreviated hash
-- git tag reference
-- git branch commit
-- git commit naming
-- git tag description
-- git version naming
+  - git describe
+  - git reference name
+  - git annotated tag
+  - git commit hash
+  - git abbreviated hash
+  - git tag reference
+  - git branch commit
+  - git commit naming
+  - git tag description
+  - git version naming
 features:
-- Generate names based on the most recent annotated tag.
-- Create names with specified abbreviated commit hash lengths.
-- Generate names using the tag reference path.
-- Describe specific Git tags by name.
-- Describe the last commit of a given branch.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate names based on the most recent annotated tag.
+  - Create names with specified abbreviated commit hash lengths.
+  - Generate names using the tag reference path.
+  - Describe specific Git tags by name.
+  - Describe the last commit of a given branch.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git describe

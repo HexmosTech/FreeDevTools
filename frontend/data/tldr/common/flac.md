@@ -1,29 +1,29 @@
 ---
-title: "FLAC Encode/Decode - Create Lossless Audio Files | Online Free DevTools by Hexmos"
+title: 'FLAC Encode/Decode - Create Lossless Audio Files | Online Free DevTools by Hexmos'
 name: flac
-path: "/freedevtools/tldr/common/flac/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flac/"
-description: "Encode FLAC files effortlessly with flac. Convert WAV to FLAC and decode FLAC to WAV, ensuring high-quality audio conversion. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flac/'
+description: 'Encode FLAC files effortlessly with flac. Convert WAV to FLAC and decode FLAC to WAV, ensuring high-quality audio conversion. Free online tool, no registration required.'
 category: common
 keywords:
-- flac encoder
-- flac decoder
-- wav to flac
-- flac to wav
-- lossless audio encoding
-- audio file conversion
-- flac command line
-- flac linux
-- flac macos
-- flac audio tool
+  - flac encoder
+  - flac decoder
+  - wav to flac
+  - flac to wav
+  - lossless audio encoding
+  - audio file conversion
+  - flac command line
+  - flac linux
+  - flac macos
+  - flac audio tool
 features:
-- Encode WAV files to FLAC format losslessly
-- Decode FLAC files back to WAV format
-- Specify output file names for encoding and decoding
-- Test FLAC files for data integrity
-- Process audio files using command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encode WAV files to FLAC format losslessly
+  - Decode FLAC files back to WAV format
+  - Specify output file names for encoding and decoding
+  - Test FLAC files for data integrity
+  - Process audio files using command-line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flac

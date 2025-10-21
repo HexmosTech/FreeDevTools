@@ -1,29 +1,29 @@
 ---
-title: "Go Documentation - View Go Packages | Online Free DevTools by Hexmos"
+title: 'Go Documentation - View Go Packages | Online Free DevTools by Hexmos'
 name: go-doc
-path: "/freedevtools/tldr/go/go-doc/"
-canonical: "https://hexmos.com/freedevtools/tldr/go/go-doc/"
-description: "View Go packages and symbols with Go Documentation. Access exported symbols, source code, and package details quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/go/go-doc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/go/go-doc/'
+description: 'View Go packages and symbols with Go Documentation. Access exported symbols, source code, and package details quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- go documentation
-- go package documentation
-- go symbol documentation
-- go pkg
-- go dev
-- golang documentation
-- golang packages
-- go source code
-- go package symbols
-- command line documentation
+  - go documentation
+  - go package documentation
+  - go symbol documentation
+  - go pkg
+  - go dev
+  - golang documentation
+  - golang packages
+  - go source code
+  - go package symbols
+  - command line documentation
 features:
-- View documentation for Go packages
-- Display exported symbols for a package
-- Show source code for Go elements
-- Inspect specific symbols within a package
-- Access documentation via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View documentation for Go packages
+  - Display exported symbols for a package
+  - Show source code for Go elements
+  - Inspect specific symbols within a package
+  - Access documentation via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go doc

@@ -1,29 +1,29 @@
 ---
-title: "Control Hangouts - Manage Google Hangouts Client | Online Free DevTools by Hexmos"
+title: 'Control Hangouts - Manage Google Hangouts Client | Online Free DevTools by Hexmos'
 name: hangups
-path: "/freedevtools/tldr/common/hangups/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hangups/"
-description: "Control Google Hangouts with Hangups client. Manage conversations, send messages, and troubleshoot connection issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hangups/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hangups/'
+description: 'Control Google Hangouts with Hangups client. Manage conversations, send messages, and troubleshoot connection issues. Free online tool, no registration required.'
 category: common
 keywords:
-- google hangouts client
-- hangouts command line
-- hangups client tool
-- hangouts message manager
-- hangups troubleshooting linux
-- hangups refresh token
-- hangups github client
-- hangups conversation control
-- hangups connection manager
-- hangups client macos
+  - google hangouts client
+  - hangouts command line
+  - hangups client tool
+  - hangouts message manager
+  - hangups troubleshooting linux
+  - hangups refresh token
+  - hangups github client
+  - hangups conversation control
+  - hangups connection manager
+  - hangups client macos
 features:
-- Start the hangups client for Google Hangouts.
-- Display troubleshooting information for connection issues.
-- Configure the refresh token path for persistent connections.
-- Manage Google Hangouts conversations from the command line.
-- Provide help and usage instructions for the hangups client.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the hangups client for Google Hangouts.
+  - Display troubleshooting information for connection issues.
+  - Configure the refresh token path for persistent connections.
+  - Manage Google Hangouts conversations from the command line.
+  - Provide help and usage instructions for the hangups client.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hangups

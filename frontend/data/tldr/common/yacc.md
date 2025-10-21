@@ -1,29 +1,29 @@
 ---
-title: "Generate Parser - Yacc LALR Parser Generator | Online Free DevTools by Hexmos"
+title: 'Generate Parser - Yacc LALR Parser Generator | Online Free DevTools by Hexmos'
 name: yacc
-path: "/freedevtools/tldr/common/yacc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/yacc/"
-description: "Generate a LALR parser with Yacc, transforming formal grammar specifications into C code. Efficient parsing and grammar conflict detection. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/yacc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/yacc/'
+description: 'Generate a LALR parser with Yacc, transforming formal grammar specifications into C code. Efficient parsing and grammar conflict detection. Free online tool, no registration required.'
 category: common
 keywords:
-- LALR parser generator
-- Yacc grammar compiler
-- C parser generation
-- grammar specification tool
-- parser development
-- language processing
-- syntax analyzer
-- LALR grammar tool
-- yacc linux
-- yacc macos
+  - LALR parser generator
+  - Yacc grammar compiler
+  - C parser generation
+  - grammar specification tool
+  - parser development
+  - language processing
+  - syntax analyzer
+  - LALR grammar tool
+  - yacc linux
+  - yacc macos
 features:
-- Generate C code from a formal grammar specification
-- Detect ambiguities and conflicts in the grammar
-- Create parser output with custom prefixes
-- Produce detailed conflict reports
-- Generate constant declarations for values from the grammar
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate C code from a formal grammar specification
+  - Detect ambiguities and conflicts in the grammar
+  - Create parser output with custom prefixes
+  - Produce detailed conflict reports
+  - Generate constant declarations for values from the grammar
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yacc

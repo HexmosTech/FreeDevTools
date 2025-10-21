@@ -1,29 +1,29 @@
 ---
-title: "Control Terminal Settings - Using Tput | Online Free DevTools by Hexmos"
+title: 'Control Terminal Settings - Using Tput | Online Free DevTools by Hexmos'
 name: tput
-path: "/freedevtools/tldr/common/tput/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tput/"
-description: "Control terminal settings and capabilities with Tput. Modify cursor position, text colors, and terminal attributes using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tput/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tput/'
+description: 'Control terminal settings and capabilities with Tput. Modify cursor position, text colors, and terminal attributes using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal settings control
-- tput terminal configuration
-- linux terminal attributes
-- command-line terminal control
-- ansi color codes terminal
-- cursor positioning terminal
-- terminal text attributes
-- tput command examples
-- terminal word wrap control
-- terminal cursor visibility
+  - terminal settings control
+  - tput terminal configuration
+  - linux terminal attributes
+  - command-line terminal control
+  - ansi color codes terminal
+  - cursor positioning terminal
+  - terminal text attributes
+  - tput command examples
+  - terminal word wrap control
+  - terminal cursor visibility
 features:
-- Move the terminal cursor to a specific row and column.
-- Set foreground and background colors using ANSI color codes.
-- Reverse text and background colors for emphasis.
-- Reset all terminal text attributes to default.
-- Save and restore the terminal screen's content.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Move the terminal cursor to a specific row and column.
+  - Set foreground and background colors using ANSI color codes.
+  - Reverse text and background colors for emphasis.
+  - Reset all terminal text attributes to default.
+  - Save and restore the terminal screen's content.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tput

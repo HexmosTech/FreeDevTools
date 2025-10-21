@@ -1,9 +1,9 @@
 ---
-title: "Generate ASCII Art - Create Text Art with Toilet | Online Free DevTools by Hexmos"
+title: 'Generate ASCII Art - Create Text Art with Toilet | Online Free DevTools by Hexmos'
 name: toilet
-path: "/freedevtools/tldr/linux/toilet/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/toilet/"
-description: "Generate stunning ASCII art with the Toilet command-line tool.  Customize fonts and filters to create unique text-based images. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/toilet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/toilet/'
+description: 'Generate stunning ASCII art with the Toilet command-line tool.  Customize fonts and filters to create unique text-based images. Free online tool, no registration required.'
 category: linux
 keywords:
   - ascii art generator
@@ -22,8 +22,8 @@ features:
   - Apply filters to modify the appearance of the art.
   - Customize output with font selection.
   - List and select available filters for artistic effects.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # toilet

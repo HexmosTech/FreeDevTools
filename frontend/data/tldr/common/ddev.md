@@ -1,29 +1,29 @@
 ---
-title: "Control ddev - PHP Development Environments | Online Free DevTools by Hexmos"
+title: 'Control ddev - PHP Development Environments | Online Free DevTools by Hexmos'
 name: ddev
-path: "/freedevtools/tldr/common/ddev/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ddev/"
-description: "Control PHP development environments with ddev. Simplify local development, manage containers, and streamline workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ddev/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ddev/'
+description: 'Control PHP development environments with ddev. Simplify local development, manage containers, and streamline workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- ddev command
-- php development environment
-- docker container management
-- local development workflow
-- ddev configuration
-- composer integration
-- nvm support
-- database export
-- command execution
-- linux macos
+  - ddev command
+  - php development environment
+  - docker container management
+  - local development workflow
+  - ddev configuration
+  - composer integration
+  - nvm support
+  - database export
+  - command execution
+  - linux macos
 features:
-- Start and configure ddev projects.
-- Manage containerized PHP development environments.
-- Execute commands within the ddev container.
-- Export databases for backup and migration.
-- Install specific Node.js versions using nvm.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start and configure ddev projects.
+  - Manage containerized PHP development environments.
+  - Execute commands within the ddev container.
+  - Export databases for backup and migration.
+  - Install specific Node.js versions using nvm.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ddev

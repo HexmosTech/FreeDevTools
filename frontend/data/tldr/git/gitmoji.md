@@ -1,29 +1,29 @@
 ---
-title: "Generate Gitmojis - Enhance Commits | Online Free DevTools by Hexmos"
+title: 'Generate Gitmojis - Enhance Commits | Online Free DevTools by Hexmos'
 name: gitmoji
-path: "/freedevtools/tldr/git/gitmoji/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitmoji/"
-description: "Generate commit messages with Gitmojis using Gitmoji command line tool. Add emojis to your commits for better communication and organization. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitmoji/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitmoji/'
+description: 'Generate commit messages with Gitmojis using Gitmoji command line tool. Add emojis to your commits for better communication and organization. Free online tool, no registration required.'
 category: common
 keywords:
-- gitmoji generator
-- commit message emoji
-- git commit emoji
-- command line gitmoji
-- git commit convention
-- emoji commit messages
-- git emoji cli
-- gitmoji commit helper
-- git commit formatting
-- terminal gitmoji
+  - gitmoji generator
+  - commit message emoji
+  - git commit emoji
+  - command line gitmoji
+  - git commit convention
+  - emoji commit messages
+  - git emoji cli
+  - gitmoji commit helper
+  - git commit formatting
+  - terminal gitmoji
 features:
-- Generate commit messages with emojis
-- Initialize Git hook for automatic gitmoji integration
-- List available emojis with descriptions
-- Search emojis by keyword for easy selection
-- Update emoji list from the main repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate commit messages with emojis
+  - Initialize Git hook for automatic gitmoji integration
+  - List available emojis with descriptions
+  - Search emojis by keyword for easy selection
+  - Update emoji list from the main repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitmoji

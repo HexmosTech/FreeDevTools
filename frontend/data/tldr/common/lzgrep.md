@@ -1,29 +1,29 @@
 ---
-title: "LZgrep - Search Compressed Files | Online Free DevTools by Hexmos"
+title: 'LZgrep - Search Compressed Files | Online Free DevTools by Hexmos'
 name: lzgrep
-path: "/freedevtools/tldr/common/lzgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lzgrep/"
-description: "Search compressed files efficiently with LZgrep. Locate patterns in xz-compressed data and streamline file analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lzgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lzgrep/'
+description: 'Search compressed files efficiently with LZgrep. Locate patterns in xz-compressed data and streamline file analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- xzgrep search
-- compressed file search
-- linux lzgrep
-- command line search
-- text search linux
-- xz data analysis
-- pattern matching linux
-- linux command alias
-- xzgrep command
-- xz compressed text search
+  - xzgrep search
+  - compressed file search
+  - linux lzgrep
+  - command line search
+  - text search linux
+  - xz data analysis
+  - pattern matching linux
+  - linux command alias
+  - xzgrep command
+  - xz compressed text search
 features:
-- Search xz-compressed files
-- Locate specific text patterns
-- Utilize command-line interface
-- Alias for xzgrep command
-- Extract information from compressed data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search xz-compressed files
+  - Locate specific text patterns
+  - Utilize command-line interface
+  - Alias for xzgrep command
+  - Extract information from compressed data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lzgrep

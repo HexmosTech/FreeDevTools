@@ -1,9 +1,9 @@
 ---
-title: "View DNF Changelog - Package Change Logs | Online Free DevTools by Hexmos"
+title: 'View DNF Changelog - Package Change Logs | Online Free DevTools by Hexmos'
 name: dnf-changelog
-path: "/freedevtools/tldr/linux/dnf-changelog/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-changelog/"
-description: "View package change logs with DNF changelog.  Easily check updates and track changes in your Linux packages. Free online resource, no registration required."
+path: '/freedevtools/tldr/linux/dnf-changelog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dnf-changelog/'
+description: 'View package change logs with DNF changelog.  Easily check updates and track changes in your Linux packages. Free online resource, no registration required.'
 category: linux
 keywords:
   - dnf changelog linux
@@ -22,8 +22,8 @@ features:
   - View a limited number of recent changelogs.
   - Show only new items for upgradeable packages.
   - Display comprehensive help information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnf changelog

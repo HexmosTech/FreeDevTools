@@ -1,9 +1,9 @@
 ---
-title: "Rename Files - Control Filenames with Rename Util | Online Free DevTools by Hexmos"
+title: 'Rename Files - Control Filenames with Rename Util | Online Free DevTools by Hexmos'
 name: rename.util
-path: "/freedevtools/tldr/linux/rename-util/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/rename-util/"
-description: "Control filenames with Rename Files Util. Easily rename multiple files using substitutions, change extensions, and prepend names. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rename-util/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/rename-util/'
+description: 'Control filenames with Rename Files Util. Easily rename multiple files using substitutions, change extensions, and prepend names. Free online tool, no registration required.'
 category: linux
 keywords:
   - filename renamer
@@ -22,8 +22,8 @@ features:
   - Prevent overwriting existing files
   - Change file extensions quickly
   - Prepend text to multiple filenames
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rename

@@ -1,29 +1,29 @@
 ---
-title: "Bash Test System - Automate Bash Tests | Online Free DevTools by Hexmos"
+title: 'Bash Test System - Automate Bash Tests | Online Free DevTools by Hexmos'
 name: bats
-path: "/freedevtools/tldr/common/bats/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bats/"
-description: "Automate Bash tests effortlessly with Bats, a TAP-compliant framework. Enhance testing efficiency and streamline your shell scripting workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bats/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bats/'
+description: 'Automate Bash tests effortlessly with Bats, a TAP-compliant framework. Enhance testing efficiency and streamline your shell scripting workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- Bash test automation
-- TAP testing framework
-- shell script testing
-- Bats testing tool
-- Linux test automation
-- continuous integration bash
-- Bash unit testing
-- automated testing Bash
-- shell scripting testing
-- CI/CD bash tests
+  - Bash test automation
+  - TAP testing framework
+  - shell script testing
+  - Bats testing tool
+  - Linux test automation
+  - continuous integration bash
+  - Bash unit testing
+  - automated testing Bash
+  - shell scripting testing
+  - CI/CD bash tests
 features:
-- Run BATS test scripts in TAP format
-- Count test cases without execution
-- Recursively execute tests in directories
-- Customize output format (pretty, tap, junit)
-- Parallel test execution with GNU parallel
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run BATS test scripts in TAP format
+  - Count test cases without execution
+  - Recursively execute tests in directories
+  - Customize output format (pretty, tap, junit)
+  - Parallel test execution with GNU parallel
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bats

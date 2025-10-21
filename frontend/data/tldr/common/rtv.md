@@ -1,29 +1,29 @@
 ---
-title: "Control Reddit from Terminal - RTV Viewer | Online Free DevTools by Hexmos"
+title: 'Control Reddit from Terminal - RTV Viewer | Online Free DevTools by Hexmos'
 name: rtv
-path: "/freedevtools/tldr/common/rtv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rtv/"
-description: "Control Reddit from your terminal with RTV, the Reddit Terminal Viewer. Browse subreddits, view submissions, and manage comments directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rtv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rtv/'
+description: 'Control Reddit from your terminal with RTV, the Reddit Terminal Viewer. Browse subreddits, view submissions, and manage comments directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Reddit terminal viewer
-- Command line Reddit
-- Terminal Reddit browser
-- RTV Reddit client
-- Reddit CLI tool
-- Linux Reddit client
-- macOS Reddit client
-- Reddit text interface
-- Browse Reddit terminal
-- Reddit command line interface
+  - Reddit terminal viewer
+  - Command line Reddit
+  - Terminal Reddit browser
+  - RTV Reddit client
+  - Reddit CLI tool
+  - Linux Reddit client
+  - macOS Reddit client
+  - Reddit text interface
+  - Browse Reddit terminal
+  - Reddit command line interface
 features:
-- Browse Reddit from the terminal
-- Navigate subreddits and view submissions
-- Expand and collapse comment threads
-- Open links directly from the terminal
-- Log in to your Reddit account
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Browse Reddit from the terminal
+  - Navigate subreddits and view submissions
+  - Expand and collapse comment threads
+  - Open links directly from the terminal
+  - Log in to your Reddit account
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rtv

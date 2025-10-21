@@ -1,8 +1,8 @@
-import React from "react";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import { Card, CardContent } from "@/components/ui/card";
+import React from 'react';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import { Card, CardContent } from '@/components/ui/card';
 
 const DeepseekTokenCounterSkeleton: React.FC = () => (
   <ToolBody>

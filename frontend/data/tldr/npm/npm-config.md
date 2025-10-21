@@ -1,29 +1,29 @@
 ---
-title: "NPM Config - Manage NPM Configuration | Online Free DevTools by Hexmos"
+title: 'NPM Config - Manage NPM Configuration | Online Free DevTools by Hexmos'
 name: npm-config
-path: "/freedevtools/tldr/npm/npm-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-config/"
-description: "Manage NPM configurations effectively with NPM Config. Control settings, retrieve values, and update configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-config/'
+description: 'Manage NPM configurations effectively with NPM Config. Control settings, retrieve values, and update configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- npm config management
-- npm configuration settings
-- npm registry config
-- npm config get
-- npm config set
-- npm config delete
-- npm config list
-- npm config edit
-- node package manager config
-- npm global config
+  - npm config management
+  - npm configuration settings
+  - npm registry config
+  - npm config get
+  - npm config set
+  - npm config delete
+  - npm config list
+  - npm config edit
+  - node package manager config
+  - npm global config
 features:
-- List all NPM configuration settings
-- Get the value of a specific configuration key
-- Set a configuration key to a specific value
-- Delete a configuration key
-- Edit the global NPM configuration file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all NPM configuration settings
+  - Get the value of a specific configuration key
+  - Set a configuration key to a specific value
+  - Delete a configuration key
+  - Edit the global NPM configuration file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm config

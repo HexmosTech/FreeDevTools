@@ -1,29 +1,29 @@
 ---
-title: "Office Activation - Manage Office Licenses | Online Free DevTools by Hexmos"
+title: 'Office Activation - Manage Office Licenses | Online Free DevTools by Hexmos'
 name: ospp.vbs
-path: "/freedevtools/tldr/windows/ospp-vbs/"
-canonical: "https://hexmos-com/freedevtools/tldr/windows/ospp-vbs/"
-description: "Manage Office licenses with ospp.vbs. Activate, install and uninstall product keys for volume licensed Microsoft Office products. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/ospp-vbs/'
+canonical: 'https://hexmos-com/freedevtools/tldr/windows/ospp-vbs/'
+description: 'Manage Office licenses with ospp.vbs. Activate, install and uninstall product keys for volume licensed Microsoft Office products. Free online tool, no registration required.'
 category: windows
 keywords:
-- Office activation
-- Microsoft Office activation
-- Volume license activation
-- Office license management
-- Office product key installer
-- Office KMS activation
-- Windows activation tool
-- OSPP VBScript
-- Office license uninstaller
-- Microsoft volume licensing
+  - Office activation
+  - Microsoft Office activation
+  - Volume license activation
+  - Office license management
+  - Office product key installer
+  - Office KMS activation
+  - Windows activation tool
+  - OSPP VBScript
+  - Office license uninstaller
+  - Microsoft volume licensing
 features:
-- Install Office product keys
-- Uninstall Office product keys
-- Set KMS hostnames and ports
-- Activate installed Office product keys via KMS
-- Display Office license information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install Office product keys
+  - Uninstall Office product keys
+  - Set KMS hostnames and ports
+  - Activate installed Office product keys via KMS
+  - Display Office license information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ospp.vbs

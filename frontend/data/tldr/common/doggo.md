@@ -1,29 +1,29 @@
 ---
-title: "DNS Lookup - Query DNS Records with Doggo | Online Free DevTools by Hexmos"
+title: 'DNS Lookup - Query DNS Records with Doggo | Online Free DevTools by Hexmos'
 name: doggo
-path: "/freedevtools/tldr/common/doggo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/doggo/"
-description: "Perform DNS lookup with Doggo, a fast DNS client for querying DNS records and resolving domains. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/doggo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/doggo/'
+description: 'Perform DNS lookup with Doggo, a fast DNS client for querying DNS records and resolving domains. Free online tool, no registration required.'
 category: common
 keywords:
-- dns lookup
-- dns resolver
-- dns query
-- command line dns
-- dns client
-- dns records
-- domain resolution
-- doggo dns
-- golang dns
-- dns over https
+  - dns lookup
+  - dns resolver
+  - dns query
+  - command line dns
+  - dns client
+  - dns records
+  - domain resolution
+  - doggo dns
+  - golang dns
+  - dns over https
 features:
-- Perform simple DNS lookups
-- Query MX records with specific nameservers
-- Utilize DNS over HTTPS for secure lookups
-- Output results in JSON format
-- Perform reverse DNS lookups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform simple DNS lookups
+  - Query MX records with specific nameservers
+  - Utilize DNS over HTTPS for secure lookups
+  - Output results in JSON format
+  - Perform reverse DNS lookups
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doggo

@@ -1,9 +1,9 @@
 ---
-title: "View Kernel Messages - dmesg Command | Online Free DevTools by Hexmos"
+title: 'View Kernel Messages - dmesg Command | Online Free DevTools by Hexmos'
 name: dmesg
-path: "/freedevtools/tldr/linux/dmesg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dmesg/"
-description: "View and analyze Linux kernel messages with the dmesg command.  Inspect system logs, troubleshoot errors, and monitor memory usage easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dmesg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dmesg/'
+description: 'View and analyze Linux kernel messages with the dmesg command.  Inspect system logs, troubleshoot errors, and monitor memory usage easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux kernel messages
@@ -22,8 +22,8 @@ features:
   - View kernel messages with timestamps
   - Display memory usage information
   - Output messages in human-readable format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dmesg

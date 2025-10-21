@@ -1,9 +1,9 @@
 ---
-title: "Display File - Interact and Scroll with More | Online Free DevTools by Hexmos"
+title: 'Display File - Interact and Scroll with More | Online Free DevTools by Hexmos'
 name: more
-path: "/freedevtools/tldr/linux/more/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/more/"
-description: "Display a file interactively with More, allowing scrolling and searching within the file content. Easily navigate large text files using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/more/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/more/'
+description: 'Display a file interactively with More, allowing scrolling and searching within the file content. Easily navigate large text files using command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - file display tool
@@ -22,8 +22,8 @@ features:
   - Navigate forward one page at a time
   - Display a file starting from a specified line number
   - Provide interactive help about available commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # more

@@ -1,9 +1,9 @@
 ---
-title: "Ceph Storage - Manage Ceph Clusters | Online Free DevTools by Hexmos"
+title: 'Ceph Storage - Manage Ceph Clusters | Online Free DevTools by Hexmos'
 name: ceph
-path: "/freedevtools/tldr/linux/ceph/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ceph/"
-description: "Manage Ceph storage clusters efficiently with these commands. Monitor health, usage, and perform pool operations. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ceph/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ceph/'
+description: 'Manage Ceph storage clusters efficiently with these commands. Monitor health, usage, and perform pool operations. Free online tool, no registration required.'
 category: linux
 keywords:
   - ceph cluster management
@@ -22,8 +22,8 @@ features:
   - Create and manage Ceph storage pools
   - Delete and rename Ceph storage pools
   - Initiate self-repair of Ceph storage pools
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ceph

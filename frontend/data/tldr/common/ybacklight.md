@@ -1,29 +1,29 @@
 ---
-title: "Control Backlight - Manage Screen Brightness with ybacklight | Online Free DevTools by Hexmos"
+title: 'Control Backlight - Manage Screen Brightness with ybacklight | Online Free DevTools by Hexmos'
 name: ybacklight
-path: "/freedevtools/tldr/common/ybacklight/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ybacklight/"
-description: "Control screen brightness with ybacklight. Adjust backlight levels and manage display settings using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ybacklight/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ybacklight/'
+description: 'Control screen brightness with ybacklight. Adjust backlight levels and manage display settings using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- backlight control
-- screen brightness
-- display management
-- linux backlight
-- ybacklight command
-- command line backlight
-- brightness adjustment
-- display brightness
-- backlight settings
-- command line tool
+  - backlight control
+  - screen brightness
+  - display management
+  - linux backlight
+  - ybacklight command
+  - command line backlight
+  - brightness adjustment
+  - display brightness
+  - backlight settings
+  - command line tool
 features:
-- Set specific brightness levels for the screen.
-- Increase or decrease brightness by specified amounts.
-- Print current and maximum brightness values.
-- Manage screen backlight from the command line.
-- Adjust brightness in defined steps.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set specific brightness levels for the screen.
+  - Increase or decrease brightness by specified amounts.
+  - Print current and maximum brightness values.
+  - Manage screen backlight from the command line.
+  - Adjust brightness in defined steps.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ybacklight

@@ -1,29 +1,29 @@
 ---
-title: "Flatpak Run - Execute Applications and Runtimes | Online Free DevTools by Hexmos"
+title: 'Flatpak Run - Execute Applications and Runtimes | Online Free DevTools by Hexmos'
 name: flatpak-run
-path: "/freedevtools/tldr/linux/flatpak-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/flatpak-run/"
-description: "Execute Flatpak applications with Flatpak Run. Manage application instances, specify runtimes, and debug applications in isolated environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/flatpak-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/flatpak-run/'
+description: 'Execute Flatpak applications with Flatpak Run. Manage application instances, specify runtimes, and debug applications in isolated environments. Free online tool, no registration required.'
 category: linux
 keywords:
-- Flatpak application execution
-- Linux application runtime
-- Flatpak command line tool
-- Run Flatpak apps
-- Flatpak sandbox manager
-- Flatpak runtime version control
-- Linux package manager
-- Flatpak application launcher
-- Linux application isolation
-- Execute commands in Flatpak
+  - Flatpak application execution
+  - Linux application runtime
+  - Flatpak command line tool
+  - Run Flatpak apps
+  - Flatpak sandbox manager
+  - Flatpak runtime version control
+  - Linux package manager
+  - Flatpak application launcher
+  - Linux application isolation
+  - Execute commands in Flatpak
 features:
-- Execute Flatpak applications from the command line
-- Specify runtime versions for Flatpak applications
-- Run interactive shells within Flatpak containers
-- Execute applications with custom runtimes
-- Launch applications from specific Flatpak branches
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Flatpak applications from the command line
+  - Specify runtime versions for Flatpak applications
+  - Run interactive shells within Flatpak containers
+  - Execute applications with custom runtimes
+  - Launch applications from specific Flatpak branches
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flatpak run

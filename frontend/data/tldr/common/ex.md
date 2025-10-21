@@ -1,29 +1,29 @@
 ---
-title: "Text Editor - Edit Files with ex | Online Free DevTools by Hexmos"
+title: 'Text Editor - Edit Files with ex | Online Free DevTools by Hexmos'
 name: ex
-path: "/freedevtools/tldr/common/ex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ex/"
-description: "Edit text files efficiently with the ex text editor. Perform regex substitutions, insert text, and switch to Vim seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ex/'
+description: 'Edit text files efficiently with the ex text editor. Perform regex substitutions, insert text, and switch to Vim seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- text editor
-- ex text editor
-- command line editor
-- file editor
-- vim editor
-- linux text editor
-- unix text editor
-- regular expression editor
-- command line text manipulation
-- vi compatible editor
+  - text editor
+  - ex text editor
+  - command line editor
+  - file editor
+  - vim editor
+  - linux text editor
+  - unix text editor
+  - regular expression editor
+  - command line text manipulation
+  - vi compatible editor
 features:
-- Open and edit files from the command line
-- Perform regular expression substitutions
-- Insert text into a file
-- Save and quit the editor
-- Switch to Vim editor mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit files from the command line
+  - Perform regular expression substitutions
+  - Insert text into a file
+  - Save and quit the editor
+  - Switch to Vim editor mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ex

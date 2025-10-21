@@ -1,29 +1,29 @@
 ---
-title: "Create Resume - Generate JSON Resume Files | Online Free DevTools by Hexmos"
+title: 'Create Resume - Generate JSON Resume Files | Online Free DevTools by Hexmos'
 name: resume
-path: "/freedevtools/tldr/common/resume/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/resume/"
-description: "Create JSON resume files instantly with Resume. Validate, export to HTML/PDF, and serve your resume online. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/resume/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/resume/'
+description: 'Create JSON resume files instantly with Resume. Validate, export to HTML/PDF, and serve your resume online. Free online tool, no registration required.'
 category: common
 keywords:
-- JSON Resume generator
-- Resume JSON creator
-- Resume CLI tool
-- Resume validator
-- Resume HTML exporter
-- Resume PDF exporter
-- Resume server
-- Resume template
-- JSON Resume schema
-- Resume command line
+  - JSON Resume generator
+  - Resume JSON creator
+  - Resume CLI tool
+  - Resume validator
+  - Resume HTML exporter
+  - Resume PDF exporter
+  - Resume server
+  - Resume template
+  - JSON Resume schema
+  - Resume command line
 features:
-- Generate a new resume.json file.
-- Validate resume.json against schema tests.
-- Export resume to HTML or PDF format.
-- Serve a local resume.json file.
-- Manage resume files via command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate a new resume.json file.
+  - Validate resume.json against schema tests.
+  - Export resume to HTML or PDF format.
+  - Serve a local resume.json file.
+  - Manage resume files via command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # resume

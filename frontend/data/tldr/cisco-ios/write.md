@@ -1,9 +1,9 @@
 ---
-title: "Write Memory - Control Data Storage | Online Free DevTools by Hexmos"
+title: 'Write Memory - Control Data Storage | Online Free DevTools by Hexmos'
 name: write
-path: "/freedevtools/tldr/cisco-ios/write/"
-canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/write/"
-description: "Control data storage with Write Memory. Manage configurations, erase memory, and display help. Free online tool, no registration required for data management."
+path: '/freedevtools/tldr/cisco-ios/write/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cisco-ios/write/'
+description: 'Control data storage with Write Memory. Manage configurations, erase memory, and display help. Free online tool, no registration required for data management.'
 category: cisco-ios
 keywords:
   - Memory Write Command
@@ -22,8 +22,8 @@ features:
   - Display help information about the write command
   - Manage persistent device configuration
   - Control data storage settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # write

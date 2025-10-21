@@ -1,9 +1,9 @@
 ---
-title: "Download Debian Packages - dget Command | Online Free DevTools by Hexmos"
+title: 'Download Debian Packages - dget Command | Online Free DevTools by Hexmos'
 name: dget
-path: "/freedevtools/tldr/linux/dget/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dget/"
-description: "Download Debian packages efficiently with the dget command.  Manage binary packages and source code effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dget/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dget/'
+description: 'Download Debian packages efficiently with the dget command.  Manage binary packages and source code effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - debian package downloader
@@ -22,8 +22,8 @@ features:
   - Allows downloading Debian source package tarballs without extraction.
   - Provides a command-line interface for easy package management.
   - Simplifies the process of obtaining Debian packages.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dget

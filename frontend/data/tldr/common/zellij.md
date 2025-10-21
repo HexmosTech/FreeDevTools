@@ -1,29 +1,29 @@
 ---
-title: "Zellij - Manage Terminal Sessions | Online Free DevTools by Hexmos"
+title: 'Zellij - Manage Terminal Sessions | Online Free DevTools by Hexmos'
 name: zellij
-path: "/freedevtools/tldr/common/zellij/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zellij/"
-description: "Manage terminal sessions with Zellij, a terminal multiplexer. Organize windows and panes efficiently with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zellij/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zellij/'
+description: 'Manage terminal sessions with Zellij, a terminal multiplexer. Organize windows and panes efficiently with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal multiplexer
-- zellij session manager
-- command line terminal
-- linux terminal multiplexer
-- macos terminal multiplexer
-- cross platform terminal
-- tmux alternative
-- screen alternative
-- terminal workspace manager
-- shell session persistence
+  - terminal multiplexer
+  - zellij session manager
+  - command line terminal
+  - linux terminal multiplexer
+  - macos terminal multiplexer
+  - cross platform terminal
+  - tmux alternative
+  - screen alternative
+  - terminal workspace manager
+  - shell session persistence
 features:
-- Start named terminal sessions
-- List available zellij sessions
-- Attach to existing sessions
-- Create new panes within a session
-- Detach from a zellij session
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start named terminal sessions
+  - List available zellij sessions
+  - Attach to existing sessions
+  - Create new panes within a session
+  - Detach from a zellij session
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zellij

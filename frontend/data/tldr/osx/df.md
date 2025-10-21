@@ -1,9 +1,9 @@
 ---
-title: "DF Command - Check Disk Space Usage | Online Free DevTools by Hexmos"
+title: 'DF Command - Check Disk Space Usage | Online Free DevTools by Hexmos'
 name: df
-path: "/freedevtools/tldr/osx/df/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/df/"
-description: "Check disk space usage with DF command. Analyze file system capacity and manage storage with this simple command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/df/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/df/'
+description: 'Check disk space usage with DF command. Analyze file system capacity and manage storage with this simple command line tool. Free online tool, no registration required.'
 category: osx
 keywords:
   - disk space usage
@@ -22,8 +22,8 @@ features:
   - Display disk space usage for a specific file or directory
   - Show inode statistics for file systems
   - Display portable disk space information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # df

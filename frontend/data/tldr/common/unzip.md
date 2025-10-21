@@ -1,29 +1,29 @@
 ---
-title: "Unzip Archive - Extract Files From Zip | Online Free DevTools by Hexmos"
+title: 'Unzip Archive - Extract Files From Zip | Online Free DevTools by Hexmos'
 name: unzip
-path: "/freedevtools/tldr/common/unzip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/unzip/"
-description: "Extract files from zip archives with Unzip command. Decompress and manage zipped files quickly and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/unzip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/unzip/'
+description: 'Extract files from zip archives with Unzip command. Decompress and manage zipped files quickly and efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- zip archive extractor
-- unzip command linux
-- unzip files macos
-- zip file decompression
-- extract zip archive common
-- unzip archive windows
-- command line unzip
-- decompress zip file
-- zip archive manager
-- unzip multiple files
+  - zip archive extractor
+  - unzip command linux
+  - unzip files macos
+  - zip file decompression
+  - extract zip archive common
+  - unzip archive windows
+  - command line unzip
+  - decompress zip file
+  - zip archive manager
+  - unzip multiple files
 features:
-- Extract all files from zip archives
-- Specify an output directory for extraction
-- Extract files to standard output
-- Extract archives with non-ASCII filenames
-- List contents of a zip archive
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract all files from zip archives
+  - Specify an output directory for extraction
+  - Extract files to standard output
+  - Extract archives with non-ASCII filenames
+  - List contents of a zip archive
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # unzip

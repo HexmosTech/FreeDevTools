@@ -1,29 +1,29 @@
 ---
-title: "Convert PBM to GEM - Image Converter | Online Free DevTools by Hexmos"
+title: 'Convert PBM to GEM - Image Converter | Online Free DevTools by Hexmos'
 name: pbmtogem
-path: "/freedevtools/tldr/common/pbmtogem/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtogem/"
-description: "Convert PBM image to GEM format with pbmtogem. Compress image files for efficient storage and transfer. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmtogem/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmtogem/'
+description: 'Convert PBM image to GEM format with pbmtogem. Compress image files for efficient storage and transfer. Free online tool, no registration required.'
 category: common
 keywords:
-- PBM to GEM converter
-- image format conversion
-- PBM image processing
-- GEM image compression
-- command line image converter
-- Netpbm image tools
-- bitmap image converter
-- PBM file conversion
-- GEM file conversion
-- image manipulation
+  - PBM to GEM converter
+  - image format conversion
+  - PBM image processing
+  - GEM image compression
+  - command line image converter
+  - Netpbm image tools
+  - bitmap image converter
+  - PBM file conversion
+  - GEM file conversion
+  - image manipulation
 features:
-- Convert PBM images to GEM format
-- Compress GEM image files
-- Suppress informational messages
-- Display version information
-- Read PBM image input
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PBM images to GEM format
+  - Compress GEM image files
+  - Suppress informational messages
+  - Display version information
+  - Read PBM image input
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmtogem

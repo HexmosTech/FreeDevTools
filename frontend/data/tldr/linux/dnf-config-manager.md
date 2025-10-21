@@ -1,29 +1,29 @@
 ---
-title: "DNF Config Manager - Control Repositories on Linux | Online Free DevTools by Hexmos"
+title: 'DNF Config Manager - Control Repositories on Linux | Online Free DevTools by Hexmos'
 name: dnf-config-manager
-path: "/freedevtools/tldr/linux/dnf-config-manager/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-config-manager/"
-description: "Control DNF repositories on Linux with DNF Config Manager. Manage, add, enable, and disable repositories easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dnf-config-manager/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dnf-config-manager/'
+description: 'Control DNF repositories on Linux with DNF Config Manager. Manage, add, enable, and disable repositories easily. Free online tool, no registration required.'
 category: linux
 keywords:
-- dnf repository manager
-- linux dnf configuration
-- fedora repository control
-- dnf config management
-- yum repository configuration
-- rpm repository editor
-- dnf repository enable
-- dnf repository disable
-- dnf repository add
-- dnf repository setopt
+  - dnf repository manager
+  - linux dnf configuration
+  - fedora repository control
+  - dnf config management
+  - yum repository configuration
+  - rpm repository editor
+  - dnf repository enable
+  - dnf repository disable
+  - dnf repository add
+  - dnf repository setopt
 features:
-- Add and enable DNF repositories from a URL
-- Print current configuration values
-- Enable specific DNF repositories
-- Disable specified DNF repositories
-- Set configuration options for a repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add and enable DNF repositories from a URL
+  - Print current configuration values
+  - Enable specific DNF repositories
+  - Disable specified DNF repositories
+  - Set configuration options for a repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnf config-manager

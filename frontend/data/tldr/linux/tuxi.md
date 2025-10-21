@@ -1,9 +1,9 @@
 ---
-title: "Scrape Google Results - Tuxi Search Scraper | Online Free DevTools by Hexmos"
+title: 'Scrape Google Results - Tuxi Search Scraper | Online Free DevTools by Hexmos'
 name: tuxi
-path: "/freedevtools/tldr/linux/tuxi/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/tuxi/"
-description: "Scrape Google search results with Tuxi. Extract SERPs and get instant, concise answers using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/tuxi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/tuxi/'
+description: 'Scrape Google search results with Tuxi. Extract SERPs and get instant, concise answers using command-line. Free online tool, no registration required.'
 category: linux
 keywords:
   - google search scraper
@@ -22,8 +22,8 @@ features:
   - Silence greetings and usage information for cleaner output
   - Get instant and concise answers from search results
   - Search Google directly from the terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tuxi

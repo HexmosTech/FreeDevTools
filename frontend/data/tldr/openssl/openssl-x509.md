@@ -1,29 +1,29 @@
 ---
-title: "OpenSSL X.509 - Manage Certificates | Online Free DevTools by Hexmos"
+title: 'OpenSSL X.509 - Manage Certificates | Online Free DevTools by Hexmos'
 name: openssl-x509
-path: "/freedevtools/tldr/openssl/openssl-x509/"
-canonical: "https://hexmos.com/freedevtools/tldr/openssl/openssl-x509/"
-description: "Manage X.509 certificates with OpenSSL X.509. Convert formats, display information, and extract public keys effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/openssl/openssl-x509/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openssl/openssl-x509/'
+description: 'Manage X.509 certificates with OpenSSL X.509. Convert formats, display information, and extract public keys effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- X.509 Certificate Management
-- Certificate Format Conversion
-- OpenSSL Certificate Viewer
-- PEM to DER Converter
-- DER to PEM Converter
-- Certificate Expiration Check
-- Extract Public Key from Certificate
-- Linux Certificate Tools
-- macOS Certificate Tools
-- OpenSSL command line
+  - X.509 Certificate Management
+  - Certificate Format Conversion
+  - OpenSSL Certificate Viewer
+  - PEM to DER Converter
+  - DER to PEM Converter
+  - Certificate Expiration Check
+  - Extract Public Key from Certificate
+  - Linux Certificate Tools
+  - macOS Certificate Tools
+  - OpenSSL command line
 features:
-- Display X.509 certificate information
-- Convert certificates between PEM and DER formats
-- Extract a certificate's public key to a file
-- Display a certificate's expiration date
-- Manage X.509 certificates using OpenSSL
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display X.509 certificate information
+  - Convert certificates between PEM and DER formats
+  - Extract a certificate's public key to a file
+  - Display a certificate's expiration date
+  - Manage X.509 certificates using OpenSSL
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openssl x509

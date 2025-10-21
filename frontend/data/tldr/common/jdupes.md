@@ -1,29 +1,29 @@
 ---
-title: "Find Duplicate Files - Deduplicate Files with jdupes | Online Free DevTools by Hexmos"
+title: 'Find Duplicate Files - Deduplicate Files with jdupes | Online Free DevTools by Hexmos'
 name: jdupes
-path: "/freedevtools/tldr/common/jdupes/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jdupes/"
-description: "Deduplicate files with jdupes, an enhanced duplicate file finder. Quickly identify and remove duplicate files to free up disk space. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jdupes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jdupes/'
+description: 'Deduplicate files with jdupes, an enhanced duplicate file finder. Quickly identify and remove duplicate files to free up disk space. Free online tool, no registration required.'
 category: common
 keywords:
-- duplicate file finder
-- jdupes file deduplication
-- remove duplicate files linux
-- find duplicate files macos
-- delete duplicate files command line
-- command line duplicate finder
-- duplicate file removal tool
-- recursive duplicate file search
-- file integrity verification
-- disk space recovery
+  - duplicate file finder
+  - jdupes file deduplication
+  - remove duplicate files linux
+  - find duplicate files macos
+  - delete duplicate files command line
+  - command line duplicate finder
+  - duplicate file removal tool
+  - recursive duplicate file search
+  - file integrity verification
+  - disk space recovery
 features:
-- Recursively search directories for duplicate files
-- Delete duplicate files interactively
-- Compare files based on content, not just name or size
-- Search multiple directories in a specific order
-- Follow subdirectories selectively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively search directories for duplicate files
+  - Delete duplicate files interactively
+  - Compare files based on content, not just name or size
+  - Search multiple directories in a specific order
+  - Follow subdirectories selectively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jdupes

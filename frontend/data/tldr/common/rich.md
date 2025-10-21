@@ -1,29 +1,29 @@
 ---
-title: "Format Terminal Output - Rich CLI | Online Free DevTools by Hexmos"
+title: 'Format Terminal Output - Rich CLI | Online Free DevTools by Hexmos'
 name: rich
-path: "/freedevtools/tldr/common/rich/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rich/"
-description: "Format terminal output with Rich, enhancing readability and debugging.  Syntax highlight code, add line numbers and use themes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rich/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rich/'
+description: 'Format terminal output with Rich, enhancing readability and debugging.  Syntax highlight code, add line numbers and use themes easily. Free online tool, no registration required.'
 category: common
 keywords:
-- rich cli formatter
-- rich terminal output
-- python syntax highlighting
-- command line formatter
-- terminal themes
-- rich text formatting
-- console output styling
-- terminal enhancement cli
-- rich markdown viewer
-- rich text export html
+  - rich cli formatter
+  - rich terminal output
+  - python syntax highlighting
+  - command line formatter
+  - terminal themes
+  - rich text formatting
+  - console output styling
+  - terminal enhancement cli
+  - rich markdown viewer
+  - rich text export html
 features:
-- Display files with syntax highlighting and formatting in the terminal
-- Apply themes to terminal output for enhanced readability
-- Export files to HTML with applied formatting
-- Display content from URLs with syntax highlighting and pagination
-- Customize text alignment and line width for precise terminal presentation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display files with syntax highlighting and formatting in the terminal
+  - Apply themes to terminal output for enhanced readability
+  - Export files to HTML with applied formatting
+  - Display content from URLs with syntax highlighting and pagination
+  - Customize text alignment and line width for precise terminal presentation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rich

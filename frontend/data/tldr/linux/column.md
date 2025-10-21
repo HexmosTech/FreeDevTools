@@ -1,9 +1,9 @@
 ---
-title: "Format Text - Columnar Formatting | Online Free DevTools by Hexmos"
+title: 'Format Text - Columnar Formatting | Online Free DevTools by Hexmos'
 name: column
-path: "/freedevtools/tldr/linux/column/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/column/"
-description: "Format text into columns with Column command-line tool. Easily create tabular output and control text alignment for enhanced readability. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/column/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/column/'
+description: 'Format text into columns with Column command-line tool. Easily create tabular output and control text alignment for enhanced readability. Free online tool, no registration required.'
 category: linux
 keywords:
   - text columnar formatting
@@ -22,8 +22,8 @@ features:
   - Specify custom column delimiters
   - Fill rows before filling columns
   - Control output width for text columns
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # column

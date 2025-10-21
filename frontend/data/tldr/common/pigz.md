@@ -1,29 +1,29 @@
 ---
-title: "Compress Files - Pigz Multithreaded Compression | Online Free DevTools by Hexmos"
+title: 'Compress Files - Pigz Multithreaded Compression | Online Free DevTools by Hexmos'
 name: pigz
-path: "/freedevtools/tldr/common/pigz/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pigz/"
-description: "Compress files efficiently with Pigz, a multithreaded gzip implementation. Accelerate file compression and decompression on Linux and macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pigz/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pigz/'
+description: 'Compress files efficiently with Pigz, a multithreaded gzip implementation. Accelerate file compression and decompression on Linux and macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- Gzip compression
-- Multithreaded compression
-- File compression
-- Tar gzip archive
-- Pigz command line
-- Zlib compression utility
-- Linux compression
-- macOS compression
-- Parallel compression
-- Archive compression
+  - Gzip compression
+  - Multithreaded compression
+  - File compression
+  - Tar gzip archive
+  - Pigz command line
+  - Zlib compression utility
+  - Linux compression
+  - macOS compression
+  - Parallel compression
+  - Archive compression
 features:
-- Compress files using multiple processors for faster execution
-- Decompress gzip archives easily
-- List the contents of compressed archives
-- Compress directories using tar and pigz together
-- Control compression level for optimal size and speed
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files using multiple processors for faster execution
+  - Decompress gzip archives easily
+  - List the contents of compressed archives
+  - Compress directories using tar and pigz together
+  - Control compression level for optimal size and speed
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pigz

@@ -1,29 +1,29 @@
 ---
-title: "Streamlink - Extract Video Streams | Online Free DevTools by Hexmos"
+title: 'Streamlink - Extract Video Streams | Online Free DevTools by Hexmos'
 name: streamlink
-path: "/freedevtools/tldr/st/streamlink/"
-canonical: "https://hexmos.com/freedevtools/tldr/st/streamlink/"
-description: "Extract video streams easily with Streamlink. Watch streams from various platforms in your favorite player, or save them to a file. Free online tool, no registration required."
+path: '/freedevtools/tldr/st/streamlink/'
+canonical: 'https://hexmos.com/freedevtools/tldr/st/streamlink/'
+description: 'Extract video streams easily with Streamlink. Watch streams from various platforms in your favorite player, or save them to a file. Free online tool, no registration required.'
 category: common
 keywords:
-- video stream extraction
-- stream extraction command line
-- streamlink video player
-- streamlink command
-- stream recording
-- hls stream extraction
-- streaming video downloader
-- stream quality selection
-- mpv player streamlink
-- live stream recording
+  - video stream extraction
+  - stream extraction command line
+  - streamlink video player
+  - streamlink command
+  - stream recording
+  - hls stream extraction
+  - streaming video downloader
+  - stream quality selection
+  - mpv player streamlink
+  - live stream recording
 features:
-- Extract streams to a specified quality
-- Play streams in preferred video player
-- Skip to a specific time in a stream
-- Record live streams to a file
-- Select the best or worst stream quality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract streams to a specified quality
+  - Play streams in preferred video player
+  - Skip to a specific time in a stream
+  - Record live streams to a file
+  - Select the best or worst stream quality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # streamlink

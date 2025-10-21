@@ -1,29 +1,29 @@
 ---
-title: "Netcat (nc) - Control Network Connections | Online Free DevTools by Hexmos"
+title: 'Netcat (nc) - Control Network Connections | Online Free DevTools by Hexmos'
 name: nc
-path: "/freedevtools/tldr/common/nc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nc/"
-description: "Control network connections easily with Netcat (nc). Send, receive, and scan data across networks. A versatile command-line tool for network debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nc/'
+description: 'Control network connections easily with Netcat (nc). Send, receive, and scan data across networks. A versatile command-line tool for network debugging. Free online tool, no registration required.'
 category: common
 keywords:
-- network connection control
-- nc command line tool
-- tcp port scanner
-- network stream redirection
-- socket listener tool
-- netcat file transfer
-- network debugging tool
-- linux network utility
-- macos network utility
-- command line netcat
+  - network connection control
+  - nc command line tool
+  - tcp port scanner
+  - network stream redirection
+  - socket listener tool
+  - netcat file transfer
+  - network debugging tool
+  - linux network utility
+  - macos network utility
+  - command line netcat
 features:
-- Redirect input/output over network streams
-- Listen on TCP ports for incoming connections
-- Scan TCP ports for open services
-- Execute shell commands through network connections
-- Forward data between local and remote ports
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Redirect input/output over network streams
+  - Listen on TCP ports for incoming connections
+  - Scan TCP ports for open services
+  - Execute shell commands through network connections
+  - Forward data between local and remote ports
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nc

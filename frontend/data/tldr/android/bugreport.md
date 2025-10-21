@@ -1,9 +1,9 @@
 ---
-title: "Generate Android Bug Report - Analyze System State | Online Free DevTools by Hexmos"
+title: 'Generate Android Bug Report - Analyze System State | Online Free DevTools by Hexmos'
 name: bugreport
-path: "/freedevtools/tldr/android/bugreport/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/bugreport/"
-description: "Generate Android bug reports with `bugreport`. Analyze system state and collect device logs for effective debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/bugreport/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/bugreport/'
+description: 'Generate Android bug reports with `bugreport`. Analyze system state and collect device logs for effective debugging. Free online tool, no registration required.'
 category: android
 keywords:
   - android bug report generation
@@ -22,8 +22,8 @@ features:
   - capture device state information
   - analyze system behavior
   - facilitate android device debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bugreport

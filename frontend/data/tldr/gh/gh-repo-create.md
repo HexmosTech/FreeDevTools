@@ -1,29 +1,29 @@
 ---
-title: "Create GitHub Repo - Manage Repositories | Online Free DevTools by Hexmos"
+title: 'Create GitHub Repo - Manage Repositories | Online Free DevTools by Hexmos'
 name: gh-repo-create
-path: "/freedevtools/tldr/gh/gh-repo-create/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-repo-create/"
-description: "Create GitHub repositories with gh-repo-create. Initialize new projects, manage existing repositories, and automate repository creation. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-repo-create/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-repo-create/'
+description: 'Create GitHub repositories with gh-repo-create. Initialize new projects, manage existing repositories, and automate repository creation. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub repository creation
-- GitHub repo manager
-- CLI repository creator
-- GitHub command line tool
-- GitHub repository initializer
-- gh repo create command
-- public repository creator
-- private repository creator
-- GitHub repo automation
-- version control repository
+  - GitHub repository creation
+  - GitHub repo manager
+  - CLI repository creator
+  - GitHub command line tool
+  - GitHub repository initializer
+  - gh repo create command
+  - public repository creator
+  - private repository creator
+  - GitHub repo automation
+  - version control repository
 features:
-- Create a new GitHub repository from the command line
-- Define repository name and description during creation
-- Create private repositories directly from the CLI
-- Clone newly created repositories locally
-- Push existing directories to new GitHub repositories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create a new GitHub repository from the command line
+  - Define repository name and description during creation
+  - Create private repositories directly from the CLI
+  - Clone newly created repositories locally
+  - Push existing directories to new GitHub repositories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh repo create

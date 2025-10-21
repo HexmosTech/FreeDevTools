@@ -1,9 +1,9 @@
 ---
-title: "Validate Logstash Configuration - ETL Tool | Online Free DevTools by Hexmos"
+title: 'Validate Logstash Configuration - ETL Tool | Online Free DevTools by Hexmos'
 name: logstash
-path: "/freedevtools/tldr/common/logstash/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/logstash/"
-description: "Validate Logstash configuration files with ease using this online tool. Analyze and test configurations before deployment. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/logstash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/logstash/'
+description: 'Validate Logstash configuration files with ease using this online tool. Analyze and test configurations before deployment. Free online tool, no registration required.'
 category: common
 keywords:
   - logstash configuration validation
@@ -22,8 +22,8 @@ features:
   - Check Logstash syntax and semantics.
   - Simulate data flow through Logstash pipelines.
   - Provide detailed error messages for configuration issues.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # logstash

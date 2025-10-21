@@ -1,9 +1,9 @@
 ---
-title: "LVM Logical Volumes - Display LVM Information | Online Free DevTools by Hexmos"
+title: 'LVM Logical Volumes - Display LVM Information | Online Free DevTools by Hexmos'
 name: lvs
-path: "/freedevtools/tldr/linux/lvs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lvs/"
-description: "Display LVM logical volume information with the lvs command.  Manage and view your logical volumes efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lvs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lvs/'
+description: 'Display LVM logical volume information with the lvs command.  Manage and view your logical volumes efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - logical volume display
@@ -22,8 +22,8 @@ features:
   - Customize the output format with --verbose and --noheadings.
   - Append specific fields to the default output.
   - Use a custom separator between fields in the output.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lvs

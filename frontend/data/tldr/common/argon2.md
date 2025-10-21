@@ -1,29 +1,29 @@
 ---
-title: "Argon2 Hash Generator - Create Secure Hashes | Online Free DevTools by Hexmos"
+title: 'Argon2 Hash Generator - Create Secure Hashes | Online Free DevTools by Hexmos'
 name: argon2
-path: "/freedevtools/tldr/common/argon2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/argon2/"
-description: "Generate Argon2 cryptographic hashes with Argon2 Hash Generator. Secure your passwords and data using advanced hashing algorithms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/argon2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/argon2/'
+description: 'Generate Argon2 cryptographic hashes with Argon2 Hash Generator. Secure your passwords and data using advanced hashing algorithms. Free online tool, no registration required.'
 category: common
 keywords:
-- argon2 hash generator
-- cryptographic hash creation
-- password hashing tool
-- secure password generator
-- linux password hashing
-- macos hash algorithm
-- argon2i hashing
-- argon2d hashing
-- salt generation tool
-- command line hashing
+  - argon2 hash generator
+  - cryptographic hash creation
+  - password hashing tool
+  - secure password generator
+  - linux password hashing
+  - macos hash algorithm
+  - argon2i hashing
+  - argon2d hashing
+  - salt generation tool
+  - command line hashing
 features:
-- Generate Argon2 hashes from passwords and salts
-- Support multiple Argon2 algorithms (argon2d, argon2i, argon2id)
-- Customize iterations, memory usage, and parallelism parameters
-- Display output hash without additional information
-- Calculate hashes with default parameters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate Argon2 hashes from passwords and salts
+  - Support multiple Argon2 algorithms (argon2d, argon2i, argon2id)
+  - Customize iterations, memory usage, and parallelism parameters
+  - Display output hash without additional information
+  - Calculate hashes with default parameters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # argon2

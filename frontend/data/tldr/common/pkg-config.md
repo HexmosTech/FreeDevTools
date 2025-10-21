@@ -1,29 +1,29 @@
 ---
-title: "pkg-config - Control Library Details | Online Free DevTools by Hexmos"
+title: 'pkg-config - Control Library Details | Online Free DevTools by Hexmos'
 name: pkg-config
-path: "/freedevtools/tldr/common/pkg-config/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pkg-config/"
-description: "Control library details with pkg-config. Retrieve library dependencies and compiler flags for building software. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pkg-config/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pkg-config/'
+description: 'Control library details with pkg-config. Retrieve library dependencies and compiler flags for building software. Free online tool, no registration required.'
 category: common
 keywords:
-- library configuration
-- compiler flags
-- dependency management
-- pkg-config flags
-- pkg-config libraries
-- linux library details
-- macos library details
-- software compilation
-- build environment
-- gtk+ configuration
+  - library configuration
+  - compiler flags
+  - dependency management
+  - pkg-config flags
+  - pkg-config libraries
+  - linux library details
+  - macos library details
+  - software compilation
+  - build environment
+  - gtk+ configuration
 features:
-- Retrieve library dependencies
-- Generate compiler flags for gcc
-- List all required libraries
-- Integrate with build systems
-- Simplify software compilation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve library dependencies
+  - Generate compiler flags for gcc
+  - List all required libraries
+  - Integrate with build systems
+  - Simplify software compilation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pkg-config

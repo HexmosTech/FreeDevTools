@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Auth - Control Kubernetes Access | Online Free DevTools by Hexmos"
+title: 'Kubectl Auth - Control Kubernetes Access | Online Free DevTools by Hexmos'
 name: kubectl-auth
-path: "/freedevtools/tldr/kubectl/kubectl-auth/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-auth/"
-description: "Control Kubernetes access with Kubectl Auth. Verify permissions and manage authorizations in your cluster. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-auth/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-auth/'
+description: 'Control Kubernetes access with Kubectl Auth. Verify permissions and manage authorizations in your cluster. Free online tool, no registration required.'
 category: common
 keywords:
-- kubectl auth
-- kubernetes authorization
-- kubernetes access control
-- kubectl permissions
-- kubernetes can-i
-- kubectl user permissions
-- kubectl service account permissions
-- kubernetes cluster access
-- kubectl role based access control
-- command line kubernetes auth
+  - kubectl auth
+  - kubernetes authorization
+  - kubernetes access control
+  - kubectl permissions
+  - kubernetes can-i
+  - kubectl user permissions
+  - kubectl service account permissions
+  - kubernetes cluster access
+  - kubectl role based access control
+  - command line kubernetes auth
 features:
-- Verify user permissions in a Kubernetes cluster
-- Check if a user can perform specific actions
-- List allowed actions for a user or service account
-- Inspect Kubernetes access rights
-- Authorize user access to resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Verify user permissions in a Kubernetes cluster
+  - Check if a user can perform specific actions
+  - List allowed actions for a user or service account
+  - Inspect Kubernetes access rights
+  - Authorize user access to resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl auth

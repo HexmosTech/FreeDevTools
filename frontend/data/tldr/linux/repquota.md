@@ -1,29 +1,29 @@
 ---
-title: "Repquota - Display Linux Filesystem Quotas | Online Free DevTools by Hexmos"
+title: 'Repquota - Display Linux Filesystem Quotas | Online Free DevTools by Hexmos'
 name: repquota
-path: "/freedevtools/tldr/linux/repquota/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/repquota/"
-description: "Display Linux filesystem quotas instantly with Repquota. Analyze disk usage, manage user limits, and optimize storage allocation on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/repquota/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/repquota/'
+description: 'Display Linux filesystem quotas instantly with Repquota. Analyze disk usage, manage user limits, and optimize storage allocation on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux disk quota
-- filesystem usage report
-- quota management linux
-- user quota analysis
-- group quota analysis
-- repquota command linux
-- linux storage limits
-- disk usage report
-- quota reporting tool
-- linux quota summary
+  - linux disk quota
+  - filesystem usage report
+  - quota management linux
+  - user quota analysis
+  - group quota analysis
+  - repquota command linux
+  - linux storage limits
+  - disk usage report
+  - quota reporting tool
+  - linux quota summary
 features:
-- Report on all filesystem quotas
-- Display quota usage for users
-- Display quota usage for groups
-- Show quotas in a human-readable format
-- Report on quotas even when not actively used
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Report on all filesystem quotas
+  - Display quota usage for users
+  - Display quota usage for groups
+  - Show quotas in a human-readable format
+  - Report on quotas even when not actively used
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # repquota

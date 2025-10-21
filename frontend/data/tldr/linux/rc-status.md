@@ -1,9 +1,9 @@
 ---
-title: "Runlevel Status Checker - Control System Runlevels | Online Free DevTools by Hexmos"
+title: 'Runlevel Status Checker - Control System Runlevels | Online Free DevTools by Hexmos'
 name: rc-status
-path: "/freedevtools/tldr/linux/rc-status/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rc-status/"
-description: "Check and control system runlevels with rc-status.  View service status, identify crashed services, and manage runlevels efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rc-status/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rc-status/'
+description: 'Check and control system runlevels with rc-status.  View service status, identify crashed services, and manage runlevels efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - runlevel status checker
@@ -22,8 +22,8 @@ features:
   - List manually started services.
   - Show all services across all runlevels.
   - Display the current runlevel and list all available runlevels.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rc-status

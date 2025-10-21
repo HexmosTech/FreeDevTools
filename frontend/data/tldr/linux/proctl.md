@@ -1,9 +1,9 @@
 ---
-title: "Manage Projects - proctl License & Language Control | Online Free DevTools by Hexmos"
+title: 'Manage Projects - proctl License & Language Control | Online Free DevTools by Hexmos'
 name: proctl
-path: "/freedevtools/tldr/linux/proctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/proctl/"
-description: "Control project licenses and languages with proctl.  Manage templates, pick from menus, and streamline your workflow. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/proctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/proctl/'
+description: 'Control project licenses and languages with proctl.  Manage templates, pick from menus, and streamline your workflow. Free online tool, no registration required.'
 category: linux
 keywords:
   - project license manager
@@ -22,8 +22,8 @@ features:
   - Create and manage license templates.
   - Remove licenses from a project.
   - Delete license templates.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # proctl

@@ -1,29 +1,29 @@
 ---
-title: "GitHub Browser - Open GitHub Repositories | Online Free DevTools by Hexmos"
+title: 'GitHub Browser - Open GitHub Repositories | Online Free DevTools by Hexmos'
 name: gh-browse
-path: "/freedevtools/tldr/gh/gh-browse/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-browse/"
-description: "Open GitHub repositories directly from your terminal with GitHub Browser. Effortlessly browse repos, issues, and wikis using the gh CLI tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-browse/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-browse/'
+description: 'Open GitHub repositories directly from your terminal with GitHub Browser. Effortlessly browse repos, issues, and wikis using the gh CLI tool. Free online tool, no registration required.'
 category: common
 keywords:
-- github repository browser
-- gh cli browser
-- github repo opener
-- command line github
-- github web browser
-- github repository navigation
-- git browser tool
-- github cli shortcuts
-- github browse command
-- github open repository
+  - github repository browser
+  - gh cli browser
+  - github repo opener
+  - command line github
+  - github web browser
+  - github repository navigation
+  - git browser tool
+  - github cli shortcuts
+  - github browse command
+  - github open repository
 features:
-- Open GitHub repositories in the browser
-- Browse specific branches and files
-- Open issues and pull requests directly
-- Print repository URLs without opening the browser
-- Open repository settings and wiki pages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open GitHub repositories in the browser
+  - Browse specific branches and files
+  - Open issues and pull requests directly
+  - Print repository URLs without opening the browser
+  - Open repository settings and wiki pages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh browse

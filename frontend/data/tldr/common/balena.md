@@ -1,29 +1,29 @@
 ---
-title: "Balena Control - Manage IoT Devices | Online Free DevTools by Hexmos"
+title: 'Balena Control - Manage IoT Devices | Online Free DevTools by Hexmos'
 name: balena
-path: "/freedevtools/tldr/common/balena/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/balena/"
-description: "Control IoT devices with Balena. Manage applications, devices, and flash OS images to connected drives. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/balena/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/balena/'
+description: 'Control IoT devices with Balena. Manage applications, devices, and flash OS images to connected drives. Free online tool, no registration required.'
 category: common
 keywords:
-- balena device management
-- iot device control
-- balena application deployment
-- balenaOS flashing
-- balena cloud cli
-- openBalena cli
-- balena login
-- balena apps
-- balena local flash
-- raspberry pi balena
+  - balena device management
+  - iot device control
+  - balena application deployment
+  - balenaOS flashing
+  - balena cloud cli
+  - openBalena cli
+  - balena login
+  - balena apps
+  - balena local flash
+  - raspberry pi balena
 features:
-- Log in to BalenaCloud or openBalena accounts.
-- Create and manage Balena applications.
-- List all applications within an account.
-- List all devices associated with an account.
-- Flash BalenaOS images to local drives.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Log in to BalenaCloud or openBalena accounts.
+  - Create and manage Balena applications.
+  - List all applications within an account.
+  - List all devices associated with an account.
+  - Flash BalenaOS images to local drives.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # balena

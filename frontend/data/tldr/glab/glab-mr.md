@@ -1,29 +1,29 @@
 ---
-title: "GitLab MR - Manage Merge Requests | Online Free DevTools by Hexmos"
+title: 'GitLab MR - Manage Merge Requests | Online Free DevTools by Hexmos'
 name: glab-mr
-path: "/freedevtools/tldr/glab/glab-mr/"
-canonical: "https://hexmos.com/freedevtools/tldr/glab/glab-mr/"
-description: "Manage GitLab merge requests efficiently with Glab MR. Create, checkout, and approve merge requests directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/glab/glab-mr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/glab/glab-mr/'
+description: 'Manage GitLab merge requests efficiently with Glab MR. Create, checkout, and approve merge requests directly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- gitlab merge request
-- glab merge request
-- git merge request command line
-- gitlab mr cli
-- glab mr create
-- gitlab workflow automation
-- code review automation
-- gitlab ci cd
-- gitlab merge tool
-- terminal git workflow
+  - gitlab merge request
+  - glab merge request
+  - git merge request command line
+  - gitlab mr cli
+  - glab mr create
+  - gitlab workflow automation
+  - code review automation
+  - gitlab ci cd
+  - gitlab merge tool
+  - terminal git workflow
 features:
-- Create GitLab merge requests from the command line
-- Checkout specific merge requests locally
-- Approve merge requests directly
-- Merge merge requests interactively
-- Edit target branch of a merge request
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create GitLab merge requests from the command line
+  - Checkout specific merge requests locally
+  - Approve merge requests directly
+  - Merge merge requests interactively
+  - Edit target branch of a merge request
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glab mr

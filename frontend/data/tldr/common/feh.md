@@ -1,29 +1,29 @@
 ---
-title: "View Images with Feh - Image Viewer Utility | Online Free DevTools by Hexmos"
+title: 'View Images with Feh - Image Viewer Utility | Online Free DevTools by Hexmos'
 name: feh
-path: "/freedevtools/tldr/common/feh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/feh/"
-description: "View images with Feh, a lightweight image viewing utility for Linux and other platforms. Display images locally or from URLs, set wallpaper and create montages. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/feh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/feh/'
+description: 'View images with Feh, a lightweight image viewing utility for Linux and other platforms. Display images locally or from URLs, set wallpaper and create montages. Free online tool, no registration required.'
 category: common
 keywords:
-- linux image viewer
-- command line image viewer
-- feh image viewer
-- image display utility
-- feh wallpaper
-- feh montage
-- linux image slideshow
-- terminal image viewer
-- feh command
-- image manipulation linux
+  - linux image viewer
+  - command line image viewer
+  - feh image viewer
+  - image display utility
+  - feh wallpaper
+  - feh montage
+  - linux image slideshow
+  - terminal image viewer
+  - feh command
+  - image manipulation linux
 features:
-- Display images from local paths or URLs.
-- Create image montages from directories.
-- Set an image as the desktop wallpaper.
-- View images in slideshow mode with custom delays.
-- Customize window appearance with borderless option.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display images from local paths or URLs.
+  - Create image montages from directories.
+  - Set an image as the desktop wallpaper.
+  - View images in slideshow mode with custom delays.
+  - Customize window appearance with borderless option.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # feh

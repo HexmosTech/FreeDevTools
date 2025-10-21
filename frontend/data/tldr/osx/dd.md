@@ -1,29 +1,29 @@
 ---
-title: "Convert File - Copy Files with dd Command | Online Free DevTools by Hexmos"
+title: 'Convert File - Copy Files with dd Command | Online Free DevTools by Hexmos'
 name: dd
-path: "/freedevtools/tldr/osx/dd/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/dd/"
-description: "Copy file efficiently with dd command. Convert file formats and create backups. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/dd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/dd/'
+description: 'Copy file efficiently with dd command. Convert file formats and create backups. Free online tool, no registration required.'
 category: osx
 keywords:
-- Disk imaging
-- Data backup
-- File conversion
-- Bootable USB creation
-- Disk cloning
-- Random data generation
-- Disk benchmarking
-- Drive backup
-- Command-line file tool
-- MacOS file utility
+  - Disk imaging
+  - Data backup
+  - File conversion
+  - Bootable USB creation
+  - Disk cloning
+  - Random data generation
+  - Disk benchmarking
+  - Drive backup
+  - Command-line file tool
+  - MacOS file utility
 features:
-- Create bootable USB drives from ISO files
-- Clone entire drives with error handling
-- Generate files with random data
-- Benchmark disk write performance
-- Create and restore system backups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create bootable USB drives from ISO files
+  - Clone entire drives with error handling
+  - Generate files with random data
+  - Benchmark disk write performance
+  - Create and restore system backups
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dd

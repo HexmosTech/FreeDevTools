@@ -1,9 +1,9 @@
 ---
-title: "Locate Files - Find Files with Where Command | Online Free DevTools by Hexmos"
+title: 'Locate Files - Find Files with Where Command | Online Free DevTools by Hexmos'
 name: where
-path: "/freedevtools/tldr/windows/where/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/where/"
-description: "Find files instantly with Where Command. Locate files by pattern, search recursively, and verify file existence using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/where/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/where/'
+description: 'Find files instantly with Where Command. Locate files by pattern, search recursively, and verify file existence using command line. Free online tool, no registration required.'
 category: windows
 keywords:
   - file location command
@@ -22,8 +22,8 @@ features:
   - Display file size and date along with location.
   - Silently check for file existence using exit codes.
   - Search for files using the PATH environment variable.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # where

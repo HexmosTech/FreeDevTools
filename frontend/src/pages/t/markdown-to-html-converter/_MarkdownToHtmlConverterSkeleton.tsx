@@ -1,5 +1,5 @@
-import { Skeleton } from "src/components/ui/skeleton";
-import React from "react";
+import { Skeleton } from 'src/components/ui/skeleton';
+import React from 'react';
 
 const MarkdownToHtmlConverterSkeleton: React.FC = () => {
   return (
@@ -23,7 +23,7 @@ const MarkdownToHtmlConverterSkeleton: React.FC = () => {
           </div>
         </div>
         <div className="flex justify-end">
-            <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-16" />
         </div>
       </div>
     </div>

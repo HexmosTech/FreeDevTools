@@ -1,29 +1,29 @@
 ---
-title: "Manage Package Versions - Control with asdf | Online Free DevTools by Hexmos"
+title: 'Manage Package Versions - Control with asdf | Online Free DevTools by Hexmos'
 name: asdf
-path: "/freedevtools/tldr/common/asdf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/asdf/"
-description: "Manage package versions easily with asdf. Install, update, and switch between different versions of programming languages and tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/asdf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/asdf/'
+description: 'Manage package versions easily with asdf. Install, update, and switch between different versions of programming languages and tools. Free online tool, no registration required.'
 category: common
 keywords:
-- asdf version manager
-- manage package versions
-- language version control
-- asdf plugin management
-- install specific versions
-- asdf current version
-- asdf set version
-- asdf install package
-- asdf list versions
-- asdf version control
+  - asdf version manager
+  - manage package versions
+  - language version control
+  - asdf plugin management
+  - install specific versions
+  - asdf current version
+  - asdf set version
+  - asdf install package
+  - asdf list versions
+  - asdf version control
 features:
-- Install specific package versions
-- Set global and local package versions
-- List available plugins
-- Show current package version
-- Manage multiple language versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific package versions
+  - Set global and local package versions
+  - List available plugins
+  - Show current package version
+  - Manage multiple language versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # asdf

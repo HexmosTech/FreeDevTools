@@ -1,29 +1,29 @@
 ---
-title: "Bashmarks - Manage Directories with Single Character Commands | Online Free DevTools by Hexmos"
+title: 'Bashmarks - Manage Directories with Single Character Commands | Online Free DevTools by Hexmos'
 name: bashmarks
-path: "/freedevtools/tldr/common/bashmarks/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bashmarks/"
-description: "Manage directories efficiently with Bashmarks. Quickly save and jump to common locations using one-character commands in your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bashmarks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bashmarks/'
+description: 'Manage directories efficiently with Bashmarks. Quickly save and jump to common locations using one-character commands in your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- bash directory manager
-- command line bookmarks
-- shell navigation tool
-- quick directory access
-- bash alias manager
-- linux directory shortcuts
-- terminal bookmark tool
-- command line directory navigation
-- bashmarks command
-- directory jump command
+  - bash directory manager
+  - command line bookmarks
+  - shell navigation tool
+  - quick directory access
+  - bash alias manager
+  - linux directory shortcuts
+  - terminal bookmark tool
+  - command line directory navigation
+  - bashmarks command
+  - directory jump command
 features:
-- Save frequently used directories
-- Jump to bookmarked directories with a single command
-- List available directory bookmarks
-- Delete existing directory bookmarks
-- Print the contents of a bookmarked directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Save frequently used directories
+  - Jump to bookmarked directories with a single command
+  - List available directory bookmarks
+  - Delete existing directory bookmarks
+  - Print the contents of a bookmarked directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bashmarks

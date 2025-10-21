@@ -1,29 +1,29 @@
 ---
-title: "Generate Password - Encrypt Passwords with makepasswd | Online Free DevTools by Hexmos"
+title: 'Generate Password - Encrypt Passwords with makepasswd | Online Free DevTools by Hexmos'
 name: makepasswd
-path: "/freedevtools/tldr/common/makepasswd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/makepasswd/"
-description: "Generate passwords with makepasswd, ensuring strong encryption. Secure your accounts and data effectively with this command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/makepasswd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/makepasswd/'
+description: 'Generate passwords with makepasswd, ensuring strong encryption. Secure your accounts and data effectively with this command. Free online tool, no registration required.'
 category: common
 keywords:
-- password generator
-- password encryption
-- secure password generation
-- linux password tool
-- command line password
-- password creation
-- random password generator
-- string based password
-- makepasswd command
-- password management
+  - password generator
+  - password encryption
+  - secure password generation
+  - linux password tool
+  - command line password
+  - password creation
+  - random password generator
+  - string based password
+  - makepasswd command
+  - password management
 features:
-- Generate random passwords of specified length
-- Create passwords with custom character sets
-- Encrypt generated passwords for added security
-- Define minimum and maximum password length
-- Generate passwords using command-line interface
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate random passwords of specified length
+  - Create passwords with custom character sets
+  - Encrypt generated passwords for added security
+  - Define minimum and maximum password length
+  - Generate passwords using command-line interface
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # makepasswd

@@ -1,29 +1,29 @@
 ---
-title: "Eva Calculator - Calculate Expressions with Eva | Online Free DevTools by Hexmos"
+title: 'Eva Calculator - Calculate Expressions with Eva | Online Free DevTools by Hexmos'
 name: eva
-path: "/freedevtools/tldr/common/eva/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/eva/"
-description: "Calculate expressions with Eva Calculator, a simple and powerful REPL. Perform arithmetic operations and use math functions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/eva/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/eva/'
+description: 'Calculate expressions with Eva Calculator, a simple and powerful REPL. Perform arithmetic operations and use math functions. Free online tool, no registration required.'
 category: common
 keywords:
-- calculator repl
-- command line calculator
-- eva calculator
-- arithmetic expressions
-- math functions
-- terminal calculator
-- eva command
-- linux calculator
-- macos calculator
-- number formatting
+  - calculator repl
+  - command line calculator
+  - eva calculator
+  - arithmetic expressions
+  - math functions
+  - terminal calculator
+  - eva command
+  - linux calculator
+  - macos calculator
+  - number formatting
 features:
-- Perform calculations using mathematical expressions
-- Evaluate expressions directly from the command line
-- Specify number of decimal places in the output
-- Use built-in trigonometric functions
-- Maintain a persistent command history
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Perform calculations using mathematical expressions
+  - Evaluate expressions directly from the command line
+  - Specify number of decimal places in the output
+  - Use built-in trigonometric functions
+  - Maintain a persistent command history
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eva

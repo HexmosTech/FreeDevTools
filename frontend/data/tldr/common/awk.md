@@ -1,29 +1,29 @@
 ---
-title: "AWK - Process Text Files | Online Free DevTools by Hexmos"
+title: 'AWK - Process Text Files | Online Free DevTools by Hexmos'
 name: awk
-path: "/freedevtools/tldr/common/awk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/awk/"
-description: "Process text files with AWK. Extract data, manipulate content, and perform calculations effortlessly using AWK. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/awk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/awk/'
+description: 'Process text files with AWK. Extract data, manipulate content, and perform calculations effortlessly using AWK. Free online tool, no registration required.'
 category: common
 keywords:
-- text processing awk
-- file parsing awk
-- data extraction awk
-- awk script execution
-- awk command examples
-- awk one-liners
-- linux awk
-- gawk tutorial
-- awk field separator
-- awk pattern matching
+  - text processing awk
+  - file parsing awk
+  - data extraction awk
+  - awk script execution
+  - awk command examples
+  - awk one-liners
+  - linux awk
+  - gawk tutorial
+  - awk field separator
+  - awk pattern matching
 features:
-- Extract specific columns from text files
-- Filter lines based on regular expressions
-- Perform arithmetic calculations on data
-- Format output using custom field separators
-- Execute custom logic with conditional statements
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract specific columns from text files
+  - Filter lines based on regular expressions
+  - Perform arithmetic calculations on data
+  - Format output using custom field separators
+  - Execute custom logic with conditional statements
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # awk

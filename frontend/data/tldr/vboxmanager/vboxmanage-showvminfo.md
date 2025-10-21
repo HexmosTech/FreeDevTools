@@ -1,29 +1,29 @@
 ---
-title: "VMInfo - Show Virtual Machine Info | Online Free DevTools by Hexmos"
+title: 'VMInfo - Show Virtual Machine Info | Online Free DevTools by Hexmos'
 name: vboxmanage-showvminfo
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-showvminfo/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-showvminfo/"
-description: "Show VM information with VBoxManage, get details and logs of virtual machines. Analyze configurations with a simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-showvminfo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-showvminfo/'
+description: 'Show VM information with VBoxManage, get details and logs of virtual machines. Analyze configurations with a simple command. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine information
-- vm info
-- vboxmanage showvminfo
-- virtualbox vm details
-- vm configuration data
-- machine readable vm data
-- virtual machine logs
-- virtualbox management
-- vbox cli
-- vm uuid
+  - virtual machine information
+  - vm info
+  - vboxmanage showvminfo
+  - virtualbox vm details
+  - vm configuration data
+  - machine readable vm data
+  - virtual machine logs
+  - virtualbox management
+  - vbox cli
+  - vm uuid
 features:
-- Display detailed information about virtual machines
-- Show machine-readable output for scripting
-- Retrieve virtual machine logs
-- Specify password for encrypted virtual machines
-- Display VM information using UUID or name
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display detailed information about virtual machines
+  - Show machine-readable output for scripting
+  - Retrieve virtual machine logs
+  - Specify password for encrypted virtual machines
+  - Display VM information using UUID or name
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage showvminfo

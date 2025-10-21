@@ -1,29 +1,29 @@
 ---
-title: "Prolog Interpreter - Execute Prolog Code | Online Free DevTools by Hexmos"
+title: 'Prolog Interpreter - Execute Prolog Code | Online Free DevTools by Hexmos'
 name: swipl
-path: "/freedevtools/tldr/common/swipl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/swipl/"
-description: "Execute Prolog code with SWI-Prolog Interpreter. Run scripts, display runtime variables, and debug Prolog applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/swipl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/swipl/'
+description: 'Execute Prolog code with SWI-Prolog Interpreter. Run scripts, display runtime variables, and debug Prolog applications. Free online tool, no registration required.'
 category: common
 keywords:
-- prolog interpreter
-- swi-prolog
-- prolog code execution
-- prolog script runner
-- interactive prolog shell
-- prolog runtime variables
-- command-line prolog
-- prolog debugging
-- prolog environment
-- prolog command
+  - prolog interpreter
+  - swi-prolog
+  - prolog code execution
+  - prolog script runner
+  - interactive prolog shell
+  - prolog runtime variables
+  - command-line prolog
+  - prolog debugging
+  - prolog environment
+  - prolog command
 features:
-- Start an interactive SWI-Prolog session.
-- Execute Prolog commands in quiet mode.
-- Run Prolog scripts from the command line.
-- Dump all SWI-Prolog runtime configuration variables.
-- Display the SWI-Prolog version information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive SWI-Prolog session.
+  - Execute Prolog commands in quiet mode.
+  - Run Prolog scripts from the command line.
+  - Dump all SWI-Prolog runtime configuration variables.
+  - Display the SWI-Prolog version information.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swipl

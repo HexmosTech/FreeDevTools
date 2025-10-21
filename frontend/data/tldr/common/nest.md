@@ -1,29 +1,29 @@
 ---
-title: "NestJS CLI - Create and Manage NestJS Applications | Online Free DevTools by Hexmos"
+title: 'NestJS CLI - Create and Manage NestJS Applications | Online Free DevTools by Hexmos'
 name: nest
-path: "/freedevtools/tldr/common/nest/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nest/"
-description: "Create NestJS applications effortlessly with Nest CLI. Initialize projects, build modules, and add libraries with a simple command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nest/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nest/'
+description: 'Create NestJS applications effortlessly with Nest CLI. Initialize projects, build modules, and add libraries with a simple command. Free online tool, no registration required.'
 category: common
 keywords:
-- nestjs cli commands
-- nestjs project generator
-- nestjs module builder
-- nestjs application manager
-- nodejs nest framework
-- nestjs add library
-- nestjs build project
-- nestjs start project
-- nestjs info version
-- nestjs development tool
+  - nestjs cli commands
+  - nestjs project generator
+  - nestjs module builder
+  - nestjs application manager
+  - nodejs nest framework
+  - nestjs add library
+  - nestjs build project
+  - nestjs start project
+  - nestjs info version
+  - nestjs development tool
 features:
-- Initialize new NestJS projects quickly
-- Build and compile NestJS applications efficiently
-- Start and run NestJS projects with ease
-- Add and manage external libraries in NestJS projects
-- Display NestJS CLI and project version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new NestJS projects quickly
+  - Build and compile NestJS applications efficiently
+  - Start and run NestJS projects with ease
+  - Add and manage external libraries in NestJS projects
+  - Display NestJS CLI and project version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nest

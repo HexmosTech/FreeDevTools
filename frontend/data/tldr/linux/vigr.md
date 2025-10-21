@@ -1,9 +1,9 @@
 ---
-title: "Edit Group File - Control Group Management | Online Free DevTools by Hexmos"
+title: 'Edit Group File - Control Group Management | Online Free DevTools by Hexmos'
 name: vigr
-path: "/freedevtools/tldr/linux/vigr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/vigr/"
-description: "Control group management by editing group files with vigr. Modify user groups and permissions with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/vigr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/vigr/'
+description: 'Control group management by editing group files with vigr. Modify user groups and permissions with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - group file editor
@@ -22,8 +22,8 @@ features:
   - Display the version of vigr.
   - Control access to system resources via groups.
   - Modify group membership.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vigr

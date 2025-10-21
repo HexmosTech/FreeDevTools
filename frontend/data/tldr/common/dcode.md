@@ -1,29 +1,29 @@
 ---
-title: "Decode Strings - Recursively Decode Text Online | Online Free DevTools by Hexmos"
+title: 'Decode Strings - Recursively Decode Text Online | Online Free DevTools by Hexmos'
 name: dcode
-path: "/freedevtools/tldr/common/dcode/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dcode/"
-description: "Decode strings online with dcode. Recursively detect and decode various encodings and hashes. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dcode/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dcode/'
+description: 'Decode strings online with dcode. Recursively detect and decode various encodings and hashes. Free online tool, no registration required.'
 category: common
 keywords:
-- string decoder online
-- text decoder
-- hex decoder
-- base64 decoder
-- caesar cipher solver
-- md5 hash lookup
-- sha1 hash lookup
-- sha2 hash lookup
-- url decoder
-- encoding detection
+  - string decoder online
+  - text decoder
+  - hex decoder
+  - base64 decoder
+  - caesar cipher solver
+  - md5 hash lookup
+  - sha1 hash lookup
+  - sha2 hash lookup
+  - url decoder
+  - encoding detection
 features:
-- Recursively detect and decode various encodings
-- Rotate strings by specified or all offsets
-- Reverse strings for decoding
-- Decode hex, decimal, and binary encodings
-- Perform MD5, SHA1, and SHA2 hash lookups (optional)
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Recursively detect and decode various encodings
+  - Rotate strings by specified or all offsets
+  - Reverse strings for decoding
+  - Decode hex, decimal, and binary encodings
+  - Perform MD5, SHA1, and SHA2 hash lookups (optional)
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dcode

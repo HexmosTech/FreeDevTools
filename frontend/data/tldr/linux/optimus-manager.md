@@ -1,9 +1,9 @@
 ---
-title: "Control Optimus GPU - Switch Graphics with optimus-manager | Online Free DevTools by Hexmos"
+title: 'Control Optimus GPU - Switch Graphics with optimus-manager | Online Free DevTools by Hexmos'
 name: optimus-manager
-path: "/freedevtools/tldr/linux/optimus-manager/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/optimus-manager/"
-description: "Switch GPU modes effortlessly with optimus-manager. Manage Nvidia Optimus graphics settings for optimal performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/optimus-manager/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/optimus-manager/'
+description: 'Switch GPU modes effortlessly with optimus-manager. Manage Nvidia Optimus graphics settings for optimal performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - gpu switching linux
@@ -22,8 +22,8 @@ features:
   - Optimize power consumption based on GPU usage.
   - Improve performance for demanding applications.
   - Seamlessly manage Nvidia Optimus graphics cards.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # optimus-manager

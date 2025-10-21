@@ -1,29 +1,29 @@
 ---
-title: "Control Development Environments - Kool | Online Free DevTools by Hexmos"
+title: 'Control Development Environments - Kool | Online Free DevTools by Hexmos'
 name: kool
-path: "/freedevtools/tldr/common/kool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kool/"
-description: "Control software development environments with Kool. Build, run, and manage your development stack with ease using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kool/'
+description: 'Control software development environments with Kool. Build, run, and manage your development stack with ease using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- development environment manager
-- kool dev environments
-- docker development workflow
-- containerized development setup
-- kool create command
-- kool run script
-- kool status check
-- kool self-update
-- yaml configuration tool
-- command-line development tools
+  - development environment manager
+  - kool dev environments
+  - docker development workflow
+  - containerized development setup
+  - kool create command
+  - kool run script
+  - kool status check
+  - kool self-update
+  - yaml configuration tool
+  - command-line development tools
 features:
-- Build development environments using presets.
-- Execute custom scripts defined in kool.yml.
-- Start and stop services within a development environment.
-- Display the status of running services.
-- Update Kool to the latest version.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build development environments using presets.
+  - Execute custom scripts defined in kool.yml.
+  - Start and stop services within a development environment.
+  - Display the status of running services.
+  - Update Kool to the latest version.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kool

@@ -1,29 +1,29 @@
 ---
-title: "Fetch JARs - Resolve Dependencies with cs-fetch | Online Free DevTools by Hexmos"
+title: 'Fetch JARs - Resolve Dependencies with cs-fetch | Online Free DevTools by Hexmos'
 name: cs-fetch
-path: "/freedevtools/tldr/cs/cs-fetch/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/cs-fetch/"
-description: "Resolve dependencies with cs-fetch. Download JAR files, source code, and Javadoc effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/cs-fetch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/cs-fetch/'
+description: 'Resolve dependencies with cs-fetch. Download JAR files, source code, and Javadoc effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Coursier dependency fetch
-- JAR file downloader
-- Coursier JAR resolver
-- Scala dependency management
-- Coursier classpath fetch
-- Coursier source fetch
-- Coursier javadoc fetch
-- Coursier artifact retrieval
-- Coursier dependency file
-- Coursier library fetch
+  - Coursier dependency fetch
+  - JAR file downloader
+  - Coursier JAR resolver
+  - Scala dependency management
+  - Coursier classpath fetch
+  - Coursier source fetch
+  - Coursier javadoc fetch
+  - Coursier artifact retrieval
+  - Coursier dependency file
+  - Coursier library fetch
 features:
-- Fetches JARs for specific dependencies.
-- Resolves classpath for selected packages.
-- Downloads source code for dependencies.
-- Retrieves Javadoc JARs for dependencies.
-- Supports dependency files for batch fetching.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Fetches JARs for specific dependencies.
+  - Resolves classpath for selected packages.
+  - Downloads source code for dependencies.
+  - Retrieves Javadoc JARs for dependencies.
+  - Supports dependency files for batch fetching.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cs fetch

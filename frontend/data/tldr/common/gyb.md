@@ -1,29 +1,29 @@
 ---
-title: "GYB - Backup Gmail Messages Locally | Online Free DevTools by Hexmos"
+title: 'GYB - Backup Gmail Messages Locally | Online Free DevTools by Hexmos'
 name: gyb
-path: "/freedevtools/tldr/common/gyb/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gyb/"
-description: "Backup Gmail messages with GYB, a Gmail backup tool. Secure your emails and restore them easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gyb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gyb/'
+description: 'Backup Gmail messages with GYB, a Gmail backup tool. Secure your emails and restore them easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Gmail backup tool
-- Gmail message backup
-- GYB backup
-- Gmail API backup
-- Gmail local backup
-- Email backup utility
-- Email archive tool
-- Gmail backup command line
-- HTTPS Gmail backup
-- Email disaster recovery
+  - Gmail backup tool
+  - Gmail message backup
+  - GYB backup
+  - Gmail API backup
+  - Gmail local backup
+  - Email backup utility
+  - Email archive tool
+  - Gmail backup command line
+  - HTTPS Gmail backup
+  - Email disaster recovery
 features:
-- Back up entire Gmail accounts locally
-- Estimate Gmail storage usage before backup
-- Restore backed up emails to a Gmail account
-- Filter backup based on email flags like starred or important
-- Archive emails using Gmail's API
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Back up entire Gmail accounts locally
+  - Estimate Gmail storage usage before backup
+  - Restore backed up emails to a Gmail account
+  - Filter backup based on email flags like starred or important
+  - Archive emails using Gmail's API
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gyb

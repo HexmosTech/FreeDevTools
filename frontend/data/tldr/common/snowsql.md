@@ -1,29 +1,29 @@
 ---
-title: "SnowSQL Client - Execute SQL Commands | Online Free DevTools by Hexmos"
+title: 'SnowSQL Client - Execute SQL Commands | Online Free DevTools by Hexmos'
 name: snowsql
-path: "/freedevtools/tldr/common/snowsql/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/snowsql/"
+path: '/freedevtools/tldr/common/snowsql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/snowsql/'
 description: "Execute SQL commands with SnowSQL client for Snowflake's Data Cloud. Connect to Snowflake, run queries and manage data efficiently. Free online tool, no registration required."
 category: common
 keywords:
-- Snowflake SQL client
-- SQL command line tool
-- SnowSQL command reference
-- Snowflake query execution
-- Database command line interface
-- Snowflake data cloud client
-- SQL scripting tool
-- SnowSQL configuration
-- SnowSQL authentication
-- SnowSQL CLI
+  - Snowflake SQL client
+  - SQL command line tool
+  - SnowSQL command reference
+  - Snowflake query execution
+  - Database command line interface
+  - Snowflake data cloud client
+  - SQL scripting tool
+  - SnowSQL configuration
+  - SnowSQL authentication
+  - SnowSQL CLI
 features:
-- Connect to Snowflake instances via command line
-- Execute SQL queries and SnowSQL commands
-- Authenticate using tokens for MFA
-- Run SQL scripts from files
-- Configure connections using configuration files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to Snowflake instances via command line
+  - Execute SQL queries and SnowSQL commands
+  - Authenticate using tokens for MFA
+  - Run SQL scripts from files
+  - Configure connections using configuration files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # snowsql

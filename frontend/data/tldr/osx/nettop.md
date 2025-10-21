@@ -1,29 +1,29 @@
 ---
-title: "Nettop - Monitor Network Activity | Online Free DevTools by Hexmos"
+title: 'Nettop - Monitor Network Activity | Online Free DevTools by Hexmos'
 name: nettop
-path: "/freedevtools/tldr/osx/nettop/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/nettop/"
-description: "Monitor network activity with Nettop, a command-line network monitoring tool for macOS. Analyze network traffic, identify bottlenecks, and optimize performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/nettop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/nettop/'
+description: 'Monitor network activity with Nettop, a command-line network monitoring tool for macOS. Analyze network traffic, identify bottlenecks, and optimize performance. Free online tool, no registration required.'
 category: osx
 keywords:
-- network monitoring tool
-- network activity monitor
-- osx network analysis
-- tcp udp monitor
-- process network usage
-- nettop command line
-- macos network tool
-- network troubleshooting
-- network traffic analysis
-- socket monitoring
+  - network monitoring tool
+  - network activity monitor
+  - osx network analysis
+  - tcp udp monitor
+  - process network usage
+  - nettop command line
+  - macos network tool
+  - network troubleshooting
+  - network traffic analysis
+  - socket monitoring
 features:
-- Monitor TCP and UDP sockets from all interfaces.
-- Monitor TCP sockets from Loopback interfaces.
-- Monitor network activity for a specific process.
-- Display a per-process summary of network usage.
-- Monitor changes in network activity at specified intervals.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Monitor TCP and UDP sockets from all interfaces.
+  - Monitor TCP sockets from Loopback interfaces.
+  - Monitor network activity for a specific process.
+  - Display a per-process summary of network usage.
+  - Monitor changes in network activity at specified intervals.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nettop

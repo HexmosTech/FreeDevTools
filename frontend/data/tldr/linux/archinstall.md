@@ -1,9 +1,9 @@
 ---
-title: "Archinstall - Install Arch Linux | Online Free DevTools by Hexmos"
+title: 'Archinstall - Install Arch Linux | Online Free DevTools by Hexmos'
 name: archinstall
-path: "/freedevtools/tldr/linux/archinstall/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/archinstall/"
-description: "Install Arch Linux effortlessly with Archinstall.  Customize your installation with presets or interactive options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/archinstall/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/archinstall/'
+description: 'Install Arch Linux effortlessly with Archinstall.  Customize your installation with presets or interactive options. Free online tool, no registration required.'
 category: linux
 keywords:
   - arch linux installer
@@ -22,8 +22,8 @@ features:
   - Allows customization of partitions, packages, and system settings.
   - Supports various hardware configurations.
   - Simplifies the complex Arch Linux installation process.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # archinstall

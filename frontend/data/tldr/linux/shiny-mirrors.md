@@ -1,9 +1,9 @@
 ---
-title: "Generate Pacman Mirrors - Manjaro Linux Mirror List | Online Free DevTools by Hexmos"
+title: 'Generate Pacman Mirrors - Manjaro Linux Mirror List | Online Free DevTools by Hexmos'
 name: shiny-mirrors
-path: "/freedevtools/tldr/linux/shiny-mirrors/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/shiny-mirrors/"
-description: "Generate Manjaro Linux pacman mirror lists with shiny-mirrors.  Easily manage and refresh your mirror sources for optimal download speeds. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/shiny-mirrors/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/shiny-mirrors/'
+description: 'Generate Manjaro Linux pacman mirror lists with shiny-mirrors.  Easily manage and refresh your mirror sources for optimal download speeds. Free online tool, no registration required.'
 category: linux
 keywords:
   - pacman mirror generator
@@ -22,8 +22,8 @@ features:
   - Displays the current mirror configuration.
   - Allows switching between different mirror branches interactively.
   - Provides status information about the current mirrors.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # shiny-mirrors

@@ -1,9 +1,9 @@
 ---
-title: "Convert CD Images - bchunk to ISO/CDR | Online Free DevTools by Hexmos"
+title: 'Convert CD Images - bchunk to ISO/CDR | Online Free DevTools by Hexmos'
 name: bchunk
-path: "/freedevtools/tldr/linux/bchunk/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bchunk/"
-description: "Convert CD images to ISO and CDR formats with bchunk. Extract audio tracks and create standard image files effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bchunk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bchunk/'
+description: 'Convert CD images to ISO and CDR formats with bchunk. Extract audio tracks and create standard image files effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - CD image converter
@@ -22,8 +22,8 @@ features:
   - Create standard ISO9660 image files.
   - Convert binary CD images.
   - Support for verbose mode during conversion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bchunk

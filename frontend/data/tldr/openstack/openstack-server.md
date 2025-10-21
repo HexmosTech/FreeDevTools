@@ -1,29 +1,29 @@
 ---
-title: "OpenStack Server - Manage VMs | Online Free DevTools by Hexmos"
+title: 'OpenStack Server - Manage VMs | Online Free DevTools by Hexmos'
 name: openstack-server
-path: "/freedevtools/tldr/openstack/openstack-server/"
-canonical: "https://hexmos.com/freedevtools/tldr/openstack/openstack-server/"
-description: "Manage OpenStack servers with this free tool. Control virtual machines, start/stop instances, and migrate servers easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/openstack/openstack-server/'
+canonical: 'https://hexmos.com/freedevtools/tldr/openstack/openstack-server/'
+description: 'Manage OpenStack servers with this free tool. Control virtual machines, start/stop instances, and migrate servers easily. Free online tool, no registration required.'
 category: common
 keywords:
-- openstack server management
-- virtual machine control
-- nova server commands
-- cloud instance manager
-- openstack vm tool
-- linux server command
-- openstack cli commands
-- server instance migration
-- vm reboot utility
-- cloud server delete
+  - openstack server management
+  - virtual machine control
+  - nova server commands
+  - cloud instance manager
+  - openstack vm tool
+  - linux server command
+  - openstack cli commands
+  - server instance migration
+  - vm reboot utility
+  - cloud server delete
 features:
-- List all OpenStack servers and their status
-- Start and stop OpenStack virtual machines
-- Create new OpenStack server instances from images
-- Delete multiple OpenStack server instances
-- Migrate servers to different hosts with live migration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all OpenStack servers and their status
+  - Start and stop OpenStack virtual machines
+  - Create new OpenStack server instances from images
+  - Delete multiple OpenStack server instances
+  - Migrate servers to different hosts with live migration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openstack server

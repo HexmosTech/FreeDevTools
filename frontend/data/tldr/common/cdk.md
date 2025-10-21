@@ -1,29 +1,29 @@
 ---
-title: "CDK - Create CloudFormation Stacks | Online Free DevTools by Hexmos"
+title: 'CDK - Create CloudFormation Stacks | Online Free DevTools by Hexmos'
 name: cdk
-path: "/freedevtools/tldr/common/cdk/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cdk/"
-description: "Create and manage AWS infrastructure as code with CDK. Synthesize CloudFormation templates, deploy stacks, and compare differences. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cdk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cdk/'
+description: 'Create and manage AWS infrastructure as code with CDK. Synthesize CloudFormation templates, deploy stacks, and compare differences. Free online tool, no registration required.'
 category: common
 keywords:
-- cdk aws
-- cdk cloudformation
-- aws cdk deploy
-- cdk synth
-- infrastructure as code cdk
-- cdk typescript
-- cdk python
-- cdk cli
-- cdk destroy
-- aws cloud development kit
+  - cdk aws
+  - cdk cloudformation
+  - aws cdk deploy
+  - cdk synth
+  - infrastructure as code cdk
+  - cdk typescript
+  - cdk python
+  - cdk cli
+  - cdk destroy
+  - aws cloud development kit
 features:
-- Synthesize CloudFormation templates from CDK code.
-- Deploy and manage AWS infrastructure stacks.
-- Compare stack differences against deployed resources.
-- Initialize new CDK projects with various languages.
-- Destroy existing AWS infrastructure stacks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synthesize CloudFormation templates from CDK code.
+  - Deploy and manage AWS infrastructure stacks.
+  - Compare stack differences against deployed resources.
+  - Initialize new CDK projects with various languages.
+  - Destroy existing AWS infrastructure stacks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cdk

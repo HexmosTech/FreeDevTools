@@ -1,9 +1,9 @@
 ---
-title: "Head Command - Output File Parts | Online Free DevTools by Hexmos"
+title: 'Head Command - Output File Parts | Online Free DevTools by Hexmos'
 name: head
-path: "/freedevtools/tldr/linux/head/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/head/"
-description: "Output file parts with Head Command. Extract initial lines or bytes. Control file content easily with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/head/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/head/'
+description: 'Output file parts with Head Command. Extract initial lines or bytes. Control file content easily with this command line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - Head Command
@@ -22,8 +22,8 @@ features:
   - Exclude the last few lines of a file.
   - Exclude the last few bytes of a file.
   - Control file output through command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # head

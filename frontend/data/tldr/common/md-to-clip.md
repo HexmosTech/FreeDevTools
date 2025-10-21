@@ -1,29 +1,29 @@
 ---
-title: "Convert TLDR to Clip - Generate CLI Pages | Online Free DevTools by Hexmos"
+title: 'Convert TLDR to Clip - Generate CLI Pages | Online Free DevTools by Hexmos'
 name: md-to-clip
-path: "/freedevtools/tldr/common/md-to-clip/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/md-to-clip/"
-description: "Convert TLDR pages to CLI pages with md-to-clip. Generate command-line documentation easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/md-to-clip/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/md-to-clip/'
+description: 'Convert TLDR pages to CLI pages with md-to-clip. Generate command-line documentation easily. Free online tool, no registration required.'
 category: common
 keywords:
-- tldr to clip converter
-- cli page generator
-- markdown to clip converter
-- command line documentation
-- tldr page converter
-- cli help generator
-- md to clip
-- common
-- linux
-- macos
+  - tldr to clip converter
+  - cli page generator
+  - markdown to clip converter
+  - command line documentation
+  - tldr page converter
+  - cli help generator
+  - md to clip
+  - common
+  - linux
+  - macos
 features:
-- Converts tldr markdown files to command-line interface pages
-- Saves converted files to the same directory or a specified output directory
-- Converts a tldr page to stdout
-- Recognizes additional placeholders from a specific configuration file
-- Displays help and version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Converts tldr markdown files to command-line interface pages
+  - Saves converted files to the same directory or a specified output directory
+  - Converts a tldr page to stdout
+  - Recognizes additional placeholders from a specific configuration file
+  - Displays help and version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # md-to-clip

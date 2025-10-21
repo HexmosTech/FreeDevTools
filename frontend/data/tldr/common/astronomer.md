@@ -1,9 +1,9 @@
 ---
-title: "Detect Illegitimate Stars - Astronomer GitHub Tool | Online Free DevTools by Hexmos"
+title: 'Detect Illegitimate Stars - Astronomer GitHub Tool | Online Free DevTools by Hexmos'
 name: astronomer
-path: "/freedevtools/tldr/common/astronomer/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/astronomer/"
-description: "Detect illegitimate GitHub stars with Astronomer, a powerful tool for identifying bot accounts boosting repository popularity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/astronomer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/astronomer/'
+description: 'Detect illegitimate GitHub stars with Astronomer, a powerful tool for identifying bot accounts boosting repository popularity. Free online tool, no registration required.'
 category: common
 keywords:
   - GitHub star detection
@@ -22,8 +22,8 @@ features:
   - Analyze star patterns for suspicious activity
   - Generate comparative reports on repository star data
   - Determine the maximum number of stars to scan in a repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # astronomer

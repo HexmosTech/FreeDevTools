@@ -1,29 +1,29 @@
 ---
-title: "Bundle JavaScript - Build and Minify with esbuild | Online Free DevTools by Hexmos"
+title: 'Bundle JavaScript - Build and Minify with esbuild | Online Free DevTools by Hexmos'
 name: esbuild
-path: "/freedevtools/tldr/common/esbuild/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/esbuild/"
-description: "Bundle JavaScript with esbuild, a blazing-fast bundler and minifier. Optimize your web apps with advanced features like JSX support and source maps. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/esbuild/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/esbuild/'
+description: 'Bundle JavaScript with esbuild, a blazing-fast bundler and minifier. Optimize your web apps with advanced features like JSX support and source maps. Free online tool, no registration required.'
 category: common
 keywords:
-- javascript bundler
-- javascript minifier
-- esbuild bundler
-- esbuild minify
-- jsx bundler
-- esm bundler
-- commonjs bundler
-- web application bundler
-- frontend bundler
-- browserify alternative
+  - javascript bundler
+  - javascript minifier
+  - esbuild bundler
+  - esbuild minify
+  - jsx bundler
+  - esm bundler
+  - commonjs bundler
+  - web application bundler
+  - frontend bundler
+  - browserify alternative
 features:
-- Bundle JavaScript and JSX applications from command line
-- Minify JavaScript code for production deployments
-- Generate source maps for easier debugging
-- Target specific browser versions for compatibility
-- Enable JSX syntax in .js files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Bundle JavaScript and JSX applications from command line
+  - Minify JavaScript code for production deployments
+  - Generate source maps for easier debugging
+  - Target specific browser versions for compatibility
+  - Enable JSX syntax in .js files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # esbuild

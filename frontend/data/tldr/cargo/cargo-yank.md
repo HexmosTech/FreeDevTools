@@ -1,29 +1,29 @@
 ---
-title: "Yank Crate - Remove Package Versions with Cargo | Online Free DevTools by Hexmos"
+title: 'Yank Crate - Remove Package Versions with Cargo | Online Free DevTools by Hexmos'
 name: cargo-yank
-path: "/freedevtools/tldr/cargo/cargo-yank/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-yank/"
-description: "Remove crate package versions easily with Cargo Yank. Prevent new projects from using a specific version. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-yank/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-yank/'
+description: 'Remove crate package versions easily with Cargo Yank. Prevent new projects from using a specific version. Free online tool, no registration required.'
 category: common
 keywords:
-- rust crate yank
-- cargo package removal
-- rust package version control
-- cargo crate version management
-- cargo registry management
-- rust crate publishing
-- rust dependency management
-- cargo command line tool
-- rust package rollback
-- cargo crate unpublishing
+  - rust crate yank
+  - cargo package removal
+  - rust package version control
+  - cargo crate version management
+  - cargo registry management
+  - rust crate publishing
+  - rust dependency management
+  - cargo command line tool
+  - rust package rollback
+  - cargo crate unpublishing
 features:
-- Remove specified crate versions from the index
-- Prevent new projects from using yanked versions
-- Undo yanks to allow crate download again
-- Specify the registry to yank from
-- Manage package versions within a Rust project
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Remove specified crate versions from the index
+  - Prevent new projects from using yanked versions
+  - Undo yanks to allow crate download again
+  - Specify the registry to yank from
+  - Manage package versions within a Rust project
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo yank

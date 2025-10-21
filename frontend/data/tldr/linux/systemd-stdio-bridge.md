@@ -1,9 +1,9 @@
 ---
-title: "Systemd STDIO Bridge - Proxy STDIO to D-Bus | Online Free DevTools by Hexmos"
+title: 'Systemd STDIO Bridge - Proxy STDIO to D-Bus | Online Free DevTools by Hexmos'
 name: systemd-stdio-bridge
-path: "/freedevtools/tldr/linux/systemd-stdio-bridge/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-stdio-bridge/"
-description: "Proxy STDIO to D-Bus with Systemd STDIO Bridge. Manage system communication and forward stdin/stdout data. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-stdio-bridge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-stdio-bridge/'
+description: 'Proxy STDIO to D-Bus with Systemd STDIO Bridge. Manage system communication and forward stdin/stdout data. Free online tool, no registration required.'
 category: linux
 keywords:
   - Systemd STDIO bridge
@@ -22,8 +22,8 @@ features:
   - Connect to a D-Bus within a specific container.
   - Forward STDIO to a custom D-Bus address.
   - Create a proxy between standard input/output and D-Bus.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-stdio-bridge

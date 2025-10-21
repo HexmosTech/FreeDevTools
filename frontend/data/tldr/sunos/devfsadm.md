@@ -1,9 +1,9 @@
 ---
-title: "Manage Device Filesystem - Control /dev | Online Free DevTools by Hexmos"
+title: 'Manage Device Filesystem - Control /dev | Online Free DevTools by Hexmos'
 name: devfsadm
-path: "/freedevtools/tldr/sunos/devfsadm/"
-canonical: "https://hexmos.com/freedevtools/tldr/sunos/devfsadm/"
-description: "Control /dev filesystem with devfsadm on SunOS. Dynamically manage device nodes, scan for new devices, and clean up dangling links. Free online tool, no registration required."
+path: '/freedevtools/tldr/sunos/devfsadm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sunos/devfsadm/'
+description: 'Control /dev filesystem with devfsadm on SunOS. Dynamically manage device nodes, scan for new devices, and clean up dangling links. Free online tool, no registration required.'
 category: sunos
 keywords:
   - device filesystem management
@@ -22,8 +22,8 @@ features:
   - Perform dry-run device management operations
   - Manage disk devices within the filesystem
   - Maintain the integrity of the /dev namespace
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # devfsadm

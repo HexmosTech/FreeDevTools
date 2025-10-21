@@ -1,9 +1,9 @@
 ---
-title: "Extend Partition - Resize Disks | Online Free DevTools by Hexmos"
+title: 'Extend Partition - Resize Disks | Online Free DevTools by Hexmos'
 name: growpart
-path: "/freedevtools/tldr/linux/growpart/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/growpart/"
-description: "Extend partitions with growpart. Resize disk partitions to maximize available space. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/growpart/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/growpart/'
+description: 'Extend partitions with growpart. Resize disk partitions to maximize available space. Free online tool, no registration required.'
 category: linux
 keywords:
   - disk partition resizer
@@ -22,8 +22,8 @@ features:
   - Preview partition changes before execution
   - Manage disk space utilization
   - Automatically determine partition size
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # growpart

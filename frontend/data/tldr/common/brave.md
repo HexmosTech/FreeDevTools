@@ -1,29 +1,29 @@
 ---
-title: "Brave Browser - Control Browser Settings | Online Free DevTools by Hexmos"
+title: 'Brave Browser - Control Browser Settings | Online Free DevTools by Hexmos'
 name: brave
-path: "/freedevtools/tldr/common/brave/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/brave/"
-description: "Control Brave browser settings easily with command-line flags. Configure privacy, security, and performance options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/brave/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/brave/'
+description: 'Control Brave browser settings easily with command-line flags. Configure privacy, security, and performance options. Free online tool, no registration required.'
 category: common
 keywords:
-- brave browser command
-- brave browser flags
-- brave settings control
-- chromium command line
-- brave privacy settings
-- brave security settings
-- brave performance settings
-- brave browser configuration
-- command line browser
-- browser settings manager
+  - brave browser command
+  - brave browser flags
+  - brave settings control
+  - chromium command line
+  - brave privacy settings
+  - brave security settings
+  - brave performance settings
+  - brave browser configuration
+  - command line browser
+  - browser settings manager
 features:
-- Configure browser privacy settings
-- Customize browser security options
-- Control browser performance settings
-- Set command-line flags for Brave
-- Manage Brave browser features via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure browser privacy settings
+  - Customize browser security options
+  - Control browser performance settings
+  - Set command-line flags for Brave
+  - Manage Brave browser features via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brave

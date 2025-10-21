@@ -1,29 +1,29 @@
 ---
-title: "Prowler GCP - Assess Google Cloud Security | Online Free DevTools by Hexmos"
+title: 'Prowler GCP - Assess Google Cloud Security | Online Free DevTools by Hexmos'
 name: prowler-gcp
-path: "/freedevtools/tldr/prowler/prowler-gcp/"
-canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler-gcp/"
-description: "Assess Google Cloud security with Prowler GCP. Audit and check compliance, identify vulnerabilities and improve cloud posture. Free online tool, no registration required."
+path: '/freedevtools/tldr/prowler/prowler-gcp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/prowler/prowler-gcp/'
+description: 'Assess Google Cloud security with Prowler GCP. Audit and check compliance, identify vulnerabilities and improve cloud posture. Free online tool, no registration required.'
 category: common
 keywords:
-- GCP security assessment
-- Google Cloud security audit
-- GCP compliance check
-- Prowler GCP scan
-- Cloud security best practices
-- GCP vulnerability assessment
-- gcp cloud posture
-- gcp security benchmark
-- Google cloud security configuration
-- prowler gcp projects
+  - GCP security assessment
+  - Google Cloud security audit
+  - GCP compliance check
+  - Prowler GCP scan
+  - Cloud security best practices
+  - GCP vulnerability assessment
+  - gcp cloud posture
+  - gcp security benchmark
+  - Google cloud security configuration
+  - prowler gcp projects
 features:
-- Scan GCP projects for security vulnerabilities
-- Audit GCP configurations against compliance standards
-- Identify potential security risks in Google Cloud
-- Automate GCP security best practices checks
-- Generate detailed security assessment reports for GCP
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan GCP projects for security vulnerabilities
+  - Audit GCP configurations against compliance standards
+  - Identify potential security risks in Google Cloud
+  - Automate GCP security best practices checks
+  - Generate detailed security assessment reports for GCP
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prowler gcp

@@ -1,9 +1,9 @@
 ---
-title: "GNOME Calculator - Use Command Line Calculator | Online Free DevTools by Hexmos"
+title: 'GNOME Calculator - Use Command Line Calculator | Online Free DevTools by Hexmos'
 name: gnome-calculator
-path: "/freedevtools/tldr/linux/gnome-calculator/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gnome-calculator/"
-description: "Calculate equations with GNOME Calculator command-line interface.  Perform basic and advanced calculations quickly and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gnome-calculator/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gnome-calculator/'
+description: 'Calculate equations with GNOME Calculator command-line interface.  Perform basic and advanced calculations quickly and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux calculator
@@ -22,8 +22,8 @@ features:
   - Solve equations directly from the command line.
   - Access advanced mathematical functions.
   - Display the calculator's version information.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnome-calculator

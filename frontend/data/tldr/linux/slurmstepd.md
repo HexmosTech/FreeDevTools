@@ -1,9 +1,9 @@
 ---
-title: "Slurm Slurmstepd - Manage Job Steps | Online Free DevTools by Hexmos"
+title: 'Slurm Slurmstepd - Manage Job Steps | Online Free DevTools by Hexmos'
 name: slurmstepd
-path: "/freedevtools/tldr/linux/slurmstepd/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmstepd/"
-description: "Manage Slurm job steps efficiently with Slurm Slurmstepd. Monitor and control individual job steps within a multi-step job. Free online resource, no registration required."
+path: '/freedevtools/tldr/linux/slurmstepd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/slurmstepd/'
+description: 'Manage Slurm job steps efficiently with Slurm Slurmstepd. Monitor and control individual job steps within a multi-step job. Free online resource, no registration required.'
 category: linux
 keywords:
   - Slurm job step management
@@ -22,8 +22,8 @@ features:
   - Communicates with the Slurm controller to report step status.
   - Handles resource allocation and release for individual job steps.
   - Enables efficient management of complex, multi-step workflows.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # slurmstepd

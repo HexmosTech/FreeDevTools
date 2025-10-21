@@ -1,29 +1,29 @@
 ---
-title: "JJ Show - Display Commit Details | Online Free DevTools by Hexmos"
+title: 'JJ Show - Display Commit Details | Online Free DevTools by Hexmos'
 name: jj-show
-path: "/freedevtools/tldr/jj/jj-show/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-show/"
-description: "Display commit details with JJ Show. Examine commit descriptions and changesets in a revision. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-show/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-show/'
+description: 'Display commit details with JJ Show. Examine commit descriptions and changesets in a revision. Free online tool, no registration required.'
 category: common
 keywords:
-- jj show commit details
-- jj show revision history
-- jj version control show
-- jj vcs commit log
-- jj show changes
-- jj show summary
-- jj show stat
-- jj show histogram
-- jj show command line
-- jj commit viewer
+  - jj show commit details
+  - jj show revision history
+  - jj version control show
+  - jj vcs commit log
+  - jj show changes
+  - jj show summary
+  - jj show stat
+  - jj show histogram
+  - jj show command line
+  - jj commit viewer
 features:
-- Show commit description
-- Show changeset details
-- Summarize commit changes
-- Display a histogram of changes
-- Inspect revisions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show commit description
+  - Show changeset details
+  - Summarize commit changes
+  - Display a histogram of changes
+  - Inspect revisions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj show

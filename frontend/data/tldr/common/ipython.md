@@ -1,29 +1,29 @@
 ---
-title: "IPython Shell - Create Interactive Python Sessions | Online Free DevTools by Hexmos"
+title: 'IPython Shell - Create Interactive Python Sessions | Online Free DevTools by Hexmos'
 name: ipython
-path: "/freedevtools/tldr/common/ipython/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ipython/"
-description: "Create interactive Python sessions with IPython shell. Enhance your Python development with dynamic object introspection and command completion. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ipython/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ipython/'
+description: 'Create interactive Python sessions with IPython shell. Enhance your Python development with dynamic object introspection and command completion. Free online tool, no registration required.'
 category: common
 keywords:
-- ipython shell
-- python interactive shell
-- python repl
-- ipython profile
-- python command completion
-- dynamic object introspection
-- ipython history
-- python development
-- common shell tools
-- command line python
+  - ipython shell
+  - python interactive shell
+  - python repl
+  - ipython profile
+  - python command completion
+  - dynamic object introspection
+  - ipython history
+  - python development
+  - common shell tools
+  - command line python
 features:
-- Launch an interactive Python REPL environment.
-- Execute Python scripts within an IPython session.
-- Generate and manage IPython profiles for customized configurations.
-- Locate the default IPython profile directory.
-- Clear and manage IPython history for privacy.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch an interactive Python REPL environment.
+  - Execute Python scripts within an IPython session.
+  - Generate and manage IPython profiles for customized configurations.
+  - Locate the default IPython profile directory.
+  - Clear and manage IPython history for privacy.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipython

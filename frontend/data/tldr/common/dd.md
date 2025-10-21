@@ -1,9 +1,9 @@
 ---
-title: "Convert and Copy Files with dd | Online Free DevTools by Hexmos"
+title: 'Convert and Copy Files with dd | Online Free DevTools by Hexmos'
 name: dd
-path: "/freedevtools/tldr/common/dd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dd/"
-description: "Convert and copy files with the powerful dd command.  Clone disks, create bootable USB drives, and generate random data. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dd/'
+description: 'Convert and copy files with the powerful dd command.  Clone disks, create bootable USB drives, and generate random data. Free online tool, no registration required.'
 category: common
 keywords:
   - file conversion dd
@@ -22,8 +22,8 @@ features:
   - Clone hard drives and other block devices.
   - Generate files containing random data.
   - Benchmark disk write performance.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dd

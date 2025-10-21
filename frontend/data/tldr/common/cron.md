@@ -1,29 +1,29 @@
 ---
-title: "Cron Scheduler - Schedule Tasks with Crontab | Online Free DevTools by Hexmos"
+title: 'Cron Scheduler - Schedule Tasks with Crontab | Online Free DevTools by Hexmos'
 name: cron
-path: "/freedevtools/tldr/common/cron/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cron/"
-description: "Schedule tasks easily with Cron Scheduler, a powerful time-based job scheduler. Automate commands and scripts on Linux and macOS systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cron/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cron/'
+description: 'Schedule tasks easily with Cron Scheduler, a powerful time-based job scheduler. Automate commands and scripts on Linux and macOS systems. Free online tool, no registration required.'
 category: common
 keywords:
-- cron scheduler
-- crontab schedule
-- linux cron
-- macos cron
-- unix cron
-- schedule jobs
-- automate tasks
-- cron expression
-- crontab editor
-- background process
+  - cron scheduler
+  - crontab schedule
+  - linux cron
+  - macos cron
+  - unix cron
+  - schedule jobs
+  - automate tasks
+  - cron expression
+  - crontab editor
+  - background process
 features:
-- Schedule tasks to run at specific times
-- Automate execution of commands and scripts
-- Manage cron jobs using crontab
-- Define recurring tasks with cron expressions
-- Control background processes on Linux and macOS
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Schedule tasks to run at specific times
+  - Automate execution of commands and scripts
+  - Manage cron jobs using crontab
+  - Define recurring tasks with cron expressions
+  - Control background processes on Linux and macOS
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cron

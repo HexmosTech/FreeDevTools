@@ -1,29 +1,29 @@
 ---
-title: "Screencapture - Create Screenshots and Recordings | Online Free DevTools by Hexmos"
+title: 'Screencapture - Create Screenshots and Recordings | Online Free DevTools by Hexmos'
 name: screencapture
-path: "/freedevtools/tldr/osx/screencapture/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/screencapture/"
-description: "Create screenshots and screen recordings with Screencapture. Capture your screen with options for delay, cursor, and area selection. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/screencapture/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/screencapture/'
+description: 'Create screenshots and screen recordings with Screencapture. Capture your screen with options for delay, cursor, and area selection. Free online tool, no registration required.'
 category: osx
 keywords:
-- screenshot capture macos
-- screen recording osx
-- macos screenshot command line
-- osx screen capture tool
-- screencapture video recording
-- timed screenshot macos
-- selected area screenshot
-- command line screenshot
-- macos screen grab utility
-- screencapture with cursor
+  - screenshot capture macos
+  - screen recording osx
+  - macos screenshot command line
+  - osx screen capture tool
+  - screencapture video recording
+  - timed screenshot macos
+  - selected area screenshot
+  - command line screenshot
+  - macos screen grab utility
+  - screencapture with cursor
 features:
-- Capture full screen or selected area
-- Record screen activity to video file
-- Capture screenshots with a specified delay
-- Include or exclude the mouse cursor in captures
-- Open screenshots directly in Preview application
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture full screen or selected area
+  - Record screen activity to video file
+  - Capture screenshots with a specified delay
+  - Include or exclude the mouse cursor in captures
+  - Open screenshots directly in Preview application
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # screencapture

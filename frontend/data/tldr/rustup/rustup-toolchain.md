@@ -1,29 +1,29 @@
 ---
-title: "Rust Toolchain Manager - Control Rust Versions | Online Free DevTools by Hexmos"
+title: 'Rust Toolchain Manager - Control Rust Versions | Online Free DevTools by Hexmos'
 name: rustup-toolchain
-path: "/freedevtools/tldr/rustup/rustup-toolchain/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-toolchain/"
-description: "Control Rust toolchains with Rust Toolchain Manager. Install, uninstall, and list Rust versions using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-toolchain/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-toolchain/'
+description: 'Control Rust toolchains with Rust Toolchain Manager. Install, uninstall, and list Rust versions using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- rust toolchain manager
-- rust version management
-- rustup toolchain install
-- rustup toolchain uninstall
-- rust programming language
-- rust compiler versions
-- cross-compilation toolchain
-- rust stable toolchain
-- rust nightly toolchain
-- rust beta toolchain
+  - rust toolchain manager
+  - rust version management
+  - rustup toolchain install
+  - rustup toolchain uninstall
+  - rust programming language
+  - rust compiler versions
+  - cross-compilation toolchain
+  - rust stable toolchain
+  - rust nightly toolchain
+  - rust beta toolchain
 features:
-- Install specific Rust toolchains
-- Uninstall existing Rust toolchains
-- List all installed Rust toolchains
-- Create custom toolchains via symlinking
-- Manage multiple Rust versions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install specific Rust toolchains
+  - Uninstall existing Rust toolchains
+  - List all installed Rust toolchains
+  - Create custom toolchains via symlinking
+  - Manage multiple Rust versions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup toolchain

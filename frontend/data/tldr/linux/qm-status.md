@@ -1,29 +1,29 @@
 ---
-title: "QM Status - Control Virtual Machines | Online Free DevTools by Hexmos"
+title: 'QM Status - Control Virtual Machines | Online Free DevTools by Hexmos'
 name: qm-status
-path: "/freedevtools/tldr/linux/qm-status/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-status/"
-description: "Control virtual machine status with QM Status. Monitor performance and manage virtual machines effectively via the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-status/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-status/'
+description: 'Control virtual machine status with QM Status. Monitor performance and manage virtual machines effectively via the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- virtual machine status
-- qm status linux
-- proxmox vm status
-- linux vm monitoring
-- virtual machine performance
-- qm command line
-- proxmox qm
-- vm status command
-- linux qemu monitor
-- proxmox virtual environment
+  - virtual machine status
+  - qm status linux
+  - proxmox vm status
+  - linux vm monitoring
+  - virtual machine performance
+  - qm command line
+  - proxmox qm
+  - vm status command
+  - linux qemu monitor
+  - proxmox virtual environment
 features:
-- Display the status of a specific virtual machine
-- Show detailed status using verbose mode
-- Monitor virtual machine performance metrics
-- Manage virtual machine lifecycle
-- Integrate with Proxmox virtual environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the status of a specific virtual machine
+  - Show detailed status using verbose mode
+  - Monitor virtual machine performance metrics
+  - Manage virtual machine lifecycle
+  - Integrate with Proxmox virtual environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm status

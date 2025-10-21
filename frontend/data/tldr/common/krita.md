@@ -1,29 +1,29 @@
 ---
-title: "Krita Image Editor - Create Digital Art | Online Free DevTools by Hexmos"
+title: 'Krita Image Editor - Create Digital Art | Online Free DevTools by Hexmos'
 name: krita
-path: "/freedevtools/tldr/common/krita/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/krita/"
-description: "Create stunning digital art with Krita Image Editor. Edit images, paint illustrations, and sketch designs using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/krita/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/krita/'
+description: 'Create stunning digital art with Krita Image Editor. Edit images, paint illustrations, and sketch designs using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- krita image editor
-- digital painting software
-- linux image editor
-- image editing command line
-- open source art program
-- digital illustration tool
-- krita scripting
-- krita command line arguments
-- image manipulation tool
-- krita workspace customization
+  - krita image editor
+  - digital painting software
+  - linux image editor
+  - image editing command line
+  - open source art program
+  - digital illustration tool
+  - krita scripting
+  - krita command line arguments
+  - image manipulation tool
+  - krita workspace customization
 features:
-- Launch Krita from the command line.
-- Open specific image files within Krita.
-- Disable the splash screen on startup.
-- Start Krita with a specified workspace.
-- Run Krita in fullscreen mode.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch Krita from the command line.
+  - Open specific image files within Krita.
+  - Disable the splash screen on startup.
+  - Start Krita with a specified workspace.
+  - Run Krita in fullscreen mode.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # krita

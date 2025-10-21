@@ -1,9 +1,9 @@
 ---
-title: "Diagnose DRM - Analyze KMS with modetest | Online Free DevTools by Hexmos"
+title: 'Diagnose DRM - Analyze KMS with modetest | Online Free DevTools by Hexmos'
 name: modetest
-path: "/freedevtools/tldr/linux/modetest/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/modetest/"
-description: "Analyze Kernel Mode Setting with modetest, a Direct Rendering Manager diagnostics tool for display configuration. Inspect connectors and modes easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/modetest/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/modetest/'
+description: 'Analyze Kernel Mode Setting with modetest, a Direct Rendering Manager diagnostics tool for display configuration. Inspect connectors and modes easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - DRM diagnostics
@@ -22,8 +22,8 @@ features:
   - Set resolution of display connectors
   - Diagnose direct rendering manager issues
   - Analyze kernel mode setting configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # modetest

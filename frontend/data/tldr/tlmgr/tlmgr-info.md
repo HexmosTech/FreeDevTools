@@ -1,29 +1,29 @@
 ---
-title: "TeX Live Info - Show Package Information | Online Free DevTools by Hexmos"
+title: 'TeX Live Info - Show Package Information | Online Free DevTools by Hexmos'
 name: tlmgr-info
-path: "/freedevtools/tldr/tlmgr/tlmgr-info/"
-canonical: "https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-info/"
-description: "Show TeX Live package information with tlmgr info. Manage TeX distribution, list installed packages, and inspect package details easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/tlmgr/tlmgr-info/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tlmgr/tlmgr-info/'
+description: 'Show TeX Live package information with tlmgr info. Manage TeX distribution, list installed packages, and inspect package details easily. Free online tool, no registration required.'
 category: common
 keywords:
-- TeX Live info
-- TeX package manager
-- tlmgr command
-- TeX package information
-- list TeX packages
-- TeX distribution manager
-- TeX package details
-- TeX Live collections
-- TeX Live schemes
-- command line package manager
+  - TeX Live info
+  - TeX package manager
+  - tlmgr command
+  - TeX package information
+  - list TeX packages
+  - TeX distribution manager
+  - TeX package details
+  - TeX Live collections
+  - TeX Live schemes
+  - command line package manager
 features:
-- List all available TeX Live packages
-- Show information about a specific package
-- List all files contained in a package
-- Display only installed packages
-- Output package data in JSON format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all available TeX Live packages
+  - Show information about a specific package
+  - List all files contained in a package
+  - Display only installed packages
+  - Output package data in JSON format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tlmgr info

@@ -1,29 +1,29 @@
 ---
-title: "Replace Text - Find and Replace with sd | Online Free DevTools by Hexmos"
+title: 'Replace Text - Find and Replace with sd | Online Free DevTools by Hexmos'
 name: sd
-path: "/freedevtools/tldr/common/sd/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sd/"
-description: "Replace text efficiently with sd, an intuitive find and replace tool. Perform regex replacements and manipulate text using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sd/'
+description: 'Replace text efficiently with sd, an intuitive find and replace tool. Perform regex replacements and manipulate text using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- text replace
-- find and replace
-- regex replace
-- command line replace
-- sed alternative
-- string manipulation
-- linux text replace
-- macos text replace
-- file replace
-- text editor
+  - text replace
+  - find and replace
+  - regex replace
+  - command line replace
+  - sed alternative
+  - string manipulation
+  - linux text replace
+  - macos text replace
+  - file replace
+  - text editor
 features:
-- Trim whitespace using regular expressions
-- Replace words using capture groups
-- Find and replace in specific files
-- Find and replace in all files in a project
-- Perform replacements via standard input/output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trim whitespace using regular expressions
+  - Replace words using capture groups
+  - Find and replace in specific files
+  - Find and replace in all files in a project
+  - Perform replacements via standard input/output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sd

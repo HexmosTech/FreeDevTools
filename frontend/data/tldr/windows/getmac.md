@@ -1,29 +1,29 @@
 ---
-title: "Getmac - Display MAC Addresses | Online Free DevTools by Hexmos"
+title: 'Getmac - Display MAC Addresses | Online Free DevTools by Hexmos'
 name: getmac
-path: "/freedevtools/tldr/windows/getmac/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/getmac/"
-description: "Display MAC addresses with Getmac, a command-line tool for Windows. Quickly retrieve network interface MAC addresses for system configuration. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/getmac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/getmac/'
+description: 'Display MAC addresses with Getmac, a command-line tool for Windows. Quickly retrieve network interface MAC addresses for system configuration. Free online tool, no registration required.'
 category: windows
 keywords:
-- MAC Address Display
-- Windows Getmac Command
-- Network Interface Card MAC
-- Ethernet MAC Address
-- Wireless MAC Address
-- Command Line MAC Tool
-- Windows Network Info
-- MAC Address Retrieval
-- System MAC Address
-- Getmac Windows
+  - MAC Address Display
+  - Windows Getmac Command
+  - Network Interface Card MAC
+  - Ethernet MAC Address
+  - Wireless MAC Address
+  - Command Line MAC Tool
+  - Windows Network Info
+  - MAC Address Retrieval
+  - System MAC Address
+  - Getmac Windows
 features:
-- Display MAC addresses for local systems
-- Display MAC addresses for remote systems
-- Format output as table, list, or CSV
-- Exclude header information from output
-- Display verbose information about MAC addresses
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display MAC addresses for local systems
+  - Display MAC addresses for remote systems
+  - Format output as table, list, or CSV
+  - Exclude header information from output
+  - Display verbose information about MAC addresses
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # getmac

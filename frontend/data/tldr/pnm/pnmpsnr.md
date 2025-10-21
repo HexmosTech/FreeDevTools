@@ -1,29 +1,29 @@
 ---
-title: "Compute Image PSNR - Compare Images | Online Free DevTools by Hexmos"
+title: 'Compute Image PSNR - Compare Images | Online Free DevTools by Hexmos'
 name: pnmpsnr
-path: "/freedevtools/tldr/pnm/pnmpsnr/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmpsnr/"
-description: "Compute Image PSNR with pnmpsnr. Analyze image differences and signal-to-noise ratio. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmpsnr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmpsnr/'
+description: 'Compute Image PSNR with pnmpsnr. Analyze image differences and signal-to-noise ratio. Free online tool, no registration required.'
 category: common
 keywords:
-- pnmpsnr image comparison
-- pixel difference analysis
-- image quality assessment
-- peak signal-to-noise ratio
-- linux image utilities
-- netpbm image tools
-- image comparison command line
-- pnm image processing
-- image error calculation
-- image difference metric
+  - pnmpsnr image comparison
+  - pixel difference analysis
+  - image quality assessment
+  - peak signal-to-noise ratio
+  - linux image utilities
+  - netpbm image tools
+  - image comparison command line
+  - pnm image processing
+  - image error calculation
+  - image difference metric
 features:
-- Calculate PSNR between two images
-- Compare color components of images
-- Run in comparison mode with target values
-- Compare individual image components to thresholds
-- Produce machine-readable output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate PSNR between two images
+  - Compare color components of images
+  - Run in comparison mode with target values
+  - Compare individual image components to thresholds
+  - Produce machine-readable output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmpsnr

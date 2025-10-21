@@ -1,29 +1,29 @@
 ---
-title: "PAM Validate - Validate Netpbm Images | Online Free DevTools by Hexmos"
+title: 'PAM Validate - Validate Netpbm Images | Online Free DevTools by Hexmos'
 name: pamvalidate
-path: "/freedevtools/tldr/common/pamvalidate/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamvalidate/"
-description: "Validate PAM images with pamvalidate. Verify the format and integrity of Netpbm image files quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamvalidate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamvalidate/'
+description: 'Validate PAM images with pamvalidate. Verify the format and integrity of Netpbm image files quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- Netpbm image validator
-- PAM file validation
-- PGM file validation
-- PBM file validation
-- PPM file validation
-- Netpbm image check
-- PAM image integrity
-- Linux image tools
-- Image format verification
-- Netpbm command line tools
+  - Netpbm image validator
+  - PAM file validation
+  - PGM file validation
+  - PBM file validation
+  - PPM file validation
+  - Netpbm image check
+  - PAM image integrity
+  - Linux image tools
+  - Image format verification
+  - Netpbm command line tools
 features:
-- Validates PAM, PGM, PBM, and PPM image files
-- Checks for valid Netpbm file format
-- Reads image data from standard input
-- Writes image data to standard output if valid
-- Provides error messages for invalid image files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validates PAM, PGM, PBM, and PPM image files
+  - Checks for valid Netpbm file format
+  - Reads image data from standard input
+  - Writes image data to standard output if valid
+  - Provides error messages for invalid image files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamvalidate

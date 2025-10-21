@@ -1,29 +1,29 @@
 ---
-title: "Supervisorctl - Control Processes | Online Free DevTools by Hexmos"
+title: 'Supervisorctl - Control Processes | Online Free DevTools by Hexmos'
 name: supervisorctl
-path: "/freedevtools/tldr/common/supervisorctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/supervisorctl/"
-description: "Control system processes with Supervisorctl. Manage, monitor and update processes on UNIX-like systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/supervisorctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/supervisorctl/'
+description: 'Control system processes with Supervisorctl. Manage, monitor and update processes on UNIX-like systems. Free online tool, no registration required.'
 category: common
 keywords:
-- process manager control
-- supervisorctl process control
-- linux process management
-- unix process management
-- process monitoring tool
-- supervisor process manager
-- system process control
-- application process control
-- supervisorctl commands
-- daemon process management
+  - process manager control
+  - supervisorctl process control
+  - linux process management
+  - unix process management
+  - process monitoring tool
+  - supervisor process manager
+  - system process control
+  - application process control
+  - supervisorctl commands
+  - daemon process management
 features:
-- Manage and monitor system processes
-- Start, stop, and restart individual processes
-- Control all processes within a defined group
-- View real-time process output (stdout/stderr)
-- Update process configurations dynamically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage and monitor system processes
+  - Start, stop, and restart individual processes
+  - Control all processes within a defined group
+  - View real-time process output (stdout/stderr)
+  - Update process configurations dynamically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # supervisorctl

@@ -1,29 +1,29 @@
 ---
-title: "Compile Fortran Code - Generate Executables with gfortran | Online Free DevTools by Hexmos"
+title: 'Compile Fortran Code - Generate Executables with gfortran | Online Free DevTools by Hexmos'
 name: gfortran
-path: "/freedevtools/tldr/common/gfortran/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gfortran/"
-description: "Compile Fortran code with gfortran. Generate executables and object files using advanced compilation options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gfortran/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gfortran/'
+description: 'Compile Fortran code with gfortran. Generate executables and object files using advanced compilation options. Free online tool, no registration required.'
 category: common
 keywords:
-- fortran compiler
-- gfortran compiler
-- compile fortran code
-- gfortran executable
-- fortran object file
-- gnu fortran
-- fortran linux
-- fortran macos
-- fortran command line
-- fortran debugging
+  - fortran compiler
+  - gfortran compiler
+  - compile fortran code
+  - gfortran executable
+  - fortran object file
+  - gnu fortran
+  - fortran linux
+  - fortran macos
+  - fortran command line
+  - fortran debugging
 features:
-- Compile Fortran source files into executable programs
-- Generate object files from Fortran source code
-- Enable debugging symbols during compilation
-- Include external libraries and modules
-- Preprocess Fortran source code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Fortran source files into executable programs
+  - Generate object files from Fortran source code
+  - Enable debugging symbols during compilation
+  - Include external libraries and modules
+  - Preprocess Fortran source code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gfortran

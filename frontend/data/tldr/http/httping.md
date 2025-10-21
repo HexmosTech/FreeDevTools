@@ -1,29 +1,29 @@
 ---
-title: "Measure Web Latency - HTTPing Network Performance | Online Free DevTools by Hexmos"
+title: 'Measure Web Latency - HTTPing Network Performance | Online Free DevTools by Hexmos'
 name: httping
-path: "/freedevtools/tldr/http/httping/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/httping/"
-description: "Measure web latency with HTTPing. Analyze server response times and throughput using this network debugging tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/httping/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/httping/'
+description: 'Measure web latency with HTTPing. Analyze server response times and throughput using this network debugging tool. Free online tool, no registration required.'
 category: common
 keywords:
-- web latency analysis
-- network performance monitoring
-- HTTP ping utility
-- server response time measurement
-- website speed test tool
-- HTTP debugging command
-- network troubleshooting tool
-- linux network analysis
-- macOS network analysis
-- common network commands
+  - web latency analysis
+  - network performance monitoring
+  - HTTP ping utility
+  - server response time measurement
+  - website speed test tool
+  - HTTP debugging command
+  - network troubleshooting tool
+  - linux network analysis
+  - macOS network analysis
+  - common network commands
 features:
-- Measure web server latency and throughput.
-- Ping a specified URL to test its responsiveness.
-- Ping a web server on a specified host and port.
-- Test TLS connections using HTTPS.
-- Authenticate with HTTP basic authentication.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Measure web server latency and throughput.
+  - Ping a specified URL to test its responsiveness.
+  - Ping a web server on a specified host and port.
+  - Test TLS connections using HTTPS.
+  - Authenticate with HTTP basic authentication.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # httping

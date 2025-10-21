@@ -1,9 +1,9 @@
 ---
-title: "Execute Expect Scripts - Automate Program Interactions | Online Free DevTools by Hexmos"
+title: 'Execute Expect Scripts - Automate Program Interactions | Online Free DevTools by Hexmos'
 name: expect
-path: "/freedevtools/tldr/linux/expect/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/expect/"
-description: "Execute Expect scripts with Expect for automated program interactions. Control terminal sessions and streamline command-line tasks efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/expect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/expect/'
+description: 'Execute Expect scripts with Expect for automated program interactions. Control terminal sessions and streamline command-line tasks efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - expect script executor
@@ -22,8 +22,8 @@ features:
   - Enter an interactive expect REPL
   - Automate interactions with terminal-based programs
   - Control program behavior through scripting
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # expect

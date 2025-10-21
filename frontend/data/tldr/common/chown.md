@@ -1,29 +1,29 @@
 ---
-title: "Chown - Change File Ownership | Online Free DevTools by Hexmos"
+title: 'Chown - Change File Ownership | Online Free DevTools by Hexmos'
 name: chown
-path: "/freedevtools/tldr/common/chown/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chown/"
-description: "Change file ownership with Chown. Quickly modify user and group ownership of files and directories on Linux and MacOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chown/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chown/'
+description: 'Change file ownership with Chown. Quickly modify user and group ownership of files and directories on Linux and MacOS. Free online tool, no registration required.'
 category: common
 keywords:
-- file ownership chown
-- linux file permissions
-- change file owner
-- chown command example
-- chown linux
-- chown macos
-- change group ownership
-- recursive chown
-- file system security
-- chown syntax
+  - file ownership chown
+  - linux file permissions
+  - change file owner
+  - chown command example
+  - chown linux
+  - chown macos
+  - change group ownership
+  - recursive chown
+  - file system security
+  - chown syntax
 features:
-- Change the owner of a file or directory.
-- Modify the group ownership of files.
-- Recursively change ownership of entire directories.
-- Update ownership based on a reference file.
-- Change ownership of symbolic links.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Change the owner of a file or directory.
+  - Modify the group ownership of files.
+  - Recursively change ownership of entire directories.
+  - Update ownership based on a reference file.
+  - Change ownership of symbolic links.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chown

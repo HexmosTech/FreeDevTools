@@ -1,29 +1,29 @@
 ---
-title: "Choco Search - Find Chocolatey Packages | Online Free DevTools by Hexmos"
+title: 'Choco Search - Find Chocolatey Packages | Online Free DevTools by Hexmos'
 name: choco-search
-path: "/freedevtools/tldr/windows/choco-search/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/choco-search/"
-description: "Find Chocolatey packages easily with Choco Search. Discover, manage, and install software packages on Windows. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/choco-search/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/choco-search/'
+description: 'Find Chocolatey packages easily with Choco Search. Discover, manage, and install software packages on Windows. Free online tool, no registration required.'
 category: windows
 keywords:
-- chocolatey package search
-- choco search windows
-- windows package manager
-- command line search
-- software package discovery
-- choco install package
-- windows application search
-- choco package lookup
-- chocolatey package list
-- command line software manager
+  - chocolatey package search
+  - choco search windows
+  - windows package manager
+  - command line search
+  - software package discovery
+  - choco install package
+  - windows application search
+  - choco package lookup
+  - chocolatey package list
+  - command line software manager
 features:
-- Search for Chocolatey packages by name
-- Filter search results for exact matches
-- Specify a custom source for package searches
-- Authenticate package searches with credentials
-- Search for packages locally without network access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for Chocolatey packages by name
+  - Filter search results for exact matches
+  - Specify a custom source for package searches
+  - Authenticate package searches with credentials
+  - Search for packages locally without network access
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # choco search

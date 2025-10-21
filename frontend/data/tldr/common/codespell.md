@@ -1,29 +1,29 @@
 ---
-title: "Codespell - Spell Check Code | Online Free DevTools by Hexmos"
+title: 'Codespell - Spell Check Code | Online Free DevTools by Hexmos'
 name: codespell
-path: "/freedevtools/tldr/common/codespell/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/codespell/"
-description: "Spell check code with Codespell. Find and correct typos in source code to improve code quality and readability. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/codespell/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/codespell/'
+description: 'Spell check code with Codespell. Find and correct typos in source code to improve code quality and readability. Free online tool, no registration required.'
 category: common
 keywords:
-- codespell spell checker
-- source code spell check
-- typo detection code
-- typo correction code
-- code quality tools
-- development spell check
-- linux codespell
-- macos codespell
-- windows codespell
-- command line spell checker
+  - codespell spell checker
+  - source code spell check
+  - typo detection code
+  - typo correction code
+  - code quality tools
+  - development spell check
+  - linux codespell
+  - macos codespell
+  - windows codespell
+  - command line spell checker
 features:
-- Check for typos recursively in code files
-- Correct typos in-place automatically
-- Skip files based on specified patterns
-- Utilize custom dictionary files
-- Ignore specific words during spell check
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Check for typos recursively in code files
+  - Correct typos in-place automatically
+  - Skip files based on specified patterns
+  - Utilize custom dictionary files
+  - Ignore specific words during spell check
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # codespell

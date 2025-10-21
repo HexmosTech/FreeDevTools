@@ -1,29 +1,29 @@
 ---
-title: "Meson Build - Generate Projects | Online Free DevTools by Hexmos"
+title: 'Meson Build - Generate Projects | Online Free DevTools by Hexmos'
 name: meson
-path: "/freedevtools/tldr/common/meson/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/meson/"
-description: "Generate projects with Meson Build System. Automate software compilation and dependency management efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/meson/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/meson/'
+description: 'Generate projects with Meson Build System. Automate software compilation and dependency management efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- meson build system
-- ninja build backend
-- python build tool
-- c project generator
-- build automation
-- software compilation
-- dependency management
-- linux build system
-- macos build system
-- cross platform build
+  - meson build system
+  - ninja build backend
+  - python build tool
+  - c project generator
+  - build automation
+  - software compilation
+  - dependency management
+  - linux build system
+  - macos build system
+  - cross platform build
 features:
-- Generate C projects with specified names and versions
-- Configure build directories with default settings
-- Compile projects from specified build directories
-- Execute all project tests
-- Display help documentation and version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate C projects with specified names and versions
+  - Configure build directories with default settings
+  - Compile projects from specified build directories
+  - Execute all project tests
+  - Display help documentation and version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # meson

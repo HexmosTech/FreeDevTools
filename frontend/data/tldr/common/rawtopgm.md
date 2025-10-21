@@ -1,29 +1,29 @@
 ---
-title: "Convert Raw Image to PGM - Greyscale Converter | Online Free DevTools by Hexmos"
+title: 'Convert Raw Image to PGM - Greyscale Converter | Online Free DevTools by Hexmos'
 name: rawtopgm
-path: "/freedevtools/tldr/common/rawtopgm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rawtopgm/"
-description: "Convert raw greyscale images to PGM format with rawtopgm. Efficiently process and manage image file conversions using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rawtopgm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rawtopgm/'
+description: 'Convert raw greyscale images to PGM format with rawtopgm. Efficiently process and manage image file conversions using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- raw image to pgm
-- greyscale image converter
-- pgm file conversion
-- rawtopgm linux
-- command line image tools
-- netpbm tools
-- image format conversion
-- raw image processing
-- pgm image manipulation
-- greyscale to pgm converter
+  - raw image to pgm
+  - greyscale image converter
+  - pgm file conversion
+  - rawtopgm linux
+  - command line image tools
+  - netpbm tools
+  - image format conversion
+  - raw image processing
+  - pgm image manipulation
+  - greyscale to pgm converter
 features:
-- Convert raw greyscale images to PGM format
-- Specify image width and height for accurate conversion
-- Handle images with bottom-first pixel ordering
-- Skip header or row data during conversion
-- Set the maximum grey value for input images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert raw greyscale images to PGM format
+  - Specify image width and height for accurate conversion
+  - Handle images with bottom-first pixel ordering
+  - Skip header or row data during conversion
+  - Set the maximum grey value for input images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rawtopgm

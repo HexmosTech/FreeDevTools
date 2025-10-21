@@ -1,29 +1,29 @@
 ---
-title: "Redirect Files with Boxxy - Manage XDG Paths | Online Free DevTools by Hexmos"
+title: 'Redirect Files with Boxxy - Manage XDG Paths | Online Free DevTools by Hexmos'
 name: boxxy
-path: "/freedevtools/tldr/common/boxxy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/boxxy/"
-description: "Redirect file paths with Boxxy, managing XDG paths for non-compliant programs.  Control file access and customize program behavior. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/boxxy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/boxxy/'
+description: 'Redirect file paths with Boxxy, managing XDG paths for non-compliant programs.  Control file access and customize program behavior. Free online tool, no registration required.'
 category: common
 keywords:
-- XDG path redirection
-- File path manager
-- Boxxy configuration
-- Program file redirect
-- Command-line redirect tool
-- Linux file redirection
-- macOS file redirection
-- Environment Variable control
-- Home directory configuration
-- Application file mapping
+  - XDG path redirection
+  - File path manager
+  - Boxxy configuration
+  - Program file redirect
+  - Command-line redirect tool
+  - Linux file redirection
+  - macOS file redirection
+  - Environment Variable control
+  - Home directory configuration
+  - Application file mapping
 features:
-- Redirect program file locations
-- Scan for redirection rule suggestions
-- Trace program file access
-- Apply redirection rules directly
-- View and edit Boxxy configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Redirect program file locations
+  - Scan for redirection rule suggestions
+  - Trace program file access
+  - Apply redirection rules directly
+  - View and edit Boxxy configuration
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # boxxy

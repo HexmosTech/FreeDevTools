@@ -1,29 +1,29 @@
 ---
-title: "Query User Sessions - Display Processes | Online Free DevTools by Hexmos"
+title: 'Query User Sessions - Display Processes | Online Free DevTools by Hexmos'
 name: query
-path: "/freedevtools/tldr/windows/query/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/query/"
-description: "Display user sessions with Query command. Retrieve information about running processes and user sessions. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/query/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/query/'
+description: 'Display user sessions with Query command. Retrieve information about running processes and user sessions. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows query
-- windows query session
-- query process
-- windows command line
-- user session viewer
-- process information
-- remote session query
-- process monitor
-- command line query
-- windows task management
+  - windows query
+  - windows query session
+  - query process
+  - windows command line
+  - user session viewer
+  - process information
+  - remote session query
+  - process monitor
+  - command line query
+  - windows task management
 features:
-- Display all active user sessions on Windows.
-- Retrieve session information on remote servers.
-- List all running processes by session.
-- Filter processes by user name.
-- Identify logged-in users on the system.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all active user sessions on Windows.
+  - Retrieve session information on remote servers.
+  - List all running processes by session.
+  - Filter processes by user name.
+  - Identify logged-in users on the system.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # query

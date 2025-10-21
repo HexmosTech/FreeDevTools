@@ -1,29 +1,29 @@
 ---
-title: "GNMI Set - Modify Network Configuration | Online Free DevTools by Hexmos"
+title: 'GNMI Set - Modify Network Configuration | Online Free DevTools by Hexmos'
 name: gnmic-set
-path: "/freedevtools/tldr/gnmic/gnmic-set/"
-canonical: "https://hexmos.com/freedevtools/tldr/gnmic/gnmic-set/"
-description: "Modify network configurations with GNMI Set. Update, replace, and delete network device settings using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/gnmic/gnmic-set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gnmic/gnmic-set/'
+description: 'Modify network configurations with GNMI Set. Update, replace, and delete network device settings using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- gnmi network configuration
-- modify network settings
-- gnmi set command
-- network device configuration
-- update network path
-- replace network value
-- delete network node
-- gnmi configuration management
-- network configuration tool
-- command line configuration
+  - gnmi network configuration
+  - modify network settings
+  - gnmi set command
+  - network device configuration
+  - update network path
+  - replace network value
+  - delete network node
+  - gnmi configuration management
+  - network configuration tool
+  - command line configuration
 features:
-- Update network device configuration values
-- Replace network device configuration values
-- Delete network nodes on network devices
-- Set configuration parameters via command line
-- Read configuration from JSON file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Update network device configuration values
+  - Replace network device configuration values
+  - Delete network nodes on network devices
+  - Set configuration parameters via command line
+  - Read configuration from JSON file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnmic set

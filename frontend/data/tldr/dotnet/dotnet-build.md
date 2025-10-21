@@ -1,29 +1,29 @@
 ---
-title: "Dotnet Build - Compile .NET Applications | Online Free DevTools by Hexmos"
+title: 'Dotnet Build - Compile .NET Applications | Online Free DevTools by Hexmos'
 name: dotnet-build
-path: "/freedevtools/tldr/dotnet/dotnet-build/"
-canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-build/"
-description: "Compile .NET applications effortlessly with Dotnet Build. Streamline your build process and manage dependencies with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/dotnet/dotnet-build/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dotnet/dotnet-build/'
+description: 'Compile .NET applications effortlessly with Dotnet Build. Streamline your build process and manage dependencies with this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- dotnet build command
-- .net application compiler
-- .net build tool
-- .net core build
-- cross platform build
-- dotnet build release mode
-- dotnet build debug mode
-- .net dependency management
-- .net command line
-- dotnet build runtime
+  - dotnet build command
+  - .net application compiler
+  - .net build tool
+  - .net core build
+  - cross platform build
+  - dotnet build release mode
+  - dotnet build debug mode
+  - .net dependency management
+  - .net command line
+  - dotnet build runtime
 features:
-- Compiles .NET projects and solutions from the command line
-- Supports building in debug or release configurations
-- Allows specifying a custom output directory for the build
-- Enables building for specific runtime environments
-- Can compile without restoring dependencies for faster builds
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compiles .NET projects and solutions from the command line
+  - Supports building in debug or release configurations
+  - Allows specifying a custom output directory for the build
+  - Enables building for specific runtime environments
+  - Can compile without restoring dependencies for faster builds
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotnet build

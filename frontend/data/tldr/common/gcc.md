@@ -1,29 +1,29 @@
 ---
-title: "Compile C/C++ Code - Control GCC Compiler | Online Free DevTools by Hexmos"
+title: 'Compile C/C++ Code - Control GCC Compiler | Online Free DevTools by Hexmos'
 name: gcc
-path: "/freedevtools/tldr/common/gcc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gcc/"
-description: "Compile C/C++ code efficiently with GCC Compiler. Optimize performance, debug effectively, and manage libraries effortlessly using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gcc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gcc/'
+description: 'Compile C/C++ code efficiently with GCC Compiler. Optimize performance, debug effectively, and manage libraries effortlessly using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- C/C++ Compiler
-- GCC compiler
-- Source Code Compilation
-- Executable Generation
-- Compiler Optimization
-- Linux Compilation
-- macOS Compilation
-- C++ Build Process
-- C Compiler Flags
-- GNU Compiler Collection
+  - C/C++ Compiler
+  - GCC compiler
+  - Source Code Compilation
+  - Executable Generation
+  - Compiler Optimization
+  - Linux Compilation
+  - macOS Compilation
+  - C++ Build Process
+  - C Compiler Flags
+  - GNU Compiler Collection
 features:
-- Compile multiple source files into a single executable
-- Optimize compiled programs for maximum performance
-- Generate assembly code from C/C++ source
-- Include external libraries during compilation
-- Debug code effectively with debugging symbols
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile multiple source files into a single executable
+  - Optimize compiled programs for maximum performance
+  - Generate assembly code from C/C++ source
+  - Include external libraries during compilation
+  - Debug code effectively with debugging symbols
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcc

@@ -1,29 +1,29 @@
 ---
-title: "Generate Fake Data with Faker | Online Free DevTools by Hexmos"
+title: 'Generate Fake Data with Faker | Online Free DevTools by Hexmos'
 name: faker
-path: "/freedevtools/tldr/common/faker/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/faker/"
-description: "Generate fake data easily with Faker. Create realistic names, addresses, and more for testing and development. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/faker/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/faker/'
+description: 'Generate fake data easily with Faker. Create realistic names, addresses, and more for testing and development. Free online tool, no registration required.'
 category: common
 keywords:
-- fake data generator
-- python faker
-- generate test data
-- dummy data
-- address generator
-- name generator
-- email generator
-- linux faker
-- macos faker
-- command line faker
+  - fake data generator
+  - python faker
+  - generate test data
+  - dummy data
+  - address generator
+  - name generator
+  - email generator
+  - linux faker
+  - macos faker
+  - command line faker
 features:
-- Generate realistic names and addresses
-- Create fake emails and phone numbers
-- Generate dummy data for testing
-- Output data to a file
-- Customize data generation with locales
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate realistic names and addresses
+  - Create fake emails and phone numbers
+  - Generate dummy data for testing
+  - Output data to a file
+  - Customize data generation with locales
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # faker

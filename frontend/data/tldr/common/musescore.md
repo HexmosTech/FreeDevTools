@@ -1,29 +1,29 @@
 ---
-title: "Create Sheet Music - Edit Scores with MuseScore | Online Free DevTools by Hexmos"
+title: 'Create Sheet Music - Edit Scores with MuseScore | Online Free DevTools by Hexmos'
 name: musescore
-path: "/freedevtools/tldr/common/musescore/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/musescore/"
-description: "Create sheet music with MuseScore command line. Edit scores, export to various formats, and debug music notations effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/musescore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/musescore/'
+description: 'Create sheet music with MuseScore command line. Edit scores, export to various formats, and debug music notations effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- sheet music editor
-- music notation software
-- MuseScore command line
-- score editing tool
-- music XML converter
-- MIDI file export
-- music sheet printing
-- lilypond integration
-- music score diff
-- audio driver configuration
+  - sheet music editor
+  - music notation software
+  - MuseScore command line
+  - score editing tool
+  - music XML converter
+  - MIDI file export
+  - music sheet printing
+  - lilypond integration
+  - music score diff
+  - audio driver configuration
 features:
-- Export sheet music to various formats
-- Debug MuseScore with command line options
-- Configure audio drivers for music playback
-- Generate diffs between different music scores
-- Customize MIDI import operations with specific files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Export sheet music to various formats
+  - Debug MuseScore with command line options
+  - Configure audio drivers for music playback
+  - Generate diffs between different music scores
+  - Customize MIDI import operations with specific files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # musescore

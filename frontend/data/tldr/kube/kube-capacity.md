@@ -1,29 +1,29 @@
 ---
-title: "Kube-Capacity - Control Kubernetes Resources | Online Free DevTools by Hexmos"
+title: 'Kube-Capacity - Control Kubernetes Resources | Online Free DevTools by Hexmos'
 name: kube-capacity
-path: "/freedevtools/tldr/kube/kube-capacity/"
-canonical: "https://hexmos.com/freedevtools/tldr/kube/kube-capacity/"
-description: "Control Kubernetes resources with Kube-Capacity. Monitor resource requests, limits and utilization in your Kubernetes cluster. Free online tool, no registration required."
+path: '/freedevtools/tldr/kube/kube-capacity/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kube/kube-capacity/'
+description: 'Control Kubernetes resources with Kube-Capacity. Monitor resource requests, limits and utilization in your Kubernetes cluster. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes capacity monitoring
-- kubernetes resource management
-- kubernetes cluster utilization
-- kubectl resource requests
-- kubectl resource limits
-- kube-capacity resource overview
-- kubernetes resource reporting
-- kubernetes pod capacity
-- kubernetes node capacity
-- linux kubernetes capacity
+  - kubernetes capacity monitoring
+  - kubernetes resource management
+  - kubernetes cluster utilization
+  - kubectl resource requests
+  - kubectl resource limits
+  - kube-capacity resource overview
+  - kubernetes resource reporting
+  - kubernetes pod capacity
+  - kubernetes node capacity
+  - linux kubernetes capacity
 features:
-- List CPU and memory resource requests
-- Display pod-level resource consumption
-- Show cluster-wide resource utilization
-- Provide a summary of node capacity
-- Combine resource requests with actual usage
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List CPU and memory resource requests
+  - Display pod-level resource consumption
+  - Show cluster-wide resource utilization
+  - Provide a summary of node capacity
+  - Combine resource requests with actual usage
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kube-capacity

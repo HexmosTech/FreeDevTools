@@ -1,29 +1,29 @@
 ---
-title: "Manage AWS WorkMail - Control Organizations and Users | Online Free DevTools by Hexmos"
+title: 'Manage AWS WorkMail - Control Organizations and Users | Online Free DevTools by Hexmos'
 name: aws-workmail
-path: "/freedevtools/tldr/aws/aws-workmail/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-workmail/"
-description: "Manage AWS WorkMail organizations and users with this command-line tool. Control users, groups, and email configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-workmail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-workmail/'
+description: 'Manage AWS WorkMail organizations and users with this command-line tool. Control users, groups, and email configurations. Free online tool, no registration required.'
 category: common
 keywords:
-- aws workmail management
-- aws workmail command line
-- workmail user management
-- workmail organization control
-- aws cli workmail
-- workmail group management
-- aws workmail automation
-- workmail email configuration
-- aws workmail user creation
-- workmail access control
+  - aws workmail management
+  - aws workmail command line
+  - workmail user management
+  - workmail organization control
+  - aws cli workmail
+  - workmail group management
+  - aws workmail automation
+  - workmail email configuration
+  - aws workmail user creation
+  - workmail access control
 features:
-- List all WorkMail organizations.
-- Manage users within a WorkMail organization.
-- Create and manage WorkMail groups.
-- Register users and groups to WorkMail.
-- Deregister users and groups from WorkMail.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all WorkMail organizations.
+  - Manage users within a WorkMail organization.
+  - Create and manage WorkMail groups.
+  - Register users and groups to WorkMail.
+  - Deregister users and groups from WorkMail.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws workmail

@@ -1,29 +1,29 @@
 ---
-title: "Octal Dump - Format File Content | Online Free DevTools by Hexmos"
+title: 'Octal Dump - Format File Content | Online Free DevTools by Hexmos'
 name: od
-path: "/freedevtools/tldr/common/od/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/od/"
-description: "Format file content with Octal Dump. Display files in octal, decimal, or hexadecimal format, and customize the output. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/od/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/od/'
+description: 'Format file content with Octal Dump. Display files in octal, decimal, or hexadecimal format, and customize the output. Free online tool, no registration required.'
 category: common
 keywords:
-- octal dump
-- format file content
-- hex dump
-- octal display
-- hexadecimal display
-- decimal display
-- file viewer
-- file analyzer
-- linux od
-- coreutils od
+  - octal dump
+  - format file content
+  - hex dump
+  - octal display
+  - hexadecimal display
+  - decimal display
+  - file viewer
+  - file analyzer
+  - linux od
+  - coreutils od
 features:
-- Display file content in various formats (octal, decimal, hexadecimal).
-- Customize the byte offsets displayed.
-- Suppress duplicate lines in the output.
-- Read specific byte ranges within a file.
-- Control the output width for each line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display file content in various formats (octal, decimal, hexadecimal).
+  - Customize the byte offsets displayed.
+  - Suppress duplicate lines in the output.
+  - Read specific byte ranges within a file.
+  - Control the output width for each line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # od

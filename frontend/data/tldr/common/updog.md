@@ -1,29 +1,29 @@
 ---
-title: "Serve Files - Control HTTP Server with Updog | Online Free DevTools by Hexmos"
+title: 'Serve Files - Control HTTP Server with Updog | Online Free DevTools by Hexmos'
 name: updog
-path: "/freedevtools/tldr/common/updog/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/updog/"
-description: "Serve files with Updog, a lightweight HTTP server for uploads and downloads. Quickly share files and directories with basic auth and SSL support. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/updog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/updog/'
+description: 'Serve files with Updog, a lightweight HTTP server for uploads and downloads. Quickly share files and directories with basic auth and SSL support. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP file server
-- file sharing server
-- simple HTTP server
-- command-line server
-- updog file server
-- local web server
-- Python SimpleHTTPServer replacement
-- ad hoc SSL certificate server
-- HTTP basic auth server
-- directory sharing server
+  - HTTP file server
+  - file sharing server
+  - simple HTTP server
+  - command-line server
+  - updog file server
+  - local web server
+  - Python SimpleHTTPServer replacement
+  - ad hoc SSL certificate server
+  - HTTP basic auth server
+  - directory sharing server
 features:
-- Serve files and directories over HTTP/HTTPS.
-- Enable basic authentication for access control.
-- Configure SSL certificates for secure connections.
-- Specify a custom port for the server.
-- Upload files to the server via HTTP.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve files and directories over HTTP/HTTPS.
+  - Enable basic authentication for access control.
+  - Configure SSL certificates for secure connections.
+  - Specify a custom port for the server.
+  - Upload files to the server via HTTP.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # updog

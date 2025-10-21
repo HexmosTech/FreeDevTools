@@ -1,9 +1,9 @@
 ---
-title: "Opensnoop - Track File Opens on System | Online Free DevTools by Hexmos"
+title: 'Opensnoop - Track File Opens on System | Online Free DevTools by Hexmos'
 name: opensnoop
-path: "/freedevtools/tldr/osx/opensnoop/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/opensnoop/"
-description: "Track file opens on your system with Opensnoop, a powerful system observability tool for monitoring file access. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/opensnoop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/opensnoop/'
+description: 'Track file opens on your system with Opensnoop, a powerful system observability tool for monitoring file access. Free online tool, no registration required.'
 category: osx
 keywords:
   - file system monitoring
@@ -22,8 +22,8 @@ features:
   - Filter file opens by process ID
   - Identify processes accessing specific files
   - Trace system calls related to file access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # opensnoop

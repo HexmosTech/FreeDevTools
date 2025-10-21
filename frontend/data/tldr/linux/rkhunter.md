@@ -1,9 +1,9 @@
 ---
-title: "Scan for Rootkits - Control Malware with rkhunter | Online Free DevTools by Hexmos"
+title: 'Scan for Rootkits - Control Malware with rkhunter | Online Free DevTools by Hexmos'
 name: rkhunter
-path: "/freedevtools/tldr/linux/rkhunter/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rkhunter/"
-description: "Scan for rootkits with rkhunter, a security auditing tool. Detect malware, system anomalies and hidden files. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rkhunter/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rkhunter/'
+description: 'Scan for rootkits with rkhunter, a security auditing tool. Detect malware, system anomalies and hidden files. Free online tool, no registration required.'
 category: linux
 keywords:
   - rootkit scanner
@@ -22,8 +22,8 @@ features:
   - List available tests
   - Verify rkhunter version
   - Display help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rkhunter

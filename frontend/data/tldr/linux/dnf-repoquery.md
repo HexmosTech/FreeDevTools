@@ -1,9 +1,9 @@
 ---
-title: "Query Packages - DNF Repoquery Command | Online Free DevTools by Hexmos"
+title: 'Query Packages - DNF Repoquery Command | Online Free DevTools by Hexmos'
 name: dnf-repoquery
-path: "/freedevtools/tldr/linux/dnf-repoquery/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf-repoquery/"
-description: "Query package information with DNF Repoquery.  List dependencies, search repositories, and manage packages efficiently using this powerful Linux command. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dnf-repoquery/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dnf-repoquery/'
+description: 'Query package information with DNF Repoquery.  List dependencies, search repositories, and manage packages efficiently using this powerful Linux command. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package query
@@ -22,8 +22,8 @@ features:
   - Display package information (version, size, etc.)
   - Check package status (installed, updated, etc.)
   - Manage installed packages using query results
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnf repoquery

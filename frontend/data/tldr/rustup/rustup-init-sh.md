@@ -1,29 +1,29 @@
 ---
-title: "Rust Toolchain Installer - Install Rust with rustup | Online Free DevTools by Hexmos"
+title: 'Rust Toolchain Installer - Install Rust with rustup | Online Free DevTools by Hexmos'
 name: rustup-init.sh
-path: "/freedevtools/tldr/rustup/rustup-init-sh/"
-canonical: "https://hexmos-com/freedevtools/tldr/rustup/rustup-init-sh/"
-description: "Install Rust toolchains easily with rustup-init. Manage Rust versions, components, and targets. Quick rustup installer. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-init-sh/'
+canonical: 'https://hexmos-com/freedevtools/tldr/rustup/rustup-init-sh/'
+description: 'Install Rust toolchains easily with rustup-init. Manage Rust versions, components, and targets. Quick rustup installer. Free online tool, no registration required.'
 category: common
 keywords:
-- rust installer
-- rust toolchain manager
-- rust version manager
-- rustup install script
-- rust component installer
-- cross-compilation rust
-- rust target specification
-- rust environment configuration
-- rustup command line
-- rustup installation profile
+  - rust installer
+  - rust toolchain manager
+  - rust version manager
+  - rustup install script
+  - rust component installer
+  - cross-compilation rust
+  - rust target specification
+  - rust environment configuration
+  - rustup command line
+  - rustup installation profile
 features:
-- Installs Rust toolchain using rustup.
-- Configures default Rust toolchain.
-- Installs specific components and targets.
-- Supports installation profiles (minimal, default, complete).
-- Enables unattended installation with confirmation bypass.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Installs Rust toolchain using rustup.
+  - Configures default Rust toolchain.
+  - Installs specific components and targets.
+  - Supports installation profiles (minimal, default, complete).
+  - Enables unattended installation with confirmation bypass.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup-init.sh

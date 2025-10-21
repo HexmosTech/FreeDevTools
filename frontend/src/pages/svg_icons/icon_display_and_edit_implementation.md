@@ -98,7 +98,7 @@ if you need to import a js or tsx component in astro you need to do like this cl
 #### 1. **Konva.Image.fromURL()** - Simple but Limited
 
 ```js
-Konva.Image.fromURL("icon.svg", (imageNode) => {
+Konva.Image.fromURL('icon.svg', (imageNode) => {
   layer.add(imageNode);
   imageNode.setAttrs({
     x: 50,
@@ -117,9 +117,9 @@ Konva.Image.fromURL("icon.svg", (imageNode) => {
 
 ```js
 new Konva.Path({
-  data: "M10,10 L20,20 L30,10 Z", // SVG path string
-  fill: "red",
-  stroke: "black",
+  data: 'M10,10 L20,20 L30,10 Z', // SVG path string
+  fill: 'red',
+  stroke: 'black',
   strokeWidth: 2,
 });
 ```
@@ -238,7 +238,7 @@ new Konva.Stage(config);
 ```js
 // Create stage
 const stage = new Konva.Stage({
-  container: "canvas-container",
+  container: 'canvas-container',
   width: 800,
   height: 600,
 });
@@ -278,22 +278,22 @@ stage.dragBoundFunc(function (pos) {
 
 ```js
 // Mouse events
-stage.on("click", function (e) {
-  console.log("Stage clicked at:", e.target.getPointerPosition());
+stage.on('click', function (e) {
+  console.log('Stage clicked at:', e.target.getPointerPosition());
 });
 
-stage.on("mousemove", function (e) {
+stage.on('mousemove', function (e) {
   const pos = stage.getPointerPosition();
-  console.log("Mouse position:", pos);
+  console.log('Mouse position:', pos);
 });
 
 // Touch events
-stage.on("touchstart", function (e) {
-  console.log("Touch started");
+stage.on('touchstart', function (e) {
+  console.log('Touch started');
 });
 
-stage.on("touchend", function (e) {
-  console.log("Touch ended");
+stage.on('touchend', function (e) {
+  console.log('Touch ended');
 });
 ```
 
@@ -302,7 +302,7 @@ stage.on("touchend", function (e) {
 ```js
 // Export to PNG
 const dataURL = stage.toDataURL({
-  mimeType: "image/png",
+  mimeType: 'image/png',
   quality: 1,
   pixelRatio: 2,
 });
@@ -312,7 +312,7 @@ const svgString = stage.toJSON();
 
 // Export to canvas
 const canvas = stage.toCanvas({
-  mimeType: "image/png",
+  mimeType: 'image/png',
   quality: 1,
   pixelRatio: 2,
 });
@@ -323,10 +323,10 @@ const canvas = stage.toCanvas({
 ```js
 // Get all layers
 const layers = stage.getLayers();
-console.log("Number of layers:", layers.length);
+console.log('Number of layers:', layers.length);
 
 // Find specific layer
-const svgLayer = stage.findOne("#svg-layer");
+const svgLayer = stage.findOne('#svg-layer');
 
 // Clear all layers
 stage.clear();
@@ -340,12 +340,12 @@ stage.batchDraw();
 ```js
 // Get current pointer position
 const pointerPos = stage.getPointerPosition();
-console.log("Pointer at:", pointerPos);
+console.log('Pointer at:', pointerPos);
 
 // Get node at specific position
 const nodeAtPos = stage.getIntersection({ x: 100, y: 100 });
 if (nodeAtPos) {
-  console.log("Node found:", nodeAtPos.getClassName());
+  console.log('Node found:', nodeAtPos.getClassName());
 }
 
 // Get all intersections
@@ -411,7 +411,7 @@ class KonvaStageManager {
   // Export stage
   exportToPNG(config = {}) {
     return this.stage.toDataURL({
-      mimeType: "image/png",
+      mimeType: 'image/png',
       quality: 1,
       pixelRatio: 2,
       ...config,
@@ -528,7 +528,7 @@ new Konva.Layer(config);
 ```js
 // Create layer
 const layer = new Konva.Layer({
-  name: "svg-layer",
+  name: 'svg-layer',
   clearBeforeDraw: true,
   visible: true,
   listening: true,
@@ -571,14 +571,14 @@ const circle = new Konva.Circle({
   x: 100,
   y: 100,
   radius: 50,
-  fill: "red",
+  fill: 'red',
 });
 
 layer.add(circle);
 
 // Find shapes in layer
-const redShapes = layer.find(".red-shape");
-const firstShape = layer.findOne("#my-shape");
+const redShapes = layer.find('.red-shape');
+const firstShape = layer.findOne('#my-shape');
 
 // Remove shapes
 layer.removeChildren(); // Remove all
@@ -616,18 +616,18 @@ layer.toggleHitCanvas();
 
 ```js
 // Layer events
-layer.on("click", function (e) {
-  console.log("Layer clicked:", e.target);
+layer.on('click', function (e) {
+  console.log('Layer clicked:', e.target);
 });
 
-layer.on("mousemove", function (e) {
+layer.on('mousemove', function (e) {
   const pos = layer.getRelativePointerPosition();
-  console.log("Mouse position on layer:", pos);
+  console.log('Mouse position on layer:', pos);
 });
 
 // Hit detection
-layer.on("mouseover", function (e) {
-  console.log("Mouse over layer");
+layer.on('mouseover', function (e) {
+  console.log('Mouse over layer');
 });
 ```
 
@@ -636,14 +636,14 @@ layer.on("mouseover", function (e) {
 ```js
 // Export layer to PNG
 const dataURL = layer.toDataURL({
-  mimeType: "image/png",
+  mimeType: 'image/png',
   quality: 1,
   pixelRatio: 2,
 });
 
 // Export to canvas
 const canvas = layer.toCanvas({
-  mimeType: "image/png",
+  mimeType: 'image/png',
   quality: 1,
   pixelRatio: 2,
 });
@@ -668,7 +668,7 @@ class LayerManager {
   createDefaultLayers() {
     // Background layer
     this.layers.background = new Konva.Layer({
-      name: "background",
+      name: 'background',
       clearBeforeDraw: true,
       visible: true,
       listening: false, // Background doesn't need events
@@ -676,7 +676,7 @@ class LayerManager {
 
     // SVG layer
     this.layers.svg = new Konva.Layer({
-      name: "svg",
+      name: 'svg',
       clearBeforeDraw: true,
       visible: true,
       listening: true,
@@ -684,7 +684,7 @@ class LayerManager {
 
     // UI layer
     this.layers.ui = new Konva.Layer({
-      name: "ui",
+      name: 'ui',
       clearBeforeDraw: true,
       visible: true,
       listening: true,
@@ -774,7 +774,7 @@ class LayerManager {
     const layer = this.layers[layerName];
     if (layer) {
       return layer.toDataURL({
-        mimeType: "image/png",
+        mimeType: 'image/png',
         quality: 1,
         pixelRatio: 2,
         ...config,
@@ -906,17 +906,17 @@ transformer.keepRatio(true);
 transformer.centeredScaling(false);
 
 // Set colors
-transformer.borderStroke("#00ff00");
+transformer.borderStroke('#00ff00');
 transformer.borderStrokeWidth(2);
-transformer.anchorFill("#ff0000");
-transformer.anchorStroke("#000000");
+transformer.anchorFill('#ff0000');
+transformer.anchorStroke('#000000');
 transformer.anchorStrokeWidth(1);
 
 // Set rotation behavior
 transformer.rotationSnaps([0, 45, 90, 135, 180, 225, 270, 315]);
 transformer.rotationSnapTolerance(10);
 transformer.rotateAnchorOffset(60);
-transformer.rotateAnchorCursor("grab");
+transformer.rotateAnchorCursor('grab');
 ```
 
 ##### Anchor Configuration
@@ -924,14 +924,14 @@ transformer.rotateAnchorCursor("grab");
 ```js
 // Enable specific anchors
 transformer.enabledAnchors([
-  "top-left",
-  "top-right",
-  "bottom-left",
-  "bottom-right",
-  "top-center",
-  "bottom-center",
-  "middle-left",
-  "middle-right",
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+  'top-center',
+  'bottom-center',
+  'middle-left',
+  'middle-right',
 ]);
 
 // Disable rotation
@@ -948,31 +948,31 @@ transformer.flipEnabled(true);
 
 ```js
 // Transform events
-transformer.on("transformstart", function (e) {
-  console.log("Transform started");
+transformer.on('transformstart', function (e) {
+  console.log('Transform started');
 });
 
-transformer.on("transform", function (e) {
-  console.log("Transforming...");
+transformer.on('transform', function (e) {
+  console.log('Transforming...');
   // Update UI or perform actions during transform
 });
 
-transformer.on("transformend", function (e) {
-  console.log("Transform ended");
+transformer.on('transformend', function (e) {
+  console.log('Transform ended');
   // Save state, update history, etc.
 });
 
 // Anchor events
-transformer.on("dragstart", function (e) {
-  console.log("Drag started on anchor:", transformer.getActiveAnchor());
+transformer.on('dragstart', function (e) {
+  console.log('Drag started on anchor:', transformer.getActiveAnchor());
 });
 
-transformer.on("dragmove", function (e) {
-  console.log("Dragging anchor:", transformer.getActiveAnchor());
+transformer.on('dragmove', function (e) {
+  console.log('Dragging anchor:', transformer.getActiveAnchor());
 });
 
-transformer.on("dragend", function (e) {
-  console.log("Drag ended on anchor:", transformer.getActiveAnchor());
+transformer.on('dragend', function (e) {
+  console.log('Drag ended on anchor:', transformer.getActiveAnchor());
 });
 ```
 
@@ -1003,10 +1003,10 @@ transformer.anchorDragBoundFunc(function (oldPos, newPos, e) {
 // Custom anchor styling
 transformer.anchorStyleFunc(function (anchor, shape) {
   // Different styles for different anchors
-  if (anchor === "top-left" || anchor === "bottom-right") {
-    anchor.fill("red");
+  if (anchor === 'top-left' || anchor === 'bottom-right') {
+    anchor.fill('red');
   } else {
-    anchor.fill("blue");
+    anchor.fill('blue');
   }
 });
 ```
@@ -1049,20 +1049,20 @@ class TransformManager {
 
   setupEventHandlers() {
     // Transform events
-    this.transformer.on("transformstart", (e) => {
+    this.transformer.on('transformstart', (e) => {
       this.onTransformStart(e);
     });
 
-    this.transformer.on("transform", (e) => {
+    this.transformer.on('transform', (e) => {
       this.onTransform(e);
     });
 
-    this.transformer.on("transformend", (e) => {
+    this.transformer.on('transformend', (e) => {
       this.onTransformEnd(e);
     });
 
     // Click events for selection
-    this.layer.on("click", (e) => {
+    this.layer.on('click', (e) => {
       this.handleClick(e);
     });
   }
@@ -1127,7 +1127,7 @@ class TransformManager {
     if (clickedShape === this.layer) {
       // Clicked on empty space - deselect all
       this.deselectAll();
-    } else if (clickedShape.getType() !== "Transformer") {
+    } else if (clickedShape.getType() !== 'Transformer') {
       // Clicked on a shape - select it
       this.selectShape(clickedShape);
     }
@@ -1135,17 +1135,17 @@ class TransformManager {
 
   // Transform event handlers
   onTransformStart(e) {
-    console.log("Transform started");
+    console.log('Transform started');
     // Store initial state for undo/redo
   }
 
   onTransform(e) {
-    console.log("Transforming...");
+    console.log('Transforming...');
     // Update UI during transform
   }
 
   onTransformEnd(e) {
-    console.log("Transform ended");
+    console.log('Transform ended');
     // Save final state
   }
 
@@ -1350,9 +1350,9 @@ new Konva.Path(config);
 ```js
 // Create path from SVG data
 const path = new Konva.Path({
-  data: "M10,10 L20,20 L30,10 Z",
-  fill: "red",
-  stroke: "black",
+  data: 'M10,10 L20,20 L30,10 Z',
+  fill: 'red',
+  stroke: 'black',
   strokeWidth: 2,
 });
 
@@ -1366,10 +1366,10 @@ layer.draw();
 ```js
 // Convert SVG path element to Konva Path
 function createPathFromSVG(svgPathElement) {
-  const pathData = svgPathElement.getAttribute("d");
-  const fill = svgPathElement.getAttribute("fill") || "black";
-  const stroke = svgPathElement.getAttribute("stroke");
-  const strokeWidth = svgPathElement.getAttribute("stroke-width") || 1;
+  const pathData = svgPathElement.getAttribute('d');
+  const fill = svgPathElement.getAttribute('fill') || 'black';
+  const stroke = svgPathElement.getAttribute('stroke');
+  const strokeWidth = svgPathElement.getAttribute('stroke-width') || 1;
 
   return new Konva.Path({
     data: pathData,
@@ -1380,7 +1380,7 @@ function createPathFromSVG(svgPathElement) {
 }
 
 // Usage
-const svgPath = document.querySelector("path");
+const svgPath = document.querySelector('path');
 const konvaPath = createPathFromSVG(svgPath);
 layer.add(konvaPath);
 ```
@@ -1389,19 +1389,19 @@ layer.add(konvaPath);
 
 ```js
 // Basic styling
-path.fill("blue");
-path.stroke("red");
+path.fill('blue');
+path.stroke('red');
 path.strokeWidth(3);
 path.opacity(0.8);
 
 // Advanced styling
-path.lineJoin("round");
-path.lineCap("round");
+path.lineJoin('round');
+path.lineCap('round');
 path.dash([5, 5]);
 path.dashEnabled(true);
 
 // Shadow
-path.shadowColor("black");
+path.shadowColor('black');
 path.shadowBlur(10);
 path.shadowOffset({ x: 2, y: 2 });
 path.shadowOpacity(0.5);
@@ -1414,16 +1414,16 @@ path.shadowEnabled(true);
 // Linear gradient
 path.fillLinearGradientStartPoint({ x: 0, y: 0 });
 path.fillLinearGradientEndPoint({ x: 100, y: 100 });
-path.fillLinearGradientColorStops([0, "red", 0.5, "yellow", 1, "blue"]);
-path.fillPriority("linear-gradient");
+path.fillLinearGradientColorStops([0, 'red', 0.5, 'yellow', 1, 'blue']);
+path.fillPriority('linear-gradient');
 
 // Radial gradient
 path.fillRadialGradientStartPoint({ x: 50, y: 50 });
 path.fillRadialGradientEndPoint({ x: 50, y: 50 });
 path.fillRadialGradientStartRadius(0);
 path.fillRadialGradientEndRadius(50);
-path.fillRadialGradientColorStops([0, "red", 1, "blue"]);
-path.fillPriority("radial-gradient");
+path.fillRadialGradientColorStops([0, 'red', 1, 'blue']);
+path.fillPriority('radial-gradient');
 ```
 
 ##### Pattern Fills
@@ -1433,14 +1433,14 @@ path.fillPriority("radial-gradient");
 const patternImage = new Image();
 patternImage.onload = function () {
   path.fillPatternImage(patternImage);
-  path.fillPatternRepeat("repeat");
+  path.fillPatternRepeat('repeat');
   path.fillPatternScale({ x: 0.5, y: 0.5 });
   path.fillPatternOffset({ x: 10, y: 10 });
   path.fillPatternRotation(45);
-  path.fillPriority("pattern");
+  path.fillPriority('pattern');
   layer.draw();
 };
-patternImage.src = "pattern.png";
+patternImage.src = 'pattern.png';
 ```
 
 ##### Path Manipulation
@@ -1448,14 +1448,14 @@ patternImage.src = "pattern.png";
 ```js
 // Get path length
 const length = path.getLength();
-console.log("Path length:", length);
+console.log('Path length:', length);
 
 // Get point at specific length
 const point = path.getPointAtLength(length / 2);
-console.log("Point at middle:", point);
+console.log('Point at middle:', point);
 
 // Update path data
-path.data("M0,0 L100,0 L100,100 L0,100 Z");
+path.data('M0,0 L100,0 L100,100 L0,100 Z');
 layer.draw();
 ```
 
@@ -1471,23 +1471,23 @@ class SVGManager {
   // Load SVG from string
   loadSVG(svgString) {
     const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(svgString, "image/svg+xml");
-    const svgElement = svgDoc.querySelector("svg");
+    const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
+    const svgElement = svgDoc.querySelector('svg');
 
     if (!svgElement) {
-      throw new Error("Invalid SVG string");
+      throw new Error('Invalid SVG string');
     }
 
     // Clear existing paths
     this.clearPaths();
 
     // Extract viewBox and dimensions
-    const viewBox = svgElement.getAttribute("viewBox");
-    const width = svgElement.getAttribute("width");
-    const height = svgElement.getAttribute("height");
+    const viewBox = svgElement.getAttribute('viewBox');
+    const width = svgElement.getAttribute('width');
+    const height = svgElement.getAttribute('height');
 
     // Convert all path elements
-    const pathElements = svgElement.querySelectorAll("path");
+    const pathElements = svgElement.querySelectorAll('path');
     pathElements.forEach((pathElement, index) => {
       const konvaPath = this.createPathFromElement(pathElement, index);
       this.paths.push(konvaPath);
@@ -1500,11 +1500,11 @@ class SVGManager {
 
   // Create Konva path from SVG path element
   createPathFromElement(pathElement, index) {
-    const pathData = pathElement.getAttribute("d");
-    const fill = pathElement.getAttribute("fill") || "black";
-    const stroke = pathElement.getAttribute("stroke");
-    const strokeWidth = pathElement.getAttribute("stroke-width");
-    const opacity = pathElement.getAttribute("opacity");
+    const pathData = pathElement.getAttribute('d');
+    const fill = pathElement.getAttribute('fill') || 'black';
+    const stroke = pathElement.getAttribute('stroke');
+    const strokeWidth = pathElement.getAttribute('stroke-width');
+    const opacity = pathElement.getAttribute('opacity');
 
     return new Konva.Path({
       data: pathData,
@@ -1576,7 +1576,7 @@ class SVGManager {
       .map((path) => {
         return `<path d="${path.data()}" fill="${path.fill()}" stroke="${path.stroke()}" stroke-width="${path.strokeWidth()}"/>`;
       })
-      .join("\n");
+      .join('\n');
 
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${svgPaths}</svg>`;
   }
@@ -1824,7 +1824,7 @@ new Konva.Image(config);
 
 ```js
 // Create image from existing image element
-const imageElement = document.getElementById("myImage");
+const imageElement = document.getElementById('myImage');
 const konvaImage = new Konva.Image({
   image: imageElement,
   x: 0,
@@ -1843,7 +1843,7 @@ layer.draw();
 ```js
 // Load image from URL
 Konva.Image.fromURL(
-  "path/to/image.png",
+  'path/to/image.png',
   function (imageNode) {
     imageNode.setAttrs({
       x: 0,
@@ -1856,7 +1856,7 @@ Konva.Image.fromURL(
     layer.draw();
   },
   function (error) {
-    console.error("Failed to load image:", error);
+    console.error('Failed to load image:', error);
   }
 );
 ```
@@ -1866,8 +1866,8 @@ Konva.Image.fromURL(
 ```js
 // Load SVG as image
 function loadSVGAsImage(svgString, callback) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
   const img = new Image();
 
   img.onload = function () {
@@ -1887,7 +1887,7 @@ function loadSVGAsImage(svgString, callback) {
   };
 
   // Convert SVG to data URL
-  const svgBlob = new Blob([svgString], { type: "image/svg+xml" });
+  const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
   const url = URL.createObjectURL(svgBlob);
   img.src = url;
 }
@@ -1935,8 +1935,8 @@ image.cropHeight(150);
 ```js
 // Create solid color background
 function createSolidBackground(color, width, height) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
 
   canvas.width = width;
   canvas.height = height;
@@ -1949,14 +1949,14 @@ function createSolidBackground(color, width, height) {
     y: 0,
     width: width,
     height: height,
-    name: "background",
+    name: 'background',
   });
 }
 
 // Create gradient background
 function createGradientBackground(startColor, endColor, width, height) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
 
   canvas.width = width;
   canvas.height = height;
@@ -1974,7 +1974,7 @@ function createGradientBackground(startColor, endColor, width, height) {
     y: 0,
     width: width,
     height: height,
-    name: "background",
+    name: 'background',
   });
 }
 ```
@@ -1984,13 +1984,13 @@ function createGradientBackground(startColor, endColor, width, height) {
 ```js
 // Create pattern fill
 function createPatternFill(patternImage, width, height) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
 
   canvas.width = width;
   canvas.height = height;
 
-  const pattern = ctx.createPattern(patternImage, "repeat");
+  const pattern = ctx.createPattern(patternImage, 'repeat');
   ctx.fillStyle = pattern;
   ctx.fillRect(0, 0, width, height);
 
@@ -2000,7 +2000,7 @@ function createPatternFill(patternImage, width, height) {
     y: 0,
     width: width,
     height: height,
-    name: "pattern-background",
+    name: 'pattern-background',
   });
 }
 ```
@@ -2016,8 +2016,8 @@ class ShapeManager {
 
   // Create circle background
   createCircle(color, radius, x = 0, y = 0) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
     const size = radius * 2;
     canvas.width = size;
@@ -2047,8 +2047,8 @@ class ShapeManager {
 
   // Create square background
   createSquare(color, size, x = 0, y = 0) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
     canvas.width = size;
     canvas.height = size;
@@ -2075,8 +2075,8 @@ class ShapeManager {
 
   // Create rounded square background
   createRoundedSquare(color, size, cornerRadius, x = 0, y = 0) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
     canvas.width = size;
     canvas.height = size;
@@ -2108,7 +2108,7 @@ class ShapeManager {
     const shape = this.getShape(shapeName);
     if (shape) {
       const canvas = shape.image();
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
 
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -2155,17 +2155,17 @@ class ShapeManager {
 ```js
 // Apply filters to image
 function applyFilters(image, filters) {
-  if (filters.includes("blur")) {
+  if (filters.includes('blur')) {
     image.filters([Konva.Filters.Blur]);
     image.blurRadius(5);
   }
 
-  if (filters.includes("brightness")) {
+  if (filters.includes('brightness')) {
     image.filters([Konva.Filters.Brighten]);
     image.brightness(0.2);
   }
 
-  if (filters.includes("contrast")) {
+  if (filters.includes('contrast')) {
     image.filters([Konva.Filters.Contrast]);
     image.contrast(0.5);
   }
@@ -2179,7 +2179,7 @@ function applyFilters(image, filters) {
 
 ```js
 // Convert image to data URL
-function imageToDataURL(image, mimeType = "image/png", quality = 1) {
+function imageToDataURL(image, mimeType = 'image/png', quality = 1) {
   return image.toDataURL({
     mimeType: mimeType,
     quality: quality,
@@ -2188,7 +2188,7 @@ function imageToDataURL(image, mimeType = "image/png", quality = 1) {
 }
 
 // Convert image to blob
-function imageToBlob(image, mimeType = "image/png", quality = 1) {
+function imageToBlob(image, mimeType = 'image/png', quality = 1) {
   return new Promise((resolve, reject) => {
     image.toBlob({
       mimeType: mimeType,
@@ -2203,7 +2203,7 @@ function imageToBlob(image, mimeType = "image/png", quality = 1) {
 // Convert image to canvas
 function imageToCanvas(image, config = {}) {
   return image.toCanvas({
-    mimeType: "image/png",
+    mimeType: 'image/png',
     quality: 1,
     pixelRatio: 2,
     ...config,
@@ -2310,7 +2310,7 @@ new Konva.Group(config);
 const group = new Konva.Group({
   x: 0,
   y: 0,
-  name: "my-group",
+  name: 'my-group',
   draggable: true,
 });
 
@@ -2327,7 +2327,7 @@ const circle = new Konva.Circle({
   x: 50,
   y: 50,
   radius: 25,
-  fill: "red",
+  fill: 'red',
 });
 
 const rect = new Konva.Rect({
@@ -2335,7 +2335,7 @@ const rect = new Konva.Rect({
   y: 100,
   width: 50,
   height: 50,
-  fill: "blue",
+  fill: 'blue',
 });
 
 // Add shapes to group
@@ -2350,17 +2350,17 @@ group.add([circle, rect]);
 
 ```js
 // Find shapes in group
-const redShapes = group.find(".red-shape");
-const firstShape = group.findOne("#my-shape");
+const redShapes = group.find('.red-shape');
+const firstShape = group.findOne('#my-shape');
 
 // Check if group has children
 if (group.hasChildren()) {
-  console.log("Group has children");
+  console.log('Group has children');
 }
 
 // Get all children
 const children = group.getChildren();
-console.log("Number of children:", children.length);
+console.log('Number of children:', children.length);
 
 // Remove specific child
 circle.remove();
@@ -2418,22 +2418,22 @@ group.clip(null);
 
 ```js
 // Group events
-group.on("click", function (e) {
-  console.log("Group clicked:", e.target);
+group.on('click', function (e) {
+  console.log('Group clicked:', e.target);
 });
 
-group.on("dragstart", function (e) {
-  console.log("Group drag started");
+group.on('dragstart', function (e) {
+  console.log('Group drag started');
 });
 
-group.on("dragend", function (e) {
-  console.log("Group drag ended");
+group.on('dragend', function (e) {
+  console.log('Group drag ended');
 });
 
 // Child events
-group.on("click", function (e) {
+group.on('click', function (e) {
   if (e.target !== group) {
-    console.log("Child clicked:", e.target);
+    console.log('Child clicked:', e.target);
   }
 });
 ```
@@ -2485,7 +2485,7 @@ class SVGGroupManager {
   // Remove shape from group
   removeFromGroup(shape) {
     const parent = shape.getParent();
-    if (parent && parent.getType() === "Group") {
+    if (parent && parent.getType() === 'Group') {
       shape.remove();
       this.layer.draw();
     }
@@ -2607,25 +2607,25 @@ class LayerOrganizer {
   initializeGroups() {
     // Background group (bottom layer)
     this.backgroundGroup = new Konva.Group({
-      name: "background",
+      name: 'background',
       listening: false,
     });
 
     // SVG group (middle layer)
     this.svgGroup = new Konva.Group({
-      name: "svg",
+      name: 'svg',
       listening: true,
     });
 
     // Shape group (middle layer)
     this.shapeGroup = new Konva.Group({
-      name: "shapes",
+      name: 'shapes',
       listening: true,
     });
 
     // UI group (top layer)
     this.uiGroup = new Konva.Group({
-      name: "ui",
+      name: 'ui',
       listening: true,
     });
 
@@ -2656,13 +2656,13 @@ class LayerOrganizer {
   // Get group by name
   getGroup(name) {
     switch (name) {
-      case "background":
+      case 'background':
         return this.backgroundGroup;
-      case "svg":
+      case 'svg':
         return this.svgGroup;
-      case "shapes":
+      case 'shapes':
         return this.shapeGroup;
-      case "ui":
+      case 'ui':
         return this.uiGroup;
       default:
         return null;
@@ -2735,14 +2735,14 @@ const groupData = group.toJSON();
 
 // Export group as image
 const groupImage = group.toDataURL({
-  mimeType: "image/png",
+  mimeType: 'image/png',
   quality: 1,
   pixelRatio: 2,
 });
 
 // Export group as canvas
 const groupCanvas = group.toCanvas({
-  mimeType: "image/png",
+  mimeType: 'image/png',
   quality: 1,
   pixelRatio: 2,
 });

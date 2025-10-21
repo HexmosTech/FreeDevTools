@@ -1,29 +1,29 @@
 ---
-title: "Arionum CLI - Manage Crypto Wallet | Online Free DevTools by Hexmos"
+title: 'Arionum CLI - Manage Crypto Wallet | Online Free DevTools by Hexmos'
 name: light-arionum-cli
-path: "/freedevtools/tldr/common/light-arionum-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/light-arionum-cli/"
-description: "Manage Arionum crypto wallet with light-arionum-cli. Send transactions, check balances, and export wallet data with this simple command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/light-arionum-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/light-arionum-cli/'
+description: 'Manage Arionum crypto wallet with light-arionum-cli. Send transactions, check balances, and export wallet data with this simple command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- arionum cli wallet
-- arionum command line
-- crypto wallet manager
-- arionum transaction sender
-- arionum balance checker
-- arionum key pair generator
-- blockchain transaction viewer
-- crypto wallet exporter
-- arionum block explorer
-- arionum address lookup
+  - arionum cli wallet
+  - arionum command line
+  - crypto wallet manager
+  - arionum transaction sender
+  - arionum balance checker
+  - arionum key pair generator
+  - blockchain transaction viewer
+  - crypto wallet exporter
+  - arionum block explorer
+  - arionum address lookup
 features:
-- Generate new Arionum public/private key pairs.
-- Display the balance of Arionum addresses.
-- Send Arionum transactions with optional messages.
-- Export current Arionum wallet information.
-- Display information about specific Arionum blocks and transactions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate new Arionum public/private key pairs.
+  - Display the balance of Arionum addresses.
+  - Send Arionum transactions with optional messages.
+  - Export current Arionum wallet information.
+  - Display information about specific Arionum blocks and transactions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # light-arionum-cli

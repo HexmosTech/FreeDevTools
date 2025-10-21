@@ -1,9 +1,9 @@
 ---
-title: "Manage Gentoo with eselect - Control System Configurations | Online Free DevTools by Hexmos"
+title: 'Manage Gentoo with eselect - Control System Configurations | Online Free DevTools by Hexmos'
 name: eselect
-path: "/freedevtools/tldr/linux/eselect/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eselect/"
-description: "Control Gentoo system configurations with eselect, a versatile command-line tool for managing various modules.  Easily manage packages and system settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eselect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eselect/'
+description: 'Control Gentoo system configurations with eselect, a versatile command-line tool for managing various modules.  Easily manage packages and system settings. Free online tool, no registration required.'
 category: linux
 keywords:
   - Gentoo package management
@@ -22,8 +22,8 @@ features:
   - Control kernel selection and installation
   - Manage locale settings and configurations
   - Adjust Gentoo system profiles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eselect

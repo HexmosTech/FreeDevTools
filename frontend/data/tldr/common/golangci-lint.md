@@ -1,29 +1,29 @@
 ---
-title: "Golang Linter - Validate Go Code | Online Free DevTools by Hexmos"
+title: 'Golang Linter - Validate Go Code | Online Free DevTools by Hexmos'
 name: golangci-lint
-path: "/freedevtools/tldr/common/golangci-lint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/golangci-lint/"
-description: "Validate Go code instantly with GolangCI-Lint. Find bugs, enforce coding standards, and improve code quality using this fast linter. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/golangci-lint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/golangci-lint/'
+description: 'Validate Go code instantly with GolangCI-Lint. Find bugs, enforce coding standards, and improve code quality using this fast linter. Free online tool, no registration required.'
 category: common
 keywords:
-- Go code linter
-- Go static analysis
-- Go code quality check
-- Golang linting tool
-- Code analysis tool
-- Golang CI/CD linter
-- Go code style checker
-- YAML linter configuration
-- Golang code scanner
-- Go bug finder
+  - Go code linter
+  - Go static analysis
+  - Go code quality check
+  - Golang linting tool
+  - Code analysis tool
+  - Golang CI/CD linter
+  - Go code style checker
+  - YAML linter configuration
+  - Golang code scanner
+  - Go bug finder
 features:
-- Run multiple linters in parallel
-- Customize linter configuration using YAML
-- Enable or disable specific linters
-- Integrate with major IDEs
-- Identify code style violations and potential bugs
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run multiple linters in parallel
+  - Customize linter configuration using YAML
+  - Enable or disable specific linters
+  - Integrate with major IDEs
+  - Identify code style violations and potential bugs
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # golangci-lint

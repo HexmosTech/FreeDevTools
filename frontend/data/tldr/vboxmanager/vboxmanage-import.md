@@ -1,29 +1,29 @@
 ---
-title: "VBoxManage Import - Import VMs | Online Free DevTools by Hexmos"
+title: 'VBoxManage Import - Import VMs | Online Free DevTools by Hexmos'
 name: vboxmanage-import
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-import/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-import/"
-description: "Import VMs with VBoxManage. Manage virtual machines, set memory, CPUs, and guest OS types with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-import/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-import/'
+description: 'Import VMs with VBoxManage. Manage virtual machines, set memory, CPUs, and guest OS types with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- vm import
-- vboxmanage import vm
-- virtualbox import ovf
-- ovf import
-- ova import
-- virtual machine import
-- vboxmanage
-- virtualbox command
-- command line vm
-- virtual machine management
+  - vm import
+  - vboxmanage import vm
+  - virtualbox import ovf
+  - ovf import
+  - ova import
+  - virtual machine import
+  - vboxmanage
+  - virtualbox command
+  - command line vm
+  - virtual machine management
 features:
-- Import virtual machines from OVF or OVA files
-- Set the name and configuration directory of the imported VM
-- Register the imported VM in VirtualBox
-- Perform dry runs to check the import process
-- Configure memory, CPUs, and guest OS type for the imported VM
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Import virtual machines from OVF or OVA files
+  - Set the name and configuration directory of the imported VM
+  - Register the imported VM in VirtualBox
+  - Perform dry runs to check the import process
+  - Configure memory, CPUs, and guest OS type for the imported VM
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage import

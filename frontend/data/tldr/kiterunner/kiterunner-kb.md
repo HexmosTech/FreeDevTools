@@ -1,29 +1,29 @@
 ---
-title: "Kiterunner Schema - Compile and Replay API Endpoints | Online Free DevTools by Hexmos"
+title: 'Kiterunner Schema - Compile and Replay API Endpoints | Online Free DevTools by Hexmos'
 name: kiterunner-kb
-path: "/freedevtools/tldr/kiterunner/kiterunner-kb/"
-canonical: "https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-kb/"
-description: "Compile Kiterunner schemas and replay API endpoints with Kiterunner KB. Convert between JSON, KITE, and TXT formats for endpoint discovery. Free online tool, no registration required."
+path: '/freedevtools/tldr/kiterunner/kiterunner-kb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kiterunner/kiterunner-kb/'
+description: 'Compile Kiterunner schemas and replay API endpoints with Kiterunner KB. Convert between JSON, KITE, and TXT formats for endpoint discovery. Free online tool, no registration required.'
 category: common
 keywords:
-- Kiterunner schema compiler
-- API endpoint discovery
-- KITE file converter
-- JSON schema parser
-- Web endpoint replay
-- Kiterunner wordlist manager
-- API schema manipulation
-- Kiterunner request replayer
-- Schema conversion tool
-- API endpoint scanner
+  - Kiterunner schema compiler
+  - API endpoint discovery
+  - KITE file converter
+  - JSON schema parser
+  - Web endpoint replay
+  - Kiterunner wordlist manager
+  - API schema manipulation
+  - Kiterunner request replayer
+  - Schema conversion tool
+  - API endpoint scanner
 features:
-- Compile JSON schemas to KITE files
-- Convert KITE files to text wordlists
-- Parse KITE files and output JSON/text data
-- Replay specific requests from KITE schemas
-- Replay requests through a proxy for inspection
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile JSON schemas to KITE files
+  - Convert KITE files to text wordlists
+  - Parse KITE files and output JSON/text data
+  - Replay specific requests from KITE schemas
+  - Replay requests through a proxy for inspection
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kiterunner kb

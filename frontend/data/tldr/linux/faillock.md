@@ -1,9 +1,9 @@
 ---
-title: "Faillock - Manage Login Failures | Online Free DevTools by Hexmos"
+title: 'Faillock - Manage Login Failures | Online Free DevTools by Hexmos'
 name: faillock
-path: "/freedevtools/tldr/linux/faillock/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/faillock/"
-description: "Manage login failures with Faillock.  View and reset authentication failure records for individual users or all users. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/faillock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/faillock/'
+description: 'Manage login failures with Faillock.  View and reset authentication failure records for individual users or all users. Free online tool, no registration required.'
 category: linux
 keywords:
   - login failure management
@@ -22,8 +22,8 @@ features:
   - List login failures for all users (requires sudo).
   - List login failures for a specific user (requires sudo).
   - Reset login failure records for a specific user (requires sudo).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # faillock

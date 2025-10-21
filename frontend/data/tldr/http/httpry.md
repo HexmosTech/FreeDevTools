@@ -1,29 +1,29 @@
 ---
-title: "Capture HTTP Traffic - Analyze Network Packets | Online Free DevTools by Hexmos"
+title: 'Capture HTTP Traffic - Analyze Network Packets | Online Free DevTools by Hexmos'
 name: httpry
-path: "/freedevtools/tldr/http/httpry/"
-canonical: "https://hexmos.com/freedevtools/tldr/http/httpry/"
-description: "Capture HTTP traffic with httpry, a lightweight packet sniffer for analyzing network traffic. Free online tool, no registration required."
+path: '/freedevtools/tldr/http/httpry/'
+canonical: 'https://hexmos.com/freedevtools/tldr/http/httpry/'
+description: 'Capture HTTP traffic with httpry, a lightweight packet sniffer for analyzing network traffic. Free online tool, no registration required.'
 category: common
 keywords:
-- HTTP traffic capture
-- Network packet analysis
-- Packet sniffer
-- HTTP monitoring tool
-- Network traffic analyzer
-- HTTP session recording
-- Linux network analysis
-- macOS network analysis
-- Command-line packet capture
-- HTTP debugging tool
+  - HTTP traffic capture
+  - Network packet analysis
+  - Packet sniffer
+  - HTTP monitoring tool
+  - Network traffic analyzer
+  - HTTP session recording
+  - Linux network analysis
+  - macOS network analysis
+  - Command-line packet capture
+  - HTTP debugging tool
 features:
-- Capture and display HTTP traffic in real-time
-- Log HTTP traffic to a file for later analysis
-- Filter HTTP traffic based on HTTP verbs
-- Capture network packets in PCAP format
-- Run as a daemon process for continuous monitoring
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture and display HTTP traffic in real-time
+  - Log HTTP traffic to a file for later analysis
+  - Filter HTTP traffic based on HTTP verbs
+  - Capture network packets in PCAP format
+  - Run as a daemon process for continuous monitoring
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # httpry

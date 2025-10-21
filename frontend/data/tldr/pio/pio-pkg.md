@@ -1,29 +1,29 @@
 ---
-title: "PIO Package Manager - Manage Packages | Online Free DevTools by Hexmos"
+title: 'PIO Package Manager - Manage Packages | Online Free DevTools by Hexmos'
 name: pio-pkg
-path: "/freedevtools/tldr/pio/pio-pkg/"
-canonical: "https://hexmos.com/freedevtools/tldr/pio/pio-pkg/"
-description: "Manage packages with PIO Package Manager. Publish, unpublish, and version PlatformIO packages using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/pio/pio-pkg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pio/pio-pkg/'
+description: 'Manage packages with PIO Package Manager. Publish, unpublish, and version PlatformIO packages using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- platformio package manager
-- pio package publishing
-- pio package unpublishing
-- pio package versioning
-- platformio library manager
-- platformio dependency management
-- pio package tarball
-- platformio registry
-- platformio package control
-- package management command line
+  - platformio package manager
+  - pio package publishing
+  - pio package unpublishing
+  - pio package versioning
+  - platformio library manager
+  - platformio dependency management
+  - pio package tarball
+  - platformio registry
+  - platformio package control
+  - package management command line
 features:
-- Create PlatformIO package tarballs
-- Publish packages to the PlatformIO registry
-- Unpublish packages from the PlatformIO registry
-- Manage package versions
-- Control package access (public/private)
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create PlatformIO package tarballs
+  - Publish packages to the PlatformIO registry
+  - Unpublish packages from the PlatformIO registry
+  - Manage package versions
+  - Control package access (public/private)
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pio pkg

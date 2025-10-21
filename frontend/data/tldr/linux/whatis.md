@@ -1,9 +1,9 @@
 ---
-title: "Whatis Command - Display Man Page Descriptions | Online Free DevTools by Hexmos"
+title: 'Whatis Command - Display Man Page Descriptions | Online Free DevTools by Hexmos'
 name: whatis
-path: "/freedevtools/tldr/linux/whatis/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/whatis/"
-description: "Quickly display man page descriptions with the whatis command.  Access concise summaries and detailed information using various options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/whatis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/whatis/'
+description: 'Quickly display man page descriptions with the whatis command.  Access concise summaries and detailed information using various options. Free online tool, no registration required.'
 category: linux
 keywords:
   - man page description
@@ -22,8 +22,8 @@ features:
   - Search for multiple commands matching a glob pattern using --wildcard.
   - Utilize regular expressions for targeted searches with --regex.
   - Specify language for descriptions using --locale.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # whatis

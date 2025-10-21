@@ -1,9 +1,9 @@
 ---
-title: "Clone VM - Create Virtual Machine Copies | Online Free DevTools by Hexmos"
+title: 'Clone VM - Create Virtual Machine Copies | Online Free DevTools by Hexmos'
 name: qm-clone
-path: "/freedevtools/tldr/linux/qm-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-clone/"
-description: "Create virtual machine copies with Qm Clone. Easily clone VMs, manage disk formats, and integrate with Proxmox pools. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-clone/'
+description: 'Create virtual machine copies with Qm Clone. Easily clone VMs, manage disk formats, and integrate with Proxmox pools. Free online tool, no registration required.'
 category: linux
 keywords:
   - virtual machine clone
@@ -22,8 +22,8 @@ features:
   - Specify different storage formats during clone (qcow2, raw, vmdk)
   - Integrate cloned VMs with Proxmox resource pools
   - Create full or linked clones of virtual machine disks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm clone

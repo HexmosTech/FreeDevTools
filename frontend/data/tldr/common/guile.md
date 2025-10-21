@@ -1,29 +1,29 @@
 ---
-title: "Guile Interpreter - Run Scheme Code | Online Free DevTools by Hexmos"
+title: 'Guile Interpreter - Run Scheme Code | Online Free DevTools by Hexmos'
 name: guile
-path: "/freedevtools/tldr/common/guile/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/guile/"
-description: "Run Scheme code with Guile Interpreter. Execute scripts, expressions, and start interactive shells using command-line options. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/guile/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/guile/'
+description: 'Run Scheme code with Guile Interpreter. Execute scripts, expressions, and start interactive shells using command-line options. Free online tool, no registration required.'
 category: common
 keywords:
-- scheme interpreter
-- guile repl
-- gnu guile
-- scheme script execution
-- guile expression execution
-- guile remote repl
-- scheme coding
-- linux scheme
-- macos scheme
-- unix scheme interpreter
+  - scheme interpreter
+  - guile repl
+  - gnu guile
+  - scheme script execution
+  - guile expression execution
+  - guile remote repl
+  - scheme coding
+  - linux scheme
+  - macos scheme
+  - unix scheme interpreter
 features:
-- Start an interactive Scheme REPL
-- Execute Scheme code from a file
-- Evaluate Scheme expressions directly
-- Listen for remote REPL connections on a port
-- Listen for remote REPL connections on a Unix socket
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start an interactive Scheme REPL
+  - Execute Scheme code from a file
+  - Evaluate Scheme expressions directly
+  - Listen for remote REPL connections on a port
+  - Listen for remote REPL connections on a Unix socket
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # guile

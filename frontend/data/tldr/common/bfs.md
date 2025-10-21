@@ -1,29 +1,29 @@
 ---
-title: "Find Files - Breadth-First Search with BFS | Online Free DevTools by Hexmos"
+title: 'Find Files - Breadth-First Search with BFS | Online Free DevTools by Hexmos'
 name: bfs
-path: "/freedevtools/tldr/common/bfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bfs/"
-description: "Find files quickly with BFS Breadth-First Search command. Efficiently locate files by name, extension, or size across directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bfs/'
+description: 'Find files quickly with BFS Breadth-First Search command. Efficiently locate files by name, extension, or size across directories. Free online tool, no registration required.'
 category: common
 keywords:
-- breadth-first search
-- bfs file search
-- file system traversal
-- find files by extension
-- find files by size
-- find files linux
-- find files macos
-- directory search
-- file search command
-- bfs command examples
+  - breadth-first search
+  - bfs file search
+  - file system traversal
+  - find files by extension
+  - find files by size
+  - find files linux
+  - find files macos
+  - directory search
+  - file search command
+  - bfs command examples
 features:
-- Search files by name and extension recursively
-- Filter files based on size ranges
-- Execute commands on found files
-- Exclude specific paths during search
-- Find empty files and directories
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search files by name and extension recursively
+  - Filter files based on size ranges
+  - Execute commands on found files
+  - Exclude specific paths during search
+  - Find empty files and directories
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bfs

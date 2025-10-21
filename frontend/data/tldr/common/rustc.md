@@ -1,29 +1,29 @@
 ---
-title: "Compile Rust Code - Execute Rust Programs | Online Free DevTools by Hexmos"
+title: 'Compile Rust Code - Execute Rust Programs | Online Free DevTools by Hexmos'
 name: rustc
-path: "/freedevtools/tldr/common/rustc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rustc/"
-description: "Compile Rust code quickly with rustc. Optimize Rust programs for size and speed. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rustc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rustc/'
+description: 'Compile Rust code quickly with rustc. Optimize Rust programs for size and speed. Free online tool, no registration required.'
 category: common
 keywords:
-- Rust compiler
-- Rust code compilation
-- Binary crate compilation
-- Rust optimization
-- Rust debugging
-- rustc explain error
-- target-specific compilation
-- Rust target list
-- compile Rust program
-- rustup target add
+  - Rust compiler
+  - Rust code compilation
+  - Binary crate compilation
+  - Rust optimization
+  - Rust debugging
+  - rustc explain error
+  - target-specific compilation
+  - Rust target list
+  - compile Rust program
+  - rustup target add
 features:
-- Compile Rust source code into executable binaries
-- Optimize compiled code for size and performance
-- Generate debugging information for easier troubleshooting
-- Explain error codes produced by the compiler
-- Compile code for specific target architectures
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Rust source code into executable binaries
+  - Optimize compiled code for size and performance
+  - Generate debugging information for easier troubleshooting
+  - Explain error codes produced by the compiler
+  - Compile code for specific target architectures
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustc

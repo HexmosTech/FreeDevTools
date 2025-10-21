@@ -1,9 +1,9 @@
 ---
-title: "Manage Ubuntu Pro Services - Secure and Optimize | Online Free DevTools by Hexmos"
+title: 'Manage Ubuntu Pro Services - Secure and Optimize | Online Free DevTools by Hexmos'
 name: pro
-path: "/freedevtools/tldr/linux/pro/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pro/"
-description: "Manage Ubuntu Pro services effectively. Enhance system security and optimize performance with Ubuntu Pro command-line tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pro/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pro/'
+description: 'Manage Ubuntu Pro services effectively. Enhance system security and optimize performance with Ubuntu Pro command-line tools. Free online tool, no registration required.'
 category: linux
 keywords:
   - Ubuntu Pro management
@@ -22,8 +22,8 @@ features:
   - Check and fix system vulnerabilities
   - Display the number of unsupported packages
   - List unavailable and third-party packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pro

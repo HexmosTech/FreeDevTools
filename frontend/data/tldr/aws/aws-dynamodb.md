@@ -1,29 +1,29 @@
 ---
-title: "DynamoDB Control - Manage AWS NoSQL Database | Online Free DevTools by Hexmos"
+title: 'DynamoDB Control - Manage AWS NoSQL Database | Online Free DevTools by Hexmos'
 name: aws-dynamodb
-path: "/freedevtools/tldr/aws/aws-dynamodb/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-dynamodb/"
-description: "Control DynamoDB database instances with AWS DynamoDB command. Manage tables, add items, and retrieve data in your AWS NoSQL database. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-dynamodb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-dynamodb/'
+description: 'Control DynamoDB database instances with AWS DynamoDB command. Manage tables, add items, and retrieve data in your AWS NoSQL database. Free online tool, no registration required.'
 category: common
 keywords:
-- aws dynamodb control
-- dynamodb table manager
-- aws nosql database
-- dynamodb item editor
-- dynamodb command line
-- aws dynamodb cli
-- dynamodb data manipulator
-- dynamodb key schema
-- dynamodb aws cloud
-- aws dynamodb scan
+  - aws dynamodb control
+  - dynamodb table manager
+  - aws nosql database
+  - dynamodb item editor
+  - dynamodb command line
+  - aws dynamodb cli
+  - dynamodb data manipulator
+  - dynamodb key schema
+  - dynamodb aws cloud
+  - aws dynamodb scan
 features:
-- Create and manage DynamoDB tables via command line
-- Add, retrieve, update, and delete items in tables
-- Scan entire tables for specific data entries
-- Describe table details and schemas
-- List all available DynamoDB tables in the AWS account
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage DynamoDB tables via command line
+  - Add, retrieve, update, and delete items in tables
+  - Scan entire tables for specific data entries
+  - Describe table details and schemas
+  - List all available DynamoDB tables in the AWS account
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws dynamodb

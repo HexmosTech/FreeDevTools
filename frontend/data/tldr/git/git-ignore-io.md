@@ -1,29 +1,29 @@
 ---
-title: "Generate Git Ignore - Create .gitignore Files | Online Free DevTools by Hexmos"
+title: 'Generate Git Ignore - Create .gitignore Files | Online Free DevTools by Hexmos'
 name: git-ignore-io
-path: "/freedevtools/tldr/git/git-ignore-io/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-ignore-io/"
-description: "Generate Git ignore files instantly with Git Ignore-io. Create and customize .gitignore templates for your projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-ignore-io/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-ignore-io/'
+description: 'Generate Git ignore files instantly with Git Ignore-io. Create and customize .gitignore templates for your projects. Free online tool, no registration required.'
 category: common
 keywords:
-- gitignore generator
-- git ignore template
-- create gitignore
-- git ignore-io templates
-- command line gitignore
-- git project ignore
-- git configuration files
-- developer ignore files
-- common gitignore
-- .gitignore generator online
+  - gitignore generator
+  - git ignore template
+  - create gitignore
+  - git ignore-io templates
+  - command line gitignore
+  - git project ignore
+  - git configuration files
+  - developer ignore files
+  - common gitignore
+  - .gitignore generator online
 features:
-- List available .gitignore templates
-- Generate customized .gitignore files
-- Supports multiple templates in one command
-- Simplifies .gitignore creation
-- Provides a command-line interface for .gitignore management
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available .gitignore templates
+  - Generate customized .gitignore files
+  - Supports multiple templates in one command
+  - Simplifies .gitignore creation
+  - Provides a command-line interface for .gitignore management
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git ignore-io

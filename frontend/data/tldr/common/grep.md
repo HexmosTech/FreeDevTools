@@ -1,29 +1,29 @@
 ---
-title: "Grep - Find Text Patterns with Regex | Online Free DevTools by Hexmos"
+title: 'Grep - Find Text Patterns with Regex | Online Free DevTools by Hexmos'
 name: grep
-path: "/freedevtools/tldr/common/grep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/grep/"
-description: "Find text patterns with Grep, the powerful command-line tool for searching files using regular expressions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/grep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/grep/'
+description: 'Find text patterns with Grep, the powerful command-line tool for searching files using regular expressions. Free online tool, no registration required.'
 category: common
 keywords:
-- "regex search grep"
-- "text pattern finder"
-- "command line grep"
-- "file content grep"
-- "linux text search"
-- "macos file search"
-- "grep regex match"
-- "grep pattern matching"
-- "grep recursive search"
-- "grep string search"
+  - 'regex search grep'
+  - 'text pattern finder'
+  - 'command line grep'
+  - 'file content grep'
+  - 'linux text search'
+  - 'macos file search'
+  - 'grep regex match'
+  - 'grep pattern matching'
+  - 'grep recursive search'
+  - 'grep string search'
 features:
-- "Search files for patterns using regular expressions"
-- "Search recursively through directories"
-- "Display line numbers of matching lines"
-- "Search for exact string matches"
-- "Invert match to find non-matching lines"
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - 'Search files for patterns using regular expressions'
+  - 'Search recursively through directories'
+  - 'Display line numbers of matching lines'
+  - 'Search for exact string matches'
+  - 'Invert match to find non-matching lines'
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # grep

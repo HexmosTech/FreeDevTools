@@ -1,29 +1,29 @@
 ---
-title: "Cargo Build - Compile Rust Packages Easily | Online Free DevTools by Hexmos"
+title: 'Cargo Build - Compile Rust Packages Easily | Online Free DevTools by Hexmos'
 name: cargo-build
-path: "/freedevtools/tldr/cargo/cargo-build/"
-canonical: "https://hexmos.com/freedevtools/tldr/cargo/cargo-build/"
-description: "Compile Rust packages effortlessly with Cargo Build. Manage dependencies, optimize for release, and target specific binaries. Free online tool, no registration required."
+path: '/freedevtools/tldr/cargo/cargo-build/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cargo/cargo-build/'
+description: 'Compile Rust packages effortlessly with Cargo Build. Manage dependencies, optimize for release, and target specific binaries. Free online tool, no registration required.'
 category: common
 keywords:
-- rust package build
-- cargo build command
-- rust release build
-- rust dependency management
-- cargo workspace build
-- rust binary compilation
-- cargo test target build
-- rust locked build
-- rust command line
-- rust package manager
+  - rust package build
+  - cargo build command
+  - rust release build
+  - rust dependency management
+  - cargo workspace build
+  - rust binary compilation
+  - cargo test target build
+  - rust locked build
+  - rust command line
+  - rust package manager
 features:
-- Compile local Rust packages and dependencies
-- Build Rust artifacts in release mode with optimizations
-- Enforce Cargo.lock file consistency during builds
-- Build all packages within a Rust workspace
-- Target specific binaries or test targets for compilation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile local Rust packages and dependencies
+  - Build Rust artifacts in release mode with optimizations
+  - Enforce Cargo.lock file consistency during builds
+  - Build all packages within a Rust workspace
+  - Target specific binaries or test targets for compilation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cargo build

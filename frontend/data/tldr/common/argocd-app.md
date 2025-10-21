@@ -1,29 +1,29 @@
 ---
-title: "ArgoCD App - Manage Kubernetes Applications | Online Free DevTools by Hexmos"
+title: 'ArgoCD App - Manage Kubernetes Applications | Online Free DevTools by Hexmos'
 name: argocd-app
-path: "/freedevtools/tldr/common/argocd-app/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/argocd-app/"
-description: "Manage applications with ArgoCD App. Deploy, synchronize, and monitor your Kubernetes applications effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/argocd-app/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/argocd-app/'
+description: 'Manage applications with ArgoCD App. Deploy, synchronize, and monitor your Kubernetes applications effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- argocd application management
-- kubernetes application deployment
-- argocd sync policy
-- argocd rollback history
-- argocd command line tool
-- gitops deployment tool
-- application auto sync
-- kubernetes deployment automation
-- argocd app preview
-- argocd application delete
+  - argocd application management
+  - kubernetes application deployment
+  - argocd sync policy
+  - argocd rollback history
+  - argocd command line tool
+  - gitops deployment tool
+  - application auto sync
+  - kubernetes deployment automation
+  - argocd app preview
+  - argocd application delete
 features:
-- List and inspect ArgoCD applications
-- Deploy applications to Kubernetes clusters
-- Synchronize applications with Git repositories
-- Rollback applications to previous versions
-- Preview application synchronization before deployment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List and inspect ArgoCD applications
+  - Deploy applications to Kubernetes clusters
+  - Synchronize applications with Git repositories
+  - Rollback applications to previous versions
+  - Preview application synchronization before deployment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # argocd app

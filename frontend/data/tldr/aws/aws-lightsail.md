@@ -1,29 +1,29 @@
 ---
-title: "AWS Lightsail - Manage Cloud Resources | Online Free DevTools by Hexmos"
+title: 'AWS Lightsail - Manage Cloud Resources | Online Free DevTools by Hexmos'
 name: aws-lightsail
-path: "/freedevtools/tldr/aws/aws-lightsail/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-lightsail/"
-description: "Manage AWS Lightsail cloud resources with this online tool. Quickly deploy and control virtual servers and applications. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-lightsail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-lightsail/'
+description: 'Manage AWS Lightsail cloud resources with this online tool. Quickly deploy and control virtual servers and applications. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS Lightsail manager
-- cloud resource management
-- virtual server control
-- lightsail instance management
-- AWS cloud deployment
-- lightsail command line
-- cloud server administration
-- lightsail CLI tool
-- AWS lightsail commands
-- manage lightsail instances
+  - AWS Lightsail manager
+  - cloud resource management
+  - virtual server control
+  - lightsail instance management
+  - AWS cloud deployment
+  - lightsail command line
+  - cloud server administration
+  - lightsail CLI tool
+  - AWS lightsail commands
+  - manage lightsail instances
 features:
-- List available Lightsail instances
-- Create new Lightsail instances
-- Stop running Lightsail instances
-- Delete existing Lightsail instances
-- Get the status of a specific Lightsail instance
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available Lightsail instances
+  - Create new Lightsail instances
+  - Stop running Lightsail instances
+  - Delete existing Lightsail instances
+  - Get the status of a specific Lightsail instance
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws lightsail

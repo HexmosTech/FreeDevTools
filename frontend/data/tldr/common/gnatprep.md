@@ -1,29 +1,29 @@
 ---
-title: "Generate Ada Code - gnatprep Preprocessor | Online Free DevTools by Hexmos"
+title: 'Generate Ada Code - gnatprep Preprocessor | Online Free DevTools by Hexmos'
 name: gnatprep
-path: "/freedevtools/tldr/common/gnatprep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gnatprep/"
-description: "Generate Ada code with gnatprep, the GNAT preprocessor. Define symbols and values for conditional compilation of Ada source. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gnatprep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gnatprep/'
+description: 'Generate Ada code with gnatprep, the GNAT preprocessor. Define symbols and values for conditional compilation of Ada source. Free online tool, no registration required.'
 category: common
 keywords:
-- ada preprocessor
-- gnat preprocessor
-- ada code generation
-- gnat code generation
-- ada conditional compilation
-- gnat conditional compilation
-- ada symbol definition
-- gnat symbol definition
-- ada source preprocessing
-- gnat source preprocessing
+  - ada preprocessor
+  - gnat preprocessor
+  - ada code generation
+  - gnat code generation
+  - ada conditional compilation
+  - gnat conditional compilation
+  - ada symbol definition
+  - gnat symbol definition
+  - ada source preprocessing
+  - gnat source preprocessing
 features:
-- Preprocess Ada source code files
-- Define symbols from external files
-- Specify symbol values on the command line
-- Control conditional compilation of Ada code
-- Generate modified Ada source code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Preprocess Ada source code files
+  - Define symbols from external files
+  - Specify symbol values on the command line
+  - Control conditional compilation of Ada code
+  - Generate modified Ada source code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gnatprep

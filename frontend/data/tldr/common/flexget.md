@@ -1,9 +1,9 @@
 ---
-title: "Automate Content with FlexGet - Automation Tool | Online Free DevTools by Hexmos"
+title: 'Automate Content with FlexGet - Automation Tool | Online Free DevTools by Hexmos'
 name: flexget
-path: "/freedevtools/tldr/common/flexget/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flexget/"
-description: "Automate content management with FlexGet. Schedule tasks, download torrents, manage podcasts, and organize media files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flexget/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flexget/'
+description: 'Automate content management with FlexGet. Schedule tasks, download torrents, manage podcasts, and organize media files. Free online tool, no registration required.'
 category: common
 keywords:
   - FlexGet automation
@@ -22,8 +22,8 @@ features:
   - Manage and organize series, movies, and podcasts
   - Run FlexGet as a daemon for continuous background processing
   - List and manage series tracked by FlexGet
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flexget

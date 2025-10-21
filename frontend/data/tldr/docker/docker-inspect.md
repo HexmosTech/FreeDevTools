@@ -1,29 +1,29 @@
 ---
-title: "Docker Inspect - Return Container Information | Online Free DevTools by Hexmos"
+title: 'Docker Inspect - Return Container Information | Online Free DevTools by Hexmos'
 name: docker-inspect
-path: "/freedevtools/tldr/docker/docker-inspect/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-inspect/"
-description: "Inspect Docker objects with Docker Inspect. Retrieve low-level information on containers, images, and volumes. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-inspect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-inspect/'
+description: 'Inspect Docker objects with Docker Inspect. Retrieve low-level information on containers, images, and volumes. Free online tool, no registration required.'
 category: common
 keywords:
-- docker container inspect
-- docker image inspect
-- docker volume inspect
-- docker container metadata
-- docker container configuration
-- docker container IP address
-- docker container log path
-- docker container port bindings
-- docker container image name
-- linux docker inspect
+  - docker container inspect
+  - docker image inspect
+  - docker volume inspect
+  - docker container metadata
+  - docker container configuration
+  - docker container IP address
+  - docker container log path
+  - docker container port bindings
+  - docker container image name
+  - linux docker inspect
 features:
-- Retrieve container configuration as JSON
-- Display container IP address
-- Show the path to the container's log file
-- Display the image name of a container
-- List all port bindings for a container
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve container configuration as JSON
+  - Display container IP address
+  - Show the path to the container's log file
+  - Display the image name of a container
+  - List all port bindings for a container
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker inspect

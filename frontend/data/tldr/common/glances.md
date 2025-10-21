@@ -1,29 +1,29 @@
 ---
-title: "Monitor System - Analyze System Performance with Glances | Online Free DevTools by Hexmos"
+title: 'Monitor System - Analyze System Performance with Glances | Online Free DevTools by Hexmos'
 name: glances
-path: "/freedevtools/tldr/common/glances/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/glances/"
-description: "Analyze system performance metrics with Glances, a cross-platform system monitoring tool. Monitor CPU, memory, disk I/O, and network usage in real-time. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/glances/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/glances/'
+description: 'Analyze system performance metrics with Glances, a cross-platform system monitoring tool. Monitor CPU, memory, disk I/O, and network usage in real-time. Free online tool, no registration required.'
 category: common
 keywords:
-- system performance monitoring
-- cross platform system monitor
-- linux system monitoring
-- windows system monitoring
-- macos system monitoring
-- glances system analysis
-- system resource usage
-- cpu monitor command line
-- memory monitor command line
-- network monitor command line
+  - system performance monitoring
+  - cross platform system monitor
+  - linux system monitoring
+  - windows system monitoring
+  - macos system monitoring
+  - glances system analysis
+  - system resource usage
+  - cpu monitor command line
+  - memory monitor command line
+  - network monitor command line
 features:
-- Display real-time CPU usage statistics
-- Monitor memory consumption and swap usage
-- Analyze disk I/O and file system performance
-- Track network interface bandwidth usage
-- Visualize system metrics in a web browser
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display real-time CPU usage statistics
+  - Monitor memory consumption and swap usage
+  - Analyze disk I/O and file system performance
+  - Track network interface bandwidth usage
+  - Visualize system metrics in a web browser
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # glances

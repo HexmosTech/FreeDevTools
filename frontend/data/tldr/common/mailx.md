@@ -1,29 +1,29 @@
 ---
-title: "Send Mail - Send and Receive Email with Mailx | Online Free DevTools by Hexmos"
+title: 'Send Mail - Send and Receive Email with Mailx | Online Free DevTools by Hexmos'
 name: mailx
-path: "/freedevtools/tldr/common/mailx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mailx/"
-description: "Send mail easily with Mailx. Compose, send, and manage emails directly from the command line with this email client tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mailx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mailx/'
+description: 'Send mail easily with Mailx. Compose, send, and manage emails directly from the command line with this email client tool. Free online tool, no registration required.'
 category: common
 keywords:
-- mailx send mail
-- command line email client
-- linux send email
-- terminal email
-- email command line
-- send email attachments
-- mailx cc
-- mailx from address
-- mailx subject
-- mailx email tool
+  - mailx send mail
+  - command line email client
+  - linux send email
+  - terminal email
+  - email command line
+  - send email attachments
+  - mailx cc
+  - mailx from address
+  - mailx subject
+  - mailx email tool
 features:
-- Send email from the command line
-- Include attachments in emails
-- Specify sender address
-- Carbon copy (CC) recipients
-- Define email subject
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send email from the command line
+  - Include attachments in emails
+  - Specify sender address
+  - Carbon copy (CC) recipients
+  - Define email subject
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mailx

@@ -1,9 +1,9 @@
 ---
-title: "GSettings - Control dconf Settings | Online Free DevTools by Hexmos"
+title: 'GSettings - Control dconf Settings | Online Free DevTools by Hexmos'
 name: gsettings
-path: "/freedevtools/tldr/linux/gsettings/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gsettings/"
-description: "Control dconf settings with GSettings. Modify and query settings using schema validation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gsettings/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gsettings/'
+description: 'Control dconf settings with GSettings. Modify and query settings using schema validation. Free online tool, no registration required.'
 category: linux
 keywords:
   - dconf settings management
@@ -22,8 +22,8 @@ features:
   - Unset a dconf key to revert to the schema default.
   - Display all schemas, keys, and values recursively.
   - Display schema-allowed values for a specified key.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gsettings

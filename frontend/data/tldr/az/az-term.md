@@ -1,29 +1,29 @@
 ---
-title: "Azure Term - Manage Marketplace Agreements | Online Free DevTools by Hexmos"
+title: 'Azure Term - Manage Marketplace Agreements | Online Free DevTools by Hexmos'
 name: az-term
-path: "/freedevtools/tldr/az/az-term/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-term/"
-description: "Manage Azure marketplace agreements efficiently with Azure Term. Accept terms, show product details, and automate deployments via the CLI. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-term/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-term/'
+description: 'Manage Azure marketplace agreements efficiently with Azure Term. Accept terms, show product details, and automate deployments via the CLI. Free online tool, no registration required.'
 category: common
 keywords:
-- azure marketplace agreements
-- azure cli terms
-- az term command
-- azure deployment automation
-- marketplace ordering api
-- azure agreement management
-- azure subscription terms
-- azure resource manager terms
-- azure cli marketplace
-- azure product deployment
+  - azure marketplace agreements
+  - azure cli terms
+  - az term command
+  - azure deployment automation
+  - marketplace ordering api
+  - azure agreement management
+  - azure subscription terms
+  - azure resource manager terms
+  - azure cli marketplace
+  - azure product deployment
 features:
-- Display marketplace agreement details.
-- Accept marketplace terms programmatically.
-- Automate deployment workflows.
-- Verify marketplace compliance.
-- Manage azure subscriptions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display marketplace agreement details.
+  - Accept marketplace terms programmatically.
+  - Automate deployment workflows.
+  - Verify marketplace compliance.
+  - Manage azure subscriptions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az term

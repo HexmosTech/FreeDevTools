@@ -1,29 +1,29 @@
 ---
-title: "Convert CSV to TSV - Format Text Files | Online Free DevTools by Hexmos"
+title: 'Convert CSV to TSV - Format Text Files | Online Free DevTools by Hexmos'
 name: csv2tsv
-path: "/freedevtools/tldr/cs/csv2tsv/"
-canonical: "https://hexmos.com/freedevtools/tldr/cs/csv2tsv/"
-description: "Format CSV files to TSV easily with csv2tsv. Quickly convert comma-separated values to tab-separated values. Free online tool, no registration required."
+path: '/freedevtools/tldr/cs/csv2tsv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cs/csv2tsv/'
+description: 'Format CSV files to TSV easily with csv2tsv. Quickly convert comma-separated values to tab-separated values. Free online tool, no registration required.'
 category: common
 keywords:
-- csv to tsv converter
-- convert csv to tsv
-- csv2tsv command
-- csv to tsv online
-- tab separated values
-- comma separated values
-- text file conversion
-- command line csv to tsv
-- linux csv to tsv
-- macos csv to tsv
+  - csv to tsv converter
+  - convert csv to tsv
+  - csv2tsv command
+  - csv to tsv online
+  - tab separated values
+  - comma separated values
+  - text file conversion
+  - command line csv to tsv
+  - linux csv to tsv
+  - macos csv to tsv
 features:
-- Convert CSV files to TSV format
-- Support custom field delimiters
-- Read from multiple input CSV files
-- Write TSV output to a file
-- Process large CSV files efficiently
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert CSV files to TSV format
+  - Support custom field delimiters
+  - Read from multiple input CSV files
+  - Write TSV output to a file
+  - Process large CSV files efficiently
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # csv2tsv

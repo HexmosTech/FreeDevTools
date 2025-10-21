@@ -1,29 +1,29 @@
 ---
-title: "Generate PBM Image - Text to PBM with PostScript | Online Free DevTools by Hexmos"
+title: 'Generate PBM Image - Text to PBM with PostScript | Online Free DevTools by Hexmos'
 name: pbmtextps
-path: "/freedevtools/tldr/common/pbmtextps/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmtextps/"
-description: "Generate PBM image with pbmtextps using PostScript fonts. Convert text to PBM images online effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmtextps/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmtextps/'
+description: 'Generate PBM image with pbmtextps using PostScript fonts. Convert text to PBM images online effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- pbm image generator
-- text to pbm converter
-- postscript pbm rendering
-- command line image generation
-- netpbm pbm tools
-- pbm image from text
-- linux pbm tools
-- macos pbm tools
-- pbm image creator
-- ascii art generator
+  - pbm image generator
+  - text to pbm converter
+  - postscript pbm rendering
+  - command line image generation
+  - netpbm pbm tools
+  - pbm image from text
+  - linux pbm tools
+  - macos pbm tools
+  - pbm image creator
+  - ascii art generator
 features:
-- Render text into a PBM image format
-- Specify font type and size for text rendering
-- Define custom left and top margins for output
-- Output PostScript code instead of PBM image
-- Control the appearance of text in PBM format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render text into a PBM image format
+  - Specify font type and size for text rendering
+  - Define custom left and top margins for output
+  - Output PostScript code instead of PBM image
+  - Control the appearance of text in PBM format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmtextps

@@ -1,29 +1,29 @@
 ---
-title: "Ansible Vault - Encrypt and Decrypt Files | Online Free DevTools by Hexmos"
+title: 'Ansible Vault - Encrypt and Decrypt Files | Online Free DevTools by Hexmos'
 name: ansible-vault
-path: "/freedevtools/tldr/ansible/ansible-vault/"
-canonical: "https://hexmos.com/freedevtools/tldr/ansible/ansible-vault/"
-description: "Encrypt and decrypt Ansible files easily with Ansible Vault. Secure sensitive data within your automation projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/ansible/ansible-vault/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ansible/ansible-vault/'
+description: 'Encrypt and decrypt Ansible files easily with Ansible Vault. Secure sensitive data within your automation projects. Free online tool, no registration required.'
 category: common
 keywords:
-- ansible vault encryption
-- ansible vault decryption
-- ansible secret management
-- ansible password protection
-- ansible data security
-- ansible vault key
-- ansible configuration encryption
-- ansible vault file
-- ansible linux
-- ansible automation security
+  - ansible vault encryption
+  - ansible vault decryption
+  - ansible secret management
+  - ansible password protection
+  - ansible data security
+  - ansible vault key
+  - ansible configuration encryption
+  - ansible vault file
+  - ansible linux
+  - ansible automation security
 features:
-- Encrypt Ansible files using a password or key file
-- Decrypt Ansible files for secure access to secrets
-- Re-key existing Ansible Vault files with new passwords
-- Encrypt individual strings for sensitive data protection
-- Manage and view encrypted Ansible data securely
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Encrypt Ansible files using a password or key file
+  - Decrypt Ansible files for secure access to secrets
+  - Re-key existing Ansible Vault files with new passwords
+  - Encrypt individual strings for sensitive data protection
+  - Manage and view encrypted Ansible data securely
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ansible-vault

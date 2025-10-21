@@ -1,29 +1,29 @@
 ---
-title: "Git Mergetool - Resolve Merge Conflicts | Online Free DevTools by Hexmos"
+title: 'Git Mergetool - Resolve Merge Conflicts | Online Free DevTools by Hexmos'
 name: git-mergetool
-path: "/freedevtools/tldr/git/git-mergetool/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-mergetool/"
-description: "Resolve merge conflicts with Git Mergetool. Launch and manage merge tools to fix code conflicts efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-mergetool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-mergetool/'
+description: 'Resolve merge conflicts with Git Mergetool. Launch and manage merge tools to fix code conflicts efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git merge conflict resolution
-- git mergetool launch
-- git conflict manager
-- git merge tool selection
-- git diff tool integration
-- git command line merge
-- git command line conflict resolution
-- git conflict resolution linux
-- git conflict resolution macos
-- git conflict resolution windows
+  - git merge conflict resolution
+  - git mergetool launch
+  - git conflict manager
+  - git merge tool selection
+  - git diff tool integration
+  - git command line merge
+  - git command line conflict resolution
+  - git conflict resolution linux
+  - git conflict resolution macos
+  - git conflict resolution windows
 features:
-- Launch default merge resolution tools
-- List available merge resolution tools
-- Specify a merge tool by name
-- Suppress prompting for each merge tool invocation
-- Use the GUI merge tool explicitly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch default merge resolution tools
+  - List available merge resolution tools
+  - Specify a merge tool by name
+  - Suppress prompting for each merge tool invocation
+  - Use the GUI merge tool explicitly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git mergetool

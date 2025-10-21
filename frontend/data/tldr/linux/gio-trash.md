@@ -1,29 +1,29 @@
 ---
-title: "GIO Trash - Manage Files in Trash Bin | Online Free DevTools by Hexmos"
+title: 'GIO Trash - Manage Files in Trash Bin | Online Free DevTools by Hexmos'
 name: gio-trash
-path: "/freedevtools/tldr/linux/gio-trash/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/gio-trash/"
-description: "Manage files in trash bin with GIO Trash. Restore deleted files and empty the trash directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/gio-trash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/gio-trash/'
+description: 'Manage files in trash bin with GIO Trash. Restore deleted files and empty the trash directly from the command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- trash manager
-- file deletion linux
-- gio trash command
-- linux trash cli
-- gnome trash utility
-- command line trash
-- trash bin management
-- file recovery linux
-- restore deleted files
-- gio linux
+  - trash manager
+  - file deletion linux
+  - gio trash command
+  - linux trash cli
+  - gnome trash utility
+  - command line trash
+  - trash bin management
+  - file recovery linux
+  - restore deleted files
+  - gio linux
 features:
-- Move files and directories to the trash bin.
-- List the contents of the trash bin.
-- Restore specific files from the trash bin by ID.
-- Manage trash from the command line.
-- Delete files permanently by bypassing the trash.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Move files and directories to the trash bin.
+  - List the contents of the trash bin.
+  - Restore specific files from the trash bin by ID.
+  - Manage trash from the command line.
+  - Delete files permanently by bypassing the trash.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gio trash

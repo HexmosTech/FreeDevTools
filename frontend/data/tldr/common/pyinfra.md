@@ -1,29 +1,29 @@
 ---
-title: "Automate Infrastructure - Control Servers with pyinfra | Online Free DevTools by Hexmos"
+title: 'Automate Infrastructure - Control Servers with pyinfra | Online Free DevTools by Hexmos'
 name: pyinfra
-path: "/freedevtools/tldr/common/pyinfra/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pyinfra/"
-description: "Automate infrastructure provisioning with pyinfra. Deploy applications, configure servers, and manage infrastructure using Python. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pyinfra/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pyinfra/'
+description: 'Automate infrastructure provisioning with pyinfra. Deploy applications, configure servers, and manage infrastructure using Python. Free online tool, no registration required.'
 category: common
 keywords:
-- infrastructure automation
-- server configuration management
-- python deployment tool
-- remote execution
-- infrastructure as code
-- pyinfra deploy
-- linux server automation
-- docker deployment
-- ssh command execution
-- configuration orchestration
+  - infrastructure automation
+  - server configuration management
+  - python deployment tool
+  - remote execution
+  - infrastructure as code
+  - pyinfra deploy
+  - linux server automation
+  - docker deployment
+  - ssh command execution
+  - configuration orchestration
 features:
-- Execute commands remotely over SSH
-- Deploy applications to multiple servers
-- Manage infrastructure using Python code
-- Automate server provisioning and configuration
-- Orchestrate complex deployments across different environments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands remotely over SSH
+  - Deploy applications to multiple servers
+  - Manage infrastructure using Python code
+  - Automate server provisioning and configuration
+  - Orchestrate complex deployments across different environments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pyinfra

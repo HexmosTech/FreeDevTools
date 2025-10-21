@@ -1,29 +1,29 @@
 ---
-title: "Convert PNM to UIL - Generate Motif Icon Files | Online Free DevTools by Hexmos"
+title: 'Convert PNM to UIL - Generate Motif Icon Files | Online Free DevTools by Hexmos'
 name: pamtouil
-path: "/freedevtools/tldr/common/pamtouil/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamtouil/"
-description: "Generate Motif UIL icon files with pamtouil from PNM or PAM images. A command line image converter for developers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamtouil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamtouil/'
+description: 'Generate Motif UIL icon files with pamtouil from PNM or PAM images. A command line image converter for developers. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM to UIL converter
-- PAM to UIL converter
-- Motif UIL icon generator
-- Image format conversion
-- PNM image manipulation
-- UIL file creation
-- Command line image tool
-- Linux image converter
-- Unix image tools
-- Netpbm utilities
+  - PNM to UIL converter
+  - PAM to UIL converter
+  - Motif UIL icon generator
+  - Image format conversion
+  - PNM image manipulation
+  - UIL file creation
+  - Command line image tool
+  - Linux image converter
+  - Unix image tools
+  - Netpbm utilities
 features:
-- Convert PNM/PAM images to Motif UIL format
-- Specify a prefix for the output UIL file
-- Create icon files from command line
-- Supports both PNM and PAM input formats
-- Generate UIL icons for Motif applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNM/PAM images to Motif UIL format
+  - Specify a prefix for the output UIL file
+  - Create icon files from command line
+  - Supports both PNM and PAM input formats
+  - Generate UIL icons for Motif applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamtouil

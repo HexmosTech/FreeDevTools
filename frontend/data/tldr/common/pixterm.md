@@ -1,29 +1,29 @@
 ---
-title: "Pixterm Image Printer - Render Images in Terminal | Online Free DevTools by Hexmos"
+title: 'Pixterm Image Printer - Render Images in Terminal | Online Free DevTools by Hexmos'
 name: pixterm
-path: "/freedevtools/tldr/common/pixterm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pixterm/"
-description: "Render images directly in your terminal with Pixterm Image Printer. Convert images to terminal art using advanced dither and aspect ratio controls. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pixterm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pixterm/'
+description: 'Render images directly in your terminal with Pixterm Image Printer. Convert images to terminal art using advanced dither and aspect ratio controls. Free online tool, no registration required.'
 category: common
 keywords:
-- Terminal image printer
-- Image to terminal converter
-- CLI image viewer
-- ASCII art generator
-- Terminal graphics rendering
-- Command line image tool
-- Linux image display
-- macOS image display
-- Console image rendering
-- Terminal image output
+  - Terminal image printer
+  - Image to terminal converter
+  - CLI image viewer
+  - ASCII art generator
+  - Terminal graphics rendering
+  - Command line image tool
+  - Linux image display
+  - macOS image display
+  - Console image rendering
+  - Terminal image output
 features:
-- Render images directly in the terminal
-- Control image aspect ratio for terminal output
-- Specify terminal row and column size for image display
-- Filter image output with matte backgrounds
-- Apply character dithering to terminal images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render images directly in the terminal
+  - Control image aspect ratio for terminal output
+  - Specify terminal row and column size for image display
+  - Filter image output with matte backgrounds
+  - Apply character dithering to terminal images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pixterm

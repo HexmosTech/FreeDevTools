@@ -1,29 +1,29 @@
 ---
-title: "Sailfish SDK - Control Sailfish OS Apps | Online Free DevTools by Hexmos"
+title: 'Sailfish SDK - Control Sailfish OS Apps | Online Free DevTools by Hexmos'
 name: sfdk
-path: "/freedevtools/tldr/sfdk/sfdk/"
-canonical: "https://hexmos.com/freedevtools/tldr/sfdk/sfdk/"
-description: "Control Sailfish OS applications with Sailfish SDK command-line tool. Manage development, testing, and building on Sailfish. Free online tool, no registration required."
+path: '/freedevtools/tldr/sfdk/sfdk/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sfdk/sfdk/'
+description: 'Control Sailfish OS applications with Sailfish SDK command-line tool. Manage development, testing, and building on Sailfish. Free online tool, no registration required.'
 category: common
 keywords:
-- Sailfish SDK control
-- Sailfish command-line tool
-- Sailfish OS development
-- Sailfish application testing
-- Sailfish SDK building
-- SFDK command-line
-- SFDK Sailfish OS
-- SFDK development
-- SFDK application control
-- Linux Sailfish development
+  - Sailfish SDK control
+  - Sailfish command-line tool
+  - Sailfish OS development
+  - Sailfish application testing
+  - Sailfish SDK building
+  - SFDK command-line
+  - SFDK Sailfish OS
+  - SFDK development
+  - SFDK application control
+  - Linux Sailfish development
 features:
-- Execute Sailfish SDK subcommands.
-- Specify a custom working directory for SFDK commands.
-- Configure SFDK with custom name-value pairs.
-- Display help documentation for various SFDK topics.
-- Check the version of the Sailfish SDK.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Sailfish SDK subcommands.
+  - Specify a custom working directory for SFDK commands.
+  - Configure SFDK with custom name-value pairs.
+  - Display help documentation for various SFDK topics.
+  - Check the version of the Sailfish SDK.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sfdk

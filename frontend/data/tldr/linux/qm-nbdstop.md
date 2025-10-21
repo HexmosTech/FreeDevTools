@@ -1,9 +1,9 @@
 ---
-title: "qm nbdstop - Stop nbd Server | Online Free DevTools by Hexmos"
+title: 'qm nbdstop - Stop nbd Server | Online Free DevTools by Hexmos'
 name: qm-nbdstop
-path: "/freedevtools/tldr/linux/qm-nbdstop/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qm-nbdstop/"
-description: "Stop embedded nbd servers with qm nbdstop.  Manage virtual machine network block devices efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qm-nbdstop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qm-nbdstop/'
+description: 'Stop embedded nbd servers with qm nbdstop.  Manage virtual machine network block devices efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - qm nbdstop command
@@ -22,8 +22,8 @@ features:
   - Provides command-line control over nbd servers.
   - Integrates seamlessly with Proxmox Virtual Environment (PVE).
   - Improves virtual machine management efficiency.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qm nbdstop

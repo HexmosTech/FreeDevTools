@@ -1,9 +1,9 @@
 ---
-title: "Generate PO Files - Update Translations with po4a | Online Free DevTools by Hexmos"
+title: 'Generate PO Files - Update Translations with po4a | Online Free DevTools by Hexmos'
 name: po4a
-path: "/freedevtools/tldr/linux/po4a/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/po4a/"
-description: "Generate PO files with po4a to seamlessly update document translations and ensure consistency across multiple languages. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/po4a/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/po4a/'
+description: 'Generate PO files with po4a to seamlessly update document translations and ensure consistency across multiple languages. Free online tool, no registration required.'
 category: linux
 keywords:
   - po4a translation
@@ -22,8 +22,8 @@ features:
   - Automatically generate PO files from documents
   - Maintain consistency between PO files and translated documents
   - Streamline the translation workflow
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # po4a

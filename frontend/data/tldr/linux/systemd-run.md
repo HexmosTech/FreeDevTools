@@ -1,9 +1,9 @@
 ---
-title: "Systemd-run - Execute Transient Units | Online Free DevTools by Hexmos"
+title: 'Systemd-run - Execute Transient Units | Online Free DevTools by Hexmos'
 name: systemd-run
-path: "/freedevtools/tldr/linux/systemd-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-run/"
-description: "Execute transient systemd units with Systemd-run. Create and manage temporary services, timers, and scopes on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-run/'
+description: 'Execute transient systemd units with Systemd-run. Create and manage temporary services, timers, and scopes on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd-run execute transient units
@@ -22,8 +22,8 @@ features:
   - Create temporary scope units for processes
   - Set environment variables for transient units
   - Execute commands interactively via PTY
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-run

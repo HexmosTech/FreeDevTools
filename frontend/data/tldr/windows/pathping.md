@@ -1,29 +1,29 @@
 ---
-title: "Trace Route - Analyze Network Paths with Pathping | Online Free DevTools by Hexmos"
+title: 'Trace Route - Analyze Network Paths with Pathping | Online Free DevTools by Hexmos'
 name: pathping
-path: "/freedevtools/tldr/windows/pathping/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/pathping/"
-description: "Analyze network paths with Pathping. Troubleshoot network latency and identify problematic hops with this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/pathping/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/pathping/'
+description: 'Analyze network paths with Pathping. Troubleshoot network latency and identify problematic hops with this powerful command-line tool. Free online tool, no registration required.'
 category: windows
 keywords:
-- network path analyzer
-- windows trace route
-- pathping command
-- network latency diagnosis
-- hop analysis tool
-- network troubleshooting windows
-- pathping ipv4
-- pathping ipv6
-- windows network diagnostic
-- command line trace
+  - network path analyzer
+  - windows trace route
+  - pathping command
+  - network latency diagnosis
+  - hop analysis tool
+  - network troubleshooting windows
+  - pathping ipv4
+  - pathping ipv6
+  - windows network diagnostic
+  - command line trace
 features:
-- Trace network paths to a specified host.
-- Identify network latency and packet loss at each hop.
-- Configure the number of pings per hop.
-- Force IPv4 or IPv6 usage for network analysis.
-- Display help information about pathping parameters.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trace network paths to a specified host.
+  - Identify network latency and packet loss at each hop.
+  - Configure the number of pings per hop.
+  - Force IPv4 or IPv6 usage for network analysis.
+  - Display help information about pathping parameters.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pathping

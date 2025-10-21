@@ -1,9 +1,9 @@
 ---
-title: "Monitor Bandwidth with bmon | Online Free DevTools by Hexmos"
+title: 'Monitor Bandwidth with bmon | Online Free DevTools by Hexmos'
 name: bmon
-path: "/freedevtools/tldr/linux/bmon/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bmon/"
-description: "Monitor network bandwidth usage with bmon, a powerful command-line tool providing detailed network statistics.  Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bmon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bmon/'
+description: 'Monitor network bandwidth usage with bmon, a powerful command-line tool providing detailed network statistics.  Free online tool, no registration required.'
 category: linux
 keywords:
   - bandwidth monitor
@@ -22,8 +22,8 @@ features:
   - Allows specifying which network interfaces to monitor.
   - Provides customizable rate calculation intervals.
   - Offers detailed statistics, including packets and errors.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bmon

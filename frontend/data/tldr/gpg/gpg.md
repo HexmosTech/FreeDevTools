@@ -1,29 +1,29 @@
 ---
-title: "GPG - Create Encryption Keys and Sign Files | Online Free DevTools by Hexmos"
+title: 'GPG - Create Encryption Keys and Sign Files | Online Free DevTools by Hexmos'
 name: gpg
-path: "/freedevtools/tldr/gpg/gpg/"
-canonical: "https://hexmos.com/freedevtools/tldr/gpg/gpg/"
-description: "Create GPG encryption keys with GPG. Secure your communications and sign documents using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/gpg/gpg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gpg/gpg/'
+description: 'Create GPG encryption keys with GPG. Secure your communications and sign documents using this powerful command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- gpg encryption
-- gpg signing
-- gpg key generation
-- gpg decrypt
-- gpg encrypt
-- gpg public key
-- gpg private key
-- openssl encryption
-- command line encryption
-- file signing linux
+  - gpg encryption
+  - gpg signing
+  - gpg key generation
+  - gpg decrypt
+  - gpg encrypt
+  - gpg public key
+  - gpg private key
+  - openssl encryption
+  - command line encryption
+  - file signing linux
 features:
-- Generate GPG key pairs for secure communication
-- Encrypt files using symmetric or asymmetric encryption
-- Sign documents for integrity and authenticity
-- Decrypt encrypted files using private keys or passphrases
-- Manage and export public and private keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate GPG key pairs for secure communication
+  - Encrypt files using symmetric or asymmetric encryption
+  - Sign documents for integrity and authenticity
+  - Decrypt encrypted files using private keys or passphrases
+  - Manage and export public and private keys
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gpg

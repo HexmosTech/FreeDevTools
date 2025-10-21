@@ -1,9 +1,9 @@
 ---
-title: "Control iptables - Save IPv4 Configuration | Online Free DevTools by Hexmos"
+title: 'Control iptables - Save IPv4 Configuration | Online Free DevTools by Hexmos'
 name: iptables-save
-path: "/freedevtools/tldr/linux/iptables-save/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/iptables-save/"
-description: "Control iptables IPv4 configurations using iptables-save. Manage network traffic and firewall rules effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/iptables-save/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/iptables-save/'
+description: 'Control iptables IPv4 configurations using iptables-save. Manage network traffic and firewall rules effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
   - iptables configuration
@@ -22,8 +22,8 @@ features:
   - Specify a table to save
   - Output configuration to standard output
   - Automate firewall rule backups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iptables-save

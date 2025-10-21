@@ -1,29 +1,29 @@
 ---
-title: "Format Equations - Typeset Groff Documents | Online Free DevTools by Hexmos"
+title: 'Format Equations - Typeset Groff Documents | Online Free DevTools by Hexmos'
 name: eqn
-path: "/freedevtools/tldr/common/eqn/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/eqn/"
-description: "Format equations for Groff documents with Eqn. Convert equation syntax to troff for typesetting and generate formatted output. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/eqn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/eqn/'
+description: 'Format equations for Groff documents with Eqn. Convert equation syntax to troff for typesetting and generate formatted output. Free online tool, no registration required.'
 category: common
 keywords:
-- groff equation formatting
-- troff document typesetting
-- eqn equation preprocessor
-- equation to troff converter
-- groff equation syntax
-- linux equation formatter
-- command line equation tool
-- document processing eqn
-- troff eqn processing
-- groff pdf generation
+  - groff equation formatting
+  - troff document typesetting
+  - eqn equation preprocessor
+  - equation to troff converter
+  - groff equation syntax
+  - linux equation formatter
+  - command line equation tool
+  - document processing eqn
+  - troff eqn processing
+  - groff pdf generation
 features:
-- Process equations for groff typesetting
-- Convert equation syntax to troff format
-- Generate formatted output for documents
-- Support equation preprocessing
-- Integrate with groff to create PDF documents
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Process equations for groff typesetting
+  - Convert equation syntax to troff format
+  - Generate formatted output for documents
+  - Support equation preprocessing
+  - Integrate with groff to create PDF documents
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eqn

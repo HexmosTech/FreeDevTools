@@ -1,29 +1,29 @@
 ---
-title: "Snap Package Manager - Install Apps on Linux | Online Free DevTools by Hexmos"
+title: 'Snap Package Manager - Install Apps on Linux | Online Free DevTools by Hexmos'
 name: snap
-path: "/freedevtools/tldr/linux/snap/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/snap/"
-description: "Install packages easily with Snap Package Manager. Manage software dependencies, and ensure secure updates for your Linux system. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/snap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/snap/'
+description: 'Install packages easily with Snap Package Manager. Manage software dependencies, and ensure secure updates for your Linux system. Free online tool, no registration required.'
 category: linux
 keywords:
-- snap package manager
-- linux snap install
-- ubuntu snap package
-- debian snap install
-- snapcraft packaging
-- snap application deployment
-- snap command line
-- snap package update
-- linux application management
-- cross platform packaging
+  - snap package manager
+  - linux snap install
+  - ubuntu snap package
+  - debian snap install
+  - snapcraft packaging
+  - snap application deployment
+  - snap command line
+  - snap package update
+  - linux application management
+  - cross platform packaging
 features:
-- Install and manage snap packages
-- Update snap packages securely
-- List installed snap packages
-- Search for available snap packages
-- Remove snap packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and manage snap packages
+  - Update snap packages securely
+  - List installed snap packages
+  - Search for available snap packages
+  - Remove snap packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # snap

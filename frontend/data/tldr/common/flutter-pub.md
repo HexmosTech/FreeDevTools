@@ -1,29 +1,29 @@
 ---
-title: "Flutter Pub - Manage Dart Packages | Online Free DevTools by Hexmos"
+title: 'Flutter Pub - Manage Dart Packages | Online Free DevTools by Hexmos'
 name: flutter-pub
-path: "/freedevtools/tldr/common/flutter-pub/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flutter-pub/"
-description: "Manage Dart packages easily with Flutter Pub. Add, remove, and upgrade your Flutter dependencies seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flutter-pub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flutter-pub/'
+description: 'Manage Dart packages easily with Flutter Pub. Add, remove, and upgrade your Flutter dependencies seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- flutter package manager
-- dart dependency management
-- flutter pub get
-- flutter pub add
-- flutter pub remove
-- flutter pub upgrade
-- flutter dependencies
-- dart packages
-- pubspec.yaml editor
-- flutter pub command
+  - flutter package manager
+  - dart dependency management
+  - flutter pub get
+  - flutter pub add
+  - flutter pub remove
+  - flutter pub upgrade
+  - flutter dependencies
+  - dart packages
+  - pubspec.yaml editor
+  - flutter pub command
 features:
-- Add Flutter package dependencies
-- Remove Flutter package dependencies
-- Upgrade Flutter packages
-- Download and update Flutter packages
-- Manage Dart dependencies from command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add Flutter package dependencies
+  - Remove Flutter package dependencies
+  - Upgrade Flutter packages
+  - Download and update Flutter packages
+  - Manage Dart dependencies from command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flutter pub

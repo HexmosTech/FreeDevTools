@@ -1,29 +1,29 @@
 ---
-title: "Fastfetch - Display System Information | Online Free DevTools by Hexmos"
+title: 'Fastfetch - Display System Information | Online Free DevTools by Hexmos'
 name: fastfetch
-path: "/freedevtools/tldr/common/fastfetch/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/fastfetch/"
-description: "Display system information quickly with Fastfetch. Analyze operating system, software, and hardware details. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/fastfetch/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/fastfetch/'
+description: 'Display system information quickly with Fastfetch. Analyze operating system, software, and hardware details. Free online tool, no registration required.'
 category: common
 keywords:
-- system information display
-- operating system details
-- hardware information retrieval
-- software configuration analysis
-- linux system information
-- macos system details
-- windows system information
-- command line system info
-- fast system information
-- system diagnostics
+  - system information display
+  - operating system details
+  - hardware information retrieval
+  - software configuration analysis
+  - linux system information
+  - macos system details
+  - windows system information
+  - command line system info
+  - fast system information
+  - system diagnostics
 features:
-- Display comprehensive system information
-- Load and use custom configuration files
-- Fetch specific system structures
-- Customize logo appearance
-- Customize color scheme
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display comprehensive system information
+  - Load and use custom configuration files
+  - Fetch specific system structures
+  - Customize logo appearance
+  - Customize color scheme
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fastfetch

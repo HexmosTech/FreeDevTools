@@ -1,29 +1,29 @@
 ---
-title: "Adscript Compiler - Generate Executables | Online Free DevTools by Hexmos"
+title: 'Adscript Compiler - Generate Executables | Online Free DevTools by Hexmos'
 name: adscript
-path: "/freedevtools/tldr/common/adscript/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/adscript/"
-description: "Generate code with Adscript Compiler. Create executables and object files from Adscript source. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/adscript/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/adscript/'
+description: 'Generate code with Adscript Compiler. Create executables and object files from Adscript source. Free online tool, no registration required.'
 category: common
 keywords:
-- adscript compiler
-- adscript executable generator
-- adscript object file
-- adscript llvm ir
-- adscript cross compiler
-- adscript linux
-- adscript macos
-- adscript windows
-- adscript file compiler
-- amplus adscript
+  - adscript compiler
+  - adscript executable generator
+  - adscript object file
+  - adscript llvm ir
+  - adscript cross compiler
+  - adscript linux
+  - adscript macos
+  - adscript windows
+  - adscript file compiler
+  - amplus adscript
 features:
-- Compile Adscript files to object code
-- Generate standalone executable files
-- Output LLVM IR for Adscript programs
-- Cross-compile for different CPU architectures
-- Support compiling for various operating systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile Adscript files to object code
+  - Generate standalone executable files
+  - Output LLVM IR for Adscript programs
+  - Cross-compile for different CPU architectures
+  - Support compiling for various operating systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # adscript

@@ -1,29 +1,29 @@
 ---
-title: "RPC Client - Control Remote Windows Systems | Online Free DevTools by Hexmos"
+title: 'RPC Client - Control Remote Windows Systems | Online Free DevTools by Hexmos'
 name: rpcclient
-path: "/freedevtools/tldr/linux/rpcclient/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rpcclient/"
-description: "Control remote Windows systems with RPC Client, a powerful Samba tool. Manage users, execute commands, and query system information. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rpcclient/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rpcclient/'
+description: 'Control remote Windows systems with RPC Client, a powerful Samba tool. Manage users, execute commands, and query system information. Free online tool, no registration required.'
 category: linux
 keywords:
-- MS-RPC client
-- samba rpcclient
-- windows remote access
-- linux windows management
-- remote system control
-- domain user management
-- windows command execution
-- samba suite tools
-- network administration linux
-- rpcclient commands
+  - MS-RPC client
+  - samba rpcclient
+  - windows remote access
+  - linux windows management
+  - remote system control
+  - domain user management
+  - windows command execution
+  - samba suite tools
+  - network administration linux
+  - rpcclient commands
 features:
-- Connect to remote Windows systems using MS-RPC protocol
-- Execute shell commands remotely on Windows hosts
-- Manage domain users, including creating and querying users
-- Enumerate domain privileges and system information
-- Authenticate with usernames, passwords, or password hashes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to remote Windows systems using MS-RPC protocol
+  - Execute shell commands remotely on Windows hosts
+  - Manage domain users, including creating and querying users
+  - Enumerate domain privileges and system information
+  - Authenticate with usernames, passwords, or password hashes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rpcclient

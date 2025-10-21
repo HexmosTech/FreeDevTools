@@ -1,29 +1,29 @@
 ---
-title: "npm-home - Open Package Pages | Online Free DevTools by Hexmos"
+title: 'npm-home - Open Package Pages | Online Free DevTools by Hexmos'
 name: npm-home
-path: "/freedevtools/tldr/npm/npm-home/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-home/"
-description: "Open npm package pages easily with npm-home. Access npm, Yarn, or GitHub repositories directly from the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-home/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-home/'
+description: 'Open npm package pages easily with npm-home. Access npm, Yarn, or GitHub repositories directly from the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- npm package manager
-- yarn package manager
-- github repository opener
-- npm page opener
-- javascript package info
-- node package viewer
-- package repository navigator
-- command line browser
-- package metadata retrieval
-- npm package lookup
+  - npm package manager
+  - yarn package manager
+  - github repository opener
+  - npm page opener
+  - javascript package info
+  - node package viewer
+  - package repository navigator
+  - command line browser
+  - package metadata retrieval
+  - npm package lookup
 features:
-- Opens npm package pages in a web browser
-- Opens GitHub repositories for packages
-- Opens Yarn package pages
-- Supports specifying package names
-- Allows choosing between npm, Yarn, or GitHub
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Opens npm package pages in a web browser
+  - Opens GitHub repositories for packages
+  - Opens Yarn package pages
+  - Supports specifying package names
+  - Allows choosing between npm, Yarn, or GitHub
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm-home

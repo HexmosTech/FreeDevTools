@@ -1,29 +1,29 @@
 ---
-title: "Quantize PNM Images - Batch Convert PNM Files | Online Free DevTools by Hexmos"
+title: 'Quantize PNM Images - Batch Convert PNM Files | Online Free DevTools by Hexmos'
 name: pnmquantall
-path: "/freedevtools/tldr/pnm/pnmquantall/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmquantall/"
-description: "Quantize PNM image files with Pnmquantall. Batch convert multiple PNM images to a shared colormap. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmquantall/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmquantall/'
+description: 'Quantize PNM image files with Pnmquantall. Batch convert multiple PNM images to a shared colormap. Free online tool, no registration required.'
 category: common
 keywords:
-- pnm image quantization
-- pnm batch converter
-- netpbm pnmquantall
-- pnm image colormap
-- image format conversion
-- pnm to indexed color
-- linux pnm utilities
-- command line image processing
-- pnm optimization
-- image color reduction
+  - pnm image quantization
+  - pnm batch converter
+  - netpbm pnmquantall
+  - pnm image colormap
+  - image format conversion
+  - pnm to indexed color
+  - linux pnm utilities
+  - command line image processing
+  - pnm optimization
+  - image color reduction
 features:
-- Quantize multiple PNM files simultaneously
-- Share a common colormap across multiple PNM images
-- Overwrite original PNM files with quantized versions
-- Save quantized images with a specified file extension
-- Reduce the number of colors in PNM images
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Quantize multiple PNM files simultaneously
+  - Share a common colormap across multiple PNM images
+  - Overwrite original PNM files with quantized versions
+  - Save quantized images with a specified file extension
+  - Reduce the number of colors in PNM images
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmquantall

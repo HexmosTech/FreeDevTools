@@ -1,29 +1,29 @@
 ---
-title: "Bundle Node.js - Create Single File with NCC | Online Free DevTools by Hexmos"
+title: 'Bundle Node.js - Create Single File with NCC | Online Free DevTools by Hexmos'
 name: ncc
-path: "/freedevtools/tldr/common/ncc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ncc/"
-description: "Bundle Node.js applications with NCC to create single files. Supports TypeScript, binary addons, and dynamic requires. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ncc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ncc/'
+description: 'Bundle Node.js applications with NCC to create single files. Supports TypeScript, binary addons, and dynamic requires. Free online tool, no registration required.'
 category: common
 keywords:
-- Node.js bundler
-- JavaScript bundler
-- TypeScript bundler
-- Single file Node.js
-- Vercel ncc
-- Node.js compiler
-- Node.js single executable
-- Node.js deployment
-- Node.js minification
-- Node.js source maps
+  - Node.js bundler
+  - JavaScript bundler
+  - TypeScript bundler
+  - Single file Node.js
+  - Vercel ncc
+  - Node.js compiler
+  - Node.js single executable
+  - Node.js deployment
+  - Node.js minification
+  - Node.js source maps
 features:
-- Bundle Node.js applications into a single file
-- Minify bundled Node.js applications
-- Generate source maps for bundled applications
-- Automatically recompile on file changes
-- Clean the ncc cache
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Bundle Node.js applications into a single file
+  - Minify bundled Node.js applications
+  - Generate source maps for bundled applications
+  - Automatically recompile on file changes
+  - Clean the ncc cache
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ncc

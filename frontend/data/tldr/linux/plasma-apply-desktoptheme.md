@@ -1,9 +1,9 @@
 ---
-title: "Plasma Theme Manager - Switch Desktop Themes | Online Free DevTools by Hexmos"
+title: 'Plasma Theme Manager - Switch Desktop Themes | Online Free DevTools by Hexmos'
 name: plasma-apply-desktoptheme
-path: "/freedevtools/tldr/linux/plasma-apply-desktoptheme/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/plasma-apply-desktoptheme/"
-description: "Switch Plasma desktop themes effortlessly with plasma-apply-desktoptheme.  Manage and apply themes using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/plasma-apply-desktoptheme/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/plasma-apply-desktoptheme/'
+description: 'Switch Plasma desktop themes effortlessly with plasma-apply-desktoptheme.  Manage and apply themes using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - plasma theme manager
@@ -22,8 +22,8 @@ features:
   - Allows switching between different themes.
   - Provides command-line interface for theme management.
   - Integrates with the KDE Plasma workspace.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # plasma-apply-desktoptheme

@@ -1,29 +1,29 @@
 ---
-title: "Delete Virsh Pool - Remove Storage Pools | Online Free DevTools by Hexmos"
+title: 'Delete Virsh Pool - Remove Storage Pools | Online Free DevTools by Hexmos'
 name: virsh-pool-delete
-path: "/freedevtools/tldr/virsh/virsh-pool-delete/"
-canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-delete/"
-description: "Delete Virsh pool storage with Virsh Pool Delete. Remove inactive storage systems easily using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/virsh/virsh-pool-delete/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virsh/virsh-pool-delete/'
+description: 'Delete Virsh pool storage with Virsh Pool Delete. Remove inactive storage systems easily using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- virsh pool delete
-- virsh storage pool delete
-- linux virsh pool
-- virsh pool management
-- kvm storage pool delete
-- libvirt pool delete
-- virsh command line
-- virsh pool destroy
-- virtual machine storage
-- delete vm storage
+  - virsh pool delete
+  - virsh storage pool delete
+  - linux virsh pool
+  - virsh pool management
+  - kvm storage pool delete
+  - libvirt pool delete
+  - virsh command line
+  - virsh pool destroy
+  - virtual machine storage
+  - delete vm storage
 features:
-- Delete the underlying storage of inactive virsh pools.
-- Remove storage pools using name or UUID.
-- Integrate with the libvirt virtualization platform.
-- Clean up and manage KVM storage efficiently.
-- Eliminate unnecessary storage resources.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete the underlying storage of inactive virsh pools.
+  - Remove storage pools using name or UUID.
+  - Integrate with the libvirt virtualization platform.
+  - Clean up and manage KVM storage efficiently.
+  - Eliminate unnecessary storage resources.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virsh pool-delete

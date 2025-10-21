@@ -1,29 +1,29 @@
 ---
-title: "Nix Develop - Generate Shell Environments | Online Free DevTools by Hexmos"
+title: 'Nix Develop - Generate Shell Environments | Online Free DevTools by Hexmos'
 name: nix-develop
-path: "/freedevtools/tldr/nix/nix-develop/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-develop/"
-description: "Generate development shell environments with Nix Develop. Quickly build and configure software using dependency isolation for reproducible builds. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-develop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-develop/'
+description: 'Generate development shell environments with Nix Develop. Quickly build and configure software using dependency isolation for reproducible builds. Free online tool, no registration required.'
 category: common
 keywords:
-- nix development shell
-- nix environment generation
-- nix dependency isolation
-- nix reproducible builds
-- nix flake development
-- linux development environment
-- macos development environment
-- nix package manager
-- command line development
-- software development environment
+  - nix development shell
+  - nix environment generation
+  - nix dependency isolation
+  - nix reproducible builds
+  - nix flake development
+  - linux development environment
+  - macos development environment
+  - nix package manager
+  - command line development
+  - software development environment
 features:
-- Launch a shell with package dependencies.
-- Create isolated development environments.
-- Build software in a reproducible environment.
-- Configure build phases.
-- Utilize nixpkgs packages directly.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch a shell with package dependencies.
+  - Create isolated development environments.
+  - Build software in a reproducible environment.
+  - Configure build phases.
+  - Utilize nixpkgs packages directly.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix develop

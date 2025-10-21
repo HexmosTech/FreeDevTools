@@ -1,9 +1,9 @@
 ---
-title: "Set Environment Variables - Control CMD Instance | Online Free DevTools by Hexmos"
+title: 'Set Environment Variables - Control CMD Instance | Online Free DevTools by Hexmos'
 name: set
-path: "/freedevtools/tldr/windows/set/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/set/"
-description: "Control environment variables with Set Environment Variables. Quickly set and display variables for CMD instance. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/set/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/set/'
+description: 'Control environment variables with Set Environment Variables. Quickly set and display variables for CMD instance. Free online tool, no registration required.'
 category: windows
 keywords:
   - cmd environment variable set
@@ -22,8 +22,8 @@ features:
   - List variables starting with a specified string
   - Prompt user for variable value input
   - Control CMD instance environment settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # set

@@ -1,9 +1,9 @@
 ---
-title: "DNF5 Package Manager - Manage Linux Packages | Online Free DevTools by Hexmos"
+title: 'DNF5 Package Manager - Manage Linux Packages | Online Free DevTools by Hexmos'
 name: dnf5
-path: "/freedevtools/tldr/linux/dnf5/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dnf5/"
-description: "Manage Linux packages efficiently with DNF5 package manager.  Upgrade, install, remove, and search packages with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dnf5/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dnf5/'
+description: 'Manage Linux packages efficiently with DNF5 package manager.  Upgrade, install, remove, and search packages with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux package manager
@@ -22,8 +22,8 @@ features:
   - Install new packages from repositories.
   - Remove unwanted packages from the system.
   - Manage cached package data efficiently.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dnf5

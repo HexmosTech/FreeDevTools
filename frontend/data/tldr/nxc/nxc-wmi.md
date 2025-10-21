@@ -1,29 +1,29 @@
 ---
-title: "WMI Pentesting - Exploit WMI with NXC | Online Free DevTools by Hexmos"
+title: 'WMI Pentesting - Exploit WMI with NXC | Online Free DevTools by Hexmos'
 name: nxc-wmi
-path: "/freedevtools/tldr/nxc/nxc-wmi/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-wmi/"
-description: "Exploit WMI with NXC using powerful penetration testing techniques. Access and control Windows systems remotely. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-wmi/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-wmi/'
+description: 'Exploit WMI with NXC using powerful penetration testing techniques. Access and control Windows systems remotely. Free online tool, no registration required.'
 category: common
 keywords:
-- WMI penetration testing
-- NXC WMI exploitation
-- Windows management instrumentation
-- Remote command execution
-- Password brute forcing
-- Local authentication bypass
-- Network credential scanner
-- Security vulnerability analysis
-- WMI query executor
-- Lateral movement tool
+  - WMI penetration testing
+  - NXC WMI exploitation
+  - Windows management instrumentation
+  - Remote command execution
+  - Password brute forcing
+  - Local authentication bypass
+  - Network credential scanner
+  - Security vulnerability analysis
+  - WMI query executor
+  - Lateral movement tool
 features:
-- Enumerate and validate credentials via WMI
-- Execute arbitrary commands on remote Windows hosts
-- Perform WMI queries for data retrieval
-- Authenticate using local accounts without domain credentials
-- Automate exploitation of WMI vulnerabilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate and validate credentials via WMI
+  - Execute arbitrary commands on remote Windows hosts
+  - Perform WMI queries for data retrieval
+  - Authenticate using local accounts without domain credentials
+  - Automate exploitation of WMI vulnerabilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc wmi

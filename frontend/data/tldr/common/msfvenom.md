@@ -1,29 +1,29 @@
 ---
-title: "Generate Metasploit Payloads - Create Exploit Code | Online Free DevTools by Hexmos"
+title: 'Generate Metasploit Payloads - Create Exploit Code | Online Free DevTools by Hexmos'
 name: msfvenom
-path: "/freedevtools/tldr/common/msfvenom/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/msfvenom/"
-description: "Generate Metasploit payloads with msfvenom. Create reverse shells, executable files and raw code for penetration testing. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/msfvenom/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/msfvenom/'
+description: 'Generate Metasploit payloads with msfvenom. Create reverse shells, executable files and raw code for penetration testing. Free online tool, no registration required.'
 category: common
 keywords:
-- metasploit payload generation
-- reverse shell generator
-- exploit code creation
-- msfvenom payload creator
-- linux payload generator
-- windows executable generator
-- raw shellcode generator
-- penetration testing payloads
-- reverse tcp payload
-- msfvenom command line
+  - metasploit payload generation
+  - reverse shell generator
+  - exploit code creation
+  - msfvenom payload creator
+  - linux payload generator
+  - windows executable generator
+  - raw shellcode generator
+  - penetration testing payloads
+  - reverse tcp payload
+  - msfvenom command line
 features:
-- Generate payloads for various operating systems
-- Create reverse TCP shells for penetration testing
-- Output payloads in multiple formats like ELF, EXE, and raw
-- List available payloads and formats
-- Customize payload options such as LHOST and LPORT
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate payloads for various operating systems
+  - Create reverse TCP shells for penetration testing
+  - Output payloads in multiple formats like ELF, EXE, and raw
+  - List available payloads and formats
+  - Customize payload options such as LHOST and LPORT
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msfvenom

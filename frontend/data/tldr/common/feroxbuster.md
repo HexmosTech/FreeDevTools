@@ -1,29 +1,29 @@
 ---
-title: "Content Discovery - Scan URLs with Feroxbuster | Online Free DevTools by Hexmos"
+title: 'Content Discovery - Scan URLs with Feroxbuster | Online Free DevTools by Hexmos'
 name: feroxbuster
-path: "/freedevtools/tldr/common/feroxbuster/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/feroxbuster/"
-description: "Scan URLs for content discovery with Feroxbuster, a fast Rust-based tool. Brute-force directories, find hidden paths and enumerate links. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/feroxbuster/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/feroxbuster/'
+description: 'Scan URLs for content discovery with Feroxbuster, a fast Rust-based tool. Brute-force directories, find hidden paths and enumerate links. Free online tool, no registration required.'
 category: common
 keywords:
-- URL scanner
-- Content discovery tool
-- Web directory brute force
-- Hidden path finder
-- URL enumeration
-- Website crawler
-- Directory scanner
-- Web content analyzer
-- Recursive URL scanner
-- Rust web scanner
+  - URL scanner
+  - Content discovery tool
+  - Web directory brute force
+  - Hidden path finder
+  - URL enumeration
+  - Website crawler
+  - Directory scanner
+  - Web content analyzer
+  - Recursive URL scanner
+  - Rust web scanner
 features:
-- Discover hidden directories and files on web servers
-- Enumerate web content with recursive scanning
-- Extract links from webpages
-- Filter scan results by status code
-- Scan specific file extensions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Discover hidden directories and files on web servers
+  - Enumerate web content with recursive scanning
+  - Extract links from webpages
+  - Filter scan results by status code
+  - Scan specific file extensions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # feroxbuster

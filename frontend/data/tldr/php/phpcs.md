@@ -1,29 +1,29 @@
 ---
-title: "Validate PHP Code - Detect Coding Standards with phpcs | Online Free DevTools by Hexmos"
+title: 'Validate PHP Code - Detect Coding Standards with phpcs | Online Free DevTools by Hexmos'
 name: phpcs
-path: "/freedevtools/tldr/php/phpcs/"
-canonical: "https://hexmos.com/freedevtools/tldr/php/phpcs/"
-description: "Validate PHP code against coding standards with phpcs. Detect coding style violations and improve code quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/php/phpcs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/php/phpcs/'
+description: 'Validate PHP code against coding standards with phpcs. Detect coding style violations and improve code quality. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP code sniffer
-- PHP coding standards
-- code style validator
-- PHP syntax checker
-- coding standards fixer
-- PEAR coding standard
-- PSR coding standards
-- PHP code analysis
-- command line validator
-- PHP code quality
+  - PHP code sniffer
+  - PHP coding standards
+  - code style validator
+  - PHP syntax checker
+  - coding standards fixer
+  - PEAR coding standard
+  - PSR coding standards
+  - PHP code analysis
+  - command line validator
+  - PHP code quality
 features:
-- Sniff directories for code style violations
-- Validate against specified coding standards
-- Output reports in various formats (full, xml, json)
-- Configure settings for the validation process
-- Include external files for customization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Sniff directories for code style violations
+  - Validate against specified coding standards
+  - Output reports in various formats (full, xml, json)
+  - Configure settings for the validation process
+  - Include external files for customization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # phpcs

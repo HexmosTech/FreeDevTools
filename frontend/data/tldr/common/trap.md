@@ -1,29 +1,29 @@
 ---
-title: "Trap Command - Control Signals | Online Free DevTools by Hexmos"
+title: 'Trap Command - Control Signals | Online Free DevTools by Hexmos'
 name: trap
-path: "/freedevtools/tldr/common/trap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/trap/"
-description: "Control signals effectively with Trap Command. Execute commands upon specific events and manage signal handling. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/trap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/trap/'
+description: 'Control signals effectively with Trap Command. Execute commands upon specific events and manage signal handling. Free online tool, no registration required.'
 category: common
 keywords:
-- Signal Handling Linux
-- Command Signal Trap
-- Linux Trap Command
-- Shell Signal Control
-- Bash Trap Examples
-- Execute Command on Signal
-- Signal Event Handler
-- POSIX Trap Command
-- Script Signal Management
-- Terminal Signal Intercept
+  - Signal Handling Linux
+  - Command Signal Trap
+  - Linux Trap Command
+  - Shell Signal Control
+  - Bash Trap Examples
+  - Execute Command on Signal
+  - Signal Event Handler
+  - POSIX Trap Command
+  - Script Signal Management
+  - Terminal Signal Intercept
 features:
-- Execute commands upon receiving specific signals
-- Remove previously defined signal handlers
-- Define custom actions for system events
-- Intercept and handle interrupt signals
-- Control program behavior with signal traps
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands upon receiving specific signals
+  - Remove previously defined signal handlers
+  - Define custom actions for system events
+  - Intercept and handle interrupt signals
+  - Control program behavior with signal traps
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # trap

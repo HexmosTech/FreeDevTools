@@ -1,24 +1,24 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { toast } from "@/components/ToastProvider";
+import React, { useState, useCallback, useEffect } from 'react';
+import { toast } from '@/components/ToastProvider';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import CopyButton from "@/components/ui/copy-button";
-import { Badge } from "@/components/ui/badge";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import QueryParamsToJsonSkeleton from "./_QueryParamsToJsonSkeleton";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import CopyButton from '@/components/ui/copy-button';
+import { Badge } from '@/components/ui/badge';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import QueryParamsToJsonSkeleton from './_QueryParamsToJsonSkeleton';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 interface QueryParam {
   key: string;
@@ -26,10 +26,10 @@ interface QueryParam {
 }
 
 export default function QueryParamsToJson() {
-  const [queryString, setQueryString] = useState("");
-  const [jsonOutput, setJsonOutput] = useState("");
+  const [queryString, setQueryString] = useState('');
+  const [jsonOutput, setJsonOutput] = useState('');
   const [parsedParams, setParsedParams] = useState<QueryParam[]>([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -42,13 +42,13 @@ export default function QueryParamsToJson() {
 
   const parseQueryParams = useCallback((queryStr: string) => {
     try {
-      setError("");
+      setError('');
 
       // Clean the query string - remove leading ? or & if present
-      const cleanQuery = queryStr.replace(/^[?&]/, "");
+      const cleanQuery = queryStr.replace(/^[?&]/, '');
 
       if (!cleanQuery.trim()) {
-        setJsonOutput("{}");
+        setJsonOutput('{}');
         setParsedParams([]);
         return;
       }
@@ -57,20 +57,20 @@ export default function QueryParamsToJson() {
       const paramsList: QueryParam[] = [];
 
       // Split by & and process each parameter
-      const pairs = cleanQuery.split("&");
+      const pairs = cleanQuery.split('&');
 
       pairs.forEach((pair) => {
         if (!pair) return;
 
-        const [key, ...valueParts] = pair.split("=");
-        const value = valueParts.join("="); // Handle values with = in them
+        const [key, ...valueParts] = pair.split('=');
+        const value = valueParts.join('='); // Handle values with = in them
 
         if (key) {
           const decodedKey = decodeURIComponent(key);
-          const decodedValue = value ? decodeURIComponent(value) : "";
+          const decodedValue = value ? decodeURIComponent(value) : '';
 
           // Handle array notation (key[])
-          if (decodedKey.endsWith("[]")) {
+          if (decodedKey.endsWith('[]')) {
             const arrayKey = decodedKey.slice(0, -2);
             if (!params[arrayKey]) {
               params[arrayKey] = [];
@@ -98,7 +98,7 @@ export default function QueryParamsToJson() {
       setParsedParams(paramsList);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to parse query parameters";
+        err instanceof Error ? err.message : 'Failed to parse query parameters';
       setError(errorMessage);
       toast.error(errorMessage);
     }
@@ -110,24 +110,24 @@ export default function QueryParamsToJson() {
   };
 
   const handleClear = () => {
-    setQueryString("");
-    setJsonOutput("");
+    setQueryString('');
+    setJsonOutput('');
     setParsedParams([]);
-    setError("");
+    setError('');
   };
 
   const handleCopyJson = () => {
     if (jsonOutput) {
       navigator.clipboard.writeText(jsonOutput);
-      toast.success("JSON copied to clipboard!");
+      toast.success('JSON copied to clipboard!');
     }
   };
 
   const exampleQueries = [
-    "name=John&age=30&city=New York",
-    "colors[]=red&colors[]=blue&colors[]=green",
-    "search=react%20tutorial&category=programming&page=1",
-    "utm_source=google&utm_medium=cpc&utm_campaign=summer_sale&product_id=123",
+    'name=John&age=30&city=New York',
+    'colors[]=red&colors[]=blue&colors[]=green',
+    'search=react%20tutorial&category=programming&page=1',
+    'utm_source=google&utm_medium=cpc&utm_campaign=summer_sale&product_id=123',
   ];
 
   return (
@@ -228,7 +228,7 @@ export default function QueryParamsToJson() {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <span>
-                            <strong>Basic Format:</strong>{" "}
+                            <strong>Basic Format:</strong>{' '}
                             ?key=value&key2=value2
                           </span>
                         </li>
@@ -294,7 +294,7 @@ export default function QueryParamsToJson() {
                         GET
                       </span>
                       <span className="text-slate-600 dark:text-slate-400">
-                        {" "}
+                        {' '}
                       </span>
                       <span className="text-green-600 dark:text-green-400">
                         /api/products

@@ -1,9 +1,9 @@
 ---
-title: "Knock Port Control - Open Ports with TCP/UDP | Online Free DevTools by Hexmos"
+title: 'Knock Port Control - Open Ports with TCP/UDP | Online Free DevTools by Hexmos'
 name: knock
-path: "/freedevtools/tldr/linux/knock/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/knock/"
-description: "Control port access with Knock, a powerful port knocking client.  Open specific ports on your firewall using TCP or UDP. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/knock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/knock/'
+description: 'Control port access with Knock, a powerful port knocking client.  Open specific ports on your firewall using TCP or UDP. Free online tool, no registration required.'
 category: linux
 keywords:
   - port knocking client
@@ -22,8 +22,8 @@ features:
   - Control port opening with specific sequences.
   - Offers verbose output for detailed connection information.
   - Supports various command-line options for flexible usage.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # knock

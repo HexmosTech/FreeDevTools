@@ -1,29 +1,29 @@
 ---
-title: "Control Transmission Remotely - Manage Torrents | Online Free DevTools by Hexmos"
+title: 'Control Transmission Remotely - Manage Torrents | Online Free DevTools by Hexmos'
 name: transmission-remote
-path: "/freedevtools/tldr/transmission/transmission-remote/"
-canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-remote/"
-description: "Control torrent downloads remotely with Transmission-Remote. Manage torrents, add files, and change settings quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/transmission/transmission-remote/'
+canonical: 'https://hexmos.com/freedevtools/tldr/transmission/transmission-remote/'
+description: 'Control torrent downloads remotely with Transmission-Remote. Manage torrents, add files, and change settings quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- transmission remote control
-- transmission command line
-- torrent remote management
-- transmission-remote linux
-- transmission-remote macos
-- transmission-remote example
-- torrent command line tool
-- transmission torrent manager
-- remote torrent client
-- transmission download control
+  - transmission remote control
+  - transmission command line
+  - torrent remote management
+  - transmission-remote linux
+  - transmission-remote macos
+  - transmission-remote example
+  - torrent command line tool
+  - transmission torrent manager
+  - remote torrent client
+  - transmission download control
 features:
-- Add torrent files or magnet links to Transmission.
-- Change the default download directory.
-- List all active torrents.
-- Start, stop, or remove torrents individually or in groups.
-- Move torrents to a different directory.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add torrent files or magnet links to Transmission.
+  - Change the default download directory.
+  - List all active torrents.
+  - Start, stop, or remove torrents individually or in groups.
+  - Move torrents to a different directory.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transmission-remote

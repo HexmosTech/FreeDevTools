@@ -1,29 +1,29 @@
 ---
-title: "LPAdmin - Configure CUPS Printers | Online Free DevTools by Hexmos"
+title: 'LPAdmin - Configure CUPS Printers | Online Free DevTools by Hexmos'
 name: lpadmin
-path: "/freedevtools/tldr/common/lpadmin/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lpadmin/"
-description: "Configure CUPS printers with LPAdmin. Manage printers, classes, and default configurations efficiently with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lpadmin/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lpadmin/'
+description: 'Configure CUPS printers with LPAdmin. Manage printers, classes, and default configurations efficiently with this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- CUPS printer configuration
-- LPAdmin command line
-- printer management linux
-- CUPS class management
-- default printer setting
-- printer deletion CUPS
-- printer class addition
-- printer class removal
-- CUPS printer configuration command
-- linux printing management
+  - CUPS printer configuration
+  - LPAdmin command line
+  - printer management linux
+  - CUPS class management
+  - default printer setting
+  - printer deletion CUPS
+  - printer class addition
+  - printer class removal
+  - CUPS printer configuration command
+  - linux printing management
 features:
-- Set the default CUPS printer
-- Delete specific printers or classes
-- Add printers to a CUPS class
-- Remove printers from a CUPS class
-- Manage CUPS printing configurations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Set the default CUPS printer
+  - Delete specific printers or classes
+  - Add printers to a CUPS class
+  - Remove printers from a CUPS class
+  - Manage CUPS printing configurations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lpadmin

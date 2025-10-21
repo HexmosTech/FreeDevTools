@@ -1,29 +1,29 @@
 ---
-title: "Create PNM Colormap - Quantize Images | Online Free DevTools by Hexmos"
+title: 'Create PNM Colormap - Quantize Images | Online Free DevTools by Hexmos'
 name: pnmcolormap
-path: "/freedevtools/tldr/pnm/pnmcolormap/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmcolormap/"
-description: "Create PNM colormaps with pnmcolormap, optimizing image colors using quantization. Enhance images and reduce color palette size. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmcolormap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmcolormap/'
+description: 'Create PNM colormaps with pnmcolormap, optimizing image colors using quantization. Enhance images and reduce color palette size. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM colormap generator
-- PNM image quantization
-- PPM color map
-- Netpbm color reduction
-- Image color palette optimization
-- PNM image processing
-- PPM image conversion
-- Linux image tools
-- Color map sorting
-- Image color manipulation
+  - PNM colormap generator
+  - PNM image quantization
+  - PPM color map
+  - Netpbm color reduction
+  - Image color palette optimization
+  - PNM image processing
+  - PPM image conversion
+  - Linux image tools
+  - Color map sorting
+  - Image color manipulation
 features:
-- Generate colormaps for PNM images
-- Reduce the number of colors in an image
-- Sort colormaps for comparison
-- Utilize splitspread strategy for detailed images
-- Optimize image colors using quantization
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate colormaps for PNM images
+  - Reduce the number of colors in an image
+  - Sort colormaps for comparison
+  - Utilize splitspread strategy for detailed images
+  - Optimize image colors using quantization
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmcolormap

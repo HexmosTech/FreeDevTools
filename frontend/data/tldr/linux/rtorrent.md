@@ -1,9 +1,9 @@
 ---
-title: "Control rtorrent - Download Torrents Easily | Online Free DevTools by Hexmos"
+title: 'Control rtorrent - Download Torrents Easily | Online Free DevTools by Hexmos'
 name: rtorrent
-path: "/freedevtools/tldr/linux/rtorrent/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/rtorrent/"
-description: "Control torrent downloads easily with rtorrent. Manage torrent files and magnet links through the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/rtorrent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/rtorrent/'
+description: 'Control torrent downloads easily with rtorrent. Manage torrent files and magnet links through the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - rtorrent torrent downloader
@@ -22,8 +22,8 @@ features:
   - View detailed torrent download information
   - Safely close and exit rtorrent
   - Manage torrents from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rtorrent

@@ -1,29 +1,29 @@
 ---
-title: "Execute NPM Packages - Run Commands with NPX | Online Free DevTools by Hexmos"
+title: 'Execute NPM Packages - Run Commands with NPX | Online Free DevTools by Hexmos'
 name: npx
-path: "/freedevtools/tldr/common/npx/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/npx/"
-description: "Execute NPM packages instantly with NPX. Run commands, specify packages, and suppress output using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/npx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/npx/'
+description: 'Execute NPM packages instantly with NPX. Run commands, specify packages, and suppress output using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- NPM package runner
-- Node package executor
-- NPX command execution
-- Execute command line packages
-- NPM command runner
-- Javascript package execution
-- NPM package manager
-- NodeJS package execution
-- NPX linux
-- NPX macos
+  - NPM package runner
+  - Node package executor
+  - NPX command execution
+  - Execute command line packages
+  - NPM command runner
+  - Javascript package execution
+  - NPM package manager
+  - NodeJS package execution
+  - NPX linux
+  - NPX macos
 features:
-- Execute commands from local or remote NPM packages.
-- Explicitly specify the package to execute a command from.
-- Run a command if it exists in the current path or node_modules/.bin.
-- Suppress any output from NPX itself during command execution.
-- Execute commands without installing the package globally.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands from local or remote NPM packages.
+  - Explicitly specify the package to execute a command from.
+  - Run a command if it exists in the current path or node_modules/.bin.
+  - Suppress any output from NPX itself during command execution.
+  - Execute commands without installing the package globally.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npx

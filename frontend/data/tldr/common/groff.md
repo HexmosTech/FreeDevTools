@@ -1,29 +1,29 @@
 ---
-title: "Format Documents - Groff Typesetting | Online Free DevTools by Hexmos"
+title: 'Format Documents - Groff Typesetting | Online Free DevTools by Hexmos'
 name: groff
-path: "/freedevtools/tldr/common/groff/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/groff/"
-description: "Format documents with Groff, a powerful typesetting system for creating professional-quality documents. Convert text to PostScript, HTML, or PDF. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/groff/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/groff/'
+description: 'Format documents with Groff, a powerful typesetting system for creating professional-quality documents. Convert text to PostScript, HTML, or PDF. Free online tool, no registration required.'
 category: common
 keywords:
-- roff typesetting
-- groff document formatting
-- postscript generation
-- html conversion
-- pdf output
-- gnu troff replacement
-- man page rendering
-- linux typesetting
-- command-line formatting
-- document publishing
+  - roff typesetting
+  - groff document formatting
+  - postscript generation
+  - html conversion
+  - pdf output
+  - gnu troff replacement
+  - man page rendering
+  - linux typesetting
+  - command-line formatting
+  - document publishing
 features:
-- Format documents to PostScript for printing
-- Render man pages for display in terminal
-- Convert man pages to HTML for web publishing
-- Typeset documents with tables and pictures to PDF
-- Execute groff commands with automatic preprocessor options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Format documents to PostScript for printing
+  - Render man pages for display in terminal
+  - Convert man pages to HTML for web publishing
+  - Typeset documents with tables and pictures to PDF
+  - Execute groff commands with automatic preprocessor options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # groff

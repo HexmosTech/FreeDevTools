@@ -1,29 +1,29 @@
 ---
-title: "Control Elasticsearch Node - Manage Operations | Online Free DevTools by Hexmos"
+title: 'Control Elasticsearch Node - Manage Operations | Online Free DevTools by Hexmos'
 name: elasticsearch-node
-path: "/freedevtools/tldr/elasticsearch/elasticsearch-node/"
-canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-node/"
-description: "Control Elasticsearch node operations with elasticsearch-node. Manage node shutdown, repurpose, and view diagnostics. Free online tool, no registration required."
+path: '/freedevtools/tldr/elasticsearch/elasticsearch-node/'
+canonical: 'https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-node/'
+description: 'Control Elasticsearch node operations with elasticsearch-node. Manage node shutdown, repurpose, and view diagnostics. Free online tool, no registration required.'
 category: common
 keywords:
-- Elasticsearch node manager
-- Elasticsearch cluster management
-- Elasticsearch node shutdown
-- Elasticsearch node repurposing
-- Elasticsearch node info command
-- Elasticsearch unsafe bootstrap
-- Elasticsearch roles management
-- Elasticsearch diagnostics tool
-- Elasticsearch command-line interface
-- Elasticsearch node control
+  - Elasticsearch node manager
+  - Elasticsearch cluster management
+  - Elasticsearch node shutdown
+  - Elasticsearch node repurposing
+  - Elasticsearch node info command
+  - Elasticsearch unsafe bootstrap
+  - Elasticsearch roles management
+  - Elasticsearch diagnostics tool
+  - Elasticsearch command-line interface
+  - Elasticsearch node control
 features:
-- Display detailed Elasticsearch node information
-- Prepare nodes for cluster restarts
-- Repurpose nodes for different roles
-- List roles assigned to a specific node
-- Show JVM version and diagnostic info
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display detailed Elasticsearch node information
+  - Prepare nodes for cluster restarts
+  - Repurpose nodes for different roles
+  - List roles assigned to a specific node
+  - Show JVM version and diagnostic info
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # elasticsearch-node

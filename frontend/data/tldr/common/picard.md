@@ -1,29 +1,29 @@
 ---
-title: "Tag Music with Picard - Generate MusicBrainz Tags | Online Free DevTools by Hexmos"
+title: 'Tag Music with Picard - Generate MusicBrainz Tags | Online Free DevTools by Hexmos'
 name: picard
-path: "/freedevtools/tldr/common/picard/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/picard/"
-description: "Tag music with Picard, a powerful MusicBrainz tagging application. Effortlessly organize and identify your music library. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/picard/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/picard/'
+description: 'Tag music with Picard, a powerful MusicBrainz tagging application. Effortlessly organize and identify your music library. Free online tool, no registration required.'
 category: common
 keywords:
-- music tagger
-- musicbrainz tagger
-- mp3 tagger
-- audio tagger
-- music metadata editor
-- Picard MusicBrainz
-- Picard tagger
-- audio file tagger
-- music identification tool
-- Picard command line
+  - music tagger
+  - musicbrainz tagger
+  - mp3 tagger
+  - audio tagger
+  - music metadata editor
+  - Picard MusicBrainz
+  - Picard tagger
+  - audio file tagger
+  - music identification tool
+  - Picard command line
 features:
-- Start the Picard application
-- Open and process multiple audio files
-- Display the installed Picard version
-- Automatically identify and tag music
-- Use MusicBrainz database for accurate tagging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the Picard application
+  - Open and process multiple audio files
+  - Display the installed Picard version
+  - Automatically identify and tag music
+  - Use MusicBrainz database for accurate tagging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # picard

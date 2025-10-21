@@ -1,29 +1,29 @@
 ---
-title: "Create Zapier Integration - Initialize with Zapier CLI | Online Free DevTools by Hexmos"
+title: 'Create Zapier Integration - Initialize with Zapier CLI | Online Free DevTools by Hexmos'
 name: zapier-init
-path: "/freedevtools/tldr/zapier/zapier-init/"
-canonical: "https://hexmos.com/freedevtools/tldr/zapier/zapier-init/"
-description: "Create a Zapier integration with Zapier init command. Quickly bootstrap new integrations using templates for authentication and data handling. Free online tool, no registration required."
+path: '/freedevtools/tldr/zapier/zapier-init/'
+canonical: 'https://hexmos.com/freedevtools/tldr/zapier/zapier-init/'
+description: 'Create a Zapier integration with Zapier init command. Quickly bootstrap new integrations using templates for authentication and data handling. Free online tool, no registration required.'
 category: common
 keywords:
-- zapier integration
-- zapier cli
-- zapier init command
-- zapier platform
-- zapier development
-- integration development
-- zapier template
-- api integration
-- automation workflow
-- zapier webhook
+  - zapier integration
+  - zapier cli
+  - zapier init command
+  - zapier platform
+  - zapier development
+  - integration development
+  - zapier template
+  - api integration
+  - automation workflow
+  - zapier webhook
 features:
-- Initialize new Zapier integrations
-- Use pre-built integration templates
-- Debug Zapier integration initialization
-- Specify a directory for the integration
-- Supports various authentication methods
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new Zapier integrations
+  - Use pre-built integration templates
+  - Debug Zapier integration initialization
+  - Specify a directory for the integration
+  - Supports various authentication methods
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zapier init

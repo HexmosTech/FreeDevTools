@@ -1,29 +1,29 @@
 ---
-title: "W32tm - Control Windows Time Service | Online Free DevTools by Hexmos"
+title: 'W32tm - Control Windows Time Service | Online Free DevTools by Hexmos'
 name: w32tm
-path: "/freedevtools/tldr/windows/w32tm/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/w32tm/"
-description: "Control time synchronization with w32tm, the Windows Time service tool. Query status, force resync, and debug time issues easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/w32tm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/w32tm/'
+description: 'Control time synchronization with w32tm, the Windows Time service tool. Query status, force resync, and debug time issues easily. Free online tool, no registration required.'
 category: windows
 keywords:
-- windows time service
-- w32tm command
-- time synchronization windows
-- windows time sync
-- ntp client windows
-- w32time configuration
-- force time sync windows
-- windows time server
-- windows command line time
-- synchronize windows clock
+  - windows time service
+  - w32tm command
+  - time synchronization windows
+  - windows time sync
+  - ntp client windows
+  - w32time configuration
+  - force time sync windows
+  - windows time server
+  - windows command line time
+  - synchronize windows clock
 features:
-- Query time synchronization status and details
-- Force immediate time resynchronization
-- Display time offset graph against a time server
-- Show NTP reply from a specified time server
-- Enable and write w32time debug logs to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Query time synchronization status and details
+  - Force immediate time resynchronization
+  - Display time offset graph against a time server
+  - Show NTP reply from a specified time server
+  - Enable and write w32time debug logs to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # w32tm

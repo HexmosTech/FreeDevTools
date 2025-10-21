@@ -1,29 +1,29 @@
 ---
-title: "Convert JPEG to PNM - Format Images | Online Free DevTools by Hexmos"
+title: 'Convert JPEG to PNM - Format Images | Online Free DevTools by Hexmos'
 name: jpegtopnm
-path: "/freedevtools/tldr/common/jpegtopnm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/jpegtopnm/"
-description: "Format JPEG images to PNM format with jpegtopnm. Convert your JFIF files easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/jpegtopnm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/jpegtopnm/'
+description: 'Format JPEG images to PNM format with jpegtopnm. Convert your JFIF files easily. Free online tool, no registration required.'
 category: common
 keywords:
-- jpeg to pnm converter
-- jfif to ppm converter
-- image format conversion
-- jpegtopnm command line
-- pnm image utility
-- linux image conversion
-- macos image conversion
-- jpg to pgm
-- netpbm image tools
-- convert image formats
+  - jpeg to pnm converter
+  - jfif to ppm converter
+  - image format conversion
+  - jpegtopnm command line
+  - pnm image utility
+  - linux image conversion
+  - macos image conversion
+  - jpg to pgm
+  - netpbm image tools
+  - convert image formats
 features:
-- Convert JPEG/JFIF files to PPM format
-- Convert JPEG/JFIF files to PGM format
-- Support for different image resolutions
-- Command-line image processing
-- Display program version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert JPEG/JFIF files to PPM format
+  - Convert JPEG/JFIF files to PGM format
+  - Support for different image resolutions
+  - Command-line image processing
+  - Display program version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jpegtopnm

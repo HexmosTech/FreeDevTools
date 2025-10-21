@@ -1,9 +1,9 @@
 ---
-title: "Manage Wine Environments - Winetricks | Online Free DevTools by Hexmos"
+title: 'Manage Wine Environments - Winetricks | Online Free DevTools by Hexmos'
 name: winetricks
-path: "/freedevtools/tldr/linux/winetricks/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/winetricks/"
-description: "Manage Wine virtual environments with Winetricks. Easily install Windows DLLs and components in custom Wine directories. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/winetricks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/winetricks/'
+description: 'Manage Wine virtual environments with Winetricks. Easily install Windows DLLs and components in custom Wine directories. Free online tool, no registration required.'
 category: linux
 keywords:
   - Wine environment manager
@@ -22,8 +22,8 @@ features:
   - Specify custom Wine directories
   - Run graphical Winetricks setup
   - Install Windows components in Wine
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # winetricks

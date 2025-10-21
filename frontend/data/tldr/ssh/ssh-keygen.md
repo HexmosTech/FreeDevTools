@@ -1,29 +1,29 @@
 ---
-title: "Generate SSH Keys - Secure Authentication | Online Free DevTools by Hexmos"
+title: 'Generate SSH Keys - Secure Authentication | Online Free DevTools by Hexmos'
 name: ssh-keygen
-path: "/freedevtools/tldr/ssh/ssh-keygen/"
-canonical: "https://hexmos.com/freedevtools/tldr/ssh/ssh-keygen/"
-description: "Generate SSH keys for secure authentication with ssh-keygen. Create RSA and ED25519 keys, manage known hosts and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/ssh/ssh-keygen/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ssh/ssh-keygen/'
+description: 'Generate SSH keys for secure authentication with ssh-keygen. Create RSA and ED25519 keys, manage known hosts and more. Free online tool, no registration required.'
 category: common
 keywords:
-- SSH key generation
-- RSA key generator
-- ED25519 key generation
-- OpenSSH key management
-- Passwordless login setup
-- SSH authentication tool
-- Public key extraction
-- Private key conversion
-- Linux SSH keys
-- macOS SSH keys
+  - SSH key generation
+  - RSA key generator
+  - ED25519 key generation
+  - OpenSSH key management
+  - Passwordless login setup
+  - SSH authentication tool
+  - Public key extraction
+  - Private key conversion
+  - Linux SSH keys
+  - macOS SSH keys
 features:
-- Generate RSA and ED25519 SSH key pairs
-- Remove host keys from known_hosts file
-- Retrieve fingerprint of an SSH key
-- Change password of an existing SSH key
-- Convert between different SSH key formats
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate RSA and ED25519 SSH key pairs
+  - Remove host keys from known_hosts file
+  - Retrieve fingerprint of an SSH key
+  - Change password of an existing SSH key
+  - Convert between different SSH key formats
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ssh-keygen

@@ -1,29 +1,29 @@
 ---
-title: "List Drivers - Display Device Driver Info | Online Free DevTools by Hexmos"
+title: 'List Drivers - Display Device Driver Info | Online Free DevTools by Hexmos'
 name: driverquery
-path: "/freedevtools/tldr/windows/driverquery/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/driverquery/"
-description: "Display driver information with Driverquery on Windows. Examine device driver properties and system configurations. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/driverquery/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/driverquery/'
+description: 'Display driver information with Driverquery on Windows. Examine device driver properties and system configurations. Free online tool, no registration required.'
 category: windows
 keywords:
-- Windows driver list
-- Driver information display
-- Device driver query
-- Driver status Windows
-- Windows driver management
-- Driver details Windows
-- Windows driver configuration
-- Driver version Windows
-- List signed drivers
-- Driverquery command
+  - Windows driver list
+  - Driver information display
+  - Device driver query
+  - Driver status Windows
+  - Windows driver management
+  - Driver details Windows
+  - Windows driver configuration
+  - Driver version Windows
+  - List signed drivers
+  - Driverquery command
 features:
-- Display all installed device drivers
-- Output driver information in table, list, or CSV format
-- Show whether drivers are digitally signed
-- Display driver information for remote computers
-- Provide verbose driver details
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all installed device drivers
+  - Output driver information in table, list, or CSV format
+  - Show whether drivers are digitally signed
+  - Display driver information for remote computers
+  - Provide verbose driver details
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # driverquery

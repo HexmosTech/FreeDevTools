@@ -1,29 +1,29 @@
 ---
-title: "Rewrite Code - Structure Search and Replace with Comby | Online Free DevTools by Hexmos"
+title: 'Rewrite Code - Structure Search and Replace with Comby | Online Free DevTools by Hexmos'
 name: comby
-path: "/freedevtools/tldr/common/comby/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/comby/"
-description: "Rewrite code structurally with Comby. Search and replace code patterns across multiple languages efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/comby/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/comby/'
+description: 'Rewrite code structurally with Comby. Search and replace code patterns across multiple languages efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- structural code search
-- code search and replace
-- comby code rewrite
-- pattern matching tool
-- code refactoring tool
-- semantic code search
-- code transformation tool
-- cross-language code search
-- comby linux
-- comby macos
+  - structural code search
+  - code search and replace
+  - comby code rewrite
+  - pattern matching tool
+  - code refactoring tool
+  - semantic code search
+  - code transformation tool
+  - cross-language code search
+  - comby linux
+  - comby macos
 features:
-- Match and rewrite code templates
-- Rewrite with rewrite properties
-- Perform in-place code modifications
-- Print matches without rewriting
-- Support multiple programming languages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Match and rewrite code templates
+  - Rewrite with rewrite properties
+  - Perform in-place code modifications
+  - Print matches without rewriting
+  - Support multiple programming languages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # comby

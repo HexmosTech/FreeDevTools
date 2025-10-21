@@ -1,29 +1,29 @@
 ---
-title: "Kubernetes Cluster - Control DigitalOcean Clusters | Online Free DevTools by Hexmos"
+title: 'Kubernetes Cluster - Control DigitalOcean Clusters | Online Free DevTools by Hexmos'
 name: doctl-kubernetes-cluster
-path: "/freedevtools/tldr/doctl/doctl-kubernetes-cluster/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-kubernetes-cluster/"
-description: "Control DigitalOcean Kubernetes clusters with doctl. Easily create, manage, upgrade, and delete clusters using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-kubernetes-cluster/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-kubernetes-cluster/'
+description: 'Control DigitalOcean Kubernetes clusters with doctl. Easily create, manage, upgrade, and delete clusters using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes cluster manager
-- doctl kubernetes control
-- digitalocean kubernetes cli
-- kubernetes cluster upgrade
-- doctl cluster delete
-- kubernetes kubeconfig fetch
-- digitalocean cluster list
-- kubernetes cluster create
-- doctl digitalocean
-- k8s cluster management
+  - kubernetes cluster manager
+  - doctl kubernetes control
+  - digitalocean kubernetes cli
+  - kubernetes cluster upgrade
+  - doctl cluster delete
+  - kubernetes kubeconfig fetch
+  - digitalocean cluster list
+  - kubernetes cluster create
+  - doctl digitalocean
+  - k8s cluster management
 features:
-- Create new Kubernetes clusters on DigitalOcean.
-- List available Kubernetes clusters.
-- Fetch and save the kubeconfig for a cluster.
-- Check for available Kubernetes upgrades.
-- Delete existing Kubernetes clusters.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Kubernetes clusters on DigitalOcean.
+  - List available Kubernetes clusters.
+  - Fetch and save the kubeconfig for a cluster.
+  - Check for available Kubernetes upgrades.
+  - Delete existing Kubernetes clusters.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl kubernetes cluster

@@ -1,9 +1,9 @@
 ---
-title: "Get Linux Distro Info - lsb_release Command | Online Free DevTools by Hexmos"
+title: 'Get Linux Distro Info - lsb_release Command | Online Free DevTools by Hexmos'
 name: lsb_release
-path: "/freedevtools/tldr/linux/lsb_release/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lsb_release/"
-description: "Get Linux distribution information quickly with the lsb_release command.  Retrieve details like description, ID, release, and codename. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lsb_release/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lsb_release/'
+description: 'Get Linux distribution information quickly with the lsb_release command.  Retrieve details like description, ID, release, and codename. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux distro information
@@ -22,8 +22,8 @@ features:
   - Show the release number of the distribution.
   - Obtain the codename of the distribution.
   - Print all available information in a single command.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsb_release

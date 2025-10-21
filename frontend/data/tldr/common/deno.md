@@ -1,29 +1,29 @@
 ---
-title: "Deno Runtime - Execute JavaScript & TypeScript | Online Free DevTools by Hexmos"
+title: 'Deno Runtime - Execute JavaScript & TypeScript | Online Free DevTools by Hexmos'
 name: deno
-path: "/freedevtools/tldr/common/deno/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/deno/"
-description: "Execute JavaScript and TypeScript code with Deno Runtime. Build secure and self-contained executables. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/deno/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/deno/'
+description: 'Execute JavaScript and TypeScript code with Deno Runtime. Build secure and self-contained executables. Free online tool, no registration required.'
 category: common
 keywords:
-- deno runtime
-- javascript runtime
-- typescript runtime
-- webassembly runtime
-- deno cli
-- deno repl
-- deno tasks
-- deno compile
-- deno install
-- deno permissions
+  - deno runtime
+  - javascript runtime
+  - typescript runtime
+  - webassembly runtime
+  - deno cli
+  - deno repl
+  - deno tasks
+  - deno compile
+  - deno install
+  - deno permissions
 features:
-- Execute JavaScript, TypeScript, and WebAssembly code securely.
-- Manage dependencies with `npm` or `jsr`.
-- Run interactive REPL shell for quick testing.
-- Compile scripts into standalone executables.
-- Check types, format code, and lint files with ease.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute JavaScript, TypeScript, and WebAssembly code securely.
+  - Manage dependencies with `npm` or `jsr`.
+  - Run interactive REPL shell for quick testing.
+  - Compile scripts into standalone executables.
+  - Check types, format code, and lint files with ease.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # deno

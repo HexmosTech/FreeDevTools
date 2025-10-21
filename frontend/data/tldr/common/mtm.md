@@ -1,29 +1,29 @@
 ---
-title: "Control Terminal Sessions - mtm Multiplexer | Online Free DevTools by Hexmos"
+title: 'Control Terminal Sessions - mtm Multiplexer | Online Free DevTools by Hexmos'
 name: mtm
-path: "/freedevtools/tldr/common/mtm/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mtm/"
-description: "Control multiple terminal sessions with mtm, a minimal terminal multiplexer. Manage windows, split panes, and navigate easily within your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mtm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mtm/'
+description: 'Control multiple terminal sessions with mtm, a minimal terminal multiplexer. Manage windows, split panes, and navigate easily within your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- terminal multiplexer
-- mtm terminal
-- linux terminal manager
-- tmux alternative
-- screen alternative
-- command line multiplexer
-- terminal session manager
-- command-line tools
-- console window manager
-- mtm command
+  - terminal multiplexer
+  - mtm terminal
+  - linux terminal manager
+  - tmux alternative
+  - screen alternative
+  - command line multiplexer
+  - terminal session manager
+  - command-line tools
+  - console window manager
+  - mtm command
 features:
-- Split terminal into horizontal or vertical panes
-- Navigate between terminal sessions using arrow keys
-- View scrollback buffer of terminal sessions
-- Switch between multiple terminal windows
-- Close current terminal session quickly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Split terminal into horizontal or vertical panes
+  - Navigate between terminal sessions using arrow keys
+  - View scrollback buffer of terminal sessions
+  - Switch between multiple terminal windows
+  - Close current terminal session quickly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mtm

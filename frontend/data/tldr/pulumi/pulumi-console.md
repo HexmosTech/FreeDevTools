@@ -1,29 +1,29 @@
 ---
-title: "Pulumi Console - Open Pulumi Stacks | Online Free DevTools by Hexmos"
+title: 'Pulumi Console - Open Pulumi Stacks | Online Free DevTools by Hexmos'
 name: pulumi-console
-path: "/freedevtools/tldr/pulumi/pulumi-console/"
-canonical: "https://hexmos.com/freedevtools/tldr/pulumi/pulumi-console/"
-description: "Open and manage Pulumi stacks directly with Pulumi Console. Inspect infrastructure, diagnose issues, and migrate stacks easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/pulumi/pulumi-console/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pulumi/pulumi-console/'
+description: 'Open and manage Pulumi stacks directly with Pulumi Console. Inspect infrastructure, diagnose issues, and migrate stacks easily. Free online tool, no registration required.'
 category: common
 keywords:
-- pulumi console
-- pulumi stack management
-- infrastructure as code console
-- cloud stack viewer
-- pulumi stack inspector
-- iac stack manager
-- pulumi cloud console
-- pulumi self-hosted console
-- pulumi stack migration
-- pulumi infrastructure debugging
+  - pulumi console
+  - pulumi stack management
+  - infrastructure as code console
+  - cloud stack viewer
+  - pulumi stack inspector
+  - iac stack manager
+  - pulumi cloud console
+  - pulumi self-hosted console
+  - pulumi stack migration
+  - pulumi infrastructure debugging
 features:
-- Open Pulumi stacks in the Pulumi Console.
-- Inspect cloud and self-hosted infrastructure.
-- Provides instructions to migrate stacks.
-- Manages cloud infrastructure from the command line.
-- Opens stacks for specific stack names.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open Pulumi stacks in the Pulumi Console.
+  - Inspect cloud and self-hosted infrastructure.
+  - Provides instructions to migrate stacks.
+  - Manages cloud infrastructure from the command line.
+  - Opens stacks for specific stack names.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pulumi console

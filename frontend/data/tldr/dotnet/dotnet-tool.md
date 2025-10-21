@@ -1,29 +1,29 @@
 ---
-title: "Dotnet Tool - Manage .NET Tools | Online Free DevTools by Hexmos"
+title: 'Dotnet Tool - Manage .NET Tools | Online Free DevTools by Hexmos'
 name: dotnet-tool
-path: "/freedevtools/tldr/dotnet/dotnet-tool/"
-canonical: "https://hexmos.com/freedevtools/tldr/dotnet/dotnet-tool/"
-description: "Manage .NET tools quickly with Dotnet Tool. Install, update, and search .NET tools in NuGet using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/dotnet/dotnet-tool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dotnet/dotnet-tool/'
+description: 'Manage .NET tools quickly with Dotnet Tool. Install, update, and search .NET tools in NuGet using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- dotnet tool manager
-- dotnet global tools
-- nuget package manager
-- dotnet cli tools
-- dotnet tool installer
-- dotnet tool updater
-- dotnet tool uninstaller
-- dotnet tool lister
-- dotnet tool search
-- dotnet tool manifest
+  - dotnet tool manager
+  - dotnet global tools
+  - nuget package manager
+  - dotnet cli tools
+  - dotnet tool installer
+  - dotnet tool updater
+  - dotnet tool uninstaller
+  - dotnet tool lister
+  - dotnet tool search
+  - dotnet tool manifest
 features:
-- Install .NET global and local tools
-- Restore tools from local tool manifest
-- Update installed .NET tools
-- Uninstall .NET tools
-- Search for .NET tools in NuGet
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install .NET global and local tools
+  - Restore tools from local tool manifest
+  - Update installed .NET tools
+  - Uninstall .NET tools
+  - Search for .NET tools in NuGet
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dotnet tool

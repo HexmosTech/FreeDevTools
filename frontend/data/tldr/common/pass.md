@@ -1,29 +1,29 @@
 ---
-title: "Password Manager - Store Passwords Securely | Online Free DevTools by Hexmos"
+title: 'Password Manager - Store Passwords Securely | Online Free DevTools by Hexmos'
 name: pass
-path: "/freedevtools/tldr/common/pass/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pass/"
-description: "Secure passwords with Pass Password Manager. Encrypt sensitive data, manage git repositories, and generate secure passwords. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pass/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pass/'
+description: 'Secure passwords with Pass Password Manager. Encrypt sensitive data, manage git repositories, and generate secure passwords. Free online tool, no registration required.'
 category: common
 keywords:
-- password manager
-- gpg encryption
-- git password storage
-- command line password manager
-- password generator
-- linux password manager
-- macos password manager
-- secure password storage
-- password store
-- encrypted data storage
+  - password manager
+  - gpg encryption
+  - git password storage
+  - command line password manager
+  - password generator
+  - linux password manager
+  - macos password manager
+  - secure password storage
+  - password store
+  - encrypted data storage
 features:
-- Initialize a password store with GPG IDs
-- Save new passwords and multiline data
-- Copy passwords to the clipboard securely
-- Generate random passwords of a specified length
-- Manage password storage using Git commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize a password store with GPG IDs
+  - Save new passwords and multiline data
+  - Copy passwords to the clipboard securely
+  - Generate random passwords of a specified length
+  - Manage password storage using Git commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pass

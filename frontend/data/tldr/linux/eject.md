@@ -1,9 +1,9 @@
 ---
-title: "Eject Command - Control Device Ejection | Online Free DevTools by Hexmos"
+title: 'Eject Command - Control Device Ejection | Online Free DevTools by Hexmos'
 name: eject
-path: "/freedevtools/tldr/linux/eject/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/eject/"
-description: "Control device ejection with the eject command.  Manage CDs, floppy disks, and more. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/eject/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/eject/'
+description: 'Control device ejection with the eject command.  Manage CDs, floppy disks, and more. Free online tool, no registration required.'
 category: linux
 keywords:
   - eject command
@@ -22,8 +22,8 @@ features:
   - Toggle tray open/close state.
   - Support for manual eject override.
   - Eject specific device types (CD-ROM, floppy, tape).
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # eject

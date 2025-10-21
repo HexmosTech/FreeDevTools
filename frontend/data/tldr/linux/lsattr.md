@@ -1,9 +1,9 @@
 ---
-title: "List Attributes - Inspect Linux Files | Online Free DevTools by Hexmos"
+title: 'List Attributes - Inspect Linux Files | Online Free DevTools by Hexmos'
 name: lsattr
-path: "/freedevtools/tldr/linux/lsattr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/lsattr/"
-description: "Inspect Linux file attributes with lsattr. Reveal file permissions, flags, and extended attributes. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/lsattr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/lsattr/'
+description: 'Inspect Linux file attributes with lsattr. Reveal file permissions, flags, and extended attributes. Free online tool, no registration required.'
 category: linux
 keywords:
   - list file attributes
@@ -22,8 +22,8 @@ features:
   - Show attributes for all files, including hidden ones.
   - Display attributes for directories only.
   - Inspect file flags on Linux filesystems.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsattr

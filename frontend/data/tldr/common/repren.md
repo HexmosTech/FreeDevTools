@@ -1,29 +1,29 @@
 ---
-title: "Rename Files - Replace Strings with Repren | Online Free DevTools by Hexmos"
+title: 'Rename Files - Replace Strings with Repren | Online Free DevTools by Hexmos'
 name: repren
-path: "/freedevtools/tldr/common/repren/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/repren/"
-description: "Replace strings to rename files easily with Repren. Perform batch file renaming and text substitution with regular expressions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/repren/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/repren/'
+description: 'Replace strings to rename files easily with Repren. Perform batch file renaming and text substitution with regular expressions. Free online tool, no registration required.'
 category: common
 keywords:
-- string replacement
-- file renaming
-- batch rename
-- regular expression
-- pattern matching
-- mass rename
-- filename editor
-- text substitution
-- linux rename
-- macos rename
+  - string replacement
+  - file renaming
+  - batch rename
+  - regular expression
+  - pattern matching
+  - mass rename
+  - filename editor
+  - text substitution
+  - linux rename
+  - macos rename
 features:
-- Rename files using literal string replacement.
-- Rename files using regular expressions.
-- Perform find and replace operations on file contents.
-- Execute both rename and find-and-replace using pattern files.
-- Perform case-insensitive renames.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rename files using literal string replacement.
+  - Rename files using regular expressions.
+  - Perform find and replace operations on file contents.
+  - Execute both rename and find-and-replace using pattern files.
+  - Perform case-insensitive renames.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # repren

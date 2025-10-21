@@ -1,29 +1,29 @@
 ---
-title: "MSSQL Client - Execute SQL Queries | Online Free DevTools by Hexmos"
+title: 'MSSQL Client - Execute SQL Queries | Online Free DevTools by Hexmos'
 name: mssqlclient.py
-path: "/freedevtools/tldr/common/mssqlclient-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/mssqlclient-py/"
-description: "Execute SQL queries with MSSQL Client. Connect to Microsoft SQL Server instances using various authentication methods. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mssqlclient-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/mssqlclient-py/'
+description: 'Execute SQL queries with MSSQL Client. Connect to Microsoft SQL Server instances using various authentication methods. Free online tool, no registration required.'
 category: common
 keywords:
-- mssql query execution
-- sql server connection
-- windows authentication mssql
-- pass-the-hash mssql
-- kerberos authentication mssql
-- mssql command line client
-- impacket mssqlclient
-- sql query tool
-- mssql database connection string
-- mssql windows authentication
+  - mssql query execution
+  - sql server connection
+  - windows authentication mssql
+  - pass-the-hash mssql
+  - kerberos authentication mssql
+  - mssql command line client
+  - impacket mssqlclient
+  - sql query tool
+  - mssql database connection string
+  - mssql windows authentication
 features:
-- Connect to MSSQL server using Windows authentication
-- Execute SQL queries from a file
-- Support for pass-the-hash authentication
-- Connect using Kerberos authentication
-- Specify database instance to connect to
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to MSSQL server using Windows authentication
+  - Execute SQL queries from a file
+  - Support for pass-the-hash authentication
+  - Connect using Kerberos authentication
+  - Specify database instance to connect to
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mssqlclient.py

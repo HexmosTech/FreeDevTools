@@ -1,29 +1,29 @@
 ---
-title: "Tmux - Manage Terminal Sessions with Ease | Online Free DevTools by Hexmos"
+title: 'Tmux - Manage Terminal Sessions with Ease | Online Free DevTools by Hexmos'
 name: tmux
-path: "/freedevtools/tldr/common/tmux/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tmux/"
-description: "Manage terminal sessions easily with Tmux. Multiplex terminals, create windows, and detach/attach sessions efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tmux/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tmux/'
+description: 'Manage terminal sessions easily with Tmux. Multiplex terminals, create windows, and detach/attach sessions efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- tmux session manager
-- terminal multiplexer
-- tmux commands linux
-- tmux configuration
-- tmux macos
-- tmux windows
-- linux terminal sessions
-- create tmux session
-- detach tmux session
-- tmux cheat sheet
+  - tmux session manager
+  - terminal multiplexer
+  - tmux commands linux
+  - tmux configuration
+  - tmux macos
+  - tmux windows
+  - linux terminal sessions
+  - create tmux session
+  - detach tmux session
+  - tmux cheat sheet
 features:
-- Create and manage multiple terminal sessions.
-- Detach and re-attach to sessions without losing progress.
-- Split terminal windows into panes.
-- Switch between sessions and windows quickly.
-- Kill sessions by name.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage multiple terminal sessions.
+  - Detach and re-attach to sessions without losing progress.
+  - Split terminal windows into panes.
+  - Switch between sessions and windows quickly.
+  - Kill sessions by name.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tmux

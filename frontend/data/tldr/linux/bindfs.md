@@ -1,29 +1,29 @@
 ---
-title: "Bindfs - Mount Directory Permissions | Online Free DevTools by Hexmos"
+title: 'Bindfs - Mount Directory Permissions | Online Free DevTools by Hexmos'
 name: bindfs
-path: "/freedevtools/tldr/linux/bindfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bindfs/"
-description: "Mount directories with Bindfs and manage permissions on Linux systems.  Securely share files and control access using different user mappings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bindfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bindfs/'
+description: 'Mount directories with Bindfs and manage permissions on Linux systems.  Securely share files and control access using different user mappings. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux bindfs
-- directory mount
-- permission management
-- file system access
-- user mapping linux
-- bindfs mount point
-- linux file sharing
-- change file ownership
-- bindfs permissions
-- linux file system
+  - linux bindfs
+  - directory mount
+  - permission management
+  - file system access
+  - user mapping linux
+  - bindfs mount point
+  - linux file sharing
+  - change file ownership
+  - bindfs permissions
+  - linux file system
 features:
-- Mount directories with customized permissions
-- Map user and group IDs for file access
-- Control file ownership on mounted directories
-- Dynamically adjust file permissions on the fly
-- Securely share files with restricted access
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Mount directories with customized permissions
+  - Map user and group IDs for file access
+  - Control file ownership on mounted directories
+  - Dynamically adjust file permissions on the fly
+  - Securely share files with restricted access
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bindfs

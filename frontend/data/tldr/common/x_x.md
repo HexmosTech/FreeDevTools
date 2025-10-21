@@ -1,29 +1,29 @@
 ---
-title: "View Excel and CSV Files - Read Data with x_x | Online Free DevTools by Hexmos"
+title: 'View Excel and CSV Files - Read Data with x_x | Online Free DevTools by Hexmos'
 name: x_x
-path: "/freedevtools/tldr/common/x_x/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/x_x/"
-description: "View Excel and CSV files easily with x_x. Read data, specify delimiters, and use headers for better data organization. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/x_x/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/x_x/'
+description: 'View Excel and CSV files easily with x_x. Read data, specify delimiters, and use headers for better data organization. Free online tool, no registration required.'
 category: common
 keywords:
-- excel viewer
-- csv viewer
-- data viewer
-- excel reader
-- csv reader
-- file viewer
-- data analysis
-- common commands
-- linux commands
-- macos commands
+  - excel viewer
+  - csv viewer
+  - data viewer
+  - excel reader
+  - csv reader
+  - file viewer
+  - data analysis
+  - common commands
+  - linux commands
+  - macos commands
 features:
-- View XLSX files
-- View CSV files
-- Use first row as header
-- Specify custom delimiters
-- Specify custom quote characters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View XLSX files
+  - View CSV files
+  - Use first row as header
+  - Specify custom delimiters
+  - Specify custom quote characters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # x_x

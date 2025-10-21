@@ -1,29 +1,29 @@
 ---
-title: "CUPS Enable - Start Printers and Classes | Online Free DevTools by Hexmos"
+title: 'CUPS Enable - Start Printers and Classes | Online Free DevTools by Hexmos'
 name: cupsenable
-path: "/freedevtools/tldr/common/cupsenable/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cupsenable/"
-description: "Start printers and classes with CUPS Enable. Quickly enable printing destinations on Linux and manage print queues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cupsenable/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cupsenable/'
+description: 'Start printers and classes with CUPS Enable. Quickly enable printing destinations on Linux and manage print queues. Free online tool, no registration required.'
 category: common
 keywords:
-- CUPS printer enable
-- CUPS class enable
-- Linux printer management
-- CUPS printer control
-- Command line printing Linux
-- CUPS destination control
-- CUPS printer resume
-- Linux CUPS administration
-- Print queue management
-- CUPS job cancellation
+  - CUPS printer enable
+  - CUPS class enable
+  - Linux printer management
+  - CUPS printer control
+  - Command line printing Linux
+  - CUPS destination control
+  - CUPS printer resume
+  - Linux CUPS administration
+  - Print queue management
+  - CUPS job cancellation
 features:
-- Enable specified CUPS printers or classes
-- Resume printing of held CUPS print jobs
-- Cancel all pending jobs for a CUPS destination
-- Control printer availability via command line
-- Manage CUPS print queues and destinations
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enable specified CUPS printers or classes
+  - Resume printing of held CUPS print jobs
+  - Cancel all pending jobs for a CUPS destination
+  - Control printer availability via command line
+  - Manage CUPS print queues and destinations
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cupsenable

@@ -1,9 +1,9 @@
 ---
-title: "Create Packages - Build Pacman Packages with makepkg | Online Free DevTools by Hexmos"
+title: 'Create Packages - Build Pacman Packages with makepkg | Online Free DevTools by Hexmos'
 name: makepkg
-path: "/freedevtools/tldr/linux/makepkg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/makepkg/"
-description: "Create Pacman packages easily with makepkg. Build installable packages from PKGBUILD files and manage dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/makepkg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/makepkg/'
+description: 'Create Pacman packages easily with makepkg. Build installable packages from PKGBUILD files and manage dependencies. Free online tool, no registration required.'
 category: linux
 keywords:
   - pacman package creation
@@ -22,8 +22,8 @@ features:
   - Verify source file checksums
   - Generate SRCINFO files
   - Clean build directories after success
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # makepkg

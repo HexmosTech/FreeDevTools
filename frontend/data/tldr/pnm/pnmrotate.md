@@ -1,29 +1,29 @@
 ---
-title: "Rotate PNM Image - Transform Images | Online Free DevTools by Hexmos"
+title: 'Rotate PNM Image - Transform Images | Online Free DevTools by Hexmos'
 name: pnmrotate
-path: "/freedevtools/tldr/pnm/pnmrotate/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmrotate/"
-description: "Transform images with PNM Rotate. Rotate PNM images easily and specify background colors. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmrotate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmrotate/'
+description: 'Transform images with PNM Rotate. Rotate PNM images easily and specify background colors. Free online tool, no registration required.'
 category: common
 keywords:
-- pnm image rotation
-- image rotation tool
-- pnm transformation
-- image manipulation
-- netpbm pnmrotate
-- linux image tools
-- command line image processing
-- rotate image by angle
-- pnm file converter
-- image editing
+  - pnm image rotation
+  - image rotation tool
+  - pnm transformation
+  - image manipulation
+  - netpbm pnmrotate
+  - linux image tools
+  - command line image processing
+  - rotate image by angle
+  - pnm file converter
+  - image editing
 features:
-- Rotate a PNM image by a specified angle
-- Define background color during rotation
-- Disable anti-aliasing for performance
-- Transform images via command line
-- Perform image manipulation tasks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Rotate a PNM image by a specified angle
+  - Define background color during rotation
+  - Disable anti-aliasing for performance
+  - Transform images via command line
+  - Perform image manipulation tasks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmrotate

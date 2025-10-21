@@ -1,29 +1,29 @@
 ---
-title: "Pamscale - Scale Images Easily | Online Free DevTools by Hexmos"
+title: 'Pamscale - Scale Images Easily | Online Free DevTools by Hexmos'
 name: pamscale
-path: "/freedevtools/tldr/common/pamscale/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamscale/"
-description: "Scale Netpbm images easily with Pamscale. Adjust width, height, and aspect ratio. Free online tool, no registration required. Ideal for image manipulation."
+path: '/freedevtools/tldr/common/pamscale/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamscale/'
+description: 'Scale Netpbm images easily with Pamscale. Adjust width, height, and aspect ratio. Free online tool, no registration required. Ideal for image manipulation.'
 category: common
 keywords:
-- pamscale image scaling
-- netpbm image scale
-- image size adjuster
-- scale image width
-- scale image height
-- aspect ratio scaling
-- image manipulation
-- image resize linux
-- pam image editor
-- common command pamscale
+  - pamscale image scaling
+  - netpbm image scale
+  - image size adjuster
+  - scale image width
+  - scale image height
+  - aspect ratio scaling
+  - image manipulation
+  - image resize linux
+  - pam image editor
+  - common command pamscale
 features:
-- Scale images by specified dimensions
-- Adjust image width while preserving aspect ratio
-- Scale images by x and y factors
-- Fit images into specified bounding box
-- Fill specified box while preserving aspect ratio
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scale images by specified dimensions
+  - Adjust image width while preserving aspect ratio
+  - Scale images by x and y factors
+  - Fit images into specified bounding box
+  - Fill specified box while preserving aspect ratio
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamscale

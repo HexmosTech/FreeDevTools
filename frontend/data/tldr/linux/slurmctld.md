@@ -1,29 +1,29 @@
 ---
-title: "Slurmctld Control - Manage Slurm Resources | Online Free DevTools by Hexmos"
+title: 'Slurmctld Control - Manage Slurm Resources | Online Free DevTools by Hexmos'
 name: slurmctld
-path: "/freedevtools/tldr/linux/slurmctld/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/slurmctld/"
-description: "Control Slurm resources with Slurmctld. Manage jobs, allocate resources, and monitor Slurm daemons effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/slurmctld/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/slurmctld/'
+description: 'Control Slurm resources with Slurmctld. Manage jobs, allocate resources, and monitor Slurm daemons effectively. Free online tool, no registration required.'
 category: linux
 keywords:
-- slurm resource manager
-- linux slurmctld command
-- slurm cluster management
-- slurm job scheduler
-- slurm daemon control
-- slurm workload management
-- slurm resource allocation
-- linux cluster administration
-- slurm configuration management
-- slurm process monitoring
+  - slurm resource manager
+  - linux slurmctld command
+  - slurm cluster management
+  - slurm job scheduler
+  - slurm daemon control
+  - slurm workload management
+  - slurm resource allocation
+  - linux cluster administration
+  - slurm configuration management
+  - slurm process monitoring
 features:
-- Clear previous slurmctld states
-- Set the daemon's nice value
-- Write log messages to a file
-- Display slurmctld help information
-- Display slurmctld version information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clear previous slurmctld states
+  - Set the daemon's nice value
+  - Write log messages to a file
+  - Display slurmctld help information
+  - Display slurmctld version information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # slurmctld

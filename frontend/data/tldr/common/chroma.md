@@ -1,29 +1,29 @@
 ---
-title: "Highlight Syntax - Chroma Code Formatter | Online Free DevTools by Hexmos"
+title: 'Highlight Syntax - Chroma Code Formatter | Online Free DevTools by Hexmos'
 name: chroma
-path: "/freedevtools/tldr/common/chroma/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chroma/"
-description: "Highlight syntax with Chroma, a versatile code formatter for various programming languages. Effortlessly format code snippets for web or documentation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chroma/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chroma/'
+description: 'Highlight syntax with Chroma, a versatile code formatter for various programming languages. Effortlessly format code snippets for web or documentation. Free online tool, no registration required.'
 category: common
 keywords:
-- syntax highlighter
-- code formatter
-- source code highlighter
-- code syntax highlighting
-- language syntax formatter
-- terminal syntax highlighting
-- code to HTML converter
-- chroma highlighter
-- cli syntax highlighting
-- command line highlighter
+  - syntax highlighter
+  - code formatter
+  - source code highlighter
+  - code syntax highlighting
+  - language syntax formatter
+  - terminal syntax highlighting
+  - code to HTML converter
+  - chroma highlighter
+  - cli syntax highlighting
+  - command line highlighter
 features:
-- Highlight code from files or standard input
-- Support for multiple programming languages via lexers
-- Output code in various formats including HTML and SVG
-- Customize highlighting styles with predefined themes
-- List available lexers, styles and formatters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Highlight code from files or standard input
+  - Support for multiple programming languages via lexers
+  - Output code in various formats including HTML and SVG
+  - Customize highlighting styles with predefined themes
+  - List available lexers, styles and formatters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chroma

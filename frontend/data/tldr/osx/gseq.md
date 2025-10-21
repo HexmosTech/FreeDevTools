@@ -1,29 +1,29 @@
 ---
-title: "Generate Number Sequences - gseq | Online Free DevTools by Hexmos"
+title: 'Generate Number Sequences - gseq | Online Free DevTools by Hexmos'
 name: gseq
-path: "/freedevtools/tldr/osx/gseq/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/gseq/"
-description: "Generate number sequences with gseq, an alias of the GNU seq command. Manipulate numerical data and automate repetitive tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/gseq/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/gseq/'
+description: 'Generate number sequences with gseq, an alias of the GNU seq command. Manipulate numerical data and automate repetitive tasks. Free online tool, no registration required.'
 category: osx
 keywords:
-- number sequence generator
-- gnu seq command
-- numerical data manipulation
-- sequence generation osx
-- command line sequence tool
-- osx sequence generator
-- generate numeric series
-- macos sequence command
-- gseq number range
-- number list generation
+  - number sequence generator
+  - gnu seq command
+  - numerical data manipulation
+  - sequence generation osx
+  - command line sequence tool
+  - osx sequence generator
+  - generate numeric series
+  - macos sequence command
+  - gseq number range
+  - number list generation
 features:
-- Generate sequences of numbers
-- Control the increment value
-- Specify the start and end numbers
-- Output sequences to the console
-- Integrate sequence generation into scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate sequences of numbers
+  - Control the increment value
+  - Specify the start and end numbers
+  - Output sequences to the console
+  - Integrate sequence generation into scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gseq

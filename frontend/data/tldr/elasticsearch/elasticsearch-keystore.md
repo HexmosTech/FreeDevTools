@@ -1,29 +1,29 @@
 ---
-title: "Elasticsearch Keystore - Manage Secure Settings | Online Free DevTools by Hexmos"
+title: 'Elasticsearch Keystore - Manage Secure Settings | Online Free DevTools by Hexmos'
 name: elasticsearch-keystore
-path: "/freedevtools/tldr/elasticsearch/elasticsearch-keystore/"
-canonical: "https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-keystore/"
-description: "Manage secure settings with Elasticsearch Keystore. Secure passwords and credentials with this free online tool, no registration required."
+path: '/freedevtools/tldr/elasticsearch/elasticsearch-keystore/'
+canonical: 'https://hexmos.com/freedevtools/tldr/elasticsearch/elasticsearch-keystore/'
+description: 'Manage secure settings with Elasticsearch Keystore. Secure passwords and credentials with this free online tool, no registration required.'
 category: common
 keywords:
-- elasticsearch keystore
-- elasticsearch secure settings
-- keystore management
-- elasticsearch password management
-- elasticsearch credentials management
-- linux elasticsearch
-- macos elasticsearch
-- keystore encryption
-- elasticsearch secret storage
-- command line keystore
+  - elasticsearch keystore
+  - elasticsearch secure settings
+  - keystore management
+  - elasticsearch password management
+  - elasticsearch credentials management
+  - linux elasticsearch
+  - macos elasticsearch
+  - keystore encryption
+  - elasticsearch secret storage
+  - command line keystore
 features:
-- Create new Elasticsearch keystores
-- Add secure settings to the keystore
-- Remove settings from the Elasticsearch keystore
-- Change the Elasticsearch keystore password
-- List all settings stored in the keystore
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Elasticsearch keystores
+  - Add secure settings to the keystore
+  - Remove settings from the Elasticsearch keystore
+  - Change the Elasticsearch keystore password
+  - List all settings stored in the keystore
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # elasticsearch-keystore

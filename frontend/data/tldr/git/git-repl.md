@@ -1,29 +1,29 @@
 ---
-title: "Control Git REPL - Interactive Git Shell | Online Free DevTools by Hexmos"
+title: 'Control Git REPL - Interactive Git Shell | Online Free DevTools by Hexmos'
 name: git-repl
-path: "/freedevtools/tldr/git/git-repl/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-repl/"
-description: "Control Git workflow with Git REPL, an interactive Git shell. Execute commands, run external programs, and manage repositories efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-repl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-repl/'
+description: 'Control Git workflow with Git REPL, an interactive Git shell. Execute commands, run external programs, and manage repositories efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git repl command
-- git interactive shell
-- git command line
-- git extras
-- git workflow management
-- git repository manipulation
-- linux git shell
-- macos git repl
-- windows git repl
-- command-line git interface
+  - git repl command
+  - git interactive shell
+  - git command line
+  - git extras
+  - git workflow management
+  - git repository manipulation
+  - linux git shell
+  - macos git repl
+  - windows git repl
+  - command-line git interface
 features:
-- Launch an interactive Git shell environment.
-- Execute Git commands within the interactive shell.
-- Run external commands from within the Git shell.
-- Utilize tab completion for command suggestions.
-- Exit the Git shell using the 'exit' command or Ctrl+D.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch an interactive Git shell environment.
+  - Execute Git commands within the interactive shell.
+  - Run external commands from within the Git shell.
+  - Utilize tab completion for command suggestions.
+  - Exit the Git shell using the 'exit' command or Ctrl+D.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git repl

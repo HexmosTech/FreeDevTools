@@ -1,29 +1,29 @@
 ---
-title: "AWS Pricing - Query AWS Prices | Online Free DevTools by Hexmos"
+title: 'AWS Pricing - Query AWS Prices | Online Free DevTools by Hexmos'
 name: aws-pricing
-path: "/freedevtools/tldr/aws/aws-pricing/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-pricing/"
-description: "Query AWS prices with the AWS Pricing tool. Get service details, product information, and pricing data from Amazon Web Services. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-pricing/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-pricing/'
+description: 'Query AWS prices with the AWS Pricing tool. Get service details, product information, and pricing data from Amazon Web Services. Free online tool, no registration required.'
 category: common
 keywords:
-- aws pricing data
-- aws service pricing
-- amazon web services pricing
-- aws ec2 pricing
-- aws cost explorer
-- aws pricing api
-- aws pricing cli
-- aws pricing calculator
-- cloud pricing analysis
-- aws resource pricing
+  - aws pricing data
+  - aws service pricing
+  - amazon web services pricing
+  - aws ec2 pricing
+  - aws cost explorer
+  - aws pricing api
+  - aws pricing cli
+  - aws pricing calculator
+  - cloud pricing analysis
+  - aws resource pricing
 features:
-- List service codes for specific AWS regions.
-- Describe attributes for a specified service.
-- Retrieve detailed pricing information for AWS services.
-- List values for specific attributes.
-- Filter pricing data based on instance type and location.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List service codes for specific AWS regions.
+  - Describe attributes for a specified service.
+  - Retrieve detailed pricing information for AWS services.
+  - List values for specific attributes.
+  - Filter pricing data based on instance type and location.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws pricing

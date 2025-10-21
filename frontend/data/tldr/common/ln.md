@@ -1,29 +1,29 @@
 ---
-title: "Create Symbolic Links - Files & Directories | Online Free DevTools by Hexmos"
+title: 'Create Symbolic Links - Files & Directories | Online Free DevTools by Hexmos'
 name: ln
-path: "/freedevtools/tldr/common/ln/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ln/"
-description: "Create symbolic links easily with ln. Manage file system links on Linux and macOS using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ln/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ln/'
+description: 'Create symbolic links easily with ln. Manage file system links on Linux and macOS using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- symbolic link generator
-- create symbolic link linux
-- create symbolic link macos
-- linux symbolic link
-- macos symbolic link
-- file system links
-- symbolic link command
-- hard link command
-- ln command linux
-- ln command macos
+  - symbolic link generator
+  - create symbolic link linux
+  - create symbolic link macos
+  - linux symbolic link
+  - macos symbolic link
+  - file system links
+  - symbolic link command
+  - hard link command
+  - ln command linux
+  - ln command macos
 features:
-- Create symbolic links to files
-- Create symbolic links to directories
-- Overwrite existing symbolic links
-- Create hard links to files
-- Manage file system links via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create symbolic links to files
+  - Create symbolic links to directories
+  - Overwrite existing symbolic links
+  - Create hard links to files
+  - Manage file system links via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ln

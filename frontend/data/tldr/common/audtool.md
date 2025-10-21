@@ -1,29 +1,29 @@
 ---
-title: "Audacious Control - Manage Music Playback | Online Free DevTools by Hexmos"
+title: 'Audacious Control - Manage Music Playback | Online Free DevTools by Hexmos'
 name: audtool
-path: "/freedevtools/tldr/common/audtool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/audtool/"
-description: "Control your Audacious music player with audtool command line utility. Manage playback, adjust volume, and get song information easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/audtool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/audtool/'
+description: 'Control your Audacious music player with audtool command line utility. Manage playback, adjust volume, and get song information easily. Free online tool, no registration required.'
 category: common
 keywords:
-- audacious control
-- audio playback manager
-- linux command line audio
-- audacious command line tool
-- music player control
-- audio volume controller
-- song info retriever
-- audacious cli
-- linux audacious
-- audio control utility
+  - audacious control
+  - audio playback manager
+  - linux command line audio
+  - audacious command line tool
+  - music player control
+  - audio volume controller
+  - song info retriever
+  - audacious cli
+  - linux audacious
+  - audio control utility
 features:
-- Play and pause audio playback
-- Display current song information
-- Set audio volume level
-- Advance to the next song in the playlist
-- Show or hide the Audacious main window
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Play and pause audio playback
+  - Display current song information
+  - Set audio volume level
+  - Advance to the next song in the playlist
+  - Show or hide the Audacious main window
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # audtool

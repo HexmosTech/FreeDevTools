@@ -1,29 +1,29 @@
 ---
-title: "Git Cat-File - Inspect Git Object Content | Online Free DevTools by Hexmos"
+title: 'Git Cat-File - Inspect Git Object Content | Online Free DevTools by Hexmos'
 name: git-cat-file
-path: "/freedevtools/tldr/git/git-cat-file/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-cat-file/"
-description: "Inspect Git object content with Git Cat-File. Retrieve object size, type, and content. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-cat-file/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-cat-file/'
+description: 'Inspect Git object content with Git Cat-File. Retrieve object size, type, and content. Free online tool, no registration required.'
 category: common
 keywords:
-- Git object inspector
-- Git file content viewer
-- Git repository browser
-- Git blob retriever
-- Git tree explorer
-- Git commit reader
-- Git object size checker
-- Git type identifier
-- Git cat-file linux
-- Git cat-file command
+  - Git object inspector
+  - Git file content viewer
+  - Git repository browser
+  - Git blob retriever
+  - Git tree explorer
+  - Git commit reader
+  - Git object size checker
+  - Git type identifier
+  - Git cat-file linux
+  - Git cat-file command
 features:
-- Display the size of a Git object in bytes
-- Determine the type of a Git object (blob, tree, commit, tag)
-- Pretty-print the contents of a Git object
-- Retrieve specific revisions of an object
-- Extract data directly from the Git object database
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display the size of a Git object in bytes
+  - Determine the type of a Git object (blob, tree, commit, tag)
+  - Pretty-print the contents of a Git object
+  - Retrieve specific revisions of an object
+  - Extract data directly from the Git object database
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git cat-file

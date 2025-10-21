@@ -1,29 +1,29 @@
 ---
-title: "Nim Compiler - Compile Nim Code | Online Free DevTools by Hexmos"
+title: 'Nim Compiler - Compile Nim Code | Online Free DevTools by Hexmos'
 name: nim
-path: "/freedevtools/tldr/common/nim/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nim/"
-description: "Compile code with Nim Compiler. Build optimized binaries and generate documentation for Nim modules effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nim/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nim/'
+description: 'Compile code with Nim Compiler. Build optimized binaries and generate documentation for Nim modules effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- nim compiler
-- nim programming
-- nim documentation generator
-- nim release build
-- nim syntax checker
-- nim optimized binary
-- nim code compilation
-- nim cross-platform
-- nim develompent tool
-- nim command-line
+  - nim compiler
+  - nim programming
+  - nim documentation generator
+  - nim release build
+  - nim syntax checker
+  - nim optimized binary
+  - nim code compilation
+  - nim cross-platform
+  - nim develompent tool
+  - nim command-line
 features:
-- Compiles Nim source files to executable binaries
-- Generates HTML documentation for Nim modules
-- Enables release optimizations for smaller binary size
-- Checks Nim code for syntax and semantic errors
-- Compiles and runs Nim source files directly
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compiles Nim source files to executable binaries
+  - Generates HTML documentation for Nim modules
+  - Enables release optimizations for smaller binary size
+  - Checks Nim code for syntax and semantic errors
+  - Compiles and runs Nim source files directly
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nim

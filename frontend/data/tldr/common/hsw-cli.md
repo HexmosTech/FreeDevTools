@@ -1,29 +1,29 @@
 ---
-title: "Handshake Wallet CLI - Control Handshake Wallet | Online Free DevTools by Hexmos"
+title: 'Handshake Wallet CLI - Control Handshake Wallet | Online Free DevTools by Hexmos'
 name: hsw-cli
-path: "/freedevtools/tldr/common/hsw-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hsw-cli/"
-description: "Control your Handshake Wallet with Handshake Wallet CLI. Manage balances, send transactions, and view history using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hsw-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hsw-cli/'
+description: 'Control your Handshake Wallet with Handshake Wallet CLI. Manage balances, send transactions, and view history using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Handshake wallet CLI
-- HSW-CLI tool
-- Handshake transaction management
-- Handshake wallet balance checker
-- Handshake wallet history viewer
-- Handshake transaction sender
-- Handshake pending transaction viewer
-- Handshake transaction details
-- Handshake CLI
-- Handshake wallet unlocker
+  - Handshake wallet CLI
+  - HSW-CLI tool
+  - Handshake transaction management
+  - Handshake wallet balance checker
+  - Handshake wallet history viewer
+  - Handshake transaction sender
+  - Handshake pending transaction viewer
+  - Handshake transaction details
+  - Handshake CLI
+  - Handshake wallet unlocker
 features:
-- Unlock and lock Handshake wallet via CLI.
-- View Handshake wallet balance and transaction history.
-- Send Handshake coins to specified addresses.
-- Display pending Handshake transactions.
-- Show details of a specific Handshake transaction.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Unlock and lock Handshake wallet via CLI.
+  - View Handshake wallet balance and transaction history.
+  - Send Handshake coins to specified addresses.
+  - Display pending Handshake transactions.
+  - Show details of a specific Handshake transaction.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hsw-cli

@@ -1,29 +1,29 @@
 ---
-title: "PipeWire Dump - Generate JSON State | Online Free DevTools by Hexmos"
+title: 'PipeWire Dump - Generate JSON State | Online Free DevTools by Hexmos'
 name: pw-dump
-path: "/freedevtools/tldr/linux/pw-dump/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pw-dump/"
-description: "Generate PipeWire state dumps with pw-dump. Analyze audio graph configurations and debug multimedia setups using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pw-dump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pw-dump/'
+description: 'Generate PipeWire state dumps with pw-dump. Analyze audio graph configurations and debug multimedia setups using command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- PipeWire JSON dump
-- PipeWire state analysis
-- Linux audio graph
-- pw-dump command
-- multimedia configuration export
-- PipeWire debugging tool
-- audio server state
-- Linux pw-dump
-- PipeWire monitoring
-- JSON configuration file
+  - PipeWire JSON dump
+  - PipeWire state analysis
+  - Linux audio graph
+  - pw-dump command
+  - multimedia configuration export
+  - PipeWire debugging tool
+  - audio server state
+  - Linux pw-dump
+  - PipeWire monitoring
+  - JSON configuration file
 features:
-- Dump PipeWire's current state as JSON
-- Monitor PipeWire state changes
-- Print JSON representation of a specific object
-- Export remote PipeWire instance state to a file
-- Customize color configuration for output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Dump PipeWire's current state as JSON
+  - Monitor PipeWire state changes
+  - Print JSON representation of a specific object
+  - Export remote PipeWire instance state to a file
+  - Customize color configuration for output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pw-dump

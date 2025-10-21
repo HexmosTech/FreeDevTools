@@ -1,29 +1,29 @@
 ---
-title: "Git Verify Tag - Check GPG Signatures | Online Free DevTools by Hexmos"
+title: 'Git Verify Tag - Check GPG Signatures | Online Free DevTools by Hexmos'
 name: git-verify-tag
-path: "/freedevtools/tldr/git/git-verify-tag/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-verify-tag/"
-description: "Check Git tags for GPG signatures with Git Verify Tag. Ensure code integrity and verify authorship of tags. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-verify-tag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-verify-tag/'
+description: 'Check Git tags for GPG signatures with Git Verify Tag. Ensure code integrity and verify authorship of tags. Free online tool, no registration required.'
 category: common
 keywords:
-- Git verify tag
-- Git GPG signature check
-- Git tag verification
-- Git code signing
-- Git commit integrity
-- Git security
-- Git tag authenticity
-- Git command line tools
-- Git repository management
-- Git tag verification linux
+  - Git verify tag
+  - Git GPG signature check
+  - Git tag verification
+  - Git code signing
+  - Git commit integrity
+  - Git security
+  - Git tag authenticity
+  - Git command line tools
+  - Git repository management
+  - Git tag verification linux
 features:
-- Verify GPG signatures of Git tags
-- Ensure the authenticity of tagged releases
-- Detect unsigned or tampered Git tags
-- Display verbose details about tag signatures
-- Output raw signature data for further analysis
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Verify GPG signatures of Git tags
+  - Ensure the authenticity of tagged releases
+  - Detect unsigned or tampered Git tags
+  - Display verbose details about tag signatures
+  - Output raw signature data for further analysis
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git verify-tag

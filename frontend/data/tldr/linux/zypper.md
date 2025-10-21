@@ -1,29 +1,29 @@
 ---
-title: "Zypper Package Manager - Manage Packages | Online Free DevTools by Hexmos"
+title: 'Zypper Package Manager - Manage Packages | Online Free DevTools by Hexmos'
 name: zypper
-path: "/freedevtools/tldr/linux/zypper/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/zypper/"
-description: "Manage software packages with Zypper Package Manager on Linux. Update repositories, install, remove and search packages efficiently using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/zypper/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/zypper/'
+description: 'Manage software packages with Zypper Package Manager on Linux. Update repositories, install, remove and search packages efficiently using command line. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux package manager
-- zypper install package
-- zypper remove package
-- zypper update repository
-- zypper search package
-- suse package management
-- opensuse package management
-- zypper command line tool
-- linux command
-- zypper repository management
+  - linux package manager
+  - zypper install package
+  - zypper remove package
+  - zypper update repository
+  - zypper search package
+  - suse package management
+  - opensuse package management
+  - zypper command line tool
+  - linux command
+  - zypper repository management
 features:
-- Synchronize package lists with remote repositories
-- Install software packages from repositories
-- Remove unwanted software packages
-- Upgrade installed packages to the latest versions
-- Search for packages using keywords
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize package lists with remote repositories
+  - Install software packages from repositories
+  - Remove unwanted software packages
+  - Upgrade installed packages to the latest versions
+  - Search for packages using keywords
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zypper

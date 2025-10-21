@@ -1,29 +1,29 @@
 ---
-title: "Nomad - Schedule Tasks | Online Free DevTools by Hexmos"
+title: 'Nomad - Schedule Tasks | Online Free DevTools by Hexmos'
 name: nomad
-path: "/freedevtools/tldr/common/nomad/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nomad/"
-description: "Schedule tasks with Nomad, a distributed scheduler. Validate jobs, plan executions, and manage cluster resources. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nomad/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nomad/'
+description: 'Schedule tasks with Nomad, a distributed scheduler. Validate jobs, plan executions, and manage cluster resources. Free online tool, no registration required.'
 category: common
 keywords:
-- Nomad scheduler
-- distributed scheduler
-- Nomad job management
-- Nomad cluster management
-- Nomad allocation logs
-- Nomad job validation
-- Nomad job planning
-- Nomad node status
-- Nomad volume status
-- datacenter scheduler
+  - Nomad scheduler
+  - distributed scheduler
+  - Nomad job management
+  - Nomad cluster management
+  - Nomad allocation logs
+  - Nomad job validation
+  - Nomad job planning
+  - Nomad node status
+  - Nomad volume status
+  - datacenter scheduler
 features:
-- Show status of nodes in a Nomad cluster
-- Validate a Nomad job file
-- Plan a job execution on a Nomad cluster
-- Display status information about a specific job
-- Follow the logs of a specific allocation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show status of nodes in a Nomad cluster
+  - Validate a Nomad job file
+  - Plan a job execution on a Nomad cluster
+  - Display status information about a specific job
+  - Follow the logs of a specific allocation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nomad

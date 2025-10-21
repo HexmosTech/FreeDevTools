@@ -1,29 +1,29 @@
 ---
-title: "SKS Management - Manage Kubernetes Clusters | Online Free DevTools by Hexmos"
+title: 'SKS Management - Manage Kubernetes Clusters | Online Free DevTools by Hexmos'
 name: exo-compute-sks
-path: "/freedevtools/tldr/exo/exo-compute-sks/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute-sks/"
-description: "Manage Kubernetes clusters with exo compute sks. Create, list, and configure Exoscale SKS. Simplify container management. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo-compute-sks/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo-compute-sks/'
+description: 'Manage Kubernetes clusters with exo compute sks. Create, list, and configure Exoscale SKS. Simplify container management. Free online tool, no registration required.'
 category: common
 keywords:
-- SKS management
-- Kubernetes cluster manager
-- Exoscale SKS control
-- Container orchestration
-- SKS version listing
-- Kubeconfig generation
-- Nodepool management
-- CSI driver enabling
-- Cloud native tools
-- Cluster lifecycle management
+  - SKS management
+  - Kubernetes cluster manager
+  - Exoscale SKS control
+  - Container orchestration
+  - SKS version listing
+  - Kubeconfig generation
+  - Nodepool management
+  - CSI driver enabling
+  - Cloud native tools
+  - Cluster lifecycle management
 features:
-- List available SKS cluster versions.
-- Generate Kubernetes configuration files for SKS clusters.
-- Add and remove node pools from existing SKS clusters.
-- Evict specific nodes from a given node pool.
-- Enable CSI drivers on an existing SKS cluster.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available SKS cluster versions.
+  - Generate Kubernetes configuration files for SKS clusters.
+  - Add and remove node pools from existing SKS clusters.
+  - Evict specific nodes from a given node pool.
+  - Enable CSI drivers on an existing SKS cluster.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo compute sks

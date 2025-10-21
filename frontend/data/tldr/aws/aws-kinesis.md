@@ -1,29 +1,29 @@
 ---
-title: "Kinesis Data Streams - Control Streaming Data | Online Free DevTools by Hexmos"
+title: 'Kinesis Data Streams - Control Streaming Data | Online Free DevTools by Hexmos'
 name: aws-kinesis
-path: "/freedevtools/tldr/aws/aws-kinesis/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-kinesis/"
-description: "Control streaming data with AWS Kinesis Data Streams. Manage Kinesis streams, write records, and process real-time data efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-kinesis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-kinesis/'
+description: 'Control streaming data with AWS Kinesis Data Streams. Manage Kinesis streams, write records, and process real-time data efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- kinesis data streams
-- aws kinesis commands
-- real-time data processing
-- stream management
-- data ingestion
-- aws cli kinesis
-- kinesis put record
-- kinesis list streams
-- shard iterator
-- kinesis get records
+  - kinesis data streams
+  - aws kinesis commands
+  - real-time data processing
+  - stream management
+  - data ingestion
+  - aws cli kinesis
+  - kinesis put record
+  - kinesis list streams
+  - shard iterator
+  - kinesis get records
 features:
-- Manage and list AWS Kinesis data streams.
-- Write data records to Kinesis streams using CLI.
-- Encode messages to base64 for Kinesis stream input.
-- List available shards within a Kinesis stream.
-- Read records from a shard using a shard iterator.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Manage and list AWS Kinesis data streams.
+  - Write data records to Kinesis streams using CLI.
+  - Encode messages to base64 for Kinesis stream input.
+  - List available shards within a Kinesis stream.
+  - Read records from a shard using a shard iterator.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws kinesis

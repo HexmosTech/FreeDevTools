@@ -1,29 +1,29 @@
 ---
-title: "File Check - Validate Files with Patterns | Online Free DevTools by Hexmos"
+title: 'File Check - Validate Files with Patterns | Online Free DevTools by Hexmos'
 name: filecheck
-path: "/freedevtools/tldr/common/filecheck/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/filecheck/"
-description: "Validate files with FileCheck using flexible pattern matching. Check input file content, customize prefixes, and verify LLVM code. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/filecheck/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/filecheck/'
+description: 'Validate files with FileCheck using flexible pattern matching. Check input file content, customize prefixes, and verify LLVM code. Free online tool, no registration required.'
 category: common
 keywords:
-- file pattern matching
-- file content validation
-- FileCheck validator
-- LLVM file checker
-- input file verifier
-- pattern file syntax
-- stdin file check
-- custom check prefix
-- directive pattern match
-- llvm code validation
+  - file pattern matching
+  - file content validation
+  - FileCheck validator
+  - LLVM file checker
+  - input file verifier
+  - pattern file syntax
+  - stdin file check
+  - custom check prefix
+  - directive pattern match
+  - llvm code validation
 features:
-- Validate file content against a specified pattern file
-- Match input from standard input against patterns
-- Use custom prefixes for check directives
-- Print good directive pattern matches for debugging
-- Integrate with LLVM tools for code validation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Validate file content against a specified pattern file
+  - Match input from standard input against patterns
+  - Use custom prefixes for check directives
+  - Print good directive pattern matches for debugging
+  - Integrate with LLVM tools for code validation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # FileCheck

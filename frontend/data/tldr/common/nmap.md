@@ -1,29 +1,29 @@
 ---
-title: "Nmap Scanner - Explore Network Ports | Online Free DevTools by Hexmos"
+title: 'Nmap Scanner - Explore Network Ports | Online Free DevTools by Hexmos'
 name: nmap
-path: "/freedevtools/tldr/common/nmap/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nmap/"
-description: "Explore network ports with Nmap scanner. Discover open ports, identify services, and perform security audits. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nmap/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nmap/'
+description: 'Explore network ports with Nmap scanner. Discover open ports, identify services, and perform security audits. Free online tool, no registration required.'
 category: common
 keywords:
-- network scanner
-- port scanner
-- network exploration tool
-- security scanner
-- nmap scan
-- nmap tutorial
-- nmap commands
-- network security
-- vulnerability scanner
-- network discovery
+  - network scanner
+  - port scanner
+  - network exploration tool
+  - security scanner
+  - nmap scan
+  - nmap tutorial
+  - nmap commands
+  - network security
+  - vulnerability scanner
+  - network discovery
 features:
-- Scan open ports on target hosts
-- Detect operating systems and services
-- Run custom NSE scripts for advanced scanning
-- Perform version detection of network services
-- Evade IDS/IPS detection with advanced techniques
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan open ports on target hosts
+  - Detect operating systems and services
+  - Run custom NSE scripts for advanced scanning
+  - Perform version detection of network services
+  - Evade IDS/IPS detection with advanced techniques
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nmap

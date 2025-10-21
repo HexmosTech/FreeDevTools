@@ -1,29 +1,29 @@
 ---
-title: "List Hledger Accounts - Manage Ledger Account Names | Online Free DevTools by Hexmos"
+title: 'List Hledger Accounts - Manage Ledger Account Names | Online Free DevTools by Hexmos'
 name: hledger-accounts
-path: "/freedevtools/tldr/hledger/hledger-accounts/"
-canonical: "https://hexmos.com/freedevtools/tldr/hledger/hledger-accounts/"
-description: "List accounts with Hledger, the powerful accounting tool. Manage account names, filter by type, and generate account directives. Free online tool, no registration required."
+path: '/freedevtools/tldr/hledger/hledger-accounts/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hledger/hledger-accounts/'
+description: 'List accounts with Hledger, the powerful accounting tool. Manage account names, filter by type, and generate account directives. Free online tool, no registration required.'
 category: common
 keywords:
-- hledger accounts
-- ledger accounts
-- accounting accounts
-- command line accounting
-- hledger commands
-- hledger accounting tool
-- financial ledger
-- ledger account types
-- declare hledger accounts
-- hledger account directives
+  - hledger accounts
+  - ledger accounts
+  - accounting accounts
+  - command line accounting
+  - hledger commands
+  - hledger accounting tool
+  - financial ledger
+  - ledger account types
+  - declare hledger accounts
+  - hledger account directives
 features:
-- List all accounts used or declared
-- Show accounts used by transactions
-- Show accounts declared with directives
-- Generate account directives for undeclared accounts
-- Filter accounts by name and type
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all accounts used or declared
+  - Show accounts used by transactions
+  - Show accounts declared with directives
+  - Generate account directives for undeclared accounts
+  - Filter accounts by name and type
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hledger accounts

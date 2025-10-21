@@ -1,29 +1,29 @@
 ---
-title: "Control Git Timestamps - Change File Dates | Online Free DevTools by Hexmos"
+title: 'Control Git Timestamps - Change File Dates | Online Free DevTools by Hexmos'
 name: git-utimes
-path: "/freedevtools/tldr/git/git-utimes/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-utimes/"
-description: "Control file timestamps with git-utimes. Synchronize file modification times to commit dates, preserving local changes. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-utimes/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-utimes/'
+description: 'Control file timestamps with git-utimes. Synchronize file modification times to commit dates, preserving local changes. Free online tool, no registration required.'
 category: common
 keywords:
-- git file timestamp
-- git utimes command
-- git commit date
-- git modification time
-- file date synchronization
-- git extras
-- git file metadata
-- linux file timestamp
-- macos file timestamp
-- git utimes linux
+  - git file timestamp
+  - git utimes command
+  - git commit date
+  - git modification time
+  - file date synchronization
+  - git extras
+  - git file metadata
+  - linux file timestamp
+  - macos file timestamp
+  - git utimes linux
 features:
-- Updates file modification times to match last commit date
-- Preserves modification times of uncommitted files
-- Changes timestamps only for files not in the working tree or index
-- Synchronizes file timestamps with version control history
-- Supports selectively updating timestamps for newer files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Updates file modification times to match last commit date
+  - Preserves modification times of uncommitted files
+  - Changes timestamps only for files not in the working tree or index
+  - Synchronizes file timestamps with version control history
+  - Supports selectively updating timestamps for newer files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git utimes

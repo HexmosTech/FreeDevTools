@@ -1,29 +1,29 @@
 ---
-title: "Virus Scan - Scan Files with Clamdscan | Online Free DevTools by Hexmos"
+title: 'Virus Scan - Scan Files with Clamdscan | Online Free DevTools by Hexmos'
 name: clamdscan
-path: "/freedevtools/tldr/common/clamdscan/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/clamdscan/"
-description: "Scan files for viruses instantly with Clamdscan, a command-line antivirus scanner. Protect your system against malware and ensure file integrity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/clamdscan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/clamdscan/'
+description: 'Scan files for viruses instantly with Clamdscan, a command-line antivirus scanner. Protect your system against malware and ensure file integrity. Free online tool, no registration required.'
 category: common
 keywords:
-- clamav virus scan
-- command line antivirus
-- linux virus scanner
-- malware detection
-- file integrity check
-- clamdscan command
-- virus scan cli
-- clamav scanner
-- infected file removal
-- security scanning
+  - clamav virus scan
+  - command line antivirus
+  - linux virus scanner
+  - malware detection
+  - file integrity check
+  - clamdscan command
+  - virus scan cli
+  - clamav scanner
+  - infected file removal
+  - security scanning
 features:
-- Scan files and directories for viruses
-- Scan data from standard input
-- Move infected files to a quarantine directory
-- Remove infected files from the system
-- Log scan reports to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan files and directories for viruses
+  - Scan data from standard input
+  - Move infected files to a quarantine directory
+  - Remove infected files from the system
+  - Log scan reports to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # clamdscan

@@ -1,29 +1,29 @@
 ---
-title: "Compress Files - bzip3 Statistical Compression | Online Free DevTools by Hexmos"
+title: 'Compress Files - bzip3 Statistical Compression | Online Free DevTools by Hexmos'
 name: bzip3
-path: "/freedevtools/tldr/common/bzip3/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bzip3/"
-description: "Compress files statistically with bzip3, a powerful file compression utility. Achieve efficient data archiving and reduce storage space on Linux. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bzip3/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bzip3/'
+description: 'Compress files statistically with bzip3, a powerful file compression utility. Achieve efficient data archiving and reduce storage space on Linux. Free online tool, no registration required.'
 category: common
 keywords:
-- bzip3 compression
-- statistical file compressor
-- data archiving tool
-- bzip3 linux command
-- file compression utility
-- bzip3 decompression
-- compressed file integrity check
-- bzip3 verbose output
-- linux compression tools
-- bzip3 command-line
+  - bzip3 compression
+  - statistical file compressor
+  - data archiving tool
+  - bzip3 linux command
+  - file compression utility
+  - bzip3 decompression
+  - compressed file integrity check
+  - bzip3 verbose output
+  - linux compression tools
+  - bzip3 command-line
 features:
-- Compress files using statistical methods
-- Decompress bzip3 compressed files
-- Test the integrity of compressed archives
-- Display verbose compression ratio information
-- Decompress files directly to standard output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files using statistical methods
+  - Decompress bzip3 compressed files
+  - Test the integrity of compressed archives
+  - Display verbose compression ratio information
+  - Decompress files directly to standard output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bzip3

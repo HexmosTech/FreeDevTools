@@ -1,9 +1,9 @@
 ---
-title: "Control nmcli Agent - Manage NetworkManager Secrets | Online Free DevTools by Hexmos"
+title: 'Control nmcli Agent - Manage NetworkManager Secrets | Online Free DevTools by Hexmos'
 name: nmcli-agent
-path: "/freedevtools/tldr/linux/nmcli-agent/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/nmcli-agent/"
-description: "Control nmcli agent for NetworkManager using command-line. Securely manage secrets and polkit authorizations for network connections. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/nmcli-agent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/nmcli-agent/'
+description: 'Control nmcli agent for NetworkManager using command-line. Securely manage secrets and polkit authorizations for network connections. Free online tool, no registration required.'
 category: linux
 keywords:
   - NetworkManager secret agent
@@ -22,8 +22,8 @@ features:
   - Listen for secret requests
   - Handle authorization requests
   - Enable all agent functionalities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nmcli agent

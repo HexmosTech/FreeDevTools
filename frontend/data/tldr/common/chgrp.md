@@ -1,29 +1,29 @@
 ---
-title: "Change Group Ownership - Control File Permissions | Online Free DevTools by Hexmos"
+title: 'Change Group Ownership - Control File Permissions | Online Free DevTools by Hexmos'
 name: chgrp
-path: "/freedevtools/tldr/common/chgrp/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/chgrp/"
-description: "Change group ownership of files and directories with chgrp. Easily manage file permissions on Linux and Unix systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/chgrp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/chgrp/'
+description: 'Change group ownership of files and directories with chgrp. Easily manage file permissions on Linux and Unix systems. Free online tool, no registration required.'
 category: common
 keywords:
-- file group ownership
-- change group linux
-- chgrp command
-- linux file permissions
-- unix group management
-- recursive chgrp
-- symbolic link chgrp
-- file reference chgrp
-- group ID management
-- file system utilities
+  - file group ownership
+  - change group linux
+  - chgrp command
+  - linux file permissions
+  - unix group management
+  - recursive chgrp
+  - symbolic link chgrp
+  - file reference chgrp
+  - group ID management
+  - file system utilities
 features:
-- Change the group owner of files and directories
-- Recursively modify group ownership for directory contents
-- Alter the group owner of symbolic links
-- Use a reference file to set group ownership
-- Integrate with file system utilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Change the group owner of files and directories
+  - Recursively modify group ownership for directory contents
+  - Alter the group owner of symbolic links
+  - Use a reference file to set group ownership
+  - Integrate with file system utilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chgrp

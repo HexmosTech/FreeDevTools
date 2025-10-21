@@ -1,9 +1,9 @@
 ---
-title: "Control iwd with iwctl - Network Management | Online Free DevTools by Hexmos"
+title: 'Control iwd with iwctl - Network Management | Online Free DevTools by Hexmos'
 name: iwctl
-path: "/freedevtools/tldr/linux/iwctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/iwctl/"
-description: "Control your network with iwctl, a command-line interface for iwd. Manage Wi-Fi connections, scan for networks, and troubleshoot connectivity issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/iwctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/iwctl/'
+description: 'Control your network with iwctl, a command-line interface for iwd. Manage Wi-Fi connections, scan for networks, and troubleshoot connectivity issues. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux network management
@@ -22,8 +22,8 @@ features:
   - List connected stations
   - Connect to Wi-Fi networks
   - Troubleshoot network connectivity issues
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iwctl

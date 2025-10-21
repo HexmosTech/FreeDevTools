@@ -1,9 +1,9 @@
 ---
-title: "Coredump Control - Manage Core Dumps | Online Free DevTools by Hexmos"
+title: 'Coredump Control - Manage Core Dumps | Online Free DevTools by Hexmos'
 name: coredumpctl
-path: "/freedevtools/tldr/linux/coredumpctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/coredumpctl/"
-description: "Control core dumps with Coredumpctl. Inspect process failures and extract core dump data for debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/coredumpctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/coredumpctl/'
+description: 'Control core dumps with Coredumpctl. Inspect process failures and extract core dump data for debugging. Free online tool, no registration required.'
 category: linux
 keywords:
   - core dump analysis
@@ -22,8 +22,8 @@ features:
   - Invoke the debugger on a core dump
   - Extract a core dump to a file
   - Skip debuginfod and pagination prompts during debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # coredumpctl

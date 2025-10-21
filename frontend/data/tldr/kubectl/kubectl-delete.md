@@ -1,29 +1,29 @@
 ---
-title: "Kubectl Delete - Remove Kubernetes Resources | Online Free DevTools by Hexmos"
+title: 'Kubectl Delete - Remove Kubernetes Resources | Online Free DevTools by Hexmos'
 name: kubectl-delete
-path: "/freedevtools/tldr/kubectl/kubectl-delete/"
-canonical: "https://hexmos.com/freedevtools/tldr/kubectl/kubectl-delete/"
-description: "Delete Kubernetes resources efficiently with Kubectl Delete. Manage pods, deployments, nodes, and more using command-line interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/kubectl/kubectl-delete/'
+canonical: 'https://hexmos.com/freedevtools/tldr/kubectl/kubectl-delete/'
+description: 'Delete Kubernetes resources efficiently with Kubectl Delete. Manage pods, deployments, nodes, and more using command-line interface. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes delete
-- kubectl delete command
-- kubernetes resource removal
-- kubectl delete pod
-- kubectl delete deployment
-- kubectl delete node
-- kubectl delete namespace
-- kubernetes yaml delete
-- kubectl delete manifest
-- kubectl delete all
+  - kubernetes delete
+  - kubectl delete command
+  - kubernetes resource removal
+  - kubectl delete pod
+  - kubectl delete deployment
+  - kubectl delete node
+  - kubectl delete namespace
+  - kubernetes yaml delete
+  - kubectl delete manifest
+  - kubectl delete all
 features:
-- Delete Kubernetes pods by name
-- Delete deployments and services by namespace
-- Delete all resources defined in a YAML manifest file
-- Remove specific Kubernetes nodes
-- Delete all pods or nodes in a Kubernetes cluster
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete Kubernetes pods by name
+  - Delete deployments and services by namespace
+  - Delete all resources defined in a YAML manifest file
+  - Remove specific Kubernetes nodes
+  - Delete all pods or nodes in a Kubernetes cluster
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kubectl delete

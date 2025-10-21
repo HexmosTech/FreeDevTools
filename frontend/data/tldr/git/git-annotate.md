@@ -1,29 +1,29 @@
 ---
-title: "Git Annotate - Show Commit History | Online Free DevTools by Hexmos"
+title: 'Git Annotate - Show Commit History | Online Free DevTools by Hexmos'
 name: git-annotate
-path: "/freedevtools/tldr/git/git-annotate/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-annotate/"
-description: "Show commit history with Git Annotate. Inspect line-by-line author and commit information for file versions. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-annotate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-annotate/'
+description: 'Show commit history with Git Annotate. Inspect line-by-line author and commit information for file versions. Free online tool, no registration required.'
 category: common
 keywords:
-- git annotate
-- git blame alternative
-- git commit history
-- git author information
-- git line history
-- git file versioning
-- command line git
-- git source code annotation
-- git developer tools
-- git commit metadata
+  - git annotate
+  - git blame alternative
+  - git commit history
+  - git author information
+  - git line history
+  - git file versioning
+  - command line git
+  - git source code annotation
+  - git developer tools
+  - git commit metadata
 features:
-- Display author and commit hash for each line
-- Show author email alongside commit hash
-- Filter lines based on regular expression
-- Annotate specific file versions
-- Identify last author for each line of code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display author and commit hash for each line
+  - Show author email alongside commit hash
+  - Filter lines based on regular expression
+  - Annotate specific file versions
+  - Identify last author for each line of code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git annotate

@@ -1,29 +1,29 @@
 ---
-title: "List Images - Display Sixel Images on Terminal | Online Free DevTools by Hexmos"
+title: 'List Images - Display Sixel Images on Terminal | Online Free DevTools by Hexmos'
 name: lsix
-path: "/freedevtools/tldr/common/lsix/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lsix/"
-description: "List images with lsix to display them in Sixel format on your terminal. Convert to Sixel, preview images quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lsix/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lsix/'
+description: 'List images with lsix to display them in Sixel format on your terminal. Convert to Sixel, preview images quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- sixel image viewer
-- terminal image display
-- sixel converter
-- image to sixel
-- sixel image list
-- terminal image preview
-- linux image viewer
-- command line image tool
-- sixel graphics terminal
-- sixel support
+  - sixel image viewer
+  - terminal image display
+  - sixel converter
+  - image to sixel
+  - sixel image list
+  - terminal image preview
+  - linux image viewer
+  - command line image tool
+  - sixel graphics terminal
+  - sixel support
 features:
-- List images in sixel format on the terminal.
-- Display images directly in a terminal emulator.
-- Preview images from the command line.
-- Support sixel graphics for image rendering.
-- Show images in the terminal without external GUI.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List images in sixel format on the terminal.
+  - Display images directly in a terminal emulator.
+  - Preview images from the command line.
+  - Support sixel graphics for image rendering.
+  - Show images in the terminal without external GUI.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lsix

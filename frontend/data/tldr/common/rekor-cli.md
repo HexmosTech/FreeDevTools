@@ -1,29 +1,29 @@
 ---
-title: "Rekor-cli - Verify Software Supply Chain Metadata | Online Free DevTools by Hexmos"
+title: 'Rekor-cli - Verify Software Supply Chain Metadata | Online Free DevTools by Hexmos'
 name: rekor-cli
-path: "/freedevtools/tldr/common/rekor-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rekor-cli/"
-description: "Verify software supply chain metadata with rekor-cli. Audit artifact integrity and ensure tamper resistance using transparency logs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rekor-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rekor-cli/'
+description: 'Verify software supply chain metadata with rekor-cli. Audit artifact integrity and ensure tamper resistance using transparency logs. Free online tool, no registration required.'
 category: common
 keywords:
-- software supply chain verification
-- artifact signing verification
-- rekor transparency log
-- immutable ledger validation
-- sigstore rekor cli
-- artifact metadata analysis
-- x509 signature validation
-- hash based artifact search
-- provenance attestation check
-- supply chain security audit
+  - software supply chain verification
+  - artifact signing verification
+  - rekor transparency log
+  - immutable ledger validation
+  - sigstore rekor cli
+  - artifact metadata analysis
+  - x509 signature validation
+  - hash based artifact search
+  - provenance attestation check
+  - supply chain security audit
 features:
-- Upload artifacts and signatures to the Rekor log
-- Retrieve information regarding log entries by UUID
-- Search the Rekor index for entries by artifact name
-- Search for specific entries using SHA hashes
-- Verify artifact integrity using public keys
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload artifacts and signatures to the Rekor log
+  - Retrieve information regarding log entries by UUID
+  - Search the Rekor index for entries by artifact name
+  - Search for specific entries using SHA hashes
+  - Verify artifact integrity using public keys
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rekor-cli

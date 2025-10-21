@@ -1,29 +1,29 @@
 ---
-title: "Control rbash Shell - Restrict Bash Commands | Online Free DevTools by Hexmos"
+title: 'Control rbash Shell - Restrict Bash Commands | Online Free DevTools by Hexmos'
 name: rbash
-path: "/freedevtools/tldr/common/rbash/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rbash/"
-description: "Control shell commands with rbash. Restrict user access to Bash environment and enhance system security. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rbash/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rbash/'
+description: 'Control shell commands with rbash. Restrict user access to Bash environment and enhance system security. Free online tool, no registration required.'
 category: common
 keywords:
-- restricted bash shell
-- rbash command
-- linux shell security
-- command restriction
-- bash environment control
-- shell access control
-- linux security hardening
-- secure shell scripting
-- command-line restriction
-- unix shell lockdown
+  - restricted bash shell
+  - rbash command
+  - linux shell security
+  - command restriction
+  - bash environment control
+  - shell access control
+  - linux security hardening
+  - secure shell scripting
+  - command-line restriction
+  - unix shell lockdown
 features:
-- Restrict command execution in interactive sessions
-- Prevent changing the working directory
-- Disable redirecting command output
-- Block modification of environment variables
-- Limit shell script functionality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Restrict command execution in interactive sessions
+  - Prevent changing the working directory
+  - Disable redirecting command output
+  - Block modification of environment variables
+  - Limit shell script functionality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rbash

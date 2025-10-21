@@ -1,29 +1,29 @@
 ---
-title: "Control Shell Script Flow - if Command | Online Free DevTools by Hexmos"
+title: 'Control Shell Script Flow - if Command | Online Free DevTools by Hexmos'
 name: if
-path: "/freedevtools/tldr/common/if/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/if/"
-description: "Control shell script execution with the `if` command. Implement conditional logic and automate tasks based on conditions. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/if/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/if/'
+description: 'Control shell script execution with the `if` command. Implement conditional logic and automate tasks based on conditions. Free online tool, no registration required.'
 category: common
 keywords:
-- shell script if statement
-- bash conditional execution
-- conditional logic linux
-- command line if control
-- linux if conditional
-- if statement example
-- script conditional flow
-- bash if else
-- shell scripting conditionals
-- if command syntax
+  - shell script if statement
+  - bash conditional execution
+  - conditional logic linux
+  - command line if control
+  - linux if conditional
+  - if statement example
+  - script conditional flow
+  - bash if else
+  - shell scripting conditionals
+  - if command syntax
 features:
-- Execute commands based on condition exit status
-- Implement if/else branching in shell scripts
-- Check for file or directory existence
-- Verify variable definition
-- Control script flow with complex conditions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands based on condition exit status
+  - Implement if/else branching in shell scripts
+  - Check for file or directory existence
+  - Verify variable definition
+  - Control script flow with complex conditions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # if

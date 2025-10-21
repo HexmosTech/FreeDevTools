@@ -1,29 +1,29 @@
 ---
-title: "Generate Kerberos SPNs - Extract User SPNs | Online Free DevTools by Hexmos"
+title: 'Generate Kerberos SPNs - Extract User SPNs | Online Free DevTools by Hexmos'
 name: getuserspns.py
-path: "/freedevtools/tldr/get/getuserspns-py/"
-canonical: "https://hexmos-com/freedevtools/tldr/get/getuserspns-py/"
-description: "Generate Kerberos SPNs with GetUserSPNs.py, retrieve SPNs associated with Active Directory users and request Kerberos TGS tickets. Free online tool, no registration required."
+path: '/freedevtools/tldr/get/getuserspns-py/'
+canonical: 'https://hexmos-com/freedevtools/tldr/get/getuserspns-py/'
+description: 'Generate Kerberos SPNs with GetUserSPNs.py, retrieve SPNs associated with Active Directory users and request Kerberos TGS tickets. Free online tool, no registration required.'
 category: common
 keywords:
-- Kerberos SPN generator
-- Active Directory SPN retrieval
-- User SPN extractor
-- Kerberos TGS ticket request
-- impacket getuserspns.py
-- Active Directory enumeration
-- Windows SPN tool
-- Domain SPN finder
-- Service Principal Name audit
-- Pass-the-hash authentication
+  - Kerberos SPN generator
+  - Active Directory SPN retrieval
+  - User SPN extractor
+  - Kerberos TGS ticket request
+  - impacket getuserspns.py
+  - Active Directory enumeration
+  - Windows SPN tool
+  - Domain SPN finder
+  - Service Principal Name audit
+  - Pass-the-hash authentication
 features:
-- Enumerate user accounts with associated SPNs
-- Request Kerberos TGS tickets for identified SPNs
-- Authenticate using pass-the-hash method
-- Save the retrieved SPNs to a file
-- Target specific domain controllers for SPN retrieval
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate user accounts with associated SPNs
+  - Request Kerberos TGS tickets for identified SPNs
+  - Authenticate using pass-the-hash method
+  - Save the retrieved SPNs to a file
+  - Target specific domain controllers for SPN retrieval
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # GetUserSPNs.py

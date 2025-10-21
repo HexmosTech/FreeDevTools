@@ -1,29 +1,29 @@
 ---
-title: "Control Processes - Top Command Utility | Online Free DevTools by Hexmos"
+title: 'Control Processes - Top Command Utility | Online Free DevTools by Hexmos'
 name: top
-path: "/freedevtools/tldr/osx/top/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/top/"
-description: "Control running processes with the Top Command utility. Monitor CPU usage, memory consumption, and system performance on macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/top/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/top/'
+description: 'Control running processes with the Top Command utility. Monitor CPU usage, memory consumption, and system performance on macOS. Free online tool, no registration required.'
 category: osx
 keywords:
-- osx process monitor
-- macos system monitor
-- command line process viewer
-- terminal task manager
-- top command osx
-- process id sorting
-- cpu usage analysis
-- memory usage analysis
-- system performance analysis
-- osx activity monitor
+  - osx process monitor
+  - macos system monitor
+  - command line process viewer
+  - terminal task manager
+  - top command osx
+  - process id sorting
+  - cpu usage analysis
+  - memory usage analysis
+  - system performance analysis
+  - osx activity monitor
 features:
-- Display dynamic real-time process information
-- Sort processes by CPU usage
-- Sort processes by memory usage
-- Filter processes by user
-- Display interactive help commands
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display dynamic real-time process information
+  - Sort processes by CPU usage
+  - Sort processes by memory usage
+  - Filter processes by user
+  - Display interactive help commands
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # top

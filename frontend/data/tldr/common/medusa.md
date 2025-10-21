@@ -1,29 +1,29 @@
 ---
-title: "Medusa Brute-forcer - Control Login Attempts | Online Free DevTools by Hexmos"
+title: 'Medusa Brute-forcer - Control Login Attempts | Online Free DevTools by Hexmos'
 name: medusa
-path: "/freedevtools/tldr/common/medusa/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/medusa/"
-description: "Control login attempts with Medusa, a modular brute-force tool. Efficiently crack passwords for various protocols. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/medusa/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/medusa/'
+description: 'Control login attempts with Medusa, a modular brute-force tool. Efficiently crack passwords for various protocols. Free online tool, no registration required.'
 category: common
 keywords:
-- login brute-forcer
-- password cracking tool
-- network security
-- penetration testing
-- medusa brute force
-- ftp brute force
-- ssh brute force
-- http brute force
-- mysql brute force
-- smb brute force
+  - login brute-forcer
+  - password cracking tool
+  - network security
+  - penetration testing
+  - medusa brute force
+  - ftp brute force
+  - ssh brute force
+  - http brute force
+  - mysql brute force
+  - smb brute force
 features:
-- Brute-force passwords against various protocols
-- Utilize username and password lists
-- Support for module-based attacks
-- Target single hosts or lists of hosts
-- Leverage pwdump files for SMB cracking
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute-force passwords against various protocols
+  - Utilize username and password lists
+  - Support for module-based attacks
+  - Target single hosts or lists of hosts
+  - Leverage pwdump files for SMB cracking
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # medusa

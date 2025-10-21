@@ -1,9 +1,9 @@
 ---
-title: "Update Finger Info - Control User Data with chfn | Online Free DevTools by Hexmos"
+title: 'Update Finger Info - Control User Data with chfn | Online Free DevTools by Hexmos'
 name: chfn
-path: "/freedevtools/tldr/linux/chfn/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/chfn/"
-description: "Control user finger information with chfn. Update name, office, and phone details easily. A free online tool for managing user data, no registration required."
+path: '/freedevtools/tldr/linux/chfn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/chfn/'
+description: 'Control user finger information with chfn. Update name, office, and phone details easily. A free online tool for managing user data, no registration required.'
 category: linux
 keywords:
   - finger information update
@@ -22,8 +22,8 @@ features:
   - Change user office phone number
   - Set user home phone number
   - Manage user information via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chfn

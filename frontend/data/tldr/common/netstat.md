@@ -1,29 +1,29 @@
 ---
-title: "Netstat - Display Network Information | Online Free DevTools by Hexmos"
+title: 'Netstat - Display Network Information | Online Free DevTools by Hexmos'
 name: netstat
-path: "/freedevtools/tldr/common/netstat/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/netstat/"
-description: "Display network information with Netstat, including open connections and listening ports. Troubleshoot network issues effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/netstat/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/netstat/'
+description: 'Display network information with Netstat, including open connections and listening ports. Troubleshoot network issues effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- network statistics
-- connection monitoring
-- port analysis
-- network troubleshooting
-- socket information
-- linux network tools
-- macos network tools
-- windows network tools
-- tcp udp ports
-- route table information
+  - network statistics
+  - connection monitoring
+  - port analysis
+  - network troubleshooting
+  - socket information
+  - linux network tools
+  - macos network tools
+  - windows network tools
+  - tcp udp ports
+  - route table information
 features:
-- List all open ports and connections
-- Display listening ports for specific protocols
-- Show process IDs associated with network connections
-- Continuously monitor network statistics
-- Display routing table information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all open ports and connections
+  - Display listening ports for specific protocols
+  - Show process IDs associated with network connections
+  - Continuously monitor network statistics
+  - Display routing table information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # netstat

@@ -1,29 +1,29 @@
 ---
-title: "Ping IPv6 - Send Network Packets with Ping6 | Online Free DevTools by Hexmos"
+title: 'Ping IPv6 - Send Network Packets with Ping6 | Online Free DevTools by Hexmos'
 name: ping6
-path: "/freedevtools/tldr/common/ping6/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ping6/"
-description: "Send IPv6 network packets with Ping6. Diagnose network connectivity and measure round-trip time. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ping6/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ping6/'
+description: 'Send IPv6 network packets with Ping6. Diagnose network connectivity and measure round-trip time. Free online tool, no registration required.'
 category: common
 keywords:
-- IPv6 ping
-- network packet sender
-- network diagnostic tool
-- ping6 command
-- ipv6 network testing
-- icmpv6 echo request
-- network troubleshooting
-- linux ping6
-- macos ping6
-- command line ping
+  - IPv6 ping
+  - network packet sender
+  - network diagnostic tool
+  - ping6 command
+  - ipv6 network testing
+  - icmpv6 echo request
+  - network troubleshooting
+  - linux ping6
+  - macos ping6
+  - command line ping
 features:
-- Send ICMP ECHO_REQUEST packets to IPv6 hosts
-- Specify the number of ping requests
-- Set the interval between ping requests
-- Disable symbolic name resolution for addresses
-- Enable audible bell notification on packet receipt
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send ICMP ECHO_REQUEST packets to IPv6 hosts
+  - Specify the number of ping requests
+  - Set the interval between ping requests
+  - Disable symbolic name resolution for addresses
+  - Enable audible bell notification on packet receipt
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ping6

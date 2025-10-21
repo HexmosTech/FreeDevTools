@@ -1,29 +1,29 @@
 ---
-title: "Control Idle Time - Manage Wayland Idle with Swayidle | Online Free DevTools by Hexmos"
+title: 'Control Idle Time - Manage Wayland Idle with Swayidle | Online Free DevTools by Hexmos'
 name: swayidle
-path: "/freedevtools/tldr/common/swayidle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/swayidle/"
-description: "Control Wayland idle state with Swayidle. Configure idle timeouts, execute commands on inactivity, and manage screen locking. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/swayidle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/swayidle/'
+description: 'Control Wayland idle state with Swayidle. Configure idle timeouts, execute commands on inactivity, and manage screen locking. Free online tool, no registration required.'
 category: common
 keywords:
-- Wayland idle manager
-- Swayidle configuration
-- Linux idle daemon
-- Wayland power management
-- sway idle timeout
-- swaylock integration
-- XDG config swayidle
-- desktop idle detection
-- screen locking manager
-- idle activity listener
+  - Wayland idle manager
+  - Swayidle configuration
+  - Linux idle daemon
+  - Wayland power management
+  - sway idle timeout
+  - swaylock integration
+  - XDG config swayidle
+  - desktop idle detection
+  - screen locking manager
+  - idle activity listener
 features:
-- Configure idle timeouts for Wayland sessions
-- Execute custom commands on idle detection
-- Integrate with swaylock for screen locking
-- Specify different actions for various idle states
-- Monitor user activity and trigger events
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure idle timeouts for Wayland sessions
+  - Execute custom commands on idle detection
+  - Integrate with swaylock for screen locking
+  - Specify different actions for various idle states
+  - Monitor user activity and trigger events
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swayidle

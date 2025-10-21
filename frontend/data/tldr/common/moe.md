@@ -1,29 +1,29 @@
 ---
-title: "Edit Text with moe - WYSIWYG Editor | Online Free DevTools by Hexmos"
+title: 'Edit Text with moe - WYSIWYG Editor | Online Free DevTools by Hexmos'
 name: moe
-path: "/freedevtools/tldr/common/moe/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/moe/"
-description: "Edit text files instantly with moe, a WYSIWYG ISO-8859-15 text editor. Control file backups and character case options with this command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/moe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/moe/'
+description: 'Edit text files instantly with moe, a WYSIWYG ISO-8859-15 text editor. Control file backups and character case options with this command. Free online tool, no registration required.'
 category: common
 keywords:
-- ISO-8859-15 text editor
-- WYSIWYG text editor
-- moe text editor command
-- Linux text editor
-- Command-line text editor
-- ISO-8859-15 encoding
-- Text file editor
-- Text file backup
-- Case-insensitive search
-- GNU moe editor
+  - ISO-8859-15 text editor
+  - WYSIWYG text editor
+  - moe text editor command
+  - Linux text editor
+  - Command-line text editor
+  - ISO-8859-15 encoding
+  - Text file editor
+  - Text file backup
+  - Case-insensitive search
+  - GNU moe editor
 features:
-- Open and edit text files
-- Create backup files when saving
-- Open files in read-only mode
-- Edit files without creating backups
-- Perform case-insensitive searches
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit text files
+  - Create backup files when saving
+  - Open files in read-only mode
+  - Edit files without creating backups
+  - Perform case-insensitive searches
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # moe

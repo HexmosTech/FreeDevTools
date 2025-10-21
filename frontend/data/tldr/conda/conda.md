@@ -1,29 +1,29 @@
 ---
-title: "Conda Environment Manager - Create and Control Environments | Online Free DevTools by Hexmos"
+title: 'Conda Environment Manager - Create and Control Environments | Online Free DevTools by Hexmos'
 name: conda
-path: "/freedevtools/tldr/conda/conda/"
-canonical: "https://hexmos.com/freedevtools/tldr/conda/conda/"
-description: "Manage Conda environments with ease. Create, activate, deactivate, and delete environments for Python and other languages. Free online tool, no registration required."
+path: '/freedevtools/tldr/conda/conda/'
+canonical: 'https://hexmos.com/freedevtools/tldr/conda/conda/'
+description: 'Manage Conda environments with ease. Create, activate, deactivate, and delete environments for Python and other languages. Free online tool, no registration required.'
 category: common
 keywords:
-- conda environment manager
-- python environment management
-- conda package manager
-- conda dependency management
-- linux environment management
-- macos environment management
-- create conda environment
-- activate conda environment
-- remove conda environment
-- conda virtual environment
+  - conda environment manager
+  - python environment management
+  - conda package manager
+  - conda dependency management
+  - linux environment management
+  - macos environment management
+  - create conda environment
+  - activate conda environment
+  - remove conda environment
+  - conda virtual environment
 features:
-- Create isolated environments for different projects
-- Install and manage packages within environments
-- Activate and deactivate environments easily
-- Remove environments to free up disk space
-- List installed packages in a specific environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create isolated environments for different projects
+  - Install and manage packages within environments
+  - Activate and deactivate environments easily
+  - Remove environments to free up disk space
+  - List installed packages in a specific environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # conda

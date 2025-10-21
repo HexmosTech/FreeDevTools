@@ -1,29 +1,29 @@
 ---
-title: "Generate LLVM IR - Disassemble Bitcode | Online Free DevTools by Hexmos"
+title: 'Generate LLVM IR - Disassemble Bitcode | Online Free DevTools by Hexmos'
 name: llvm-dis
-path: "/freedevtools/tldr/llvm/llvm-dis/"
-canonical: "https://hexmos.com/freedevtools/tldr/llvm/llvm-dis/"
-description: "Generate LLVM Intermediate Representation (IR) with llvm-dis. Disassemble LLVM bitcode into human-readable format. Free online tool, no registration required."
+path: '/freedevtools/tldr/llvm/llvm-dis/'
+canonical: 'https://hexmos.com/freedevtools/tldr/llvm/llvm-dis/'
+description: 'Generate LLVM Intermediate Representation (IR) with llvm-dis. Disassemble LLVM bitcode into human-readable format. Free online tool, no registration required.'
 category: common
 keywords:
-- LLVM IR generator
-- Bitcode disassembler
-- LLVM bytecode converter
-- IR text translator
-- LLVM IR code
-- BC to LLVM IR
-- LLVM compiler
-- Compiler infrastructure
-- Code analysis
-- Low level virtual machine
+  - LLVM IR generator
+  - Bitcode disassembler
+  - LLVM bytecode converter
+  - IR text translator
+  - LLVM IR code
+  - BC to LLVM IR
+  - LLVM compiler
+  - Compiler infrastructure
+  - Code analysis
+  - Low level virtual machine
 features:
-- Convert LLVM bitcode files to human-readable LLVM IR.
-- Output disassembled LLVM IR to standard output.
-- Save disassembled LLVM IR to a specified file.
-- Disassemble bitcode files with the same filename as the IR.
-- Generate human-readable IR from LLVM bytecode.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert LLVM bitcode files to human-readable LLVM IR.
+  - Output disassembled LLVM IR to standard output.
+  - Save disassembled LLVM IR to a specified file.
+  - Disassemble bitcode files with the same filename as the IR.
+  - Generate human-readable IR from LLVM bytecode.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # llvm-dis

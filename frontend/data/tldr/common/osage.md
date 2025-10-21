@@ -1,9 +1,9 @@
 ---
-title: "Generate Graphviz Image - Render Network Graphs | Online Free DevTools by Hexmos"
+title: 'Generate Graphviz Image - Render Network Graphs | Online Free DevTools by Hexmos'
 name: osage
-path: "/freedevtools/tldr/common/osage/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/osage/"
-description: "Generate Graphviz image files with Osage. Render network graphs and diagrams from dot files. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/osage/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/osage/'
+description: 'Generate Graphviz image files with Osage. Render network graphs and diagrams from dot files. Free online tool, no registration required.'
 category: common
 keywords:
   - graphviz image generator
@@ -21,8 +21,8 @@ features:
   - Support multiple layout algorithms including dot, neato, and circo.
   - Process Graphviz code from standard input.
   - Generate image files based on the input filename.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # osage

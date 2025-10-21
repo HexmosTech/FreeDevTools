@@ -1,9 +1,9 @@
 ---
-title: "Manage UEFI Variables with efivar | Online Free DevTools by Hexmos"
+title: 'Manage UEFI Variables with efivar | Online Free DevTools by Hexmos'
 name: efivar
-path: "/freedevtools/tldr/linux/efivar/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/efivar/"
-description: "Manage UEFI variables effortlessly with the efivar command. List, print, and modify UEFI variables with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/efivar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/efivar/'
+description: 'Manage UEFI variables effortlessly with the efivar command. List, print, and modify UEFI variables with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - UEFI variable management
@@ -22,8 +22,8 @@ features:
   - Modify the contents of a UEFI variable (requires further options not shown)
   - Provides a command-line interface for UEFI variable manipulation
   - Enables direct interaction with UEFI firmware settings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # efivar

@@ -1,9 +1,9 @@
 ---
-title: "Generate LaTeX Planner - Create Daily Planners | Online Free DevTools by Hexmos"
+title: 'Generate LaTeX Planner - Create Daily Planners | Online Free DevTools by Hexmos'
 name: yplan
-path: "/freedevtools/tldr/linux/yplan/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/yplan/"
-description: "Generate LaTeX code for a two-page vertical daily planner with yplan. Customize language, lettercase, and year. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/yplan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/yplan/'
+description: 'Generate LaTeX code for a two-page vertical daily planner with yplan. Customize language, lettercase, and year. Free online tool, no registration required.'
 category: linux
 keywords:
   - LaTeX planner generator
@@ -22,8 +22,8 @@ features:
   - Supports specifying the year for the planner.
   - Outputs a .tex file ready for compilation.
   - Compatible with pandoc, pdflatex, and xetex for conversion.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yplan

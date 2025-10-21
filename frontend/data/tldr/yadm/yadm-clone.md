@@ -1,29 +1,29 @@
 ---
-title: "Clone dotfiles - Manage configuration with yadm-clone | Online Free DevTools by Hexmos"
+title: 'Clone dotfiles - Manage configuration with yadm-clone | Online Free DevTools by Hexmos'
 name: yadm-clone
-path: "/freedevtools/tldr/yadm/yadm-clone/"
-canonical: "https://hexmos.com/freedevtools/tldr/yadm/yadm-clone/"
-description: "Manage dotfiles with yadm-clone to clone and configure your repository. Automate bootstrap execution. Free online tool, no registration required."
+path: '/freedevtools/tldr/yadm/yadm-clone/'
+canonical: 'https://hexmos.com/freedevtools/tldr/yadm/yadm-clone/'
+description: 'Manage dotfiles with yadm-clone to clone and configure your repository. Automate bootstrap execution. Free online tool, no registration required.'
 category: common
 keywords:
-- dotfiles manager
-- yadm dotfile clone
-- configuration file manager
-- version control config
-- dotfiles backup
-- git repository clone
-- dotfiles synchronization
-- yadm config management
-- linux dotfiles
-- macos dotfiles
+  - dotfiles manager
+  - yadm dotfile clone
+  - configuration file manager
+  - version control config
+  - dotfiles backup
+  - git repository clone
+  - dotfiles synchronization
+  - yadm config management
+  - linux dotfiles
+  - macos dotfiles
 features:
-- Clone dotfiles repository from remote location
-- Execute bootstrap script automatically during clone
-- Specify worktree directory during cloning
-- Override existing local branch during clone
-- Clone specific branch from remote repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Clone dotfiles repository from remote location
+  - Execute bootstrap script automatically during clone
+  - Specify worktree directory during cloning
+  - Override existing local branch during clone
+  - Clone specific branch from remote repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # yadm clone

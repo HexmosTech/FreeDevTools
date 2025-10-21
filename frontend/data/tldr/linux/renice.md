@@ -1,9 +1,9 @@
 ---
-title: "Renice Command - Control Process Priority | Online Free DevTools by Hexmos"
+title: 'Renice Command - Control Process Priority | Online Free DevTools by Hexmos'
 name: renice
-path: "/freedevtools/tldr/linux/renice/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/renice/"
-description: "Control process priority with the renice command.  Adjust niceness values to manage system resource allocation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/renice/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/renice/'
+description: 'Control process priority with the renice command.  Adjust niceness values to manage system resource allocation. Free online tool, no registration required.'
 category: linux
 keywords:
   - process priority control
@@ -22,8 +22,8 @@ features:
   - Set absolute priority for specific processes by PID.
   - Manage priority of processes owned by a specific user.
   - Control priority of processes within a process group.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # renice

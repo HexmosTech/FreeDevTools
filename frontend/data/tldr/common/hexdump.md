@@ -1,29 +1,29 @@
 ---
-title: "Hexdump - Inspect Binary Data | Online Free DevTools by Hexmos"
+title: 'Hexdump - Inspect Binary Data | Online Free DevTools by Hexmos'
 name: hexdump
-path: "/freedevtools/tldr/common/hexdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hexdump/"
-description: "Inspect binary data with Hexdump. Analyze file contents in hexadecimal, decimal, octal, or ASCII formats for debugging. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hexdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hexdump/'
+description: 'Inspect binary data with Hexdump. Analyze file contents in hexadecimal, decimal, octal, or ASCII formats for debugging. Free online tool, no registration required.'
 category: common
 keywords:
-- hexdump binary data
-- hexadecimal file viewer
-- binary file inspection
-- data dump analysis
-- debug output examination
-- linux hexdump command
-- macos hexdump utility
-- file content analyzer
-- binary format inspector
-- ASCII data viewer
+  - hexdump binary data
+  - hexadecimal file viewer
+  - binary file inspection
+  - data dump analysis
+  - debug output examination
+  - linux hexdump command
+  - macos hexdump utility
+  - file content analyzer
+  - binary format inspector
+  - ASCII data viewer
 features:
-- Display file contents in hexadecimal format
-- Show offset and ASCII representation of data
-- Limit the number of bytes displayed
-- Print verbose output without duplicate line suppression
-- Format output using printf-like format strings
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display file contents in hexadecimal format
+  - Show offset and ASCII representation of data
+  - Limit the number of bytes displayed
+  - Print verbose output without duplicate line suppression
+  - Format output using printf-like format strings
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hexdump

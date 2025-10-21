@@ -1,9 +1,9 @@
 ---
-title: "Control kdialog - Display KDE Dialogs | Online Free DevTools by Hexmos"
+title: 'Control kdialog - Display KDE Dialogs | Online Free DevTools by Hexmos'
 name: kdialog
-path: "/freedevtools/tldr/linux/kdialog/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kdialog/"
-description: "Control KDE dialog boxes with kdialog. Display message boxes, input prompts, and file choosers from shell scripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kdialog/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kdialog/'
+description: 'Control KDE dialog boxes with kdialog. Display message boxes, input prompts, and file choosers from shell scripts. Free online tool, no registration required.'
 category: linux
 keywords:
   - KDE dialog control
@@ -22,8 +22,8 @@ features:
   - Open file selection dialogs to choose files
   - Create yes/no and warning dialogs for user confirmation
   - Display progress bars and communicate via D-Bus
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kdialog

@@ -1,29 +1,29 @@
 ---
-title: "PDF Text Search - Find Text in PDFs | Online Free DevTools by Hexmos"
+title: 'PDF Text Search - Find Text in PDFs | Online Free DevTools by Hexmos'
 name: pdfgrep
-path: "/freedevtools/tldr/common/pdfgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pdfgrep/"
-description: "Search PDF text with pdfgrep. Quickly find specific words or phrases within PDF documents using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pdfgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pdfgrep/'
+description: 'Search PDF text with pdfgrep. Quickly find specific words or phrases within PDF documents using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- PDF text search
-- PDF content search
-- PDF file search
-- PDF text extraction
-- PDF grep command
-- Linux PDF search
-- macOS PDF search
-- Command line PDF search
-- Recursive PDF search
-- PDF pattern matching
+  - PDF text search
+  - PDF content search
+  - PDF file search
+  - PDF text extraction
+  - PDF grep command
+  - Linux PDF search
+  - macOS PDF search
+  - Command line PDF search
+  - Recursive PDF search
+  - PDF pattern matching
 features:
-- Find text patterns within PDF files
-- Include filename and page number in search results
-- Perform case-insensitive searches
-- Search PDF files recursively
-- Limit the number of matches returned
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Find text patterns within PDF files
+  - Include filename and page number in search results
+  - Perform case-insensitive searches
+  - Search PDF files recursively
+  - Limit the number of matches returned
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pdfgrep

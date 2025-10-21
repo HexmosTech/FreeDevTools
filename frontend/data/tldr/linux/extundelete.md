@@ -1,9 +1,9 @@
 ---
-title: "Recover Deleted Files - extundelete | Online Free DevTools by Hexmos"
+title: 'Recover Deleted Files - extundelete | Online Free DevTools by Hexmos'
 name: extundelete
-path: "/freedevtools/tldr/linux/extundelete/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/extundelete/"
-description: "Recover deleted files with extundelete, a powerful data recovery tool for ext3/ext4 partitions. Restore files and directories with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/extundelete/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/extundelete/'
+description: 'Recover deleted files with extundelete, a powerful data recovery tool for ext3/ext4 partitions. Restore files and directories with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - extundelete data recovery
@@ -22,8 +22,8 @@ features:
   - Restore deleted directories recursively
   - Recover files deleted after a specific date
   - Parse journal to restore data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # extundelete

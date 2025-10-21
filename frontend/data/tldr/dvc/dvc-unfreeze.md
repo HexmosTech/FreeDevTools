@@ -1,29 +1,29 @@
 ---
-title: "DVC Unfreeze - Restore DVC Stage Tracking | Online Free DevTools by Hexmos"
+title: 'DVC Unfreeze - Restore DVC Stage Tracking | Online Free DevTools by Hexmos'
 name: dvc-unfreeze
-path: "/freedevtools/tldr/dvc/dvc-unfreeze/"
-canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-unfreeze/"
-description: "Unfreeze DVC stages to restore dependency tracking with DVC Unfreeze. Manage pipeline stages and resume monitoring changes. Free online tool, no registration required."
+path: '/freedevtools/tldr/dvc/dvc-unfreeze/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dvc/dvc-unfreeze/'
+description: 'Unfreeze DVC stages to restore dependency tracking with DVC Unfreeze. Manage pipeline stages and resume monitoring changes. Free online tool, no registration required.'
 category: common
 keywords:
-- DVC stage unfreeze
-- DVC pipeline management
-- DVC dependency tracking
-- Unfreeze DVC stage command
-- DVC stage control
-- DVC CLI
-- DVC pipeline restore
-- DVC stage modification
-- DVC workflow automation
-- Command-line DVC tool
+  - DVC stage unfreeze
+  - DVC pipeline management
+  - DVC dependency tracking
+  - Unfreeze DVC stage command
+  - DVC stage control
+  - DVC CLI
+  - DVC pipeline restore
+  - DVC stage modification
+  - DVC workflow automation
+  - Command-line DVC tool
 features:
-- Re-enable tracking for frozen DVC stages
-- Restore dependency monitoring in DVC pipelines
-- Unfreeze multiple DVC stages simultaneously
-- Facilitate iterative development with DVC
-- Manage DVC pipeline stage dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Re-enable tracking for frozen DVC stages
+  - Restore dependency monitoring in DVC pipelines
+  - Unfreeze multiple DVC stages simultaneously
+  - Facilitate iterative development with DVC
+  - Manage DVC pipeline stage dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dvc unfreeze

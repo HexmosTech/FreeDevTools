@@ -1,29 +1,29 @@
 ---
-title: "Storage Queue - Manage Azure Queues | Online Free DevTools by Hexmos"
+title: 'Storage Queue - Manage Azure Queues | Online Free DevTools by Hexmos'
 name: az-storage-queue
-path: "/freedevtools/tldr/az/az-storage-queue/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-queue/"
-description: "Manage Azure storage queues with az-storage-queue. Create, list, and delete queues, generate SAS tokens for secure access. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-storage-queue/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-storage-queue/'
+description: 'Manage Azure storage queues with az-storage-queue. Create, list, and delete queues, generate SAS tokens for secure access. Free online tool, no registration required.'
 category: common
 keywords:
-- azure storage queue management
-- storage queue command line
-- azure queue sas generator
-- queue list azure cli
-- azure storage queue create
-- azure queue delete
-- azure queue metadata management
-- queue permissions azure cli
-- azure storage account queue
-- az storage queue
+  - azure storage queue management
+  - storage queue command line
+  - azure queue sas generator
+  - queue list azure cli
+  - azure storage queue create
+  - azure queue delete
+  - azure queue metadata management
+  - queue permissions azure cli
+  - azure storage account queue
+  - az storage queue
 features:
-- Create new Azure storage queues
-- Generate shared access signatures (SAS) for queues
-- List queues within a storage account
-- Delete queues and their messages
-- Manage queue metadata
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Azure storage queues
+  - Generate shared access signatures (SAS) for queues
+  - List queues within a storage account
+  - Delete queues and their messages
+  - Manage queue metadata
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az storage queue

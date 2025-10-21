@@ -1,29 +1,29 @@
 ---
-title: "NPM Search - Find Packages in the Registry | Online Free DevTools by Hexmos"
+title: 'NPM Search - Find Packages in the Registry | Online Free DevTools by Hexmos'
 name: npm-search
-path: "/freedevtools/tldr/npm/npm-search/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-search/"
-description: "Find NPM packages easily with NPM Search. Discover, explore, and install Node.js modules from the registry. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-search/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-search/'
+description: 'Find NPM packages easily with NPM Search. Discover, explore, and install Node.js modules from the registry. Free online tool, no registration required.'
 category: common
 keywords:
-- npm package search
-- node package manager search
-- javascript package registry
-- npm module lookup
-- npm command line search
-- npm package directory
-- npm find packages
-- node js libraries
-- npm package explorer
-- npm registry search
+  - npm package search
+  - node package manager search
+  - javascript package registry
+  - npm module lookup
+  - npm command line search
+  - npm package directory
+  - npm find packages
+  - node js libraries
+  - npm package explorer
+  - npm registry search
 features:
-- Search for npm packages by name or keyword
-- View detailed package information (description, author, version)
-- Search packages by author
-- Search packages within a specific npm organization scope
-- Combine multiple search terms for advanced filtering
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for npm packages by name or keyword
+  - View detailed package information (description, author, version)
+  - Search packages by author
+  - Search packages within a specific npm organization scope
+  - Combine multiple search terms for advanced filtering
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm search

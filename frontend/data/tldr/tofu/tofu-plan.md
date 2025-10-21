@@ -1,29 +1,29 @@
 ---
-title: "Generate Tofu Plans - Automate Infrastructure with OpenTofu | Online Free DevTools by Hexmos"
+title: 'Generate Tofu Plans - Automate Infrastructure with OpenTofu | Online Free DevTools by Hexmos'
 name: tofu-plan
-path: "/freedevtools/tldr/tofu/tofu-plan/"
-canonical: "https://hexmos.com/freedevtools/tldr/tofu/tofu-plan/"
-description: "Generate Tofu plans with OpenTofu to automate infrastructure deployments. Preview changes, target resources, and manage your infrastructure efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/tofu/tofu-plan/'
+canonical: 'https://hexmos.com/freedevtools/tldr/tofu/tofu-plan/'
+description: 'Generate Tofu plans with OpenTofu to automate infrastructure deployments. Preview changes, target resources, and manage your infrastructure efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- opentofu plan
-- infrastructure as code
-- opentofu automation
-- tofu execution plan
-- opentofu destroy plan
-- tofu refresh state
-- opentofu variable definition
-- opentofu resource targeting
-- opentofu json output
-- opentofu plan file
+  - opentofu plan
+  - infrastructure as code
+  - opentofu automation
+  - tofu execution plan
+  - opentofu destroy plan
+  - tofu refresh state
+  - opentofu variable definition
+  - opentofu resource targeting
+  - opentofu json output
+  - opentofu plan file
 features:
-- Generate execution plans for infrastructure changes
-- Preview resource modifications before applying them
-- Target specific resources for focused updates
-- Output plans in JSON format for automation
-- Write plans to a file for later application
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate execution plans for infrastructure changes
+  - Preview resource modifications before applying them
+  - Target specific resources for focused updates
+  - Output plans in JSON format for automation
+  - Write plans to a file for later application
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tofu plan

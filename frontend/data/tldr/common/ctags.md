@@ -1,29 +1,29 @@
 ---
-title: "Generate ctags - Index Code Objects | Online Free DevTools by Hexmos"
+title: 'Generate ctags - Index Code Objects | Online Free DevTools by Hexmos'
 name: ctags
-path: "/freedevtools/tldr/common/ctags/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ctags/"
-description: "Generate indexes with ctags, a powerful tool for navigating code. Quickly find functions and classes across projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ctags/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ctags/'
+description: 'Generate indexes with ctags, a powerful tool for navigating code. Quickly find functions and classes across projects. Free online tool, no registration required.'
 category: common
 keywords:
-- ctags index
-- source code index generator
-- code navigation tool
-- programming language indexer
-- ctags file
-- ctags linux
-- ctags macos
-- ctags windows
-- ctags documentation
-- ctags tutorial
+  - ctags index
+  - source code index generator
+  - code navigation tool
+  - programming language indexer
+  - ctags file
+  - ctags linux
+  - ctags macos
+  - ctags windows
+  - ctags documentation
+  - ctags tutorial
 features:
-- Generate tag files for source code
-- Index various programming languages
-- Recursively generate tags in directories
-- Output tags in JSON format
-- Specify fields to include in the output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate tag files for source code
+  - Index various programming languages
+  - Recursively generate tags in directories
+  - Output tags in JSON format
+  - Specify fields to include in the output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ctags

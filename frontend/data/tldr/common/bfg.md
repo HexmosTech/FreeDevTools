@@ -1,29 +1,29 @@
 ---
-title: "BFG Cleaner - Remove Git Data | Online Free DevTools by Hexmos"
+title: 'BFG Cleaner - Remove Git Data | Online Free DevTools by Hexmos'
 name: bfg
-path: "/freedevtools/tldr/common/bfg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/bfg/"
-description: "Remove unwanted data with BFG Cleaner, efficiently cleaning Git repository history. Delete large files and sensitive information. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/bfg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/bfg/'
+description: 'Remove unwanted data with BFG Cleaner, efficiently cleaning Git repository history. Delete large files and sensitive information. Free online tool, no registration required.'
 category: common
 keywords:
-- git repository cleaner
-- bfg git cleaner
-- git history rewrite
-- remove large files git
-- delete sensitive data git
-- git password removal
-- git data scrubbing
-- git commit history editor
-- bfg command line
-- git repository optimization
+  - git repository cleaner
+  - bfg git cleaner
+  - git history rewrite
+  - remove large files git
+  - delete sensitive data git
+  - git password removal
+  - git data scrubbing
+  - git commit history editor
+  - bfg command line
+  - git repository optimization
 features:
-- Delete specified files from Git history
-- Replace text content across all commits
-- Clean large files from the repository
-- Rewrite Git history to remove unwanted data
-- Purge sensitive information like passwords from history
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete specified files from Git history
+  - Replace text content across all commits
+  - Clean large files from the repository
+  - Rewrite Git history to remove unwanted data
+  - Purge sensitive information like passwords from history
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bfg

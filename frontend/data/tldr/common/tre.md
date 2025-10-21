@@ -1,29 +1,29 @@
 ---
-title: "Tree Command - Visualize Directory Structure | Online Free DevTools by Hexmos"
+title: 'Tree Command - Visualize Directory Structure | Online Free DevTools by Hexmos'
 name: tre
-path: "/freedevtools/tldr/common/tre/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tre/"
-description: "Visualize directory structure with Tree Command. Explore file hierarchies and manage files efficiently using the tre command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tre/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tre/'
+description: 'Visualize directory structure with Tree Command. Explore file hierarchies and manage files efficiently using the tre command. Free online tool, no registration required.'
 category: common
 keywords:
-- directory structure visualization
-- tre command line tool
-- file system tree view
-- gitignore aware tree
-- linux directory tree
-- macos directory tree
-- command line file browser
-- hierarchical file explorer
-- console file manager
-- terminal tree generator
+  - directory structure visualization
+  - tre command line tool
+  - file system tree view
+  - gitignore aware tree
+  - linux directory tree
+  - macos directory tree
+  - command line file browser
+  - hierarchical file explorer
+  - console file manager
+  - terminal tree generator
 features:
-- Display directory structure as a tree.
-- Limit tree depth for focused views.
-- Filter files based on regular expressions.
-- Customize output format (JSON, tree diagram).
-- Integrate with shell editor for file access.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display directory structure as a tree.
+  - Limit tree depth for focused views.
+  - Filter files based on regular expressions.
+  - Customize output format (JSON, tree diagram).
+  - Integrate with shell editor for file access.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tre

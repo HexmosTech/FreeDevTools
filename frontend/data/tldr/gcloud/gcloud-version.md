@@ -1,29 +1,29 @@
 ---
-title: "GCloud Version - Generate CLI Info | Online Free DevTools by Hexmos"
+title: 'GCloud Version - Generate CLI Info | Online Free DevTools by Hexmos'
 name: gcloud-version
-path: "/freedevtools/tldr/gcloud/gcloud-version/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-version/"
-description: "Generate Google Cloud CLI version information with GCloud Version. Check installed components, updates, and dependencies. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-version/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-version/'
+description: 'Generate Google Cloud CLI version information with GCloud Version. Check installed components, updates, and dependencies. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud version
-- google cloud version
-- gcloud cli version
-- google cloud sdk version
-- cli version information
-- gcloud component versions
-- google cloud platform
-- gcp version
-- gcloud sdk
-- google cloud cli
+  - gcloud version
+  - google cloud version
+  - gcloud cli version
+  - google cloud sdk version
+  - cli version information
+  - gcloud component versions
+  - google cloud platform
+  - gcp version
+  - gcloud sdk
+  - google cloud cli
 features:
-- Display installed Google Cloud CLI component versions
-- Check for available updates to gcloud components
-- Provide Google Cloud SDK version details
-- Show dependencies of the gcloud CLI
-- Generate version information for the Cloud SDK
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display installed Google Cloud CLI component versions
+  - Check for available updates to gcloud components
+  - Provide Google Cloud SDK version details
+  - Show dependencies of the gcloud CLI
+  - Generate version information for the Cloud SDK
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud-version

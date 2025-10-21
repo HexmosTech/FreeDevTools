@@ -1,29 +1,29 @@
 ---
-title: "Busybox - Control System Utilities | Online Free DevTools by Hexmos"
+title: 'Busybox - Control System Utilities | Online Free DevTools by Hexmos'
 name: busybox
-path: "/freedevtools/tldr/common/busybox/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/busybox/"
-description: "Control system utilities with Busybox. Manage files, processes, and network configurations with this versatile command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/busybox/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/busybox/'
+description: 'Control system utilities with Busybox. Manage files, processes, and network configurations with this versatile command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- linux system utilities
-- embedded linux tools
-- busybox command line
-- minimal linux environment
-- single executable utilities
-- linux system administration
-- busybox shell commands
-- command line file manager
-- embedded system utilities
-- busybox networking tools
+  - linux system utilities
+  - embedded linux tools
+  - busybox command line
+  - minimal linux environment
+  - single executable utilities
+  - linux system administration
+  - busybox shell commands
+  - command line file manager
+  - embedded system utilities
+  - busybox networking tools
 features:
-- Execute individual system utilities
-- Manage files and directories
-- Control processes and services
-- Configure network settings
-- Display help information for utilities
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute individual system utilities
+  - Manage files and directories
+  - Control processes and services
+  - Configure network settings
+  - Display help information for utilities
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # busybox

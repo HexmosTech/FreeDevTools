@@ -1,29 +1,29 @@
 ---
-title: "Go Build - Compile Go Sources | Online Free DevTools by Hexmos"
+title: 'Go Build - Compile Go Sources | Online Free DevTools by Hexmos'
 name: go-build
-path: "/freedevtools/tldr/go/go-build/"
-canonical: "https://hexmos.com/freedevtools/tldr/go/go-build/"
-description: "Compile Go sources effortlessly with Go Build. Create binaries, specify output filenames, and enable race detection. Free online tool, no registration required."
+path: '/freedevtools/tldr/go/go-build/'
+canonical: 'https://hexmos.com/freedevtools/tldr/go/go-build/'
+description: 'Compile Go sources effortlessly with Go Build. Create binaries, specify output filenames, and enable race detection. Free online tool, no registration required.'
 category: common
 keywords:
-- go build command
-- go compiler
-- compile go program
-- go executable
-- go build flags
-- go build package
-- go build race condition
-- go build linux
-- go build windows
-- go build macos
+  - go build command
+  - go compiler
+  - compile go program
+  - go executable
+  - go build flags
+  - go build package
+  - go build race condition
+  - go build linux
+  - go build windows
+  - go build macos
 features:
-- Compile single Go source files
-- Specify output filename for the compiled binary
-- Compile Go packages into executables
-- Enable data race detection during compilation
-- Compile Go sources for different operating systems
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile single Go source files
+  - Specify output filename for the compiled binary
+  - Compile Go packages into executables
+  - Enable data race detection during compilation
+  - Compile Go sources for different operating systems
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go build

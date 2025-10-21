@@ -1,29 +1,29 @@
 ---
-title: "Control Command Snippets - Manage Notes with QC | Online Free DevTools by Hexmos"
+title: 'Control Command Snippets - Manage Notes with QC | Online Free DevTools by Hexmos'
 name: qc
-path: "/freedevtools/tldr/common/qc/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/qc/"
-description: "Control command snippets efficiently with QC. Manage, search, and execute code snippets stored in QOwnNotes for enhanced productivity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/qc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/qc/'
+description: 'Control command snippets efficiently with QC. Manage, search, and execute code snippets stored in QOwnNotes for enhanced productivity. Free online tool, no registration required.'
 category: common
 keywords:
-- command snippet manager
-- qownnotes commands
-- note command execution
-- command line snippet
-- qc command line
-- code snippet management
-- markdown snippet tool
-- note taking automation
-- shell script execution
-- command configuration
+  - command snippet manager
+  - qownnotes commands
+  - note command execution
+  - command line snippet
+  - qc command line
+  - code snippet management
+  - markdown snippet tool
+  - note taking automation
+  - shell script execution
+  - command configuration
 features:
-- Configure snippet manager settings
-- Search and print command snippets
-- Execute snippets with command preview
-- Execute the last executed snippet
-- Switch between note folders in QOwnNotes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure snippet manager settings
+  - Search and print command snippets
+  - Execute snippets with command preview
+  - Execute the last executed snippet
+  - Switch between note folders in QOwnNotes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qc

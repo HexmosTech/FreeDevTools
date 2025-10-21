@@ -1,29 +1,29 @@
 ---
-title: "Manage K3s Clusters - Control Kubernetes | Online Free DevTools by Hexmos"
+title: 'Manage K3s Clusters - Control Kubernetes | Online Free DevTools by Hexmos'
 name: k3s
-path: "/freedevtools/tldr/common/k3s/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/k3s/"
-description: "Manage Kubernetes clusters with K3s. Deploy lightweight Kubernetes, take snapshots, and rotate certificates using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/k3s/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/k3s/'
+description: 'Manage Kubernetes clusters with K3s. Deploy lightweight Kubernetes, take snapshots, and rotate certificates using simple commands. Free online tool, no registration required.'
 category: common
 keywords:
-- kubernetes management
-- k3s cluster
-- lightweight kubernetes
-- etcd snapshot
-- certificate rotation
-- kubectl command
-- k3s uninstall
-- kubernetes command line
-- container orchestration
-- k8s management
+  - kubernetes management
+  - k3s cluster
+  - lightweight kubernetes
+  - etcd snapshot
+  - certificate rotation
+  - kubectl command
+  - k3s uninstall
+  - kubernetes command line
+  - container orchestration
+  - k8s management
 features:
-- Deploy lightweight Kubernetes clusters
-- Take etcd snapshots of K3s clusters
-- Rotate CA certificates for K3s
-- Manage bootstrap tokens for cluster access
-- Uninstall K3s and remove components
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy lightweight Kubernetes clusters
+  - Take etcd snapshots of K3s clusters
+  - Rotate CA certificates for K3s
+  - Manage bootstrap tokens for cluster access
+  - Uninstall K3s and remove components
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # k3s

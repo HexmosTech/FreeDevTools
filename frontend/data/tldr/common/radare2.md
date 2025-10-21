@@ -1,29 +1,29 @@
 ---
-title: "Reverse Engineer - Analyze Binaries with Radare2 | Online Free DevTools by Hexmos"
+title: 'Reverse Engineer - Analyze Binaries with Radare2 | Online Free DevTools by Hexmos'
 name: radare2
-path: "/freedevtools/tldr/common/radare2/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/radare2/"
-description: "Reverse engineer binaries with Radare2, a powerful reverse engineering framework. Analyze executables, debug programs, and script automation tasks with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/radare2/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/radare2/'
+description: 'Reverse engineer binaries with Radare2, a powerful reverse engineering framework. Analyze executables, debug programs, and script automation tasks with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Binary analysis
-- Reverse engineering tool
-- Radare2 framework
-- Executable analysis
-- Debugging tool
-- Malware analysis
-- Shellcode analysis
-- Linux reverse engineering
-- Windows reverse engineering
-- macOS reverse engineering
+  - Binary analysis
+  - Reverse engineering tool
+  - Radare2 framework
+  - Executable analysis
+  - Debugging tool
+  - Malware analysis
+  - Shellcode analysis
+  - Linux reverse engineering
+  - Windows reverse engineering
+  - macOS reverse engineering
 features:
-- Open and analyze binary files without parsing headers
-- Debug programs using the built-in debugger
-- Execute custom scripts before interactive CLI starts
-- Display help text for specific commands within radare2
-- Dump raw bytes from the current block to a file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and analyze binary files without parsing headers
+  - Debug programs using the built-in debugger
+  - Execute custom scripts before interactive CLI starts
+  - Display help text for specific commands within radare2
+  - Dump raw bytes from the current block to a file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # radare2

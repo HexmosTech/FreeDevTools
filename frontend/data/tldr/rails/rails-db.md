@@ -1,29 +1,29 @@
 ---
-title: "Rails DB - Create Databases | Online Free DevTools by Hexmos"
+title: 'Rails DB - Create Databases | Online Free DevTools by Hexmos'
 name: rails-db
-path: "/freedevtools/tldr/rails/rails-db/"
-canonical: "https://hexmos.com/freedevtools/tldr/rails/rails-db/"
-description: "Create databases with Rails DB, manage migrations, and seed your development environment. Optimize your database workflows with this free online tool, no registration required."
+path: '/freedevtools/tldr/rails/rails-db/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rails/rails-db/'
+description: 'Create databases with Rails DB, manage migrations, and seed your development environment. Optimize your database workflows with this free online tool, no registration required.'
 category: common
 keywords:
-- rails database creation
-- rails database migration
-- rails db setup
-- rails db create
-- rails db migrate
-- rails db seed
-- ruby on rails database commands
-- activerecord migration
-- database management rails
-- rails db console
+  - rails database creation
+  - rails database migration
+  - rails db setup
+  - rails db create
+  - rails db migrate
+  - rails db seed
+  - ruby on rails database commands
+  - activerecord migration
+  - database management rails
+  - rails db console
 features:
-- Create and initialize databases.
-- Manage database migrations.
-- Access the database console.
-- Seed the database with initial data.
-- Rollback recent migrations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and initialize databases.
+  - Manage database migrations.
+  - Access the database console.
+  - Seed the database with initial data.
+  - Rollback recent migrations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rails db

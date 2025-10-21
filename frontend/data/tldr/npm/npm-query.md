@@ -1,29 +1,29 @@
 ---
-title: "NPM Query - Print Package Dependencies | Online Free DevTools by Hexmos"
+title: 'NPM Query - Print Package Dependencies | Online Free DevTools by Hexmos'
 name: npm-query
-path: "/freedevtools/tldr/npm/npm-query/"
-canonical: "https://hexmos.com/freedevtools/tldr/npm/npm-query/"
-description: "Print package dependencies with NPM Query, using CSS-like selectors to filter and extract data. Inspect package structure, identify dependencies, and automate tasks. Free online tool, no registration required."
+path: '/freedevtools/tldr/npm/npm-query/'
+canonical: 'https://hexmos.com/freedevtools/tldr/npm/npm-query/'
+description: 'Print package dependencies with NPM Query, using CSS-like selectors to filter and extract data. Inspect package structure, identify dependencies, and automate tasks. Free online tool, no registration required.'
 category: common
 keywords:
-- npm package dependencies
-- javascript dependency management
-- node package inspection
-- npm query selector
-- CSS selector npm
-- npm package analyzer
-- npm dependency tree
-- npm dependency filter
-- npm package metadata
-- command line npm
+  - npm package dependencies
+  - javascript dependency management
+  - node package inspection
+  - npm query selector
+  - CSS selector npm
+  - npm package analyzer
+  - npm dependency tree
+  - npm dependency filter
+  - npm package metadata
+  - command line npm
 features:
-- Print direct dependencies
-- Filter dependencies by name and version
-- Identify packages with no dependencies
-- Extract dependencies with specific scripts
-- Locate Git dependencies and their requirers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print direct dependencies
+  - Filter dependencies by name and version
+  - Identify packages with no dependencies
+  - Extract dependencies with specific scripts
+  - Locate Git dependencies and their requirers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # npm query

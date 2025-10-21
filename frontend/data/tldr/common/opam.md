@@ -1,29 +1,29 @@
 ---
-title: "OPAM - Manage OCaml Packages | Online Free DevTools by Hexmos"
+title: 'OPAM - Manage OCaml Packages | Online Free DevTools by Hexmos'
 name: opam
-path: "/freedevtools/tldr/common/opam/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/opam/"
-description: "Manage OCaml packages with OPAM, the OCaml package manager. Install, update, and search for OCaml libraries and tools. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/opam/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/opam/'
+description: 'Manage OCaml packages with OPAM, the OCaml package manager. Install, update, and search for OCaml libraries and tools. Free online tool, no registration required.'
 category: common
 keywords:
-- ocaml package manager
-- ocaml dependency management
-- opam package management
-- ocaml library install
-- ocaml tool install
-- opam search packages
-- ocaml package update
-- ocaml package upgrade
-- opam ocaml modules
-- linux opam install
+  - ocaml package manager
+  - ocaml dependency management
+  - opam package management
+  - ocaml library install
+  - ocaml tool install
+  - opam search packages
+  - ocaml package update
+  - ocaml package upgrade
+  - opam ocaml modules
+  - linux opam install
 features:
-- Initialize the opam environment
-- Search for available OCaml packages
-- Install OCaml packages and dependencies
-- Display detailed information about a package
-- Update the local package database
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize the opam environment
+  - Search for available OCaml packages
+  - Install OCaml packages and dependencies
+  - Display detailed information about a package
+  - Update the local package database
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # opam

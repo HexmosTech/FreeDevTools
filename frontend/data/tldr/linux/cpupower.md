@@ -1,9 +1,9 @@
 ---
-title: "CPU Power Control - Manage CPU Frequency | Online Free DevTools by Hexmos"
+title: 'CPU Power Control - Manage CPU Frequency | Online Free DevTools by Hexmos'
 name: cpupower
-path: "/freedevtools/tldr/linux/cpupower/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/cpupower/"
-description: "Control CPU frequency and power settings with cpupower. Manage governors, view core information, and optimize performance. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/cpupower/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/cpupower/'
+description: 'Control CPU frequency and power settings with cpupower. Manage governors, view core information, and optimize performance. Free online tool, no registration required.'
 category: linux
 keywords:
   - cpu frequency control
@@ -22,8 +22,8 @@ features:
   - Manage CPU frequencies on individual cores or all cores.
   - Analyze available CPU governors and their characteristics.
   - Display hardware frequency information in human-readable format.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cpupower

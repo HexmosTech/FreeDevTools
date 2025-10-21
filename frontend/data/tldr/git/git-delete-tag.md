@@ -1,29 +1,29 @@
 ---
-title: "Delete Git Tag - Remove Tags Locally & Remotely | Online Free DevTools by Hexmos"
+title: 'Delete Git Tag - Remove Tags Locally & Remotely | Online Free DevTools by Hexmos'
 name: git-delete-tag
-path: "/freedevtools/tldr/git/git-delete-tag/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-delete-tag/"
-description: "Delete Git tags with Git Delete Tag. Remove local and remote tags easily using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-delete-tag/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-delete-tag/'
+description: 'Delete Git tags with Git Delete Tag. Remove local and remote tags easily using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- git delete tag
-- git tag removal
-- git tag delete
-- delete remote git tag
-- delete local git tag
-- git tag management
-- git command line
-- git extras
-- git tag operations
-- git version control
+  - git delete tag
+  - git tag removal
+  - git tag delete
+  - delete remote git tag
+  - delete local git tag
+  - git tag management
+  - git command line
+  - git extras
+  - git tag operations
+  - git version control
 features:
-- Delete local Git tags
-- Delete remote Git tags
-- Remove specific tag versions
-- Support for batch tag deletion
-- Integrate with git-extras for enhanced functionality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Delete local Git tags
+  - Delete remote Git tags
+  - Remove specific tag versions
+  - Support for batch tag deletion
+  - Integrate with git-extras for enhanced functionality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git delete-tag

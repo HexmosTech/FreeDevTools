@@ -1,29 +1,29 @@
 ---
-title: "Renice - Control Process Priority | Online Free DevTools by Hexmos"
+title: 'Renice - Control Process Priority | Online Free DevTools by Hexmos'
 name: renice
-path: "/freedevtools/tldr/common/renice/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/renice/"
-description: "Control process priority with Renice. Adjust scheduling priority on Linux and macOS systems using this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/renice/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/renice/'
+description: 'Control process priority with Renice. Adjust scheduling priority on Linux and macOS systems using this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- process priority control
-- renice process scheduling
-- linux renice command
-- macos renice command
-- process niceness value
-- change process priority
-- adjust process scheduling
-- process management linux
-- process management macos
-- command line renice
+  - process priority control
+  - renice process scheduling
+  - linux renice command
+  - macos renice command
+  - process niceness value
+  - change process priority
+  - adjust process scheduling
+  - process management linux
+  - process management macos
+  - command line renice
 features:
-- Adjust process priority by PID
-- Modify priority of all processes owned by a user
-- Change priority for processes in a process group
-- Increase or decrease process niceness values
-- Alter the scheduling favorability of running processes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Adjust process priority by PID
+  - Modify priority of all processes owned by a user
+  - Change priority for processes in a process group
+  - Increase or decrease process niceness values
+  - Alter the scheduling favorability of running processes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # renice

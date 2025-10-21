@@ -1,9 +1,9 @@
 ---
-title: "Submit LSF Jobs - Schedule Batch Tasks | Online Free DevTools by Hexmos"
+title: 'Submit LSF Jobs - Schedule Batch Tasks | Online Free DevTools by Hexmos'
 name: bsub
-path: "/freedevtools/tldr/linux/bsub/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/bsub/"
-description: "Schedule batch tasks with LSF bsub command. Submit jobs, manage queues, and allocate resources effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/bsub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/bsub/'
+description: 'Schedule batch tasks with LSF bsub command. Submit jobs, manage queues, and allocate resources effectively. Free online tool, no registration required.'
 category: linux
 keywords:
   - LSF job submission
@@ -22,8 +22,8 @@ features:
   - Redirect output and error streams
   - Request specific CPU cores and memory allocation
   - Set runtime limits for job execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bsub

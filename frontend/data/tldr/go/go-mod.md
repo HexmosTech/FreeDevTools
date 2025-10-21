@@ -1,29 +1,29 @@
 ---
-title: "Go Mod - Manage Go Modules | Online Free DevTools by Hexmos"
+title: 'Go Mod - Manage Go Modules | Online Free DevTools by Hexmos'
 name: go-mod
-path: "/freedevtools/tldr/go/go-mod/"
-canonical: "https://hexmos.com/freedevtools/tldr/go/go-mod/"
-description: "Manage Go modules efficiently with Go Mod. Download, tidy, verify, and vendor your Go dependencies easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/go/go-mod/'
+canonical: 'https://hexmos.com/freedevtools/tldr/go/go-mod/'
+description: 'Manage Go modules efficiently with Go Mod. Download, tidy, verify, and vendor your Go dependencies easily. Free online tool, no registration required.'
 category: common
 keywords:
-- go modules
-- go mod init
-- go dependency management
-- go mod download
-- go mod tidy
-- go mod verify
-- go mod vendor
-- go packages
-- go dependency tree
-- go build management
+  - go modules
+  - go mod init
+  - go dependency management
+  - go mod download
+  - go mod tidy
+  - go mod verify
+  - go mod vendor
+  - go packages
+  - go dependency tree
+  - go build management
 features:
-- Initialize new Go modules
-- Download Go dependencies
-- Tidy up Go module dependencies
-- Verify Go dependency content
-- Vendor Go module dependencies
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new Go modules
+  - Download Go dependencies
+  - Tidy up Go module dependencies
+  - Verify Go dependency content
+  - Vendor Go module dependencies
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # go mod

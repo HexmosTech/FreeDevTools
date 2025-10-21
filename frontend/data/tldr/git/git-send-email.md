@@ -1,29 +1,29 @@
 ---
-title: "Git Send Email - Send Patches as Emails | Online Free DevTools by Hexmos"
+title: 'Git Send Email - Send Patches as Emails | Online Free DevTools by Hexmos'
 name: git-send-email
-path: "/freedevtools/tldr/git/git-send-email/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-send-email/"
-description: "Send Git patches as emails with Git Send Email. Review, annotate, and compose patches efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-send-email/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-send-email/'
+description: 'Send Git patches as emails with Git Send Email. Review, annotate, and compose patches efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- git send email
-- git email patches
-- send git commits
-- git patch series
-- git email workflow
-- git commit email
-- git send email linux
-- git send email macos
-- git send email interactive
-- git send email annotate
+  - git send email
+  - git email patches
+  - send git commits
+  - git patch series
+  - git email workflow
+  - git commit email
+  - git send email linux
+  - git send email macos
+  - git send email interactive
+  - git send email annotate
 features:
-- Send individual or multiple git commits as email patches
-- Compose introductory email messages for patch series
-- Interactively review and edit patch email content
-- Annotate individual patches before sending
-- Send patches from specified commits or revision ranges
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Send individual or multiple git commits as email patches
+  - Compose introductory email messages for patch series
+  - Interactively review and edit patch email content
+  - Annotate individual patches before sending
+  - Send patches from specified commits or revision ranges
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git send-email

@@ -1,9 +1,9 @@
 ---
-title: "Sync iCloud - Control iCloud & iCloud Drive | Online Free DevTools by Hexmos"
+title: 'Sync iCloud - Control iCloud & iCloud Drive | Online Free DevTools by Hexmos'
 name: bird
-path: "/freedevtools/tldr/osx/bird/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/bird/"
-description: "Control iCloud and iCloud Drive sync with Bird. Manage file synchronization and iCloud data seamlessly using this free online tool, no registration required."
+path: '/freedevtools/tldr/osx/bird/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/bird/'
+description: 'Control iCloud and iCloud Drive sync with Bird. Manage file synchronization and iCloud data seamlessly using this free online tool, no registration required.'
 category: osx
 keywords:
   - iCloud sync control
@@ -22,8 +22,8 @@ features:
   - Control iCloud Drive data transfer
   - Schedule iCloud data backups
   - Monitor iCloud syncing progress
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # bird

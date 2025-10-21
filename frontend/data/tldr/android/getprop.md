@@ -1,9 +1,9 @@
 ---
-title: "Getprop - Show Android System Properties | Online Free DevTools by Hexmos"
+title: 'Getprop - Show Android System Properties | Online Free DevTools by Hexmos'
 name: getprop
-path: "/freedevtools/tldr/android/getprop/"
-canonical: "https://hexmos.com/freedevtools/tldr/android/getprop/"
-description: "Show Android system properties with Getprop. Access device configuration, retrieve build information, and debug Android devices effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/android/getprop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/android/getprop/'
+description: 'Show Android system properties with Getprop. Access device configuration, retrieve build information, and debug Android devices effortlessly. Free online tool, no registration required.'
 category: android
 keywords:
   - android system properties
@@ -22,8 +22,8 @@ features:
   - Show the Android SDK API level
   - Show the Android version
   - Show the device model
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # getprop

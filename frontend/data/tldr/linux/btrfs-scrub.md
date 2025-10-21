@@ -1,29 +1,29 @@
 ---
-title: "Btrfs Scrub - Verify Filesystem Data Integrity | Online Free DevTools by Hexmos"
+title: 'Btrfs Scrub - Verify Filesystem Data Integrity | Online Free DevTools by Hexmos'
 name: btrfs-scrub
-path: "/freedevtools/tldr/linux/btrfs-scrub/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/btrfs-scrub/"
-description: "Verify filesystem integrity with Btrfs Scrub. Scan for and correct errors on Btrfs volumes for data protection. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/btrfs-scrub/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/btrfs-scrub/'
+description: 'Verify filesystem integrity with Btrfs Scrub. Scan for and correct errors on Btrfs volumes for data protection. Free online tool, no registration required.'
 category: linux
 keywords:
-- btrfs scrub
-- btrfs data integrity
-- linux filesystem scrub
-- btrfs error correction
-- btrfs volume repair
-- btrfs filesystem check
-- btrfs data verification
-- btrfs scrub command
-- linux btrfs maintenance
-- btrfs raid scrub
+  - btrfs scrub
+  - btrfs data integrity
+  - linux filesystem scrub
+  - btrfs error correction
+  - btrfs volume repair
+  - btrfs filesystem check
+  - btrfs data verification
+  - btrfs scrub command
+  - linux btrfs maintenance
+  - btrfs raid scrub
 features:
-- Scan Btrfs filesystems for errors
-- Correct detected data corruption
-- Monitor scrub progress and status
-- Cancel or resume ongoing scrubs
-- Run scrubs in quiet mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Scan Btrfs filesystems for errors
+  - Correct detected data corruption
+  - Monitor scrub progress and status
+  - Cancel or resume ongoing scrubs
+  - Run scrubs in quiet mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # btrfs scrub

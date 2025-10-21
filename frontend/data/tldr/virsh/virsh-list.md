@@ -1,29 +1,29 @@
 ---
-title: "Virsh List - Control Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Virsh List - Control Virtual Machines | Online Free DevTools by Hexmos'
 name: virsh-list
-path: "/freedevtools/tldr/virsh/virsh-list/"
-canonical: "https://hexmos.com/freedevtools/tldr/virsh/virsh-list/"
-description: "Control virtual machines with Virsh List. Manage VMs across different states and configurations effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/virsh/virsh-list/'
+canonical: 'https://hexmos.com/freedevtools/tldr/virsh/virsh-list/'
+description: 'Control virtual machines with Virsh List. Manage VMs across different states and configurations effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine list
-- virsh vm list
-- kvm virtual machine
-- qemu virtual machine
-- libvirt virsh
-- virsh list all
-- virsh autostart
-- virtual machine snapshots
-- linux virtual machines
-- virtual machine management
+  - virtual machine list
+  - virsh vm list
+  - kvm virtual machine
+  - qemu virtual machine
+  - libvirt virsh
+  - virsh list all
+  - virsh autostart
+  - virtual machine snapshots
+  - linux virtual machines
+  - virtual machine management
 features:
-- List running virtual machines
-- Display all virtual machines regardless of state
-- Filter VMs by autostart status
-- Show VMs with or without snapshots
-- Manage virtual machine states using command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List running virtual machines
+  - Display all virtual machines regardless of state
+  - Filter VMs by autostart status
+  - Show VMs with or without snapshots
+  - Manage virtual machine states using command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # virsh list

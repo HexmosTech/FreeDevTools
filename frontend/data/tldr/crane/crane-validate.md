@@ -1,9 +1,9 @@
 ---
-title: "Crane Validate - Image Validation Tool | Online Free DevTools by Hexmos"
+title: 'Crane Validate - Image Validation Tool | Online Free DevTools by Hexmos'
 name: crane-validate
-path: "/freedevtools/tldr/crane/crane-validate/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-validate/"
-description: "Validate container images quickly with Crane Validate. Ensure image integrity, skip layer download, and validate tarballs. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-validate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-validate/'
+description: 'Validate container images quickly with Crane Validate. Ensure image integrity, skip layer download, and validate tarballs. Free online tool, no registration required.'
 category: common
 keywords:
   - container image validation
@@ -22,8 +22,8 @@ features:
   - Validate remote container images
   - Validate container images from tarballs
   - Verify image integrity and structure
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane validate

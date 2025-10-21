@@ -1,29 +1,29 @@
 ---
-title: "Hg Commit - Control Repository Changes | Online Free DevTools by Hexmos"
+title: 'Hg Commit - Control Repository Changes | Online Free DevTools by Hexmos'
 name: hg-commit
-path: "/freedevtools/tldr/hg/hg-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/hg/hg-commit/"
-description: "Control repository changes with Hg Commit. Manage staged files, specify commit messages, and interactively select changes. Free online tool, no registration required."
+path: '/freedevtools/tldr/hg/hg-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/hg/hg-commit/'
+description: 'Control repository changes with Hg Commit. Manage staged files, specify commit messages, and interactively select changes. Free online tool, no registration required.'
 category: common
 keywords:
-- hg commit command
-- mercurial commit
-- version control commit
-- hg repository update
-- command line commit tool
-- version control system
-- hg exclude pattern
-- hg include pattern
-- commit staged changes
-- mercurial commit message
+  - hg commit command
+  - mercurial commit
+  - version control commit
+  - hg repository update
+  - command line commit tool
+  - version control system
+  - hg exclude pattern
+  - hg include pattern
+  - commit staged changes
+  - mercurial commit message
 features:
-- Commit staged files to a Mercurial repository.
-- Commit specific files or directories within a repository.
-- Add custom commit messages to changes.
-- Include or exclude files based on patterns when committing.
-- Use interactive mode to review and select changes for commit.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Commit staged files to a Mercurial repository.
+  - Commit specific files or directories within a repository.
+  - Add custom commit messages to changes.
+  - Include or exclude files based on patterns when committing.
+  - Use interactive mode to review and select changes for commit.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hg commit

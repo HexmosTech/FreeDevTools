@@ -1,9 +1,9 @@
 ---
-title: "Microsoft Edge - Control Web Browsing with msedge | Online Free DevTools by Hexmos"
+title: 'Microsoft Edge - Control Web Browsing with msedge | Online Free DevTools by Hexmos'
 name: msedge
-path: "/freedevtools/tldr/windows/msedge/"
-canonical: "https://hexmos.com/freedevtools/tldr/windows/msedge/"
-description: "Control web browsing sessions with Microsoft Edge. Open URLs, manage profiles, and configure proxy settings using the msedge command. Free online tool, no registration required."
+path: '/freedevtools/tldr/windows/msedge/'
+canonical: 'https://hexmos.com/freedevtools/tldr/windows/msedge/'
+description: 'Control web browsing sessions with Microsoft Edge. Open URLs, manage profiles, and configure proxy settings using the msedge command. Free online tool, no registration required.'
 category: windows
 keywords:
   - web browser command
@@ -22,8 +22,8 @@ features:
   - Open URLs in a new Microsoft Edge window
   - Start Microsoft Edge in application mode for focused use
   - Configure and use proxy servers with Microsoft Edge
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msedge

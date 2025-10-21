@@ -1,9 +1,9 @@
 ---
-title: "Needrestart - Manage Outdated Processes | Online Free DevTools by Hexmos"
+title: 'Needrestart - Manage Outdated Processes | Online Free DevTools by Hexmos'
 name: needrestart
-path: "/freedevtools/tldr/linux/needrestart/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/needrestart/"
-description: "Manage outdated processes efficiently with Needrestart.  Identify and restart outdated daemons and kernel components easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/needrestart/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/needrestart/'
+description: 'Manage outdated processes efficiently with Needrestart.  Identify and restart outdated daemons and kernel components easily. Free online tool, no registration required.'
 category: linux
 keywords:
   - daemon restart management
@@ -22,8 +22,8 @@ features:
   - Supports verbose and quiet output modes for flexible usage.
   - Checks for outdated kernel and CPU microcode.
   - Offers batch mode processing for efficient management.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # needrestart

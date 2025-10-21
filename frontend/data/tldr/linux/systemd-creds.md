@@ -1,9 +1,9 @@
 ---
-title: "Systemd Creds - Manage Service Credentials | Online Free DevTools by Hexmos"
+title: 'Systemd Creds - Manage Service Credentials | Online Free DevTools by Hexmos'
 name: systemd-creds
-path: "/freedevtools/tldr/linux/systemd-creds/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/systemd-creds/"
-description: "Manage service credentials with Systemd Creds. Encrypt, decrypt, and control access to sensitive data using this powerful command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/systemd-creds/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/systemd-creds/'
+description: 'Manage service credentials with Systemd Creds. Encrypt, decrypt, and control access to sensitive data using this powerful command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - systemd credential management
@@ -22,8 +22,8 @@ features:
   - Manage credentials with specific names.
   - Set expiration timestamps for credentials.
   - Integrate credentials directly into service files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # systemd-creds

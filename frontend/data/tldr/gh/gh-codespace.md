@@ -1,29 +1,29 @@
 ---
-title: "GitHub Codespace - Manage Cloud Dev Environments | Online Free DevTools by Hexmos"
+title: 'GitHub Codespace - Manage Cloud Dev Environments | Online Free DevTools by Hexmos'
 name: gh-codespace
-path: "/freedevtools/tldr/gh/gh-codespace/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-codespace/"
-description: "Manage cloud development environments with GitHub Codespace.  Connect, list, and delete codespaces seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-codespace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-codespace/'
+description: 'Manage cloud development environments with GitHub Codespace.  Connect, list, and delete codespaces seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- github codespace manager
-- cloud development environment
-- remote development tool
-- github cli codespace
-- vscode remote development
-- ssh codespace connection
-- github codespace delete
-- dev environment management
-- github codespaces list
-- github codespace create
+  - github codespace manager
+  - cloud development environment
+  - remote development tool
+  - github cli codespace
+  - vscode remote development
+  - ssh codespace connection
+  - github codespace delete
+  - dev environment management
+  - github codespaces list
+  - github codespace create
 features:
-- Create a codespace directly from the command line.
-- List all available codespaces on GitHub.
-- Connect to a remote codespace via SSH.
-- Transfer files between your local machine and a codespace.
-- Display logs and manage ports for a codespace.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create a codespace directly from the command line.
+  - List all available codespaces on GitHub.
+  - Connect to a remote codespace via SSH.
+  - Transfer files between your local machine and a codespace.
+  - Display logs and manage ports for a codespace.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh codespace

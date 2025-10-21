@@ -1,29 +1,29 @@
 ---
-title: "GitHub Workflow - Manage Actions | Online Free DevTools by Hexmos"
+title: 'GitHub Workflow - Manage Actions | Online Free DevTools by Hexmos'
 name: gh-workflow
-path: "/freedevtools/tldr/gh/gh-workflow/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-workflow/"
-description: "Manage GitHub Actions workflows with gh-workflow. View, run, and control workflow executions. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-workflow/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-workflow/'
+description: 'Manage GitHub Actions workflows with gh-workflow. View, run, and control workflow executions. Free online tool, no registration required.'
 category: common
 keywords:
-- github actions workflow
-- github workflow manager
-- github cli workflow
-- github ci/cd workflow
-- workflow automation github
-- github workflow run
-- github workflow view
-- github workflow list
-- github workflow enable
-- github workflow disable
+  - github actions workflow
+  - github workflow manager
+  - github cli workflow
+  - github ci/cd workflow
+  - workflow automation github
+  - github workflow run
+  - github workflow view
+  - github workflow list
+  - github workflow enable
+  - github workflow disable
 features:
-- View the latest jobs for a specific workflow
-- Display the YAML definition of a workflow
-- Run manual workflows with specified parameters
-- Enable or disable GitHub Actions workflows
-- List available workflow files in a repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View the latest jobs for a specific workflow
+  - Display the YAML definition of a workflow
+  - Run manual workflows with specified parameters
+  - Enable or disable GitHub Actions workflows
+  - List available workflow files in a repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh workflow

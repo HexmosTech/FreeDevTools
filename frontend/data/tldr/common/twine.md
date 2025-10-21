@@ -1,29 +1,29 @@
 ---
-title: "Publish Python Packages - Upload with Twine | Online Free DevTools by Hexmos"
+title: 'Publish Python Packages - Upload with Twine | Online Free DevTools by Hexmos'
 name: twine
-path: "/freedevtools/tldr/common/twine/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/twine/"
-description: "Upload Python packages with Twine. Distribute your Python code easily using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/twine/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/twine/'
+description: 'Upload Python packages with Twine. Distribute your Python code easily using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- python package upload
-- pypi upload twine
-- python distribution
-- twine package manager
-- command line upload python
-- python package publishing
-- twine pypi
-- wheel upload twine
-- source distribution upload
-- python package deployment
+  - python package upload
+  - pypi upload twine
+  - python distribution
+  - twine package manager
+  - command line upload python
+  - python package publishing
+  - twine pypi
+  - wheel upload twine
+  - source distribution upload
+  - python package deployment
 features:
-- Upload packages to PyPI
-- Verify package rendering on PyPI
-- Upload using custom configuration files
-- Skip existing files during upload
-- Upload with verbose output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload packages to PyPI
+  - Verify package rendering on PyPI
+  - Upload using custom configuration files
+  - Skip existing files during upload
+  - Upload with verbose output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # twine

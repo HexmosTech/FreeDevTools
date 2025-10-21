@@ -1,29 +1,29 @@
 ---
-title: "Linode CLI - Manage Cloud Services | Online Free DevTools by Hexmos"
+title: 'Linode CLI - Manage Cloud Services | Online Free DevTools by Hexmos'
 name: linode-cli
-path: "/freedevtools/tldr/linode/linode-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/linode/linode-cli/"
-description: "Manage Linode cloud services instantly with Linode CLI. Control Linodes, manage domains, and configure DNS settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/linode/linode-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linode/linode-cli/'
+description: 'Manage Linode cloud services instantly with Linode CLI. Control Linodes, manage domains, and configure DNS settings. Free online tool, no registration required.'
 category: common
 keywords:
-- linode cloud manager
-- linode command line interface
-- linode infrastructure management
-- cloud resource control
-- linode cli linux
-- linode cli cloud
-- linode server management
-- linode domain control
-- linode kubernetes cli
-- cloud service automation
+  - linode cloud manager
+  - linode command line interface
+  - linode infrastructure management
+  - cloud resource control
+  - linode cli linux
+  - linode cli cloud
+  - linode server management
+  - linode domain control
+  - linode kubernetes cli
+  - cloud service automation
 features:
-- List and manage Linode instances
-- Control Linode Kubernetes Engine (LKE) clusters
-- Manage domains and DNS configurations
-- Control NodeBalancers for load balancing
-- Manage Object Storage buckets
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List and manage Linode instances
+  - Control Linode Kubernetes Engine (LKE) clusters
+  - Manage domains and DNS configurations
+  - Control NodeBalancers for load balancing
+  - Manage Object Storage buckets
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # linode-cli

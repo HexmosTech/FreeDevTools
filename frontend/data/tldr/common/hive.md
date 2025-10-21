@@ -1,29 +1,29 @@
 ---
-title: "Run Hive Queries - Execute HiveQL with CLI | Online Free DevTools by Hexmos"
+title: 'Run Hive Queries - Execute HiveQL with CLI | Online Free DevTools by Hexmos'
 name: hive
-path: "/freedevtools/tldr/common/hive/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hive/"
-description: "Execute Hive queries efficiently with HiveQL CLI. Analyze big data, perform ETL operations, and manage data warehouses seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hive/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hive/'
+description: 'Execute Hive queries efficiently with HiveQL CLI. Analyze big data, perform ETL operations, and manage data warehouses seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- HiveQL execution
-- Apache Hive CLI
-- Big data querying
-- Data warehousing hive
-- HiveQL file processing
-- Hive variable substitution
-- Hive configuration settings
-- Hive interactive shell
-- SQL-on-Hadoop execution
-- Hive query language
+  - HiveQL execution
+  - Apache Hive CLI
+  - Big data querying
+  - Data warehousing hive
+  - HiveQL file processing
+  - Hive variable substitution
+  - Hive configuration settings
+  - Hive interactive shell
+  - SQL-on-Hadoop execution
+  - Hive query language
 features:
-- Execute HiveQL commands directly from the command line
-- Run Hive queries from SQL files with variable substitution
-- Start an interactive Hive shell for data exploration
-- Configure Hive settings using command-line options
-- Define variables for use in HiveQL scripts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute HiveQL commands directly from the command line
+  - Run Hive queries from SQL files with variable substitution
+  - Start an interactive Hive shell for data exploration
+  - Configure Hive settings using command-line options
+  - Define variables for use in HiveQL scripts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hive

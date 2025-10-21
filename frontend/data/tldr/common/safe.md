@@ -1,29 +1,29 @@
 ---
-title: "Control Vault Secrets - Interact with Vault Using Safe | Online Free DevTools by Hexmos"
+title: 'Control Vault Secrets - Interact with Vault Using Safe | Online Free DevTools by Hexmos'
 name: safe
-path: "/freedevtools/tldr/common/safe/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/safe/"
-description: "Control Vault secrets with Safe. Manage authentication, display key hierarchies, and securely generate SSH keys. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/safe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/safe/'
+description: 'Control Vault secrets with Safe. Manage authentication, display key hierarchies, and securely generate SSH keys. Free online tool, no registration required.'
 category: common
 keywords:
-- vault secret manager
-- vault cli client
-- hashicorp vault controller
-- safe vault commands
-- vault ssh key generator
-- vault secret tree viewer
-- vault authentication token
-- safe move secrets
-- vault target configuration
-- safe environment variables
+  - vault secret manager
+  - vault cli client
+  - hashicorp vault controller
+  - safe vault commands
+  - vault ssh key generator
+  - vault secret tree viewer
+  - vault authentication token
+  - safe move secrets
+  - vault target configuration
+  - safe environment variables
 features:
-- Authenticate to a HashiCorp Vault server using a token.
-- Generate and store SSH key pairs securely.
-- Move secrets between different paths within the Vault.
-- Display the hierarchical structure of secrets.
-- Configure and manage Vault targets.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate to a HashiCorp Vault server using a token.
+  - Generate and store SSH key pairs securely.
+  - Move secrets between different paths within the Vault.
+  - Display the hierarchical structure of secrets.
+  - Configure and manage Vault targets.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # safe

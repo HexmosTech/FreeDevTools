@@ -1,29 +1,29 @@
 ---
-title: "Edit Text with Pico - Command-Line Editor | Online Free DevTools by Hexmos"
+title: 'Edit Text with Pico - Command-Line Editor | Online Free DevTools by Hexmos'
 name: pico
-path: "/freedevtools/tldr/common/pico/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pico/"
-description: "Edit text with Pico, a simple command-line text editor based on Alpine Composer. Create and modify files directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pico/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pico/'
+description: 'Edit text with Pico, a simple command-line text editor based on Alpine Composer. Create and modify files directly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- pico text editor
-- command line text editor
-- linux text editor
-- unix text editor
-- alpine composer pico
-- terminal text editing
-- pico editor commands
-- console based text editor
-- pico file editor
-- text editing tools
+  - pico text editor
+  - command line text editor
+  - linux text editor
+  - unix text editor
+  - alpine composer pico
+  - terminal text editing
+  - pico editor commands
+  - console based text editor
+  - pico file editor
+  - text editing tools
 features:
-- Open and edit text files from the command line
-- Navigate to a specific line within a file
-- Define a custom quote string for email-like formatting
-- Enable mouse support for easier navigation in terminals like xterm
-- Enable a read-only mode to prevent accidental modifications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open and edit text files from the command line
+  - Navigate to a specific line within a file
+  - Define a custom quote string for email-like formatting
+  - Enable mouse support for easier navigation in terminals like xterm
+  - Enable a read-only mode to prevent accidental modifications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pico

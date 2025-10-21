@@ -1,29 +1,29 @@
 ---
-title: "QEMU x86_64 Emulator - Run Virtual Machines | Online Free DevTools by Hexmos"
+title: 'QEMU x86_64 Emulator - Run Virtual Machines | Online Free DevTools by Hexmos'
 name: qemu-system-x86_64
-path: "/freedevtools/tldr/qemu/qemu-system-x86_64/"
-canonical: "https://hexmos.com/freedevtools/tldr/qemu/qemu-system-x86_64/"
-description: "Run virtual machines with QEMU x86_64 emulator. Emulate x86_64 architecture, boot from images, and test operating systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/qemu/qemu-system-x86_64/'
+canonical: 'https://hexmos.com/freedevtools/tldr/qemu/qemu-system-x86_64/'
+description: 'Run virtual machines with QEMU x86_64 emulator. Emulate x86_64 architecture, boot from images, and test operating systems. Free online tool, no registration required.'
 category: common
 keywords:
-- qemu x86_64 emulation
-- x86_64 virtual machine
-- qemu system emulator
-- linux virtual machine
-- qemu image boot
-- operating system testing
-- bootable usb test
-- headless qemu
-- qemu command line
-- virtual device emulation
+  - qemu x86_64 emulation
+  - x86_64 virtual machine
+  - qemu system emulator
+  - linux virtual machine
+  - qemu image boot
+  - operating system testing
+  - bootable usb test
+  - headless qemu
+  - qemu command line
+  - virtual device emulation
 features:
-- Boot virtual machines from disk images
-- Emulate x86_64 architecture on different platforms
-- Boot from live ISO images for OS testing
-- Emulate physical devices like USB drives
-- Run QEMU instances in non-graphical mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Boot virtual machines from disk images
+  - Emulate x86_64 architecture on different platforms
+  - Boot from live ISO images for OS testing
+  - Emulate physical devices like USB drives
+  - Run QEMU instances in non-graphical mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qemu-system-x86_64

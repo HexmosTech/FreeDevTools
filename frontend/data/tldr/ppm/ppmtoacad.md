@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to AutoCAD - Image Converter | Online Free DevTools by Hexmos"
+title: 'Convert PPM to AutoCAD - Image Converter | Online Free DevTools by Hexmos'
 name: ppmtoacad
-path: "/freedevtools/tldr/ppm/ppmtoacad/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoacad/"
-description: "Convert PPM images to AutoCAD files with ppmtoacad. Supports slide and binary database formats. Free online tool, no registration required. Leverage image conversion."
+path: '/freedevtools/tldr/ppm/ppmtoacad/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtoacad/'
+description: 'Convert PPM images to AutoCAD files with ppmtoacad. Supports slide and binary database formats. Free online tool, no registration required. Leverage image conversion.'
 category: common
 keywords:
-- PPM to AutoCAD converter
-- image to acad conversion
-- PPM image converter
-- AutoCAD file generation
-- PPM to DXB conversion
-- Netpbm image tools
-- Linux image conversion
-- macOS image conversion
-- command-line image converter
-- AutoCAD slide creation
+  - PPM to AutoCAD converter
+  - image to acad conversion
+  - PPM image converter
+  - AutoCAD file generation
+  - PPM to DXB conversion
+  - Netpbm image tools
+  - Linux image conversion
+  - macOS image conversion
+  - command-line image converter
+  - AutoCAD slide creation
 features:
-- Convert PPM images to AutoCAD slides
-- Convert PPM images to AutoCAD binary database files
-- Restrict output colors to 8 RGB shades
-- Support for both slide and DXB output formats
-- Command-line image processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to AutoCAD slides
+  - Convert PPM images to AutoCAD binary database files
+  - Restrict output colors to 8 RGB shades
+  - Support for both slide and DXB output formats
+  - Command-line image processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtoacad

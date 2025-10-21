@@ -1,9 +1,9 @@
 ---
-title: "Clean AppArmor Profiles - Optimize Security Rules | Online Free DevTools by Hexmos"
+title: 'Clean AppArmor Profiles - Optimize Security Rules | Online Free DevTools by Hexmos'
 name: aa-cleanprof
-path: "/freedevtools/tldr/linux/aa-cleanprof/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/aa-cleanprof/"
-description: "Optimize AppArmor security with aa-cleanprof by removing unused rules.  Improve system performance and security. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/aa-cleanprof/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/aa-cleanprof/'
+description: 'Optimize AppArmor security with aa-cleanprof by removing unused rules.  Improve system performance and security. Free online tool, no registration required.'
 category: linux
 keywords:
   - apparmor profile cleaner
@@ -22,8 +22,8 @@ features:
   - Allows specifying the directory containing profiles.
   - Offers silent execution without prompts.
   - Prevents profile reload after cleaning for improved efficiency.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aa-cleanprof

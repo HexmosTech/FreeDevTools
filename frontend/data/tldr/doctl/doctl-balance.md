@@ -1,29 +1,29 @@
 ---
-title: "doctl Balance - Show Account Balance | Online Free DevTools by Hexmos"
+title: 'doctl Balance - Show Account Balance | Online Free DevTools by Hexmos'
 name: doctl-balance
-path: "/freedevtools/tldr/doctl/doctl-balance/"
-canonical: "https://hexmos.com/freedevtools/tldr/doctl/doctl-balance/"
-description: "Show account balance with doctl Balance. Get DigitalOcean account balance and manage billing information with ease using the command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/doctl/doctl-balance/'
+canonical: 'https://hexmos.com/freedevtools/tldr/doctl/doctl-balance/'
+description: 'Show account balance with doctl Balance. Get DigitalOcean account balance and manage billing information with ease using the command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- doctl account balance
-- DigitalOcean balance check
-- doctl billing information
-- command line balance
-- DigitalOcean CLI
-- doctl access token balance
-- doctl context balance
-- cloud account balance
-- doctl get balance
-- doctl financial management
+  - doctl account balance
+  - DigitalOcean balance check
+  - doctl billing information
+  - command line balance
+  - DigitalOcean CLI
+  - doctl access token balance
+  - doctl context balance
+  - cloud account balance
+  - doctl get balance
+  - doctl financial management
 features:
-- Display DigitalOcean account balance
-- Authenticate using access token
-- Authenticate using configured context
-- Show current account credit
-- Retrieve billing information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display DigitalOcean account balance
+  - Authenticate using access token
+  - Authenticate using configured context
+  - Show current account credit
+  - Retrieve billing information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # doctl balance

@@ -1,29 +1,29 @@
 ---
-title: "Cisco Show - Display System Info | Online Free DevTools by Hexmos"
+title: 'Cisco Show - Display System Info | Online Free DevTools by Hexmos'
 name: show
-path: "/freedevtools/tldr/cisco-ios/show/"
-canonical: "https://hexmos.com/freedevtools/tldr/cisco-ios/show/"
-description: "Display Cisco system information with the Cisco Show command. Inspect network configurations, monitor interface status, and troubleshoot network issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/cisco-ios/show/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cisco-ios/show/'
+description: 'Display Cisco system information with the Cisco Show command. Inspect network configurations, monitor interface status, and troubleshoot network issues. Free online tool, no registration required.'
 category: cisco-ios
 keywords:
-- cisco show command
-- ios show configuration
-- cisco ios command reference
-- network configuration display
-- interface status monitoring
-- vlan configuration inspection
-- cisco troubleshooting commands
-- cisco running configuration
-- cisco ip ssh configuration
-- cisco ios network analysis
+  - cisco show command
+  - ios show configuration
+  - cisco ios command reference
+  - network configuration display
+  - interface status monitoring
+  - vlan configuration inspection
+  - cisco troubleshooting commands
+  - cisco running configuration
+  - cisco ip ssh configuration
+  - cisco ios network analysis
 features:
-- Display network interface information
-- Show the running configuration of the Cisco device
-- Inspect VLAN configuration details
-- Display SSH server configuration
-- Monitor IP addressing information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display network interface information
+  - Show the running configuration of the Cisco device
+  - Inspect VLAN configuration details
+  - Display SSH server configuration
+  - Monitor IP addressing information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # show

@@ -1,29 +1,29 @@
 ---
-title: "JJ Abandon - Control Revision History | Online Free DevTools by Hexmos"
+title: 'JJ Abandon - Control Revision History | Online Free DevTools by Hexmos'
 name: jj-abandon
-path: "/freedevtools/tldr/jj/jj-abandon/"
-canonical: "https://hexmos.com/freedevtools/tldr/jj/jj-abandon/"
-description: "Control revision history with JJ Abandon. Abandon revisions, rebase descendants, and manage change IDs effectively. Free online tool, no registration required."
+path: '/freedevtools/tldr/jj/jj-abandon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/jj/jj-abandon/'
+description: 'Control revision history with JJ Abandon. Abandon revisions, rebase descendants, and manage change IDs effectively. Free online tool, no registration required.'
 category: common
 keywords:
-- jj abandon revision
-- jujutsu abandon revision
-- revision history management
-- git abandon equivalent
-- jj rebase descendants
-- jj change ID removal
-- jj version control
-- jj command line
-- jj workflow
-- jj revert changes
+  - jj abandon revision
+  - jujutsu abandon revision
+  - revision history management
+  - git abandon equivalent
+  - jj rebase descendants
+  - jj change ID removal
+  - jj version control
+  - jj command line
+  - jj workflow
+  - jj revert changes
 features:
-- Abandon specified revisions.
-- Rebase descendants onto parent revisions.
-- Remove change IDs from abandoned revisions.
-- Retain bookmarks when abandoning revisions.
-- Restore descendants' contents after abandoning.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Abandon specified revisions.
+  - Rebase descendants onto parent revisions.
+  - Remove change IDs from abandoned revisions.
+  - Retain bookmarks when abandoning revisions.
+  - Restore descendants' contents after abandoning.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # jj abandon

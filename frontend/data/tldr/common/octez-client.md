@@ -1,29 +1,29 @@
 ---
-title: "Octez Client - Interact with Tezos Blockchain | Online Free DevTools by Hexmos"
+title: 'Octez Client - Interact with Tezos Blockchain | Online Free DevTools by Hexmos'
 name: octez-client
-path: "/freedevtools/tldr/common/octez-client/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/octez-client/"
-description: "Interact with the Tezos blockchain using Octez Client. Manage accounts, transfer tez, and deploy smart contracts easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/octez-client/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/octez-client/'
+description: 'Interact with the Tezos blockchain using Octez Client. Manage accounts, transfer tez, and deploy smart contracts easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Tezos blockchain client
-- Octez client command
-- Tezos account manager
-- Smart contract deployment
-- Tez transfer utility
-- Michelson code execution
-- Tezos RPC interaction
-- Blockchain command line
-- Tezos account balance
-- Crypto transfer client
+  - Tezos blockchain client
+  - Octez client command
+  - Tezos account manager
+  - Smart contract deployment
+  - Tez transfer utility
+  - Michelson code execution
+  - Tezos RPC interaction
+  - Blockchain command line
+  - Tezos account balance
+  - Crypto transfer client
 features:
-- Configure connection to a Tezos RPC node
-- Generate and manage Tezos accounts with aliases
-- Transfer tez between accounts on the Tezos blockchain
-- Originate and deploy smart contracts with initial storage
-- Call smart contracts with Michelson-encoded parameters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Configure connection to a Tezos RPC node
+  - Generate and manage Tezos accounts with aliases
+  - Transfer tez between accounts on the Tezos blockchain
+  - Originate and deploy smart contracts with initial storage
+  - Call smart contracts with Michelson-encoded parameters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # octez-client

@@ -1,29 +1,29 @@
 ---
-title: "Convert PDF Files - Mutool PDF Converter | Online Free DevTools by Hexmos"
+title: 'Convert PDF Files - Mutool PDF Converter | Online Free DevTools by Hexmos'
 name: mutool
-path: "/freedevtools/tldr/common/mutool/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mutool/"
-description: "Convert PDF files easily with Mutool. Query information, extract data, and manipulate PDF content with this command-line utility. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mutool/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mutool/'
+description: 'Convert PDF files easily with Mutool. Query information, extract data, and manipulate PDF content with this command-line utility. Free online tool, no registration required.'
 category: common
 keywords:
-- pdf converter
-- pdf manipulation
-- pdf extract data
-- pdf query information
-- pdf merge files
-- command line pdf tools
-- pdf to image conversion
-- pdf to text conversion
-- linux pdf tools
-- mutool pdf editor
+  - pdf converter
+  - pdf manipulation
+  - pdf extract data
+  - pdf query information
+  - pdf merge files
+  - command line pdf tools
+  - pdf to image conversion
+  - pdf to text conversion
+  - linux pdf tools
+  - mutool pdf editor
 features:
-- Convert PDF pages to PNG images
-- Extract text content from PDF files
-- Merge multiple PDF files into a single PDF
-- Query information about PDF content and metadata
-- Extract images, fonts, and resources from PDF files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PDF pages to PNG images
+  - Extract text content from PDF files
+  - Merge multiple PDF files into a single PDF
+  - Query information about PDF content and metadata
+  - Extract images, fonts, and resources from PDF files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mutool

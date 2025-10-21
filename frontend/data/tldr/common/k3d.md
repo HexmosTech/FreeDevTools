@@ -1,29 +1,29 @@
 ---
-title: "Create k3d Clusters - Manage k3s Docker | Online Free DevTools by Hexmos"
+title: 'Create k3d Clusters - Manage k3s Docker | Online Free DevTools by Hexmos'
 name: k3d
-path: "/freedevtools/tldr/common/k3d/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/k3d/"
-description: "Create k3d clusters easily with k3d. Deploy lightweight Kubernetes distributions inside Docker containers. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/k3d/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/k3d/'
+description: 'Create k3d clusters easily with k3d. Deploy lightweight Kubernetes distributions inside Docker containers. Free online tool, no registration required.'
 category: common
 keywords:
-- k3d cluster creation
-- k3s docker management
-- containerized kubernetes
-- lightweight k8s deployment
-- k3d image import
-- k3d registry create
-- docker kubernetes cluster
-- k3s node management
-- k3d command line
-- k3s docker setup
+  - k3d cluster creation
+  - k3s docker management
+  - containerized kubernetes
+  - lightweight k8s deployment
+  - k3d image import
+  - k3d registry create
+  - docker kubernetes cluster
+  - k3s node management
+  - k3d command line
+  - k3s docker setup
 features:
-- Create and manage k3s clusters inside Docker
-- Deploy lightweight Kubernetes environments rapidly
-- Import Docker images directly into k3d clusters
-- Create and manage containerized k3s nodes
-- Establish private registries for k3d deployments
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create and manage k3s clusters inside Docker
+  - Deploy lightweight Kubernetes environments rapidly
+  - Import Docker images directly into k3d clusters
+  - Create and manage containerized k3s nodes
+  - Establish private registries for k3d deployments
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # k3d

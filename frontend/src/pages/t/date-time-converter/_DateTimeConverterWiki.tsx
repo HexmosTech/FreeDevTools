@@ -1,12 +1,12 @@
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
+import ToolGridContainer from '@/components/tool/ToolGridContainer';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import React from "react";
+} from '@/components/ui/card';
+import React from 'react';
 
 function _DateTimeConverterWiki() {
   return (
@@ -21,7 +21,7 @@ function _DateTimeConverterWiki() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              Whenever possible, use{" "}
+              Whenever possible, use{' '}
               <a
                 className="text-blue-600 hover:underline dark:text-blue-400"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
@@ -29,7 +29,7 @@ function _DateTimeConverterWiki() {
                 rel="noopener noreferrer"
               >
                 UTC
-              </a>{" "}
+              </a>{' '}
               or choose a consistent time zone when creating time-based content
               or data values. This makes it much easier to compare, debug, and
               work with dates from different sources—no more mental math or
@@ -38,7 +38,7 @@ function _DateTimeConverterWiki() {
             <p>
               <strong>Example:</strong> It's much easier to spot differences and
               similarities when all your timestamps are in the same time zone.
-              When values use different{" "}
+              When values use different{' '}
               <a
                 className="text-blue-600 hover:underline dark:text-blue-400"
                 href="https://en.wikipedia.org/wiki/UTC_offset"
@@ -46,7 +46,7 @@ function _DateTimeConverterWiki() {
                 rel="noopener noreferrer"
               >
                 offsets
-              </a>{" "}
+              </a>{' '}
               or time zones, you have to mentally translate each one, which can
               lead to mistakes.
             </p>
@@ -96,7 +96,7 @@ function _DateTimeConverterWiki() {
             </div>
             <p>
               As you can see, when timestamps use different offsets, it's hard
-              to visually compare them. Converting everything to{" "}
+              to visually compare them. Converting everything to{' '}
               <a
                 className="text-blue-600 hover:underline dark:text-blue-400"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
@@ -104,7 +104,7 @@ function _DateTimeConverterWiki() {
                 rel="noopener noreferrer"
               >
                 UTC
-              </a>{" "}
+              </a>{' '}
               (or a single time zone) makes it much easier to spot duplicates or
               differences at a glance.
             </p>
@@ -123,8 +123,8 @@ function _DateTimeConverterWiki() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              For most use cases, you can use an incremental time value like{" "}
-              <span className="font-mono">Instant</span> or{" "}
+              For most use cases, you can use an incremental time value like{' '}
+              <span className="font-mono">Instant</span> or{' '}
               <span className="font-mono">Date</span> for your timestamp values.
               If your app only cares about the order of events (not the local
               wall time), a timestamp is all you need.
@@ -136,7 +136,7 @@ function _DateTimeConverterWiki() {
               of events.
             </p>
             <p>
-              It's best to normalize all timestamps to{" "}
+              It's best to normalize all timestamps to{' '}
               <a
                 className="text-blue-600 hover:underline dark:text-blue-400"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
@@ -144,7 +144,7 @@ function _DateTimeConverterWiki() {
                 rel="noopener noreferrer"
               >
                 UTC
-              </a>{" "}
+              </a>{' '}
               (or, less commonly, a specific UTC offset) so you can easily
               compare and merge data from different sources. Storing the local
               offset is only useful if you ever need to recover the original
@@ -152,7 +152,7 @@ function _DateTimeConverterWiki() {
               necessary.
             </p>
             <p>
-              <strong>Tip:</strong> When in doubt, use{" "}
+              <strong>Tip:</strong> When in doubt, use{' '}
               <a
                 className="text-blue-600 hover:underline dark:text-blue-400"
                 href="https://www.timeanddate.com/worldclock/timezone/utc"
@@ -160,7 +160,7 @@ function _DateTimeConverterWiki() {
                 rel="noopener noreferrer"
               >
                 UTC
-              </a>{" "}
+              </a>{' '}
               for serializing, storing, and exchanging date and time values.
               Serializing timestamps with an offset can make things more
               complicated, especially if your system uses multiple offsets.
@@ -185,7 +185,7 @@ function _DateTimeConverterWiki() {
             <p>
               If your app schedules or displays events in the future (like
               meetings, reminders, or calendar entries), you should use a
-              date-time type that includes the time zone—such as{" "}
+              date-time type that includes the time zone—such as{' '}
               <a
                 className="font-mono text-blue-600 hover:underline dark:text-blue-400"
                 href="https://javadoc.io/static/org.json4s/json4s-ext_3/4.1.0-M1/org/json4s/ext/DateParser$$ZonedInstant.html"

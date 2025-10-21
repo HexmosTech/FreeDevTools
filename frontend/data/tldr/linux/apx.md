@@ -1,9 +1,9 @@
 ---
-title: "apx Package Manager - Manage Software Packages | Online Free DevTools by Hexmos"
+title: 'apx Package Manager - Manage Software Packages | Online Free DevTools by Hexmos'
 name: apx
-path: "/freedevtools/tldr/linux/apx/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/apx/"
-description: "Manage software packages efficiently with apx Package Manager.  Install packages across multiple sources and subsystems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/apx/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/apx/'
+description: 'Manage software packages efficiently with apx Package Manager.  Install packages across multiple sources and subsystems. Free online tool, no registration required.'
 category: linux
 keywords:
   - package manager command
@@ -22,8 +22,8 @@ features:
   - Utilize a command-line interface for efficient package management.
   - Supports various package formats and repositories.
   - Provides detailed documentation and usage examples.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # apx

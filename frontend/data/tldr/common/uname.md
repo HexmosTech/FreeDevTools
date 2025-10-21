@@ -1,29 +1,29 @@
 ---
-title: "Uname - Generate System Information | Online Free DevTools by Hexmos"
+title: 'Uname - Generate System Information | Online Free DevTools by Hexmos'
 name: uname
-path: "/freedevtools/tldr/common/uname/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/uname/"
-description: "Generate system information with Uname. Quickly retrieve kernel details, hardware architecture, and operating system name. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/uname/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/uname/'
+description: 'Generate system information with Uname. Quickly retrieve kernel details, hardware architecture, and operating system name. Free online tool, no registration required.'
 category: common
 keywords:
-- system information generator
-- kernel name retrieval
-- operating system details
-- hardware architecture info
-- linux system info
-- macos system details
-- uname command line
-- system architecture processor
-- kernel release version
-- hostname retrieval
+  - system information generator
+  - kernel name retrieval
+  - operating system details
+  - hardware architecture info
+  - linux system info
+  - macos system details
+  - uname command line
+  - system architecture processor
+  - kernel release version
+  - hostname retrieval
 features:
-- Print the kernel name.
-- Display all available system information.
-- Print system architecture and processor information.
-- Display kernel release and version details.
-- Print the system hostname.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Print the kernel name.
+  - Display all available system information.
+  - Print system architecture and processor information.
+  - Display kernel release and version details.
+  - Print the system hostname.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # uname

@@ -1,29 +1,29 @@
 ---
-title: "Create Exoscale Instance - Manage Cloud VMs | Online Free DevTools by Hexmos"
+title: 'Create Exoscale Instance - Manage Cloud VMs | Online Free DevTools by Hexmos'
 name: exo-compute-instance
-path: "/freedevtools/tldr/exo/exo-compute-instance/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute-instance/"
-description: "Create Exoscale instance with this command-line tool. Manage cloud VMs and virtual machines on Exoscale infrastructure. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo-compute-instance/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo-compute-instance/'
+description: 'Create Exoscale instance with this command-line tool. Manage cloud VMs and virtual machines on Exoscale infrastructure. Free online tool, no registration required.'
 category: common
 keywords:
-- exoscale compute instance
-- cloud virtual machine manager
-- vm instance creator
-- exoscale cli
-- linux vm management
-- instance snapshot tool
-- vm disk resizer
-- cloud infrastructure management
-- virtual machine scaling
-- exoscale security group
+  - exoscale compute instance
+  - cloud virtual machine manager
+  - vm instance creator
+  - exoscale cli
+  - linux vm management
+  - instance snapshot tool
+  - vm disk resizer
+  - cloud infrastructure management
+  - virtual machine scaling
+  - exoscale security group
 features:
-- Create new Exoscale compute instances
-- Manage instance security groups
-- Resize compute instance disks
-- Create and revert to snapshots
-- Scale compute instance resources
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Exoscale compute instances
+  - Manage instance security groups
+  - Resize compute instance disks
+  - Create and revert to snapshots
+  - Scale compute instance resources
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo compute instance

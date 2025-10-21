@@ -1,29 +1,29 @@
 ---
-title: "PAM Slice - Extract Image Data | Online Free DevTools by Hexmos"
+title: 'PAM Slice - Extract Image Data | Online Free DevTools by Hexmos'
 name: pamslice
-path: "/freedevtools/tldr/common/pamslice/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamslice/"
-description: "Extract image data with PAM Slice. Precisely select rows or columns from PAM images. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamslice/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamslice/'
+description: 'Extract image data with PAM Slice. Precisely select rows or columns from PAM images. Free online tool, no registration required.'
 category: common
 keywords:
-- PAM image slice
-- PAM data extraction
-- Image row extraction
-- Image column extraction
-- Netpbm tools
-- Image processing command
-- PAM format analysis
-- Linux image manipulation
-- Command line image tools
-- PAM plane selection
+  - PAM image slice
+  - PAM data extraction
+  - Image row extraction
+  - Image column extraction
+  - Netpbm tools
+  - Image processing command
+  - PAM format analysis
+  - Linux image manipulation
+  - Command line image tools
+  - PAM plane selection
 features:
-- Extract pixel values from a specified row
-- Extract pixel values from a specified column
-- Select a specific plane from a PAM image
-- Format output for visualization with `xmgr`
-- Process PAM images from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Extract pixel values from a specified row
+  - Extract pixel values from a specified column
+  - Select a specific plane from a PAM image
+  - Format output for visualization with `xmgr`
+  - Process PAM images from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamslice

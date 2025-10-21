@@ -1,9 +1,9 @@
 ---
-title: "Service Config - Control SMF Configuration | Online Free DevTools by Hexmos"
+title: 'Service Config - Control SMF Configuration | Online Free DevTools by Hexmos'
 name: svccfg
-path: "/freedevtools/tldr/sunos/svccfg/"
-canonical: "https://hexmos.com/freedevtools/tldr/sunos/svccfg/"
-description: "Control SMF configuration with svccfg. Import, export and modify service manifests on SunOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/sunos/svccfg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/sunos/svccfg/'
+description: 'Control SMF configuration with svccfg. Import, export and modify service manifests on SunOS. Free online tool, no registration required.'
 category: sunos
 keywords:
   - smf configuration management
@@ -22,8 +22,8 @@ features:
   - import service configurations from XML
   - modify service definitions
   - manage SunOS system services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # svccfg

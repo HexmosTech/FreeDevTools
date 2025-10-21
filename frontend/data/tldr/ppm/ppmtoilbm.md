@@ -1,29 +1,29 @@
 ---
-title: "Convert PPM to ILBM - Create ILBM Images | Online Free DevTools by Hexmos"
+title: 'Convert PPM to ILBM - Create ILBM Images | Online Free DevTools by Hexmos'
 name: ppmtoilbm
-path: "/freedevtools/tldr/ppm/ppmtoilbm/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmtoilbm/"
-description: "Convert PPM to ILBM with ppmtoilbm. Create ILBM images from PPM files using this image conversion tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmtoilbm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmtoilbm/'
+description: 'Convert PPM to ILBM with ppmtoilbm. Create ILBM images from PPM files using this image conversion tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM to ILBM conversion
-- ILBM image creation
-- PPM image converter
-- ILBM file generator
-- Netpbm tools
-- Image format conversion
-- Color palette management
-- Command line image tools
-- Linux image processing
-- MacOS image conversion
+  - PPM to ILBM conversion
+  - ILBM image creation
+  - PPM image converter
+  - ILBM file generator
+  - Netpbm tools
+  - Image format conversion
+  - Color palette management
+  - Command line image tools
+  - Linux image processing
+  - MacOS image conversion
 features:
-- Convert PPM images to ILBM format
-- Specify the number of planes in the ILBM file
-- Choose the compression method for the ILBM file
-- Create HAM/24bit/direct color ILBM files
-- Control maximum number of planes written
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to ILBM format
+  - Specify the number of planes in the ILBM file
+  - Choose the compression method for the ILBM file
+  - Create HAM/24bit/direct color ILBM files
+  - Control maximum number of planes written
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmtoilbm

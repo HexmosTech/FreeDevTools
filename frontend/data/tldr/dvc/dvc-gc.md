@@ -1,29 +1,29 @@
 ---
-title: "DVC Garbage Collect - Remove Unused Files | Online Free DevTools by Hexmos"
+title: 'DVC Garbage Collect - Remove Unused Files | Online Free DevTools by Hexmos'
 name: dvc-gc
-path: "/freedevtools/tldr/dvc/dvc-gc/"
-canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-gc/"
-description: "Garbage collect files with DVC and remove unused data from cache and remote storage. Clean up your DVC project efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/dvc/dvc-gc/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dvc/dvc-gc/'
+description: 'Garbage collect files with DVC and remove unused data from cache and remote storage. Clean up your DVC project efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- dvc garbage collection
-- data version control cleanup
-- dvc cache management
-- dvc remote storage cleanup
-- dvc unused data removal
-- dvc project optimization
-- dvc data pipeline gc
-- dvc disk space recovery
-- dvc repository maintenance
-- dvc stale data removal
+  - dvc garbage collection
+  - data version control cleanup
+  - dvc cache management
+  - dvc remote storage cleanup
+  - dvc unused data removal
+  - dvc project optimization
+  - dvc data pipeline gc
+  - dvc disk space recovery
+  - dvc repository maintenance
+  - dvc stale data removal
 features:
-- Removes unused files from the DVC cache.
-- Cleans up remote storage to free up space.
-- Identifies and deletes stale data references.
-- Supports garbage collection across branches and tags.
-- Integrates with cloud storage for comprehensive cleanup.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Removes unused files from the DVC cache.
+  - Cleans up remote storage to free up space.
+  - Identifies and deletes stale data references.
+  - Supports garbage collection across branches and tags.
+  - Integrates with cloud storage for comprehensive cleanup.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dvc gc

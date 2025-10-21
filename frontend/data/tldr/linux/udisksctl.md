@@ -1,9 +1,9 @@
 ---
-title: "udisksctl - Control Storage Devices | Online Free DevTools by Hexmos"
+title: 'udisksctl - Control Storage Devices | Online Free DevTools by Hexmos'
 name: udisksctl
-path: "/freedevtools/tldr/linux/udisksctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/udisksctl/"
-description: "Control storage devices with udisksctl. Manage disks, partitions, and mounts with ease using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/udisksctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/udisksctl/'
+description: 'Control storage devices with udisksctl. Manage disks, partitions, and mounts with ease using this command-line tool. Free online tool, no registration required.'
 category: linux
 keywords:
   - disk device control
@@ -22,8 +22,8 @@ features:
   - Get detailed device information
   - Monitor storage device events
   - Interact with udisksd daemon
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # udisksctl

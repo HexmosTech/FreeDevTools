@@ -1,29 +1,29 @@
 ---
-title: "SVN Changelist - Control File Lists | Online Free DevTools by Hexmos"
+title: 'SVN Changelist - Control File Lists | Online Free DevTools by Hexmos'
 name: svn-changelist
-path: "/freedevtools/tldr/common/svn-changelist/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/svn-changelist/"
-description: "Control file lists with SVN Changelist. Easily manage and organize changes within your Subversion repository. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/svn-changelist/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/svn-changelist/'
+description: 'Control file lists with SVN Changelist. Easily manage and organize changes within your Subversion repository. Free online tool, no registration required.'
 category: common
 keywords:
-- SVN changelist manager
-- Subversion changelist tool
-- SVN file grouping
-- SVN change tracking
-- SVN commit organizer
-- SVN command line changelist
-- SVN version control changelist
-- SVN commit grouping tool
-- Subversion commit organization
-- SVN changelist modification
+  - SVN changelist manager
+  - Subversion changelist tool
+  - SVN file grouping
+  - SVN change tracking
+  - SVN commit organizer
+  - SVN command line changelist
+  - SVN version control changelist
+  - SVN commit grouping tool
+  - Subversion commit organization
+  - SVN changelist modification
 features:
-- Add files to a specified SVN changelist
-- Remove files from an SVN changelist
-- Recursively add directory contents to a changelist
-- Remove an entire SVN changelist at once
-- Commit changes within a specific SVN changelist
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add files to a specified SVN changelist
+  - Remove files from an SVN changelist
+  - Recursively add directory contents to a changelist
+  - Remove an entire SVN changelist at once
+  - Commit changes within a specific SVN changelist
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # svn changelist

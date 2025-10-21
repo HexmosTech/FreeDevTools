@@ -1,29 +1,29 @@
 ---
-title: "Manage Git Branches - Control Commits with Git GUI | Online Free DevTools by Hexmos"
+title: 'Manage Git Branches - Control Commits with Git GUI | Online Free DevTools by Hexmos'
 name: git-gui
-path: "/freedevtools/tldr/git/git-gui/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-gui/"
-description: "Manage Git branches with Git GUI, a visual tool for managing commits, remotes, and merges. Simplify version control using a graphical interface. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-gui/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-gui/'
+description: 'Manage Git branches with Git GUI, a visual tool for managing commits, remotes, and merges. Simplify version control using a graphical interface. Free online tool, no registration required.'
 category: common
 keywords:
-- git gui manager
-- git branch manager
-- git commit control
-- git visual merge
-- git repository management
-- git blame tool
-- git citool
-- linux git gui
-- macos git gui
-- windows git gui
+  - git gui manager
+  - git branch manager
+  - git commit control
+  - git visual merge
+  - git repository management
+  - git blame tool
+  - git citool
+  - linux git gui
+  - macos git gui
+  - windows git gui
 features:
-- Launch a graphical user interface for Git
-- Visually manage branches and commits
-- Inspect file history with `git blame`
-- Create and amend commits using citool
-- Browse repository trees and open the blame tool
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch a graphical user interface for Git
+  - Visually manage branches and commits
+  - Inspect file history with `git blame`
+  - Create and amend commits using citool
+  - Browse repository trees and open the blame tool
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git gui

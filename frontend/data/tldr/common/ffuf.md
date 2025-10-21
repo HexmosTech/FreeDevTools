@@ -1,29 +1,29 @@
 ---
-title: "Fuzz Websites - Discover Vulnerabilities with ffuf | Online Free DevTools by Hexmos"
+title: 'Fuzz Websites - Discover Vulnerabilities with ffuf | Online Free DevTools by Hexmos'
 name: ffuf
-path: "/freedevtools/tldr/common/ffuf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ffuf/"
-description: "Discover website vulnerabilities with ffuf. Perform fast web fuzzing and enumerate directories using command-line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ffuf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ffuf/'
+description: 'Discover website vulnerabilities with ffuf. Perform fast web fuzzing and enumerate directories using command-line. Free online tool, no registration required.'
 category: common
 keywords:
-- web fuzzing
-- website vulnerability scanner
-- directory enumeration
-- ffuf command
-- go fuzzer
-- url fuzzing
-- subdomain enumeration
-- web server discovery
-- web application security
-- command-line fuzzer
+  - web fuzzing
+  - website vulnerability scanner
+  - directory enumeration
+  - ffuf command
+  - go fuzzer
+  - url fuzzing
+  - subdomain enumeration
+  - web server discovery
+  - web application security
+  - command-line fuzzer
 features:
-- Enumerate directories and files on web servers
-- Fuzz subdomains to discover hidden web applications
-- Customize requests with headers, methods, and data
-- Filter results based on HTTP status codes
-- Support multiple wordlists with different fuzzing modes
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate directories and files on web servers
+  - Fuzz subdomains to discover hidden web applications
+  - Customize requests with headers, methods, and data
+  - Filter results based on HTTP status codes
+  - Support multiple wordlists with different fuzzing modes
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ffuf

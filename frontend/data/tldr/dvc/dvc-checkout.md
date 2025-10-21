@@ -1,29 +1,29 @@
 ---
-title: "DVC Checkout - Manage Data Versions | Online Free DevTools by Hexmos"
+title: 'DVC Checkout - Manage Data Versions | Online Free DevTools by Hexmos'
 name: dvc-checkout
-path: "/freedevtools/tldr/dvc/dvc-checkout/"
-canonical: "https://hexmos.com/freedevtools/tldr/dvc/dvc-checkout/"
-description: "Manage data versions easily with DVC Checkout. Retrieve specific file versions from cache. Free online tool, no registration required."
+path: '/freedevtools/tldr/dvc/dvc-checkout/'
+canonical: 'https://hexmos.com/freedevtools/tldr/dvc/dvc-checkout/'
+description: 'Manage data versions easily with DVC Checkout. Retrieve specific file versions from cache. Free online tool, no registration required.'
 category: common
 keywords:
-- dvc checkout
-- data version control
-- dvc data management
-- git data checkout
-- dvc versioning
-- data caching dvc
-- machine learning data
-- data pipeline checkout
-- dvc command line
-- data version retrieval
+  - dvc checkout
+  - data version control
+  - dvc data management
+  - git data checkout
+  - dvc versioning
+  - data caching dvc
+  - machine learning data
+  - data pipeline checkout
+  - dvc command line
+  - data version retrieval
 features:
-- Retrieve specific data versions from cache
-- Checkout data files and directories
-- Integrate with Git for version control
-- Restore data to specific commits
-- Manage data dependencies effectively
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve specific data versions from cache
+  - Checkout data files and directories
+  - Integrate with Git for version control
+  - Restore data to specific commits
+  - Manage data dependencies effectively
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dvc checkout

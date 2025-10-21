@@ -1,9 +1,9 @@
 ---
-title: "VGDisplay - Display LVM Volume Groups | Online Free DevTools by Hexmos"
+title: 'VGDisplay - Display LVM Volume Groups | Online Free DevTools by Hexmos'
 name: vgdisplay
-path: "/freedevtools/tldr/linux/vgdisplay/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/vgdisplay/"
-description: "Display LVM volume group information with VGDisplay.  View details on your logical volumes and manage storage efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/vgdisplay/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/vgdisplay/'
+description: 'Display LVM volume group information with VGDisplay.  View details on your logical volumes and manage storage efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - LVM volume group display
@@ -22,8 +22,8 @@ features:
   - View volume group status and size
   - Check free space within volume groups
   - Identify physical volumes associated with groups
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vgdisplay

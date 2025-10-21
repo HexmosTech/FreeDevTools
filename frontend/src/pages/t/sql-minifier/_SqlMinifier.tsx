@@ -1,119 +1,119 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import SqlMinifierSkeleton from "./_SqlMinifierSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import SqlMinifierSkeleton from './_SqlMinifierSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // SQL Minification utility functions
 const minifySQL = (
   sql: string,
   options: { preserveComments: boolean } = { preserveComments: false }
 ): string => {
-  if (!sql || typeof sql !== "string") {
-    throw new Error("Invalid SQL input");
+  if (!sql || typeof sql !== 'string') {
+    throw new Error('Invalid SQL input');
   }
 
   let result = sql;
 
   // Remove single-line comments (-- comments) unless preserving
   if (!options.preserveComments) {
-    result = result.replace(/--.*$/gm, "");
+    result = result.replace(/--.*$/gm, '');
   }
 
   // Remove multi-line comments (/* comments */) unless preserving
   if (!options.preserveComments) {
-    result = result.replace(/\/\*[\s\S]*?\*\//g, "");
+    result = result.replace(/\/\*[\s\S]*?\*\//g, '');
   }
 
   // Remove extra whitespace and normalize spacing
   result = result
-    .replace(/\s+/g, " ") // Replace multiple spaces with single space
-    .replace(/\s*;\s*/g, ";") // Remove spaces around semicolons
-    .replace(/\s*,\s*/g, ",") // Remove spaces around commas
-    .replace(/\s*\(\s*/g, "(") // Remove spaces around opening parentheses
-    .replace(/\s*\)\s*/g, ")") // Remove spaces around closing parentheses
-    .replace(/\s*=\s*/g, "=") // Remove spaces around equals
-    .replace(/\s*<\s*/g, "<") // Remove spaces around less than
-    .replace(/\s*>\s*/g, ">") // Remove spaces around greater than
-    .replace(/\s*<=\s*/g, "<=") // Remove spaces around less than or equal
-    .replace(/\s*>=\s*/g, ">=") // Remove spaces around greater than or equal
-    .replace(/\s*<>\s*/g, "<>") // Remove spaces around not equal
-    .replace(/\s*\+\s*/g, "+") // Remove spaces around plus
-    .replace(/\s*-\s*/g, "-") // Remove spaces around minus
-    .replace(/\s*\*\s*/g, "*") // Remove spaces around multiplication
-    .replace(/\s*\/\s*/g, "/") // Remove spaces around division
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .replace(/\s*;\s*/g, ';') // Remove spaces around semicolons
+    .replace(/\s*,\s*/g, ',') // Remove spaces around commas
+    .replace(/\s*\(\s*/g, '(') // Remove spaces around opening parentheses
+    .replace(/\s*\)\s*/g, ')') // Remove spaces around closing parentheses
+    .replace(/\s*=\s*/g, '=') // Remove spaces around equals
+    .replace(/\s*<\s*/g, '<') // Remove spaces around less than
+    .replace(/\s*>\s*/g, '>') // Remove spaces around greater than
+    .replace(/\s*<=\s*/g, '<=') // Remove spaces around less than or equal
+    .replace(/\s*>=\s*/g, '>=') // Remove spaces around greater than or equal
+    .replace(/\s*<>\s*/g, '<>') // Remove spaces around not equal
+    .replace(/\s*\+\s*/g, '+') // Remove spaces around plus
+    .replace(/\s*-\s*/g, '-') // Remove spaces around minus
+    .replace(/\s*\*\s*/g, '*') // Remove spaces around multiplication
+    .replace(/\s*\/\s*/g, '/') // Remove spaces around division
     .trim();
 
   // Add back necessary spaces around SQL keywords
   const keywords = [
-    "SELECT",
-    "FROM",
-    "WHERE",
-    "JOIN",
-    "INNER",
-    "LEFT",
-    "RIGHT",
-    "OUTER",
-    "ON",
-    "AS",
-    "AND",
-    "OR",
-    "NOT",
-    "IN",
-    "EXISTS",
-    "BETWEEN",
-    "LIKE",
-    "IS",
-    "NULL",
-    "ORDER",
-    "BY",
-    "GROUP",
-    "HAVING",
-    "UNION",
-    "INSERT",
-    "INTO",
-    "VALUES",
-    "UPDATE",
-    "SET",
-    "DELETE",
-    "CREATE",
-    "TABLE",
-    "ALTER",
-    "DROP",
-    "INDEX",
-    "VIEW",
-    "CASE",
-    "WHEN",
-    "THEN",
-    "ELSE",
-    "END",
-    "IF",
-    "DISTINCT",
-    "ALL",
-    "LIMIT",
-    "OFFSET",
-    "ASC",
-    "DESC",
+    'SELECT',
+    'FROM',
+    'WHERE',
+    'JOIN',
+    'INNER',
+    'LEFT',
+    'RIGHT',
+    'OUTER',
+    'ON',
+    'AS',
+    'AND',
+    'OR',
+    'NOT',
+    'IN',
+    'EXISTS',
+    'BETWEEN',
+    'LIKE',
+    'IS',
+    'NULL',
+    'ORDER',
+    'BY',
+    'GROUP',
+    'HAVING',
+    'UNION',
+    'INSERT',
+    'INTO',
+    'VALUES',
+    'UPDATE',
+    'SET',
+    'DELETE',
+    'CREATE',
+    'TABLE',
+    'ALTER',
+    'DROP',
+    'INDEX',
+    'VIEW',
+    'CASE',
+    'WHEN',
+    'THEN',
+    'ELSE',
+    'END',
+    'IF',
+    'DISTINCT',
+    'ALL',
+    'LIMIT',
+    'OFFSET',
+    'ASC',
+    'DESC',
   ];
 
   keywords.forEach((keyword) => {
-    const regex = new RegExp(`\\b${keyword}\\b`, "gi");
+    const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
     result = result.replace(regex, ` ${keyword} `);
   });
 
   // Clean up extra spaces that might have been added
-  result = result.replace(/\s+/g, " ").trim();
+  result = result.replace(/\s+/g, ' ').trim();
 
   return result;
 };
@@ -121,30 +121,30 @@ const minifySQL = (
 const validateSQLInput = (
   sql: string
 ): { isValid: boolean; error?: string } => {
-  if (!sql || typeof sql !== "string") {
-    return { isValid: false, error: "SQL input is required" };
+  if (!sql || typeof sql !== 'string') {
+    return { isValid: false, error: 'SQL input is required' };
   }
 
   const trimmed = sql.trim();
   if (trimmed.length === 0) {
-    return { isValid: false, error: "SQL input cannot be empty" };
+    return { isValid: false, error: 'SQL input cannot be empty' };
   }
 
   // Basic SQL validation - check for common SQL keywords
   const sqlKeywords = [
-    "SELECT",
-    "INSERT",
-    "UPDATE",
-    "DELETE",
-    "CREATE",
-    "ALTER",
-    "DROP",
-    "WITH",
-    "SHOW",
-    "DESCRIBE",
-    "EXPLAIN",
-    "CALL",
-    "SET",
+    'SELECT',
+    'INSERT',
+    'UPDATE',
+    'DELETE',
+    'CREATE',
+    'ALTER',
+    'DROP',
+    'WITH',
+    'SHOW',
+    'DESCRIBE',
+    'EXPLAIN',
+    'CALL',
+    'SET',
   ];
 
   const hasValidKeyword = sqlKeywords.some((keyword) =>
@@ -154,7 +154,7 @@ const validateSQLInput = (
   if (!hasValidKeyword) {
     return {
       isValid: false,
-      error: "Input does not appear to contain valid SQL statements",
+      error: 'Input does not appear to contain valid SQL statements',
     };
   }
 
@@ -162,9 +162,9 @@ const validateSQLInput = (
 };
 
 const SqlMinifier: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [preserveComments, setPreserveComments] = useState(false);
   const [compressionRatio, setCompressionRatio] = useState<number | null>(null);
@@ -182,18 +182,18 @@ const SqlMinifier: React.FC = () => {
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const value = e.target.value;
       setInput(value);
-      setError("");
+      setError('');
       setCompressionRatio(null);
 
       if (!value.trim()) {
-        setOutput("");
+        setOutput('');
         return;
       }
 
       const validation = validateSQLInput(value);
       if (!validation.isValid) {
-        setError(validation.error || "Invalid SQL input");
-        setOutput("");
+        setError(validation.error || 'Invalid SQL input');
+        setOutput('');
         return;
       }
 
@@ -208,9 +208,9 @@ const SqlMinifier: React.FC = () => {
         setCompressionRatio(Math.max(0, ratio));
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to minify SQL";
+          err instanceof Error ? err.message : 'Failed to minify SQL';
         setError(errorMessage);
-        setOutput("");
+        setOutput('');
       }
     },
     [preserveComments]
@@ -230,17 +230,17 @@ const SqlMinifier: React.FC = () => {
           const ratio = ((originalSize - minifiedSize) / originalSize) * 100;
           setCompressionRatio(Math.max(0, ratio));
         } catch (err) {
-          setError(err instanceof Error ? err.message : "Failed to minify SQL");
-          setOutput("");
+          setError(err instanceof Error ? err.message : 'Failed to minify SQL');
+          setOutput('');
         }
       }
     }
   }, [preserveComments, input]);
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
     setCompressionRatio(null);
   };
 
@@ -645,7 +645,7 @@ WHERE u.status = 'active';`}
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Reverse Engineering Prevention:</strong>{" "}
+                            <strong>Reverse Engineering Prevention:</strong>{' '}
                             Make it harder to understand database schema from
                             SQL files
                           </div>

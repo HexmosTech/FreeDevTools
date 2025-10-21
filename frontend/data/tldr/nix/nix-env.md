@@ -1,29 +1,29 @@
 ---
-title: "Nix-env - Manage Packages | Online Free DevTools by Hexmos"
+title: 'Nix-env - Manage Packages | Online Free DevTools by Hexmos'
 name: nix-env
-path: "/freedevtools/tldr/nix/nix-env/"
-canonical: "https://hexmos.com/freedevtools/tldr/nix/nix-env/"
-description: "Manage packages with Nix-env. Install, uninstall, and upgrade software packages easily using the Nix package manager. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-env/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nix/nix-env/'
+description: 'Manage packages with Nix-env. Install, uninstall, and upgrade software packages easily using the Nix package manager. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package manager
-- nix user environment
-- package installation
-- package uninstallation
-- package upgrade
-- declarative package management
-- functional package management
-- linux package manager
-- nixos package manager
-- nix expressions
+  - nix package manager
+  - nix user environment
+  - package installation
+  - package uninstallation
+  - package upgrade
+  - declarative package management
+  - functional package management
+  - linux package manager
+  - nixos package manager
+  - nix expressions
 features:
-- List installed packages
-- Query available packages
-- Install packages from nixpkgs or URLs
-- Uninstall existing packages
-- Upgrade individual or all packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List installed packages
+  - Query available packages
+  - Install packages from nixpkgs or URLs
+  - Uninstall existing packages
+  - Upgrade individual or all packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix-env

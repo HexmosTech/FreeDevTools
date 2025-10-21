@@ -1,29 +1,29 @@
 ---
-title: "Execute Command - Control Process Execution with xe | Online Free DevTools by Hexmos"
+title: 'Execute Command - Control Process Execution with xe | Online Free DevTools by Hexmos'
 name: xe
-path: "/freedevtools/tldr/common/xe/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xe/"
-description: "Control process execution instantly with xe. Execute commands on each line of input, parallelize execution, and manage shellscripts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xe/'
+description: 'Control process execution instantly with xe. Execute commands on each line of input, parallelize execution, and manage shellscripts. Free online tool, no registration required.'
 category: common
 keywords:
-- command line execution
-- parallel process execution
-- shellscript execution
-- xargs alternative
-- xe command
-- line processing
-- linux command execution
-- macos command execution
-- batch command execution
-- input line processing
+  - command line execution
+  - parallel process execution
+  - shellscript execution
+  - xargs alternative
+  - xe command
+  - line processing
+  - linux command execution
+  - macos command execution
+  - batch command execution
+  - input line processing
 features:
-- Execute commands for each input line
-- Substitute placeholders in commands
-- Join multiple lines into a single command
-- Limit the number of parallel processes
-- Execute shellscripts with line processing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands for each input line
+  - Substitute placeholders in commands
+  - Join multiple lines into a single command
+  - Limit the number of parallel processes
+  - Execute shellscripts with line processing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xe

@@ -1,29 +1,29 @@
 ---
-title: "Control Dropbox Sync - Maestral Client | Online Free DevTools by Hexmos"
+title: 'Control Dropbox Sync - Maestral Client | Online Free DevTools by Hexmos'
 name: maestral
-path: "/freedevtools/tldr/common/maestral/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/maestral/"
-description: "Control your Dropbox sync with Maestral. Manage sync status, pause/resume syncing, and check file status effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/maestral/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/maestral/'
+description: 'Control your Dropbox sync with Maestral. Manage sync status, pause/resume syncing, and check file status effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- dropbox client
-- maestral linux
-- maestral macos
-- dropbox sync command
-- dropbox command line
-- sync status
-- file sync utility
-- pause sync
-- resume sync
-- dropbox lightweight client
+  - dropbox client
+  - maestral linux
+  - maestral macos
+  - dropbox sync command
+  - dropbox command line
+  - sync status
+  - file sync utility
+  - pause sync
+  - resume sync
+  - dropbox lightweight client
 features:
-- Start the Maestral GUI
-- Display the current Maestral status
-- Pause the Dropbox syncing process
-- Resume the Dropbox syncing process
-- Show the sync status of specific files or folders
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the Maestral GUI
+  - Display the current Maestral status
+  - Pause the Dropbox syncing process
+  - Resume the Dropbox syncing process
+  - Show the sync status of specific files or folders
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # maestral

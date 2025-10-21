@@ -1,29 +1,29 @@
 ---
-title: "Zegrep - Search Compressed Files with Regex | Online Free DevTools by Hexmos"
+title: 'Zegrep - Search Compressed Files with Regex | Online Free DevTools by Hexmos'
 name: zegrep
-path: "/freedevtools/tldr/common/zegrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/zegrep/"
-description: "Search compressed files with Zegrep, utilizing extended regex patterns to find specific matches. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/zegrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/zegrep/'
+description: 'Search compressed files with Zegrep, utilizing extended regex patterns to find specific matches. Free online tool, no registration required.'
 category: common
 keywords:
-- compressed file search
-- regex pattern matching
-- zegrep command
-- egrep for compressed files
-- linux compressed file tools
-- unix file searching
-- extended regex search
-- grep alternative
-- text search compressed
-- command line file search
+  - compressed file search
+  - regex pattern matching
+  - zegrep command
+  - egrep for compressed files
+  - linux compressed file tools
+  - unix file searching
+  - extended regex search
+  - grep alternative
+  - text search compressed
+  - command line file search
 features:
-- Search compressed files using extended regular expressions.
-- Perform case-insensitive searches in compressed files.
-- Invert the match to find lines that do not match the pattern.
-- Display file name and line number for each match.
-- Print only the matched text from the compressed file.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search compressed files using extended regular expressions.
+  - Perform case-insensitive searches in compressed files.
+  - Invert the match to find lines that do not match the pattern.
+  - Display file name and line number for each match.
+  - Print only the matched text from the compressed file.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zegrep

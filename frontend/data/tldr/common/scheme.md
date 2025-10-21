@@ -1,29 +1,29 @@
 ---
-title: "Scheme Interpreter - Execute Code | Online Free DevTools by Hexmos"
+title: 'Scheme Interpreter - Execute Code | Online Free DevTools by Hexmos'
 name: scheme
-path: "/freedevtools/tldr/common/scheme/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/scheme/"
-description: "Execute Scheme code instantly with Scheme Interpreter. Run scripts, load programs, and evaluate expressions using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/scheme/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/scheme/'
+description: 'Execute Scheme code instantly with Scheme Interpreter. Run scripts, load programs, and evaluate expressions using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- Scheme Interpreter
-- Lisp interpreter
-- Scheme REPL
-- Run Scheme script
-- GNU Scheme
-- MIT Scheme
-- Scheme language
-- Scheme programming
-- Command-line interpreter
-- Interactive Scheme
+  - Scheme Interpreter
+  - Lisp interpreter
+  - Scheme REPL
+  - Run Scheme script
+  - GNU Scheme
+  - MIT Scheme
+  - Scheme language
+  - Scheme programming
+  - Command-line interpreter
+  - Interactive Scheme
 features:
-- Execute Scheme scripts
-- Start an interactive Scheme REPL
-- Load Scheme programs into the REPL
-- Evaluate Scheme expressions directly
-- Run Scheme programs in quiet mode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Scheme scripts
+  - Start an interactive Scheme REPL
+  - Load Scheme programs into the REPL
+  - Evaluate Scheme expressions directly
+  - Run Scheme programs in quiet mode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # scheme

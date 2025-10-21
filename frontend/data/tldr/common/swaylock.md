@@ -1,29 +1,29 @@
 ---
-title: "Lock Screen - Control Swaylock Screen Locking | Online Free DevTools by Hexmos"
+title: 'Lock Screen - Control Swaylock Screen Locking | Online Free DevTools by Hexmos'
 name: swaylock
-path: "/freedevtools/tldr/common/swaylock/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/swaylock/"
-description: "Control screen locking with Swaylock. Enhance security by locking your Wayland compositor screen quickly and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/swaylock/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/swaylock/'
+description: 'Control screen locking with Swaylock. Enhance security by locking your Wayland compositor screen quickly and easily. Free online tool, no registration required.'
 category: common
 keywords:
-- wayland screen locker
-- swaylock configuration
-- linux screen lock
-- command line screen lock
-- swaylock daemonize
-- wayland compositor security
-- screen lock image
-- screen lock color
-- swaylock failed attempts
-- swaylock config file
+  - wayland screen locker
+  - swaylock configuration
+  - linux screen lock
+  - command line screen lock
+  - swaylock daemonize
+  - wayland compositor security
+  - screen lock image
+  - screen lock color
+  - swaylock failed attempts
+  - swaylock config file
 features:
-- Lock screen with custom configuration
-- Lock screen using a specified background color
-- Lock screen using a custom image
-- Detach from controlling terminal for background operation
-- Display number of failed login attempts
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Lock screen with custom configuration
+  - Lock screen using a specified background color
+  - Lock screen using a custom image
+  - Detach from controlling terminal for background operation
+  - Display number of failed login attempts
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # swaylock

@@ -1,29 +1,29 @@
 ---
-title: "Pueue Edit - Modify Queued Tasks | Online Free DevTools by Hexmos"
+title: 'Pueue Edit - Modify Queued Tasks | Online Free DevTools by Hexmos'
 name: pueue-edit
-path: "/freedevtools/tldr/pueue/pueue-edit/"
-canonical: "https://hexmos.com/freedevtools/tldr/pueue/pueue-edit/"
-description: "Modify queued tasks with Pueue Edit, a task management tool. Edit commands, paths, and configurations easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/pueue/pueue-edit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pueue/pueue-edit/'
+description: 'Modify queued tasks with Pueue Edit, a task management tool. Edit commands, paths, and configurations easily. Free online tool, no registration required.'
 category: common
 keywords:
-- task management
-- queue editor
-- pueue command
-- pueue edit task
-- command line task manager
-- linux task queue
-- macos task queue
-- edit queued command
-- modify task path
-- pueue configuration
+  - task management
+  - queue editor
+  - pueue command
+  - pueue edit task
+  - command line task manager
+  - linux task queue
+  - macos task queue
+  - edit queued command
+  - modify task path
+  - pueue configuration
 features:
-- Edit command of queued tasks
-- Modify execution path of tasks
-- Change task configuration via editor
-- Update stashed task parameters
-- Configure task execution environment
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Edit command of queued tasks
+  - Modify execution path of tasks
+  - Change task configuration via editor
+  - Update stashed task parameters
+  - Configure task execution environment
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pueue edit

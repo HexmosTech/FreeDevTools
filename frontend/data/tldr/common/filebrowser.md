@@ -1,29 +1,29 @@
 ---
-title: "Manage Files - Browse Directories with Filebrowser | Online Free DevTools by Hexmos"
+title: 'Manage Files - Browse Directories with Filebrowser | Online Free DevTools by Hexmos'
 name: filebrowser
-path: "/freedevtools/tldr/common/filebrowser/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/filebrowser/"
-description: "Manage files with Filebrowser, a simple HTTP web server. Browse directories, upload and download files easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/filebrowser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/filebrowser/'
+description: 'Manage files with Filebrowser, a simple HTTP web server. Browse directories, upload and download files easily. Free online tool, no registration required.'
 category: common
 keywords:
-- file manager
-- web file browser
-- http file server
-- directory browser
-- file upload
-- file download
-- file directory management
-- command line file browser
-- simple file server
-- web directory browser
+  - file manager
+  - web file browser
+  - http file server
+  - directory browser
+  - file upload
+  - file download
+  - file directory management
+  - command line file browser
+  - simple file server
+  - web directory browser
 features:
-- Serve files and directories over HTTP
-- Browse and manage files through a web interface
-- Configure server address and port
-- Set up user accounts with custom usernames and passwords
-- Disable thumbnails and command runner for enhanced security
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Serve files and directories over HTTP
+  - Browse and manage files through a web interface
+  - Configure server address and port
+  - Set up user accounts with custom usernames and passwords
+  - Disable thumbnails and command runner for enhanced security
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # filebrowser

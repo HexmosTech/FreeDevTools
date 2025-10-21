@@ -1,29 +1,29 @@
 ---
-title: "Clean PBM Image - Erase Pixels | Online Free DevTools by Hexmos"
+title: 'Clean PBM Image - Erase Pixels | Online Free DevTools by Hexmos'
 name: pbmclean
-path: "/freedevtools/tldr/common/pbmclean/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pbmclean/"
-description: "Clean PBM images by removing isolated pixels with PBMclean. Enhance image quality and reduce noise. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pbmclean/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pbmclean/'
+description: 'Clean PBM images by removing isolated pixels with PBMclean. Enhance image quality and reduce noise. Free online tool, no registration required.'
 category: common
 keywords:
-- PBM image cleaner
-- Clean PBM pixels
-- PBM noise reduction
-- Erase isolated pixels
-- PBM image processing
-- Netpbm tools
-- Linux image manipulation
-- MacOS image cleaning
-- Command line image editor
-- PBM optimization
+  - PBM image cleaner
+  - Clean PBM pixels
+  - PBM noise reduction
+  - Erase isolated pixels
+  - PBM image processing
+  - Netpbm tools
+  - Linux image manipulation
+  - MacOS image cleaning
+  - Command line image editor
+  - PBM optimization
 features:
-- Erase isolated black pixels in PBM images
-- Erase isolated white pixels in PBM images
-- Specify minimum neighbor count for pixel removal
-- Clean up binary image noise
-- Improve PBM image quality
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Erase isolated black pixels in PBM images
+  - Erase isolated white pixels in PBM images
+  - Specify minimum neighbor count for pixel removal
+  - Clean up binary image noise
+  - Improve PBM image quality
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pbmclean

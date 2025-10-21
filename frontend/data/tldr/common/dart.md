@@ -1,29 +1,29 @@
 ---
-title: "Dart Project Manager - Create & Run Dart Projects | Online Free DevTools by Hexmos"
+title: 'Dart Project Manager - Create & Run Dart Projects | Online Free DevTools by Hexmos'
 name: dart
-path: "/freedevtools/tldr/common/dart/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dart/"
-description: "Manage Dart projects efficiently with Dart Project Manager. Initialize projects, run Dart files, and download dependencies quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dart/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dart/'
+description: 'Manage Dart projects efficiently with Dart Project Manager. Initialize projects, run Dart files, and download dependencies quickly. Free online tool, no registration required.'
 category: common
 keywords:
-- Dart project manager
-- Dart command-line tool
-- Dart package management
-- Dart null safety upgrade
-- Dart native binary compiler
-- Dart automated fixes
-- Dart pub get command
-- Dart run command
-- Dart test command
-- Dart code analysis
+  - Dart project manager
+  - Dart command-line tool
+  - Dart package management
+  - Dart null safety upgrade
+  - Dart native binary compiler
+  - Dart automated fixes
+  - Dart pub get command
+  - Dart run command
+  - Dart test command
+  - Dart code analysis
 features:
-- Initialize new Dart projects
-- Run Dart files directly from the command line
-- Download and manage project dependencies
-- Execute unit tests for Dart projects
-- Compile Dart code into native executables
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize new Dart projects
+  - Run Dart files directly from the command line
+  - Download and manage project dependencies
+  - Execute unit tests for Dart projects
+  - Compile Dart code into native executables
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dart

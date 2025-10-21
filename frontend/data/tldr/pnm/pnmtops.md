@@ -1,29 +1,29 @@
 ---
-title: "Convert PNM to PS - Generate PostScript Files | Online Free DevTools by Hexmos"
+title: 'Convert PNM to PS - Generate PostScript Files | Online Free DevTools by Hexmos'
 name: pnmtops
-path: "/freedevtools/tldr/pnm/pnmtops/"
-canonical: "https://hexmos.com/freedevtools/tldr/pnm/pnmtops/"
-description: "Convert PNM images to PostScript files with pnmtops. Generate high-quality PS documents and control image dimensions. Free online tool, no registration required."
+path: '/freedevtools/tldr/pnm/pnmtops/'
+canonical: 'https://hexmos.com/freedevtools/tldr/pnm/pnmtops/'
+description: 'Convert PNM images to PostScript files with pnmtops. Generate high-quality PS documents and control image dimensions. Free online tool, no registration required.'
 category: common
 keywords:
-- PNM to PS converter
-- PostScript file generator
-- image format conversion
-- PNM image processing
-- linux image converter
-- command line image tools
-- Netpbm image utility
-- convert image to postscript
-- PNM to PS command
-- image dimension control
+  - PNM to PS converter
+  - PostScript file generator
+  - image format conversion
+  - PNM image processing
+  - linux image converter
+  - command line image tools
+  - Netpbm image utility
+  - convert image to postscript
+  - PNM to PS command
+  - image dimension control
 features:
-- Convert PNM images to PostScript format.
-- Specify output image dimensions in inches.
-- Define page dimensions for the PostScript output.
-- Support for image width and height control.
-- Generate PS files from PNM images on the command line.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PNM images to PostScript format.
+  - Specify output image dimensions in inches.
+  - Define page dimensions for the PostScript output.
+  - Support for image width and height control.
+  - Generate PS files from PNM images on the command line.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pnmtops

@@ -1,29 +1,29 @@
 ---
-title: "Pgrep - Find Processes by Name | Online Free DevTools by Hexmos"
+title: 'Pgrep - Find Processes by Name | Online Free DevTools by Hexmos'
 name: pgrep
-path: "/freedevtools/tldr/common/pgrep/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pgrep/"
-description: "Find processes by name with Pgrep. Quickly locate and signal running programs using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pgrep/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pgrep/'
+description: 'Find processes by name with Pgrep. Quickly locate and signal running programs using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- process finder
-- signal processes
-- command line process management
-- linux process search
-- macos process search
-- pgrep command
-- process id lookup
-- find processes by user
-- match process by command string
-- signal running processes
+  - process finder
+  - signal processes
+  - command line process management
+  - linux process search
+  - macos process search
+  - pgrep command
+  - process id lookup
+  - find processes by user
+  - match process by command string
+  - signal running processes
 features:
-- Find processes by name or command string
-- Search for processes including command-line options
-- Locate processes run by a specific user
-- Return process IDs (PIDs) of matching processes
-- Signal processes based on found matches
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Find processes by name or command string
+  - Search for processes including command-line options
+  - Locate processes run by a specific user
+  - Return process IDs (PIDs) of matching processes
+  - Signal processes based on found matches
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pgrep

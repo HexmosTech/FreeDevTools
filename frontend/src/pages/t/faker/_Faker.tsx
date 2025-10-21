@@ -1,85 +1,85 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import FakerSkeleton from "./_FakerSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import FakerSkeleton from './_FakerSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Trash2Icon, PlusIcon } from "lucide-react";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Trash2Icon, PlusIcon } from 'lucide-react';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // Simplified faker implementation (in a real project, you'd use @faker-js/faker)
 const createFakeData = (category: string, dataType: string): any => {
   const generators: Record<string, Record<string, () => any>> = {
     person: {
       firstName: () =>
-        ["John", "Jane", "Michael", "Sarah", "David", "Emma"][
-        Math.floor(Math.random() * 6)
+        ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma'][
+          Math.floor(Math.random() * 6)
         ],
       lastName: () =>
-        ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia"][
-        Math.floor(Math.random() * 6)
+        ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'][
+          Math.floor(Math.random() * 6)
         ],
       fullName: () =>
-        `${createFakeData("person", "firstName")} ${createFakeData("person", "lastName")}`,
+        `${createFakeData('person', 'firstName')} ${createFakeData('person', 'lastName')}`,
       email: () =>
-        `${createFakeData("person", "firstName").toLowerCase()}@example.com`,
+        `${createFakeData('person', 'firstName').toLowerCase()}@example.com`,
       phone: () => `+1${Math.floor(Math.random() * 9000000000) + 1000000000}`,
     },
     address: {
       street: () =>
-        ["123 Main St", "456 Oak Ave", "789 Pine Rd", "321 Elm Dr"][
-        Math.floor(Math.random() * 4)
+        ['123 Main St', '456 Oak Ave', '789 Pine Rd', '321 Elm Dr'][
+          Math.floor(Math.random() * 4)
         ],
       city: () =>
-        ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"][
-        Math.floor(Math.random() * 5)
+        ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'][
+          Math.floor(Math.random() * 5)
         ],
       state: () =>
-        ["NY", "CA", "IL", "TX", "AZ"][Math.floor(Math.random() * 5)],
+        ['NY', 'CA', 'IL', 'TX', 'AZ'][Math.floor(Math.random() * 5)],
       zipCode: () => Math.floor(Math.random() * 90000) + 10000,
       country: () =>
-        ["USA", "Canada", "UK", "Australia", "Germany"][
-        Math.floor(Math.random() * 5)
+        ['USA', 'Canada', 'UK', 'Australia', 'Germany'][
+          Math.floor(Math.random() * 5)
         ],
     },
     company: {
       name: () =>
         [
-          "Acme Corp",
-          "Tech Solutions",
-          "Global Industries",
-          "Innovative Systems",
+          'Acme Corp',
+          'Tech Solutions',
+          'Global Industries',
+          'Innovative Systems',
         ][Math.floor(Math.random() * 4)],
       department: () =>
-        ["Engineering", "Marketing", "Sales", "HR", "Finance"][
-        Math.floor(Math.random() * 5)
+        ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'][
+          Math.floor(Math.random() * 5)
         ],
       jobTitle: () =>
-        ["Developer", "Manager", "Analyst", "Coordinator", "Specialist"][
-        Math.floor(Math.random() * 5)
+        ['Developer', 'Manager', 'Analyst', 'Coordinator', 'Specialist'][
+          Math.floor(Math.random() * 5)
         ],
     },
     datatype: {
       uuid: () =>
-        "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+        'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
           const r = (Math.random() * 16) | 0;
-          const v = c == "x" ? r : (r & 0x3) | 0x8;
+          const v = c == 'x' ? r : (r & 0x3) | 0x8;
           return v.toString(16);
         }),
       number: () => Math.floor(Math.random() * 1000),
@@ -87,25 +87,25 @@ const createFakeData = (category: string, dataType: string): any => {
       date: () =>
         new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000)
           .toISOString()
-          .split("T")[0],
+          .split('T')[0],
       url: () => `https://example${Math.floor(Math.random() * 10)}.com`,
     },
     lorem: {
       word: () =>
-        ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur"][
-        Math.floor(Math.random() * 6)
+        ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur'][
+          Math.floor(Math.random() * 6)
         ],
       sentence: () =>
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       paragraph: () =>
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
     },
   };
 
   if (generators[category] && generators[category][dataType]) {
     return generators[category][dataType]();
   }
-  return "Unknown";
+  return 'Unknown';
 };
 
 interface Field {
@@ -116,65 +116,65 @@ interface Field {
 }
 
 const outputFormats = [
-  { value: "json", label: "JSON" },
-  { value: "csv", label: "CSV" },
-  { value: "sql", label: "SQL" },
-  { value: "yaml", label: "YAML" },
+  { value: 'json', label: 'JSON' },
+  { value: 'csv', label: 'CSV' },
+  { value: 'sql', label: 'SQL' },
+  { value: 'yaml', label: 'YAML' },
 ];
 
 const dataCategories = [
-  { value: "person", label: "Person" },
-  { value: "address", label: "Address" },
-  { value: "company", label: "Company" },
-  { value: "datatype", label: "Data Type" },
-  { value: "lorem", label: "Lorem Ipsum" },
+  { value: 'person', label: 'Person' },
+  { value: 'address', label: 'Address' },
+  { value: 'company', label: 'Company' },
+  { value: 'datatype', label: 'Data Type' },
+  { value: 'lorem', label: 'Lorem Ipsum' },
 ];
 
 const dataTypes: Record<string, { value: string; label: string }[]> = {
   person: [
-    { value: "firstName", label: "First Name" },
-    { value: "lastName", label: "Last Name" },
-    { value: "fullName", label: "Full Name" },
-    { value: "email", label: "Email" },
-    { value: "phone", label: "Phone" },
+    { value: 'firstName', label: 'First Name' },
+    { value: 'lastName', label: 'Last Name' },
+    { value: 'fullName', label: 'Full Name' },
+    { value: 'email', label: 'Email' },
+    { value: 'phone', label: 'Phone' },
   ],
   address: [
-    { value: "street", label: "Street" },
-    { value: "city", label: "City" },
-    { value: "state", label: "State" },
-    { value: "zipCode", label: "Zip Code" },
-    { value: "country", label: "Country" },
+    { value: 'street', label: 'Street' },
+    { value: 'city', label: 'City' },
+    { value: 'state', label: 'State' },
+    { value: 'zipCode', label: 'Zip Code' },
+    { value: 'country', label: 'Country' },
   ],
   company: [
-    { value: "name", label: "Company Name" },
-    { value: "department", label: "Department" },
-    { value: "jobTitle", label: "Job Title" },
+    { value: 'name', label: 'Company Name' },
+    { value: 'department', label: 'Department' },
+    { value: 'jobTitle', label: 'Job Title' },
   ],
   datatype: [
-    { value: "uuid", label: "UUID" },
-    { value: "number", label: "Number" },
-    { value: "boolean", label: "Boolean" },
-    { value: "date", label: "Date" },
-    { value: "url", label: "URL" },
+    { value: 'uuid', label: 'UUID' },
+    { value: 'number', label: 'Number' },
+    { value: 'boolean', label: 'Boolean' },
+    { value: 'date', label: 'Date' },
+    { value: 'url', label: 'URL' },
   ],
   lorem: [
-    { value: "word", label: "Word" },
-    { value: "sentence", label: "Sentence" },
-    { value: "paragraph", label: "Paragraph" },
+    { value: 'word', label: 'Word' },
+    { value: 'sentence', label: 'Sentence' },
+    { value: 'paragraph', label: 'Paragraph' },
   ],
 };
 
 const Faker: React.FC = () => {
   const [fields, setFields] = useState<Field[]>([
-    { id: "1", fieldName: "id", category: "datatype", dataType: "uuid" },
-    { id: "2", fieldName: "name", category: "person", dataType: "fullName" },
-    { id: "3", fieldName: "email", category: "person", dataType: "email" },
+    { id: '1', fieldName: 'id', category: 'datatype', dataType: 'uuid' },
+    { id: '2', fieldName: 'name', category: 'person', dataType: 'fullName' },
+    { id: '3', fieldName: 'email', category: 'person', dataType: 'email' },
   ]);
-  const [outputFormat, setOutputFormat] = useState("json");
+  const [outputFormat, setOutputFormat] = useState('json');
   const [rowCount, setRowCount] = useState(10);
-  const [tableName, setTableName] = useState("users");
-  const [csvDelimiter, setCsvDelimiter] = useState(",");
-  const [output, setOutput] = useState("");
+  const [tableName, setTableName] = useState('users');
+  const [csvDelimiter, setCsvDelimiter] = useState(',');
+  const [output, setOutput] = useState('');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -188,9 +188,9 @@ const Faker: React.FC = () => {
   const addField = () => {
     const newField: Field = {
       id: Date.now().toString(),
-      fieldName: "",
-      category: "person",
-      dataType: "firstName",
+      fieldName: '',
+      category: 'person',
+      dataType: 'firstName',
     };
     setFields([...fields, newField]);
   };
@@ -209,7 +209,7 @@ const Faker: React.FC = () => {
 
   const validateFields = (): { valid: boolean; message?: string } => {
     if (fields.length === 0) {
-      return { valid: false, message: "Add at least one field." };
+      return { valid: false, message: 'Add at least one field.' };
     }
 
     for (let i = 0; i < fields.length; i++) {
@@ -248,17 +248,17 @@ const Faker: React.FC = () => {
   const generateData = useCallback(() => {
     const validation = validateFields();
     if (!validation.valid) {
-      toast.error(validation.message || "Validation failed");
+      toast.error(validation.message || 'Validation failed');
       return;
     }
 
     try {
-      let result = "";
+      let result = '';
 
-      if (outputFormat === "json") {
+      if (outputFormat === 'json') {
         const data = Array.from({ length: rowCount }, () => generateObject());
         result = JSON.stringify(data, null, 2);
-      } else if (outputFormat === "csv") {
+      } else if (outputFormat === 'csv') {
         const headers = fields.map((f) => f.fieldName).join(csvDelimiter);
         const rows = Array.from({ length: rowCount }, () => {
           return fields
@@ -271,20 +271,20 @@ const Faker: React.FC = () => {
             })
             .join(csvDelimiter);
         });
-        result = [headers, ...rows].join("\n");
-      } else if (outputFormat === "sql") {
-        const columns = fields.map((f) => f.fieldName).join(", ");
+        result = [headers, ...rows].join('\n');
+      } else if (outputFormat === 'sql') {
+        const columns = fields.map((f) => f.fieldName).join(', ');
         const inserts = Array.from({ length: rowCount }, () => {
           const values = fields
             .map((field) => {
               const value = createFakeData(field.category, field.dataType);
-              return typeof value === "string" ? `'${value}'` : value;
+              return typeof value === 'string' ? `'${value}'` : value;
             })
-            .join(", ");
+            .join(', ');
           return `INSERT INTO ${tableName} (${columns}) VALUES (${values});`;
         });
-        result = inserts.join("\n");
-      } else if (outputFormat === "yaml") {
+        result = inserts.join('\n');
+      } else if (outputFormat === 'yaml') {
         const data = Array.from({ length: rowCount }, () => generateObject());
         // Simple YAML conversion (in a real project, use js-yaml library)
         result = data
@@ -292,12 +292,12 @@ const Faker: React.FC = () => {
             const yamlItem = Object.entries(item)
               .map(
                 ([key, value]) =>
-                  `  ${key}: ${typeof value === "string" ? `"${value}"` : value}`
+                  `  ${key}: ${typeof value === 'string' ? `"${value}"` : value}`
               )
-              .join("\n");
+              .join('\n');
             return `- \n${yamlItem}`;
           })
-          .join("\n");
+          .join('\n');
       }
 
       setOutput(result);
@@ -305,13 +305,13 @@ const Faker: React.FC = () => {
         `Generated ${rowCount} rows of ${outputFormat.toUpperCase()} data!`
       );
     } catch (error) {
-      toast.error("Failed to generate data");
-      console.error("Generation error:", error);
+      toast.error('Failed to generate data');
+      console.error('Generation error:', error);
     }
   }, [fields, outputFormat, rowCount, tableName, csvDelimiter]);
 
   const handleClear = () => {
-    setOutput("");
+    setOutput('');
   };
 
   return (
@@ -367,7 +367,7 @@ const Faker: React.FC = () => {
                     </Select>
                   </div>
 
-                  {outputFormat === "sql" && (
+                  {outputFormat === 'sql' && (
                     <div className="space-y-2">
                       <Label>Table Name</Label>
                       <Input
@@ -378,7 +378,7 @@ const Faker: React.FC = () => {
                     </div>
                   )}
 
-                  {outputFormat === "csv" && (
+                  {outputFormat === 'csv' && (
                     <div className="space-y-2">
                       <Label>CSV Delimiter</Label>
                       <Input
@@ -435,7 +435,7 @@ const Faker: React.FC = () => {
                                 value={field.category}
                                 onValueChange={(value) => {
                                   const firstType =
-                                    dataTypes[value]?.[0]?.value || "";
+                                    dataTypes[value]?.[0]?.value || '';
                                   updateField(field.id, {
                                     category: value,
                                     dataType: firstType,

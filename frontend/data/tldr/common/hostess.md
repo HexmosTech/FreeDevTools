@@ -1,29 +1,29 @@
 ---
-title: "Host File Manager - Control Host Names with Hostess | Online Free DevTools by Hexmos"
+title: 'Host File Manager - Control Host Names with Hostess | Online Free DevTools by Hexmos'
 name: hostess
-path: "/freedevtools/tldr/common/hostess/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hostess/"
-description: "Control host names easily with Hostess. Manage your /etc/hosts file to map domains to IP addresses. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hostess/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hostess/'
+description: 'Control host names easily with Hostess. Manage your /etc/hosts file to map domains to IP addresses. Free online tool, no registration required.'
 category: common
 keywords:
-- host file manager
-- etc/hosts editor
-- domain name manager
-- ip address mapper
-- linux host file
-- macos host file
-- hostname resolver
-- hostess command
-- local domain manager
-- host file configuration
+  - host file manager
+  - etc/hosts editor
+  - domain name manager
+  - ip address mapper
+  - linux host file
+  - macos host file
+  - hostname resolver
+  - hostess command
+  - local domain manager
+  - host file configuration
 features:
-- Add custom domain to IP address mappings
-- Remove specific domains from host file
-- Disable domains without removing them
-- List all domains, IPs, and status information
-- Manage /etc/hosts file directly from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add custom domain to IP address mappings
+  - Remove specific domains from host file
+  - Disable domains without removing them
+  - List all domains, IPs, and status information
+  - Manage /etc/hosts file directly from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hostess

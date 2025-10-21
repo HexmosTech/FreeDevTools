@@ -1,9 +1,9 @@
 ---
-title: "Control Pacman Files - Manage Arch Linux Packages | Online Free DevTools by Hexmos"
+title: 'Control Pacman Files - Manage Arch Linux Packages | Online Free DevTools by Hexmos'
 name: pacman-files
-path: "/freedevtools/tldr/linux/pacman-files/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacman-files/"
-description: "Control package files with Pacman Files, the Arch Linux package manager utility. Search for files within packages, and update package databases. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacman-files/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacman-files/'
+description: 'Control package files with Pacman Files, the Arch Linux package manager utility. Search for files within packages, and update package databases. Free online tool, no registration required.'
 category: linux
 keywords:
   - pacman file search
@@ -22,8 +22,8 @@ features:
   - Search for files using regular expressions
   - List package names for specific files
   - List all files owned by a specific package
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacman --files

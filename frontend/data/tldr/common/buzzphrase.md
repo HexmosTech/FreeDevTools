@@ -1,29 +1,29 @@
 ---
-title: "Generate Buzzphrases - Create Random Phrases | Online Free DevTools by Hexmos"
+title: 'Generate Buzzphrases - Create Random Phrases | Online Free DevTools by Hexmos'
 name: buzzphrase
-path: "/freedevtools/tldr/common/buzzphrase/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/buzzphrase/"
-description: "Generate buzzphrases instantly with Buzzphrase. Create random, professional-sounding phrases for presentations and marketing materials. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/buzzphrase/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/buzzphrase/'
+description: 'Generate buzzphrases instantly with Buzzphrase. Create random, professional-sounding phrases for presentations and marketing materials. Free online tool, no registration required.'
 category: common
 keywords:
-- buzzphrase generator
-- random phrase generator
-- marketing phrase generator
-- business buzzword generator
-- presentation phrase generator
-- node.js buzzphrase tool
-- command line buzzphrase
-- generate random strings
-- atomantic buzzphrase
-- common platform buzzphrase
+  - buzzphrase generator
+  - random phrase generator
+  - marketing phrase generator
+  - business buzzword generator
+  - presentation phrase generator
+  - node.js buzzphrase tool
+  - command line buzzphrase
+  - generate random strings
+  - atomantic buzzphrase
+  - common platform buzzphrase
 features:
-- Generate strings of random phrases
-- Format phrases with adjectives, verbs, and nouns
-- Customize phrase structure
-- Generate multiple phrases at once
-- Create business-sounding phrases
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate strings of random phrases
+  - Format phrases with adjectives, verbs, and nouns
+  - Customize phrase structure
+  - Generate multiple phrases at once
+  - Create business-sounding phrases
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # buzzphrase

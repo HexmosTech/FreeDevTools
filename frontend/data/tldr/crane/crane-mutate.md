@@ -1,29 +1,29 @@
 ---
-title: "Mutate Images - Modify Container Images | Online Free DevTools by Hexmos"
+title: 'Mutate Images - Modify Container Images | Online Free DevTools by Hexmos'
 name: crane-mutate
-path: "/freedevtools/tldr/crane/crane-mutate/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-mutate/"
-description: "Modify container images instantly with Crane Mutate. Update labels, annotations, and metadata of your container images. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-mutate/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-mutate/'
+description: 'Modify container images instantly with Crane Mutate. Update labels, annotations, and metadata of your container images. Free online tool, no registration required.'
 category: common
 keywords:
-- Container Image Mutation
-- Image Annotation Editor
-- Docker Image Labeler
-- OCI Image Modifier
-- Container Registry Tool
-- crane mutate command
-- Container Image Metadata
-- Image Configuration Tool
-- Kubernetes Image Management
-- Cloud Native Image Utility
+  - Container Image Mutation
+  - Image Annotation Editor
+  - Docker Image Labeler
+  - OCI Image Modifier
+  - Container Registry Tool
+  - crane mutate command
+  - Container Image Metadata
+  - Image Configuration Tool
+  - Kubernetes Image Management
+  - Cloud Native Image Utility
 features:
-- Modify image labels and annotations
-- Append files or directories to container images
-- Set the platform of a container image
-- Push mutated images to a container registry
-- Update image user and working directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Modify image labels and annotations
+  - Append files or directories to container images
+  - Set the platform of a container image
+  - Push mutated images to a container registry
+  - Update image user and working directory
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane mutate

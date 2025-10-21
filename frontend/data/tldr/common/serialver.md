@@ -1,29 +1,29 @@
 ---
-title: "Generate serialVersionUID - Inspect Java Classes | Online Free DevTools by Hexmos"
+title: 'Generate serialVersionUID - Inspect Java Classes | Online Free DevTools by Hexmos'
 name: serialver
-path: "/freedevtools/tldr/common/serialver/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/serialver/"
-description: "Generate serialVersionUID with serialver. Inspect Java classes to determine their serial version UID. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/serialver/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/serialver/'
+description: 'Generate serialVersionUID with serialver. Inspect Java classes to determine their serial version UID. Free online tool, no registration required.'
 category: common
 keywords:
-- Java serialVersionUID generator
-- serialver Java class UID
-- Java class version identifier
-- serialVersionUID checker
-- Java serialization tool
-- Java class inspection
-- Java class compatibility
-- Java UID validation
-- Java class analyzer
-- serialver command line
+  - Java serialVersionUID generator
+  - serialver Java class UID
+  - Java class version identifier
+  - serialVersionUID checker
+  - Java serialization tool
+  - Java class inspection
+  - Java class compatibility
+  - Java UID validation
+  - Java class analyzer
+  - serialver command line
 features:
-- Generate serialVersionUID for Java classes
-- Inspect serial version UID of Java files
-- Determine class compatibility for serialization
-- Support colon-separated class lists
-- Accept Java Virtual Machine options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate serialVersionUID for Java classes
+  - Inspect serial version UID of Java files
+  - Determine class compatibility for serialization
+  - Support colon-separated class lists
+  - Accept Java Virtual Machine options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # serialver

@@ -1,29 +1,29 @@
 ---
-title: "Racket Interpreter - Execute Code | Online Free DevTools by Hexmos"
+title: 'Racket Interpreter - Execute Code | Online Free DevTools by Hexmos'
 name: racket
-path: "/freedevtools/tldr/common/racket/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/racket/"
-description: "Execute Racket code snippets rapidly with Racket Interpreter. Run scripts, evaluate expressions, and manage modules seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/racket/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/racket/'
+description: 'Execute Racket code snippets rapidly with Racket Interpreter. Run scripts, evaluate expressions, and manage modules seamlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- Racket code execution
-- Racket script interpreter
-- Racket expression evaluator
-- Racket REPL shell
-- Racket module runner
-- Lisp dialect interpreter
-- Functional programming Racket
-- Scheme language interpreter
-- Racket command-line
-- Racket language tool
+  - Racket code execution
+  - Racket script interpreter
+  - Racket expression evaluator
+  - Racket REPL shell
+  - Racket module runner
+  - Lisp dialect interpreter
+  - Functional programming Racket
+  - Scheme language interpreter
+  - Racket command-line
+  - Racket language tool
 features:
-- Execute Racket scripts from the command line
-- Evaluate Racket expressions directly
-- Start an interactive Racket REPL shell
-- Run Racket modules as scripts
-- Interpret `typed/racket` hashlang
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute Racket scripts from the command line
+  - Evaluate Racket expressions directly
+  - Start an interactive Racket REPL shell
+  - Run Racket modules as scripts
+  - Interpret `typed/racket` hashlang
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # racket

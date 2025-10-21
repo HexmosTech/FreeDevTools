@@ -1,29 +1,29 @@
 ---
-title: "Create Docker Image - Commit Container Changes | Online Free DevTools by Hexmos"
+title: 'Create Docker Image - Commit Container Changes | Online Free DevTools by Hexmos'
 name: docker-commit
-path: "/freedevtools/tldr/docker/docker-commit/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-commit/"
-description: "Create Docker image from container changes with Docker Commit. Preserve application states and easily build new images. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-commit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-commit/'
+description: 'Create Docker image from container changes with Docker Commit. Preserve application states and easily build new images. Free online tool, no registration required.'
 category: common
 keywords:
-- docker image create
-- docker commit changes
-- container to image
-- docker image tag
-- docker metadata author
-- docker image comment
-- docker command line
-- docker container commit
-- docker pause commit
-- docker image build
+  - docker image create
+  - docker commit changes
+  - container to image
+  - docker image tag
+  - docker metadata author
+  - docker image comment
+  - docker command line
+  - docker container commit
+  - docker pause commit
+  - docker image build
 features:
-- Create images from container changes
-- Apply Dockerfile instructions to created images
-- Add author metadata to images
-- Include comments within the image metadata
-- Commit images without pausing the container
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create images from container changes
+  - Apply Dockerfile instructions to created images
+  - Add author metadata to images
+  - Include comments within the image metadata
+  - Commit images without pausing the container
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker commit

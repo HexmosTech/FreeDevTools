@@ -1,29 +1,29 @@
 ---
-title: "Inkscape - Generate SVG Graphics | Online Free DevTools by Hexmos"
+title: 'Inkscape - Generate SVG Graphics | Online Free DevTools by Hexmos'
 name: inkscape
-path: "/freedevtools/tldr/in/inkscape/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/inkscape/"
-description: "Generate SVG graphics with Inkscape. Convert SVG files to other formats, edit objects, and automate graphics tasks using command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/inkscape/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/inkscape/'
+description: 'Generate SVG graphics with Inkscape. Convert SVG files to other formats, edit objects, and automate graphics tasks using command line. Free online tool, no registration required.'
 category: common
 keywords:
-- SVG graphic generator
-- SVG file converter
-- Inkscape command line
-- Vector graphics editor
-- SVG to PNG conversion
-- SVG to PDF conversion
-- Inkscape scripting
-- Linux SVG editor
-- MacOS SVG editor
-- Scalable vector graphics
+  - SVG graphic generator
+  - SVG file converter
+  - Inkscape command line
+  - Vector graphics editor
+  - SVG to PNG conversion
+  - SVG to PDF conversion
+  - Inkscape scripting
+  - Linux SVG editor
+  - MacOS SVG editor
+  - Scalable vector graphics
 features:
-- Convert SVG files to various bitmap formats
-- Export specific objects from an SVG file by ID
-- Automate SVG editing tasks with scripting
-- Convert text to paths for PDF export
-- Rotate and duplicate objects within SVG files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert SVG files to various bitmap formats
+  - Export specific objects from an SVG file by ID
+  - Automate SVG editing tasks with scripting
+  - Convert text to paths for PDF export
+  - Rotate and duplicate objects within SVG files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # inkscape

@@ -1,29 +1,29 @@
 ---
-title: "Picocom - Control Serial Ports | Online Free DevTools by Hexmos"
+title: 'Picocom - Control Serial Ports | Online Free DevTools by Hexmos'
 name: picocom
-path: "/freedevtools/tldr/common/picocom/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/picocom/"
-description: "Control serial ports with Picocom. Connect to devices, configure baud rates, and map special characters for efficient serial communication. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/picocom/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/picocom/'
+description: 'Control serial ports with Picocom. Connect to devices, configure baud rates, and map special characters for efficient serial communication. Free online tool, no registration required.'
 category: common
 keywords:
-- serial console
-- serial communication
-- device communication
-- picocom terminal
-- tty device
-- baud rate configuration
-- linux serial
-- embedded device control
-- serial port monitoring
-- serial data transfer
+  - serial console
+  - serial communication
+  - device communication
+  - picocom terminal
+  - tty device
+  - baud rate configuration
+  - linux serial
+  - embedded device control
+  - serial port monitoring
+  - serial data transfer
 features:
-- Connect to serial ports using specified device paths
-- Configure custom baud rates for serial communication
-- Map special characters like LF to CRLF for accurate data transfer
-- Control serial port communication from the command line
-- Display helpful information and usage instructions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to serial ports using specified device paths
+  - Configure custom baud rates for serial communication
+  - Map special characters like LF to CRLF for accurate data transfer
+  - Control serial port communication from the command line
+  - Display helpful information and usage instructions
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # picocom

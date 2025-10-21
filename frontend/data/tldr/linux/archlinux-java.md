@@ -1,29 +1,29 @@
 ---
-title: "Control Java Versions - Archlinux-Java | Online Free DevTools by Hexmos"
+title: 'Control Java Versions - Archlinux-Java | Online Free DevTools by Hexmos'
 name: archlinux-java
-path: "/freedevtools/tldr/linux/archlinux-java/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/archlinux-java/"
-description: "Control Java versions with Archlinux-Java. Manage default JVM environments and fix broken configurations instantly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/archlinux-java/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/archlinux-java/'
+description: 'Control Java versions with Archlinux-Java. Manage default JVM environments and fix broken configurations instantly. Free online tool, no registration required.'
 category: linux
 keywords:
-- java version manager
-- archlinux java manager
-- linux java environment
-- jvm switcher
-- java development linux
-- archlinux java configuration
-- command line java
-- java environment variables
-- set java default
-- manage java versions linux
+  - java version manager
+  - archlinux java manager
+  - linux java environment
+  - jvm switcher
+  - java development linux
+  - archlinux java configuration
+  - command line java
+  - java environment variables
+  - set java default
+  - manage java versions linux
 features:
-- List installed Java environments.
-- Set the default Java environment.
-- Get the current default Java environment.
-- Unset the default Java environment.
-- Fix invalid Java configurations.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List installed Java environments.
+  - Set the default Java environment.
+  - Get the current default Java environment.
+  - Unset the default Java environment.
+  - Fix invalid Java configurations.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # archlinux-java

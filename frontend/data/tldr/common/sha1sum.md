@@ -1,29 +1,29 @@
 ---
-title: "Calculate SHA1 Checksum - Verify File Integrity | Online Free DevTools by Hexmos"
+title: 'Calculate SHA1 Checksum - Verify File Integrity | Online Free DevTools by Hexmos'
 name: sha1sum
-path: "/freedevtools/tldr/common/sha1sum/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/sha1sum/"
-description: "Calculate SHA1 checksum with sha1sum, verify file integrity using this checksum generator, ensuring data authenticity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/sha1sum/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/sha1sum/'
+description: 'Calculate SHA1 checksum with sha1sum, verify file integrity using this checksum generator, ensuring data authenticity. Free online tool, no registration required.'
 category: common
 keywords:
-- SHA1 checksum calculator
-- File integrity checker
-- SHA1 hash generator
-- Verify file checksum
-- Linux SHA1 utility
-- macOS SHA1 command
-- Calculate file hash
-- Cryptographic checksum tool
-- Data authenticity verification
-- SHA1 sum validation
+  - SHA1 checksum calculator
+  - File integrity checker
+  - SHA1 hash generator
+  - Verify file checksum
+  - Linux SHA1 utility
+  - macOS SHA1 command
+  - Calculate file hash
+  - Cryptographic checksum tool
+  - Data authenticity verification
+  - SHA1 sum validation
 features:
-- Calculate SHA1 checksums for files
-- Verify file integrity against known checksums
-- Generate checksums from standard input
-- Check multiple files against a checksum file
-- Ignore missing files during checksum verification
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Calculate SHA1 checksums for files
+  - Verify file integrity against known checksums
+  - Generate checksums from standard input
+  - Check multiple files against a checksum file
+  - Ignore missing files during checksum verification
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # sha1sum

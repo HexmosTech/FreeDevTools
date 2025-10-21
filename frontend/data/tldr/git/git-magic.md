@@ -1,29 +1,29 @@
 ---
-title: "Automate Git Workflow - Magic Add, Commit, Push | Online Free DevTools by Hexmos"
+title: 'Automate Git Workflow - Magic Add, Commit, Push | Online Free DevTools by Hexmos'
 name: git-magic
-path: "/freedevtools/tldr/git/git-magic/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-magic/"
-description: "Automate Git workflow with Git Magic. Streamline adding, committing, and pushing changes with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-magic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-magic/'
+description: 'Automate Git workflow with Git Magic. Streamline adding, committing, and pushing changes with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- git workflow automation
-- git commit automation
-- git add commit push
-- git command shortcuts
-- git commit message generator
-- git push force
-- command line git
-- linux git
-- macos git
-- windows git
+  - git workflow automation
+  - git commit automation
+  - git add commit push
+  - git command shortcuts
+  - git commit message generator
+  - git push force
+  - command line git
+  - linux git
+  - macos git
+  - windows git
 features:
-- Automates the add, commit, and push process.
-- Generates commit messages automatically.
-- Allows custom commit message specification.
-- Enables force pushing to remote.
-- Provides options to edit commit messages before committing.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automates the add, commit, and push process.
+  - Generates commit messages automatically.
+  - Allows custom commit message specification.
+  - Enables force pushing to remote.
+  - Provides options to edit commit messages before committing.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git magic

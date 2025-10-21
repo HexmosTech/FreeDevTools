@@ -1,29 +1,29 @@
 ---
-title: "Control Audio Playback - Audacious Player | Online Free DevTools by Hexmos"
+title: 'Control Audio Playback - Audacious Player | Online Free DevTools by Hexmos'
 name: audacious
-path: "/freedevtools/tldr/common/audacious/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/audacious/"
-description: "Control audio playback with Audacious Player. Manage playlists, enqueue directories, and navigate tracks using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/audacious/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/audacious/'
+description: 'Control audio playback with Audacious Player. Manage playlists, enqueue directories, and navigate tracks using simple commands. Free online tool, no registration required.'
 category: common
 keywords:
-- audio player control
-- audacious command line
-- linux audio player
-- playlist management
-- mp3 playback cli
-- audio enqueue command
-- headless audio playback
-- audacious player cli
-- command line audio control
-- audacious media player
+  - audio player control
+  - audacious command line
+  - linux audio player
+  - playlist management
+  - mp3 playback cli
+  - audio enqueue command
+  - headless audio playback
+  - audacious player cli
+  - command line audio control
+  - audacious media player
 features:
-- Launch the Audacious GUI
-- Enqueue audio files from a directory
-- Control playback (play/pause, stop, skip)
-- Start Audacious in headless mode
-- Quit Audacious after playback completion
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch the Audacious GUI
+  - Enqueue audio files from a directory
+  - Control playback (play/pause, stop, skip)
+  - Start Audacious in headless mode
+  - Quit Audacious after playback completion
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # audacious

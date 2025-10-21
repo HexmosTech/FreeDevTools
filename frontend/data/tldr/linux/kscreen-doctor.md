@@ -1,29 +1,29 @@
 ---
-title: "Control Screen Setup - Kscreen-doctor | Online Free DevTools by Hexmos"
+title: 'Control Screen Setup - Kscreen-doctor | Online Free DevTools by Hexmos'
 name: kscreen-doctor
-path: "/freedevtools/tldr/linux/kscreen-doctor/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kscreen-doctor/"
-description: "Control screen setup with Kscreen-doctor, a powerful Linux display configuration tool.  Adjust resolution, rotation, and scaling effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kscreen-doctor/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kscreen-doctor/'
+description: 'Control screen setup with Kscreen-doctor, a powerful Linux display configuration tool.  Adjust resolution, rotation, and scaling effortlessly. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux screen configuration
-- kscreen-doctor display manager
-- linux display settings command line
-- screen resolution controller linux
-- display rotation adjuster linux
-- monitor scaling linux
-- display output information linux
-- xrandr alternative linux
-- kde screen management
-- linux display configuration tool
+  - linux screen configuration
+  - kscreen-doctor display manager
+  - linux display settings command line
+  - screen resolution controller linux
+  - display rotation adjuster linux
+  - monitor scaling linux
+  - display output information linux
+  - xrandr alternative linux
+  - kde screen management
+  - linux display configuration tool
 features:
-- Show display output information
-- Set display rotation
-- Adjust display scaling
-- Configure multiple monitors
-- Manipulate screen setup via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show display output information
+  - Set display rotation
+  - Adjust display scaling
+  - Configure multiple monitors
+  - Manipulate screen setup via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kscreen-doctor

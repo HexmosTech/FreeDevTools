@@ -1,9 +1,9 @@
 ---
-title: "Change User Password - Control User Data | Online Free DevTools by Hexmos"
+title: 'Change User Password - Control User Data | Online Free DevTools by Hexmos'
 name: chpass
-path: "/freedevtools/tldr/osx/chpass/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/chpass/"
-description: "Change user password easily with chpass. Update login shell and user database information with this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/chpass/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/chpass/'
+description: 'Change user password easily with chpass. Update login shell and user database information with this command-line tool. Free online tool, no registration required.'
 category: osx
 keywords:
   - user password change
@@ -22,8 +22,8 @@ features:
   - Interact with user account settings
   - Authenticate against directory nodes
   - Update user credentials from command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # chpass

@@ -1,29 +1,29 @@
 ---
-title: "Control Elasticsearch - Manage Cradle Indices | Online Free DevTools by Hexmos"
+title: 'Control Elasticsearch - Manage Cradle Indices | Online Free DevTools by Hexmos'
 name: cradle-elastic
-path: "/freedevtools/tldr/cradle/cradle-elastic/"
-canonical: "https://hexmos.com/freedevtools/tldr/cradle/cradle-elastic/"
-description: "Manage Elasticsearch indices for Cradle instances with Cradle Elastic. Flush indices, submit schemas, and populate data quickly and easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/cradle/cradle-elastic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/cradle/cradle-elastic/'
+description: 'Manage Elasticsearch indices for Cradle instances with Cradle Elastic. Flush indices, submit schemas, and populate data quickly and easily. Free online tool, no registration required.'
 category: common
 keywords:
-- elasticsearch management
-- cradle elasticsearch
-- index flushing
-- schema submission
-- data population
-- php elasticsearch
-- command line elasticsearch
-- cradle php
-- elastic index control
-- elastic data management
+  - elasticsearch management
+  - cradle elasticsearch
+  - index flushing
+  - schema submission
+  - data population
+  - php elasticsearch
+  - command line elasticsearch
+  - cradle php
+  - elastic index control
+  - elastic data management
 features:
-- Flush Elasticsearch indices
-- Submit Elasticsearch schemas for packages
-- Populate Elasticsearch indices
-- Manage indices for specific packages
-- Truncate Elasticsearch data
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Flush Elasticsearch indices
+  - Submit Elasticsearch schemas for packages
+  - Populate Elasticsearch indices
+  - Manage indices for specific packages
+  - Truncate Elasticsearch data
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cradle elastic

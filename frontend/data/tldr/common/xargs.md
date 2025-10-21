@@ -1,29 +1,29 @@
 ---
-title: "Xargs - Control Command Arguments | Online Free DevTools by Hexmos"
+title: 'Xargs - Control Command Arguments | Online Free DevTools by Hexmos'
 name: xargs
-path: "/freedevtools/tldr/common/xargs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/xargs/"
-description: "Control command arguments with Xargs. Execute commands with piped input, process files in parallel, and manage command-line workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/xargs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/xargs/'
+description: 'Control command arguments with Xargs. Execute commands with piped input, process files in parallel, and manage command-line workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- xargs command arguments
-- command line argument processing
-- parallel command execution
-- piped input arguments
-- file processing arguments
-- gnu xargs tool
-- shell command control
-- linux xargs
-- macos xargs
-- bash arguments
+  - xargs command arguments
+  - command line argument processing
+  - parallel command execution
+  - piped input arguments
+  - file processing arguments
+  - gnu xargs tool
+  - shell command control
+  - linux xargs
+  - macos xargs
+  - bash arguments
 features:
-- Execute commands using input as arguments
-- Process files in parallel for faster execution
-- Control command arguments with placeholders
-- Run chained commands on input data
-- Prompt for confirmation before command execution
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands using input as arguments
+  - Process files in parallel for faster execution
+  - Control command arguments with placeholders
+  - Run chained commands on input data
+  - Prompt for confirmation before command execution
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xargs

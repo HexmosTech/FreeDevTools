@@ -1,29 +1,29 @@
 ---
-title: "Storage Account - Manage Azure Storage Accounts | Online Free DevTools by Hexmos"
+title: 'Storage Account - Manage Azure Storage Accounts | Online Free DevTools by Hexmos'
 name: az-storage-account
-path: "/freedevtools/tldr/az/az-storage-account/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-account/"
-description: "Manage Azure storage accounts with az-storage-account. Easily create, delete, and generate SAS tokens for your Azure storage. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-storage-account/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-storage-account/'
+description: 'Manage Azure storage accounts with az-storage-account. Easily create, delete, and generate SAS tokens for your Azure storage. Free online tool, no registration required.'
 category: common
 keywords:
-- azure storage account management
-- storage account azure cli
-- azure storage sas generator
-- azure storage account creator
-- azure storage account deleter
-- azure cli storage account commands
-- az storage linux
-- az storage windows
-- azure storage account shared access signature
-- azure resource group storage
+  - azure storage account management
+  - storage account azure cli
+  - azure storage sas generator
+  - azure storage account creator
+  - azure storage account deleter
+  - azure cli storage account commands
+  - az storage linux
+  - az storage windows
+  - azure storage account shared access signature
+  - azure resource group storage
 features:
-- Create Azure storage accounts with configurable SKU and location.
-- Generate SAS tokens for secure access to storage account resources.
-- List all storage accounts within a specific Azure resource group.
-- Delete specific Azure storage accounts.
-- Manage storage account properties using the Azure CLI.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create Azure storage accounts with configurable SKU and location.
+  - Generate SAS tokens for secure access to storage account resources.
+  - List all storage accounts within a specific Azure resource group.
+  - Delete specific Azure storage accounts.
+  - Manage storage account properties using the Azure CLI.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az storage account

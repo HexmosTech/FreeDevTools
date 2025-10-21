@@ -1,29 +1,29 @@
 ---
-title: "Create PostgreSQL Database - Initialize DB | Online Free DevTools by Hexmos"
+title: 'Create PostgreSQL Database - Initialize DB | Online Free DevTools by Hexmos'
 name: initdb
-path: "/freedevtools/tldr/in/initdb/"
-canonical: "https://hexmos.com/freedevtools/tldr/in/initdb/"
-description: "Create PostgreSQL database clusters with initdb. Initialize a new PostgreSQL instance and configure storage locations. Free online tool, no registration required."
+path: '/freedevtools/tldr/in/initdb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/in/initdb/'
+description: 'Create PostgreSQL database clusters with initdb. Initialize a new PostgreSQL instance and configure storage locations. Free online tool, no registration required.'
 category: common
 keywords:
-- PostgreSQL database
-- database cluster
-- initdb command
-- create database
-- PostgreSQL initdb
-- database initialization
-- common commands
-- database management
-- PostgreSQL configuration
-- command line database
+  - PostgreSQL database
+  - database cluster
+  - initdb command
+  - create database
+  - PostgreSQL initdb
+  - database initialization
+  - common commands
+  - database management
+  - PostgreSQL configuration
+  - command line database
 features:
-- Initialize PostgreSQL database clusters
-- Define data storage directory for PostgreSQL
-- Configure authentication methods for PostgreSQL
-- Create a new PostgreSQL instance
-- Generate initial database files for PostgreSQL
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Initialize PostgreSQL database clusters
+  - Define data storage directory for PostgreSQL
+  - Configure authentication methods for PostgreSQL
+  - Create a new PostgreSQL instance
+  - Generate initial database files for PostgreSQL
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # initdb

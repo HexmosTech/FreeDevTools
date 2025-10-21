@@ -1,29 +1,29 @@
 ---
-title: "GitHub API - Execute Authenticated API Requests | Online Free DevTools by Hexmos"
+title: 'GitHub API - Execute Authenticated API Requests | Online Free DevTools by Hexmos'
 name: gh-api
-path: "/freedevtools/tldr/gh/gh-api/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-api/"
-description: "Execute GitHub API requests seamlessly with gh-api. Authenticate requests, retrieve data, and manage your GitHub resources efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-api/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-api/'
+description: 'Execute GitHub API requests seamlessly with gh-api. Authenticate requests, retrieve data, and manage your GitHub resources efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- github api request
-- authenticated api call
-- github cli api
-- github rest api
-- api data retrieval
-- github resource management
-- gh api command
-- graphql api query
-- github enterprise server api
-- github api json
+  - github api request
+  - authenticated api call
+  - github cli api
+  - github rest api
+  - api data retrieval
+  - github resource management
+  - gh api command
+  - graphql api query
+  - github enterprise server api
+  - github api json
 features:
-- Execute authenticated HTTP requests to the GitHub API.
-- Retrieve and display API responses in JSON format.
-- Send custom requests using various HTTP methods (POST, GET, etc.).
-- Include HTTP response headers in the output for detailed information.
-- Send API requests to a specific GitHub Enterprise Server instance.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute authenticated HTTP requests to the GitHub API.
+  - Retrieve and display API responses in JSON format.
+  - Send custom requests using various HTTP methods (POST, GET, etc.).
+  - Include HTTP response headers in the output for detailed information.
+  - Send API requests to a specific GitHub Enterprise Server instance.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh api

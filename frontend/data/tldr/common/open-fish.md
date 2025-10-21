@@ -1,29 +1,29 @@
 ---
-title: "Open Files - Access Files & URIs | Online Free DevTools by Hexmos"
+title: 'Open Files - Access Files & URIs | Online Free DevTools by Hexmos'
 name: open.fish
-path: "/freedevtools/tldr/common/open-fish/"
-canonical: "https://hexmos-com/freedevtools/tldr/common/open-fish/"
-description: "Access files with Open command. Quickly open files, directories, and URIs using default applications across platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/open-fish/'
+canonical: 'https://hexmos-com/freedevtools/tldr/common/open-fish/'
+description: 'Access files with Open command. Quickly open files, directories, and URIs using default applications across platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- file opener
-- uri opener
-- directory opener
-- fish shell open
-- haiku open command
-- macos open command
-- file association opener
-- default application launcher
-- open file extension
-- open website
+  - file opener
+  - uri opener
+  - directory opener
+  - fish shell open
+  - haiku open command
+  - macos open command
+  - file association opener
+  - default application launcher
+  - open file extension
+  - open website
 features:
-- Open files with default applications
-- Open directories with default file manager
-- Open URLs with default browser
-- Open URIs with registered applications
-- Launch files by extension
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Open files with default applications
+  - Open directories with default file manager
+  - Open URLs with default browser
+  - Open URIs with registered applications
+  - Launch files by extension
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # open

@@ -1,29 +1,29 @@
 ---
-title: "Cloud Foundry Control - Manage Cloud Apps | Online Free DevTools by Hexmos"
+title: 'Cloud Foundry Control - Manage Cloud Apps | Online Free DevTools by Hexmos'
 name: cf
-path: "/freedevtools/tldr/common/cf/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cf/"
-description: "Control your Cloud Foundry applications with CF. Deploy, manage services, and monitor logs instantly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cf/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cf/'
+description: 'Control your Cloud Foundry applications with CF. Deploy, manage services, and monitor logs instantly. Free online tool, no registration required.'
 category: common
 keywords:
-- cloud foundry control
-- cf command line
-- cloud application management
-- cf cli commands
-- cloud foundry deployment
-- cf service management
-- cloud foundry logs
-- cf app push
-- cf marketplace
-- cloud foundry ssh
+  - cloud foundry control
+  - cf command line
+  - cloud application management
+  - cf cli commands
+  - cloud foundry deployment
+  - cf service management
+  - cloud foundry logs
+  - cf app push
+  - cf marketplace
+  - cloud foundry ssh
 features:
-- Deploy applications to Cloud Foundry
-- Manage services within a Cloud Foundry organization
-- Bind services to applications
-- Execute tasks within a deployed application
-- Access application logs for monitoring and debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy applications to Cloud Foundry
+  - Manage services within a Cloud Foundry organization
+  - Bind services to applications
+  - Execute tasks within a deployed application
+  - Access application logs for monitoring and debugging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cf

@@ -1,29 +1,29 @@
 ---
-title: "Manage C/C++ Packages - Control Libraries with vcpkg | Online Free DevTools by Hexmos"
+title: 'Manage C/C++ Packages - Control Libraries with vcpkg | Online Free DevTools by Hexmos'
 name: vcpkg
-path: "/freedevtools/tldr/common/vcpkg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/vcpkg/"
-description: "Manage C/C++ packages instantly with vcpkg. Install libraries, search for packages, and configure CMake projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/vcpkg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/vcpkg/'
+description: 'Manage C/C++ packages instantly with vcpkg. Install libraries, search for packages, and configure CMake projects. Free online tool, no registration required.'
 category: common
 keywords:
-- C++ package manager
-- C++ library manager
-- vcpkg package install
-- vcpkg search package
-- vcpkg CMake integration
-- C++ dependency management
-- cross platform C++ libraries
-- C/C++ library build
-- vcpkg emscripten
-- vcpkg configuration
+  - C++ package manager
+  - C++ library manager
+  - vcpkg package install
+  - vcpkg search package
+  - vcpkg CMake integration
+  - C++ dependency management
+  - cross platform C++ libraries
+  - C/C++ library build
+  - vcpkg emscripten
+  - vcpkg configuration
 features:
-- Install and manage C/C++ libraries
-- Search for available packages
-- Integrate with CMake build systems
-- Support multiple target architectures (triplets)
-- Build packages using specific toolchains
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Install and manage C/C++ libraries
+  - Search for available packages
+  - Integrate with CMake build systems
+  - Support multiple target architectures (triplets)
+  - Build packages using specific toolchains
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # vcpkg

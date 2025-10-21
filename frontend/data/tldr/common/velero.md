@@ -1,29 +1,29 @@
 ---
-title: "Velero - Backup Kubernetes Apps | Online Free DevTools by Hexmos"
+title: 'Velero - Backup Kubernetes Apps | Online Free DevTools by Hexmos'
 name: velero
-path: "/freedevtools/tldr/common/velero/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/velero/"
-description: "Backup Kubernetes applications with Velero. Secure your data, migrate clusters, and restore applications with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/velero/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/velero/'
+description: 'Backup Kubernetes applications with Velero. Secure your data, migrate clusters, and restore applications with ease. Free online tool, no registration required.'
 category: common
 keywords:
-- Kubernetes backup
-- Velero backup
-- Kubernetes restore
-- Velero restore
-- Kubernetes migration
-- Velero migration
-- Kubernetes disaster recovery
-- Velero disaster recovery
-- Kubernetes application backup
-- Velero CLI
+  - Kubernetes backup
+  - Velero backup
+  - Kubernetes restore
+  - Velero restore
+  - Kubernetes migration
+  - Velero migration
+  - Kubernetes disaster recovery
+  - Velero disaster recovery
+  - Kubernetes application backup
+  - Velero CLI
 features:
-- Create backups of Kubernetes resources
-- Schedule recurring Kubernetes backups
-- Restore Kubernetes applications from backups
-- Delete existing Kubernetes backups
-- Migrate Kubernetes applications between clusters
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create backups of Kubernetes resources
+  - Schedule recurring Kubernetes backups
+  - Restore Kubernetes applications from backups
+  - Delete existing Kubernetes backups
+  - Migrate Kubernetes applications between clusters
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # velero

@@ -1,29 +1,29 @@
 ---
-title: "Manage Torrents - Control Transmission Downloads | Online Free DevTools by Hexmos"
+title: 'Manage Torrents - Control Transmission Downloads | Online Free DevTools by Hexmos'
 name: transmission
-path: "/freedevtools/tldr/transmission/transmission/"
-canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission/"
-description: "Manage torrent downloads efficiently with Transmission. Control torrent sessions and manage files with this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/transmission/transmission/'
+canonical: 'https://hexmos.com/freedevtools/tldr/transmission/transmission/'
+description: 'Manage torrent downloads efficiently with Transmission. Control torrent sessions and manage files with this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- torrent manager
-- transmission client
-- bittorrent command line
-- torrent download control
-- transmission daemon control
-- torrent file creation
-- torrent file editing
-- transmission show torrent info
-- common transmission
-- linux transmission
+  - torrent manager
+  - transmission client
+  - bittorrent command line
+  - torrent download control
+  - transmission daemon control
+  - torrent file creation
+  - torrent file editing
+  - transmission show torrent info
+  - common transmission
+  - linux transmission
 features:
-- Control the Transmission daemon remotely
-- Create new torrent files
-- Modify existing torrent files
-- Display information about torrent files
-- Interact with the daemon via command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Control the Transmission daemon remotely
+  - Create new torrent files
+  - Modify existing torrent files
+  - Display information about torrent files
+  - Interact with the daemon via command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transmission

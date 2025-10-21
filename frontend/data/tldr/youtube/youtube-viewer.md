@@ -1,29 +1,29 @@
 ---
-title: "Youtube-viewer - Search and Play YouTube Videos | Online Free DevTools by Hexmos"
+title: 'Youtube-viewer - Search and Play YouTube Videos | Online Free DevTools by Hexmos'
 name: youtube-viewer
-path: "/freedevtools/tldr/youtube/youtube-viewer/"
-canonical: "https://hexmos.com/freedevtools/tldr/youtube/youtube-viewer/"
-description: "Search YouTube videos easily with youtube-viewer. Stream content, log in to your account, and specify playback quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/youtube/youtube-viewer/'
+canonical: 'https://hexmos.com/freedevtools/tldr/youtube/youtube-viewer/'
+description: 'Search YouTube videos easily with youtube-viewer. Stream content, log in to your account, and specify playback quality. Free online tool, no registration required.'
 category: common
 keywords:
-- youtube video search
-- youtube video player
-- youtube command line
-- youtube-viewer linux
-- youtube-viewer macos
-- youtube-viewer windows
-- youtube video stream
-- youtube search term
-- youtube account login
-- youtube video 720p
+  - youtube video search
+  - youtube video player
+  - youtube command line
+  - youtube-viewer linux
+  - youtube-viewer macos
+  - youtube-viewer windows
+  - youtube video stream
+  - youtube search term
+  - youtube account login
+  - youtube video 720p
 features:
-- Search for YouTube videos by keyword
-- Log in to a YouTube account
-- Play videos using a specific URL
-- Play videos in an external player (e.g., VLC)
-- Display a search prompt for easy video selection
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Search for YouTube videos by keyword
+  - Log in to a YouTube account
+  - Play videos using a specific URL
+  - Play videos in an external player (e.g., VLC)
+  - Display a search prompt for easy video selection
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # youtube-viewer

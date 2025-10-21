@@ -1,9 +1,9 @@
 ---
-title: "Setfattr - Control File Attributes | Online Free DevTools by Hexmos"
+title: 'Setfattr - Control File Attributes | Online Free DevTools by Hexmos'
 name: setfattr
-path: "/freedevtools/tldr/linux/setfattr/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/setfattr/"
-description: "Control file attributes with Setfattr.  Manage extended attributes on files easily and efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/setfattr/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/setfattr/'
+description: 'Control file attributes with Setfattr.  Manage extended attributes on files easily and efficiently. Free online tool, no registration required.'
 category: linux
 keywords:
   - file attribute management
@@ -22,8 +22,8 @@ features:
   - Modify existing extended file attributes.
   - Manage file metadata through command-line interface.
   - Works with various file systems supporting extended attributes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # setfattr

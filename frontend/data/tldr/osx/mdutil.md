@@ -1,29 +1,29 @@
 ---
-title: "Metadata Control - Manage Spotlight Indexing | Online Free DevTools by Hexmos"
+title: 'Metadata Control - Manage Spotlight Indexing | Online Free DevTools by Hexmos'
 name: mdutil
-path: "/freedevtools/tldr/osx/mdutil/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/mdutil/"
-description: "Manage spotlight indexing with mdutil on macOS. Control indexing status, enable/disable indexing, and erase metadata stores using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/mdutil/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/mdutil/'
+description: 'Manage spotlight indexing with mdutil on macOS. Control indexing status, enable/disable indexing, and erase metadata stores using the command line. Free online tool, no registration required.'
 category: osx
 keywords:
-- macos spotlight indexing
-- spotlight metadata management
-- mdutil command macos
-- osx indexing control
-- spotlight index rebuild
-- macos metadata store
-- disable spotlight indexing
-- enable spotlight indexing
-- macos command line tools
-- spotlight indexing status
+  - macos spotlight indexing
+  - spotlight metadata management
+  - mdutil command macos
+  - osx indexing control
+  - spotlight index rebuild
+  - macos metadata store
+  - disable spotlight indexing
+  - enable spotlight indexing
+  - macos command line tools
+  - spotlight indexing status
 features:
-- Show the indexing status of volumes.
-- Enable or disable Spotlight indexing for specific volumes.
-- Enable or disable Spotlight indexing for all volumes.
-- Erase the metadata stores for a volume.
-- Restart the Spotlight indexing process.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Show the indexing status of volumes.
+  - Enable or disable Spotlight indexing for specific volumes.
+  - Enable or disable Spotlight indexing for all volumes.
+  - Erase the metadata stores for a volume.
+  - Restart the Spotlight indexing process.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mdutil

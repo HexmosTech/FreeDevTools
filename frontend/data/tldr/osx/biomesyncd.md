@@ -1,29 +1,29 @@
 ---
-title: "Biomesyncd - Synchronize Data Between Devices | Online Free DevTools by Hexmos"
+title: 'Biomesyncd - Synchronize Data Between Devices | Online Free DevTools by Hexmos'
 name: biomesyncd
-path: "/freedevtools/tldr/osx/biomesyncd/"
-canonical: "https://hexmos.com/freedevtools/tldr/osx/biomesyncd/"
-description: "Synchronize data securely with Biomesyncd, ensuring seamless data transfer between devices. Monitor data flow and maintain consistent data states. Free online tool, no registration required."
+path: '/freedevtools/tldr/osx/biomesyncd/'
+canonical: 'https://hexmos.com/freedevtools/tldr/osx/biomesyncd/'
+description: 'Synchronize data securely with Biomesyncd, ensuring seamless data transfer between devices. Monitor data flow and maintain consistent data states. Free online tool, no registration required.'
 category: osx
 keywords:
-- data synchronization osx
-- device data syncing
-- osx data transfer
-- biomesyncd data management
-- account data syncing
-- osx device synchronization tool
-- biomesyncd daemon
-- secure data transfer
-- multi-device sync
-- macos data synchronization
+  - data synchronization osx
+  - device data syncing
+  - osx data transfer
+  - biomesyncd data management
+  - account data syncing
+  - osx device synchronization tool
+  - biomesyncd daemon
+  - secure data transfer
+  - multi-device sync
+  - macos data synchronization
 features:
-- Synchronizes data across registered devices
-- Maintains consistent data state between devices
-- Operates as a background daemon
-- Enables secure data transfer
-- Supports automatic data syncing
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronizes data across registered devices
+  - Maintains consistent data state between devices
+  - Operates as a background daemon
+  - Enables secure data transfer
+  - Supports automatic data syncing
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # biomesyncd

@@ -1,9 +1,9 @@
 ---
-title: "Getent - Retrieve System Database Entries | Online Free DevTools by Hexmos"
+title: 'Getent - Retrieve System Database Entries | Online Free DevTools by Hexmos'
 name: getent
-path: "/freedevtools/tldr/linux/getent/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/getent/"
-description: "Retrieve system database entries with Getent. Access group, user, service, and host information using Name Service Switch. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/getent/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/getent/'
+description: 'Retrieve system database entries with Getent. Access group, user, service, and host information using Name Service Switch. Free online tool, no registration required.'
 category: linux
 keywords:
   - getent entries
@@ -22,8 +22,8 @@ features:
   - List all available groups
   - Display members of a specific group
   - Retrieve a list of all available services
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # getent

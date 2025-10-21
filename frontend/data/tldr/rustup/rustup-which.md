@@ -1,29 +1,29 @@
 ---
-title: "Rustup Which - Locate Rust Binaries | Online Free DevTools by Hexmos"
+title: 'Rustup Which - Locate Rust Binaries | Online Free DevTools by Hexmos'
 name: rustup-which
-path: "/freedevtools/tldr/rustup/rustup-which/"
-canonical: "https://hexmos.com/freedevtools/tldr/rustup/rustup-which/"
-description: "Locate Rust binaries quickly with Rustup Which. Find the path of executables managed by Rustup in different toolchains. Free online tool, no registration required."
+path: '/freedevtools/tldr/rustup/rustup-which/'
+canonical: 'https://hexmos.com/freedevtools/tldr/rustup/rustup-which/'
+description: 'Locate Rust binaries quickly with Rustup Which. Find the path of executables managed by Rustup in different toolchains. Free online tool, no registration required.'
 category: common
 keywords:
-- rustup which
-- rust binary path
-- rust toolchain location
-- rust executable finder
-- rust environment variables
-- rust command lookup
-- rust development tools
-- cargo toolchain
-- rustup command-line
-- rust compiler path
+  - rustup which
+  - rust binary path
+  - rust toolchain location
+  - rust executable finder
+  - rust environment variables
+  - rust command lookup
+  - rust development tools
+  - cargo toolchain
+  - rustup command-line
+  - rust compiler path
 features:
-- Locate Rust binaries within a specified toolchain.
-- Determine the exact path of Rust executables.
-- Identify the Rust toolchain used for a specific command.
-- Integrate with Rustup for managing Rust versions.
-- Resolve binary paths in the default Rust toolchain.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Locate Rust binaries within a specified toolchain.
+  - Determine the exact path of Rust executables.
+  - Identify the Rust toolchain used for a specific command.
+  - Integrate with Rustup for managing Rust versions.
+  - Resolve binary paths in the default Rust toolchain.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rustup which

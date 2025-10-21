@@ -1,9 +1,9 @@
 ---
-title: "Create Online Books - With Mdbook | Online Free DevTools by Hexmos"
+title: 'Create Online Books - With Mdbook | Online Free DevTools by Hexmos'
 name: mdbook
-path: "/freedevtools/tldr/linux/mdbook/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/mdbook/"
-description: "Create online books easily with Mdbook. Build, serve, and watch Markdown files for automatic book generation. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mdbook/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/mdbook/'
+description: 'Create online books easily with Mdbook. Build, serve, and watch Markdown files for automatic book generation. Free online tool, no registration required.'
 category: linux
 keywords:
   - markdown book creator
@@ -22,8 +22,8 @@ features:
   - Serve an mdbook project locally for testing
   - Watch for changes and automatically rebuild
   - Clean the generated book directory
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mdbook

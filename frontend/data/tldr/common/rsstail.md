@@ -1,29 +1,29 @@
 ---
-title: "RSSTail - Monitor RSS Feeds | Online Free DevTools by Hexmos"
+title: 'RSSTail - Monitor RSS Feeds | Online Free DevTools by Hexmos'
 name: rsstail
-path: "/freedevtools/tldr/common/rsstail/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/rsstail/"
-description: "Monitor RSS feeds with RSSTail. Track website updates, new content, and blog posts in real-time directly from your terminal. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/rsstail/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/rsstail/'
+description: 'Monitor RSS feeds with RSSTail. Track website updates, new content, and blog posts in real-time directly from your terminal. Free online tool, no registration required.'
 category: common
 keywords:
-- RSS feed monitoring
-- command line RSS reader
-- terminal RSS feed
-- live RSS feed updates
-- RSS feed tail
-- website change tracker
-- news feed monitor
-- linux RSS reader
-- macos RSS reader
-- common command
+  - RSS feed monitoring
+  - command line RSS reader
+  - terminal RSS feed
+  - live RSS feed updates
+  - RSS feed tail
+  - website change tracker
+  - news feed monitor
+  - linux RSS reader
+  - macos RSS reader
+  - common command
 features:
-- Display RSS feed content
-- Monitor for new feed entries
-- Show feeds in reverse chronological order
-- Customize update interval
-- Display publication date and link
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display RSS feed content
+  - Monitor for new feed entries
+  - Show feeds in reverse chronological order
+  - Customize update interval
+  - Display publication date and link
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # rsstail

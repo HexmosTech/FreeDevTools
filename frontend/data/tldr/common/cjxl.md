@@ -1,29 +1,29 @@
 ---
-title: "Compress Images to JPEG XL - cjxl | Online Free DevTools by Hexmos"
+title: 'Compress Images to JPEG XL - cjxl | Online Free DevTools by Hexmos'
 name: cjxl
-path: "/freedevtools/tldr/common/cjxl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/cjxl/"
-description: "Compress images with cjxl to JPEG XL format. Reduce image size efficiently while retaining quality. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/cjxl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/cjxl/'
+description: 'Compress images with cjxl to JPEG XL format. Reduce image size efficiently while retaining quality. Free online tool, no registration required.'
 category: common
 keywords:
-- JPEG XL compression
-- JXL image encoder
-- Image compression tool
-- PNG to JXL converter
-- JPEG to JXL converter
-- Lossless image compression
-- cjxl image optimization
-- Command-line image compressor
-- Image format conversion
-- libjxl
+  - JPEG XL compression
+  - JXL image encoder
+  - Image compression tool
+  - PNG to JXL converter
+  - JPEG to JXL converter
+  - Lossless image compression
+  - cjxl image optimization
+  - Command-line image compressor
+  - Image format conversion
+  - libjxl
 features:
-- Compress images to JPEG XL format
-- Convert PNG, JPEG, and other image formats to JXL
-- Set quality and compression levels
-- Lossless image compression option
-- Display detailed help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress images to JPEG XL format
+  - Convert PNG, JPEG, and other image formats to JXL
+  - Set quality and compression levels
+  - Lossless image compression option
+  - Display detailed help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # cjxl

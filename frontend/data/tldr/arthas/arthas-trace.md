@@ -1,29 +1,29 @@
 ---
-title: "Arthas Trace - Trace Method Calls | Online Free DevTools by Hexmos"
+title: 'Arthas Trace - Trace Method Calls | Online Free DevTools by Hexmos'
 name: arthas-trace
-path: "/freedevtools/tldr/arthas/arthas-trace/"
-canonical: "https://hexmos.com/freedevtools/tldr/arthas/arthas-trace/"
-description: "Trace method calls with Arthas Trace, debug Java applications, and identify performance bottlenecks with detailed invocation chain analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/arthas/arthas-trace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/arthas/arthas-trace/'
+description: 'Trace method calls with Arthas Trace, debug Java applications, and identify performance bottlenecks with detailed invocation chain analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- Java method tracing
-- Arthas invocation chain analysis
-- JVM method call analysis
-- Java performance profiling
-- Arthas debugging
-- Java application troubleshooting
-- Arthas method execution analysis
-- JVM call stack tracing
-- Java bytecode instrumentation
-- Arthas command-line tool
+  - Java method tracing
+  - Arthas invocation chain analysis
+  - JVM method call analysis
+  - Java performance profiling
+  - Arthas debugging
+  - Java application troubleshooting
+  - Arthas method execution analysis
+  - JVM call stack tracing
+  - Java bytecode instrumentation
+  - Arthas command-line tool
 features:
-- Trace the execution path of Java methods
-- Measure the time spent in each method call
-- Filter trace output based on execution time thresholds
-- Analyze nested method invocations and their performance impact
-- Identify performance bottlenecks within Java applications
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trace the execution path of Java methods
+  - Measure the time spent in each method call
+  - Filter trace output based on execution time thresholds
+  - Analyze nested method invocations and their performance impact
+  - Identify performance bottlenecks within Java applications
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # arthas-trace

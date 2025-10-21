@@ -1,29 +1,29 @@
 ---
-title: "Mount CIFS - Access Network Shares on Linux | Online Free DevTools by Hexmos"
+title: 'Mount CIFS - Access Network Shares on Linux | Online Free DevTools by Hexmos'
 name: mount.cifs
-path: "/freedevtools/tldr/linux/mount-cifs/"
-canonical: "https://hexmos-com/freedevtools/tldr/linux/mount-cifs/"
-description: "Mount CIFS shares with mount.cifs on Linux for easy network access. Configure user credentials and permissions seamlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/mount-cifs/'
+canonical: 'https://hexmos-com/freedevtools/tldr/linux/mount-cifs/'
+description: 'Mount CIFS shares with mount.cifs on Linux for easy network access. Configure user credentials and permissions seamlessly. Free online tool, no registration required.'
 category: linux
 keywords:
-- CIFS mount
-- SMB mount
-- Linux mount CIFS
-- Network share mount
-- Samba share mount
-- CIFS client Linux
-- mount.cifs options
-- Linux file sharing
-- Command line CIFS mount
-- SMB client Linux
+  - CIFS mount
+  - SMB mount
+  - Linux mount CIFS
+  - Network share mount
+  - Samba share mount
+  - CIFS client Linux
+  - mount.cifs options
+  - Linux file sharing
+  - Command line CIFS mount
+  - SMB client Linux
 features:
-- Mount SMB/CIFS shares from a server
-- Authenticate with username and password
-- Connect as a guest user without credentials
-- Set user and group ownership for mounted directories
-- Mount network shares with specified user ID and group ID
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Mount SMB/CIFS shares from a server
+  - Authenticate with username and password
+  - Connect as a guest user without credentials
+  - Set user and group ownership for mounted directories
+  - Mount network shares with specified user ID and group ID
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mount.cifs

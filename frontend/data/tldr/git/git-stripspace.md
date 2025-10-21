@@ -1,29 +1,29 @@
 ---
-title: "Whitespace Trim - Format Git Text | Online Free DevTools by Hexmos"
+title: 'Whitespace Trim - Format Git Text | Online Free DevTools by Hexmos'
 name: git-stripspace
-path: "/freedevtools/tldr/git/git-stripspace/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-stripspace/"
-description: "Format Git text with git-stripspace. Clean commit messages and notes by trimming whitespace and comments. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-stripspace/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-stripspace/'
+description: 'Format Git text with git-stripspace. Clean commit messages and notes by trimming whitespace and comments. Free online tool, no registration required.'
 category: common
 keywords:
-- git whitespace trim
-- git stripspace command
-- git comment remover
-- git text formatter
-- git message cleaner
-- git notes editor
-- git branch description
-- git tag formatter
-- linux whitespace trim
-- macos git stripspace
+  - git whitespace trim
+  - git stripspace command
+  - git comment remover
+  - git text formatter
+  - git message cleaner
+  - git notes editor
+  - git branch description
+  - git tag formatter
+  - linux whitespace trim
+  - macos git stripspace
 features:
-- Trim whitespace from Git text input
-- Remove comments from Git commit messages
-- Convert text to Git comment format
-- Clean notes and tags for repository
-- Format branch descriptions automatically
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Trim whitespace from Git text input
+  - Remove comments from Git commit messages
+  - Convert text to Git comment format
+  - Clean notes and tags for repository
+  - Format branch descriptions automatically
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git stripspace

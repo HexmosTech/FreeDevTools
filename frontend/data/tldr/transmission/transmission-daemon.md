@@ -1,29 +1,29 @@
 ---
-title: "Transmission Daemon - Control Torrents | Online Free DevTools by Hexmos"
+title: 'Transmission Daemon - Control Torrents | Online Free DevTools by Hexmos'
 name: transmission-daemon
-path: "/freedevtools/tldr/transmission/transmission-daemon/"
-canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-daemon/"
-description: "Control torrent downloads with Transmission Daemon, a lightweight and efficient BitTorrent client. Manage downloads remotely and automate torrent handling. Free online tool, no registration required."
+path: '/freedevtools/tldr/transmission/transmission-daemon/'
+canonical: 'https://hexmos.com/freedevtools/tldr/transmission/transmission-daemon/'
+description: 'Control torrent downloads with Transmission Daemon, a lightweight and efficient BitTorrent client. Manage downloads remotely and automate torrent handling. Free online tool, no registration required.'
 category: common
 keywords:
-- transmission daemon
-- bittorrent daemon
-- torrent control
-- headless torrent client
-- transmission-remote
-- linux torrent
-- macos torrent
-- common torrent
-- torrent automation
-- command-line torrent
+  - transmission daemon
+  - bittorrent daemon
+  - torrent control
+  - headless torrent client
+  - transmission-remote
+  - linux torrent
+  - macos torrent
+  - common torrent
+  - torrent automation
+  - command-line torrent
 features:
-- Start a headless Transmission session.
-- Monitor a directory for new torrents.
-- Dump daemon settings to a JSON file.
-- Configure web interface authentication.
-- Specify allowed IP addresses for web interface access.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start a headless Transmission session.
+  - Monitor a directory for new torrents.
+  - Dump daemon settings to a JSON file.
+  - Configure web interface authentication.
+  - Specify allowed IP addresses for web interface access.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transmission-daemon

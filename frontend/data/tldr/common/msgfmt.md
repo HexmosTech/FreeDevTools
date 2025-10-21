@@ -1,29 +1,29 @@
 ---
-title: "Format Message Catalog - Compile PO Files with msgfmt | Online Free DevTools by Hexmos"
+title: 'Format Message Catalog - Compile PO Files with msgfmt | Online Free DevTools by Hexmos'
 name: msgfmt
-path: "/freedevtools/tldr/common/msgfmt/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/msgfmt/"
-description: "Format message catalogs with msgfmt. Compile .po files to .mo files for gettext localization. Streamline translation workflows. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/msgfmt/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/msgfmt/'
+description: 'Format message catalogs with msgfmt. Compile .po files to .mo files for gettext localization. Streamline translation workflows. Free online tool, no registration required.'
 category: common
 keywords:
-- message catalog formatter
-- PO file compiler
-- gettext MO file generator
-- localization compiler
-- msgfmt linux
-- msgfmt macOS
-- msgfmt command
-- compile translations
-- .po to .mo converter
-- gettext compiler
+  - message catalog formatter
+  - PO file compiler
+  - gettext MO file generator
+  - localization compiler
+  - msgfmt linux
+  - msgfmt macOS
+  - msgfmt command
+  - compile translations
+  - .po to .mo converter
+  - gettext compiler
 features:
-- Compiles .po files to .mo binary message catalogs
-- Converts message catalogs for gettext
-- Supports custom output file names
-- Provides help information via command-line arguments
-- Optimizes message catalogs for efficient lookup
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compiles .po files to .mo binary message catalogs
+  - Converts message catalogs for gettext
+  - Supports custom output file names
+  - Provides help information via command-line arguments
+  - Optimizes message catalogs for efficient lookup
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msgfmt

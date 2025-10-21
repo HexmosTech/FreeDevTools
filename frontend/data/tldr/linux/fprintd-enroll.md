@@ -1,9 +1,9 @@
 ---
-title: "Enroll Fingerprints - fprintd-enroll Management | Online Free DevTools by Hexmos"
+title: 'Enroll Fingerprints - fprintd-enroll Management | Online Free DevTools by Hexmos'
 name: fprintd-enroll
-path: "/freedevtools/tldr/linux/fprintd-enroll/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fprintd-enroll/"
-description: "Enroll fingerprints with fprintd-enroll command. Manage fingerprint database entries for user authentication. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/fprintd-enroll/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fprintd-enroll/'
+description: 'Enroll fingerprints with fprintd-enroll command. Manage fingerprint database entries for user authentication. Free online tool, no registration required.'
 category: linux
 keywords:
   - fingerprint enrollment command
@@ -22,8 +22,8 @@ features:
   - Allows enrollment for specific users.
   - Provides command-line interface for easy management.
   - Integrates with the fprintd fingerprint management daemon.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fprintd-enroll

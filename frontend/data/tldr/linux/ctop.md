@@ -1,9 +1,9 @@
 ---
-title: "Control Container Performance - ctop | Online Free DevTools by Hexmos"
+title: 'Control Container Performance - ctop | Online Free DevTools by Hexmos'
 name: ctop
-path: "/freedevtools/tldr/linux/ctop/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ctop/"
-description: "Control container performance metrics instantly with ctop. Monitor CPU usage, memory consumption, and IO operations in real-time. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ctop/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ctop/'
+description: 'Control container performance metrics instantly with ctop. Monitor CPU usage, memory consumption, and IO operations in real-time. Free online tool, no registration required.'
 category: linux
 keywords:
   - container performance monitoring
@@ -22,8 +22,8 @@ features:
   - Filter and sort containers by various metrics
   - Reverse the container sort order
   - Invert the default color scheme
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ctop

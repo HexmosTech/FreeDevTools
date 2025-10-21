@@ -1,29 +1,29 @@
 ---
-title: "Control minidlna - Stream Media with DLNA | Online Free DevTools by Hexmos"
+title: 'Control minidlna - Stream Media with DLNA | Online Free DevTools by Hexmos'
 name: minidlna
-path: "/freedevtools/tldr/common/minidlna/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/minidlna/"
-description: "Control media streaming with minidlna. Configure and manage your DLNA server to stream media to smart TVs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/minidlna/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/minidlna/'
+description: 'Control media streaming with minidlna. Configure and manage your DLNA server to stream media to smart TVs. Free online tool, no registration required.'
 category: common
 keywords:
-- DLNA media server
-- UPnP AV server
-- media streaming linux
-- minidlna configuration
-- linux media server
-- smart TV streaming
-- DLNA server configuration
-- media server control
-- network media streaming
-- linux streaming server
+  - DLNA media server
+  - UPnP AV server
+  - media streaming linux
+  - minidlna configuration
+  - linux media server
+  - smart TV streaming
+  - DLNA server configuration
+  - media server control
+  - network media streaming
+  - linux streaming server
 features:
-- Start the minidlna daemon with default settings
-- Specify a custom configuration file for minidlna
-- Force a database rescan on minidlna startup
-- Run minidlna in foreground for debugging
-- Specify a custom media directory for minidlna
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start the minidlna daemon with default settings
+  - Specify a custom configuration file for minidlna
+  - Force a database rescan on minidlna startup
+  - Run minidlna in foreground for debugging
+  - Specify a custom media directory for minidlna
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # minidlna

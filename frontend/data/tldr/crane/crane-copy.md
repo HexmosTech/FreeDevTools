@@ -1,29 +1,29 @@
 ---
-title: "Copy Image - Transfer Container Images with Crane | Online Free DevTools by Hexmos"
+title: 'Copy Image - Transfer Container Images with Crane | Online Free DevTools by Hexmos'
 name: crane-copy
-path: "/freedevtools/tldr/crane/crane-copy/"
-canonical: "https://hexmos.com/freedevtools/tldr/crane/crane-copy/"
-description: "Copy container images easily with Crane. Transfer images between registries, retain digests, and manage tags efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/crane/crane-copy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/crane/crane-copy/'
+description: 'Copy container images easily with Crane. Transfer images between registries, retain digests, and manage tags efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Container image copy
-- Docker image transfer
-- Crane image registry
-- Container registry copy
-- Image mirroring tool
-- Docker image copy tool
-- Container image replication
-- Registry image management
-- Command line image copy
-- Image digest preservation
+  - Container image copy
+  - Docker image transfer
+  - Crane image registry
+  - Container registry copy
+  - Image mirroring tool
+  - Docker image copy tool
+  - Container image replication
+  - Registry image management
+  - Command line image copy
+  - Image digest preservation
 features:
-- Copy container images between registries
-- Retain image digests during transfer
-- Copy all tags associated with an image
-- Limit concurrent copy jobs
-- Prevent overwriting existing tags
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Copy container images between registries
+  - Retain image digests during transfer
+  - Copy all tags associated with an image
+  - Limit concurrent copy jobs
+  - Prevent overwriting existing tags
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crane copy

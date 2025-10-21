@@ -1,29 +1,29 @@
 ---
-title: "Java Compiler - Compile Java Code | Online Free DevTools by Hexmos"
+title: 'Java Compiler - Compile Java Code | Online Free DevTools by Hexmos'
 name: javac
-path: "/freedevtools/tldr/common/javac/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/javac/"
-description: "Compile Java code with javac. Easily create executable Java programs from source code with this online tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/javac/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/javac/'
+description: 'Compile Java code with javac. Easily create executable Java programs from source code with this online tool. Free online tool, no registration required.'
 category: common
 keywords:
-- java compiler
-- java application compiler
-- compile java online
-- javac command
-- java development
-- java source code
-- class file generation
-- cross-platform java
-- javac flags
-- java command line
+  - java compiler
+  - java application compiler
+  - compile java online
+  - javac command
+  - java development
+  - java source code
+  - class file generation
+  - cross-platform java
+  - javac flags
+  - java command line
 features:
-- Compile single Java files
-- Compile multiple Java files simultaneously
-- Compile all Java files in a directory
-- Specify output directory for compiled class files
-- Generate executable Java bytecode
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compile single Java files
+  - Compile multiple Java files simultaneously
+  - Compile all Java files in a directory
+  - Specify output directory for compiled class files
+  - Generate executable Java bytecode
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # javac

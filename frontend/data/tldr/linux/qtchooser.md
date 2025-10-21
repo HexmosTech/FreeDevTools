@@ -1,29 +1,29 @@
 ---
-title: "Qt Version Control - Manage Qt Versions | Online Free DevTools by Hexmos"
+title: 'Qt Version Control - Manage Qt Versions | Online Free DevTools by Hexmos'
 name: qtchooser
-path: "/freedevtools/tldr/linux/qtchooser/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/qtchooser/"
-description: "Control Qt versions with Qtchooser. Manage multiple Qt installations and select the active version for development. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/qtchooser/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/qtchooser/'
+description: 'Control Qt versions with Qtchooser. Manage multiple Qt installations and select the active version for development. Free online tool, no registration required.'
 category: linux
 keywords:
-- Qt version control
-- Qt environment manager
-- Qt development linux
-- Qt configuration linux
-- Qt version selector
-- Qt qmake path
-- Qt binary versions
-- Qt application development
-- Qt install command
-- Linux Qt chooser
+  - Qt version control
+  - Qt environment manager
+  - Qt development linux
+  - Qt configuration linux
+  - Qt version selector
+  - Qt qmake path
+  - Qt binary versions
+  - Qt application development
+  - Qt install command
+  - Linux Qt chooser
 features:
-- List available Qt versions
-- Print Qt environment information
-- Run tools with specific Qt versions
-- Add Qt version entries
-- Display help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List available Qt versions
+  - Print Qt environment information
+  - Run tools with specific Qt versions
+  - Add Qt version entries
+  - Display help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qtchooser

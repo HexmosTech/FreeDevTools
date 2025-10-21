@@ -1,29 +1,29 @@
 ---
-title: "Format PHP Code - Pint Code Style Fixer | Online Free DevTools by Hexmos"
+title: 'Format PHP Code - Pint Code Style Fixer | Online Free DevTools by Hexmos'
 name: pint
-path: "/freedevtools/tldr/common/pint/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pint/"
-description: "Format PHP code with Pint, an opinionated PHP code style fixer. Enhance code readability and consistency using Laravel Pint. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pint/'
+description: 'Format PHP code with Pint, an opinionated PHP code style fixer. Enhance code readability and consistency using Laravel Pint. Free online tool, no registration required.'
 category: common
 keywords:
-- PHP code fixer
-- Laravel Pint
-- Code style formatter
-- PHP linting tool
-- PSR code style
-- PHP code beautifier
-- Code style standards
-- PHP coding standards
-- Automated code formatting
-- Pint configuration
+  - PHP code fixer
+  - Laravel Pint
+  - Code style formatter
+  - PHP linting tool
+  - PSR code style
+  - PHP code beautifier
+  - Code style standards
+  - PHP coding standards
+  - Automated code formatting
+  - Pint configuration
 features:
-- Automatically formats PHP code according to predefined rules
-- Enforces consistent coding style across projects
-- Integrates with PHP-CS-Fixer for advanced styling options
-- Supports custom configuration files for tailored formatting
-- Allows dry runs to preview changes before applying
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Automatically formats PHP code according to predefined rules
+  - Enforces consistent coding style across projects
+  - Integrates with PHP-CS-Fixer for advanced styling options
+  - Supports custom configuration files for tailored formatting
+  - Allows dry runs to preview changes before applying
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pint

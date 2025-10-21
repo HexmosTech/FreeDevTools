@@ -1,29 +1,29 @@
 ---
-title: "PSSH Control - Parallel SSH Execution | Online Free DevTools by Hexmos"
+title: 'PSSH Control - Parallel SSH Execution | Online Free DevTools by Hexmos'
 name: pssh
-path: "/freedevtools/tldr/common/pssh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pssh/"
-description: "Control parallel SSH connections with PSSH. Execute commands on multiple servers simultaneously for efficient system administration. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pssh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pssh/'
+description: 'Control parallel SSH connections with PSSH. Execute commands on multiple servers simultaneously for efficient system administration. Free online tool, no registration required.'
 category: common
 keywords:
-- parallel ssh execution
-- pssh command line
-- remote server control
-- linux server management
-- unix parallel execution
-- ssh batch commands
-- parallel process execution
-- distributed command execution
-- server automation tool
-- batch ssh tool
+  - parallel ssh execution
+  - pssh command line
+  - remote server control
+  - linux server management
+  - unix parallel execution
+  - ssh batch commands
+  - parallel process execution
+  - distributed command execution
+  - server automation tool
+  - batch ssh tool
 features:
-- Execute commands on multiple hosts simultaneously
-- Distribute commands via SSH in parallel
-- Specify host lists from a file
-- Manage SSH connections with custom arguments
-- Limit the number of parallel connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Execute commands on multiple hosts simultaneously
+  - Distribute commands via SSH in parallel
+  - Specify host lists from a file
+  - Manage SSH connections with custom arguments
+  - Limit the number of parallel connections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pssh

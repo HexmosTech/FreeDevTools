@@ -1,29 +1,29 @@
 ---
-title: "Generate Drupal Code - DCG | Online Free DevTools by Hexmos"
+title: 'Generate Drupal Code - DCG | Online Free DevTools by Hexmos'
 name: dcg
-path: "/freedevtools/tldr/common/dcg/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dcg/"
-description: "Generate Drupal code efficiently with DCG. Streamline module, service, and form creation. Boost Drupal development productivity. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dcg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dcg/'
+description: 'Generate Drupal code efficiently with DCG. Streamline module, service, and form creation. Boost Drupal development productivity. Free online tool, no registration required.'
 category: common
 keywords:
-- Drupal code generator
-- Drupal module generator
-- Drupal service generator
-- Drupal form generator
-- Drupal theme generator
-- Drupal code scaffolding
-- Drush code generator
-- Drupal CLI tools
-- PHP code generator
-- Drupal development tools
+  - Drupal code generator
+  - Drupal module generator
+  - Drupal service generator
+  - Drupal form generator
+  - Drupal theme generator
+  - Drupal code scaffolding
+  - Drush code generator
+  - Drupal CLI tools
+  - PHP code generator
+  - Drupal development tools
 features:
-- Generate Drupal modules with interactive wizard
-- Scaffold Drupal services and plugins
-- Create Drupal forms from the command line
-- Specify output directory for generated code
-- Generate code based on provided templates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate Drupal modules with interactive wizard
+  - Scaffold Drupal services and plugins
+  - Create Drupal forms from the command line
+  - Specify output directory for generated code
+  - Generate code based on provided templates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dcg

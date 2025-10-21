@@ -1,29 +1,29 @@
 ---
-title: "RDP Exploitation - Pentest RDP Servers | Online Free DevTools by Hexmos"
+title: 'RDP Exploitation - Pentest RDP Servers | Online Free DevTools by Hexmos'
 name: nxc-rdp
-path: "/freedevtools/tldr/nxc/nxc-rdp/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-rdp/"
-description: "Pentest RDP servers with nxc-rdp. Exploit remote desktop protocol for security audits and vulnerability assessment. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-rdp/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-rdp/'
+description: 'Pentest RDP servers with nxc-rdp. Exploit remote desktop protocol for security audits and vulnerability assessment. Free online tool, no registration required.'
 category: common
 keywords:
-- RDP exploitation tool
-- RDP pentesting command
-- Network credential brute forcing
-- Remote desktop screenshot capture
-- Windows RDP security audit
-- NXC RDP module
-- RDP login prompt screenshot
-- Network Level Authentication bypass
-- Penetration testing RDP
-- Security scanning RDP servers
+  - RDP exploitation tool
+  - RDP pentesting command
+  - Network credential brute forcing
+  - Remote desktop screenshot capture
+  - Windows RDP security audit
+  - NXC RDP module
+  - RDP login prompt screenshot
+  - Network Level Authentication bypass
+  - Penetration testing RDP
+  - Security scanning RDP servers
 features:
-- Brute-force RDP credentials using username and password lists.
-- Capture screenshots of RDP sessions with custom delay.
-- Specify resolution for RDP session screenshots.
-- Capture screenshot of RDP login prompt even if NLA is disabled.
-- Automate RDP vulnerability assessment and exploit checks.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Brute-force RDP credentials using username and password lists.
+  - Capture screenshots of RDP sessions with custom delay.
+  - Specify resolution for RDP session screenshots.
+  - Capture screenshot of RDP login prompt even if NLA is disabled.
+  - Automate RDP vulnerability assessment and exploit checks.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc rdp

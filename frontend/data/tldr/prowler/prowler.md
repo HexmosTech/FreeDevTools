@@ -1,29 +1,29 @@
 ---
-title: "Audit Security - Prowler Compliance Checks | Online Free DevTools by Hexmos"
+title: 'Audit Security - Prowler Compliance Checks | Online Free DevTools by Hexmos'
 name: prowler
-path: "/freedevtools/tldr/prowler/prowler/"
-canonical: "https://hexmos.com/freedevtools/tldr/prowler/prowler/"
-description: "Audit security best practices with Prowler across AWS, Azure, GCP and Kubernetes. Perform compliance checks and generate security assessments. Free online tool, no registration required."
+path: '/freedevtools/tldr/prowler/prowler/'
+canonical: 'https://hexmos.com/freedevtools/tldr/prowler/prowler/'
+description: 'Audit security best practices with Prowler across AWS, Azure, GCP and Kubernetes. Perform compliance checks and generate security assessments. Free online tool, no registration required.'
 category: common
 keywords:
-- cloud security audit
-- AWS security assessment
-- Azure security compliance
-- GCP security benchmark
-- Kubernetes security audit
-- prowler security checks
-- security best practices
-- cloud compliance scanner
-- cybersecurity audit tool
-- prowler open source
+  - cloud security audit
+  - AWS security assessment
+  - Azure security compliance
+  - GCP security benchmark
+  - Kubernetes security audit
+  - prowler security checks
+  - security best practices
+  - cloud compliance scanner
+  - cybersecurity audit tool
+  - prowler open source
 features:
-- Audit AWS, Azure, GCP, and Kubernetes security configurations
-- Generate compliance reports in multiple formats (CSV, JSON-ASFF, HTML)
-- Filter findings by status (PASS, FAIL, MANUAL)
-- List available security checks for specific cloud providers
-- Execute audits in verbose mode for detailed output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Audit AWS, Azure, GCP, and Kubernetes security configurations
+  - Generate compliance reports in multiple formats (CSV, JSON-ASFF, HTML)
+  - Filter findings by status (PASS, FAIL, MANUAL)
+  - List available security checks for specific cloud providers
+  - Execute audits in verbose mode for detailed output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # prowler

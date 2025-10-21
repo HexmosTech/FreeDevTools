@@ -1,29 +1,29 @@
 ---
-title: "Metasploit Console - Exploit Systems | Online Free DevTools by Hexmos"
+title: 'Metasploit Console - Exploit Systems | Online Free DevTools by Hexmos'
 name: msfconsole
-path: "/freedevtools/tldr/common/msfconsole/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/msfconsole/"
-description: "Exploit systems with Metasploit Console, a powerful penetration testing framework. Conduct vulnerability assessments and security audits efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/msfconsole/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/msfconsole/'
+description: 'Exploit systems with Metasploit Console, a powerful penetration testing framework. Conduct vulnerability assessments and security audits efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Metasploit Console exploitation
-- Penetration testing framework
-- Security auditing tool
-- Vulnerability assessment scanner
-- Exploit development platform
-- Msfconsole command line
-- Reverse engineering tool
-- Network security analysis
-- Exploit execution tool
-- Penetration testing Kali Linux
+  - Metasploit Console exploitation
+  - Penetration testing framework
+  - Security auditing tool
+  - Vulnerability assessment scanner
+  - Exploit development platform
+  - Msfconsole command line
+  - Reverse engineering tool
+  - Network security analysis
+  - Exploit execution tool
+  - Penetration testing Kali Linux
 features:
-- Launch the Metasploit console
-- Execute commands within the console
-- Disable database support
-- Run quietly without banner output
-- Display version and help information
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Launch the Metasploit console
+  - Execute commands within the console
+  - Disable database support
+  - Run quietly without banner output
+  - Display version and help information
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # msfconsole

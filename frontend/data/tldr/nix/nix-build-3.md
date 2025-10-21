@@ -1,29 +1,29 @@
 ---
-title: "Nix Build - Generate Packages Effortlessly | Online Free DevTools by Hexmos"
+title: 'Nix Build - Generate Packages Effortlessly | Online Free DevTools by Hexmos'
 name: nix-build.3
-path: "/freedevtools/tldr/nix/nix-build-3/"
-canonical: "https://hexmos-com/freedevtools/tldr/nix/nix-build-3/"
-description: "Generate packages easily with Nix Build, utilizing Nix expressions and flake support. Manage builds, print paths, and avoid symlinks. Free online tool, no registration required."
+path: '/freedevtools/tldr/nix/nix-build-3/'
+canonical: 'https://hexmos-com/freedevtools/tldr/nix/nix-build-3/'
+description: 'Generate packages easily with Nix Build, utilizing Nix expressions and flake support. Manage builds, print paths, and avoid symlinks. Free online tool, no registration required.'
 category: common
 keywords:
-- nix package build
-- nix expression build
-- nix flake build
-- nix package manager
-- nixos package
-- linux package build
-- macos package build
-- declarative package management
-- reproducible builds
-- nix build command
+  - nix package build
+  - nix expression build
+  - nix flake build
+  - nix package manager
+  - nixos package
+  - linux package build
+  - macos package build
+  - declarative package management
+  - reproducible builds
+  - nix build command
 features:
-- Build packages from Nix expressions
-- Utilize flakes for package definitions
-- Print store paths without creating symlinks
-- Build packages from nixpkgs repository
-- Show build logs during the build process
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build packages from Nix expressions
+  - Utilize flakes for package definitions
+  - Print store paths without creating symlinks
+  - Build packages from nixpkgs repository
+  - Show build logs during the build process
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nix build

@@ -1,29 +1,29 @@
 ---
-title: "Authenticate Kerberos - Get Tickets with kinit | Online Free DevTools by Hexmos"
+title: 'Authenticate Kerberos - Get Tickets with kinit | Online Free DevTools by Hexmos'
 name: kinit
-path: "/freedevtools/tldr/common/kinit/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/kinit/"
-description: "Authenticate Kerberos principals with kinit. Obtain and renew tickets for users, services, and applications easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/kinit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/kinit/'
+description: 'Authenticate Kerberos principals with kinit. Obtain and renew tickets for users, services, and applications easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Kerberos authentication
-- Kerberos ticket
-- kinit command
-- Kerberos principal
-- Kerberos realm
-- Ticket granting ticket
-- Kerberos keytab
-- Linux Kerberos
-- MacOS Kerberos
-- kinit renew ticket
+  - Kerberos authentication
+  - Kerberos ticket
+  - kinit command
+  - Kerberos principal
+  - Kerberos realm
+  - Ticket granting ticket
+  - Kerberos keytab
+  - Linux Kerberos
+  - MacOS Kerberos
+  - kinit renew ticket
 features:
-- Authenticate a user with a Kerberos server
-- Obtain a ticket-granting ticket
-- Renew an existing Kerberos ticket
-- Specify a custom lifetime for a ticket
-- Authenticate with a specific keytab file
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Authenticate a user with a Kerberos server
+  - Obtain a ticket-granting ticket
+  - Renew an existing Kerberos ticket
+  - Specify a custom lifetime for a ticket
+  - Authenticate with a specific keytab file
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kinit

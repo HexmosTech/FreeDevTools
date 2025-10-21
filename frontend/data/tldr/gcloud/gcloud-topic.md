@@ -1,29 +1,29 @@
 ---
-title: "Gcloud Topic - Display Google Cloud Topics | Online Free DevTools by Hexmos"
+title: 'Gcloud Topic - Display Google Cloud Topics | Online Free DevTools by Hexmos'
 name: gcloud-topic
-path: "/freedevtools/tldr/gcloud/gcloud-topic/"
-canonical: "https://hexmos.com/freedevtools/tldr/gcloud/gcloud-topic/"
-description: "Display Google Cloud topic help with Gcloud Topic. Explore supplementary help for accessibility, filtering, and formatting options. Free online tool, no registration required."
+path: '/freedevtools/tldr/gcloud/gcloud-topic/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gcloud/gcloud-topic/'
+description: 'Display Google Cloud topic help with Gcloud Topic. Explore supplementary help for accessibility, filtering, and formatting options. Free online tool, no registration required.'
 category: common
 keywords:
-- gcloud topic help
-- google cloud topics
-- gcloud command help
-- gcloud filtering
-- gcloud formatting
-- gcloud accessibility
-- cloud sdk topic
-- gcloud linux
-- gcloud macos
-- gcloud windows
+  - gcloud topic help
+  - google cloud topics
+  - gcloud command help
+  - gcloud filtering
+  - gcloud formatting
+  - gcloud accessibility
+  - cloud sdk topic
+  - gcloud linux
+  - gcloud macos
+  - gcloud windows
 features:
-- Display help for gcloud topics
-- List available gcloud topics
-- View supplementary help material
-- Explore filtering options
-- Explore formatting options
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display help for gcloud topics
+  - List available gcloud topics
+  - View supplementary help material
+  - Explore filtering options
+  - Explore formatting options
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gcloud topic

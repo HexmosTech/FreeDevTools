@@ -1,29 +1,29 @@
 ---
-title: "Lstopo - Show Hardware Topology | Online Free DevTools by Hexmos"
+title: 'Lstopo - Show Hardware Topology | Online Free DevTools by Hexmos'
 name: lstopo
-path: "/freedevtools/tldr/common/lstopo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/lstopo/"
-description: "Show hardware topology with Lstopo. Visualize system hardware components and their relationships. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/lstopo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/lstopo/'
+description: 'Show hardware topology with Lstopo. Visualize system hardware components and their relationships. Free online tool, no registration required.'
 category: common
 keywords:
-- hardware topology viewer
-- lstopo topology display
-- system hardware information
-- Linux hardware topology
-- CPU topology visualization
-- PCI device listing
-- NUMA node display
-- hardware resource allocation
-- graphical topology representation
-- machine architecture overview
+  - hardware topology viewer
+  - lstopo topology display
+  - system hardware information
+  - Linux hardware topology
+  - CPU topology visualization
+  - PCI device listing
+  - NUMA node display
+  - hardware resource allocation
+  - graphical topology representation
+  - machine architecture overview
 features:
-- Display system hardware topology graphically
-- Show physical indices as seen by the OS
-- Output topology in various formats (XML, PDF, PNG, etc.)
-- Summarize or show full hardware topology details
-- Represent topology in monochrome or greyscale
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display system hardware topology graphically
+  - Show physical indices as seen by the OS
+  - Output topology in various formats (XML, PDF, PNG, etc.)
+  - Summarize or show full hardware topology details
+  - Represent topology in monochrome or greyscale
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # lstopo

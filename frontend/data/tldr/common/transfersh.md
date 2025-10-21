@@ -1,29 +1,29 @@
 ---
-title: "Upload Files with transfersh - Share Files | Online Free DevTools by Hexmos"
+title: 'Upload Files with transfersh - Share Files | Online Free DevTools by Hexmos'
 name: transfersh
-path: "/freedevtools/tldr/common/transfersh/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/transfersh/"
-description: "Upload files quickly with transfersh, a command-line tool for effortless file sharing. Securely transfer files with this simple and efficient command. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/transfersh/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/transfersh/'
+description: 'Upload files quickly with transfersh, a command-line tool for effortless file sharing. Securely transfer files with this simple and efficient command. Free online tool, no registration required.'
 category: common
 keywords:
-- file sharing command
-- command line file upload
-- transfersh file transfer
-- command line transfer.sh
-- share files from terminal
-- linux file upload
-- macos file upload
-- transfersh command
-- file upload cli
-- terminal file sharing
+  - file sharing command
+  - command line file upload
+  - transfersh file transfer
+  - command line transfer.sh
+  - share files from terminal
+  - linux file upload
+  - macos file upload
+  - transfersh command
+  - file upload cli
+  - terminal file sharing
 features:
-- Upload files to transfer.sh from the command line
-- Specify a custom filename for uploaded files
-- Upload entire directories recursively
-- Use a custom transfer.sh server
-- Upload a directory as an uncompressed tar archive
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Upload files to transfer.sh from the command line
+  - Specify a custom filename for uploaded files
+  - Upload entire directories recursively
+  - Use a custom transfer.sh server
+  - Upload a directory as an uncompressed tar archive
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transfersh

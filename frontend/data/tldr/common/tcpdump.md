@@ -1,29 +1,29 @@
 ---
-title: "Tcpdump - Capture Network Traffic | Online Free DevTools by Hexmos"
+title: 'Tcpdump - Capture Network Traffic | Online Free DevTools by Hexmos'
 name: tcpdump
-path: "/freedevtools/tldr/common/tcpdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tcpdump/"
-description: "Capture network traffic with Tcpdump. Analyze packets, filter by host, port, and interface, and troubleshoot network issues. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tcpdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tcpdump/'
+description: 'Capture network traffic with Tcpdump. Analyze packets, filter by host, port, and interface, and troubleshoot network issues. Free online tool, no registration required.'
 category: common
 keywords:
-- Network packet capture
-- Tcpdump packet analyzer
-- Network traffic analysis
-- Linux network debugging
-- Command-line packet sniffer
-- Pcap file analysis
-- Network protocol analysis
-- Tcpdump filter expressions
-- Network security monitoring
-- Network troubleshooting tool
+  - Network packet capture
+  - Tcpdump packet analyzer
+  - Network traffic analysis
+  - Linux network debugging
+  - Command-line packet sniffer
+  - Pcap file analysis
+  - Network protocol analysis
+  - Tcpdump filter expressions
+  - Network security monitoring
+  - Network troubleshooting tool
 features:
-- Capture network traffic from specific interfaces
-- Filter traffic based on host, port, and protocol
-- Write captured traffic to pcap files
-- Read and analyze pcap files
-- Display captured traffic in ASCII format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture network traffic from specific interfaces
+  - Filter traffic based on host, port, and protocol
+  - Write captured traffic to pcap files
+  - Read and analyze pcap files
+  - Display captured traffic in ASCII format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tcpdump

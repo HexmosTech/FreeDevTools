@@ -1,9 +1,9 @@
 ---
-title: "Manage Packages with dpkg - Debian Package Control | Online Free DevTools by Hexmos"
+title: 'Manage Packages with dpkg - Debian Package Control | Online Free DevTools by Hexmos'
 name: dpkg
-path: "/freedevtools/tldr/linux/dpkg/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/dpkg/"
-description: "Control Debian packages easily with dpkg. Install, remove, list, and manage packages via command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/dpkg/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/dpkg/'
+description: 'Control Debian packages easily with dpkg. Install, remove, list, and manage packages via command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - debian package manager
@@ -22,8 +22,8 @@ features:
   - List installed Debian packages and their details.
   - Search for files belonging to specific packages.
   - Completely purge packages including configuration files.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dpkg

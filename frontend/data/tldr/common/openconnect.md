@@ -1,29 +1,29 @@
 ---
-title: "OpenConnect VPN - Connect to VPN Servers | Online Free DevTools by Hexmos"
+title: 'OpenConnect VPN - Connect to VPN Servers | Online Free DevTools by Hexmos'
 name: openconnect
-path: "/freedevtools/tldr/common/openconnect/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/openconnect/"
-description: "Connect to VPN servers securely with OpenConnect VPN client. Establish secure connections, manage configurations, and authenticate with certificates. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/openconnect/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/openconnect/'
+description: 'Connect to VPN servers securely with OpenConnect VPN client. Establish secure connections, manage configurations, and authenticate with certificates. Free online tool, no registration required.'
 category: common
 keywords:
-- openconnect vpn client
-- vpn connection manager
-- secure vpn connection
-- cisco anyconnect client
-- linux vpn client
-- command line vpn
-- vpn configuration file
-- ssl certificate authentication
-- vpn background process
-- terminate vpn connection
+  - openconnect vpn client
+  - vpn connection manager
+  - secure vpn connection
+  - cisco anyconnect client
+  - linux vpn client
+  - command line vpn
+  - vpn configuration file
+  - ssl certificate authentication
+  - vpn background process
+  - terminate vpn connection
 features:
-- Establish secure VPN connections to servers
-- Run VPN connections in the background
-- Terminate existing VPN connections gracefully
-- Read connection options from configuration files
-- Authenticate using specific SSL client certificates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Establish secure VPN connections to servers
+  - Run VPN connections in the background
+  - Terminate existing VPN connections gracefully
+  - Read connection options from configuration files
+  - Authenticate using specific SSL client certificates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openconnect

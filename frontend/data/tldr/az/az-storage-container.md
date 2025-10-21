@@ -1,29 +1,29 @@
 ---
-title: "Storage Container - Manage Azure Blobs | Online Free DevTools by Hexmos"
+title: 'Storage Container - Manage Azure Blobs | Online Free DevTools by Hexmos'
 name: az-storage-container
-path: "/freedevtools/tldr/az/az-storage-container/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-storage-container/"
-description: "Manage Azure blob storage containers with az-storage-container. Generate SAS tokens and control access levels. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-storage-container/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-storage-container/'
+description: 'Manage Azure blob storage containers with az-storage-container. Generate SAS tokens and control access levels. Free online tool, no registration required.'
 category: common
 keywords:
-- azure blob storage container
-- azure storage management
-- container access control
-- storage shared access signature
-- azure container list
-- azure container delete
-- az storage command
-- blob container sas token
-- azure cli storage
-- storage container permissions
+  - azure blob storage container
+  - azure storage management
+  - container access control
+  - storage shared access signature
+  - azure container list
+  - azure container delete
+  - az storage command
+  - blob container sas token
+  - azure cli storage
+  - storage container permissions
 features:
-- Create new Azure blob storage containers
-- Generate shared access signatures for containers
-- List containers within a storage account
-- Delete specified containers from Azure storage
-- Configure public access levels for containers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create new Azure blob storage containers
+  - Generate shared access signatures for containers
+  - List containers within a storage account
+  - Delete specified containers from Azure storage
+  - Configure public access levels for containers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az storage container

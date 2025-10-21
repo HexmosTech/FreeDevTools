@@ -1,29 +1,29 @@
 ---
-title: "VBoxManage - Start Virtual Machines | Online Free DevTools by Hexmos"
+title: 'VBoxManage - Start Virtual Machines | Online Free DevTools by Hexmos'
 name: vboxmanage-startvm
-path: "/freedevtools/tldr/vboxmanager/vboxmanage-startvm/"
-canonical: "https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-startvm/"
-description: "Start virtual machines with VBoxManage. Manage virtual machine instances, including headless and GUI modes, efficiently using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/vboxmanager/vboxmanage-startvm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/vboxmanager/vboxmanage-startvm/'
+description: 'Start virtual machines with VBoxManage. Manage virtual machine instances, including headless and GUI modes, efficiently using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- virtual machine control
-- vboxmanage start vm
-- virtualbox vm management
-- vm headless start
-- vm gui start
-- vm password protection
-- vm environment variables
-- virtual machine uuid
-- virtualbox command line
-- cross-platform vm
+  - virtual machine control
+  - vboxmanage start vm
+  - virtualbox vm management
+  - vm headless start
+  - vm gui start
+  - vm password protection
+  - vm environment variables
+  - virtual machine uuid
+  - virtualbox command line
+  - cross-platform vm
 features:
-- Start virtual machines with specified UUID or name
-- Launch VMs in different UI modes (headless, GUI, SDL, separate)
-- Secure encrypted VMs using password files
-- Secure encrypted VMs using password IDs
-- Set environment variables when starting virtual machines
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Start virtual machines with specified UUID or name
+  - Launch VMs in different UI modes (headless, GUI, SDL, separate)
+  - Secure encrypted VMs using password files
+  - Secure encrypted VMs using password IDs
+  - Set environment variables when starting virtual machines
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # VBoxManage startvm

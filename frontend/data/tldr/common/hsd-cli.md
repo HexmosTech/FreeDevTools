@@ -1,29 +1,29 @@
 ---
-title: "Control Handshake Blockchain - hsd-cli | Online Free DevTools by Hexmos"
+title: 'Control Handshake Blockchain - hsd-cli | Online Free DevTools by Hexmos'
 name: hsd-cli
-path: "/freedevtools/tldr/common/hsd-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/hsd-cli/"
-description: "Control the Handshake blockchain with hsd-cli. Retrieve information, broadcast transactions, and view blocks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/hsd-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/hsd-cli/'
+description: 'Control the Handshake blockchain with hsd-cli. Retrieve information, broadcast transactions, and view blocks. Free online tool, no registration required.'
 category: common
 keywords:
-- handshake blockchain control
-- hsd-cli command line
-- blockchain transaction broadcast
-- hsd node management
-- blockchain mempool snapshot
-- hsd-cli transaction viewer
-- hsd-cli block explorer
-- handshake address lookup
-- blockchain chain reset
-- hsd-cli rpc execution
+  - handshake blockchain control
+  - hsd-cli command line
+  - blockchain transaction broadcast
+  - hsd node management
+  - blockchain mempool snapshot
+  - hsd-cli transaction viewer
+  - hsd-cli block explorer
+  - handshake address lookup
+  - blockchain chain reset
+  - hsd-cli rpc execution
 features:
-- Retrieve Handshake blockchain information
-- Broadcast transactions to the network
-- View mempool snapshot details
-- Inspect transactions by address or hash
-- Examine blocks by height or hash
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Retrieve Handshake blockchain information
+  - Broadcast transactions to the network
+  - View mempool snapshot details
+  - Inspect transactions by address or hash
+  - Examine blocks by height or hash
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # hsd-cli

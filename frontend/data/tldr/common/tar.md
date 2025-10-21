@@ -1,29 +1,29 @@
 ---
-title: "Create Tar Archives - Archiving Utility | Online Free DevTools by Hexmos"
+title: 'Create Tar Archives - Archiving Utility | Online Free DevTools by Hexmos'
 name: tar
-path: "/freedevtools/tldr/common/tar/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/tar/"
-description: "Create tar archives with Tar. An archiving utility frequently used with gzip or bzip2 for compression. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/tar/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/tar/'
+description: 'Create tar archives with Tar. An archiving utility frequently used with gzip or bzip2 for compression. Free online tool, no registration required.'
 category: common
 keywords:
-- tar archive creation
-- tar compression utility
-- gzip tar archive
-- bzip2 tar archive
-- linux tar command
-- unix tar command
-- tar extract files
-- tar list contents
-- tar file management
-- tar archive manager
+  - tar archive creation
+  - tar compression utility
+  - gzip tar archive
+  - bzip2 tar archive
+  - linux tar command
+  - unix tar command
+  - tar extract files
+  - tar list contents
+  - tar file management
+  - tar archive manager
 features:
-- Create tar archives from files and directories
-- Compress tar archives with gzip or bzip2
-- Extract files from tar archives
-- List the contents of a tar archive verbosely
-- Automatically determine compression program based on file extension
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create tar archives from files and directories
+  - Compress tar archives with gzip or bzip2
+  - Extract files from tar archives
+  - List the contents of a tar archive verbosely
+  - Automatically determine compression program based on file extension
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # tar

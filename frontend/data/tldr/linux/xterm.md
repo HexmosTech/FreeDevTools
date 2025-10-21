@@ -1,9 +1,9 @@
 ---
-title: "Control XTerm - Terminal Emulator for X Window System | Online Free DevTools by Hexmos"
+title: 'Control XTerm - Terminal Emulator for X Window System | Online Free DevTools by Hexmos'
 name: xterm
-path: "/freedevtools/tldr/linux/xterm/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/xterm/"
-description: "Control terminal sessions with XTerm, a powerful terminal emulator for the X Window System. Customize appearance, geometry, and fonts with ease. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/xterm/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/xterm/'
+description: 'Control terminal sessions with XTerm, a powerful terminal emulator for the X Window System. Customize appearance, geometry, and fonts with ease. Free online tool, no registration required.'
 category: linux
 keywords:
   - xterm terminal emulator
@@ -22,8 +22,8 @@ features:
   - Open terminal sessions in fullscreen mode
   - Specify terminal title for easy identification
   - Configure characters per line and number of lines
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # xterm

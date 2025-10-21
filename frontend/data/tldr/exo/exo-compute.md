@@ -1,29 +1,29 @@
 ---
-title: "Manage Compute Resources - Exoscale Compute | Online Free DevTools by Hexmos"
+title: 'Manage Compute Resources - Exoscale Compute | Online Free DevTools by Hexmos'
 name: exo-compute
-path: "/freedevtools/tldr/exo/exo-compute/"
-canonical: "https://hexmos.com/freedevtools/tldr/exo/exo-compute/"
-description: "Manage Exoscale compute resources with Exoscale Compute. Deploy instances, configure security groups, and manage load balancers easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/exo/exo-compute/'
+canonical: 'https://hexmos.com/freedevtools/tldr/exo/exo-compute/'
+description: 'Manage Exoscale compute resources with Exoscale Compute. Deploy instances, configure security groups, and manage load balancers easily. Free online tool, no registration required.'
 category: common
 keywords:
-- exoscale compute manager
-- cloud compute resource management
-- virtual instance controller
-- security group configuration
-- load balancer service editor
-- ssh key registration exoscale
-- snapshot template creator
-- exoscale command line tools
-- compute instance deployer
-- network rule modifier
+  - exoscale compute manager
+  - cloud compute resource management
+  - virtual instance controller
+  - security group configuration
+  - load balancer service editor
+  - ssh key registration exoscale
+  - snapshot template creator
+  - exoscale command line tools
+  - compute instance deployer
+  - network rule modifier
 features:
-- Deploy and manage Exoscale Compute instances.
-- Configure security group rules for network access.
-- Manage services of Exoscale Network Load Balancers.
-- Register SSH keys for secure instance access.
-- Register instance templates from snapshots.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Deploy and manage Exoscale Compute instances.
+  - Configure security group rules for network access.
+  - Manage services of Exoscale Network Load Balancers.
+  - Register SSH keys for secure instance access.
+  - Register instance templates from snapshots.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # exo compute

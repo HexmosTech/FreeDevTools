@@ -1,29 +1,29 @@
 ---
-title: "Gunicorn Server - Run Python Web Apps | Online Free DevTools by Hexmos"
+title: 'Gunicorn Server - Run Python Web Apps | Online Free DevTools by Hexmos'
 name: gunicorn
-path: "/freedevtools/tldr/common/gunicorn/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gunicorn/"
-description: "Run Python web apps easily with Gunicorn HTTP server. Configure ports, workers, and enable HTTPS for secure deployments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gunicorn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gunicorn/'
+description: 'Run Python web apps easily with Gunicorn HTTP server. Configure ports, workers, and enable HTTPS for secure deployments. Free online tool, no registration required.'
 category: common
 keywords:
-- python wsgi server
-- gunicorn web app deployment
-- gunicorn http server
-- gunicorn python server
-- gunicorn configuration
-- gunicorn command line
-- gunicorn reverse proxy
-- gunicorn worker process
-- gunicorn https configuration
-- gunicorn localhost
+  - python wsgi server
+  - gunicorn web app deployment
+  - gunicorn http server
+  - gunicorn python server
+  - gunicorn configuration
+  - gunicorn command line
+  - gunicorn reverse proxy
+  - gunicorn worker process
+  - gunicorn https configuration
+  - gunicorn localhost
 features:
-- Run Python web applications
-- Configure server port and address
-- Enable automatic live reloading
-- Manage worker processes and threads
-- Configure HTTPS with certificates
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run Python web applications
+  - Configure server port and address
+  - Enable automatic live reloading
+  - Manage worker processes and threads
+  - Configure HTTPS with certificates
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gunicorn

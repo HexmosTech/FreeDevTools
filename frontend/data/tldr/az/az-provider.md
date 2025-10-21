@@ -1,29 +1,29 @@
 ---
-title: "Azure Provider - Manage Resource Providers | Online Free DevTools by Hexmos"
+title: 'Azure Provider - Manage Resource Providers | Online Free DevTools by Hexmos'
 name: az-provider
-path: "/freedevtools/tldr/az/az-provider/"
-canonical: "https://hexmos.com/freedevtools/tldr/az/az-provider/"
-description: "Manage Azure resource providers with Az Provider. Register, unregister, list and show information. Free online tool, no registration required."
+path: '/freedevtools/tldr/az/az-provider/'
+canonical: 'https://hexmos.com/freedevtools/tldr/az/az-provider/'
+description: 'Manage Azure resource providers with Az Provider. Register, unregister, list and show information. Free online tool, no registration required.'
 category: common
 keywords:
-- azure resource provider manager
-- az provider register
-- az provider unregister
-- azure subscription provider list
-- azure provider information
-- azure resource types
-- azure cloud management
-- azure cli command
-- resource provider automation
-- cloud resource management
+  - azure resource provider manager
+  - az provider register
+  - az provider unregister
+  - azure subscription provider list
+  - azure provider information
+  - azure resource types
+  - azure cloud management
+  - azure cli command
+  - resource provider automation
+  - cloud resource management
 features:
-- Register Azure resource providers
-- Unregister Azure resource providers
-- List all providers for an Azure subscription
-- Show information about a specific provider
-- List resource types for a provider
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Register Azure resource providers
+  - Unregister Azure resource providers
+  - List all providers for an Azure subscription
+  - Show information about a specific provider
+  - List resource types for a provider
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # az provider

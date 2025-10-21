@@ -1,9 +1,9 @@
 ---
-title: "IP Route - Show Network Routes | Online Free DevTools by Hexmos"
+title: 'IP Route - Show Network Routes | Online Free DevTools by Hexmos'
 name: ip-route-show
-path: "/freedevtools/tldr/linux/ip-route-show/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/ip-route-show/"
-description: "Show network routes with IP Route. Analyze routing tables and manage network traffic on Linux systems. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/ip-route-show/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/ip-route-show/'
+description: 'Show network routes with IP Route. Analyze routing tables and manage network traffic on Linux systems. Free online tool, no registration required.'
 category: linux
 keywords:
   - network route analysis
@@ -22,8 +22,8 @@ features:
   - List routes for a particular network interface
   - Filter routes based on destination address
   - Analyze routing paths and network connectivity
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ip route show

@@ -1,29 +1,29 @@
 ---
-title: "MySQL Tool - Manage Databases | Online Free DevTools by Hexmos"
+title: 'MySQL Tool - Manage Databases | Online Free DevTools by Hexmos'
 name: mysql
-path: "/freedevtools/tldr/common/mysql/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/mysql/"
-description: "Manage databases with MySQL tool. Connect to databases, execute SQL scripts, and restore backups. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/mysql/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/mysql/'
+description: 'Manage databases with MySQL tool. Connect to databases, execute SQL scripts, and restore backups. Free online tool, no registration required.'
 category: common
 keywords:
-- mysql database management
-- mysql command line tool
-- mysql sql execution
-- mysql database restore
-- mysql connection parameters
-- mysql linux
-- mysql database backup
-- mysql unix socket connection
-- mysql command line interface
-- mysql database administration
+  - mysql database management
+  - mysql command line tool
+  - mysql sql execution
+  - mysql database restore
+  - mysql connection parameters
+  - mysql linux
+  - mysql database backup
+  - mysql unix socket connection
+  - mysql command line interface
+  - mysql database administration
 features:
-- Connect to a MySQL database
-- Execute SQL statements from a file
-- Restore a database from a SQL backup
-- Connect to a database using a Unix socket
-- Specify username and password for database connection
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to a MySQL database
+  - Execute SQL statements from a file
+  - Restore a database from a SQL backup
+  - Connect to a database using a Unix socket
+  - Specify username and password for database connection
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # mysql

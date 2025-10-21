@@ -1,9 +1,9 @@
 ---
-title: "fstrim - Trim Unused SSD Blocks | Online Free DevTools by Hexmos"
+title: 'fstrim - Trim Unused SSD Blocks | Online Free DevTools by Hexmos'
 name: fstrim
-path: "/freedevtools/tldr/linux/fstrim/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/fstrim/"
-description: "Optimize SSD performance with fstrim, discarding unused blocks on your storage device. Improve speed and efficiency with this command-line tool. Free online resource, no registration required."
+path: '/freedevtools/tldr/linux/fstrim/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/fstrim/'
+description: 'Optimize SSD performance with fstrim, discarding unused blocks on your storage device. Improve speed and efficiency with this command-line tool. Free online resource, no registration required.'
 category: linux
 keywords:
   - ssd trim command
@@ -22,8 +22,8 @@ features:
   - Prevents data fragmentation and wear.
   - Supports trimming on multiple partitions.
   - Provides verbose output for monitoring progress.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # fstrim

@@ -1,29 +1,29 @@
 ---
-title: "WPA Supplicant - Manage Wireless Networks | Online Free DevTools by Hexmos"
+title: 'WPA Supplicant - Manage Wireless Networks | Online Free DevTools by Hexmos'
 name: wpa_supplicant
-path: "/freedevtools/tldr/common/wpa_supplicant/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/wpa_supplicant/"
-description: "Manage wireless networks with WPA Supplicant. Securely join protected Wi-Fi networks and configure network settings. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/wpa_supplicant/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/wpa_supplicant/'
+description: 'Manage wireless networks with WPA Supplicant. Securely join protected Wi-Fi networks and configure network settings. Free online tool, no registration required.'
 category: common
 keywords:
-- Wireless network manager
-- WPA supplicant configuration
-- Wi-Fi security setup
-- Linux network configuration
-- Command line network tool
-- Wireless profile management
-- Enterprise Wi-Fi setup
-- Network authentication tool
-- Wi-Fi password management
-- WPA2 network connection
+  - Wireless network manager
+  - WPA supplicant configuration
+  - Wi-Fi security setup
+  - Linux network configuration
+  - Command line network tool
+  - Wireless profile management
+  - Enterprise Wi-Fi setup
+  - Network authentication tool
+  - Wi-Fi password management
+  - WPA2 network connection
 features:
-- Connect to protected wireless networks
-- Run in daemon mode for background operation
-- Configure network interfaces for wireless access
-- Automate wireless network connections
-- Manage multiple wireless network profiles
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to protected wireless networks
+  - Run in daemon mode for background operation
+  - Configure network interfaces for wireless access
+  - Automate wireless network connections
+  - Manage multiple wireless network profiles
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # wpa_supplicant

@@ -1,9 +1,9 @@
 ---
-title: "elink Command - Link NCBI Databases | Online Free DevTools by Hexmos"
+title: 'elink Command - Link NCBI Databases | Online Free DevTools by Hexmos'
 name: elink
-path: "/freedevtools/tldr/linux/elink/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/elink/"
-description: "Link NCBI databases with the elink command.  Find related sequences and biosamples efficiently using this free online tool; no registration required."
+path: '/freedevtools/tldr/linux/elink/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/elink/'
+description: 'Link NCBI databases with the elink command.  Find related sequences and biosamples efficiently using this free online tool; no registration required.'
 category: linux
 keywords:
   - NCBI database linking
@@ -22,8 +22,8 @@ features:
   - Identifies related biosamples from nucleotide query results.
   - Integrates seamlessly with the esearch command for efficient database querying.
   - Simplifies complex database navigation and data retrieval for biological research.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # elink

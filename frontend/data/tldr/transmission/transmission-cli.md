@@ -1,29 +1,29 @@
 ---
-title: "Torrent Downloader - Control Downloads with transmission-cli | Online Free DevTools by Hexmos"
+title: 'Torrent Downloader - Control Downloads with transmission-cli | Online Free DevTools by Hexmos'
 name: transmission-cli
-path: "/freedevtools/tldr/transmission/transmission-cli/"
-canonical: "https://hexmos.com/freedevtools/tldr/transmission/transmission-cli/"
-description: "Control torrent downloads easily with transmission-cli, a lightweight command-line BitTorrent client. Manage download speed and encryption. Free online tool, no registration required."
+path: '/freedevtools/tldr/transmission/transmission-cli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/transmission/transmission-cli/'
+description: 'Control torrent downloads easily with transmission-cli, a lightweight command-line BitTorrent client. Manage download speed and encryption. Free online tool, no registration required.'
 category: common
 keywords:
-- torrent downloader
-- command line torrent client
-- cli torrent downloader
-- linux torrent download
-- magnet link downloader
-- torrent speed control
-- transmission command line
-- bittorrent client
-- torrent encryption
-- peer blocklist
+  - torrent downloader
+  - command line torrent client
+  - cli torrent downloader
+  - linux torrent download
+  - magnet link downloader
+  - torrent speed control
+  - transmission command line
+  - bittorrent client
+  - torrent encryption
+  - peer blocklist
 features:
-- Download torrents from URLs, magnet links, or local files
-- Limit download and upload speeds for torrents
-- Force encryption for peer connections to enhance privacy
-- Create new torrent files from existing files or directories
-- Utilize Bluetack-formatted peer blocklists to filter connections
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Download torrents from URLs, magnet links, or local files
+  - Limit download and upload speeds for torrents
+  - Force encryption for peer connections to enhance privacy
+  - Create new torrent files from existing files or directories
+  - Utilize Bluetack-formatted peer blocklists to filter connections
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # transmission-cli

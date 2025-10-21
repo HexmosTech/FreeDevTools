@@ -1,9 +1,9 @@
 ---
-title: "OpenFortivpn VPN Client - Connect Securely | Online Free DevTools by Hexmos"
+title: 'OpenFortivpn VPN Client - Connect Securely | Online Free DevTools by Hexmos'
 name: openfortivpn
-path: "/freedevtools/tldr/linux/openfortivpn/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/openfortivpn/"
-description: "Connect securely with OpenFortivpn VPN client.  Manage VPN connections using username/password, config files, or host/port. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/openfortivpn/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/openfortivpn/'
+description: 'Connect securely with OpenFortivpn VPN client.  Manage VPN connections using username/password, config files, or host/port. Free online tool, no registration required.'
 category: linux
 keywords:
   - openfortivpn vpn client
@@ -22,8 +22,8 @@ features:
   - Specify host and port for direct connection.
   - Manage trusted certificates for enhanced security.
   - Establish secure VPN connections using PPP+SSL protocol.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # openfortivpn

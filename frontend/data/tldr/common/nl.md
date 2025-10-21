@@ -1,29 +1,29 @@
 ---
-title: "Number Lines - Format Text Files with nl | Online Free DevTools by Hexmos"
+title: 'Number Lines - Format Text Files with nl | Online Free DevTools by Hexmos'
 name: nl
-path: "/freedevtools/tldr/common/nl/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/nl/"
-description: "Format text files with Number Lines (nl). Add line numbers to your files, customize numbering and separators. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/nl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/nl/'
+description: 'Format text files with Number Lines (nl). Add line numbers to your files, customize numbering and separators. Free online tool, no registration required.'
 category: common
 keywords:
-- line number formatting
-- text file numbering
-- nl command linux
-- nl command example
-- number lines in file
-- add line numbers to text
-- customize line numbering
-- linux command line tools
-- text processing utilities
-- format text files
+  - line number formatting
+  - text file numbering
+  - nl command linux
+  - nl command example
+  - number lines in file
+  - add line numbers to text
+  - customize line numbering
+  - linux command line tools
+  - text processing utilities
+  - format text files
 features:
-- Number non-blank lines in a file.
-- Customize line numbering increment.
-- Format line numbering justification and width.
-- Specify a custom separator between line numbers and lines.
-- Number only lines matching a specific regular expression.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Number non-blank lines in a file.
+  - Customize line numbering increment.
+  - Format line numbering justification and width.
+  - Specify a custom separator between line numbers and lines.
+  - Number only lines matching a specific regular expression.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nl

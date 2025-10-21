@@ -1,29 +1,29 @@
 ---
-title: "Print Environment - Display Variables | Online Free DevTools by Hexmos"
+title: 'Print Environment - Display Variables | Online Free DevTools by Hexmos'
 name: printenv
-path: "/freedevtools/tldr/common/printenv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/printenv/"
-description: "Display environment variables with Print Environment. View all or specific variables for shell environments. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/printenv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/printenv/'
+description: 'Display environment variables with Print Environment. View all or specific variables for shell environments. Free online tool, no registration required.'
 category: common
 keywords:
-- environment variables display
-- shell variables list
-- printenv command
-- linux environment variables
-- bash printenv
-- macos printenv command
-- environment variables viewer
-- shell environment variables
-- common printenv
-- command line environment
+  - environment variables display
+  - shell variables list
+  - printenv command
+  - linux environment variables
+  - bash printenv
+  - macos printenv command
+  - environment variables viewer
+  - shell environment variables
+  - common printenv
+  - command line environment
 features:
-- Display all environment variables
-- Print the value of a specific variable
-- Output variable value with NUL terminator
-- View environment in shell scripts
-- List environment for debugging
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display all environment variables
+  - Print the value of a specific variable
+  - Output variable value with NUL terminator
+  - View environment in shell scripts
+  - List environment for debugging
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # printenv

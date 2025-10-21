@@ -1,29 +1,29 @@
 ---
-title: "Pinky Command - Print User Info with Finger Protocol | Online Free DevTools by Hexmos"
+title: 'Pinky Command - Print User Info with Finger Protocol | Online Free DevTools by Hexmos'
 name: pinky
-path: "/freedevtools/tldr/common/pinky/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pinky/"
-description: "Print user information easily with Pinky command. Retrieve user details and system information using the finger protocol on Linux and macOS. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pinky/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pinky/'
+description: 'Print user information easily with Pinky command. Retrieve user details and system information using the finger protocol on Linux and macOS. Free online tool, no registration required.'
 category: common
 keywords:
-- user information command
-- finger protocol lookup
-- linux user details
-- macos user details
-- command line user info
-- pinky command example
-- user account information
-- system user details
-- terminal user lookup
-- command line finger utility
+  - user information command
+  - finger protocol lookup
+  - linux user details
+  - macos user details
+  - command line user info
+  - pinky command example
+  - user account information
+  - system user details
+  - terminal user lookup
+  - command line finger utility
 features:
-- Display user login name
-- Retrieve user full name
-- Show user terminal line
-- Indicate write access
-- Customize output format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display user login name
+  - Retrieve user full name
+  - Show user terminal line
+  - Indicate write access
+  - Customize output format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pinky

@@ -1,29 +1,29 @@
 ---
-title: "Generate PPM Globe - Create Spherical Images | Online Free DevTools by Hexmos"
+title: 'Generate PPM Globe - Create Spherical Images | Online Free DevTools by Hexmos'
 name: ppmglobe
-path: "/freedevtools/tldr/ppm/ppmglobe/"
-canonical: "https://hexmos.com/freedevtools/tldr/ppm/ppmglobe/"
-description: "Generate PPM Globe images with ppmglobe. Transform images into strips for spherical mapping using this command line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/ppm/ppmglobe/'
+canonical: 'https://hexmos.com/freedevtools/tldr/ppm/ppmglobe/'
+description: 'Generate PPM Globe images with ppmglobe. Transform images into strips for spherical mapping using this command line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- PPM globe generator
-- Image spherical mapping
-- PPM to globe conversion
-- Netpbm image manipulation
-- Command line image tools
-- PPM image converter
-- Image wrapping tool
-- Sphere image creator
-- Linux image tools
-- MacOS image utilities
+  - PPM globe generator
+  - Image spherical mapping
+  - PPM to globe conversion
+  - Netpbm image manipulation
+  - Command line image tools
+  - PPM image converter
+  - Image wrapping tool
+  - Sphere image creator
+  - Linux image tools
+  - MacOS image utilities
 features:
-- Convert PPM images to spherical strips
-- Create images for gluing onto a sphere
-- Define background color between strips
-- Generate custom number of strips
-- Output to PPM image format
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Convert PPM images to spherical strips
+  - Create images for gluing onto a sphere
+  - Define background color between strips
+  - Generate custom number of strips
+  - Output to PPM image format
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ppmglobe

@@ -1,29 +1,29 @@
 ---
-title: "Decrypt Bluetooth - Crack BLE Encryption | Online Free DevTools by Hexmos"
+title: 'Decrypt Bluetooth - Crack BLE Encryption | Online Free DevTools by Hexmos'
 name: crackle
-path: "/freedevtools/tldr/common/crackle/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/crackle/"
-description: "Crack BLE encryption with Crackle, a powerful Bluetooth Low Energy decryption tool. Recover temporary keys and decrypt recorded communications easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/crackle/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/crackle/'
+description: 'Crack BLE encryption with Crackle, a powerful Bluetooth Low Energy decryption tool. Recover temporary keys and decrypt recorded communications easily. Free online tool, no registration required.'
 category: common
 keywords:
-- BLE encryption cracker
-- Bluetooth decryption tool
-- PCAP decryption
-- LTK decryption
-- Bluetooth low energy
-- Crackle command
-- wireless security
-- network forensics
-- packet analysis
-- Bluetooth communication
+  - BLE encryption cracker
+  - Bluetooth decryption tool
+  - PCAP decryption
+  - LTK decryption
+  - Bluetooth low energy
+  - Crackle command
+  - wireless security
+  - network forensics
+  - packet analysis
+  - Bluetooth communication
 features:
-- Crack and decrypt BLE encryption
-- Recover temporary keys from recorded pairing events
-- Decrypt communication using a specified long-term key
-- Analyze PCAP files for recoverable temporary keys
-- Decrypt subsequent communications after TK recovery
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Crack and decrypt BLE encryption
+  - Recover temporary keys from recorded pairing events
+  - Decrypt communication using a specified long-term key
+  - Analyze PCAP files for recoverable temporary keys
+  - Decrypt subsequent communications after TK recovery
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # crackle

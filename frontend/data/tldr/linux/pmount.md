@@ -1,29 +1,29 @@
 ---
-title: "Mount Devices - Mount Removable Media with pmount | Online Free DevTools by Hexmos"
+title: 'Mount Devices - Mount Removable Media with pmount | Online Free DevTools by Hexmos'
 name: pmount
-path: "/freedevtools/tldr/linux/pmount/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pmount/"
-description: "Mount removable devices easily with pmount on Linux. Manage access and filesystem types for hotpluggable media. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pmount/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pmount/'
+description: 'Mount removable devices easily with pmount on Linux. Manage access and filesystem types for hotpluggable media. Free online tool, no registration required.'
 category: linux
 keywords:
-- "linux mount device"
-- "removable media mounter"
-- "pmount linux command"
-- "block device mounting"
-- "hotpluggable device mount"
-- "iso9660 image mount"
-- "ntfs disk mount"
-- "media device manager"
-- "linux filesystem mounter"
-- "user mount utility"
+  - 'linux mount device'
+  - 'removable media mounter'
+  - 'pmount linux command'
+  - 'block device mounting'
+  - 'hotpluggable device mount'
+  - 'iso9660 image mount'
+  - 'ntfs disk mount'
+  - 'media device manager'
+  - 'linux filesystem mounter'
+  - 'user mount utility'
 features:
-- "Mount devices as a regular user"
-- "Specify filesystem type for mounting"
-- "Force read-write or read-only mounting"
-- "List all mounted removable devices"
-- "Mount devices by label or device path"
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - 'Mount devices as a regular user'
+  - 'Specify filesystem type for mounting'
+  - 'Force read-write or read-only mounting'
+  - 'List all mounted removable devices'
+  - 'Mount devices by label or device path'
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pmount

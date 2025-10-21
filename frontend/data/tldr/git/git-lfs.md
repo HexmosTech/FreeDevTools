@@ -1,29 +1,29 @@
 ---
-title: "Git LFS - Manage Large Files in Git | Online Free DevTools by Hexmos"
+title: 'Git LFS - Manage Large Files in Git | Online Free DevTools by Hexmos'
 name: git-lfs
-path: "/freedevtools/tldr/git/git-lfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-lfs/"
-description: "Manage large files with Git LFS. Track, store, and collaborate on large assets efficiently using this command-line tool. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-lfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-lfs/'
+description: 'Manage large files with Git LFS. Track, store, and collaborate on large assets efficiently using this command-line tool. Free online tool, no registration required.'
 category: common
 keywords:
-- git large file storage
-- lfs file management
-- git lfs tracking
-- git lfs push
-- git lfs fetch
-- git lfs checkout
-- git lfs endpoint configuration
-- git large object storage
-- version control large files
-- git lfs command line
+  - git large file storage
+  - lfs file management
+  - git lfs tracking
+  - git lfs push
+  - git lfs fetch
+  - git lfs checkout
+  - git lfs endpoint configuration
+  - git large object storage
+  - version control large files
+  - git lfs command line
 features:
-- Track specific file patterns in Git LFS.
-- Configure Git LFS endpoint URLs.
-- List all tracked patterns within Git LFS.
-- Push all Git LFS objects to a remote server.
-- Replace pointer files with actual Git LFS objects.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Track specific file patterns in Git LFS.
+  - Configure Git LFS endpoint URLs.
+  - List all tracked patterns within Git LFS.
+  - Push all Git LFS objects to a remote server.
+  - Replace pointer files with actual Git LFS objects.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git lfs

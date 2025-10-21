@@ -1,29 +1,29 @@
 ---
-title: "GitHub Terminal - Control GitHub from Command Line | Online Free DevTools by Hexmos"
+title: 'GitHub Terminal - Control GitHub from Command Line | Online Free DevTools by Hexmos'
 name: gitsome
-path: "/freedevtools/tldr/git/gitsome/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitsome/"
-description: "Control GitHub from your terminal with Gitsome, the command line interface. Manage notifications, repos, and activity feeds directly. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitsome/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitsome/'
+description: 'Control GitHub from your terminal with Gitsome, the command line interface. Manage notifications, repos, and activity feeds directly. Free online tool, no registration required.'
 category: common
 keywords:
-- GitHub command line
-- GitHub terminal interface
-- GitHub CLI
-- Git autocomplete
-- GitHub notification manager
-- GitHub repo viewer
-- GitHub activity feed
-- Gitsome
-- gh command
-- Linux GitHub
+  - GitHub command line
+  - GitHub terminal interface
+  - GitHub CLI
+  - Git autocomplete
+  - GitHub notification manager
+  - GitHub repo viewer
+  - GitHub activity feed
+  - Gitsome
+  - gh command
+  - Linux GitHub
 features:
-- Access and manage GitHub notifications from the terminal
-- View GitHub repository activity feeds
-- Filter and browse starred repositories using a search string
-- Configure GitHub authentication for command-line access
-- Enable autocompletion for Git and GitHub commands in the terminal
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Access and manage GitHub notifications from the terminal
+  - View GitHub repository activity feeds
+  - Filter and browse starred repositories using a search string
+  - Configure GitHub authentication for command-line access
+  - Enable autocompletion for Git and GitHub commands in the terminal
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitsome

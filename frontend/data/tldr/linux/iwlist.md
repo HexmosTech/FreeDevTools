@@ -1,9 +1,9 @@
 ---
-title: "Iwlist Wireless Interface - Scan Networks | Online Free DevTools by Hexmos"
+title: 'Iwlist Wireless Interface - Scan Networks | Online Free DevTools by Hexmos'
 name: iwlist
-path: "/freedevtools/tldr/linux/iwlist/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/iwlist/"
-description: "Scan wireless networks and manage wireless interface settings with Iwlist.  Get detailed information about access points, frequencies, and security parameters. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/iwlist/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/iwlist/'
+description: 'Scan wireless networks and manage wireless interface settings with Iwlist.  Get detailed information about access points, frequencies, and security parameters. Free online tool, no registration required.'
 category: linux
 keywords:
   - wireless network scanner
@@ -22,8 +22,8 @@ features:
   - List supported bit-rates for the wireless interface.
   - Retrieve WPA authentication parameters.
   - Show configured WPA encryption keys and supported key sizes.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # iwlist

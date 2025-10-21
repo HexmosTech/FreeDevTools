@@ -1,29 +1,29 @@
 ---
-title: "Convert LaTeX to HTML - GladTeX Image Generator | Online Free DevTools by Hexmos"
+title: 'Convert LaTeX to HTML - GladTeX Image Generator | Online Free DevTools by Hexmos'
 name: gladtex
-path: "/freedevtools/tldr/common/gladtex/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/gladtex/"
-description: "Convert LaTeX formulas into HTML-compatible images with GladTeX. Easily integrate mathematical expressions into your web projects. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/gladtex/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/gladtex/'
+description: 'Convert LaTeX formulas into HTML-compatible images with GladTeX. Easily integrate mathematical expressions into your web projects. Free online tool, no registration required.'
 category: common
 keywords:
-- latex to html converter
-- latex image generator
-- math to image converter
-- command line latex converter
-- html latex integration
-- latex web display
-- gladtex command
-- htex to html
-- latex formula converter
-- web math renderer
+  - latex to html converter
+  - latex image generator
+  - math to image converter
+  - command line latex converter
+  - html latex integration
+  - latex web display
+  - gladtex command
+  - htex to html
+  - latex formula converter
+  - web math renderer
 features:
-- Converts LaTeX formulas into images for web display
-- Saves generated images to a specified directory
-- Allows customization of image resolution (DPI)
-- Retains LaTeX source files after conversion
-- Supports custom background and foreground colors
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Converts LaTeX formulas into images for web display
+  - Saves generated images to a specified directory
+  - Allows customization of image resolution (DPI)
+  - Retains LaTeX source files after conversion
+  - Supports custom background and foreground colors
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gladtex

@@ -1,9 +1,9 @@
 ---
-title: "KDE Inhibit - Control Desktop Functions | Online Free DevTools by Hexmos"
+title: 'KDE Inhibit - Control Desktop Functions | Online Free DevTools by Hexmos'
 name: kde-inhibit
-path: "/freedevtools/tldr/linux/kde-inhibit/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/kde-inhibit/"
-description: "Control desktop functions with KDE Inhibit. Inhibit power management and screen saver functions easily using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/kde-inhibit/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/kde-inhibit/'
+description: 'Control desktop functions with KDE Inhibit. Inhibit power management and screen saver functions easily using the command line. Free online tool, no registration required.'
 category: linux
 keywords:
   - desktop function control
@@ -22,8 +22,8 @@ features:
   - Disable color correction while an application runs
   - Control desktop environment functionality via command line
   - Execute commands with temporary function restrictions
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # kde-inhibit

@@ -1,29 +1,29 @@
 ---
-title: "Web Extension Manager - Control Firefox Extensions | Online Free DevTools by Hexmos"
+title: 'Web Extension Manager - Control Firefox Extensions | Online Free DevTools by Hexmos'
 name: web-ext
-path: "/freedevtools/tldr/common/web-ext/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/web-ext/"
-description: "Control web extension development with Web Ext Manager. Build, run, lint, and sign your Firefox extensions easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/web-ext/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/web-ext/'
+description: 'Control web extension development with Web Ext Manager. Build, run, lint, and sign your Firefox extensions easily. Free online tool, no registration required.'
 category: common
 keywords:
-- web extension manager
-- firefox extension development
-- web-ext run
-- web-ext build
-- web-ext lint
-- web extension signing
-- firefox extension testing
-- web extension packaging
-- firefox android extension
-- web-ext firefox-android
+  - web extension manager
+  - firefox extension development
+  - web-ext run
+  - web-ext build
+  - web-ext lint
+  - web extension signing
+  - firefox extension testing
+  - web extension packaging
+  - firefox android extension
+  - web-ext firefox-android
 features:
-- Run web extensions in Firefox desktop and Android
-- Lint manifest and source files for errors
-- Build and package web extensions
-- Sign packages for self-hosting
-- Control extension development from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Run web extensions in Firefox desktop and Android
+  - Lint manifest and source files for errors
+  - Build and package web extensions
+  - Sign packages for self-hosting
+  - Control extension development from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # web-ext

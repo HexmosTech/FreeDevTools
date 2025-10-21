@@ -1,29 +1,29 @@
 ---
-title: "Manage Tasks - To-Do List Manager | Online Free DevTools by Hexmos"
+title: 'Manage Tasks - To-Do List Manager | Online Free DevTools by Hexmos'
 name: task
-path: "/freedevtools/tldr/common/task/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/task/"
-description: "Manage your to-do list with Task, the command-line task manager. Schedule tasks, set priorities, and track progress efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/task/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/task/'
+description: 'Manage your to-do list with Task, the command-line task manager. Schedule tasks, set priorities, and track progress efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- command line task manager
-- to-do list manager
-- taskwarrior command
-- task management tool
-- linux task manager
-- macos task manager
-- schedule tasks command line
-- priority management command line
-- burndown chart command line
-- task tracking command line
+  - command line task manager
+  - to-do list manager
+  - taskwarrior command
+  - task management tool
+  - linux task manager
+  - macos task manager
+  - schedule tasks command line
+  - priority management command line
+  - burndown chart command line
+  - task tracking command line
 features:
-- Add new tasks with due dates
-- Modify task priorities and details
-- Mark tasks as completed
-- Delete unwanted tasks
-- List and filter tasks by due date
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add new tasks with due dates
+  - Modify task priorities and details
+  - Mark tasks as completed
+  - Delete unwanted tasks
+  - List and filter tasks by due date
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # task

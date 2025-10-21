@@ -1,29 +1,29 @@
 ---
-title: "Docker Network - Create & Manage Networks | Online Free DevTools by Hexmos"
+title: 'Docker Network - Create & Manage Networks | Online Free DevTools by Hexmos'
 name: docker-network
-path: "/freedevtools/tldr/docker/docker-network/"
-canonical: "https://hexmos.com/freedevtools/tldr/docker/docker-network/"
-description: "Create Docker networks easily with Docker Network tool. Manage, inspect, connect, and disconnect containers. Free online tool, no registration required."
+path: '/freedevtools/tldr/docker/docker-network/'
+canonical: 'https://hexmos.com/freedevtools/tldr/docker/docker-network/'
+description: 'Create Docker networks easily with Docker Network tool. Manage, inspect, connect, and disconnect containers. Free online tool, no registration required.'
 category: common
 keywords:
-- docker network create
-- docker network manage
-- docker network inspect
-- docker network connect
-- docker network disconnect
-- docker network prune
-- docker network remove
-- docker container networking
-- docker network configuration
-- docker network driver
+  - docker network create
+  - docker network manage
+  - docker network inspect
+  - docker network connect
+  - docker network disconnect
+  - docker network prune
+  - docker network remove
+  - docker container networking
+  - docker network configuration
+  - docker network driver
 features:
-- Create user-defined Docker networks
-- Inspect detailed network information
-- Connect containers to existing networks
-- Disconnect containers from networks
-- Remove unused Docker networks
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create user-defined Docker networks
+  - Inspect detailed network information
+  - Connect containers to existing networks
+  - Disconnect containers from networks
+  - Remove unused Docker networks
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # docker network

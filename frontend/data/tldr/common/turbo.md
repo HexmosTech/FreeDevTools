@@ -1,29 +1,29 @@
 ---
-title: "Build JavaScript - Control Projects with Turbo | Online Free DevTools by Hexmos"
+title: 'Build JavaScript - Control Projects with Turbo | Online Free DevTools by Hexmos'
 name: turbo
-path: "/freedevtools/tldr/common/turbo/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/turbo/"
-description: "Control JavaScript build projects instantly with Turbo. Optimize builds, enable remote caching, and generate dependency graphs. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/turbo/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/turbo/'
+description: 'Control JavaScript build projects instantly with Turbo. Optimize builds, enable remote caching, and generate dependency graphs. Free online tool, no registration required.'
 category: common
 keywords:
-- JavaScript build tool
-- TypeScript build tool
-- Turbo build system
-- Vercel turbo
-- Monorepo build
-- Incremental build
-- Remote caching
-- Task runner
-- Dependency graph generator
-- Parallel task execution
+  - JavaScript build tool
+  - TypeScript build tool
+  - Turbo build system
+  - Vercel turbo
+  - Monorepo build
+  - Incremental build
+  - Remote caching
+  - Task runner
+  - Dependency graph generator
+  - Parallel task execution
 features:
-- Build JavaScript and TypeScript projects
-- Link projects to a Vercel organization
-- Enable remote caching for faster builds
-- Generate dependency graphs of task executions
-- Run tasks in parallel across packages
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Build JavaScript and TypeScript projects
+  - Link projects to a Vercel organization
+  - Enable remote caching for faster builds
+  - Generate dependency graphs of task executions
+  - Run tasks in parallel across packages
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # turbo

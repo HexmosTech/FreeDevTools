@@ -1,29 +1,29 @@
 ---
-title: "AWS Route53 - Control DNS Records | Online Free DevTools by Hexmos"
+title: 'AWS Route53 - Control DNS Records | Online Free DevTools by Hexmos'
 name: aws-route53
-path: "/freedevtools/tldr/aws/aws-route53/"
-canonical: "https://hexmos.com/freedevtools/tldr/aws/aws-route53/"
-description: "Control DNS records with AWS Route53. Manage hosted zones and update record sets using the command line. Free online tool, no registration required."
+path: '/freedevtools/tldr/aws/aws-route53/'
+canonical: 'https://hexmos.com/freedevtools/tldr/aws/aws-route53/'
+description: 'Control DNS records with AWS Route53. Manage hosted zones and update record sets using the command line. Free online tool, no registration required.'
 category: common
 keywords:
-- AWS Route53 DNS control
-- Route53 hosted zone manager
-- Route53 record set editor
-- AWS Route53 command line tool
-- DNS record management aws
-- Route53 zone administration cli
-- AWS cloud DNS editor
-- AWS Route53 record updater
-- AWS Route53 command linux
-- AWS Route53 dns record manager
+  - AWS Route53 DNS control
+  - Route53 hosted zone manager
+  - Route53 record set editor
+  - AWS Route53 command line tool
+  - DNS record management aws
+  - Route53 zone administration cli
+  - AWS cloud DNS editor
+  - AWS Route53 record updater
+  - AWS Route53 command linux
+  - AWS Route53 dns record manager
 features:
-- List all hosted zones for a Route53 account
-- Show all records in a specified hosted zone
-- Create a new public hosted zone with a request identifier
-- Delete an existing hosted zone
-- Test DNS resolving with Amazon servers
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - List all hosted zones for a Route53 account
+  - Show all records in a specified hosted zone
+  - Create a new public hosted zone with a request identifier
+  - Delete an existing hosted zone
+  - Test DNS resolving with Amazon servers
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # aws route53

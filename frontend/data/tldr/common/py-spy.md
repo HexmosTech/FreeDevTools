@@ -1,29 +1,29 @@
 ---
-title: "Py-Spy Profiler - Profile Python Code | Online Free DevTools by Hexmos"
+title: 'Py-Spy Profiler - Profile Python Code | Online Free DevTools by Hexmos'
 name: py-spy
-path: "/freedevtools/tldr/common/py-spy/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/py-spy/"
-description: "Profile Python code with Py-Spy, a powerful sampling profiler. Analyze execution time, generate flame graphs, and identify performance bottlenecks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/py-spy/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/py-spy/'
+description: 'Profile Python code with Py-Spy, a powerful sampling profiler. Analyze execution time, generate flame graphs, and identify performance bottlenecks. Free online tool, no registration required.'
 category: common
 keywords:
-- python code profiler
-- python sampling profiler
-- python performance analysis
-- py-spy profiler
-- python debugging
-- python flame graph generator
-- python execution time analysis
-- linux python profiler
-- macos python profiler
-- command line python profiler
+  - python code profiler
+  - python sampling profiler
+  - python performance analysis
+  - py-spy profiler
+  - python debugging
+  - python flame graph generator
+  - python execution time analysis
+  - linux python profiler
+  - macos python profiler
+  - command line python profiler
 features:
-- Analyze Python program execution time
-- Generate SVG flame graphs for performance visualization
-- Dump the call stack of a running Python process
-- Show a live view of functions taking the most time
-- Profile Python code without modifying the source code
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Analyze Python program execution time
+  - Generate SVG flame graphs for performance visualization
+  - Dump the call stack of a running Python process
+  - Show a live view of functions taking the most time
+  - Profile Python code without modifying the source code
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # py-spy

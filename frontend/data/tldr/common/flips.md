@@ -1,29 +1,29 @@
 ---
-title: "Create Patches - Apply IPS/BPS Files | Online Free DevTools by Hexmos"
+title: 'Create Patches - Apply IPS/BPS Files | Online Free DevTools by Hexmos'
 name: flips
-path: "/freedevtools/tldr/common/flips/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/flips/"
-description: "Create patches with Flips, apply IPS and BPS patch formats to ROM files for modifying and distributing game hacks. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/flips/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/flips/'
+description: 'Create patches with Flips, apply IPS and BPS patch formats to ROM files for modifying and distributing game hacks. Free online tool, no registration required.'
 category: common
 keywords:
-- bps patch creator
-- ips patch creator
-- rom patcher
-- flips patch tool
-- create rom patch
-- apply bps patch
-- apply ips patch
-- rom hacking tool
-- game patch utility
-- smc patch generator
+  - bps patch creator
+  - ips patch creator
+  - rom patcher
+  - flips patch tool
+  - create rom patch
+  - apply bps patch
+  - apply ips patch
+  - rom hacking tool
+  - game patch utility
+  - smc patch generator
 features:
-- Create IPS patches from two ROM files
-- Create BPS patches from two ROM files
-- Apply IPS patches to ROM files
-- Apply BPS patches to ROM files
-- Create modified ROM files from patches
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Create IPS patches from two ROM files
+  - Create BPS patches from two ROM files
+  - Apply IPS patches to ROM files
+  - Apply BPS patches to ROM files
+  - Create modified ROM files from patches
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # flips

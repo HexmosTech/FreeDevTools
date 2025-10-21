@@ -1,29 +1,29 @@
 ---
-title: "Synchronize Files - Unison File Synchronization | Online Free DevTools by Hexmos"
+title: 'Synchronize Files - Unison File Synchronization | Online Free DevTools by Hexmos'
 name: unison
-path: "/freedevtools/tldr/common/unison/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/unison/"
-description: "Synchronize files easily with Unison, a powerful bidirectional file synchronization tool. Keep your directories in sync across platforms. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/unison/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/unison/'
+description: 'Synchronize files easily with Unison, a powerful bidirectional file synchronization tool. Keep your directories in sync across platforms. Free online tool, no registration required.'
 category: common
 keywords:
-- file synchronization
-- bidirectional sync
-- directory synchronization
-- unison sync
-- cross platform sync
-- file replication
-- linux file sync
-- macos file sync
-- windows file sync
-- file versioning
+  - file synchronization
+  - bidirectional sync
+  - directory synchronization
+  - unison sync
+  - cross platform sync
+  - file replication
+  - linux file sync
+  - macos file sync
+  - windows file sync
+  - file versioning
 features:
-- Synchronize files bidirectionally between two directories
-- Automatically accept default synchronization actions
-- Ignore specific file patterns during synchronization
-- Resolve file conflicts intelligently
-- View detailed documentation on synchronization topics
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Synchronize files bidirectionally between two directories
+  - Automatically accept default synchronization actions
+  - Ignore specific file patterns during synchronization
+  - Resolve file conflicts intelligently
+  - View detailed documentation on synchronization topics
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # unison

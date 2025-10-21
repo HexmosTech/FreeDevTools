@@ -1,29 +1,29 @@
 ---
-title: "Control Railway Projects - Connect and Manage | Online Free DevTools by Hexmos"
+title: 'Control Railway Projects - Connect and Manage | Online Free DevTools by Hexmos'
 name: railway
-path: "/freedevtools/tldr/common/railway/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/railway/"
-description: "Control Railway projects seamlessly with Railway. Connect to existing projects, create new deployments, and manage environments easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/railway/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/railway/'
+description: 'Control Railway projects seamlessly with Railway. Connect to existing projects, create new deployments, and manage environments easily. Free online tool, no registration required.'
 category: common
 keywords:
-- railway project management
-- railway cli tool
-- railway deployment tool
-- railway environment variables
-- railway project link
-- railway project init
-- railway run command
-- railway up deploy
-- railway connect database
-- railway cloud deployment
+  - railway project management
+  - railway cli tool
+  - railway deployment tool
+  - railway environment variables
+  - railway project link
+  - railway project init
+  - railway run command
+  - railway up deploy
+  - railway connect database
+  - railway cloud deployment
 features:
-- Connect to Railway projects for streamlined management.
-- Initialize new Railway projects directly from the command line.
-- Deploy linked project directories with ease.
-- Execute local commands using active environment variables.
-- Open interactive database shells for enhanced control.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Connect to Railway projects for streamlined management.
+  - Initialize new Railway projects directly from the command line.
+  - Deploy linked project directories with ease.
+  - Execute local commands using active environment variables.
+  - Open interactive database shells for enhanced control.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # railway

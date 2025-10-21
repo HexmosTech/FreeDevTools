@@ -1,29 +1,29 @@
 ---
-title: "Capture Wireless Networks - Airodump-ng Packet Capture | Online Free DevTools by Hexmos"
+title: 'Capture Wireless Networks - Airodump-ng Packet Capture | Online Free DevTools by Hexmos'
 name: airodump-ng
-path: "/freedevtools/tldr/common/airodump-ng/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/airodump-ng/"
-description: "Capture wireless network data with Airodump-ng. Analyze packets and display network information. Enhance your network security analysis. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/airodump-ng/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/airodump-ng/'
+description: 'Capture wireless network data with Airodump-ng. Analyze packets and display network information. Enhance your network security analysis. Free online tool, no registration required.'
 category: common
 keywords:
-- wireless network capture
-- packet capture analysis
-- airodump-ng packet sniffer
-- wifi network monitoring
-- wireless network security
-- aircrack-ng suite
-- linux network tools
-- 802.11 network analyzer
-- wireless intrusion detection
-- network traffic analysis
+  - wireless network capture
+  - packet capture analysis
+  - airodump-ng packet sniffer
+  - wifi network monitoring
+  - wireless network security
+  - aircrack-ng suite
+  - linux network tools
+  - 802.11 network analyzer
+  - wireless intrusion detection
+  - network traffic analysis
 features:
-- Capture 802.11 frames in real time
-- Display wireless network information (BSSID, ESSID, channel)
-- Filter captured packets based on BSSID
-- Write captured data to a file for later analysis
-- Monitor network traffic on specific channels
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Capture 802.11 frames in real time
+  - Display wireless network information (BSSID, ESSID, channel)
+  - Filter captured packets based on BSSID
+  - Write captured data to a file for later analysis
+  - Monitor network traffic on specific channels
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # airodump-ng

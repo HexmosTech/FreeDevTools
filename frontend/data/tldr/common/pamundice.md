@@ -1,29 +1,29 @@
 ---
-title: "Combine Netpbm Images - Grid Layouts | Online Free DevTools by Hexmos"
+title: 'Combine Netpbm Images - Grid Layouts | Online Free DevTools by Hexmos'
 name: pamundice
-path: "/freedevtools/tldr/common/pamundice/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pamundice/"
-description: "Combine Netpbm images with pamundice, creating grid layouts. Specify grid dimensions and overlaps easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pamundice/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pamundice/'
+description: 'Combine Netpbm images with pamundice, creating grid layouts. Specify grid dimensions and overlaps easily. Free online tool, no registration required.'
 category: common
 keywords:
-- Netpbm image combiner
-- Image grid generator
-- PPM image stitcher
-- Pamundice command
-- Netpbm grid layout
-- Image assembly tool
-- Netpbm image processing
-- Linux image tools
-- Image grid creation
-- Image concatenation
+  - Netpbm image combiner
+  - Image grid generator
+  - PPM image stitcher
+  - Pamundice command
+  - Netpbm grid layout
+  - Image assembly tool
+  - Netpbm image processing
+  - Linux image tools
+  - Image grid creation
+  - Image concatenation
 features:
-- Combines multiple Netpbm images into a single image.
-- Creates grid layouts based on specified dimensions.
-- Supports image overlap for seamless stitching.
-- Accepts a list of filenames for batch processing.
-- Enables image combination using `printf`-style expressions.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Combines multiple Netpbm images into a single image.
+  - Creates grid layouts based on specified dimensions.
+  - Supports image overlap for seamless stitching.
+  - Accepts a list of filenames for batch processing.
+  - Enables image combination using `printf`-style expressions.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pamundice

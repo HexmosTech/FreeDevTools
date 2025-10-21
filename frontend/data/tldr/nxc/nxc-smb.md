@@ -1,29 +1,29 @@
 ---
-title: "Control NXC SMB - Exploit SMB Servers | Online Free DevTools by Hexmos"
+title: 'Control NXC SMB - Exploit SMB Servers | Online Free DevTools by Hexmos'
 name: nxc-smb
-path: "/freedevtools/tldr/nxc/nxc-smb/"
-canonical: "https://hexmos.com/freedevtools/tldr/nxc/nxc-smb/"
-description: "Control NXC SMB with NetExec to pentest SMB servers, enumerate shares, and exploit vulnerabilities. Free online tool, no registration required."
+path: '/freedevtools/tldr/nxc/nxc-smb/'
+canonical: 'https://hexmos.com/freedevtools/tldr/nxc/nxc-smb/'
+description: 'Control NXC SMB with NetExec to pentest SMB servers, enumerate shares, and exploit vulnerabilities. Free online tool, no registration required.'
 category: common
 keywords:
-- SMB server exploitation
-- NXC SMB penetration testing
-- NetExec SMB vulnerability scan
-- SMB share enumeration
-- Windows SMB attack
-- Password brute force SMB
-- Pass the hash SMB
-- SMB command execution
-- Network interface enumeration SMB
-- zerologon exploit SMB
+  - SMB server exploitation
+  - NXC SMB penetration testing
+  - NetExec SMB vulnerability scan
+  - SMB share enumeration
+  - Windows SMB attack
+  - Password brute force SMB
+  - Pass the hash SMB
+  - SMB command execution
+  - Network interface enumeration SMB
+  - zerologon exploit SMB
 features:
-- Enumerate SMB shares and access rights.
-- Scan for SMB vulnerabilities like zerologon and petitpotam.
-- Execute commands on target SMB hosts.
-- Perform password brute-force attacks against SMB servers.
-- Enumerate network interfaces using pass-the-hash authentication.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Enumerate SMB shares and access rights.
+  - Scan for SMB vulnerabilities like zerologon and petitpotam.
+  - Execute commands on target SMB hosts.
+  - Perform password brute-force attacks against SMB servers.
+  - Enumerate network interfaces using pass-the-hash authentication.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # nxc smb

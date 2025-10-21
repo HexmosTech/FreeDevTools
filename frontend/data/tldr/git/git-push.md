@@ -1,29 +1,29 @@
 ---
-title: "Git Push - Send Commits to Remote Repository | Online Free DevTools by Hexmos"
+title: 'Git Push - Send Commits to Remote Repository | Online Free DevTools by Hexmos'
 name: git-push
-path: "/freedevtools/tldr/git/git-push/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/git-push/"
-description: "Push Git commits with Git Push. Transfer changes from local to remote repositories, manage branches, and update remote origins. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/git-push/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/git-push/'
+description: 'Push Git commits with Git Push. Transfer changes from local to remote repositories, manage branches, and update remote origins. Free online tool, no registration required.'
 category: common
 keywords:
-- git push command
-- git remote push
-- git push origin
-- git branch push
-- git push upstream
-- git delete remote branch
-- git prune remote
-- git push all branches
-- git push tags
-- git repository update
+  - git push command
+  - git remote push
+  - git push origin
+  - git branch push
+  - git push upstream
+  - git delete remote branch
+  - git prune remote
+  - git push all branches
+  - git push tags
+  - git repository update
 features:
-- Push local branch changes to a remote repository
-- Set a remote branch as the default push/pull target
-- Delete branches in a remote repository
-- Update all local branches to their remote counterparts
-- Publish tags that are not yet in the remote repository
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Push local branch changes to a remote repository
+  - Set a remote branch as the default push/pull target
+  - Delete branches in a remote repository
+  - Update all local branches to their remote counterparts
+  - Publish tags that are not yet in the remote repository
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # git push

@@ -1,29 +1,29 @@
 ---
-title: "GitHub Run - View Workflow Runs | Online Free DevTools by Hexmos"
+title: 'GitHub Run - View Workflow Runs | Online Free DevTools by Hexmos'
 name: gh-run
-path: "/freedevtools/tldr/gh/gh-run/"
-canonical: "https://hexmos.com/freedevtools/tldr/gh/gh-run/"
-description: "View GitHub Actions workflow runs with gh run. Inspect job logs, check run statuses, and re-run workflows effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/gh/gh-run/'
+canonical: 'https://hexmos.com/freedevtools/tldr/gh/gh-run/'
+description: 'View GitHub Actions workflow runs with gh run. Inspect job logs, check run statuses, and re-run workflows effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- github actions workflow run
-- github run command
-- gh run view
-- gh run watch
-- gh run rerun
-- ci cd pipeline
-- github actions logs
-- workflow automation
-- github cli tools
-- github actions debugger
+  - github actions workflow run
+  - github run command
+  - gh run view
+  - gh run watch
+  - gh run rerun
+  - ci cd pipeline
+  - github actions logs
+  - workflow automation
+  - github cli tools
+  - github actions debugger
 features:
-- View detailed information about workflow runs
-- Watch active runs until completion
-- Re-run specific GitHub Actions workflows
-- Display job logs for debugging purposes
-- Check workflow status and exit on failure
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - View detailed information about workflow runs
+  - Watch active runs until completion
+  - Re-run specific GitHub Actions workflows
+  - Display job logs for debugging purposes
+  - Check workflow status and exit on failure
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gh run

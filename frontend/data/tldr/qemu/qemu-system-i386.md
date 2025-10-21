@@ -1,29 +1,29 @@
 ---
-title: "Emulate i386 - Run Virtual Machines | Online Free DevTools by Hexmos"
+title: 'Emulate i386 - Run Virtual Machines | Online Free DevTools by Hexmos'
 name: qemu-system-i386
-path: "/freedevtools/tldr/qemu/qemu-system-i386/"
-canonical: "https://hexmos.com/freedevtools/tldr/qemu/qemu-system-i386/"
-description: "Emulate i386 architecture with QEMU system emulator. Run virtual machines, boot from ISO images, and test bootable media efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/qemu/qemu-system-i386/'
+canonical: 'https://hexmos.com/freedevtools/tldr/qemu/qemu-system-i386/'
+description: 'Emulate i386 architecture with QEMU system emulator. Run virtual machines, boot from ISO images, and test bootable media efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- i386 emulator
-- QEMU i386
-- virtual machine i386
-- i386 virtualization
-- system emulator
-- i386 boot
-- linux i386 emulation
-- iso boot i386
-- qemu command
-- physical device boot
+  - i386 emulator
+  - QEMU i386
+  - virtual machine i386
+  - i386 virtualization
+  - system emulator
+  - i386 boot
+  - linux i386 emulation
+  - iso boot i386
+  - qemu command
+  - physical device boot
 features:
-- Boot virtual machines from disk images
-- Run QEMU instances from live ISO images
-- Boot from physical devices like USB drives
-- Launch QEMU without a VNC server
-- List supported machine types for emulation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Boot virtual machines from disk images
+  - Run QEMU instances from live ISO images
+  - Boot from physical devices like USB drives
+  - Launch QEMU without a VNC server
+  - List supported machine types for emulation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # qemu-system-i386

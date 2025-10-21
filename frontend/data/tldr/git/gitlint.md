@@ -1,29 +1,29 @@
 ---
-title: "Validate Git Commit Messages - Style Linter | Online Free DevTools by Hexmos"
+title: 'Validate Git Commit Messages - Style Linter | Online Free DevTools by Hexmos'
 name: gitlint
-path: "/freedevtools/tldr/git/gitlint/"
-canonical: "https://hexmos.com/freedevtools/tldr/git/gitlint/"
-description: "Validate git commit messages with Gitlint, a powerful style linter. Improve code quality and collaboration with consistent commit messages. Free online tool, no registration required."
+path: '/freedevtools/tldr/git/gitlint/'
+canonical: 'https://hexmos.com/freedevtools/tldr/git/gitlint/'
+description: 'Validate git commit messages with Gitlint, a powerful style linter. Improve code quality and collaboration with consistent commit messages. Free online tool, no registration required.'
 category: common
 keywords:
-- git commit message linter
-- commit message validation
-- git style guide
-- git commit conventions
-- lint git commits
-- git commit formatting
-- git commit quality control
-- command line linter
-- code review automation
-- commit history improvement
+  - git commit message linter
+  - commit message validation
+  - git style guide
+  - git commit conventions
+  - lint git commits
+  - git commit formatting
+  - git commit quality control
+  - command line linter
+  - code review automation
+  - commit history improvement
 features:
-- Checks commit messages for style compliance
-- Lints a specific range of commits
-- Allows custom rules through extra paths
-- Enables targeting specific CI jobs
-- Reads commit messages from files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Checks commit messages for style compliance
+  - Lints a specific range of commits
+  - Allows custom rules through extra paths
+  - Enables targeting specific CI jobs
+  - Reads commit messages from files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # gitlint

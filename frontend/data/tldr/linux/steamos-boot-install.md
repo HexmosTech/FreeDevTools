@@ -1,9 +1,9 @@
 ---
-title: "Install SteamOS Boot - Finalize System | Online Free DevTools by Hexmos"
+title: 'Install SteamOS Boot - Finalize System | Online Free DevTools by Hexmos'
 name: steamos-boot-install
-path: "/freedevtools/tldr/linux/steamos-boot-install/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/steamos-boot-install/"
-description: "Install SteamOS bootloader with steamos-boot-install. Finalize your SteamOS installation and configure boot settings quickly. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/steamos-boot-install/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/steamos-boot-install/'
+description: 'Install SteamOS bootloader with steamos-boot-install. Finalize your SteamOS installation and configure boot settings quickly. Free online tool, no registration required.'
 category: linux
 keywords:
   - steamos boot install
@@ -22,8 +22,8 @@ features:
   - Automates post-installation tasks
   - Streamlines SteamOS setup
   - Simplifies boot configuration
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # steamos-boot-install

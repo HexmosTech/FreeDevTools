@@ -1,29 +1,29 @@
 ---
-title: "Control IPFS Files - Manage Decentralized Storage | Online Free DevTools by Hexmos"
+title: 'Control IPFS Files - Manage Decentralized Storage | Online Free DevTools by Hexmos'
 name: ipfs
-path: "/freedevtools/tldr/common/ipfs/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/ipfs/"
-description: "Manage IPFS files with IPFS command. Add, pin, and retrieve decentralized storage content. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/ipfs/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/ipfs/'
+description: 'Manage IPFS files with IPFS command. Add, pin, and retrieve decentralized storage content. Free online tool, no registration required.'
 category: common
 keywords:
-- IPFS file management
-- decentralized storage management
-- IPFS pinning
-- IPFS get command
-- IPFS add command
-- IPFS repository garbage collection
-- interplanetary file system
-- peer-to-peer hypermedia
-- file system hash
-- content addressing
+  - IPFS file management
+  - decentralized storage management
+  - IPFS pinning
+  - IPFS get command
+  - IPFS add command
+  - IPFS repository garbage collection
+  - interplanetary file system
+  - peer-to-peer hypermedia
+  - file system hash
+  - content addressing
 features:
-- Add files to the IPFS network
-- Pin files to local IPFS storage
-- Retrieve files from the IPFS network using their hash
-- Remove pinned files from local IPFS storage
-- Perform garbage collection to remove unpinned files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Add files to the IPFS network
+  - Pin files to local IPFS storage
+  - Retrieve files from the IPFS network using their hash
+  - Remove pinned files from local IPFS storage
+  - Perform garbage collection to remove unpinned files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # ipfs

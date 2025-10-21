@@ -1,29 +1,29 @@
 ---
-title: "Monitor Progress - Control Data Flow with pv | Online Free DevTools by Hexmos"
+title: 'Monitor Progress - Control Data Flow with pv | Online Free DevTools by Hexmos'
 name: pv
-path: "/freedevtools/tldr/common/pv/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/pv/"
-description: "Control data flow and monitor progress with pv, a powerful pipe viewer for Linux and macOS. Track data transfer speeds and amounts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/pv/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/pv/'
+description: 'Control data flow and monitor progress with pv, a powerful pipe viewer for Linux and macOS. Track data transfer speeds and amounts. Free online tool, no registration required.'
 category: common
 keywords:
-- pipe viewer linux
-- monitor data progress
-- pv command example
-- linux progress bar
-- macos data transfer
-- command line progress
-- data flow control
-- file transfer monitor
-- speed monitor command
-- data pipe control
+  - pipe viewer linux
+  - monitor data progress
+  - pv command example
+  - linux progress bar
+  - macos data transfer
+  - command line progress
+  - data flow control
+  - file transfer monitor
+  - speed monitor command
+  - data pipe control
 features:
-- Display data transfer progress in real-time
-- Measure data flow speed and amount
-- Filter data and track output size
-- Attach to running processes for file read progress
-- Skip errors while reading erroneous files
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Display data transfer progress in real-time
+  - Measure data flow speed and amount
+  - Filter data and track output size
+  - Attach to running processes for file read progress
+  - Skip errors while reading erroneous files
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pv

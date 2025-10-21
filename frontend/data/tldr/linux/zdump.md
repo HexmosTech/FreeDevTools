@@ -1,9 +1,9 @@
 ---
-title: "Print Timezone Information - zdump | Online Free DevTools by Hexmos"
+title: 'Print Timezone Information - zdump | Online Free DevTools by Hexmos'
 name: zdump
-path: "/freedevtools/tldr/linux/zdump/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/zdump/"
-description: "Print timezone information with zdump. Determine current time in specific timezones and explore its options. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/zdump/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/zdump/'
+description: 'Print timezone information with zdump. Determine current time in specific timezones and explore its options. Free online tool, no registration required.'
 category: linux
 keywords:
   - timezone information
@@ -22,8 +22,8 @@ features:
   - Support various timezone formats
   - Offer command-line usage
   - Display help information for zdump
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # zdump

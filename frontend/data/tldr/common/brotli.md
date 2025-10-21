@@ -1,29 +1,29 @@
 ---
-title: "Brotli Compress - Create Brotli Archives | Online Free DevTools by Hexmos"
+title: 'Brotli Compress - Create Brotli Archives | Online Free DevTools by Hexmos'
 name: brotli
-path: "/freedevtools/tldr/common/brotli/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/brotli/"
-description: "Compress files with Brotli using Brotli command-line tool. Create and decompress Brotli archives efficiently. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/brotli/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/brotli/'
+description: 'Compress files with Brotli using Brotli command-line tool. Create and decompress Brotli archives efficiently. Free online tool, no registration required.'
 category: common
 keywords:
-- Brotli archive
-- Brotli compression
-- Brotli decompress
-- Brotli file compressor
-- Brotli command
-- Linux Brotli
-- macOS Brotli
-- Brotli archive creator
-- Brotli file compression tool
-- Brotli high compression
+  - Brotli archive
+  - Brotli compression
+  - Brotli decompress
+  - Brotli file compressor
+  - Brotli command
+  - Linux Brotli
+  - macOS Brotli
+  - Brotli archive creator
+  - Brotli file compression tool
+  - Brotli high compression
 features:
-- Compress files into Brotli archives
-- Decompress Brotli archives
-- Specify the output filename for compressed files
-- Define compression quality for optimal results
-- Compress and decompress from the command line
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Compress files into Brotli archives
+  - Decompress Brotli archives
+  - Specify the output filename for compressed files
+  - Define compression quality for optimal results
+  - Compress and decompress from the command line
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # brotli

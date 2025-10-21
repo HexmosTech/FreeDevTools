@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CurlToJsFetchSkeleton from "./_CurlToJsFetchSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+import React, { useState, useEffect, useCallback } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import CurlToJsFetchSkeleton from './_CurlToJsFetchSkeleton';
+import CopyButton from '@/components/ui/copy-button';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // cURL to JavaScript Fetch conversion utilities
 const convertCurlToFetch = (
@@ -40,7 +40,7 @@ const convertCurlToFetch = (
     return fetchCode;
   } catch (error) {
     throw new Error(
-      `Failed to convert cURL command: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to convert cURL command: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
 };
@@ -63,13 +63,13 @@ interface ParsedCurl {
 
 const parseCurlCommand = (curlCommand: string): ParsedCurl => {
   const result: ParsedCurl = {
-    url: "",
-    method: "GET",
+    url: '',
+    method: 'GET',
     headers: {},
   };
 
   // Remove 'curl' from the beginning
-  let command = curlCommand.trim().replace(/^curl\s+/, "");
+  let command = curlCommand.trim().replace(/^curl\s+/, '');
 
   // Parse URL (first non-flag argument or -u/--url)
   const urlMatch =
@@ -77,7 +77,7 @@ const parseCurlCommand = (curlCommand: string): ParsedCurl => {
     command.match(/(?:^|\s)(['"]?)([^-\s][^\s]*)\1(?:\s|$)/);
   if (urlMatch) {
     result.url = urlMatch[2] || urlMatch[1];
-    result.url = result.url.replace(/['"]/g, "");
+    result.url = result.url.replace(/['"]/g, '');
   }
 
   // Parse method
@@ -90,7 +90,7 @@ const parseCurlCommand = (curlCommand: string): ParsedCurl => {
   const headerMatches = command.matchAll(/(?:^|\s)-H\s+(['"])(.*?)\1/g);
   for (const match of headerMatches) {
     const headerLine = match[2];
-    const colonIndex = headerLine.indexOf(":");
+    const colonIndex = headerLine.indexOf(':');
     if (colonIndex > 0) {
       const key = headerLine.substring(0, colonIndex).trim();
       const value = headerLine.substring(colonIndex + 1).trim();
@@ -104,8 +104,8 @@ const parseCurlCommand = (curlCommand: string): ParsedCurl => {
   );
   if (dataMatch) {
     result.data = dataMatch[2];
-    if (result.method === "GET") {
-      result.method = "POST";
+    if (result.method === 'GET') {
+      result.method = 'POST';
     }
   }
 
@@ -128,16 +128,16 @@ const generateFetchCode = (
 ): string => {
   const { includeComments, useAsync, includeErrorHandling } = options;
 
-  let code = "";
+  let code = '';
 
   if (includeComments) {
-    code += "// Converted from cURL command\n";
+    code += '// Converted from cURL command\n';
   }
 
   if (useAsync) {
-    code += "const response = await fetch(";
+    code += 'const response = await fetch(';
   } else {
-    code += "fetch(";
+    code += 'fetch(';
   }
 
   // URL
@@ -145,22 +145,22 @@ const generateFetchCode = (
 
   // Options object
   const hasOptions =
-    parsed.method !== "GET" ||
+    parsed.method !== 'GET' ||
     Object.keys(parsed.headers).length > 0 ||
     parsed.data ||
     parsed.auth;
 
   if (hasOptions) {
-    code += ", {\n";
+    code += ', {\n';
 
     // Method
-    if (parsed.method !== "GET") {
+    if (parsed.method !== 'GET') {
       code += `  method: '${parsed.method}',\n`;
     }
 
     // Headers
     if (Object.keys(parsed.headers).length > 0 || parsed.auth) {
-      code += "  headers: {\n";
+      code += '  headers: {\n';
 
       // Authentication
       if (parsed.auth) {
@@ -175,7 +175,7 @@ const generateFetchCode = (
         code += `    '${key}': '${value}',\n`;
       }
 
-      code += "  },\n";
+      code += '  },\n';
     }
 
     // Body
@@ -183,28 +183,28 @@ const generateFetchCode = (
       code += `  body: '${parsed.data}',\n`;
     }
 
-    code += "}";
+    code += '}';
   }
 
-  code += ")";
+  code += ')';
 
   if (useAsync && includeErrorHandling) {
-    code += ";\n\n";
+    code += ';\n\n';
     if (includeComments) {
-      code += "// Handle the response\n";
+      code += '// Handle the response\n';
     }
-    code += "if (!response.ok) {\n";
-    code += "  throw new Error(`HTTP error! status: ${response.status}`);\n";
-    code += "}\n\n";
-    code += "const data = await response.json();\n";
-    code += "console.log(data);";
+    code += 'if (!response.ok) {\n';
+    code += '  throw new Error(`HTTP error! status: ${response.status}`);\n';
+    code += '}\n\n';
+    code += 'const data = await response.json();\n';
+    code += 'console.log(data);';
   } else if (useAsync) {
-    code += ";\n\n";
-    code += "const data = await response.json();\n";
-    code += "console.log(data);";
+    code += ';\n\n';
+    code += 'const data = await response.json();\n';
+    code += 'console.log(data);';
   } else {
-    code += "\n  .then(response => response.json())\n";
-    code += "  .then(data => console.log(data))\n";
+    code += '\n  .then(response => response.json())\n';
+    code += '  .then(data => console.log(data))\n';
     code += "  .catch(error => console.error('Error:', error));";
   }
 
@@ -212,9 +212,9 @@ const generateFetchCode = (
 };
 
 const CurlToJsFetch: React.FC = () => {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
   const [includeComments, setIncludeComments] = useState(true);
   const [useAsync, setUseAsync] = useState(true);
@@ -230,11 +230,11 @@ const CurlToJsFetch: React.FC = () => {
   }, []);
 
   const handleConversion = useCallback(() => {
-    setError("");
+    setError('');
 
     if (!input.trim()) {
-      setError("Please provide a cURL command");
-      setOutput("");
+      setError('Please provide a cURL command');
+      setOutput('');
       return;
     }
 
@@ -245,20 +245,20 @@ const CurlToJsFetch: React.FC = () => {
         includeErrorHandling,
       });
       setOutput(fetchCode);
-      toast.success("cURL command converted successfully!");
+      toast.success('cURL command converted successfully!');
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to convert cURL command";
+        err instanceof Error ? err.message : 'Failed to convert cURL command';
       setError(errorMessage);
-      setOutput("");
-      toast.error("Failed to convert cURL command");
+      setOutput('');
+      toast.error('Failed to convert cURL command');
     }
   }, [input, includeComments, useAsync, includeErrorHandling]);
 
   const handleInputChange = useCallback(
     (value: string) => {
       setInput(value);
-      setError("");
+      setError('');
 
       if (autoConvert && value.trim()) {
         setTimeout(() => {
@@ -279,9 +279,9 @@ const CurlToJsFetch: React.FC = () => {
   );
 
   const handleClear = () => {
-    setInput("");
-    setOutput("");
-    setError("");
+    setInput('');
+    setOutput('');
+    setError('');
   };
 
   const sampleCurl = `curl -X POST https://api.example.com/users \\
@@ -298,7 +298,7 @@ const CurlToJsFetch: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -457,7 +457,7 @@ const CurlToJsFetch: React.FC = () => {
                           Lines Generated:
                         </span>
                         <span className="ml-2 font-mono text-blue-800 dark:text-blue-200">
-                          {output.split("\n").length} lines
+                          {output.split('\n').length} lines
                         </span>
                       </div>
                     </div>
@@ -555,7 +555,7 @@ const CurlToJsFetch: React.FC = () => {
                       </div>
                       <div className="text-slate-800 dark:text-slate-200 break-all">
                         curl -X POST -H "Content-Type: application/json" -d '
-                        {"key" + ":" + "value"}' https://api.example.com
+                        {'key' + ':' + 'value'}' https://api.example.com
                       </div>
                     </div>
                     <div>

@@ -1,29 +1,29 @@
 ---
-title: "Blender - Render 3D Graphics via Command Line | Online Free DevTools by Hexmos"
+title: 'Blender - Render 3D Graphics via Command Line | Online Free DevTools by Hexmos'
 name: blender
-path: "/freedevtools/tldr/common/blender/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/blender/"
-description: "Render 3D graphics with Blender using command line arguments. Control animation output, frame rendering, and scene settings effortlessly. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/blender/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/blender/'
+description: 'Render 3D graphics with Blender using command line arguments. Control animation output, frame rendering, and scene settings effortlessly. Free online tool, no registration required.'
 category: common
 keywords:
-- 3D rendering command line
-- blender command line render
-- animation rendering cli
-- background rendering blender
-- scene rendering blender
-- frame rendering blender
-- blender batch render
-- cli 3d graphics rendering
-- blender python scripting
-- blender automation
+  - 3D rendering command line
+  - blender command line render
+  - animation rendering cli
+  - background rendering blender
+  - scene rendering blender
+  - frame rendering blender
+  - blender batch render
+  - cli 3d graphics rendering
+  - blender python scripting
+  - blender automation
 features:
-- Render animations in the background
-- Control rendering output path and naming
-- Render specific frames from an animation
-- Render specific scenes within a Blender file
-- Execute Python expressions for advanced rendering controls
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Render animations in the background
+  - Control rendering output path and naming
+  - Render specific frames from an animation
+  - Render specific scenes within a Blender file
+  - Execute Python expressions for advanced rendering controls
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # blender

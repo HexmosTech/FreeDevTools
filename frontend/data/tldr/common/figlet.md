@@ -1,29 +1,29 @@
 ---
-title: "Generate ASCII Art - Figlet Text Banners | Online Free DevTools by Hexmos"
+title: 'Generate ASCII Art - Figlet Text Banners | Online Free DevTools by Hexmos'
 name: figlet
-path: "/freedevtools/tldr/common/figlet/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/figlet/"
-description: "Generate ASCII art with Figlet for banners and text graphics. Create impressive terminal displays using custom fonts. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/figlet/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/figlet/'
+description: 'Generate ASCII art with Figlet for banners and text graphics. Create impressive terminal displays using custom fonts. Free online tool, no registration required.'
 category: common
 keywords:
-- ascii art generator
-- text banner creator
-- figlet text converter
-- command line banner
-- terminal text art
-- linux figlet
-- macos figlet
-- text to ascii art
-- figlet font styles
-- command line text effects
+  - ascii art generator
+  - text banner creator
+  - figlet text converter
+  - command line banner
+  - terminal text art
+  - linux figlet
+  - macos figlet
+  - text to ascii art
+  - figlet font styles
+  - command line text effects
 features:
-- Generate ASCII art banners from text input.
-- Support for custom font files and styles.
-- Pipe command output for dynamic text banners.
-- Control text alignment and width within the terminal.
-- Display available FIGlet fonts for text customization.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate ASCII art banners from text input.
+  - Support for custom font files and styles.
+  - Pipe command output for dynamic text banners.
+  - Control text alignment and width within the terminal.
+  - Display available FIGlet fonts for text customization.
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # figlet

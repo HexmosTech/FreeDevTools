@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import HarFileViewerSkeleton from "./_HarFileViewerSkeleton";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import ToolBody from '@/components/tool/ToolBody';
+import ToolCardWrapper from '@/components/tool/ToolCardWrapper';
+import ToolContentCardWrapper from '@/components/tool/ToolContentCardWrapper';
+import HarFileViewerSkeleton from './_HarFileViewerSkeleton';
+import { toast } from '@/components/ToastProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -24,9 +24,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import ToolVideo from "@/components/tool/ToolVideo";
-import AdBanner from "../../../components/banner/AdBanner";
+} from '@/components/ui/table';
+import ToolVideo from '@/components/tool/ToolVideo';
+import AdBanner from '../../../components/banner/AdBanner';
 
 // HAR file types and interfaces
 interface HarEntry {
@@ -65,42 +65,42 @@ interface HarData {
 }
 
 type FilterType =
-  | "All"
-  | "XHR"
-  | "JS"
-  | "CSS"
-  | "Img"
-  | "Media"
-  | "Other"
-  | "Error";
+  | 'All'
+  | 'XHR'
+  | 'JS'
+  | 'CSS'
+  | 'Img'
+  | 'Media'
+  | 'Other'
+  | 'Error';
 
 // Utility functions
 const getContentType = (mimeType: string): FilterType => {
   if (
-    mimeType.includes("application/json") ||
-    mimeType.includes("xmlhttprequest")
+    mimeType.includes('application/json') ||
+    mimeType.includes('xmlhttprequest')
   )
-    return "XHR";
-  if (mimeType.includes("javascript") || mimeType.includes("js")) return "JS";
-  if (mimeType.includes("css")) return "CSS";
-  if (mimeType.includes("image")) return "Img";
-  if (mimeType.includes("video") || mimeType.includes("audio")) return "Media";
-  return "Other";
+    return 'XHR';
+  if (mimeType.includes('javascript') || mimeType.includes('js')) return 'JS';
+  if (mimeType.includes('css')) return 'CSS';
+  if (mimeType.includes('image')) return 'Img';
+  if (mimeType.includes('video') || mimeType.includes('audio')) return 'Media';
+  return 'Other';
 };
 
 const getStatusBadgeVariant = (status: number) => {
-  if (status >= 200 && status < 300) return "default";
-  if (status >= 300 && status < 400) return "secondary";
-  if (status >= 400) return "destructive";
-  return "outline";
+  if (status >= 200 && status < 300) return 'default';
+  if (status >= 300 && status < 400) return 'secondary';
+  if (status >= 400) return 'destructive';
+  return 'outline';
 };
 
 const HarFileViewer: React.FC = () => {
   const [harData, setHarData] = useState<HarData | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
-  const [filter, setFilter] = useState<FilterType>("All");
-  const [statusFilter, setStatusFilter] = useState<string>("All");
+  const [filter, setFilter] = useState<FilterType>('All');
+  const [statusFilter, setStatusFilter] = useState<string>('All');
   const [expandedEntry, setExpandedEntry] = useState<number | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
@@ -113,10 +113,10 @@ const HarFileViewer: React.FC = () => {
   }, []);
 
   const handleFileUpload = useCallback((file: File) => {
-    setError("");
+    setError('');
 
-    if (!file.name.endsWith(".har") && !file.name.endsWith(".json")) {
-      setError("Please upload a valid HAR file (.har or .json)");
+    if (!file.name.endsWith('.har') && !file.name.endsWith('.json')) {
+      setError('Please upload a valid HAR file (.har or .json)');
       return;
     }
 
@@ -127,7 +127,7 @@ const HarFileViewer: React.FC = () => {
         const data = JSON.parse(content) as HarData;
 
         if (!data.log || !data.log.entries) {
-          throw new Error("Invalid HAR file format");
+          throw new Error('Invalid HAR file format');
         }
 
         setHarData(data);
@@ -136,7 +136,7 @@ const HarFileViewer: React.FC = () => {
         setError(
           "Failed to parse HAR file. Please ensure it's a valid HAR file."
         );
-        toast.error("Failed to parse HAR file");
+        toast.error('Failed to parse HAR file');
       }
     };
     reader.readAsText(file);
@@ -171,16 +171,16 @@ const HarFileViewer: React.FC = () => {
     let entries = harData.log.entries;
 
     // Filter by content type
-    if (filter !== "All") {
+    if (filter !== 'All') {
       entries = entries.filter((entry) => {
-        if (filter === "Error") return entry.response.status >= 400;
+        if (filter === 'Error') return entry.response.status >= 400;
         return getContentType(entry.response.content.mimeType) === filter;
       });
     }
 
     // Filter by status code
-    if (statusFilter !== "All") {
-      const statusRange = statusFilter.split("x")[0];
+    if (statusFilter !== 'All') {
+      const statusRange = statusFilter.split('x')[0];
       entries = entries.filter((entry) =>
         entry.response.status.toString().startsWith(statusRange)
       );
@@ -203,18 +203,18 @@ const HarFileViewer: React.FC = () => {
 
   const handleClear = () => {
     setHarData(null);
-    setError("");
-    setFilter("All");
-    setStatusFilter("All");
+    setError('');
+    setFilter('All');
+    setStatusFilter('All');
     setExpandedEntry(null);
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 B";
+    if (bytes === 0) return '0 B';
     const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB"];
+    const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
   const formatTime = (ms: number): string => {
@@ -224,16 +224,16 @@ const HarFileViewer: React.FC = () => {
 
   const getStatusCodeColor = (status: number): string => {
     if (status >= 200 && status < 300)
-      return "text-green-600 dark:text-green-400";
+      return 'text-green-600 dark:text-green-400';
     if (status >= 300 && status < 400)
-      return "text-yellow-600 dark:text-yellow-400";
-    if (status >= 400) return "text-red-600 dark:text-red-400";
-    return "text-slate-600 dark:text-slate-400";
+      return 'text-yellow-600 dark:text-yellow-400';
+    if (status >= 400) return 'text-red-600 dark:text-red-400';
+    return 'text-slate-600 dark:text-slate-400';
   };
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -258,8 +258,8 @@ const HarFileViewer: React.FC = () => {
                   onDragLeave={handleDragLeave}
                   className={`relative flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed rounded-lg p-6 transition-colors ${
                     dragActive
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                      : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50"
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50'
                   }`}
                 >
                   <input
@@ -288,8 +288,8 @@ const HarFileViewer: React.FC = () => {
                     </div>
                     <div className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {dragActive
-                        ? "Drop your HAR file here"
-                        : "Upload HAR File"}
+                        ? 'Drop your HAR file here'
+                        : 'Upload HAR File'}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                       Drag & drop a .har or .json file, or click to browse
@@ -310,7 +310,7 @@ const HarFileViewer: React.FC = () => {
                 {harData && (
                   <div className="mt-4 flex justify-between items-center">
                     <div className="text-sm text-slate-600 dark:text-slate-400">
-                      <strong>Loaded:</strong> {harData.log.entries.length}{" "}
+                      <strong>Loaded:</strong> {harData.log.entries.length}{' '}
                       requests
                     </div>
                     <Button onClick={handleClear} variant="outline" size="sm">
@@ -332,19 +332,19 @@ const HarFileViewer: React.FC = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       {(
                         [
-                          "All",
-                          "XHR",
-                          "JS",
-                          "CSS",
-                          "Img",
-                          "Media",
-                          "Other",
-                          "Error",
+                          'All',
+                          'XHR',
+                          'JS',
+                          'CSS',
+                          'Img',
+                          'Media',
+                          'Other',
+                          'Error',
                         ] as FilterType[]
                       ).map((type) => (
                         <Button
                           key={type}
-                          variant={filter === type ? "default" : "outline"}
+                          variant={filter === type ? 'default' : 'outline'}
                           size="sm"
                           onClick={() => setFilter(type)}
                           className="text-xs"
@@ -374,7 +374,7 @@ const HarFileViewer: React.FC = () => {
                     </div>
 
                     <div className="text-sm text-slate-600 dark:text-slate-400">
-                      Showing {filteredEntries.length} of{" "}
+                      Showing {filteredEntries.length} of{' '}
                       {harData.log.entries.length} requests
                     </div>
                   </CardContent>
@@ -402,7 +402,7 @@ const HarFileViewer: React.FC = () => {
                             <TableRow
                               key={index}
                               className={`cursor-pointer ${
-                                expandedEntry === index ? "bg-muted/50" : ""
+                                expandedEntry === index ? 'bg-muted/50' : ''
                               }`}
                               onClick={() =>
                                 setExpandedEntry(
@@ -464,23 +464,23 @@ const HarFileViewer: React.FC = () => {
                           <h4 className="font-medium mb-2">General</h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
-                              <strong>URL:</strong>{" "}
+                              <strong>URL:</strong>{' '}
                               {filteredEntries[expandedEntry].request.url}
                             </div>
                             <div>
-                              <strong>Method:</strong>{" "}
+                              <strong>Method:</strong>{' '}
                               {filteredEntries[expandedEntry].request.method}
                             </div>
                             <div>
-                              <strong>Status:</strong>{" "}
-                              {filteredEntries[expandedEntry].response.status}{" "}
+                              <strong>Status:</strong>{' '}
+                              {filteredEntries[expandedEntry].response.status}{' '}
                               {
                                 filteredEntries[expandedEntry].response
                                   .statusText
                               }
                             </div>
                             <div>
-                              <strong>Started:</strong>{" "}
+                              <strong>Started:</strong>{' '}
                               {new Date(
                                 filteredEntries[expandedEntry].startedDateTime
                               ).toLocaleString()}

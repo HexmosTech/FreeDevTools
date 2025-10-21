@@ -1,29 +1,29 @@
 ---
-title: "Dune Build System - Build OCaml Projects | Online Free DevTools by Hexmos"
+title: 'Dune Build System - Build OCaml Projects | Online Free DevTools by Hexmos'
 name: dune
-path: "/freedevtools/tldr/common/dune/"
-canonical: "https://hexmos.com/freedevtools/tldr/common/dune/"
-description: "Build OCaml projects with Dune build system. Efficiently manage dependencies and automate compilation. Free online tool, no registration required."
+path: '/freedevtools/tldr/common/dune/'
+canonical: 'https://hexmos.com/freedevtools/tldr/common/dune/'
+description: 'Build OCaml projects with Dune build system. Efficiently manage dependencies and automate compilation. Free online tool, no registration required.'
 category: common
 keywords:
-- ocaml build system
-- dune build automation
-- ocaml dependency management
-- dune project compiler
-- ocaml build tool
-- dune command line interface
-- ocaml package manager
-- dune workspace manager
-- ocaml build configuration
-- dune OCaml
+  - ocaml build system
+  - dune build automation
+  - ocaml dependency management
+  - dune project compiler
+  - ocaml build tool
+  - dune command line interface
+  - ocaml package manager
+  - dune workspace manager
+  - ocaml build configuration
+  - dune OCaml
 features:
-- Builds all project targets
-- Cleans up the project workspace
-- Runs all project tests
-- Starts a utop REPL with modules loaded
-- Automates OCaml project compilation
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Builds all project targets
+  - Cleans up the project workspace
+  - Runs all project tests
+  - Starts a utop REPL with modules loaded
+  - Automates OCaml project compilation
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # dune

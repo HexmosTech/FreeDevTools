@@ -1,29 +1,29 @@
 ---
-title: "Generate Package Graph - Pacgraph | Online Free DevTools by Hexmos"
+title: 'Generate Package Graph - Pacgraph | Online Free DevTools by Hexmos'
 name: pacgraph
-path: "/freedevtools/tldr/linux/pacgraph/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/pacgraph/"
-description: "Generate dependency graphs with Pacgraph, a powerful Linux package visualization tool. Analyze software dependencies and system architecture easily. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/pacgraph/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/pacgraph/'
+description: 'Generate dependency graphs with Pacgraph, a powerful Linux package visualization tool. Analyze software dependencies and system architecture easily. Free online tool, no registration required.'
 category: linux
 keywords:
-- linux package graph generator
-- pacman package dependency graph
-- visualize package dependencies
-- arch linux dependency analysis
-- linux software architecture
-- package manager graph
-- command line graph tool
-- system dependency mapping
-- svg package graph
-- png package graph
+  - linux package graph generator
+  - pacman package dependency graph
+  - visualize package dependencies
+  - arch linux dependency analysis
+  - linux software architecture
+  - package manager graph
+  - command line graph tool
+  - system dependency mapping
+  - svg package graph
+  - png package graph
 features:
-- Generate package dependency graphs in SVG format
-- Produce package graphs in PNG format
-- Print package dependency summary to console
-- Customize node and link colors in the graph
-- Override default filename and location for graph output
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+  - Generate package dependency graphs in SVG format
+  - Produce package graphs in PNG format
+  - Print package dependency summary to console
+  - Customize node and link colors in the graph
+  - Override default filename and location for graph output
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # pacgraph

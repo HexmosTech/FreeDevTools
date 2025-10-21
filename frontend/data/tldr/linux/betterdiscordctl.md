@@ -1,9 +1,9 @@
 ---
-title: "BetterDiscord Control - Manage BetterDiscord on Linux | Online Free DevTools by Hexmos"
+title: 'BetterDiscord Control - Manage BetterDiscord on Linux | Online Free DevTools by Hexmos'
 name: betterdiscordctl
-path: "/freedevtools/tldr/linux/betterdiscordctl/"
-canonical: "https://hexmos.com/freedevtools/tldr/linux/betterdiscordctl/"
-description: "Manage BetterDiscord installations effortlessly with betterdiscordctl.  Install BetterDiscord on various Discord versions (Stable, Canary, PTB, Flatpak, Snap) using simple commands. Free online tool, no registration required."
+path: '/freedevtools/tldr/linux/betterdiscordctl/'
+canonical: 'https://hexmos.com/freedevtools/tldr/linux/betterdiscordctl/'
+description: 'Manage BetterDiscord installations effortlessly with betterdiscordctl.  Install BetterDiscord on various Discord versions (Stable, Canary, PTB, Flatpak, Snap) using simple commands. Free online tool, no registration required.'
 category: linux
 keywords:
   - linux discord management
@@ -22,8 +22,8 @@ features:
   - Provides simple, command-line driven installation.
   - Manages BetterDiscord installations on Linux systems.
   - Offers flexibility for different Discord distribution methods.
-ogImage: "https://hexmos.com/freedevtools/site-banner.png"
-twitterImage: "https://hexmos.com/freedevtools/site-banner.png"
+ogImage: 'https://hexmos.com/freedevtools/site-banner.png'
+twitterImage: 'https://hexmos.com/freedevtools/site-banner.png'
 ---
 
 # betterdiscordctl
