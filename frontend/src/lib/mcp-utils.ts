@@ -90,7 +90,7 @@ export async function generateMcpDirectoryPaginatedPaths({
       id,
       name: categoryData.categoryDisplay,
       description: '',
-      icon: `/freedevtools/svg_icons/automation/mcp-server-stroke-rounded.svg`,
+      icon: id, // Use the category ID as the icon key for emoji matching
       serverCount: categoryData.totalRepositories,
       url: `/freedevtools/mcp/${id}/1/`,
     })

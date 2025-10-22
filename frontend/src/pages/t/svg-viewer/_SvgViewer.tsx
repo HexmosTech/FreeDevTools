@@ -185,15 +185,17 @@ const SvgViewer: React.FC = () => {
 
     try {
       // Check if content contains SVG
-      if (!svgContent.toLowerCase().includes("<svg")) {
+      // Normalize input: unescape common HTML entities that may be pasted
+      const normalized = svgContent.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+
+      if (!normalized.toLowerCase().includes("<svg")) {
         setError("Input does not contain a valid SVG element");
         setSvgDataUrl("");
         setSvgDimensions({});
         return;
       }
-
       // Extract SVG dimensions
-      const svgMatch = svgContent.match(/<svg[^>]*>/i);
+      const svgMatch = normalized.match(/<svg[^>]*>/i);
       if (svgMatch) {
         const svgTag = svgMatch[0];
         const widthMatch = svgTag.match(/width\s*=\s*["']([^"']+)["']/i);
@@ -204,8 +206,15 @@ const SvgViewer: React.FC = () => {
         });
       }
 
+      // Ensure xmlns is present; some SVG snippets omit it which can cause rendering issues
+      let finalSvg = normalized;
+      const hasXmlns = /<svg[^>]*xmlns=["'][^"']+["']/i.test(finalSvg);
+      if (!hasXmlns) {
+        finalSvg = finalSvg.replace(/<svg(\s|>)/i, '<svg xmlns="http://www.w3.org/2000/svg"$1');
+      }
+
       // Create data URL
-      const blob = new Blob([svgContent], { type: "image/svg+xml" });
+      const blob = new Blob([finalSvg], { type: "image/svg+xml" });
       const reader = new FileReader();
 
       reader.onload = () => {

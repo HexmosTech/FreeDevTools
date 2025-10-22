@@ -14,7 +14,7 @@ func generateCheatsheetsData(ctx context.Context) ([]CheatsheetData, error) {
 	fmt.Println("📖 Generating cheatsheets data...")
 
 	// Path to cheatsheet files
-	basePath := "../frontend/src/pages/html_pages/cheatsheets"
+	basePath := "../frontend/data/cheatsheets"
 
 	files, err := filepath.Glob(filepath.Join(basePath, "**", "*.html"))
 	if err != nil {
@@ -90,7 +90,14 @@ func processCheatsheetFile(filePath, basePath string) (*CheatsheetData, string, 
 
 	category := pathParts[0]
 	fileName := pathParts[len(pathParts)-1]
-	name := strings.TrimSuffix(fileName, ".html")
+	fileBaseName := strings.TrimSuffix(fileName, ".html")
+
+	// Extract H1 title from HTML content
+	name := extractHTMLTitle(contentStr)
+	if name == "" {
+		// Fallback to filename if no H1 found
+		name = fileBaseName
+	}
 
 	// Extract description from HTML (prefer meta description)
 	description := extractHTMLDescription(contentStr)
@@ -98,8 +105,8 @@ func processCheatsheetFile(filePath, basePath string) (*CheatsheetData, string, 
 		description = fmt.Sprintf("Cheatsheet for %s", name)
 	}
 
-	// Generate path
-	fullPath := fmt.Sprintf("/freedevtools/c/%s/%s/", category, name)
+	// Generate path (using fileBaseName for the URL)
+	fullPath := fmt.Sprintf("/freedevtools/c/%s/%s/", category, fileBaseName)
 
 	// Generate ID
 	id := generateCheatsheetID(fullPath)
@@ -142,6 +149,17 @@ func extractHTMLDescription(content string) string {
 	// Fallback: try property="og:description"
 	ogDescRegex := regexp.MustCompile(`<meta\s+property=["']og:description["']\s+content=["']([^"']*)["']`)
 	match = ogDescRegex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		return strings.TrimSpace(match[1])
+	}
+
+	return ""
+}
+
+func extractHTMLTitle(content string) string {
+	// Try H1 tag first
+	h1Regex := regexp.MustCompile(`<h1[^>]*>([^<]+)</h1>`)
+	match := h1Regex.FindStringSubmatch(content)
 	if len(match) > 1 {
 		return strings.TrimSpace(match[1])
 	}

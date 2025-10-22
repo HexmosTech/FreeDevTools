@@ -180,3 +180,6 @@ We appreciate every contribution! 🙌
 ## Thank You 💜
 
 Your contributions make [FreeDevTools](https://hexmos.com/freedevtools/) better for everyone.
+
+## ⭐ Star This Repository
+Please consider giving us a ⭐ star on GitHub! It helps us reach more developers who could benefit from these utilities.
