@@ -9,7 +9,7 @@ svgs = [
 png_cluster = "./data/cluster_png.json"
 svg_cluster = "./data/cluster_svg.json"
 
-API_KEY = "AIzaSyDtNBCOZDq8SDGwYZR4zmRpRMiLgO9Fzi4"
+API_KEY = ""
 """
 svg_icons/github/github-svgrepo-com.svg
 github - clusters
@@ -89,7 +89,7 @@ Example of the cluster_svg.json & cluster_png.json
 
 curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent" \
   -H 'Content-Type: application/json' \
-  -H 'X-goog-api-key: AIzaSyDtNBCOZDq8SDGwYZR4zmRpRMiLgO9Fzi4' \
+  -H 'X-goog-api-key: ' \
   -X POST \
   -d '{
     "contents": [
@@ -190,7 +190,6 @@ def create_fallback_metadata(filename, cluster_name, format_type="svg"):
         format_desc = "raster-based PNG icon"
         format_tags = [cluster_name, "icon", "png", "bitmap", "raster", "ui"]
         format_benefits = "high-quality with transparency support"
-    
     return {
         "fileName": filename,
         "description": f"A {format_desc} from the {cluster_name} category, designed for modern web applications and user interfaces. This {format_benefits}.",
@@ -244,23 +243,60 @@ def update_cluster_files():
         svg_metadata = generate_metadata_with_gemini(full_path, cluster_name, "svg")
         png_metadata = generate_metadata_with_gemini(full_path, cluster_name, "png")
 
+        # Create cluster if it doesn't exist
+        if cluster_name not in svg_data["clusters"]:
+            svg_data["clusters"][cluster_name] = {
+                "name": cluster_name,
+                "source_folder": cluster_name,
+                "path": f"/freedevtools/unique/{cluster_name}",
+                "keywords": [
+                    cluster_name,
+                    f"free {cluster_name} icons",
+                    f"free {cluster_name} svg",
+                    "unique",
+                    "exclusive",
+                    cluster_name,
+                ],
+                "features": ["feature1", "feature2", "feature3"],
+                "title": f"Free {cluster_name} icons | Online Free DevTools by Hexmos",
+                "description": f"count: 0, topic: {cluster_name}, source: {cluster_name}",
+                "fileNames": [],
+            }
+
+        if cluster_name not in png_data["clusters"]:
+            png_data["clusters"][cluster_name] = {
+                "name": cluster_name,
+                "source_folder": cluster_name,
+                "path": f"/freedevtools/unique/{cluster_name}",
+                "keywords": [
+                    cluster_name,
+                    f"free {cluster_name} icons",
+                    f"free {cluster_name} png",
+                    "unique",
+                    "exclusive",
+                    cluster_name,
+                ],
+                "features": ["feature1", "feature2", "feature3"],
+                "title": f"Free {cluster_name} icons | Online Free DevTools by Hexmos",
+                "description": f"count: 0, topic: {cluster_name}, source: {cluster_name}",
+                "fileNames": [],
+            }
+
         # Add to SVG cluster
-        if cluster_name in svg_data["clusters"]:
-            svg_data["clusters"][cluster_name]["fileNames"].append(svg_metadata)
-            # Update count in description
-            current_count = len(svg_data["clusters"][cluster_name]["fileNames"])
-            svg_data["clusters"][cluster_name][
-                "description"
-            ] = f"count: {current_count}, topic: {cluster_name}, source: {cluster_name}"
+        svg_data["clusters"][cluster_name]["fileNames"].append(svg_metadata)
+        # Update count in description
+        current_count = len(svg_data["clusters"][cluster_name]["fileNames"])
+        svg_data["clusters"][cluster_name][
+            "description"
+        ] = f"count: {current_count}, topic: {cluster_name}, source: {cluster_name}"
 
         # Add to PNG cluster with PNG-specific metadata
-        if cluster_name in png_data["clusters"]:
-            png_data["clusters"][cluster_name]["fileNames"].append(png_metadata)
-            # Update count in description
-            current_count = len(png_data["clusters"][cluster_name]["fileNames"])
-            png_data["clusters"][cluster_name][
-                "description"
-            ] = f"count: {current_count}, topic: {cluster_name}, source: {cluster_name}"
+        png_data["clusters"][cluster_name]["fileNames"].append(png_metadata)
+        # Update count in description
+        current_count = len(png_data["clusters"][cluster_name]["fileNames"])
+        png_data["clusters"][cluster_name][
+            "description"
+        ] = f"count: {current_count}, topic: {cluster_name}, source: {cluster_name}"
 
     # Save updated files
     save_json_file(svg_cluster, svg_data)

@@ -16,7 +16,7 @@ func generateTLDRData(ctx context.Context) ([]TLDRData, error) {
 	fmt.Println("📚 Generating TLDR data...")
 
 	// Path to TLDR markdown files
-	basePath := "../frontend/src/pages/markdown_pages/tldr"
+	basePath := "../frontend/data/tldr"
 
 	files, err := filepath.Glob(filepath.Join(basePath, "**", "*.md"))
 	if err != nil {
@@ -88,9 +88,12 @@ func processTLDRFile(filePath string) (*TLDRData, error) {
 		path = path + "/"
 	}
 
+	// Format the name with first letter capitalized
+	formattedName := capitalizeFirstLetter(frontmatter.Name)
+
 	tldrData := &TLDRData{
 		ID:          id,
-		Name:        frontmatter.Name,
+		Name:        formattedName,
 		Description: frontmatter.Description,
 		Path:        path,
 		Category:    "tldr", // Always set to "tldr" for all TLDR entries
@@ -102,11 +105,24 @@ func processTLDRFile(filePath string) (*TLDRData, error) {
 func generateIDFromPath(path string) string {
 	// Remove the base path and convert to ID format
 	cleanPath := strings.Replace(path, "/freedevtools/tldr/", "", 1)
+	
+	// Remove trailing slash if present
+	cleanPath = strings.TrimSuffix(cleanPath, "/")
+	
+	// Replace remaining slashes with dashes
 	cleanPath = strings.Replace(cleanPath, "/", "-", -1)
 
 	// Replace any invalid characters with underscores
 	reg := regexp.MustCompile(`[^a-zA-Z0-9\-_]`)
 	cleanPath = reg.ReplaceAllString(cleanPath, "_")
 
-	return fmt.Sprintf("tldr-%s", cleanPath)
+	return fmt.Sprintf("tldr-%s", sanitizeID(cleanPath))
+}
+
+
+func capitalizeFirstLetter(name string) string {
+	if len(name) == 0 {
+		return name
+	}
+	return strings.ToUpper(string(name[0])) + strings.ToLower(name[1:])
 }

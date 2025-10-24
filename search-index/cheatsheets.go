@@ -92,11 +92,11 @@ func processCheatsheetFile(filePath, basePath string) (*CheatsheetData, string, 
 	fileName := pathParts[len(pathParts)-1]
 	fileBaseName := strings.TrimSuffix(fileName, ".html")
 
-	// Extract H1 title from HTML content
+	// Extract title from HTML content using fallback hierarchy
 	name := extractHTMLTitle(contentStr)
 	if name == "" {
-		// Fallback to filename if no H1 found
-		name = fileBaseName
+		// Fallback to formatted filename: replace _ with space and capitalize words
+		name = formatFilenameAsTitle(fileBaseName)
 	}
 
 	// Extract description from HTML (prefer meta description)
@@ -157,14 +157,89 @@ func extractHTMLDescription(content string) string {
 }
 
 func extractHTMLTitle(content string) string {
-	// Try H1 tag first
-	h1Regex := regexp.MustCompile(`<h1[^>]*>([^<]+)</h1>`)
-	match := h1Regex.FindStringSubmatch(content)
+	// 1. Try <title> tag first
+	titleRegex := regexp.MustCompile(`<title[^>]*>([^<]+)</title>`)
+	match := titleRegex.FindStringSubmatch(content)
 	if len(match) > 1 {
-		return strings.TrimSpace(match[1])
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
+	}
+
+	// 2. Try <meta property="og:title">
+	ogTitleRegex := regexp.MustCompile(`<meta\s+property="og:title"\s+content="([^"]+)"`)
+	match = ogTitleRegex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
+	}
+
+	// 3. Try <meta property="twitter:title">
+	twitterTitleRegex := regexp.MustCompile(`<meta\s+property="twitter:title"\s+content="([^"]+)"`)
+	match = twitterTitleRegex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
+	}
+
+	// 4. Try H1 tag
+	h1Regex := regexp.MustCompile(`<h1[^>]*>([^<]+)</h1>`)
+	match = h1Regex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
 	}
 
 	return ""
+}
+
+func cleanTitle(title string) string {
+	// Split by | and take only the first part
+	parts := strings.Split(title, "|")
+	if len(parts) > 0 {
+		title = strings.TrimSpace(parts[0])
+	}
+	
+	// Replace common HTML entities and Unicode escapes
+	title = strings.ReplaceAll(title, "\\u0026", "&")
+	title = strings.ReplaceAll(title, "&amp;", "&")
+	title = strings.ReplaceAll(title, "&lt;", "<")
+	title = strings.ReplaceAll(title, "&gt;", ">")
+	title = strings.ReplaceAll(title, "&quot;", "\"")
+	title = strings.ReplaceAll(title, "&#39;", "'")
+	title = strings.ReplaceAll(title, "&nbsp;", " ")
+	
+	// Remove emojis and other Unicode symbols (keep only basic ASCII letters, numbers, spaces, and common punctuation)
+	reg := regexp.MustCompile(`[^\x20-\x7E]`)
+	title = reg.ReplaceAllString(title, "")
+	
+	// Clean up multiple spaces
+	title = regexp.MustCompile(`\s+`).ReplaceAllString(title, " ")
+	title = strings.TrimSpace(title)
+	
+	return title
+}
+
+func formatFilenameAsTitle(filename string) string {
+	// Replace underscores with spaces
+	formatted := strings.ReplaceAll(filename, "_", " ")
+	
+	// Split into words and capitalize each word
+	words := strings.Fields(formatted)
+	for i, word := range words {
+		if len(word) > 0 {
+			words[i] = strings.ToUpper(string(word[0])) + strings.ToLower(word[1:])
+		}
+	}
+	
+	return strings.Join(words, " ")
 }
 
 func generateCheatsheetID(path string) string {

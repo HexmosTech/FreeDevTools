@@ -9,25 +9,25 @@ run:
 	go run .
 
 gen-tools:
-	go run . category tools
+	go run . category=tools
 
 gen-tldr:
-	go run . category tldr
+	go run . category=tldr
 
 gen-emojis:
-	go run . category emojis
+	go run . category=emojis
 
 gen-svg-icons:
-	go run . category svg_icons
+	go run . category=svg_icons
 
 gen-png-icons:
-	go run . category png_icons
+	go run . category=png_icons
 
 gen-cheatsheets:
-	go run . category cheatsheets
+	go run . category=cheatsheets
 
 gen-mcp:
-	go run . category mcp
+	go run . category=mcp
 
 gen-all:
 	go run .
@@ -35,7 +35,7 @@ gen-all:
 sync-search-index:
 	@echo "🔄 Starting search index sync process..."
 	@echo "📊 Step 1: Generating search index files..."
-	go run .
+	./search-index
 	@echo "📤 Step 2: Transferring files to remote server..."
 	./transfer-index-files.sh
 	@echo "✅ Search index sync completed!"

@@ -33,6 +33,13 @@ func parseToolsConfig(tsContent string) ([]ToolData, error) {
 	objectRegex := regexp.MustCompile(`export const TOOLS_CONFIG:[\s\S]*?=\s*\{([\s\S]*?)\}\s*;`)
 	objectMatch := objectRegex.FindStringSubmatch(tsContent)
 	if len(objectMatch) < 2 {
+		fmt.Printf("❌ TOOLS_CONFIG object not found in TypeScript file\n")
+		fmt.Printf("File length: %d characters\n", len(tsContent))
+		previewLen := 200
+		if len(tsContent) < previewLen {
+			previewLen = len(tsContent)
+		}
+		fmt.Printf("First 200 chars: %s\n", tsContent[:previewLen])
 		return tools, fmt.Errorf("TOOLS_CONFIG object not found")
 	}
 
@@ -47,10 +54,11 @@ func parseToolsConfig(tsContent string) ([]ToolData, error) {
 func parseToolEntries(body string) []ToolData {
 	var tools []ToolData
 
-	// Find tool keys first
-	keyRegex := regexp.MustCompile(`"([^"]+)"\s*:\s*\{`)
+	// Find tool keys first (handle both single and double quotes)
+	keyRegex := regexp.MustCompile(`['"]([^'"]+)['"]\s*:\s*\{`)
 	keyMatches := keyRegex.FindAllStringSubmatch(body, -1)
 	keyIndices := keyRegex.FindAllStringIndex(body, -1)
+
 
 	for i, keyMatch := range keyMatches {
 		if len(keyMatch) < 2 {
@@ -101,6 +109,7 @@ func parseToolEntries(body string) []ToolData {
 
 		description := extractStringField(toolBlock, "description")
 		path := extractStringField(toolBlock, "path")
+		
 
 		// Generate ID from path
 		id := generateToolIDFromPath(path)
@@ -149,17 +158,26 @@ func generateToolIDFromPath(path string) string {
 }
 
 func extractStringField(block, field string) string {
-	// Handle both quoted and unquoted field names
+	// Handle both single and double quotes, and multiline values
 	patterns := []string{
-		fmt.Sprintf(`\b%s\s*:\s*"([^"]*)"`, field),
-		fmt.Sprintf(`"%s"\s*:\s*"([^"]*)"`, field),
+		// Single quotes
+		fmt.Sprintf(`%s\s*:\s*'([^']*)'`, field),
+		// Double quotes  
+		fmt.Sprintf(`%s\s*:\s*"([^"]*)"`, field),
+		// Multiline single quotes
+		fmt.Sprintf(`%s\s*:\s*'([^']*(?:'[^']*)*)'`, field),
+		// Multiline double quotes
+		fmt.Sprintf(`%s\s*:\s*"([^"]*(?:"[^"]*)*)"`, field),
 	}
 
 	for _, pattern := range patterns {
 		regex := regexp.MustCompile(pattern)
 		match := regex.FindStringSubmatch(block)
 		if len(match) > 1 {
-			return match[1]
+			value := strings.TrimSpace(match[1])
+			if value != "" {
+				return value
+			}
 		}
 	}
 	return ""

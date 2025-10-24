@@ -14,7 +14,7 @@ func generateSVGIconsData(ctx context.Context) ([]SVGIconData, error) {
 	fmt.Println("🎨 Generating SVG icons data...")
 
 	// Path to cluster.json file
-	clusterPath := "../frontend/src/pages/svg_icons/cluster_svg.json"
+	clusterPath := "../frontend/data/cluster_svg.json"
 
 	content, err := ioutil.ReadFile(clusterPath)
 	if err != nil {
@@ -91,13 +91,19 @@ func generateSVGIconsData(ctx context.Context) ([]SVGIconData, error) {
 func generateIconIDFromPath(path string) string {
 	// Remove the base path (similar to Python logic)
 	cleanPath := strings.Replace(path, "/freedevtools/svg_icons/", "", 1)
-	// Replace slashes with hyphens
+	
+	// Remove trailing slash if present
+	cleanPath = strings.TrimSuffix(cleanPath, "/")
+	
+	// Replace remaining slashes with hyphens
 	cleanPath = strings.Replace(cleanPath, "/", "-", -1)
+	
 	// Replace any invalid characters with underscores
 	reg := regexp.MustCompile(`[^a-zA-Z0-9\-_]`)
 	cleanPath = reg.ReplaceAllString(cleanPath, "_")
-	// Add prefix with hyphen
-	return fmt.Sprintf("svg-icons-%s", cleanPath)
+	
+	// Add prefix with hyphen and sanitize
+	return fmt.Sprintf("svg-icons-%s", sanitizeID(cleanPath))
 }
 
 func formatIconName(iconName string) string {
@@ -115,3 +121,4 @@ func formatIconName(iconName string) string {
 
 	return strings.Join(words, " ")
 }
+

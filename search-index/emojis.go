@@ -107,8 +107,9 @@ func processEmojiFile(filePath string) (*EmojiData, error) {
 	// Create the path
 	path := fmt.Sprintf("/freedevtools/emoji/%s/", slug)
 
-	// Generate ID
-	id := fmt.Sprintf("emojis-%s", slug)
+	// Generate ID - sanitize to only allow alphanumeric, hyphens, and underscores
+	sanitizedSlug := sanitizeID(slug)
+	id := fmt.Sprintf("emojis-%s", sanitizedSlug)
 
 	emojiDataResult := &EmojiData{
 		ID:          id,
@@ -151,3 +152,4 @@ func findNestedDefinition(emojiData EmojiJSONData) string {
 	}
 	return ""
 }
+

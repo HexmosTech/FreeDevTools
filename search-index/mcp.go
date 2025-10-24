@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -135,7 +136,7 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 			}
 
 			// Create a unique ID for the repository
-			id := fmt.Sprintf("mcp-%s-%s", categoryKey, repoKey)
+			id := fmt.Sprintf("mcp-%s-%s", sanitizeID(categoryKey), sanitizeID(repoKey))
 
 			// Generate a path for the repository
 			path := fmt.Sprintf("/freedevtools/mcp/%s/%s/", categoryKey, repoKey)
@@ -149,10 +150,13 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 				description = fmt.Sprintf("MCP server: %s", repo.Name)
 			}
 
+			// Format the repository name properly
+			formattedName := formatRepositoryName(repo.Name)
+
 			// Create MCPData entry
 			mcpEntry := MCPData{
 				ID:          id,
-				Name:        repo.Name,
+				Name:        formattedName,
 				Description: description,
 				Path:        path,
 				Category:    "mcp",
@@ -171,6 +175,14 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 	})
 
 	return mcpData, nil
+}
+
+func formatRepositoryName(name string) string {
+	// Only capitalize the first letter, keep everything else as is
+	if len(name) == 0 {
+		return name
+	}
+	return strings.ToUpper(string(name[0])) + strings.ToLower(name[1:])
 }
 
 // runMCPOnly runs only the MCP data generation
@@ -209,3 +221,4 @@ func runMCPOnly(ctx context.Context, start time.Time) {
 
 	fmt.Printf("💾 Data saved to output/mcp.json\n")
 }
+
