@@ -7,10 +7,14 @@ import path from "path";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://hexmos.com/freedevtools',
+  site: 'https://hexmos.com/freedevtools/',
   output: 'static',
   base: "/freedevtools",
-  trailingSlash: 'always',
+  trailingSlash: 'ignore',
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover'
+  },
   integrations: [
     react(),
     tailwind(),
@@ -33,11 +37,11 @@ export default defineConfig({
         "@": path.resolve("./src"),
       },
     },
-    build:{
+    build: {
       sourcemap: false,
-      minify:true,
-      terserOptions:{
-        compress:true,
+      minify: true,
+      terserOptions: {
+        compress: true,
       }
     },
   },

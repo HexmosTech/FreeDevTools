@@ -7,11 +7,68 @@ import ToolContainer from '../../../components/tool/ToolContainer';
 import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { generateMcpStaticPaths } from '../../../lib/mcp-utils';
-import {
-  addTargetBlankToLinks,
-  fixRelativeLinks,
-  formatRepositoryName,
-} from '../../../lib/utils';
+import { formatRepositoryName } from '../../../lib/utils';
+
+function processMcpReadmeLinks(html: string): string {
+  // First, add IDs to all headings (h1-h6) so anchor links work
+  html = html.replace(
+    /<(h[1-6])([^>]*)>([^<]+)<\/h[1-6]>/gi,
+    (match, tag, attributes, content) => {
+      // Generate anchor ID from heading content
+      const anchorId = content
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single
+        .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+
+      // Add scroll margin to offset the header - use both class and inline style
+      const existingClass = attributes.includes('class=') ? attributes : '';
+      const scrollMarginClass = existingClass
+        ? existingClass.replace(/class="([^"]*)"/, 'class="$1 scroll-mt-32"')
+        : 'class="scroll-mt-32"';
+
+      // Add inline style as backup to ensure scroll margin works
+      const existingStyle = attributes.includes('style=') ? attributes : '';
+      const scrollMarginStyle = existingStyle
+        ? existingStyle.replace(
+            /style="([^"]*)"/,
+            'style="$1; scroll-margin-top: 8rem;"'
+          )
+        : 'style="scroll-margin-top: 8rem;"';
+
+      return `<${tag} ${scrollMarginClass} ${scrollMarginStyle} id="${anchorId}">${content}</${tag}>`;
+    }
+  );
+
+  // Then process the links
+  return html.replace(
+    /<a\s+([^>]*?)href="([^"]*?)"([^>]*?)>/g,
+    (
+      match: string,
+      beforeHref: string,
+      href: string,
+      afterHref: string
+    ): string => {
+      // Keep absolute URLs (https/http) as clickable links
+      if (/^https?:\/\//i.test(href)) {
+        // Add target="_blank" for external links
+        if (!match.includes('target=')) {
+          return `<a ${beforeHref}href="${href}"${afterHref} target="_blank" rel="noopener noreferrer">`;
+        }
+        return match;
+      }
+
+      // Handle anchor links (starting with #) - keep them as clickable for scrolling
+      if (href.startsWith('#')) {
+        return match;
+      }
+
+      // Disable all relative links (/, ../, ./, etc.) by removing href and adding disabled styling
+      return `<span ${beforeHref}${afterHref}>`;
+    }
+  );
+}
 
 // Generate static paths for all MCP repositories using optimized utility
 export async function getStaticPaths() {
@@ -51,14 +108,11 @@ const formattedName = formatRepositoryName(server.name);
 let processedReadmeContent: string = '';
 if (server.readme_content) {
   try {
-    // Fix relative links to point to the GitHub repository
-    let cleanedContent = fixRelativeLinks(server.readme_content, server.url);
-
     // Convert markdown to HTML
-    let htmlContent = await marked(cleanedContent);
+    let htmlContent = await marked(server.readme_content);
 
-    // Add target="_blank" to external links
-    processedReadmeContent = addTargetBlankToLinks(htmlContent);
+    // Process links: keep absolute URLs and anchor links, disable relative links
+    processedReadmeContent = processMcpReadmeLinks(htmlContent);
   } catch (error) {
     console.warn('Error processing README content:', error);
     processedReadmeContent = server.readme_content;
@@ -381,3 +435,4 @@ const breadcrumbItems = [
     </div>
   </ToolContainer>
 </BaseLayout>
+

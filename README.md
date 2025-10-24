@@ -1,6 +1,27 @@
 [![FreeDevTools](frontend/public/site-banner.png)](https://hexmos.com/freedevtools/)
 
+![GitHub stars](https://img.shields.io/github/stars/HexmosTech/FreeDevTools?style=social)  
+![GitHub forks](https://img.shields.io/github/forks/HexmosTech/FreeDevTools)  
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/t/HexmosTech/FreeDevTools)](https://github.com/HexmosTech/FreeDevTools/commits/main)  
+[![GitHub last commit](https://img.shields.io/github/last-commit/HexmosTech/FreeDevTools)](https://github.com/HexmosTech/FreeDevTools/commits/main)  
+[![GitHub repo size](https://img.shields.io/github/repo-size/HexmosTech/FreeDevTools)](https://github.com/HexmosTech/FreeDevTools)  
+[![Deployment](https://img.shields.io/badge/deployment-Live-green)](https://hexmos.com/freedevtools/)  
+![GitHub issues](https://img.shields.io/github/issues/HexmosTech/FreeDevTools)
+ 
+
+
 A curated collection of 1,25,000+ free resources, icons, cheat sheets, and TLDRs. No login, unlimited downloads.
+
+---
+
+## 📘 Table of Contents
+- [Available Tools](#available-tools)
+- [Quick Start](#quick-start)
+- [Related Projects](#related-projects)
+- [Contributing](#contributing)
+- [Contributors](#contributors)
+
+---
 
 ## Available Tools
 
@@ -98,6 +119,8 @@ A curated collection of 1,25,000+ free resources, icons, cheat sheets, and TLDRs
   <sup>Convert any string to a clean, URL-friendly slug instantly with Slugify String Tool by Hexmos. Enter your text and get a slugified output for SEO, file names, and web development.</sup>
 - **More tools coming soon...**
 
+---
+
 ## Quick Start
 
 1. **Clone the repository**
@@ -120,6 +143,8 @@ A curated collection of 1,25,000+ free resources, icons, cheat sheets, and TLDRs
    make run
    ```
 
+---
+
 ## Related Projects
 
 **[LiveReview](https://hexmos.com/livereview)** - I'm building a private AI code review tool that runs on your LLM key (OpenAI, Gemini, etc.) with flat, no-seat pricing — designed for small teams. Check it out, if that's your kind of thing.
@@ -134,6 +159,8 @@ If you're tired of waiting for your peer to review your code or are not confiden
 
 If you find these tools helpful, please consider giving us a ⭐ star on GitHub! It helps us reach more developers who could benefit from these utilities.
 
+---
+
 ## Contributing
 
 We welcome contributions! Here's how you can help:
@@ -143,6 +170,8 @@ We welcome contributions! Here's how you can help:
 ---
 
 **Made with ❤️ by the developer community**
+
+---
 
 ## Contributors
 
