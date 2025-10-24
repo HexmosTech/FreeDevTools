@@ -28,6 +28,7 @@ export default defineConfig({
   ],
   cacheDir: ".astro/cache",
   build: {
+    incremental: true,
     concurrency: 64,
     inlineStylesheets: 'never'
   },
