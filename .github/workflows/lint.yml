@@ -1,0 +1,122 @@
+name: Lint & Format Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/lint.yml'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/lint.yml'
+
+permissions:
+  contents: write   # required to push back formatted changes
+
+jobs:
+  lint:
+    name: Lint Frontend Code (format & auto-fix)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies (frontend)
+        working-directory: frontend
+        run: npm ci
+
+      - name: Determine changed files
+        id: changed
+        run: |
+          # For PRs, GITHUB_HEAD_REF and GITHUB_BASE_REF are set.
+          if [ -n "$GITHUB_HEAD_REF" ]; then
+            echo "Event: pull_request"
+            echo "Base: $GITHUB_BASE_REF"
+            echo "Head: $GITHUB_HEAD_REF"
+            git fetch origin "$GITHUB_BASE_REF" --depth=1 || true
+            CHANGED=$(git diff --name-only origin/"$GITHUB_BASE_REF"...HEAD || true)
+          else
+            echo "Event: push"
+            # list files touched by the push (all commits in the push)
+            CHANGED=$(git diff-tree --no-commit-id --name-only -r $GITHUB_SHA || true)
+          fi
+
+          echo "raw_changed<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Filter frontend source files (for Prettier)
+        id: files
+        run: |
+          RAW="${{ steps.changed.outputs.raw_changed }}"
+          echo "Raw changed list:"
+          echo "$RAW"
+          # only keep frontend files with relevant extensions
+          FILES=$(echo "$RAW" | grep '^frontend/' | grep -E '\.(js|jsx|ts|tsx|css|md|json|astro)$' || true)
+          echo "files_to_format<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Show files that will be formatted (log)
+        run: |
+          echo "FILES to format:"
+          echo "${{ steps.files.outputs.files_to_format }}"
+
+      - name: Run Prettier on changed files (auto-fix)
+        if: ${{ steps.files.outputs.files_to_format != '' }}
+        run: |
+          # run Prettier from repo root; allow .prettierignore located at frontend/.prettierignore
+          echo "${{ steps.files.outputs.files_to_format }}" | tr '\n' ' ' > /tmp/files.txt
+          FILES=$(cat /tmp/files.txt)
+          echo "Formatting these files:"
+          echo "$FILES"
+          npx prettier --write --ignore-path frontend/.prettierignore $FILES
+
+      - name: Run Prettier list-different on all frontend (optional visibility)
+        working-directory: frontend
+        run: |
+          # helpful for logs if something else slipped in; this is safe as a read-only check
+          npm run format:list || true
+
+      - name: Run ESLint (only in frontend, full lint; fails if issues)
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Commit & push formatting changes back to branch (if any)
+        run: |
+          # Determine branch to push: PR head branch or pushed branch
+          if [ -n "$GITHUB_HEAD_REF" ]; then
+            BRANCH="$GITHUB_HEAD_REF"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          echo "Pushing fixes to branch: $BRANCH"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage only files modified by Prettier (to avoid accidentally adding unrelated files)
+          git add -A
+
+          # only commit if there are changes
+          if git diff --cached --quiet; then
+            echo "No formatting changes to commit."
+            exit 0
+          else
+            git commit -m "chore: auto-format frontend files with Prettier [skip ci]"
+            # push back to the branch that triggered the workflow (head branch)
+            git push origin HEAD:"$BRANCH"
+          fi
