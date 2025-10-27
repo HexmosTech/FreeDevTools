@@ -252,6 +252,86 @@ go run . category=emojis
 go run . category=svg_icons
 go run . category=cheatsheets
 go run . category=mcp
+
+# Process JSON files with text stemming
+go run . stem=output/emojis.json
+go run . stem=output/tools.json
+go run . stem=output/tldr_pages.json
+```
+
+## Text Stemming Processing
+
+The search index generator includes advanced text processing capabilities using the [jargon](https://github.com/clipperhouse/jargon) library for improved search functionality.
+
+### Stem Processing Features
+
+The stem processing applies three key transformations to text data:
+
+1. **Contractions Expansion**: Expands contractions (e.g., "don't" → "do not")
+2. **ASCII Folding**: Normalizes Unicode characters to ASCII equivalents
+3. **English Stemming**: Reduces words to their root forms (e.g., "running" → "run")
+
+### Usage
+
+```bash
+# Process any JSON file with stemming
+go run . stem=filepath.json
+
+# Example:
+go run . stem=output/emojis.json
+```
+
+### Output Structure
+
+After processing, JSON objects will include additional fields:
+
+```json
+{
+  "id": "emojis-smiling-face",
+  "name": "Smiling Face",
+  "altName": "smil face", // Processed version of name
+  "description": "A yellow face...",
+  "altDescription": "a yellow face...", // Processed version of description
+  "code": "😊",
+  "path": "/freedevtools/emoji/smiling-face",
+  "category": "emojis"
+}
+```
+
+### Performance
+
+- **Parallel Processing**: Uses multiple workers (CPU count - 1) for fast processing
+- **Speed**: ~123µs per entry on modern hardware
+- **Memory Efficient**: Processes large datasets without memory issues
+
+### Processing Pipeline
+
+1. **File Validation**: Checks if the target JSON file exists in `output/` directory
+2. **JSON Parsing**: Loads and parses the JSON data structure
+3. **Parallel Processing**: Distributes work across multiple goroutines
+4. **Text Processing**: Applies contractions, ASCII folding, and stemming
+5. **Progress Tracking**: Shows examples and progress updates
+6. **File Output**: Saves processed data back to the original file
+
+### Example Output
+
+```
+🔍 Processing emojis file: output/emojis.json
+📊 Found 2812 entries to process
+🚀 Using 7 workers for parallel processing
+📝 Example 1:
+   Name: 'Adhesive Bandage' → altName: 'adhes bandag'
+   Description: 'An adhesive bandage...' → altDescription: 'an adhes bandag...'
+
+⏳ Processed 100/2812 entries...
+⏳ Processed 200/2812 entries...
+...
+✅ Processing completed!
+📈 Statistics:
+   • Entries processed: 2812
+   • Workers used: 7
+   • Time taken: 347.633132ms
+   • Average time per entry: 123.624µs
 ```
 
 ## Integration with transfer-index-files.sh
@@ -303,6 +383,9 @@ make gen-mcp          # Generate mcp.json
 
 # Generate all categories
 make gen-all
+
+# Process JSON files with stemming
+make stem              # Process emojis.json with stemming
 
 # Complete sync process (generate + transfer + index)
 make sync-search-index

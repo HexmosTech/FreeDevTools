@@ -32,6 +32,10 @@ gen-mcp:
 gen-all:
 	go run .
 
+# Stem processing
+stem:
+	go run . stem=output/emojis.json
+
 sync-search-index:
 	@echo "🔄 Starting search index sync process..."
 	@echo "📊 Step 1: Generating search index files..."

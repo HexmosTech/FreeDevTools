@@ -1,8 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { X, Wrench, BookOpen, FileText, Image, PenLine, Smile } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  BookOpen,
+  FileText,
+  Image,
+  PenLine,
+  Settings,
+  Smile,
+  Wrench,
+  X,
+} from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 // Add TypeScript declaration for our global window properties
 declare global {
@@ -13,13 +27,6 @@ declare global {
       getQuery: () => string;
     };
   }
-}
-
-// Add type definition for the custom event
-interface SearchQueryChangedEvent extends CustomEvent {
-  detail: {
-    query: string;
-  };
 }
 
 interface SearchResult {
@@ -33,7 +40,7 @@ interface SearchResult {
   slug?: string;
   code?: string; // For emojis
   image?: string; // For SVG icons
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface SearchResponse {
@@ -43,52 +50,119 @@ interface SearchResponse {
   limit: number;
   offset: number;
   estimatedTotalHits: number;
+  totalHits?: number;
+  totalPages?: number;
+  page?: number;
+  facetDistribution?: {
+    category?: {
+      [key: string]: number;
+    };
+  };
 }
 
 // Search function for Meilisearch
-async function searchUtilities(query: string): Promise<SearchResponse> {
+async function searchUtilities(
+  query: string,
+  categories: string[] = [],
+  page: number = 1
+): Promise<SearchResponse> {
   try {
+    const searchBody: {
+      q: string;
+      limit: number;
+      offset: number;
+      facets: string[];
+      attributesToRetrieve: string[];
+      filter?: string;
+    } = {
+      q: query,
+      limit: 30,
+      offset: (page - 1) * 30,
+      facets: ['category'], // Always include facets for category filtering
+      attributesToRetrieve: [
+        'id',
+        'name',
+        'title',
+        'description',
+        'category',
+        'path',
+        'image',
+        'code',
+      ], // Only retrieve essential fields for better performance
+    };
+
+    // Add category filter if specified
+    if (categories.length > 0) {
+      const filterConditions: string[] = categories.map((category) => {
+        if (category === 'emoji') {
+          return "category = 'emojis'";
+        }
+        return `category = '${category}'`;
+      });
+
+      if (filterConditions.length === 1) {
+        searchBody.filter = filterConditions[0];
+      } else {
+        searchBody.filter = filterConditions.join(' OR ');
+      }
+    }
+
     const response = await fetch(
-      "https://search.apps.hexmos.com/indexes/freedevtools/search",
+      'https://search.apps.hexmos.com/indexes/freedevtools/search',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization:
-            "Bearer 509923210c1fbc863d8cd8d01ffc062bac61aa503944c5d65b155e6cafdaddb5",
+            'Bearer 509923210c1fbc863d8cd8d01ffc062bac61aa503944c5d65b155e6cafdaddb5',
         },
-        body: JSON.stringify({ q: query }),
+        body: JSON.stringify(searchBody),
       }
     );
 
     if (!response.ok) {
-      throw new Error("Search failed: " + response.statusText);
+      throw new Error('Search failed: ' + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Search error:", error);
+    console.error('Search error:', error);
     return {
       hits: [],
-      query: "",
+      query: '',
       processingTimeMs: 0,
       limit: 0,
       offset: 0,
-      estimatedTotalHits: 0
+      estimatedTotalHits: 0,
     };
   }
 }
 
 const SearchPage: React.FC = () => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchInfo, setSearchInfo] = useState<{
     totalHits: number;
     processingTime: number;
+    facetTotal?: number;
   } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allResults, setAllResults] = useState<SearchResult[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<{
+    [key: string]: number;
+  }>({});
+
+  // Get effective filter categories
+  const getEffectiveCategories = useCallback(() => {
+    if (activeCategory === 'all') return [];
+    if (activeCategory === 'multi') return selectedCategories;
+    return [activeCategory];
+  }, [activeCategory, selectedCategories]);
 
   // Add this function to update the URL hash
   const updateUrlHash = (searchQuery: string) => {
@@ -98,7 +172,11 @@ const SearchPage: React.FC = () => {
     } else {
       // Clear hash if search is empty
       if (window.location.hash.startsWith('#search')) {
-        history.pushState("", document.title, window.location.pathname + window.location.search);
+        history.pushState(
+          '',
+          document.title,
+          window.location.pathname + window.location.search
+        );
       }
     }
   };
@@ -109,7 +187,9 @@ const SearchPage: React.FC = () => {
     const checkHashForSearch = () => {
       if (window.location.hash.startsWith('#search?q=')) {
         try {
-          const hashParams = new URLSearchParams(window.location.hash.substring(8)); // Remove '#search?'
+          const hashParams = new URLSearchParams(
+            window.location.hash.substring(8)
+          ); // Remove '#search?'
           const searchParam = hashParams.get('q');
           if (searchParam) {
             // Update both local state and global search state
@@ -125,7 +205,7 @@ const SearchPage: React.FC = () => {
     };
 
     checkHashForSearch();
-    
+
     // Also listen for hash changes
     window.addEventListener('hashchange', checkHashForSearch);
     return () => {
@@ -138,14 +218,17 @@ const SearchPage: React.FC = () => {
     const handleSearchQueryChange = (event: CustomEvent) => {
       const newQuery = event.detail.query;
       setQuery(newQuery);
-      
+
       // Update URL hash when query changes
       updateUrlHash(newQuery);
     };
 
     // Add event listener
-    window.addEventListener('searchQueryChanged', handleSearchQueryChange as EventListener);
-    
+    window.addEventListener(
+      'searchQueryChanged',
+      handleSearchQueryChange as (event: Event) => void
+    );
+
     // Initial load from global state if it exists
     if (window.searchState && window.searchState.getQuery()) {
       const initialQuery = window.searchState.getQuery();
@@ -154,7 +237,10 @@ const SearchPage: React.FC = () => {
     }
 
     return () => {
-      window.removeEventListener('searchQueryChanged', handleSearchQueryChange as EventListener);
+      window.removeEventListener(
+        'searchQueryChanged',
+        handleSearchQueryChange as (event: Event) => void
+      );
     };
   }, []);
 
@@ -168,17 +254,39 @@ const SearchPage: React.FC = () => {
 
     const timeoutId = setTimeout(async () => {
       setLoading(true);
+      setCurrentPage(1); // Reset to first page for new search
+      setAvailableCategories({}); // Clear counts while loading
       try {
-        const searchResponse = await searchUtilities(query);
-        console.log("Search results:", searchResponse);
+        const searchResponse = await searchUtilities(
+          query,
+          getEffectiveCategories(),
+          1
+        );
+        console.log('Search results:', searchResponse);
         setResults(searchResponse.hits || []);
+        setAllResults(searchResponse.hits || []); // Store all accumulated results
+
+        // Calculate real total from facet distribution
+        let facetTotal = 0;
+        if (searchResponse.facetDistribution?.category) {
+          facetTotal = Object.values(
+            searchResponse.facetDistribution.category
+          ).reduce((sum, count) => sum + count, 0);
+          setAvailableCategories(searchResponse.facetDistribution.category);
+        }
+
         setSearchInfo({
-          totalHits: searchResponse.estimatedTotalHits || 0,
-          processingTime: searchResponse.processingTimeMs || 0
+          totalHits:
+            facetTotal > 0
+              ? facetTotal
+              : searchResponse.estimatedTotalHits || 0,
+          processingTime: searchResponse.processingTimeMs || 0,
+          facetTotal: facetTotal,
         });
       } catch (error) {
-        console.error("Search error:", error);
+        console.error('Search error:', error);
         setResults([]);
+        setAllResults([]);
         setSearchInfo(null);
       } finally {
         setLoading(false);
@@ -186,29 +294,128 @@ const SearchPage: React.FC = () => {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [query]);
+  }, [query, activeCategory, selectedCategories, getEffectiveCategories]);
+
+  // Reset page and clear results when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+    setResults([]);
+    setAllResults([]);
+    setSearchInfo(null);
+  }, [activeCategory, selectedCategories]);
 
   // Update URL when query changes manually
   useEffect(() => {
     updateUrlHash(query);
   }, [query]);
-  
-  // Filter results by category
-  const filteredResults = activeCategory === "all" 
-    ? results 
-    : results.filter(result => {
-        if (activeCategory === "emoji") {
-          return result.category?.toLowerCase() === "emojis";
-        }
-        return result.category?.toLowerCase() === activeCategory.toLowerCase();
-      });
 
-  const handleSelect = (result: SearchResult) => {
-    if (result.path) {
-      // Navigate directly to the path since it already includes the full path
-      window.location.href = `https://hexmos.com${result.path}`;
+  // Handle ESC key to clear results
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && query.trim()) {
+        clearResults();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [query]);
+
+  // Results are already filtered by backend, no need for frontend filtering
+  const filteredResults = allResults;
+
+  // Load more functionality
+  const totalPages = searchInfo ? Math.ceil(searchInfo.totalHits / 100) : 1;
+  const hasMoreResults = currentPage < totalPages;
+  const currentPageNumber = Math.ceil(allResults.length / 100);
+
+  const loadMoreResults = async () => {
+    if (!hasMoreResults || loadingMore) return;
+
+    setLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      const searchResponse = await searchUtilities(
+        query,
+        getEffectiveCategories(),
+        nextPage
+      );
+      const newResults = searchResponse.hits || [];
+
+      // Append new results to existing ones
+      setAllResults((prev) => [...prev, ...newResults]);
+      setResults((prev) => [...prev, ...newResults]);
+      setCurrentPage(nextPage);
+    } catch (error) {
+      console.error('Load more error:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Get category display name
+  const getCategoryDisplayName = (category: string) => {
+    switch (category) {
+      case 'emoji':
+        return 'emojis';
+      case 'mcp':
+        return 'MCPs';
+      case 'svg_icons':
+        return 'SVG icons';
+      case 'png_icons':
+        return 'PNG icons';
+      case 'tools':
+        return 'tools';
+      case 'tldr':
+        return 'TLDRs';
+      case 'cheatsheets':
+        return 'cheatsheets';
+      default:
+        return 'items';
+    }
+  };
+
+  // Handle category selection (left click - single select)
+  const handleCategoryClick = (category: string) => {
+    if (category === 'all') {
+      setActiveCategory('all');
+      setSelectedCategories([]);
     } else {
-      console.warn("No path found for result:", result);
+      setActiveCategory(category);
+      setSelectedCategories([category]);
+    }
+  };
+
+  // Handle category right-click (multi-select)
+  const handleCategoryRightClick = (e: React.MouseEvent, category: string) => {
+    e.preventDefault();
+
+    if (category === 'all') {
+      setActiveCategory('all');
+      setSelectedCategories([]);
+      return;
+    }
+
+    const isSelected = selectedCategories.includes(category);
+
+    if (isSelected) {
+      // Remove from selection
+      const newSelection = selectedCategories.filter((cat) => cat !== category);
+      setSelectedCategories(newSelection);
+
+      // If no categories selected, go back to "all"
+      if (newSelection.length === 0) {
+        setActiveCategory('all');
+      } else {
+        setActiveCategory('multi');
+      }
+    } else {
+      // Add to selection
+      const newSelection = [...selectedCategories, category];
+      setSelectedCategories(newSelection);
+      setActiveCategory('multi');
     }
   };
 
@@ -216,18 +423,27 @@ const SearchPage: React.FC = () => {
   const clearResults = () => {
     // Clear the query in this component
     setQuery('');
-    
+    setResults([]);
+    setAllResults([]);
+    setCurrentPage(1);
+    setActiveCategory('all');
+    setSelectedCategories([]);
+
     // Update the global search state to empty string
     if (window.searchState) {
       window.searchState.setQuery('');
     }
-    
+
     // Clear URL hash
     if (window.location.hash.startsWith('#search')) {
-      history.pushState("", document.title, window.location.pathname + window.location.search);
+      history.pushState(
+        '',
+        document.title,
+        window.location.pathname + window.location.search
+      );
     }
   };
-  
+
   // If no search query, don't show the search UI
   if (!query.trim()) {
     return null;
@@ -239,81 +455,323 @@ const SearchPage: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4 mt-8 md:mt-0">
           <h2 className="text-xl font-medium">
-            {searchInfo ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"` : `Search Results for "${query}"`}
+            {searchInfo
+              ? activeCategory === 'all'
+                ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"`
+                : activeCategory === 'multi'
+                  ? `Found ${searchInfo.totalHits.toLocaleString()} results for "${query}"`
+                  : `Found ${searchInfo.totalHits.toLocaleString()} ${getCategoryDisplayName(activeCategory)} for "${query}"`
+              : `Search Results for "${query}"`}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={clearResults}
+            className="flex items-center gap-2"
           >
-            <X className="h-4 w-4 mr-1" />
-            Clear results
+            <kbd className="px-1.5 py-0.5 text-xs text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-600 dark:text-gray-300 dark:border-gray-500">
+              Esc
+            </kbd>
+            <span className="text-sm">Clear results</span>
+            <X className="h-4 w-4" />
           </Button>
         </div>
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
-          <Button
-            variant={activeCategory === "all" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("all")}
-            className="whitespace-nowrap text-xs lg:text-sm"
-          >
-            All
-          </Button>
-          <Button
-            variant={activeCategory === "tools" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("tools")}
-            className="whitespace-nowrap text-xs lg:text-sm"
-          >
-            <Wrench className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-            Tools
-          </Button>
-          <Button
-            variant={activeCategory === "tldr" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("tldr")}
-            className="whitespace-nowrap text-xs lg:text-sm"
-          >
-            <BookOpen className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-            TLDR
-          </Button>
-          <Button
-            variant={activeCategory === "cheatsheets" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("cheatsheets")}
-            className="whitespace-nowrap text-xs lg:text-sm"
-          >
-            <FileText className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-            Cheatsheets
-          </Button>
-          <Button
-            variant={activeCategory === "png_icons" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("png_icons")}
-            className="whitespace-nowrap text-xs lg:text-sm"
-          >
-            <Image className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-            PNG Icons
-          </Button>
-          <Button
-            variant={activeCategory === "svg_icons" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("svg_icons")}
-            className="whitespace-nowrap text-xs lg:text-sm"
-          >
-            <PenLine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-            SVG Icons
-          </Button>
-          <Button
-            variant={activeCategory === "emoji" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("emoji")}
-            className="whitespace-nowrap text-xs lg:text-sm"
-          >
-            <Smile className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-            Emojis
-          </Button>
-        </div>
+        <TooltipProvider>
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
+            <Button
+              variant={activeCategory === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleCategoryClick('all')}
+              onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
+              className="whitespace-nowrap text-xs lg:text-sm"
+            >
+              All{' '}
+              {activeCategory === 'all' &&
+                Object.keys(availableCategories).length > 0 &&
+                `(${Object.values(availableCategories).reduce((sum, count) => sum + count, 0)})`}
+            </Button>
+            {!(
+              activeCategory === 'tools' || selectedCategories.includes('tools')
+            ) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCategoryClick('tools')}
+                    onContextMenu={(e) => handleCategoryRightClick(e, 'tools')}
+                    className="whitespace-nowrap text-xs lg:text-sm hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50"
+                  >
+                    <Wrench className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                    Tools{' '}
+                    {(activeCategory === 'tools' ||
+                      selectedCategories.includes('tools') ||
+                      activeCategory === 'all') &&
+                      availableCategories.tools &&
+                      `(${availableCategories.tools})`}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <span className="text-xs">Right-click to multi-select</span>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCategoryClick('tools')}
+                onContextMenu={(e) => handleCategoryRightClick(e, 'tools')}
+                className="whitespace-nowrap text-xs lg:text-sm shadow-md shadow-blue-500/50"
+              >
+                <Wrench className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                Tools{' '}
+                {availableCategories.tools && `(${availableCategories.tools})`}
+              </Button>
+            )}
+            {!(
+              activeCategory === 'tldr' || selectedCategories.includes('tldr')
+            ) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCategoryClick('tldr')}
+                    onContextMenu={(e) => handleCategoryRightClick(e, 'tldr')}
+                    className="whitespace-nowrap text-xs lg:text-sm hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50"
+                  >
+                    <BookOpen className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                    TLDR{' '}
+                    {(activeCategory === 'tldr' ||
+                      selectedCategories.includes('tldr') ||
+                      activeCategory === 'all') &&
+                      availableCategories.tldr &&
+                      `(${availableCategories.tldr})`}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Right-click to multi-select</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCategoryClick('tldr')}
+                onContextMenu={(e) => handleCategoryRightClick(e, 'tldr')}
+                className="whitespace-nowrap text-xs lg:text-sm shadow-md shadow-blue-500/50"
+              >
+                <BookOpen className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                TLDR{' '}
+                {availableCategories.tldr && `(${availableCategories.tldr})`}
+              </Button>
+            )}
+            {!(
+              activeCategory === 'cheatsheets' ||
+              selectedCategories.includes('cheatsheets')
+            ) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCategoryClick('cheatsheets')}
+                    onContextMenu={(e) =>
+                      handleCategoryRightClick(e, 'cheatsheets')
+                    }
+                    className="whitespace-nowrap text-xs lg:text-sm hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50"
+                  >
+                    <FileText className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                    Cheatsheets{' '}
+                    {(activeCategory === 'cheatsheets' ||
+                      selectedCategories.includes('cheatsheets') ||
+                      activeCategory === 'all') &&
+                      availableCategories.cheatsheets &&
+                      `(${availableCategories.cheatsheets})`}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Right-click to multi-select</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCategoryClick('cheatsheets')}
+                onContextMenu={(e) =>
+                  handleCategoryRightClick(e, 'cheatsheets')
+                }
+                className="whitespace-nowrap text-xs lg:text-sm shadow-md shadow-blue-500/50"
+              >
+                <FileText className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                Cheatsheets{' '}
+                {availableCategories.cheatsheets &&
+                  `(${availableCategories.cheatsheets})`}
+              </Button>
+            )}
+            {!(
+              activeCategory === 'png_icons' ||
+              selectedCategories.includes('png_icons')
+            ) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCategoryClick('png_icons')}
+                    onContextMenu={(e) =>
+                      handleCategoryRightClick(e, 'png_icons')
+                    }
+                    className="whitespace-nowrap text-xs lg:text-sm hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50"
+                  >
+                    <Image className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                    PNG Icons{' '}
+                    {(activeCategory === 'png_icons' ||
+                      selectedCategories.includes('png_icons') ||
+                      activeCategory === 'all') &&
+                      availableCategories.png_icons &&
+                      `(${availableCategories.png_icons})`}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Right-click to multi-select</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCategoryClick('png_icons')}
+                onContextMenu={(e) => handleCategoryRightClick(e, 'png_icons')}
+                className="whitespace-nowrap text-xs lg:text-sm shadow-md shadow-blue-500/50"
+              >
+                <Image className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                PNG Icons{' '}
+                {availableCategories.png_icons &&
+                  `(${availableCategories.png_icons})`}
+              </Button>
+            )}
+            {!(
+              activeCategory === 'svg_icons' ||
+              selectedCategories.includes('svg_icons')
+            ) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCategoryClick('svg_icons')}
+                    onContextMenu={(e) =>
+                      handleCategoryRightClick(e, 'svg_icons')
+                    }
+                    className="whitespace-nowrap text-xs lg:text-sm hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50"
+                  >
+                    <PenLine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                    SVG Icons{' '}
+                    {(activeCategory === 'svg_icons' ||
+                      selectedCategories.includes('svg_icons') ||
+                      activeCategory === 'all') &&
+                      availableCategories.svg_icons &&
+                      `(${availableCategories.svg_icons})`}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Right-click to multi-select</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCategoryClick('svg_icons')}
+                onContextMenu={(e) => handleCategoryRightClick(e, 'svg_icons')}
+                className="whitespace-nowrap text-xs lg:text-sm shadow-md shadow-blue-500/50"
+              >
+                <PenLine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                SVG Icons{' '}
+                {availableCategories.svg_icons &&
+                  `(${availableCategories.svg_icons})`}
+              </Button>
+            )}
+            {!(
+              activeCategory === 'emoji' || selectedCategories.includes('emoji')
+            ) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCategoryClick('emoji')}
+                    onContextMenu={(e) => handleCategoryRightClick(e, 'emoji')}
+                    className="whitespace-nowrap text-xs lg:text-sm hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50"
+                  >
+                    <Smile className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                    Emojis{' '}
+                    {(activeCategory === 'emoji' ||
+                      selectedCategories.includes('emoji') ||
+                      activeCategory === 'all') &&
+                      availableCategories.emojis &&
+                      `(${availableCategories.emojis})`}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Right-click to multi-select</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCategoryClick('emoji')}
+                onContextMenu={(e) => handleCategoryRightClick(e, 'emoji')}
+                className="whitespace-nowrap text-xs lg:text-sm shadow-md shadow-blue-500/50"
+              >
+                <Smile className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                Emojis{' '}
+                {availableCategories.emojis &&
+                  `(${availableCategories.emojis})`}
+              </Button>
+            )}
+            {!(
+              activeCategory === 'mcp' || selectedCategories.includes('mcp')
+            ) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCategoryClick('mcp')}
+                    onContextMenu={(e) => handleCategoryRightClick(e, 'mcp')}
+                    className="whitespace-nowrap text-xs lg:text-sm hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50"
+                  >
+                    <Settings className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                    MCP{' '}
+                    {(activeCategory === 'mcp' ||
+                      selectedCategories.includes('mcp') ||
+                      activeCategory === 'all') &&
+                      availableCategories.mcp &&
+                      `(${availableCategories.mcp})`}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Right-click to multi-select</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCategoryClick('mcp')}
+                onContextMenu={(e) => handleCategoryRightClick(e, 'mcp')}
+                className="whitespace-nowrap text-xs lg:text-sm shadow-md shadow-blue-500/50"
+              >
+                <Settings className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                MCP {availableCategories.mcp && `(${availableCategories.mcp})`}
+              </Button>
+            )}
+          </div>
+        </TooltipProvider>
       </div>
 
       {loading && (
@@ -326,7 +784,7 @@ const SearchPage: React.FC = () => {
       {!loading && results.length === 0 && (
         <div className="text-center p-8">
           <p className="text-muted-foreground">
-            No results found for "{query}"
+            No results found for &quot;{query}&quot;
           </p>
         </div>
       )}
@@ -338,7 +796,7 @@ const SearchPage: React.FC = () => {
           </p>
           <Button
             variant="link"
-            onClick={() => setActiveCategory("all")}
+            onClick={() => setActiveCategory('all')}
             className="mt-2"
           >
             View all results
@@ -364,24 +822,26 @@ const SearchPage: React.FC = () => {
                   return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
                 case 'png_icons':
                   return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
+                case 'mcp':
+                  return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
                 default:
                   return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
               }
             };
 
             return (
-              <a 
+              <a
                 key={result.id || index}
                 href={result.path ? `https://hexmos.com${result.path}` : '#'}
                 className="block no-underline"
               >
-                {result.category?.toLowerCase() === "emojis" ? (
-                  <Card 
-                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col"
-                  >
+                {result.category?.toLowerCase() === 'emojis' ? (
+                  <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col">
                     <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
                       {result.category && (
-                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
+                        <div
+                          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
+                        >
                           {result.category}
                         </div>
                       )}
@@ -389,24 +849,27 @@ const SearchPage: React.FC = () => {
                         {result.code}
                       </div>
                       <span className="font-medium text-center text-xs">
-                        {result.name || result.title || "Untitled"}
+                        {result.name || result.title || 'Untitled'}
                       </span>
                     </div>
                   </Card>
-                ) : result.category?.toLowerCase() === "svg_icons" || result.category?.toLowerCase() === "png_icons" ? (
-                  <Card
-                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col"
-                  >
+                ) : result.category?.toLowerCase() === 'svg_icons' ||
+                  result.category?.toLowerCase() === 'png_icons' ? (
+                  <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
                     <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
                       {result.category && (
-                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
-                          {result.category === "svg_icons" ? "SVG Icons" : "PNG Icons"}
+                        <div
+                          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
+                        >
+                          {result.category === 'svg_icons'
+                            ? 'SVG Icons'
+                            : 'PNG Icons'}
                         </div>
                       )}
                       <div className="w-16 h-16 mb-3 flex items-center justify-center bg-white dark:bg-gray-100 rounded-md p-2">
-                        <img 
-                          src={`https://hexmos.com/freedevtools${result.image}`} 
-                          alt={result.name || result.title || "Icon"} 
+                        <img
+                          src={`https://hexmos.com/freedevtools${result.image}`}
+                          alt={result.name || result.title || 'Icon'}
                           className="w-full h-full object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
@@ -414,23 +877,23 @@ const SearchPage: React.FC = () => {
                         />
                       </div>
                       <span className="text-center text-xs text-gray-700 dark:text-gray-300">
-                        {result.name || result.title || "Untitled"}
+                        {result.name || result.title || 'Untitled'}
                       </span>
                     </div>
                   </Card>
-                ) : (                
-                  <Card
-                    className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col"
-                  >
+                ) : (
+                  <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
                     <div className="p-4 flex flex-col h-full relative">
                       {result.category && (
-                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}>
+                        <div
+                          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
+                        >
                           {result.category}
                         </div>
                       )}
                       <div className="pr-16 mb-2">
                         <span className="font-bold text-md">
-                          {result.name || result.title || "Untitled"}
+                          {result.name || result.title || 'Untitled'}
                         </span>
                       </div>
                       {result.description && (
@@ -444,6 +907,46 @@ const SearchPage: React.FC = () => {
               </a>
             );
           })}
+        </div>
+      )}
+
+      {/* Load More Section */}
+      {!loading && filteredResults.length > 0 && (
+        <div className="flex flex-col items-center space-y-4 mt-8">
+          {searchInfo && (
+            <p className="text-sm text-muted-foreground">
+              Showing {allResults.length} of{' '}
+              {searchInfo.totalHits.toLocaleString()}{' '}
+              {activeCategory === 'all'
+                ? 'items'
+                : getCategoryDisplayName(activeCategory)}{' '}
+              (Page {currentPageNumber} of {totalPages})
+            </p>
+          )}
+
+          {hasMoreResults && (
+            <Button
+              variant="default"
+              onClick={loadMoreResults}
+              disabled={loadingMore}
+              className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              {loadingMore ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary-foreground"></div>
+                  <span className="text-primary-foreground">Loading...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-primary-foreground">Load More</span>
+                  <span className="text-xs text-primary-foreground/80">
+                    ({searchInfo ? searchInfo.totalHits - allResults.length : 0}{' '}
+                    more)
+                  </span>
+                </>
+              )}
+            </Button>
+          )}
         </div>
       )}
     </div>

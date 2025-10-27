@@ -7,7 +7,7 @@ import path from "path";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://hexmos.com/freedevtools/',
+  site: 'https://hexmos.com/freedevtools',
   output: 'static',
   base: "/freedevtools",
   trailingSlash: 'ignore',

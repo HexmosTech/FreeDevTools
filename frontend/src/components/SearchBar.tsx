@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Search } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 
 // Add this type definition for the custom event
 interface SearchQueryChangedEvent extends CustomEvent {
@@ -216,9 +216,13 @@ const SearchBar: React.FC = () => {
           )} */}
 
           {/* Keyboard shortcut hint (hidden on mobile) */}
-          <kbd className="pointer-events-none absolute right-2 border-none top-1/2 -translate-y-1/2 hidden h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex" id="search-help">
-            <span className="text-xs mt-0.5">⌘ K</span>
-          </kbd>
+          <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1" id="search-help">
+            <kbd className="px-1.5 py-0.5 text-xs  text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-600 dark:text-gray-300 dark:border-gray-500">Ctrl</kbd>
+            <span className="text-xs">/</span>
+            <kbd className="px-1.5 py-0.5 text-sm  text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-600 dark:text-gray-300 dark:border-gray-500">⌘</kbd>
+            <span className="text-xs">+</span>
+            <kbd className="px-1.5 py-0.5 text-xs  text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-600 dark:text-gray-300 dark:border-gray-500">K</kbd>
+          </div>
         </div>
       </div>
     </>

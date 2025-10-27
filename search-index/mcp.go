@@ -10,6 +10,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	jargon_stemmer "search-index/jargon-stemmer"
 )
 
 // MCPMetadata represents the structure of the metadata JSON file
@@ -185,8 +187,8 @@ func formatRepositoryName(name string) string {
 	return strings.ToUpper(string(name[0])) + strings.ToLower(name[1:])
 }
 
-// runMCPOnly runs only the MCP data generation
-func runMCPOnly(ctx context.Context, start time.Time) {
+// RunMCPOnly runs only the MCP data generation
+func RunMCPOnly(ctx context.Context, start time.Time) {
 	fmt.Println("🔧 Generating MCP data only...")
 
 	mcpData, err := generateMCPData(ctx)
@@ -220,5 +222,12 @@ func runMCPOnly(ctx context.Context, start time.Time) {
 	}
 
 	fmt.Printf("💾 Data saved to output/mcp.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/mcp.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
 }
 

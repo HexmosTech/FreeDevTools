@@ -5,9 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"regexp"
+	jargon_stemmer "search-index/jargon-stemmer"
 	"sort"
 	"strings"
+	"time"
 )
 
 func generatePNGIconsData(ctx context.Context) ([]SVGIconData, error) {
@@ -40,7 +43,6 @@ func generatePNGIconsData(ctx context.Context) ([]SVGIconData, error) {
 		}
 
 		categoryCount++
-		fmt.Printf("  %d. %s (%d icons)\n", categoryCount, clusterEntry.Name, len(clusterEntry.FileNames))
 
 		for _, fileName := range clusterEntry.FileNames {
 			iconCount++
@@ -93,3 +95,45 @@ func generatePNGIconIDFromPath(path string) string {
 	return fmt.Sprintf("png-icons-%s", sanitizeID(cleanPath))
 }
 
+
+func RunPNGIconsOnly(ctx context.Context, start time.Time) {
+	fmt.Println("🖼️ Generating PNG icons data only...")
+
+	icons, err := generatePNGIconsData(ctx)
+	if err != nil {
+		log.Fatalf("❌ PNG icons data generation failed: %v", err)
+	}
+
+	if err := saveToJSON("png_icons.json", icons); err != nil {
+		log.Fatalf("Failed to save PNG icons data: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 PNG icons data generation completed in %v\n", elapsed)
+	fmt.Printf("📊 Generated %d PNG icons\n", len(icons))
+
+	// Show sample
+	fmt.Println("\n📝 Sample PNG icons:")
+	for i, icon := range icons {
+		if i >= 10 {
+			fmt.Printf("  ... and %d more icons\n", len(icons)-10)
+			break
+		}
+		fmt.Printf("  %d. %s (ID: %s)\n", i+1, icon.Name, icon.ID)
+		if icon.Description != "" {
+			fmt.Printf("     Description: %s\n", truncateString(icon.Description, 80))
+		}
+		fmt.Printf("     Image: %s\n", icon.Image)
+		fmt.Printf("     Path: %s\n", icon.Path)
+		fmt.Println()
+	}
+
+	fmt.Printf("💾 Data saved to output/png_icons.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/png_icons.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
+}

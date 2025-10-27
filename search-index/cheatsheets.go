@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 	"regexp"
+	jargon_stemmer "search-index/jargon-stemmer"
 	"sort"
 	"strings"
+	"time"
 )
 
 func generateCheatsheetsData(ctx context.Context) ([]CheatsheetData, error) {
@@ -254,4 +257,46 @@ func generateCheatsheetID(path string) string {
 	cleanPath = reg.ReplaceAllString(cleanPath, "_")
 	// Add prefix
 	return fmt.Sprintf("cheatsheets-%s", cleanPath)
+}
+
+func RunCheatsheetsOnly(ctx context.Context, start time.Time) {
+	fmt.Println("📖 Generating cheatsheets data only...")
+
+	cheatsheets, err := generateCheatsheetsData(ctx)
+	if err != nil {
+		log.Fatalf("❌ Cheatsheets data generation failed: %v", err)
+	}
+
+	// Save to JSON
+	if err := saveToJSON("cheatsheets.json", cheatsheets); err != nil {
+		log.Fatalf("Failed to save cheatsheets data: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 Cheatsheets data generation completed in %v\n", elapsed)
+	fmt.Printf("📊 Generated %d cheatsheets\n", len(cheatsheets))
+
+	// Show sample data
+	fmt.Println("\n📝 Sample cheatsheets:")
+	for i, sheet := range cheatsheets {
+		if i >= 10 { // Show first 10
+			fmt.Printf("  ... and %d more cheatsheets\n", len(cheatsheets)-10)
+			break
+		}
+		fmt.Printf("  %d. %s (ID: %s)\n", i+1, sheet.Name, sheet.ID)
+		if sheet.Description != "" {
+			fmt.Printf("     Description: %s\n", truncateString(sheet.Description, 80))
+		}
+		fmt.Printf("     Path: %s\n", sheet.Path)
+		fmt.Println()
+	}
+
+	fmt.Printf("💾 Data saved to output/cheatsheets.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/cheatsheets.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
 }

@@ -191,6 +191,15 @@ export async function getCheatsheet(
       metatags.description = descMatch[1];
     }
 
+    const metaKeywordsMatch = htmlContent.match(
+      /<meta[^>]*name=["']keywords["'][^>]*content=["']([^"']*)["']/i
+    );
+    if (metaKeywordsMatch) {
+      metatags.keywords = metaKeywordsMatch[1]
+        .split(',')
+        .map((kw) => kw.trim());
+    }
+
     // Extract content from the body tag
     const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
     let bodyContent = '';

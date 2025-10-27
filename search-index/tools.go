@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"regexp"
+	jargon_stemmer "search-index/jargon-stemmer"
 	"strings"
+	"time"
 )
 
 func generateToolsData(ctx context.Context) ([]ToolData, error) {
@@ -181,4 +184,32 @@ func extractStringField(block, field string) string {
 		}
 	}
 	return ""
+}
+
+
+func RunToolsOnly(ctx context.Context, start time.Time) {
+	fmt.Println("📱 Generating tools data only...")
+
+	tools, err := generateToolsData(ctx)
+	if err != nil {
+		log.Fatalf("❌ Tools data generation failed: %v", err)
+	}
+
+	// Save to JSON
+	if err := saveToJSON("tools.json", tools); err != nil {
+		log.Fatalf("Failed to save tools data: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 Tools data generation completed in %v\n", elapsed)
+	fmt.Printf("📊 Generated %d tools\n", len(tools))
+
+	fmt.Printf("💾 Data saved to output/tools.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/tools.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
 }

@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	jargon_stemmer "search-index/jargon-stemmer"
 )
 
 func main() {
@@ -20,8 +22,15 @@ func main() {
 		log.Fatalf("Failed to create output directory: %v", err)
 	}
 
-	// Parse command line arguments for category
+	// Parse command line arguments for category and stem
 	category := parseCategory()
+	stemArgs := parseStem()
+
+	if stemArgs != "" {
+		fmt.Printf("🚀 Starting stem processing...\n")
+		runStemProcessing(stemArgs)
+		return
+	}
 
 	if category != "" {
 		fmt.Printf("🚀 Starting %s data generation...\n", category)
@@ -271,6 +280,31 @@ doneWithErrors:
 	fmt.Printf("  - Cheatsheets: %d items\n", len(cheatsheets))
 	fmt.Printf("  - MCP: %d items\n", len(mcp))
 	fmt.Printf("\n💾 All files saved to ./output/ directory\n")
+	
+	// Automatically run stem processing on all generated files
+	fmt.Println("\n🔍 Running stem processing on all files...")
+	
+	// Get all JSON files from output directory
+	outputDir := "output"
+	files, err := os.ReadDir(outputDir)
+	if err != nil {
+		log.Printf("❌ Failed to read output directory: %v", err)
+		return
+	}
+	
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), ".json") {
+			filePath := filepath.Join(outputDir, file.Name())
+			fmt.Printf("Processing %s...\n", filePath)
+			if err := jargon_stemmer.ProcessJSONFile(filePath); err != nil {
+				log.Printf("❌ Stem processing failed for %s: %v", filePath, err)
+			} else {
+				fmt.Printf("✅ Completed %s\n", filePath)
+			}
+		}
+	}
+	
+	fmt.Println("🎉 All stem processing completed!")
 }
 
 func parseCategory() string {
@@ -282,6 +316,40 @@ func parseCategory() string {
 	return ""
 }
 
+func parseStem() string {
+	for _, arg := range os.Args[1:] {
+		if strings.HasPrefix(arg, "stem=") {
+			return strings.TrimPrefix(arg, "stem=")
+		}
+	}
+	return ""
+}
+
+func runStemProcessing(stemArgs string) {
+	start := time.Now()
+	
+	// Use the file path directly
+	filePath := strings.TrimSpace(stemArgs)
+	
+	// Check if the file exists
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		fmt.Printf("❌ File not found: %s\n", filePath)
+		fmt.Println("Make sure the file exists.")
+		os.Exit(1)
+	}
+	
+	fmt.Printf("🔍 Processing file: %s\n", filePath)
+	
+	// Use the reusable function from jargon-stemmer package
+	if err := jargon_stemmer.ProcessJSONFile(filePath); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 Stem processing completed in %v\n", elapsed)
+	fmt.Printf("💾 Processed file: %s\n", filePath)
+}
+
 func runSingleCategory(category string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
@@ -290,222 +358,26 @@ func runSingleCategory(category string) {
 
 	switch strings.ToLower(category) {
 	case "tools":
-		runToolsOnly(ctx, start)
+		RunToolsOnly(ctx, start)
 	case "tldr":
-		runTLDROnly(ctx, start)
+		RunTLDROnly(ctx, start)
 	case "emojis":
-		runEmojisOnly(ctx, start)
+		RunEmojisOnly(ctx, start)
 	case "svg_icons", "svg-icons":
-		runSVGIconsOnly(ctx, start)
+		RunSVGIconsOnly(ctx, start)
 	case "png_icons", "png-icons":
-		runPNGIconsOnly(ctx, start)	
+		RunPNGIconsOnly(ctx, start)	
 	case "cheatsheets":
-		runCheatsheetsOnly(ctx, start)
+		RunCheatsheetsOnly(ctx, start)
 	case "mcp":
-		runMCPOnly(ctx, start)
+		RunMCPOnly(ctx, start)
 	default:
 		fmt.Printf("❌ Unknown category: %s\n", category)
 		fmt.Println("Available categories: tools, tldr, emojis, svg_icons, png_icons, cheatsheets, mcp")
 		fmt.Println("Usage: go run main.go category=tools")
+		fmt.Println("Or for stem processing: go run main.go stem=output/emojis.json")
 		os.Exit(1)
 	}
-}
-
-func runToolsOnly(ctx context.Context, start time.Time) {
-	fmt.Println("📱 Generating tools data only...")
-
-	tools, err := generateToolsData(ctx)
-	if err != nil {
-		log.Fatalf("❌ Tools data generation failed: %v", err)
-	}
-
-	// Save to JSON
-	if err := saveToJSON("tools.json", tools); err != nil {
-		log.Fatalf("Failed to save tools data: %v", err)
-	}
-
-	elapsed := time.Since(start)
-	fmt.Printf("\n🎉 Tools data generation completed in %v\n", elapsed)
-	fmt.Printf("📊 Generated %d tools\n", len(tools))
-
-	fmt.Printf("💾 Data saved to output/tools.json\n")
-}
-
-func runTLDROnly(ctx context.Context, start time.Time) {
-	fmt.Println("📚 Generating TLDR data only...")
-
-	tldr, err := generateTLDRData(ctx)
-	if err != nil {
-		log.Fatalf("❌ TLDR data generation failed: %v", err)
-	}
-
-	// Save to JSON
-	if err := saveToJSON("tldr_pages.json", tldr); err != nil {
-		log.Fatalf("Failed to save TLDR data: %v", err)
-	}
-
-	elapsed := time.Since(start)
-	fmt.Printf("\n🎉 TLDR data generation completed in %v\n", elapsed)
-	fmt.Printf("📊 Generated %d TLDR pages\n", len(tldr))
-
-	// Show sample data
-	fmt.Println("\n📝 Sample TLDR pages:")
-	for i, page := range tldr {
-		if i >= 10 { // Show first 10
-			fmt.Printf("  ... and %d more pages\n", len(tldr)-10)
-			break
-		}
-		fmt.Printf("  %d. %s (ID: %s, Category: %s)\n", i+1, page.Name, page.ID, page.Category)
-		if page.Description != "" {
-			fmt.Printf("     Description: %s\n", truncateString(page.Description, 80))
-		}
-		fmt.Printf("     Path: %s\n", page.Path)
-		fmt.Println()
-	}
-
-	fmt.Printf("💾 Data saved to output/tldr_pages.json\n")
-}
-
-func runEmojisOnly(ctx context.Context, start time.Time) {
-	fmt.Println("😀 Generating emojis data only...")
-
-	emojis, err := generateEmojisData(ctx)
-	if err != nil {
-		log.Fatalf("❌ Emojis data generation failed: %v", err)
-	}
-
-	// Save to JSON
-	if err := saveToJSON("emojis.json", emojis); err != nil {
-		log.Fatalf("Failed to save emojis data: %v", err)
-	}
-
-	elapsed := time.Since(start)
-	fmt.Printf("\n🎉 Emojis data generation completed in %v\n", elapsed)
-	fmt.Printf("📊 Generated %d emojis\n", len(emojis))
-
-	// Show sample data
-	fmt.Println("\n📝 Sample emojis:")
-	for i, emoji := range emojis {
-		if i >= 10 { // Show first 10
-			fmt.Printf("  ... and %d more emojis\n", len(emojis)-10)
-			break
-		}
-		fmt.Printf("  %d. %s %s (ID: %s)\n", i+1, emoji.Name, emoji.Code, emoji.ID)
-		if emoji.Description != "" {
-			fmt.Printf("     Description: %s\n", truncateString(emoji.Description, 80))
-		}
-		fmt.Printf("     Path: %s\n", emoji.Path)
-		fmt.Println()
-	}
-
-	fmt.Printf("💾 Data saved to output/emojis.json\n")
-}
-
-func runSVGIconsOnly(ctx context.Context, start time.Time) {
-	fmt.Println("🎨 Generating SVG icons data only...")
-
-	icons, err := generateSVGIconsData(ctx)
-	if err != nil {
-		log.Fatalf("❌ SVG icons data generation failed: %v", err)
-	}
-
-	// Save to JSON
-	if err := saveToJSON("svg_icons.json", icons); err != nil {
-		log.Fatalf("Failed to save SVG icons data: %v", err)
-	}
-
-	elapsed := time.Since(start)
-	fmt.Printf("\n🎉 SVG icons data generation completed in %v\n", elapsed)
-	fmt.Printf("📊 Generated %d SVG icons\n", len(icons))
-
-	// Show sample data
-	fmt.Println("\n📝 Sample SVG icons:")
-	for i, icon := range icons {
-		if i >= 10 { // Show first 10
-			fmt.Printf("  ... and %d more icons\n", len(icons)-10)
-			break
-		}
-		fmt.Printf("  %d. %s (ID: %s)\n", i+1, icon.Name, icon.ID)
-		if icon.Description != "" {
-			fmt.Printf("     Description: %s\n", truncateString(icon.Description, 80))
-		}
-		fmt.Printf("     Image: %s\n", icon.Image)
-		fmt.Printf("     Path: %s\n", icon.Path)
-		fmt.Println()
-	}
-
-	fmt.Printf("💾 Data saved to output/svg_icons.json\n")
-}
-
-func runPNGIconsOnly(ctx context.Context, start time.Time) {
-	fmt.Println("🖼️ Generating PNG icons data only...")
-
-	icons, err := generatePNGIconsData(ctx)
-	if err != nil {
-		log.Fatalf("❌ PNG icons data generation failed: %v", err)
-	}
-
-	if err := saveToJSON("png_icons.json", icons); err != nil {
-		log.Fatalf("Failed to save PNG icons data: %v", err)
-	}
-
-	elapsed := time.Since(start)
-	fmt.Printf("\n🎉 PNG icons data generation completed in %v\n", elapsed)
-	fmt.Printf("📊 Generated %d PNG icons\n", len(icons))
-
-	// Show sample
-	fmt.Println("\n📝 Sample PNG icons:")
-	for i, icon := range icons {
-		if i >= 10 {
-			fmt.Printf("  ... and %d more icons\n", len(icons)-10)
-			break
-		}
-		fmt.Printf("  %d. %s (ID: %s)\n", i+1, icon.Name, icon.ID)
-		if icon.Description != "" {
-			fmt.Printf("     Description: %s\n", truncateString(icon.Description, 80))
-		}
-		fmt.Printf("     Image: %s\n", icon.Image)
-		fmt.Printf("     Path: %s\n", icon.Path)
-		fmt.Println()
-	}
-
-	fmt.Printf("💾 Data saved to output/png_icons.json\n")
-}
-
-
-func runCheatsheetsOnly(ctx context.Context, start time.Time) {
-	fmt.Println("📖 Generating cheatsheets data only...")
-
-	cheatsheets, err := generateCheatsheetsData(ctx)
-	if err != nil {
-		log.Fatalf("❌ Cheatsheets data generation failed: %v", err)
-	}
-
-	// Save to JSON
-	if err := saveToJSON("cheatsheets.json", cheatsheets); err != nil {
-		log.Fatalf("Failed to save cheatsheets data: %v", err)
-	}
-
-	elapsed := time.Since(start)
-	fmt.Printf("\n🎉 Cheatsheets data generation completed in %v\n", elapsed)
-	fmt.Printf("📊 Generated %d cheatsheets\n", len(cheatsheets))
-
-	// Show sample data
-	fmt.Println("\n📝 Sample cheatsheets:")
-	for i, sheet := range cheatsheets {
-		if i >= 10 { // Show first 10
-			fmt.Printf("  ... and %d more cheatsheets\n", len(cheatsheets)-10)
-			break
-		}
-		fmt.Printf("  %d. %s (ID: %s)\n", i+1, sheet.Name, sheet.ID)
-		if sheet.Description != "" {
-			fmt.Printf("     Description: %s\n", truncateString(sheet.Description, 80))
-		}
-		fmt.Printf("     Path: %s\n", sheet.Path)
-		fmt.Println()
-	}
-
-	fmt.Printf("💾 Data saved to output/cheatsheets.json\n")
 }
 
 // Helper functions
