@@ -1,0 +1,63 @@
+name: Manual Build and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment to build in'
+        required: true
+        type: string
+
+jobs:
+  build_sections:
+    strategy:
+      matrix: 
+        target: [c, emojis, mcp, mcp-pages, png_icons, png_icons_pages, svg_icons, svg_icons_pages, t, tldr]
+    uses: ./.github/workflows/targeted-build.yml
+    with:
+      build_target: ${{ matrix.target }}
+      environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
+    outputs:
+      target: ${{ matrix.target }}
+
+
+  merge_build_outputs:
+    runs-on: ubuntu-latest
+    needs: build_sections
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all partial build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: false
+          path: ./dist-sections
+
+      - name: Merge builds
+        run: |
+          mkdir -p frontend/dist
+          for part in dist-sections/*; do
+            echo "🔧 Merging $part..."
+            rsync -a "$part"/ frontend/dist/
+          done
+          echo "✅ Final merged build ready in ./frontend/dist"
+
+      # Perhaps we only want this for debugging purposes
+      - name: List content of the final dist directory
+        run: |
+          echo "📂 Listing final dist directory:"
+          cd frontend/dist
+          du -sh ./* | sort -h
+          echo ""
+          echo "🔎 Full directory structure:"
+          find . -type f | sort
+
+      # TODO: Once we are happy with the build, update this step so it deploys the
+      # merged build to the correct environment based in the "environment" variable
+      - name: Deploy (example)
+        run: echo "🚀 Deploying merged build..."
