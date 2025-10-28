@@ -1,0 +1,70 @@
+name: Targeted Build
+
+on: 
+  workflow_call:
+    inputs:
+      build_target:
+        description: 'The build target passed in from the caller workflow'
+        required: true
+        type: string
+      environment:
+        description: 'The environment to build in'
+        required: true
+        type: string
+
+defaults:
+  run:
+    working-directory: frontend
+
+jobs:
+  partial_build:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.1.34"
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('frontend/bun.lockb') }}
+
+      - name: Install dependencies
+        run: |
+          echo "💿 Installing dependencies..."
+          bun install --frozen-lockfile --no-cache
+
+      - name: Prepare target folder
+        run: |
+          echo "⚠️ Preparing target folder..."
+          ./scripts/prepare_tmp_folders.sh ${{ github.event.inputs.build_target }}
+
+      - name: Build project
+        run: |
+          echo "🏗️ Building project..."
+          bun run build:prod --outDir "dist-${{ github.event.inputs.build_target }} --silent"
+        env:
+          PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
+          MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
+
+      - name: Restore tmp folders
+        if: always()
+        run: |
+          echo "♻️ Restoring tmp folders..."
+          ./scripts/restore_tmp_folders.sh ${{ github.event.inputs.build_target }}
+
+      - name: Upload partial build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.event.inputs.build_target }}
+          path: frontend/dist-${{ github.event.inputs.build_target }}
