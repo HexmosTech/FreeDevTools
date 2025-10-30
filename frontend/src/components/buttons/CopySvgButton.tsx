@@ -25,7 +25,9 @@ const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
       console.log('Fetching SVG:', { category, iconName });
 
       try {
-        const response = await fetch(`/freedevtools/svg_icons/${category}/${iconName}.svg`);
+        const response = await fetch(
+          `/freedevtools/svg_icons/${category}/${iconName}.svg`
+        );
         svgData = await response.text();
         console.log('SVG loaded successfully');
       } catch (error) {
@@ -39,19 +41,28 @@ const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
       await navigator.clipboard.writeText(svgData);
       toast.success('SVG copied to clipboard!');
     } catch (error) {
+      console.log(error);
       toast.error('Failed to copy SVG to clipboard');
     }
   }, [iconData]);
-
-  console.log('CopySvgButton rendering with iconData:', iconData);
 
   return (
     <button
       onClick={copyAsSVG}
       className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
     >
-      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+      <svg
+        className="w-4 h-4 mr-2"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+        ></path>
       </svg>
       Copy SVG
     </button>
