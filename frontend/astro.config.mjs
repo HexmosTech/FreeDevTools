@@ -42,7 +42,13 @@ export default defineConfig({
       minify: true,
       terserOptions: {
         compress: true,
-      }
-    }
+      },
+      rollupOptions: {
+        output: {
+          // ⚠️ this line disables automatic chunk splitting
+          manualChunks: undefined,
+        },
+      },
+    },
   },
 });
