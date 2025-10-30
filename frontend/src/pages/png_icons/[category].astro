@@ -1,22 +1,20 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  getClusterByName,
+  getClusters,
+  getIconsByCluster,
+} from 'db/png_icons/png-icons-utils';
+import AdBanner from '../../components/banner/AdBanner.astro';
 import CreditsButton from '../../components/buttons/CreditsButton';
 import ToolContainer from '../../components/tool/ToolContainer';
 import ToolHead from '../../components/tool/ToolHead';
-import { getCollection } from 'astro:content';
-import AdBanner from '../../components/banner/AdBanner.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
-  const pngIconsEntries = await getCollection('pngIconsMetadata');
-  const iconsData = pngIconsEntries[0]?.data;
+  const clusters = getClusters();
 
-  if (!iconsData) {
-    throw new Error('png icons metadata not found');
-  }
-
-  const categories = Object.values(iconsData.clusters).map(
-    (cluster: any) => cluster.name
-  );
+  // Use cluster names for URLs (these match cluster_svg.json cluster.name)
+  const categories = clusters.map((cluster) => cluster.name);
 
   return categories.map((category) => ({
     params: { category },
@@ -27,69 +25,39 @@ export async function getStaticPaths() {
 const { category } = Astro.params;
 
 async function getCategoryIcons() {
-  const pngIconsEntries = await getCollection('pngIconsMetadata');
-  const iconsData = pngIconsEntries[0]?.data;
+  // Get icons from SQLite database
+  // The category parameter is the cluster display name (from cluster.name in cluster_svg.json)
+  // Look up cluster by display name to get the source_folder (actual folder name used in icon table)
+  const clusterData = getClusterByName(category);
 
-  if (!iconsData) {
+  if (!clusterData) {
     return [];
   }
 
-  // Find the cluster by name
-  const cluster = Object.values(iconsData.clusters).find(
-    (c: any) => c.name === category
-  ) as any;
-  if (!cluster) {
-    return [];
-  }
+  // The icon table uses cluster key (folder name = source_folder), not display name
+  // Use source_folder to query icons
+  const dbIcons = getIconsByCluster(clusterData.source_folder || category);
 
-  const icons = [];
+  const icons = dbIcons.map((icon) => {
+    const iconName = icon.name.replace('.svg', '');
 
-  // Process each file object in the cluster - NO png loading at build time
-  for (const fileObj of cluster.fileNames) {
-    const iconName =
-      typeof fileObj === 'string'
-        ? fileObj.replace('.svg', '')
-        : fileObj.fileName?.replace('.svg', '') || '';
-
-    icons.push({
+    return {
       name: iconName,
-      description:
-        typeof fileObj === 'object'
-          ? fileObj.description || `Free ${iconName} icon`
-          : `Free ${iconName} icon`,
+      description: icon.description || `Free ${iconName} icon`,
       category: category,
-      tags:
-        typeof fileObj === 'object'
-          ? fileObj.tags || cluster.keywords || []
-          : cluster.keywords || [],
-      author:
-        typeof fileObj === 'object'
-          ? fileObj.author || 'Free DevTools'
-          : 'Free DevTools',
-      license: typeof fileObj === 'object' ? fileObj.license || 'MIT' : 'MIT',
+      tags: icon.tags || [],
+      author: 'Free DevTools',
+      license: 'MIT',
       url: `/freedevtools/png_icons/${category}/${iconName}/`,
-    });
-  }
+      base64: icon.base64,
+    };
+  });
 
   return icons;
 }
 
 const categoryIcons = await getCategoryIcons();
 const totalIcons = categoryIcons.length;
-
-const categoryIconMap = {
-  general: 'https://cdn-icons-png.flaticon.com/512/5515/5515389.png',
-  animals: 'https://cdn-icons-png.flaticon.com/512/1998/1998619.png',
-  nature: 'https://cdn-icons-png.flaticon.com/512/1998/1998619.png',
-  technology: 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png',
-  business: 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png',
-  social: 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png',
-  shapes: 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png',
-};
-
-const categoryIcon =
-  categoryIconMap[category as keyof typeof categoryIconMap] ||
-  categoryIconMap.general;
 
 // Breadcrumb data
 const breadcrumbItems = [
@@ -144,22 +112,11 @@ const breadcrumbItems = [
                       style="display: flex; align-items: center; justify-content: center; overflow: hidden;"
                     >
                       <img
-                        src={`/freedevtools/svg_icons/${icon.category}/${icon.name}.svg`}
+                        src={`data:image/png;base64,${icon.base64}`}
                         alt={`${iconName} icon`}
                         class="w-20 h-20 object-contain"
                         loading="lazy"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
                       />
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        class="text-slate-400"
-                        style="display:none;"
-                      >
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
                     </div>
                   </div>
                 </div>
