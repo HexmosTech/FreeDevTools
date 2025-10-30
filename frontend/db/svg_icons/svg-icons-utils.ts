@@ -8,6 +8,7 @@ import type {
   RawIconRow,
 } from './svg-icons-schema';
 
+// DB queries
 let dbInstance: Database.Database | null = null;
 
 function getDbPath(): string {
