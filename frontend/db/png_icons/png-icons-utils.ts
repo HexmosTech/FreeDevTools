@@ -6,13 +6,13 @@ import type {
   Overview,
   RawClusterRow,
   RawIconRow,
-} from './svg-icons-schema';
+} from './png-icons-schema';
 
 // DB queries
 let dbInstance: Database.Database | null = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/svg_icons/svg-icons-db.db');
+  return path.resolve(process.cwd(), 'db/png_icons/png-icons-db.db');
 }
 
 export function getDb(): Database.Database {
