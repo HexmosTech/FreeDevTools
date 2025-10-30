@@ -1,4 +1,8 @@
 ---
+import {
+  getClusters,
+  getIconByCategoryAndName,
+} from 'db/png_icons/png-icons-utils';
 import AdBanner from '../../../components/banner/AdBanner.astro';
 import CopyPngButton from '../../../components/buttons/CopyPngButton.tsx';
 import CopySvgButton from '../../../components/buttons/CopySvgButton.tsx';
@@ -9,59 +13,23 @@ import ToastProvider from '../../../components/ToastProvider';
 import ToolContainer from '../../../components/tool/ToolContainer';
 import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-// PNG processing moved to client-side for better performance
 
 export async function getStaticPaths() {
-  const { getCollection } = await import('astro:content');
-
-  const pngIconsEntries = await getCollection('pngIconsMetadata');
-  const iconsData = pngIconsEntries[0]?.data;
-
-  if (!iconsData) {
-    throw new Error('PNG icons metadata not found');
-  }
-
+  const clusters = getClusters();
   const paths = [];
 
-  // Process each cluster (category) - NO PNG loading at build time
-  for (const [clusterKey, clusterData] of Object.entries(iconsData.clusters)) {
-    const cluster = clusterData as any;
-    const categoryName = cluster.name; // Use the name from the cluster data
+  // Process each cluster (category)
+  for (const cluster of clusters) {
+    // Get all icons for this cluster using source_folder (cluster key)
+    const { getIconsByCluster } = await import('db/png_icons/png-icons-utils');
+    const icons = getIconsByCluster(cluster.source_folder || cluster.name);
 
-    // Process each file object in the cluster - NO PNG loading at build time
-    for (const fileObj of cluster.fileNames) {
-      const iconName =
-        typeof fileObj === 'string'
-          ? fileObj.replace('.svg', '')
-          : fileObj.fileName?.replace('.svg', '') || '';
+    // Process each icon
+    for (const iconRecord of icons) {
+      const iconName = iconRecord.name.replace('.svg', '');
 
       paths.push({
-        params: { category: categoryName, icon: iconName },
-        props: {
-          iconData: {
-            name: iconName,
-            description:
-              typeof fileObj === 'object'
-                ? fileObj.description || `Free ${iconName} icon`
-                : `Free ${iconName} icon`,
-            category: categoryName,
-            tags:
-              typeof fileObj === 'object'
-                ? fileObj.tags || cluster.keywords || []
-                : cluster.keywords || [],
-            author:
-              typeof fileObj === 'object'
-                ? fileObj.author || 'Free DevTools by Hexmos'
-                : 'Free DevTools by Hexmos',
-            license:
-              typeof fileObj === 'object' ? fileObj.license || 'MIT' : 'MIT',
-            usecases: typeof fileObj === 'object' ? fileObj.usecases || '' : '',
-            synonyms: typeof fileObj === 'object' ? fileObj.synonyms || [] : [],
-            industry: typeof fileObj === 'object' ? fileObj.industry || '' : '',
-            emotional_cues:
-              typeof fileObj === 'object' ? fileObj.emotional_cues || '' : '',
-          },
-        },
+        params: { category: cluster.name, icon: iconName },
       });
     }
   }
@@ -70,21 +38,30 @@ export async function getStaticPaths() {
 }
 
 const { category, icon } = Astro.params;
-const { iconData } = Astro.props as {
-  iconData: {
-    name: string;
-    category: string;
-    svgContent: string;
-    originalSvgContent: string;
-    tags: string[];
-    author: string;
-    license: string;
-    description: string;
-    usecases: string;
-    synonyms: string[];
-    industry: string;
-    emotional_cues: string;
-  };
+
+// Get icon data from SQLite database
+const iconRecord = getIconByCategoryAndName(category || '', icon || '');
+
+if (!iconRecord) {
+  return Astro.redirect('/freedevtools/png_icons/');
+}
+
+// Prepare icon data for the component
+const iconName = iconRecord.name.replace('.svg', '');
+const iconData = {
+  name: iconName,
+  description: iconRecord.description || `Free ${iconName} icon`,
+  category: category || '',
+  tags: iconRecord.tags || [],
+  author: 'Free DevTools by Hexmos',
+  license: 'MIT',
+  usecases: iconRecord.usecases || '',
+  synonyms: iconRecord.synonyms || [],
+  industry: iconRecord.industry || '',
+  emotional_cues: iconRecord.emotional_cues || '',
+  // SVG content will be fetched client-side if needed, empty for now since we use file paths
+  svgContent: '',
+  originalSvgContent: '',
 };
 
 // Breadcrumb data
@@ -104,7 +81,7 @@ const altText = `${iconData.name} ${iconData.category} icon - Free PNG download`
 
 const canonical = `https://hexmos.com/freedevtools/png_icons/${category}/${icon}/`;
 
-// Static PNG dimensions for structured data
+// Static SVG dimensions for structured data
 const pngDimensions = {
   width: 128,
   height: 128,
@@ -128,7 +105,7 @@ const encodingFormat =
 
 <BaseLayout
   name={iconData.name}
-  path={`/freedevtools/png_icons/${category}/${icon}/`}
+  path={`/freedevtools/svg_icons/${category}/${icon}/`}
   title={seoTitle}
   description={seoDescription}
   canonical={canonical}
@@ -204,11 +181,7 @@ const encodingFormat =
         {/* Right Block: Metadata */}
         <div class="flex flex-col justify-start space-y-6">
           <p class="leading-relaxed">
-            {
-              iconData.description
-                .replace(/SVG/g, 'PNG')
-                .replace(/\bAn PNG\b/g, 'A PNG')
-            }
+            {iconData.description}
           </p>
 
           {/* Sections */}
