@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const SvgIconsSkeleton: React.FC = () => {
   return (
@@ -17,7 +17,7 @@ const SvgIconsSkeleton: React.FC = () => {
         </div>
       </div>
 
-      {/* Pagination info skeleton */}
+      {/* Pagination info skeleton. */}
       <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-6">
         <div className="h-4 w-64 bg-slate-200 dark:bg-slate-700 rounded mx-auto"></div>
       </div>
@@ -53,7 +53,7 @@ const SvgIconsSkeleton: React.FC = () => {
         </div>
         <div className="h-4 w-48 bg-slate-200 dark:bg-slate-700 rounded mx-auto"></div>
       </div>
-    </div >
+    </div>
   );
 };
 

@@ -43,6 +43,6 @@ export default defineConfig({
       terserOptions: {
         compress: true,
       }
-    },
+    }
   },
 });
