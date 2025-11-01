@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Trash2Icon, PlusIcon } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import AdBanner from "../../../components/banner/AdBanner";
 
 // Simplified faker implementation (in a real project, you'd use @faker-js/faker)
@@ -398,7 +398,7 @@ const Faker: React.FC = () => {
                       Data Fields ({fields.length})
                     </Label>
                     <Button onClick={addField} size="sm">
-                      <PlusIcon className="h-4 w-4 mr-1" />
+                      <IconSvg iconName="round-plus" className="h-4 w-4 mr-1" />
                       Add Field
                     </Button>
                   </div>
@@ -489,9 +489,9 @@ const Faker: React.FC = () => {
                             onClick={() => removeField(field.id)}
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                            className="mt-6 h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
                           >
-                            <Trash2Icon className="h-4 w-4" />
+                            <IconSvg iconName="round-restore-from-trash" width="20" height="20" />
                           </Button>
                         </div>
                       ))}

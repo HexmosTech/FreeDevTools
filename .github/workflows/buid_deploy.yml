@@ -141,7 +141,7 @@ jobs:
         if: steps.detect-changes.outputs.should_deploy == 'true'
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: '1.1.34'
+          bun-version: "1.1.34"
 
       - name: Cache Bun dependencies
         if: steps.detect-changes.outputs.should_deploy == 'true'
@@ -207,6 +207,14 @@ jobs:
           cd frontend
           bun install --frozen-lockfile
 
+      - name: Clean dist directory
+        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+        run: |
+          echo "🧹 Cleaning dist directory before build..."
+          cd frontend
+          rm -rf dist
+          mkdir -p dist
+
       - name: Build project
         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
         run: |
@@ -253,9 +261,12 @@ jobs:
 
           if [[ "$changed_sections" == "public_assets_only" ]]; then
             echo "📁 Only public assets changed - syncing files only"
-            rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+            rsync -rvz --delete --no-perms --no-owner --no-group --no-times --progress ./frontend/public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+          elif [[ "$changed_sections" == "full_rebuild" ]]; then
+            echo "📦 Full deployment - deleting old files on server"
+            rsync -rvz --delete --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
           else
-            echo "📦 Full deployment"
+            echo "📦 Partial deployment - keeping existing files on server"
             rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
           fi
 

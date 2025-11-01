@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import { toast } from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import XmlFormatterSkeleton from "./_XmlFormatterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import CopyButton from "@/components/ui/copy-button";
+import { IconSvg } from "@/components/ui/IconSvg";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -19,8 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertTriangle, CheckIcon, XIcon, MinusIcon } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useMemo, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import XmlFormatterSkeleton from "./_XmlFormatterSkeleton";
 
 // XML formatting logic based on reference implementation
 interface XMLFormatterOptions {
@@ -58,7 +58,8 @@ const isValidXML = (rawXml: string): boolean => {
     // Check for parsing errors
     const errorNode = xmlDoc.querySelector("parsererror");
     return !errorNode;
-  } catch (error) {
+  } catch (_error) {
+    console.log(_error);
     return false;
   }
 };
@@ -293,7 +294,7 @@ const XmlFormatter: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -380,7 +381,7 @@ const XmlFormatter: React.FC = () => {
                           variant="outline"
                           size="sm"
                         >
-                          <XIcon className="h-4 w-4" />
+                          <IconSvg iconName="round-close" className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -396,12 +397,12 @@ const XmlFormatter: React.FC = () => {
                       <div className="flex items-center gap-2">
                         {formattingResult.isValid ? (
                           <Badge variant="default" className="bg-green-600">
-                            <CheckIcon className="h-3 w-3 mr-1" />
+                            <IconSvg iconName="round-check" className="h-3 w-3 mr-1" />
                             Valid XML
                           </Badge>
                         ) : (
                           <Badge variant="destructive">
-                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            <IconSvg iconName="round-dangerous" className="h-3 w-3 mr-1" />
                             Invalid XML
                           </Badge>
                         )}
@@ -411,7 +412,7 @@ const XmlFormatter: React.FC = () => {
                     {formattingResult.error ? (
                       <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                         <div className="flex items-start gap-2">
-                          <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                          <IconSvg iconName="round-dangerous" className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                           <div>
                             <div className="font-medium text-red-800 dark:text-red-200 mb-1">
                               XML Validation Error:
@@ -441,7 +442,7 @@ const XmlFormatter: React.FC = () => {
                               variant="outline"
                               size="sm"
                             >
-                              <MinusIcon className="h-4 w-4 mr-1" />
+                              <IconSvg iconName="round-minus" className="h-4 w-4 mr-1" />
                               Minify
                             </Button>
                           </div>

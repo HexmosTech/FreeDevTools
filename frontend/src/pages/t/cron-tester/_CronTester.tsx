@@ -9,9 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
+import { IconSvg } from "@/components/ui/IconSvg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon, RefreshCwIcon, XIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import CronTesterSkeleton from "./_CronTesterSkeleton";
@@ -178,7 +178,8 @@ const parseCronExpression = async (expression: string): Promise<CronResult> => {
         verbose: true,
         use24HourTimeFormat: true,
       });
-    } catch (cronstrueError) {
+    } catch (_cronstrueError) {
+      console.error(_cronstrueError);
       // Fallback to basic description if cronstrue fails
       description = generateBasicDescription(minute, hour, day, month, weekday);
     }
@@ -383,26 +384,41 @@ const CronTester: React.FC = () => {
 
   // Parse cron expression whenever it changes
   useEffect(() => {
-    if (cronExpression.trim() && loaded) {
+    if (!cronExpression.trim() || !loaded) {
+      setCronResult(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    const parseAsync = async () => {
       setIsLoading(true);
-      parseCronExpression(cronExpression)
-        .then((result) => {
+      try {
+        const result = await parseCronExpression(cronExpression);
+        if (!cancelled) {
           setCronResult(result);
-        })
-        .catch((error) => {
+        }
+      } catch {
+        if (!cancelled) {
           setCronResult({
             isValid: false,
             description: "",
             nextExecutions: [],
             error: "Failed to parse cron expression",
           });
-        })
-        .finally(() => {
+        }
+      } finally {
+        if (!cancelled) {
           setIsLoading(false);
-        });
-    } else {
-      setCronResult(null);
-    }
+        }
+      }
+    };
+
+    parseAsync();
+
+    return () => {
+      cancelled = true;
+    };
   }, [cronExpression, loaded]);
 
   const handleExpressionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -463,7 +479,7 @@ const CronTester: React.FC = () => {
                       size="sm"
                       disabled={isLoading}
                     >
-                      <RefreshCwIcon className="h-4 w-4 mr-1" />
+                      <IconSvg iconName="round-refresh" className="h-4 w-4 mr-1" />
                       Random
                     </Button>
                     <Button
@@ -472,7 +488,7 @@ const CronTester: React.FC = () => {
                       size="sm"
                       disabled={isLoading}
                     >
-                      <XIcon className="h-4 w-4" />
+                      <IconSvg iconName="round-close" className="h-4 w-4" />
                     </Button>
                     {cronResult?.isValid && (
                       <CopyButton text={cronExpression} />
@@ -510,7 +526,7 @@ const CronTester: React.FC = () => {
                         {/* Next Execution Times */}
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <CalendarIcon className="h-5 w-5 text-muted-foreground" />
+                            <IconSvg iconName="round-calendar-month" className="h-5 w-5 text-muted-foreground" />
                             <Label className="font-medium">
                               Next Execution Times (UTC)
                             </Label>
@@ -857,7 +873,7 @@ const CronTester: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Avoid Overlaps:</strong> Ensure jobs don't
+                            <strong>Avoid Overlaps:</strong> Ensure jobs don&apos;t
                             run longer than their intervals
                           </div>
                         </li>

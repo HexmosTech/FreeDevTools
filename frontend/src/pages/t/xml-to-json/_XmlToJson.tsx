@@ -1,23 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import XmlToJsonSkeleton from "./_XmlToJsonSkeleton";
-import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
-import {
-  Download,
-  FileText,
-  Code2,
-  RefreshCw,
-  AlertCircle,
-  CheckCircle2,
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import CopyButton from "@/components/ui/copy-button";
+import { IconSvg } from "@/components/ui/IconSvg";
+import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import XmlToJsonSkeleton from "./_XmlToJsonSkeleton";
 
 const XmlToJson: React.FC = () => {
   const [input, setInput] = useState("");
@@ -58,7 +51,8 @@ const XmlToJson: React.FC = () => {
           setValidationStatus("valid");
           setError("");
         }
-      } catch (err) {
+      } catch (_err) {
+        console.log(_err);
         setValidationStatus("invalid");
         setError("Invalid XML format");
       }
@@ -225,7 +219,8 @@ const XmlToJson: React.FC = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       toast.success("JSON file downloaded!");
-    } catch (err) {
+    } catch (_err) {
+      console.log(_err);
       toast.error("Failed to download file");
     }
   }, [output]);
@@ -254,11 +249,11 @@ const XmlToJson: React.FC = () => {
   const getValidationIcon = () => {
     switch (validationStatus) {
       case "valid":
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+        return <IconSvg iconName="round-check" className="h-4 w-4 text-green-500" />;
       case "invalid":
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
+        return <IconSvg iconName="round-dangerous" className="h-4 w-4 text-red-500" />;
       default:
-        return <FileText className="h-4 w-4 text-slate-400" />;
+        return <IconSvg iconName="round-insert-drive-file" className="h-4 w-4 text-slate-400" />;
     }
   };
 
@@ -317,8 +312,8 @@ const XmlToJson: React.FC = () => {
                         {validationStatus !== "idle" && (
                           <div
                             className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${validationStatus === "valid"
-                                ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                                : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                              ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                              : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                               }`}
                           >
                             {validationStatus === "valid"
@@ -339,9 +334,9 @@ const XmlToJson: React.FC = () => {
                         className="flex items-center gap-2"
                       >
                         {isProcessing ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          <IconSvg iconName="round-refresh" className="h-4 w-4 animate-spin" />
                         ) : (
-                          <Code2 className="h-4 w-4" />
+                          <IconSvg iconName="round-code" className="h-4 w-4" />
                         )}
                         {isProcessing ? "Converting..." : "Convert to JSON"}
                       </Button>
@@ -358,7 +353,7 @@ const XmlToJson: React.FC = () => {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                          <Code2 className="h-4 w-4 text-slate-400" />
+                          <IconSvg iconName="round-code" className="h-4 w-4 text-slate-400" />
                           JSON Output
                           {output && (
                             <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -382,7 +377,7 @@ const XmlToJson: React.FC = () => {
                               onClick={handleDownload}
                               className="h-8 px-2"
                             >
-                              <Download className="h-4 w-4" />
+                              <IconSvg iconName="round-download" className="h-4 w-4" />
                             </Button>
                           </div>
                         )}
@@ -396,7 +391,7 @@ const XmlToJson: React.FC = () => {
                     </div>
                     {error && (
                       <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
-                        <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <IconSvg iconName="round-dangerous" className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <div>
                           <div className="font-medium">Conversion Error</div>
                           <div className="text-sm">{error}</div>
@@ -405,7 +400,7 @@ const XmlToJson: React.FC = () => {
                     )}
                     {output && !error && (
                       <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
-                        <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <IconSvg iconName="round-check" className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <div className="text-sm">
                           XML successfully converted to JSON format
                         </div>
@@ -436,7 +431,7 @@ const XmlToJson: React.FC = () => {
                     structured data with support for attributes and hierarchical
                     relationships.{" "}
                     <strong>JSON (JavaScript Object Notation)</strong> is a
-                    lightweight, text-based data interchange format that's easy
+                    lightweight, text-based data interchange format that&apos;s easy
                     to read and parse.
                   </p>
                   <p>
