@@ -148,3 +148,41 @@ export function getIconsByTag(tag: string): Icon[] {
     tags: JSON.parse(row.tags || '[]') as string[],
   })) as Icon[];
 }
+
+// Get icon by cluster and icon name directly from database
+export function getIconByClusterAndName(
+  cluster: string,
+  iconName: string
+): { base64: string } | null {
+  const db = getDb();
+  // Build the filename with .svg extension
+  const filename = iconName.includes('.svg') ? iconName : `${iconName}.svg`;
+
+  // Query icon using cluster and filename - matches: SELECT base64 FROM icon WHERE cluster = 'rotary' AND name = 'arrow-rotary-last-left.svg'
+  const stmt = db.prepare(
+    `SELECT base64 
+     FROM icon WHERE cluster = ? AND name = ?`
+  );
+  const result = stmt.get(cluster, filename) as { base64: string } | undefined;
+  if (!result) return null;
+
+  return result;
+}
+
+// Get icon SVG content by decoding base64 from database
+export function getIconSvgFromDb(
+  cluster: string,
+  iconName: string
+): string | null {
+  const icon = getIconByClusterAndName(cluster, iconName);
+  if (!icon || !icon.base64) return null;
+
+  try {
+    // Decode base64 to get SVG content
+    const svgContent = Buffer.from(icon.base64, 'base64').toString('utf-8');
+    return svgContent;
+  } catch (error) {
+    console.error('Failed to decode base64 icon:', error);
+    return null;
+  }
+}

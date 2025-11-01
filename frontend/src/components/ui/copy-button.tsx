@@ -1,7 +1,7 @@
-import { Copy } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "../ToastProvider";
 import { Button } from "./button";
+import { IconSvg } from "./IconSvg";
 
 interface CopyButtonProps {
   text: string;
@@ -50,10 +50,20 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       className={`bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 ${className}`}
     >
       {size === "icon" ? (
-        <Copy className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+        <IconSvg
+          iconName="baseline-content-copy"
+          width="16"
+          height="16"
+          className="text-slate-600 dark:text-slate-300"
+        />
       ) : (
         <>
-          <Copy className="w-4 h-4 mr-2 text-slate-600 dark:text-slate-300" />
+          <IconSvg
+            iconName="baseline-content-copy"
+            width="16"
+            height="16"
+            className="mr-2 text-slate-600 dark:text-slate-300"
+          />
           {copySuccess ? "Copied!" : "Copy"}
         </>
       )}

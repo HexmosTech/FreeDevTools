@@ -1,3 +1,4 @@
+import { IconSvg } from '@/components/ui/IconSvg';
 import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
 
@@ -6,8 +7,11 @@ interface CopySvgButtonProps {
     name: string;
     originalSvgContent: string;
     svgContent: string;
+    category?: string;
+    iconName?: string;
   };
 }
+
 
 const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
   const copyAsSVG = useCallback(async () => {
@@ -51,19 +55,12 @@ const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
       onClick={copyAsSVG}
       className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
     >
-      <svg
-        className="w-4 h-4 mr-2"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-        ></path>
-      </svg>
+      <IconSvg
+        iconName="baseline-content-copy"
+        width="16"
+        height="16"
+        className="mr-2"
+      />
       Copy SVG
     </button>
   );

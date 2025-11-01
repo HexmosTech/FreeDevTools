@@ -1,3 +1,4 @@
+import { IconSvg } from '@/components/ui/IconSvg';
 import Konva from 'konva';
 import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
@@ -12,6 +13,7 @@ interface CopyPngButtonProps {
 }
 
 const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) => {
+
   const copyAsPNG = useCallback(async () => {
     // Load SVG content client-side if not available
     let svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
@@ -179,6 +181,12 @@ const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) =
       onClick={copyAsPNG}
       className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
     >
+      <IconSvg
+        iconName="baseline-content-copy"
+        width="16"
+        height="16"
+        className="mr-2"
+      />
       Copy PNG
     </button>
   );
