@@ -6,7 +6,7 @@ import ToolCardWrapper from "src/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "src/components/tool/ToolContentCardWrapper";
 import RsaKeyPairGeneratorSkeleton from "src/pages/t/rsa-key-pair-generator/_RsaKeyPairGeneratorSkeleton";
 import CopyButton from "src/components/ui/copy-button";
-import { toast } from "src/components/ToastProvider";
+import { toast } from "@/components/ToastProvider";
 import { Button } from "src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
 import { Textarea } from "src/components/ui/textarea";

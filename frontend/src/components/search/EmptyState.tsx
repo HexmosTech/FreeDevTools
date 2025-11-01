@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-
 interface EmptyStateProps {
   query: string;
   activeCategory: string;
@@ -29,9 +27,12 @@ const EmptyState = ({
         No results found in category <strong>{activeCategory}</strong>
       </p>
       {onViewAll && (
-        <Button variant="link" onClick={onViewAll} className="mt-2">
+        <button
+          onClick={onViewAll}
+          className="mt-2 text-primary underline-offset-4 hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        >
           View all results
-        </Button>
+        </button>
       )}
     </div>
   );
