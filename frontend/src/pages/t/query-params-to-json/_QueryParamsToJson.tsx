@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import {
   Card,
   CardContent,

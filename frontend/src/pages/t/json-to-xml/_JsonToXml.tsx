@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import ToolVideo from "@/components/tool/ToolVideo";
 import JsonToXmlSkeleton from "./_JsonToXmlSkeleton";
 import AdBanner from "../../../components/banner/AdBanner";

@@ -14,7 +14,7 @@ Our goals are:
 1. Do not use sizes for H1, H2, H3, H4, H5, H6 & P like text-sm, md:text-lg, lg:text-2xl like that. We have defined rules globally so do not mention sizes for these elements.
 2. Read the folder @src/components/ui for Shadcn components, Don't use any component outside of @src/components/ui. If you think any component is needed for your implementation and it is not present here - DO NOT PROCEED further, but rather ask on how to proceed. Usually a new component will have to be added in this directory.
 3. For copy button use @src/components/ui/copy-button.tsx component.
-4. Use react-toastify for adding toast where ever applicable @/components/ToastProvider.tsx.
+4. Use react-toastify for adding toast where ever applicable
 5. There is a skeleton loader component present in the same directory of the tool, after creating the tool, update the skeleton for handling the loader (example: @src/pages/tool-name/\_ToolNameSkeleton.tsx), so the loading state is more accurate.
 6. Do not modify any of the standard components in src/components/ui and src/components/tools. If a change is absolutely necessary, then ask before doing so.
 

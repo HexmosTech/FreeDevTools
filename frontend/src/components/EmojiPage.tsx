@@ -1,4 +1,4 @@
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import { useState } from 'react';
 import type { EmojiData, EmojiImageVariants } from '../lib/emojis';
 
