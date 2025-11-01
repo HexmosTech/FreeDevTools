@@ -13,14 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Upload,
-  FileText,
-  Eye,
-  Download,
-  Maximize2,
-  Minimize2,
-} from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import ToolVideo from "@/components/tool/ToolVideo";
 import AdBanner from "../../../components/banner/AdBanner";
 // SVG Upload Component
@@ -94,8 +87,8 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
     <div className="space-y-4">
       <div
         className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
+          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+          : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
           }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -112,7 +105,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         {selectedFile ? (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <FileText className="w-12 h-12 text-green-500" />
+              <IconSvg iconName="round-insert-drive-file" className="w-12 h-12 text-green-500" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -137,7 +130,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <Upload className="w-12 h-12 text-slate-400" />
+              <IconSvg iconName="round-file-upload" className="w-12 h-12 text-slate-400" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -228,7 +221,8 @@ const SvgViewer: React.FC = () => {
       };
 
       reader.readAsDataURL(blob);
-    } catch (err) {
+    } catch (_err) {
+      console.log(_err);
       setError("Invalid SVG format");
       setSvgDataUrl("");
       setSvgDimensions({});
@@ -400,7 +394,7 @@ Example:
                         onClick={downloadSvg}
                         className="flex items-center gap-2"
                       >
-                        <Download className="w-4 h-4" />
+                        <IconSvg iconName="round-download" className="w-4 h-4" />
                         Download
                       </Button>
                     )}
@@ -415,7 +409,7 @@ Example:
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <Eye className="w-5 h-5" />
+                      <IconSvg iconName="round-remove-red-eye" className="w-5 h-5" />
                       SVG Preview
                     </CardTitle>
                     {svgDataUrl && (
@@ -428,9 +422,9 @@ Example:
                           className="flex items-center gap-1"
                         >
                           {isFullscreen ? (
-                            <Minimize2 className="w-4 h-4" />
+                            <IconSvg iconName="round-minimize" className="w-4 h-4" />
                           ) : (
-                            <Maximize2 className="w-4 h-4" />
+                            <IconSvg iconName="round-maximize" className="w-4 h-4" />
                           )}
                           {isFullscreen ? "Minimize" : "Fullscreen"}
                         </Button>
@@ -479,8 +473,8 @@ Example:
                       {/* SVG Display */}
                       <div
                         className={`border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-white dark:bg-slate-900 overflow-auto ${isFullscreen
-                            ? "fixed inset-4 z-50 bg-white dark:bg-slate-900"
-                            : "max-h-96"
+                          ? "fixed inset-4 z-50 bg-white dark:bg-slate-900"
+                          : "max-h-96"
                           }`}
                       >
                         <div className="flex items-center justify-center min-h-[200px]">
@@ -592,7 +586,7 @@ Example:
 
                   <div className="bg-slate-100 dark:bg-slate-700 rounded p-4 font-mono text-sm">
                     <div className="text-slate-600 dark:text-slate-400 mb-2">
-                      // Basic SVG Structure
+                      {"// Basic SVG Structure"}
                     </div>
                     <div className="text-slate-800 dark:text-slate-200">
                       <span className="text-purple-600 dark:text-purple-400">
@@ -600,11 +594,11 @@ Example:
                       </span>
                       <span className="text-blue-600 dark:text-blue-400">
                         {" "}
-                        width="100" height="100"
+                        width=&quot;100&quot; height=&quot;100&quot;
                       </span>
                       <span className="text-green-600 dark:text-green-400">
                         {" "}
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns=&quot;http://www.w3.org/2000/svg&quot;
                       </span>
                       <span className="text-purple-600 dark:text-purple-400">
                         &gt;
@@ -615,7 +609,7 @@ Example:
                       </span>
                       <span className="text-blue-600 dark:text-blue-400">
                         {" "}
-                        cx="50" cy="50" r="40" fill="blue"
+                        cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;40&quot; fill=&quot;blue&quot;
                       </span>
                       <span className="text-orange-600 dark:text-orange-400">
                         {" "}

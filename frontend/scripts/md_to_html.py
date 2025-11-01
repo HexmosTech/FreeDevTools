@@ -1,38 +1,41 @@
-import os
-import markdown
 import mimetypes
+import os
+
+import markdown
 
 # File extensions to language mapping for syntax highlighting
 LANGUAGE_MAP = {
-    '.js': 'javascript',
-    '.py': 'python',
-    '.sh': 'bash',
-    '.css': 'css',
-    '.html': 'html',
-    '.php': 'php',
-    '.java': 'java',
-    '.cpp': 'cpp',
-    '.c': 'c',
-    '.go': 'go',
-    '.rs': 'rust',
-    '.rb': 'ruby',
-    '.sql': 'sql',
-    '.yaml': 'yaml',
-    '.yml': 'yaml',
-    '.json': 'json',
-    '.xml': 'xml',
-    '.dockerfile': 'dockerfile',
-    '.dockerignore': 'dockerfile',
-    '.gitignore': 'gitignore',
-    '.md': 'markdown',
-    '.txt': 'text',
-    '.log': 'text'
+    ".js": "javascript",
+    ".py": "python",
+    ".sh": "bash",
+    ".css": "css",
+    ".html": "html",
+    ".php": "php",
+    ".java": "java",
+    ".cpp": "cpp",
+    ".c": "c",
+    ".go": "go",
+    ".rs": "rust",
+    ".rb": "ruby",
+    ".sql": "sql",
+    ".yaml": "yaml",
+    ".yml": "yaml",
+    ".json": "json",
+    ".xml": "xml",
+    ".dockerfile": "dockerfile",
+    ".dockerignore": "dockerfile",
+    ".gitignore": "gitignore",
+    ".md": "markdown",
+    ".txt": "text",
+    ".log": "text",
 }
+
 
 def get_language_from_extension(file_path):
     """Get the language for syntax highlighting based on file extension"""
     _, ext = os.path.splitext(file_path.lower())
-    return LANGUAGE_MAP.get(ext, 'text')
+    return LANGUAGE_MAP.get(ext, "text")
+
 
 def create_html_template(content, title, language=None):
     """Create a complete HTML document with syntax highlighting"""
@@ -45,7 +48,6 @@ def create_html_template(content, title, language=None):
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
     <style>
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             max-width: 1200px;
             margin: 0 auto;
@@ -128,20 +130,41 @@ def create_html_template(content, title, language=None):
 </html>"""
     return html_template
 
+
 def convert_md_to_html(repo_path, output_folder="html_output"):
     # Create output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
 
     # Supported file extensions
-    supported_extensions = ['.md', '.js', '.py', '.sh', '.css', '.html', '.php', '.java', 
-                          '.cpp', '.c', '.go', '.rs', '.rb', '.sql', '.yaml', '.yml', 
-                          '.json', '.xml', '.dockerfile', '.txt', '.log']
+    supported_extensions = [
+        ".md",
+        ".js",
+        ".py",
+        ".sh",
+        ".css",
+        ".html",
+        ".php",
+        ".java",
+        ".cpp",
+        ".c",
+        ".go",
+        ".rs",
+        ".rb",
+        ".sql",
+        ".yaml",
+        ".yml",
+        ".json",
+        ".xml",
+        ".dockerfile",
+        ".txt",
+        ".log",
+    ]
 
     for root, _, files in os.walk(repo_path):
         for file in files:
             file_path = os.path.join(root, file)
             _, ext = os.path.splitext(file.lower())
-            
+
             if ext in supported_extensions:
                 # Read file content
                 try:
@@ -157,27 +180,38 @@ def convert_md_to_html(repo_path, output_folder="html_output"):
                         continue
 
                 # Generate title from filename
-                title = os.path.splitext(file)[0].replace('_', ' ').replace('-', ' ').title()
-                
-                if ext == '.md':
+                title = (
+                    os.path.splitext(file)[0]
+                    .replace("_", " ")
+                    .replace("-", " ")
+                    .title()
+                )
+
+                if ext == ".md":
                     # Convert markdown to HTML
-                    html_content = markdown.markdown(content, extensions=["fenced_code", "tables", "codehilite"])
-                    final_content = f'<div class="markdown-content">{html_content}</div>'
+                    html_content = markdown.markdown(
+                        content, extensions=["fenced_code", "tables", "codehilite"]
+                    )
+                    final_content = (
+                        f'<div class="markdown-content">{html_content}</div>'
+                    )
                 else:
                     # Wrap other formats in code blocks with syntax highlighting
                     language = get_language_from_extension(file)
-                    escaped_content = content.replace('<', '&lt;').replace('>', '&gt;')
+                    escaped_content = content.replace("<", "&lt;").replace(">", "&gt;")
                     final_content = f'<pre><code class="language-{language}">{escaped_content}</code></pre>'
 
                 # Create complete HTML document
-                html_document = create_html_template(final_content, title, language if ext != '.md' else None)
+                html_document = create_html_template(
+                    final_content, title, language if ext != ".md" else None
+                )
 
                 # Preserve directory structure in output
                 # Get relative path from repo_path to maintain structure
                 rel_path = os.path.relpath(root, repo_path)
-                
+
                 # Create output directory structure
-                if rel_path == '.':
+                if rel_path == ".":
                     # File is in root directory
                     output_dir = output_folder
                 else:
@@ -193,6 +227,7 @@ def convert_md_to_html(repo_path, output_folder="html_output"):
                     f.write(html_document)
 
                 print(f"Converted: {file_path} → {html_path}")
+
 
 if __name__ == "__main__":
     repo_path = input("Enter the path to your repo: ").strip()

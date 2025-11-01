@@ -1,21 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  mode:"jit",
+  mode: "jit",
   darkMode: "class",
   content: [
     "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
     "./public/**/*.html",
   ],
   plugins: [
-    require('@tailwindcss/typography'),
+    // require('@tailwindcss/typography'),
   ],
   theme: {
     extend: {
-      fontFamily: {
-        // "eb-garamond": ["EB Garamond", "serif"],
-        "dm-serif": ["DM Serif Text", "serif"],
-        "cal-sans": ["Cal Sans", "sans-serif"],
-      },
       colors: {
         black: {
           DEFAULT: "#424242",

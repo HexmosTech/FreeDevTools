@@ -15,11 +15,11 @@ from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
 # Import build_sqlite_from_json to call it after processing
-import build_sqlite_from_json
+# import build_sqlite_from_json
 import cairosvg
 from PIL import Image
 
-SOURCE = "./test2"
+SOURCE = "./data"
 
 
 def svg_to_base64(svg_path):
