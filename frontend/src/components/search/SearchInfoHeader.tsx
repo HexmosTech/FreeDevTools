@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { IconSvg } from '@/components/ui/IconSvg';
 import type { SearchInfo } from './types';
 import { getCategoryDisplayName } from './utils';
 
@@ -41,7 +41,7 @@ const SearchInfoHeader = ({
           Esc
         </kbd>
         <span className="text-sm">Clear results</span>
-        <X className="h-4 w-4" />
+        <IconSvg iconName="round-close" className="h-4 w-4" />
       </Button>
     </div>
   );

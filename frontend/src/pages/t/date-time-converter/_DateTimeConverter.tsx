@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import { useEffect, useState } from "react";
 import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import _DateTimeConverterWiki from "./_DateTimeConverterWiki";
@@ -229,7 +229,7 @@ const DateTimeConverter = () => {
                           size="lg"
                           className="h-12 px-6"
                         >
-                          <CalendarIcon className="w-5 h-5 mr-2" />
+                          <IconSvg iconName="round-calendar-month" className="w-5 h-5 mr-2" />
                           {selectedDate
                             ? format(selectedDate, "PPP")
                             : "Pick a date"}

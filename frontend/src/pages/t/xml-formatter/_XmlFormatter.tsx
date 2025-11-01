@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertTriangle, CheckIcon, XIcon, MinusIcon } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import AdBanner from "../../../components/banner/AdBanner";
 
 // XML formatting logic based on reference implementation
@@ -380,7 +380,7 @@ const XmlFormatter: React.FC = () => {
                           variant="outline"
                           size="sm"
                         >
-                          <XIcon className="h-4 w-4" />
+                          <IconSvg iconName="round-close" className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -396,12 +396,12 @@ const XmlFormatter: React.FC = () => {
                       <div className="flex items-center gap-2">
                         {formattingResult.isValid ? (
                           <Badge variant="default" className="bg-green-600">
-                            <CheckIcon className="h-3 w-3 mr-1" />
+                            <IconSvg iconName="round-check" className="h-3 w-3 mr-1" />
                             Valid XML
                           </Badge>
                         ) : (
                           <Badge variant="destructive">
-                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            <IconSvg iconName="round-dangerous" className="h-3 w-3 mr-1" />
                             Invalid XML
                           </Badge>
                         )}
@@ -441,7 +441,7 @@ const XmlFormatter: React.FC = () => {
                               variant="outline"
                               size="sm"
                             >
-                              <MinusIcon className="h-4 w-4 mr-1" />
+                              <IconSvg iconName="round-minus" className="h-4 w-4 mr-1" />
                               Minify
                             </Button>
                           </div>

@@ -6,7 +6,7 @@ import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/button";
 import ToolVideo from "@/components/tool/ToolVideo";
-import { Download } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
@@ -295,7 +295,8 @@ const SvgPlaceholderGenerator: React.FC = () => {
                           className="p-2"
                           title="Download SVG"
                         >
-                          <Download className="w-5 h-5" />
+                          Download
+                          <IconSvg iconName="round-download" className="w-5 h-5" width="20" height="20" />
                         </Button>
                       )}
                     </div>

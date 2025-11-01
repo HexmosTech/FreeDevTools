@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Download } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import ToolVideo from "@/components/tool/ToolVideo";
 import AdBanner from "../../../components/banner/AdBanner";
 
@@ -293,7 +293,7 @@ const JsonToCsvConverter: React.FC = () => {
                             onClick={handleDownload}
                             className="flex items-center gap-1"
                           >
-                            <Download className="w-4 h-4" />
+                            <IconSvg iconName="round-download" className="w-4 h-4" />
                             Download
                           </Button>
                           <CopyButton text={output} size="sm" />

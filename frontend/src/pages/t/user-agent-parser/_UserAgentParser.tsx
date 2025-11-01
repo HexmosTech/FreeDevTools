@@ -12,17 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import {
-  Monitor,
-  Smartphone,
-  Cpu,
-  Globe,
-  XIcon,
-  RefreshCw,
-  Info,
-  Tablet,
-  Server,
-} from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import ToolVideo from "@/components/tool/ToolVideo";
 import AdBanner from "../../../components/banner/AdBanner";
 
@@ -244,20 +234,20 @@ const UserAgentParser: React.FC = () => {
   const getDeviceIcon = (deviceType?: string) => {
     switch (deviceType) {
       case "mobile":
-        return <Smartphone className="h-4 w-4" />;
+        return <IconSvg iconName="round-smartphone" className="h-4 w-4" />;
       case "tablet":
-        return <Tablet className="h-4 w-4" />;
+        return <IconSvg iconName="round-tablet-mac" className="h-4 w-4" />;
       case "desktop":
-        return <Monitor className="h-4 w-4" />;
+        return <IconSvg iconName="round-monitor" className="h-4 w-4" />;
       default:
-        return <Monitor className="h-4 w-4" />;
+        return <IconSvg iconName="round-monitor" className="h-4 w-4" />;
     }
   };
 
   const sections: UserAgentSection[] = [
     {
       heading: "Browser",
-      icon: <Globe className="h-4 w-4" />,
+      icon: <IconSvg iconName="round-public" className="h-4 w-4" />,
       content: [
         {
           label: "Name",
@@ -273,7 +263,7 @@ const UserAgentParser: React.FC = () => {
     },
     {
       heading: "Engine",
-      icon: <Server className="h-4 w-4" />,
+      icon: <IconSvg iconName="round-wb-cloudy" className="h-4 w-4" />,
       content: [
         {
           label: "Name",
@@ -289,7 +279,7 @@ const UserAgentParser: React.FC = () => {
     },
     {
       heading: "Operating System",
-      icon: <Monitor className="h-4 w-4" />,
+      icon: <IconSvg iconName="round-monitor" className="h-4 w-4" />,
       content: [
         {
           label: "Name",
@@ -326,7 +316,7 @@ const UserAgentParser: React.FC = () => {
     },
     {
       heading: "CPU",
-      icon: <Cpu className="h-4 w-4" />,
+      icon: <IconSvg iconName="round-monitor" className="h-4 w-4" />,
       content: [
         {
           label: "Architecture",
@@ -379,7 +369,7 @@ const UserAgentParser: React.FC = () => {
                       variant="outline"
                       size="sm"
                     >
-                      <RefreshCw className="h-4 w-4 mr-1" />
+                      <IconSvg iconName="round-refresh" className="h-4 w-4 mr-1" />
                       Use Current Browser
                     </Button>
                     <Button
@@ -387,11 +377,11 @@ const UserAgentParser: React.FC = () => {
                       variant="outline"
                       size="sm"
                     >
-                      <Info className="h-4 w-4 mr-1" />
+                      <IconSvg iconName="round-info" className="h-4 w-4 mr-1" />
                       Load Sample
                     </Button>
                     <Button onClick={handleClear} variant="outline" size="sm">
-                      <XIcon className="h-4 w-4 mr-1" />
+                      <IconSvg iconName="round-close" className="h-4 w-4 mr-1" />
                       Clear
                     </Button>
                     {userAgent && <CopyButton text={userAgent} />}

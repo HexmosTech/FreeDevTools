@@ -13,7 +13,7 @@ import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Globe, RefreshCw, User, Users } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import React, { useEffect, useMemo, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import ChmodCalculatorSkeleton from "./_ChmodCalculatorSkeleton";
@@ -225,19 +225,19 @@ const ChmodCalculator: React.FC = () => {
       {
         group: "owner",
         title: "Owner (u)",
-        icon: <User className="h-4 w-4" />,
+        icon: <IconSvg iconName="round-person" className="h-4 w-4" />,
         description: "File owner",
       },
       {
         group: "group",
         title: "Group (g)",
-        icon: <Users className="h-4 w-4" />,
+        icon: <IconSvg iconName="round-supervised-user-circle" className="h-4 w-4" />,
         description: "File group",
       },
       {
         group: "public",
         title: "Others (o)",
-        icon: <Globe className="h-4 w-4" />,
+        icon: <IconSvg iconName="round-public" className="h-4 w-4" />,
         description: "Everyone else",
       },
     ];
@@ -267,7 +267,7 @@ const ChmodCalculator: React.FC = () => {
                       File Permissions Matrix
                     </Label>
                     <Button onClick={handleReset} variant="outline" size="sm">
-                      <RefreshCw className="h-4 w-4 mr-1" />
+                      <IconSvg iconName="round-refresh" className="h-4 w-4 mr-1" />
                       Reset
                     </Button>
                   </div>

@@ -13,14 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Upload,
-  FileText,
-  Eye,
-  Download,
-  Maximize2,
-  Minimize2,
-} from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import ToolVideo from "@/components/tool/ToolVideo";
 import AdBanner from "../../../components/banner/AdBanner";
 // SVG Upload Component
@@ -112,7 +105,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         {selectedFile ? (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <FileText className="w-12 h-12 text-green-500" />
+              <IconSvg iconName="round-insert-drive-file" className="w-12 h-12 text-green-500" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -137,7 +130,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <Upload className="w-12 h-12 text-slate-400" />
+              <IconSvg iconName="round-file-upload" className="w-12 h-12 text-slate-400" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -400,7 +393,7 @@ Example:
                         onClick={downloadSvg}
                         className="flex items-center gap-2"
                       >
-                        <Download className="w-4 h-4" />
+                        <IconSvg iconName="round-download" className="w-4 h-4" />
                         Download
                       </Button>
                     )}
@@ -415,7 +408,7 @@ Example:
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <Eye className="w-5 h-5" />
+                      <IconSvg iconName="round-remove-red-eye" className="w-5 h-5" />
                       SVG Preview
                     </CardTitle>
                     {svgDataUrl && (
@@ -428,9 +421,9 @@ Example:
                           className="flex items-center gap-1"
                         >
                           {isFullscreen ? (
-                            <Minimize2 className="w-4 h-4" />
+                            <IconSvg iconName="round-minimize" className="w-4 h-4" />
                           ) : (
-                            <Maximize2 className="w-4 h-4" />
+                            <IconSvg iconName="round-maximize" className="w-4 h-4" />
                           )}
                           {isFullscreen ? "Minimize" : "Fullscreen"}
                         </Button>

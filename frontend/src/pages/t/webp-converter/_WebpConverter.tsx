@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FileImageIcon, DownloadIcon, TrashIcon, Upload } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import AdBanner from "../../../components/banner/AdBanner";
 
 // WebP conversion utilities
@@ -376,7 +376,7 @@ const WebpConverter: React.FC = () => {
                       }
                     }}
                   >
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <IconSvg iconName="round-file-upload" className="h-12 w-12 mx-auto text-muted-foreground mb-4" width="48" height="48" />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">
                         Drag & drop images here, or click to select
@@ -419,7 +419,7 @@ const WebpConverter: React.FC = () => {
                         variant="outline"
                         size="sm"
                       >
-                        <TrashIcon className="h-4 w-4 mr-1" />
+                        <IconSvg iconName="round-restore-from-trash" className="h-4 w-4 mr-1" />
                         Clear All
                       </Button>
                     </div>
@@ -433,7 +433,7 @@ const WebpConverter: React.FC = () => {
                         >
                           <div className="flex items-center min-w-0 flex-1">
                             <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded flex items-center justify-center mr-3">
-                              <FileImageIcon className="h-4 w-4 text-primary" />
+                              <IconSvg iconName="round-file-present" className="h-4 w-4 text-primary" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="font-medium text-sm truncate">
@@ -527,7 +527,7 @@ const WebpConverter: React.FC = () => {
                               .length === 0
                           }
                         >
-                          <DownloadIcon className="h-4 w-4 mr-2" />
+                          <IconSvg iconName="round-download" className="h-4 w-4 mr-2" />
                           Download
                         </Button>
                       )}

@@ -31,14 +31,17 @@ export const IconSvg: React.FC<IconSvgProps> = ({
     return null;
   }
 
+  const widthValue = typeof width === 'number' ? `${width}px` : width;
+  const heightValue = typeof height === 'number' ? `${height}px` : height;
+
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       width={width}
       height={height}
       fill={fill}
       className={className}
+      style={{ width: widthValue, height: heightValue, flexShrink: 0 }}
       dangerouslySetInnerHTML={{ __html: iconBody }}
     />
   );

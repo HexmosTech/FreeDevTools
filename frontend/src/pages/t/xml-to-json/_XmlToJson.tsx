@@ -9,14 +9,7 @@ import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolVideo from "@/components/tool/ToolVideo";
-import {
-  Download,
-  FileText,
-  Code2,
-  RefreshCw,
-  AlertCircle,
-  CheckCircle2,
-} from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import AdBanner from "../../../components/banner/AdBanner";
 
 const XmlToJson: React.FC = () => {
@@ -254,11 +247,11 @@ const XmlToJson: React.FC = () => {
   const getValidationIcon = () => {
     switch (validationStatus) {
       case "valid":
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+        return <IconSvg iconName="round-check" className="h-4 w-4 text-green-500" />;
       case "invalid":
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
+        return <IconSvg iconName="round-dangerous" className="h-4 w-4 text-red-500" />;
       default:
-        return <FileText className="h-4 w-4 text-slate-400" />;
+        return <IconSvg iconName="round-insert-drive-file" className="h-4 w-4 text-slate-400" />;
     }
   };
 
@@ -339,9 +332,9 @@ const XmlToJson: React.FC = () => {
                         className="flex items-center gap-2"
                       >
                         {isProcessing ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          <IconSvg iconName="round-refresh" className="h-4 w-4 animate-spin" />
                         ) : (
-                          <Code2 className="h-4 w-4" />
+                          <IconSvg iconName="round-code" className="h-4 w-4" />
                         )}
                         {isProcessing ? "Converting..." : "Convert to JSON"}
                       </Button>
@@ -358,7 +351,7 @@ const XmlToJson: React.FC = () => {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                          <Code2 className="h-4 w-4 text-slate-400" />
+                          <IconSvg iconName="round-code" className="h-4 w-4 text-slate-400" />
                           JSON Output
                           {output && (
                             <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -382,7 +375,7 @@ const XmlToJson: React.FC = () => {
                               onClick={handleDownload}
                               className="h-8 px-2"
                             >
-                              <Download className="h-4 w-4" />
+                              <IconSvg iconName="round-download" className="h-4 w-4" />
                             </Button>
                           </div>
                         )}
@@ -396,7 +389,7 @@ const XmlToJson: React.FC = () => {
                     </div>
                     {error && (
                       <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
-                        <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <IconSvg iconName="round-dangerous" className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <div>
                           <div className="font-medium">Conversion Error</div>
                           <div className="text-sm">{error}</div>
@@ -405,7 +398,7 @@ const XmlToJson: React.FC = () => {
                     )}
                     {output && !error && (
                       <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
-                        <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <IconSvg iconName="round-check" className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <div className="text-sm">
                           XML successfully converted to JSON format
                         </div>

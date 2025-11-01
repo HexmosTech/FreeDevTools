@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Search } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import React, { useEffect, useRef, useState } from "react";
 
 // Add this type definition for the custom event
@@ -166,7 +166,7 @@ const SearchBar: React.FC = () => {
           className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
           aria-label="Search"
         >
-          <Search className="h-5 w-5" />
+          <IconSvg iconName="round-search" className="h-5 w-5" />
         </button>
       </div>
 

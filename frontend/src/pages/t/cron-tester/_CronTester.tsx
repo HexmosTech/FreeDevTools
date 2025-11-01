@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon, RefreshCwIcon, XIcon } from "lucide-react";
+import { IconSvg } from "@/components/ui/IconSvg";
 import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import CronTesterSkeleton from "./_CronTesterSkeleton";
@@ -463,7 +463,7 @@ const CronTester: React.FC = () => {
                       size="sm"
                       disabled={isLoading}
                     >
-                      <RefreshCwIcon className="h-4 w-4 mr-1" />
+                      <IconSvg iconName="round-refresh" className="h-4 w-4 mr-1" />
                       Random
                     </Button>
                     <Button
@@ -472,7 +472,7 @@ const CronTester: React.FC = () => {
                       size="sm"
                       disabled={isLoading}
                     >
-                      <XIcon className="h-4 w-4" />
+                      <IconSvg iconName="round-close" className="h-4 w-4" />
                     </Button>
                     {cronResult?.isValid && (
                       <CopyButton text={cronExpression} />
@@ -510,7 +510,7 @@ const CronTester: React.FC = () => {
                         {/* Next Execution Times */}
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
-                            <CalendarIcon className="h-5 w-5 text-muted-foreground" />
+                            <IconSvg iconName="round-calendar-month" className="h-5 w-5 text-muted-foreground" />
                             <Label className="font-medium">
                               Next Execution Times (UTC)
                             </Label>
