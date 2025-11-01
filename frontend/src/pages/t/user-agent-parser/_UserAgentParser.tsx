@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import { toast } from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import UserAgentParserSkeleton from "./_UserAgentParserSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import CopyButton from "@/components/ui/copy-button";
 import { IconSvg } from "@/components/ui/IconSvg";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useMemo, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import UserAgentParserSkeleton from "./_UserAgentParserSkeleton";
 
 // User Agent parsing logic based on reference implementation
 interface UAParserResult {
@@ -193,7 +193,8 @@ const UserAgentParser: React.FC = () => {
   const userAgentInfo = useMemo(() => {
     try {
       return parseUserAgent(userAgent);
-    } catch (error) {
+    } catch (_error) {
+      console.log(_error);
       return {
         ua: "",
         browser: {},
@@ -329,7 +330,7 @@ const UserAgentParser: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -665,7 +666,7 @@ const UserAgentParser: React.FC = () => {
 
             <ToolVideo
               title="Learn More: What Is User-Agent Parsing?"
-              description="This video explains what a User-Agent string is, how it's parsed, and why it's a critical component for websites to identify browsers and devices."
+              description="This video explains what a User-Agent string is, how it&apos;s parsed, and why it&apos;s a critical component for websites to identify browsers and devices."
               videoUrl="https://www.youtube.com/embed/tZ4ssSZCOio"
             />
           </ToolContentCardWrapper>

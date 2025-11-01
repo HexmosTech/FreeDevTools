@@ -11,6 +11,7 @@ import {
   CardHeader
 } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
+import { IconSvg } from "@/components/ui/IconSvg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -26,11 +27,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { IconSvg } from "@/components/ui/IconSvg";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
 import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import _DateTimeConverterWiki from "./_DateTimeConverterWiki";
-import AdBanner from "../../../components/banner/AdBanner";
 
 const DateTimeConverter = () => {
   const [input, setInput] = useState("");
@@ -69,13 +69,14 @@ const DateTimeConverter = () => {
         case "iso":
           parsedDate = new Date(input);
           break;
-        case "timestamp":
+        case "timestamp": {
           // Handle both seconds and milliseconds timestamps
           const timestamp = parseInt(input);
           parsedDate = new Date(
             timestamp < 10000000000 ? timestamp * 1000 : timestamp
           );
           break;
+        }
         case "unix":
           parsedDate = new Date(parseInt(input) * 1000);
           break;

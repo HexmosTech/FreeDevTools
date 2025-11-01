@@ -8,9 +8,9 @@ import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo"; // Assuming this component exists
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IconSvg } from "@/components/ui/IconSvg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import * as zstd from "@oneidentity/zstd-js";
-import { IconSvg } from "@/components/ui/IconSvg";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import AdBanner from "../../../components/banner/AdBanner";
@@ -61,7 +61,7 @@ const ZstdCompress: React.FC = () => {
         const codec = await ZstdInit();
         setZstdApi(codec);
         setIsZstdReady(true);
-      } catch (err) {
+      } catch {
         setError("Failed to load compression library.");
         toast.error("Error: Could not initialize Zstd.");
       }

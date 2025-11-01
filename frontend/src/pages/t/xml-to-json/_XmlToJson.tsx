@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import XmlToJsonSkeleton from "./_XmlToJsonSkeleton";
-import CopyButton from "@/components/ui/copy-button";
 import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
+import { Button } from "@/components/ui/button";
+import CopyButton from "@/components/ui/copy-button";
 import { IconSvg } from "@/components/ui/IconSvg";
+import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import XmlToJsonSkeleton from "./_XmlToJsonSkeleton";
 
 const XmlToJson: React.FC = () => {
   const [input, setInput] = useState("");
@@ -51,7 +51,8 @@ const XmlToJson: React.FC = () => {
           setValidationStatus("valid");
           setError("");
         }
-      } catch (err) {
+      } catch (_err) {
+        console.log(_err);
         setValidationStatus("invalid");
         setError("Invalid XML format");
       }
@@ -218,7 +219,8 @@ const XmlToJson: React.FC = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       toast.success("JSON file downloaded!");
-    } catch (err) {
+    } catch (_err) {
+      console.log(_err);
       toast.error("Failed to download file");
     }
   }, [output]);
@@ -310,8 +312,8 @@ const XmlToJson: React.FC = () => {
                         {validationStatus !== "idle" && (
                           <div
                             className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${validationStatus === "valid"
-                                ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                                : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                              ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                              : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                               }`}
                           >
                             {validationStatus === "valid"
@@ -429,7 +431,7 @@ const XmlToJson: React.FC = () => {
                     structured data with support for attributes and hierarchical
                     relationships.{" "}
                     <strong>JSON (JavaScript Object Notation)</strong> is a
-                    lightweight, text-based data interchange format that's easy
+                    lightweight, text-based data interchange format that&apos;s easy
                     to read and parse.
                   </p>
                   <p>
