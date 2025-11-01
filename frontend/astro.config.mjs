@@ -13,7 +13,7 @@ export default defineConfig({
   base: "/freedevtools",
   trailingSlash: 'ignore',
   prefetch: {
-    prefetchAll: true,
+    prefetchAll: false,
     defaultStrategy: 'hover'
   },
   integrations: [

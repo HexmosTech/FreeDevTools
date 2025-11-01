@@ -6,7 +6,7 @@ import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import RgbToHexSkeleton from "./_RgbToHexSkeleton";
 import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

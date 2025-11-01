@@ -3,7 +3,7 @@ import ToolContainer from "@/components/tool/ToolContainer";
 import ToolHead from "@/components/tool/ToolHead";
 import SvgPlaceholderGeneratorSkeleton from "./_SvgPlaceholderGeneratorSkeleton";
 import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import ToolVideo from "@/components/tool/ToolVideo";
 import { IconSvg } from "@/components/ui/IconSvg";

@@ -6,7 +6,7 @@ import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import LlamaTokenCounterSkeleton from "./_LlamaTokenCounterSkeleton";
 import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ToolVideo from "@/components/tool/ToolVideo";

@@ -24,7 +24,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import { parse as parseYaml } from "yaml";
 import AdBanner from "../../../components/banner/AdBanner";
 

@@ -66,7 +66,7 @@ import ToolContainer from "@/components/tool/ToolContainer";
 import ToolHead from "@/components/tool/ToolHead";
 import ${componentName}Skeleton from "./_${componentName}Skeleton";
 import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 
 const ${componentName}: React.FC = () => {
