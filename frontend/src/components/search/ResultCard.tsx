@@ -14,7 +14,15 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
   if (category === 'emojis') {
     return (
       <a
-        href={result.path ? `https://hexmos.com${result.path}` : '#'}
+        href={
+          result.path
+            ? `${
+                typeof window !== 'undefined'
+                  ? `${window.location.protocol}//${window.location.host}`
+                  : 'https://hexmos.com'
+              }${result.path}`
+            : '#'
+        }
         className="block no-underline"
       >
         <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col">
@@ -40,7 +48,15 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
   if (category === 'svg_icons' || category === 'png_icons') {
     return (
       <a
-        href={result.path ? `https://hexmos.com${result.path}` : '#'}
+        href={
+          result.path
+            ? `${
+                typeof window !== 'undefined'
+                  ? `${window.location.protocol}//${window.location.host}`
+                  : 'https://hexmos.com'
+              }${result.path}`
+            : '#'
+        }
         className="block no-underline"
       >
         <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
@@ -74,7 +90,15 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
   // Regular card (tools, tldr, cheatsheets, mcp)
   return (
     <a
-      href={result.path ? `https://hexmos.com${result.path}` : '#'}
+      href={
+        result.path
+          ? `${
+              typeof window !== 'undefined'
+                ? `${window.location.protocol}//${window.location.host}`
+                : 'https://hexmos.com'
+            }${result.path}`
+          : '#'
+      }
       className="block no-underline"
     >
       <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
