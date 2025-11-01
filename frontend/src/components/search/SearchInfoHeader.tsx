@@ -30,7 +30,7 @@ const SearchInfoHeader = ({
 
   return (
     <div className="flex items-center justify-between mb-4 mt-8 md:mt-0">
-      <h2 >{getTitle()}</h2>
+      <h2>{getTitle()}</h2>
       <Button
         variant="ghost"
         size="sm"
@@ -48,4 +48,3 @@ const SearchInfoHeader = ({
 };
 
 export default SearchInfoHeader;
-

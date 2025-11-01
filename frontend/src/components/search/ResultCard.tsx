@@ -7,7 +7,7 @@ interface ResultCardProps {
   index: number;
 }
 
-const ResultCard = ({ result, index }: ResultCardProps) => {
+const ResultCard = ({ result, _index }: ResultCardProps) => {
   const category = result.category?.toLowerCase();
 
   // Emoji card
@@ -103,4 +103,3 @@ const ResultCard = ({ result, index }: ResultCardProps) => {
 };
 
 export default ResultCard;
-

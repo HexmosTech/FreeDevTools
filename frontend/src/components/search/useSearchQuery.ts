@@ -2,7 +2,18 @@ import { useEffect, useState } from 'react';
 import { updateUrlHash } from './utils';
 
 export function useSearchQuery() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() => {
+    // Lazy initialization: check for initial query from global state
+    if (
+      typeof window !== 'undefined' &&
+      window.searchState &&
+      window.searchState.getQuery()
+    ) {
+      const initialQuery = window.searchState.getQuery();
+      return initialQuery;
+    }
+    return '';
+  });
 
   // Check for search terms in hash on initial load
   useEffect(() => {
@@ -52,10 +63,9 @@ export function useSearchQuery() {
       handleSearchQueryChange as (event: Event) => void
     );
 
-    // Initial load from global state if it exists
+    // Update URL hash if initial query was set from lazy initialization
     if (window.searchState && window.searchState.getQuery()) {
       const initialQuery = window.searchState.getQuery();
-      setQuery(initialQuery);
       updateUrlHash(initialQuery);
     }
 
@@ -74,4 +84,3 @@ export function useSearchQuery() {
 
   return { query, setQuery };
 }
-
