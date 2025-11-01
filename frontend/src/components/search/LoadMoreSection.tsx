@@ -1,6 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { getCategoryDisplayName } from './utils';
 import type { SearchInfo } from './types';
+import { getCategoryDisplayName } from './utils';
 
 interface LoadMoreSectionProps {
   searchInfo: SearchInfo | null;
@@ -40,11 +39,10 @@ const LoadMoreSection = ({
         </p>
       )}
 
-      <Button
-        variant="default"
+      <button
         onClick={onLoadMore}
         disabled={loadingMore}
-        className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+        className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 space-x-2"
       >
         {loadingMore ? (
           <>
@@ -59,7 +57,7 @@ const LoadMoreSection = ({
             </span>
           </>
         )}
-      </Button>
+      </button>
     </div>
   );
 };

@@ -1,7 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Icon } from '@iconify-icon/react';
 import React from 'react';
-import CategoryButton from './CategoryButton';
 
 interface CategoryFilterProps {
   activeCategory: string;
@@ -38,18 +37,19 @@ const CategoryFilter = ({
     <TooltipProvider>
       <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
         {/* All button */}
-        <Button
-          variant={activeCategory === 'all' ? 'default' : 'outline'}
-          size="sm"
+        <button
           onClick={() => onCategoryClick('all')}
           onContextMenu={(e) => onCategoryRightClick(e, 'all')}
-          className="text-xs lg:text-sm w-full flex items-center justify-center gap-1 px-2"
+          className={`text-xs lg:text-sm w-full flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${activeCategory === 'all'
+            ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+            : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+            }`}
         >
           All{' '}
           {activeCategory === 'all' &&
             Object.keys(availableCategories).length > 0 &&
             `(${getAllCount()})`}
-        </Button>
+        </button>
 
         {/* Category buttons */}
         {categories
@@ -63,20 +63,54 @@ const CategoryFilter = ({
 
             if (!category.icon) return null;
 
+            const buttonContent = (
+              <>
+                <Icon
+                  icon={category.icon}
+                  width="18"
+                  height="16"
+                  className="lg:w-4 lg:h-4 flex-shrink-0"
+                />
+                <span className="truncate">{category.label}</span>
+                {count !== undefined && (
+                  <span className="flex-shrink-0 ml-0.5">({count.toLocaleString()})</span>
+                )}
+              </>
+            );
+
+            const buttonClassName = `text-xs lg:text-sm w-full flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive || selectedCategories.includes(category.key)
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+              : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
+              }`;
+
+            if (isActive || selectedCategories.includes(category.key)) {
+              return (
+                <button
+                  key={category.key}
+                  onClick={() => onCategoryClick(category.key)}
+                  onContextMenu={(e) => onCategoryRightClick(e, category.key)}
+                  className={buttonClassName}
+                >
+                  {buttonContent}
+                </button>
+              );
+            }
+
             return (
-              <CategoryButton
-                key={category.key}
-                category={category.key}
-                icon={category.icon}
-                label={category.label}
-                count={
-                  isActive || activeCategory === 'all' ? count : undefined
-                }
-                isActive={isActive}
-                isSelected={selectedCategories.includes(category.key)}
-                onClick={() => onCategoryClick(category.key)}
-                onRightClick={(e) => onCategoryRightClick(e, category.key)}
-              />
+              <Tooltip key={category.key}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => onCategoryClick(category.key)}
+                    onContextMenu={(e) => onCategoryRightClick(e, category.key)}
+                    className={buttonClassName}
+                  >
+                    {buttonContent}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <span className="text-xs">Right-click to multi-select</span>
+                </TooltipContent>
+              </Tooltip>
             );
           })}
       </div>

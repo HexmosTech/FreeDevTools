@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "../ToastProvider";
+import { toast } from "@/components/ToastProvider";
 import { Button } from "./button";
 import { IconSvg } from "./IconSvg";
 
