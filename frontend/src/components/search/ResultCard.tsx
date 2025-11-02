@@ -1,13 +1,11 @@
-import { Card } from '@/components/ui/card';
-import { getBadgeVariant } from './utils';
 import type { SearchResult } from './types';
+import { getBadgeVariant } from './utils';
 
 interface ResultCardProps {
   result: SearchResult;
-  index: number;
 }
 
-const ResultCard = ({ result, _index }: ResultCardProps) => {
+const ResultCard = ({ result }: ResultCardProps) => {
   const category = result.category?.toLowerCase();
 
   // Emoji card
@@ -25,7 +23,7 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
         }
         className="block no-underline"
       >
-        <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col">
+        <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col">
           <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
             {result.category && (
               <div
@@ -39,7 +37,7 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
               {result.name || result.title || 'Untitled'}
             </span>
           </div>
-        </Card>
+        </div>
       </a>
     );
   }
@@ -59,7 +57,7 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
         }
         className="block no-underline"
       >
-        <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
+        <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
           <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
             {result.category && (
               <div
@@ -82,7 +80,7 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
               {result.name || result.title || 'Untitled'}
             </span>
           </div>
-        </Card>
+        </div>
       </a>
     );
   }
@@ -101,7 +99,7 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
       }
       className="block no-underline"
     >
-      <Card className="cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
+      <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
         <div className="p-4 flex flex-col h-full relative">
           {result.category && (
             <div
@@ -121,7 +119,7 @@ const ResultCard = ({ result, _index }: ResultCardProps) => {
             </p>
           )}
         </div>
-      </Card>
+      </div>
     </a>
   );
 };
