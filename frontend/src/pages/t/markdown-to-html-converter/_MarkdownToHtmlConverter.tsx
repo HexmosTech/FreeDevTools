@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "src/components/tool/ToolContainer";
-import ToolHead from "src/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
+import React, { useCallback, useEffect, useState } from "react";
+import showdown from "showdown";
 import ToolBody from "src/components/tool/ToolBody";
 import ToolCardWrapper from "src/components/tool/ToolCardWrapper";
+import ToolContainer from "src/components/tool/ToolContainer";
 import ToolContentCardWrapper from "src/components/tool/ToolContentCardWrapper";
-import MarkdownToHtmlConverterSkeleton from "src/pages/t/markdown-to-html-converter/_MarkdownToHtmlConverterSkeleton";
-import CopyButton from "src/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "src/components/tool/ToolHead";
+import ToolVideo from "src/components/tool/ToolVideo";
 import { Button } from "src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
-import { Textarea } from "src/components/ui/textarea";
+import CopyButton from "src/components/ui/copy-button";
 import { Label } from "src/components/ui/label";
-import ToolVideo from "src/components/tool/ToolVideo";
-import showdown from "showdown";
+import { Textarea } from "src/components/ui/textarea";
+import MarkdownToHtmlConverterSkeleton from "src/pages/t/markdown-to-html-converter/_MarkdownToHtmlConverterSkeleton";
 import AdBanner from "../../../components/banner/AdBanner";
 
 const converter = new showdown.Converter();
@@ -61,7 +61,7 @@ const MarkdownToHtmlConverter: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -109,9 +109,9 @@ const MarkdownToHtmlConverter: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                    <Button onClick={handleClear} variant="outline" size="sm">
-                        Clear
-                    </Button>
+                  <Button onClick={handleClear} variant="outline" size="sm">
+                    Clear
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -128,7 +128,7 @@ const MarkdownToHtmlConverter: React.FC = () => {
                 <CardTitle>Markdown Syntax Guide</CardTitle>
               </CardHeader>
               <CardContent className="text-slate-800 dark:text-slate-400 space-y-4">
-              <p>
+                <p>
                   Markdown is a simple and intuitive markup language. Here are some of the most common elements you'll use:
                 </p>
                 <h4 className="font-semibold text-slate-900 dark:text-slate-100">Headers</h4>
@@ -148,7 +148,7 @@ const MarkdownToHtmlConverter: React.FC = () => {
                 <pre className="bg-slate-100 dark:bg-slate-700 p-2 rounded text-sm">
                   1. First ordered list item
                   2. Another item
-                  
+
                   - Unordered list can use asterisks
                   * Or minuses
                   + Or pluses
@@ -163,7 +163,7 @@ const MarkdownToHtmlConverter: React.FC = () => {
                 </pre>
                 <h4 className="font-semibold text-slate-900 dark:text-slate-100">Blockquotes</h4>
                 <pre className="bg-slate-100 dark:bg-slate-700 p-2 rounded text-sm">
-                   Blockquotes are very handy in email to emulate reply text.
+                  Blockquotes are very handy in email to emulate reply text.
                 </pre>
               </CardContent>
             </Card>

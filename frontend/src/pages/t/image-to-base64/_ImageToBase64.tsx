@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ImageToBase64Skeleton from "./_ImageToBase64Skeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import CopyButton from "@/components/ui/copy-button";
 import { IconSvg } from "@/components/ui/IconSvg";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import ImageToBase64Skeleton from "./_ImageToBase64Skeleton";
 // Image Upload Component
 interface ImageUploadProps {
   onFileSelect: (file: File) => void;
@@ -80,8 +80,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       <div
         className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
+          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+          : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
           }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}

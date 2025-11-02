@@ -1,9 +1,10 @@
-import { toast } from "react-toastify";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,9 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import React, { useEffect, useState } from "react";
-import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
-import ToolVideo from "@/components/tool/ToolVideo";
 import AdBanner from "../../../components/banner/AdBanner";
+import PasswordGeneratorSkeleton from "./_PasswordGeneratorSkeleton";
 
 interface PasswordOptions {
   length: number;
@@ -370,7 +370,7 @@ const PasswordGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -459,18 +459,17 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${
-                      options.length === 16 &&
-                      options.includeUppercase &&
-                      options.includeLowercase &&
-                      options.includeNumbers &&
-                      options.includeSymbols &&
-                      !options.easyToRead &&
-                      !options.easyToSay &&
-                      !options.useWords
+                    className={`p-3 text-center ${options.length === 16 &&
+                        options.includeUppercase &&
+                        options.includeLowercase &&
+                        options.includeNumbers &&
+                        options.includeSymbols &&
+                        !options.easyToRead &&
+                        !options.easyToSay &&
+                        !options.useWords
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Strong
@@ -495,18 +494,17 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${
-                      options.length === 12 &&
-                      options.includeUppercase &&
-                      options.includeLowercase &&
-                      options.includeNumbers &&
-                      !options.includeSymbols &&
-                      options.easyToRead &&
-                      !options.easyToSay &&
-                      !options.useWords
+                    className={`p-3 text-center ${options.length === 12 &&
+                        options.includeUppercase &&
+                        options.includeLowercase &&
+                        options.includeNumbers &&
+                        !options.includeSymbols &&
+                        options.easyToRead &&
+                        !options.easyToSay &&
+                        !options.useWords
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Easy to Type
@@ -530,17 +528,16 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${
-                      options.wordCount === 3 &&
-                      options.includeUppercase &&
-                      options.includeLowercase &&
-                      options.includeNumbers &&
-                      !options.includeSymbols &&
-                      options.useWords &&
-                      options.separator === "-"
+                    className={`p-3 text-center ${options.wordCount === 3 &&
+                        options.includeUppercase &&
+                        options.includeLowercase &&
+                        options.includeNumbers &&
+                        !options.includeSymbols &&
+                        options.useWords &&
+                        options.separator === "-"
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Memorable
@@ -565,18 +562,17 @@ const PasswordGenerator: React.FC = () => {
                     }
                     variant="outline"
                     size="custom"
-                    className={`p-3 text-center ${
-                      options.length === 32 &&
-                      options.includeUppercase &&
-                      options.includeLowercase &&
-                      options.includeNumbers &&
-                      options.includeSymbols &&
-                      !options.easyToRead &&
-                      !options.easyToSay &&
-                      !options.useWords
+                    className={`p-3 text-center ${options.length === 32 &&
+                        options.includeUppercase &&
+                        options.includeLowercase &&
+                        options.includeNumbers &&
+                        options.includeSymbols &&
+                        !options.easyToRead &&
+                        !options.easyToSay &&
+                        !options.useWords
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
                         : "hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium text-slate-900 dark:text-slate-100">
                       Ultra Secure
@@ -602,11 +598,10 @@ const PasswordGenerator: React.FC = () => {
                     onClick={() => updateOption("useWords", false)}
                     variant="outline"
                     size="custom"
-                    className={`p-4 text-left whitespace-normal ${
-                      !options.useWords
+                    className={`p-4 text-left whitespace-normal ${!options.useWords
                         ? "bg-blue-50 dark:bg-blue-950"
                         : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
-                    }`}
+                      }`}
                   >
                     <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
                       Character-Based
@@ -623,11 +618,10 @@ const PasswordGenerator: React.FC = () => {
                     onClick={() => updateOption("useWords", true)}
                     variant="outline"
                     size="custom"
-                    className={`p-4 text-left whitespace-normal ${
-                      options.useWords
+                    className={`p-4 text-left whitespace-normal ${options.useWords
                         ? "bg-blue-50 dark:bg-blue-950"
                         : "hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/50"
-                    }`}
+                      }`}
                   >
                     <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-1">
                       Word-Based

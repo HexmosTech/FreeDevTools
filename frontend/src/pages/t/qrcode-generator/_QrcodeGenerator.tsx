@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import QrcodeGeneratorSkeleton from "./_QrcodeGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "@/components/tool/ToolHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import CopyButton from "@/components/ui/copy-button";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,9 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { getToolByKey, type Tool } from "@/config/tools";
 import QRCode from "qrcode";
+import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import QrcodeGeneratorSkeleton from "./_QrcodeGeneratorSkeleton";
 
 type ErrorCorrectionLevel = "low" | "medium" | "quartile" | "high";
 
@@ -141,7 +141,7 @@ const QrcodeGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead name={toolConfig.name} description={toolConfig.description} />

@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CsvToJsonSkeleton from "./_CsvToJsonSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
+import CopyButton from "@/components/ui/copy-button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import CsvToJsonSkeleton from "./_CsvToJsonSkeleton";
 
 // CSV to JSON conversion utility
 const convertCsvToJson = (
@@ -219,7 +219,7 @@ David Wilson,32,Australia,david@example.com`;
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
@@ -268,11 +268,10 @@ David Wilson,32,Australia,david@example.com`;
                       onDrop={handleDrop}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
-                      className={`relative border-2 border-dashed rounded-lg p-3 transition-colors ${
-                        isDragging
+                      className={`relative border-2 border-dashed rounded-lg p-3 transition-colors ${isDragging
                           ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                           : "border-gray-300 dark:border-gray-600"
-                      }`}
+                        }`}
                     >
                       <Textarea
                         value={input}
