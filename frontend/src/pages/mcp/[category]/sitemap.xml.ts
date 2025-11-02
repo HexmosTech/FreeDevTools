@@ -34,7 +34,6 @@ export const GET: APIRoute = async ({ site, params }) => {
 
   // Create URLs for all repositories in this category
   const urls = Object.keys(repositories).map((repoId) => {
-    const repo = repositories[repoId];
     return `
       <url>
         <loc>${site}/mcp/${category}/${repoId}/</loc>
