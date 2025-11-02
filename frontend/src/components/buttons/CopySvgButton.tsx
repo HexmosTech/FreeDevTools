@@ -1,6 +1,6 @@
+import { toast } from '@/components/ToastProvider';
 import { IconSvg } from '@/components/ui/IconSvg';
 import React, { useCallback } from 'react';
-import { toast } from 'react-toastify';
 
 interface CopySvgButtonProps {
   iconData: {
@@ -11,7 +11,6 @@ interface CopySvgButtonProps {
     iconName?: string;
   };
 }
-
 
 const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
   const copyAsSVG = useCallback(async () => {
