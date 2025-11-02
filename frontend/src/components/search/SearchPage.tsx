@@ -1,5 +1,4 @@
 import { IconSvg } from '@/components/ui/IconSvg';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Icon } from '@iconify-icon/react';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -548,7 +547,10 @@ const SearchPage: React.FC = () => {
 
   const getAllCount = () => {
     if (Object.keys(availableCategories).length === 0) return undefined;
-    return Object.values(availableCategories).reduce((sum, count) => sum + count, 0);
+    return Object.values(availableCategories).reduce(
+      (sum, count) => sum + count,
+      0
+    );
   };
 
   const getTitle = () => {
@@ -582,85 +584,89 @@ const SearchPage: React.FC = () => {
         </div>
 
         {/* CategoryFilter */}
-        <TooltipProvider>
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
-            <button
-              onClick={() => handleCategoryClick('all')}
-              onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
-              className={`text-xs lg:text-sm w-full flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${activeCategory === 'all'
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
+          <button
+            onClick={() => handleCategoryClick('all')}
+            onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
+            className={`text-xs lg:text-sm w-full flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+              activeCategory === 'all'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+                : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+            }`}
+          >
+            All{' '}
+            {activeCategory === 'all' &&
+              Object.keys(availableCategories).length > 0 &&
+              `(${getAllCount()})`}
+          </button>
+
+          {categories
+            .filter((cat) => cat.key !== 'all')
+            .map((category) => {
+              const isActive =
+                activeCategory === category.key ||
+                selectedCategories.includes(category.key);
+              const count =
+                availableCategories[category.key] ||
+                (activeCategory === 'all'
+                  ? availableCategories[category.key]
+                  : undefined);
+
+              if (!category.icon) return null;
+
+              const buttonContent = (
+                <>
+                  <Icon
+                    icon={category.icon}
+                    width="18"
+                    height="16"
+                    className="lg:w-4 lg:h-4 flex-shrink-0"
+                  />
+                  <span className="truncate">{category.label}</span>
+                  {count !== undefined && (
+                    <span className="flex-shrink-0 ml-0.5">
+                      ({count.toLocaleString()})
+                    </span>
+                  )}
+                </>
+              );
+
+              const buttonClassName = `text-xs lg:text-sm w-full flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                isActive || selectedCategories.includes(category.key)
                   ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
-                  : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
-                }`}
-            >
-              All{' '}
-              {activeCategory === 'all' &&
-                Object.keys(availableCategories).length > 0 &&
-                `(${getAllCount()})`}
-            </button>
+                  : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
+              }`;
 
-            {categories
-              .filter((cat) => cat.key !== 'all')
-              .map((category) => {
-                const isActive =
-                  activeCategory === category.key ||
-                  selectedCategories.includes(category.key);
-                const count = availableCategories[category.key] ||
-                  (activeCategory === 'all' ? availableCategories[category.key] : undefined);
-
-                if (!category.icon) return null;
-
-                const buttonContent = (
-                  <>
-                    <Icon
-                      icon={category.icon}
-                      width="18"
-                      height="16"
-                      className="lg:w-4 lg:h-4 flex-shrink-0"
-                    />
-                    <span className="truncate">{category.label}</span>
-                    {count !== undefined && (
-                      <span className="flex-shrink-0 ml-0.5">({count.toLocaleString()})</span>
-                    )}
-                  </>
-                );
-
-                const buttonClassName = `text-xs lg:text-sm w-full flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive || selectedCategories.includes(category.key)
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
-                    : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
-                  }`;
-
-                if (isActive || selectedCategories.includes(category.key)) {
-                  return (
-                    <button
-                      key={category.key}
-                      onClick={() => handleCategoryClick(category.key)}
-                      onContextMenu={(e) => handleCategoryRightClick(e, category.key)}
-                      className={buttonClassName}
-                    >
-                      {buttonContent}
-                    </button>
-                  );
-                }
-
+              if (isActive || selectedCategories.includes(category.key)) {
                 return (
-                  <Tooltip key={category.key}>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => handleCategoryClick(category.key)}
-                        onContextMenu={(e) => handleCategoryRightClick(e, category.key)}
-                        className={buttonClassName}
-                      >
-                        {buttonContent}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <span className="text-xs">Right-click to multi-select</span>
-                    </TooltipContent>
-                  </Tooltip>
+                  <button
+                    key={category.key}
+                    onClick={() => handleCategoryClick(category.key)}
+                    onContextMenu={(e) =>
+                      handleCategoryRightClick(e, category.key)
+                    }
+                    className={buttonClassName}
+                  >
+                    {buttonContent}
+                  </button>
                 );
-              })}
-          </div>
-        </TooltipProvider>
+              }
+
+              return (
+                <button
+                  key={category.key}
+                  onClick={() => handleCategoryClick(category.key)}
+                  onContextMenu={(e) =>
+                    handleCategoryRightClick(e, category.key)
+                  }
+                  className={buttonClassName}
+                  title="Right-click to multi-select"
+                >
+                  {buttonContent}
+                </button>
+              );
+            })}
+        </div>
       </div>
 
       {/* LoadingState */}
@@ -708,7 +714,8 @@ const SearchPage: React.FC = () => {
             <div className="flex flex-col items-center space-y-4 mt-8">
               {searchInfo && (
                 <p className="text-sm text-muted-foreground">
-                  Showing {allResults.length} of {searchInfo.totalHits.toLocaleString()}{' '}
+                  Showing {allResults.length} of{' '}
+                  {searchInfo.totalHits.toLocaleString()}{' '}
                   {activeCategory === 'all'
                     ? 'items'
                     : getCategoryDisplayName(activeCategory)}{' '}
@@ -730,7 +737,11 @@ const SearchPage: React.FC = () => {
                   <>
                     <span className="text-primary-foreground">Load More</span>
                     <span className="text-xs text-primary-foreground/80">
-                      ({searchInfo ? searchInfo.totalHits - allResults.length : 0} more)
+                      (
+                      {searchInfo
+                        ? searchInfo.totalHits - allResults.length
+                        : 0}{' '}
+                      more)
                     </span>
                   </>
                 )}
