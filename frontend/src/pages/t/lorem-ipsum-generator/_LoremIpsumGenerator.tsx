@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import LoremIpsumGeneratorSkeleton from "./_LoremIpsumGeneratorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -19,11 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import LoremIpsumGeneratorSkeleton from "./_LoremIpsumGeneratorSkeleton";
 
 // Lorem Ipsum word bank
 const words = [

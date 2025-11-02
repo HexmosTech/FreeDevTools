@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import DiffCheckerSkeleton from "./_DiffCheckerSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import CopyButton from "@/components/ui/copy-button";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,9 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import DiffCheckerSkeleton from "./_DiffCheckerSkeleton";
 
 // Diff algorithm options
 const DIFF_MODES = {
@@ -249,13 +249,12 @@ const user = {
               {diffResult.changes.map((change, index) => (
                 <div
                   key={index}
-                  className={`whitespace-pre-wrap ${
-                    change.added
+                  className={`whitespace-pre-wrap ${change.added
                       ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
                       : change.removed
                         ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200"
                         : "text-slate-700 dark:text-slate-300"
-                  } ${change.added || change.removed ? "px-1" : ""}`}
+                    } ${change.added || change.removed ? "px-1" : ""}`}
                 >
                   {change.added && "+ "}
                   {change.removed && "- "}
@@ -271,7 +270,7 @@ const user = {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead

@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import JwtParserSkeleton from "./_JwtParserSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import CopyButton from "@/components/ui/copy-button";
 import { Label } from "@/components/ui/label";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import JwtParserSkeleton from "./_JwtParserSkeleton";
 
 // JWT Parser Utility Functions
 interface JWTDecoded {
@@ -148,7 +148,7 @@ const JwtParser: React.FC = () => {
 
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead

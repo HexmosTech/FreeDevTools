@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";

@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import RgbToHexSkeleton from "./_RgbToHexSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "react-toastify";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import ToolVideo from "@/components/tool/ToolVideo";
+import React, { useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
+import RgbToHexSkeleton from "./_RgbToHexSkeleton";
 
 // RGB to HEX conversion utility functions
 interface RGBValues {
@@ -196,7 +194,7 @@ const RgbToHex: React.FC = () => {
   };
   return (
     <ToolContainer>
-            <div className="mb-16 mt-[74px]">
+      <div className="mb-16 mt-[74px]">
         <AdBanner />
       </div>
       <ToolHead
