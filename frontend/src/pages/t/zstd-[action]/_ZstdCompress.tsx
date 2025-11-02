@@ -3,7 +3,6 @@ import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
 import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo"; // Assuming this component exists
 import { Button } from "@/components/ui/button";
@@ -206,7 +205,8 @@ const ZstdCompress: React.FC = () => {
               <TabsTrigger value="decompress">Decompress</TabsTrigger>
             </TabsList>
             <TabsContent value="compress">
-              <ToolGridContainer>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
+
                 {/* Compressor Input Card */}
                 <ToolCardWrapper>
                   <Card className="tool-card-bg-grid">
@@ -311,11 +311,11 @@ const ZstdCompress: React.FC = () => {
                     </CardContent>
                   </Card>
                 </ToolCardWrapper>
-              </ToolGridContainer>
+              </div>
             </TabsContent>
             <TabsContent value="decompress">
-              <ToolGridContainer>
-                {/* Decompressor Input Card */}
+            <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
+            {/* Decompressor Input Card */}
                 <ToolCardWrapper>
                   <Card className="tool-card-bg-grid">
                     <CardHeader>
@@ -411,7 +411,7 @@ const ZstdCompress: React.FC = () => {
                     </CardContent>
                   </Card>
                 </ToolCardWrapper>
-              </ToolGridContainer>
+              </div>
             </TabsContent>
           </Tabs>
 

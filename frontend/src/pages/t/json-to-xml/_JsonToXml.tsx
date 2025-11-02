@@ -2,7 +2,6 @@ import toast from "@/components/ToastProvider";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
 import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
@@ -70,7 +69,7 @@ const JsonToXml: React.FC = () => {
       {!loaded ? (
         <JsonToXmlSkeleton />
       ) : (
-        <ToolGridContainer>
+        <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
           <div className="mb-16 mt-[74px]">
             <AdBanner />
           </div>
@@ -147,7 +146,7 @@ const JsonToXml: React.FC = () => {
               </ul>
             </Card>
           </ToolContentCardWrapper>
-        </ToolGridContainer>
+        </div>
       )}
     </ToolContainer>
   );

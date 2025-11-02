@@ -1,5 +1,4 @@
-import ToolBody from "@/components/tool/ToolBody";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
+import ToolBody from "@/components/tool/ToolBody"; 
 import {
   Card,
   CardContent,
@@ -11,7 +10,7 @@ import React from "react";
 const DateTimeConverterSkeleton: React.FC = () => {
   return (
     <ToolBody>
-      <ToolGridContainer>
+                <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
         {/* Input Section Skeleton */}
         <Card className="w-full break-inside-avoid mb-6 dark:bg-slate-900">
           <CardHeader>
@@ -107,7 +106,7 @@ const DateTimeConverterSkeleton: React.FC = () => {
             <Skeleton className="h-16 w-full rounded" />
           </CardContent>
         </Card>
-      </ToolGridContainer>
+      </div>
 
       {/* Footer Skeleton */}
       <div className="text-center text-muted-foreground mt-6">

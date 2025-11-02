@@ -1,7 +1,7 @@
+import { toast } from '@/components/ToastProvider';
 import { IconSvg } from '@/components/ui/IconSvg';
 import Konva from 'konva';
 import React, { useCallback } from 'react';
-import { toast } from 'react-toastify';
 
 interface CopyPngButtonProps {
   iconData: {
@@ -12,8 +12,10 @@ interface CopyPngButtonProps {
   size?: number;
 }
 
-const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) => {
-
+const CopyPngButton: React.FC<CopyPngButtonProps> = ({
+  iconData,
+  size = 512,
+}) => {
   const copyAsPNG = useCallback(async () => {
     // Load SVG content client-side if not available
     let svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
@@ -25,7 +27,9 @@ const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) =
       const iconName = pathParts[pathParts.length - 1];
 
       try {
-        const response = await fetch(`/freedevtools/svg_icons/${category}/${iconName}.svg`);
+        const response = await fetch(
+          `/freedevtools/svg_icons/${category}/${iconName}.svg`
+        );
         svgData = await response.text();
       } catch (error) {
         console.error('Failed to load SVG:', error);
@@ -62,113 +66,126 @@ const CopyPngButton: React.FC<CopyPngButtonProps> = ({ iconData, size = 512 }) =
           : svgData.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
 
         // Create data URL
-        const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgWithNamespace);
+        const svgDataUrl =
+          'data:image/svg+xml;charset=utf-8,' +
+          encodeURIComponent(svgWithNamespace);
 
         // Use Konva's Image.fromURL for better SVG handling
-        Konva.Image.fromURL(svgDataUrl, async (imageNode) => {
-          try {
-            // Scale image to fit within the canvas while maintaining aspect ratio
-            const imageAspect = imageNode.width() / imageNode.height();
-            const canvasAspect = size / size;
+        Konva.Image.fromURL(
+          svgDataUrl,
+          async (imageNode) => {
+            try {
+              // Scale image to fit within the canvas while maintaining aspect ratio
+              const imageAspect = imageNode.width() / imageNode.height();
+              const canvasAspect = size / size;
 
-            let imageWidth, imageHeight;
-            if (imageAspect > canvasAspect) {
-              imageWidth = size * 0.8; // 80% of canvas size
-              imageHeight = imageWidth / imageAspect;
-            } else {
-              imageHeight = size * 0.8;
-              imageWidth = imageHeight * imageAspect;
-            }
+              let imageWidth, imageHeight;
+              if (imageAspect > canvasAspect) {
+                imageWidth = size * 0.8; // 80% of canvas size
+                imageHeight = imageWidth / imageAspect;
+              } else {
+                imageHeight = size * 0.8;
+                imageWidth = imageHeight * imageAspect;
+              }
 
-            // Center the image
-            imageNode.setAttrs({
-              x: (size - imageWidth) / 2,
-              y: (size - imageHeight) / 2,
-              width: imageWidth,
-              height: imageHeight,
-              listening: false,
-            });
-
-            layer.add(imageNode);
-            layer.draw();
-
-            // Export using Konva's built-in method with transparency
-            const dataURL = stage.toDataURL({
-              mimeType: 'image/png',
-              quality: 1,
-              pixelRatio: 2, // High DPI
-              // No backgroundColor specified = transparent
-            });
-
-            // Convert data URL to blob
-            const response = await fetch(dataURL);
-            const blob = await response.blob();
-
-            if (blob && blob.size > 0) {
-              console.log('Konva PNG blob created, size:', blob.size);
-
-              // Create a proper image file for clipboard
-              const file = new File([blob], `${iconData?.name || 'icon'}.png`, {
-                type: 'image/png'
+              // Center the image
+              imageNode.setAttrs({
+                x: (size - imageWidth) / 2,
+                y: (size - imageHeight) / 2,
+                width: imageWidth,
+                height: imageHeight,
+                listening: false,
               });
 
-              // Check if modern clipboard API is supported
-              if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
-                try {
-                  await navigator.clipboard.write([
-                    new ClipboardItem({
-                      'image/png': file
-                    })
-                  ]);
-                  toast.success('PNG copied to clipboard!');
-                } catch (err) {
-                  console.error('Clipboard error:', err);
-                  // Fallback: try with blob instead of file
+              layer.add(imageNode);
+              layer.draw();
+
+              // Export using Konva's built-in method with transparency
+              const dataURL = stage.toDataURL({
+                mimeType: 'image/png',
+                quality: 1,
+                pixelRatio: 2, // High DPI
+                // No backgroundColor specified = transparent
+              });
+
+              // Convert data URL to blob
+              const response = await fetch(dataURL);
+              const blob = await response.blob();
+
+              if (blob && blob.size > 0) {
+                console.log('Konva PNG blob created, size:', blob.size);
+
+                // Create a proper image file for clipboard
+                const file = new File(
+                  [blob],
+                  `${iconData?.name || 'icon'}.png`,
+                  {
+                    type: 'image/png',
+                  }
+                );
+
+                // Check if modern clipboard API is supported
+                if (
+                  navigator.clipboard &&
+                  typeof ClipboardItem !== 'undefined'
+                ) {
                   try {
                     await navigator.clipboard.write([
                       new ClipboardItem({
-                        'image/png': blob
-                      })
+                        'image/png': file,
+                      }),
                     ]);
                     toast.success('PNG copied to clipboard!');
-                  } catch (fallbackErr) {
-                    console.error('Fallback clipboard error:', fallbackErr);
-                    toast.error('Failed to copy PNG to clipboard');
+                  } catch (err) {
+                    console.error('Clipboard error:', err);
+                    // Fallback: try with blob instead of file
+                    try {
+                      await navigator.clipboard.write([
+                        new ClipboardItem({
+                          'image/png': blob,
+                        }),
+                      ]);
+                      toast.success('PNG copied to clipboard!');
+                    } catch (fallbackErr) {
+                      console.error('Fallback clipboard error:', fallbackErr);
+                      toast.error('Failed to copy PNG to clipboard');
+                    }
                   }
+                } else {
+                  // Fallback for older browsers - create a temporary download
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `${iconData?.name || 'icon'}.png`;
+                  link.click();
+                  URL.revokeObjectURL(url);
+                  toast.info('PNG downloaded (clipboard not supported)');
                 }
               } else {
-                // Fallback for older browsers - create a temporary download
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${iconData?.name || 'icon'}.png`;
-                link.click();
-                URL.revokeObjectURL(url);
-                toast.info('PNG downloaded (clipboard not supported)');
+                console.error('Failed to create blob or blob is empty');
+                toast.error('Failed to create PNG image');
               }
-            } else {
-              console.error('Failed to create blob or blob is empty');
-              toast.error('Failed to create PNG image');
-            }
 
-            // Cleanup
-            stage.destroy();
-            document.body.removeChild(container);
-            resolve(undefined);
-          } catch (error) {
-            console.error('Error in Konva image processing:', error);
-            toast.error('Failed to process PNG image');
+              // Cleanup
+              stage.destroy();
+              document.body.removeChild(container);
+              resolve(undefined);
+            } catch (error) {
+              console.error('Error in Konva image processing:', error);
+              toast.error('Failed to process PNG image');
+              stage.destroy();
+              document.body.removeChild(container);
+              reject(error);
+            }
+          },
+          (error) => {
+            console.error('Konva image load error:', error);
+            toast.error('Failed to load SVG image');
             stage.destroy();
             document.body.removeChild(container);
             reject(error);
           }
-        }, (error) => {
-          console.error('Konva image load error:', error);
-          toast.error('Failed to load SVG image');
-          stage.destroy();
-          document.body.removeChild(container);
-          reject(error);
-        });
+        );
       });
     } catch (error) {
       console.error('PNG copy error:', error);

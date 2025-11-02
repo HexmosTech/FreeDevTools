@@ -3,13 +3,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 const ZstdCompressSkeleton: React.FC = () => {
   return (
     <ToolBody>
-      <ToolGridContainer>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
         <ToolCardWrapper>
           <Card className="tool-card-bg-grid">
             <CardHeader>
@@ -47,7 +46,7 @@ const ZstdCompressSkeleton: React.FC = () => {
             </CardContent>
           </Card>
         </ToolContentCardWrapper>
-      </ToolGridContainer>
+      </div>
     </ToolBody>
   );
 };
