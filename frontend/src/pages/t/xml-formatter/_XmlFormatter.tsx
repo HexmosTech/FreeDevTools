@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
+import { Cross2Icon, CheckIcon, ExclamationTriangleIcon, MinusIcon } from "@radix-ui/react-icons";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -381,7 +381,7 @@ const XmlFormatter: React.FC = () => {
                           variant="outline"
                           size="sm"
                         >
-                          <IconSvg iconName="round-close" className="h-4 w-4" />
+                          <Cross2Icon className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -397,12 +397,12 @@ const XmlFormatter: React.FC = () => {
                       <div className="flex items-center gap-2">
                         {formattingResult.isValid ? (
                           <Badge variant="default" className="bg-green-600">
-                            <IconSvg iconName="round-check" className="h-3 w-3 mr-1" />
+                            <CheckIcon className="h-3 w-3 mr-1" />
                             Valid XML
                           </Badge>
                         ) : (
                           <Badge variant="destructive">
-                            <IconSvg iconName="round-dangerous" className="h-3 w-3 mr-1" />
+                            <ExclamationTriangleIcon className="h-3 w-3 mr-1" />
                             Invalid XML
                           </Badge>
                         )}
@@ -412,7 +412,7 @@ const XmlFormatter: React.FC = () => {
                     {formattingResult.error ? (
                       <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                         <div className="flex items-start gap-2">
-                          <IconSvg iconName="round-dangerous" className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                          <ExclamationTriangleIcon className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                           <div>
                             <div className="font-medium text-red-800 dark:text-red-200 mb-1">
                               XML Validation Error:
@@ -442,7 +442,7 @@ const XmlFormatter: React.FC = () => {
                               variant="outline"
                               size="sm"
                             >
-                              <IconSvg iconName="round-minus" className="h-4 w-4 mr-1" />
+                              <MinusIcon className="h-4 w-4 mr-1" />
                               Minify
                             </Button>
                           </div>

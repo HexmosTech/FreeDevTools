@@ -10,7 +10,6 @@ import {
   CardHeader
 } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -25,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
@@ -229,7 +229,7 @@ const DateTimeConverter = () => {
                           size="lg"
                           className="h-12 px-6"
                         >
-                          <IconSvg iconName="round-calendar-month" className="w-5 h-5 mr-2" />
+                          <CalendarIcon className="w-5 h-5 mr-2" />
                           {selectedDate
                             ? format(selectedDate, "PPP")
                             : "Pick a date"}

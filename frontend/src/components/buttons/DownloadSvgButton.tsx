@@ -1,5 +1,5 @@
+import { DownloadIcon } from '@radix-ui/react-icons';
 import React, { useCallback } from 'react';
-import { IconSvg } from '@/components/ui/IconSvg';
 
 interface DownloadSvgButtonProps {
   iconData: {
@@ -45,8 +45,7 @@ const DownloadSvgButton: React.FC<DownloadSvgButtonProps> = ({ iconData }) => {
       onClick={downloadAsSVG}
       className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-black bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"
     >
-      <IconSvg
-        iconName="outline-file-download"
+      <DownloadIcon
         width="16"
         height="16"
         className="mr-2"

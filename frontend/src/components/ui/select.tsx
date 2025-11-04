@@ -1,6 +1,6 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
-import { IconSvg } from "./IconSvg"
+import { CaretUpIcon, CheckIcon } from "@radix-ui/react-icons"
 
 import { cn } from "@/lib/utils"
 
@@ -24,7 +24,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <IconSvg iconName="round-keyboard-arrow-up" className="h-4 w-4 opacity-50 rotate-180" />
+      <CaretUpIcon className="h-4 w-4 opacity-50 rotate-180" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))
@@ -42,7 +42,7 @@ const SelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    <IconSvg iconName="round-keyboard-arrow-up" className="h-4 w-4" />
+    <CaretUpIcon className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
 ))
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
@@ -59,7 +59,7 @@ const SelectScrollDownButton = React.forwardRef<
     )}
     {...props}
   >
-    <IconSvg iconName="round-keyboard-arrow-up" className="h-4 w-4 rotate-180" />
+    <CaretUpIcon className="h-4 w-4 rotate-180" />
   </SelectPrimitive.ScrollDownButton>
 ))
 SelectScrollDownButton.displayName =
@@ -123,7 +123,7 @@ const SelectItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <IconSvg iconName="round-check" className="h-4 w-4" />
+        <CheckIcon className="h-4 w-4" />
       </SelectPrimitive.ItemIndicator>
     </span>
 

@@ -7,7 +7,6 @@ import ToolHead from "@/components/tool/ToolHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import FakerSkeleton from "./_FakerSkeleton";
@@ -398,7 +398,7 @@ const Faker: React.FC = () => {
                       Data Fields ({fields.length})
                     </Label>
                     <Button onClick={addField} size="sm">
-                      <IconSvg iconName="round-plus" className="h-4 w-4 mr-1" />
+                      <PlusIcon className="h-4 w-4 mr-1" />
                       Add Field
                     </Button>
                   </div>
@@ -491,7 +491,7 @@ const Faker: React.FC = () => {
                             size="sm"
                             className="mt-6 h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
                           >
-                            <IconSvg iconName="round-restore-from-trash" width="20" height="20" />
+                            <TrashIcon width="20" height="20" />
                           </Button>
                         </div>
                       ))}

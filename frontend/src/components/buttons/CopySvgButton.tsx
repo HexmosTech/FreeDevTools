@@ -1,5 +1,5 @@
 import { toast } from '@/components/ToastProvider';
-import { IconSvg } from '@/components/ui/IconSvg';
+import { ClipboardCopyIcon } from '@radix-ui/react-icons';
 import React, { useCallback } from 'react';
 
 interface CopySvgButtonProps {
@@ -54,8 +54,7 @@ const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
       onClick={copyAsSVG}
       className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
     >
-      <IconSvg
-        iconName="baseline-content-copy"
+      <ClipboardCopyIcon
         width="16"
         height="16"
         className="mr-2"
