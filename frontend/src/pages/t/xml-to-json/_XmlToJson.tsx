@@ -7,7 +7,7 @@ import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
+import { CheckIcon, CodeIcon, DownloadIcon, ExclamationTriangleIcon, FileTextIcon, ReloadIcon } from "@radix-ui/react-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import XmlToJsonSkeleton from "./_XmlToJsonSkeleton";
@@ -249,11 +249,11 @@ const XmlToJson: React.FC = () => {
   const getValidationIcon = () => {
     switch (validationStatus) {
       case "valid":
-        return <IconSvg iconName="round-check" className="h-4 w-4 text-green-500" />;
+        return <CheckIcon className="h-4 w-4 text-green-500" />;
       case "invalid":
-        return <IconSvg iconName="round-dangerous" className="h-4 w-4 text-red-500" />;
+        return <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />;
       default:
-        return <IconSvg iconName="round-insert-drive-file" className="h-4 w-4 text-slate-400" />;
+        return <FileTextIcon className="h-4 w-4 text-slate-400" />;
     }
   };
 
@@ -334,9 +334,9 @@ const XmlToJson: React.FC = () => {
                         className="flex items-center gap-2"
                       >
                         {isProcessing ? (
-                          <IconSvg iconName="round-refresh" className="h-4 w-4 animate-spin" />
+                          <ReloadIcon className="h-4 w-4 animate-spin" />
                         ) : (
-                          <IconSvg iconName="round-code" className="h-4 w-4" />
+                          <CodeIcon className="h-4 w-4" />
                         )}
                         {isProcessing ? "Converting..." : "Convert to JSON"}
                       </Button>
@@ -353,7 +353,7 @@ const XmlToJson: React.FC = () => {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                          <IconSvg iconName="round-code" className="h-4 w-4 text-slate-400" />
+                          <CodeIcon className="h-4 w-4 text-slate-400" />
                           JSON Output
                           {output && (
                             <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -377,7 +377,7 @@ const XmlToJson: React.FC = () => {
                               onClick={handleDownload}
                               className="h-8 px-2"
                             >
-                              <IconSvg iconName="round-download" className="h-4 w-4" />
+                              <DownloadIcon className="h-4 w-4" />
                             </Button>
                           </div>
                         )}
@@ -391,7 +391,7 @@ const XmlToJson: React.FC = () => {
                     </div>
                     {error && (
                       <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
-                        <IconSvg iconName="round-dangerous" className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <ExclamationTriangleIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <div>
                           <div className="font-medium">Conversion Error</div>
                           <div className="text-sm">{error}</div>
@@ -400,7 +400,7 @@ const XmlToJson: React.FC = () => {
                     )}
                     {output && !error && (
                       <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
-                        <IconSvg iconName="round-check" className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <CheckIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <div className="text-sm">
                           XML successfully converted to JSON format
                         </div>

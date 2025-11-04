@@ -1,4 +1,4 @@
-import { IconSvg } from "./IconSvg"
+import { CaretDownIcon, ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 import * as React from "react"
 import type { DayButtonProps } from "react-day-picker"
 import { DayPicker, getDefaultClassNames } from "react-day-picker"
@@ -133,14 +133,13 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <IconSvg iconName="round-chevron-left" className={cn("size-4", className)} {...props} />
+              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
             )
           }
 
           if (orientation === "right") {
             return (
-              <IconSvg
-                iconName="round-chevron-right"
+              <ChevronRightIcon
                 className={cn("size-4", className)}
                 {...props}
               />
@@ -148,7 +147,7 @@ function Calendar({
           }
 
           return (
-            <IconSvg iconName="round-keyboard-arrow-down" className={cn("size-4", className)} {...props} />
+            <CaretDownIcon className={cn("size-4", className)} {...props} />
           )
         },
         DayButton: CalendarDayButton,

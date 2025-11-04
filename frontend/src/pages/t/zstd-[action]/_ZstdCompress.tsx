@@ -7,9 +7,9 @@ import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo"; // Assuming this component exists
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IconSvg } from "@/components/ui/IconSvg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import * as zstd from "@oneidentity/zstd-js";
+import { Cross2Icon, DownloadIcon, UploadIcon } from "@radix-ui/react-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import AdBanner from "../../../components/banner/AdBanner";
@@ -205,7 +205,7 @@ const ZstdCompress: React.FC = () => {
               <TabsTrigger value="decompress">Decompress</TabsTrigger>
             </TabsList>
             <TabsContent value="compress">
-            <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
+              <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
 
                 {/* Compressor Input Card */}
                 <ToolCardWrapper>
@@ -219,7 +219,7 @@ const ZstdCompress: React.FC = () => {
                         className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                       >
                         <input {...getInputProps()} />
-                        <IconSvg iconName="round-cloud-upload" className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" width="40" height="40" />
+                        <UploadIcon className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" width="40" height="40" />
                         {inputFile ? (
                           <p className="text-center text-slate-700 dark:text-slate-300">
                             {inputFile.name}{" "}
@@ -248,7 +248,7 @@ const ZstdCompress: React.FC = () => {
                           variant="outline"
                           disabled={isProcessing}
                         >
-                          <IconSvg iconName="round-close" className="w-4 h-4 mr-2" /> Clear
+                          <Cross2Icon className="w-4 h-4 mr-2" /> Clear
                         </Button>
                       </div>
                     </CardContent>
@@ -300,7 +300,7 @@ const ZstdCompress: React.FC = () => {
                         className="w-full"
                         disabled={!outputData || isProcessing}
                       >
-                        <IconSvg iconName="round-download" className="w-4 h-4 mr-2" />
+                        <DownloadIcon className="w-4 h-4 mr-2" />
                         Download .zst File
                       </Button>
                       {error && (
@@ -314,8 +314,8 @@ const ZstdCompress: React.FC = () => {
               </div>
             </TabsContent>
             <TabsContent value="decompress">
-            <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
-            {/* Decompressor Input Card */}
+              <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
+                {/* Decompressor Input Card */}
                 <ToolCardWrapper>
                   <Card className="tool-card-bg-grid">
                     <CardHeader>
@@ -327,7 +327,7 @@ const ZstdCompress: React.FC = () => {
                         className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                       >
                         <input {...getInputProps()} />
-                        <IconSvg iconName="round-cloud-upload" className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" width="40" height="40" />
+                        <UploadIcon className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" width="40" height="40" />
                         {inputFile ? (
                           <p className="text-center text-slate-700 dark:text-slate-300">
                             {inputFile.name}{" "}
@@ -356,7 +356,7 @@ const ZstdCompress: React.FC = () => {
                           variant="outline"
                           disabled={isProcessing}
                         >
-                          <IconSvg iconName="round-close" className="w-4 h-4 mr-2" /> Clear
+                          <Cross2Icon className="w-4 h-4 mr-2" /> Clear
                         </Button>
                       </div>
                     </CardContent>
@@ -400,7 +400,7 @@ const ZstdCompress: React.FC = () => {
                         className="w-full"
                         disabled={!outputData || isProcessing}
                       >
-                        <IconSvg iconName="round-download" className="w-4 h-4 mr-2" />
+                        <DownloadIcon className="w-4 h-4 mr-2" />
                         Download Decompressed File
                       </Button>
                       {error && (

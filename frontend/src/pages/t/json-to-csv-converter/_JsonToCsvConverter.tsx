@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DownloadIcon } from "@radix-ui/react-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import JsonToCsvConverterSkeleton from "./_JsonToCsvConverterSkeleton";
@@ -293,7 +293,7 @@ const JsonToCsvConverter: React.FC = () => {
                             onClick={handleDownload}
                             className="flex items-center gap-1"
                           >
-                            <IconSvg iconName="round-download" className="w-4 h-4" />
+                            <DownloadIcon className="w-4 h-4" />
                             Download
                           </Button>
                           <CopyButton text={output} size="sm" />

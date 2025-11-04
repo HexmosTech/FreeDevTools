@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { GlobeIcon, PersonIcon, ReloadIcon } from "@radix-ui/react-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import ChmodCalculatorSkeleton from "./_ChmodCalculatorSkeleton";
@@ -220,19 +220,19 @@ const ChmodCalculator: React.FC = () => {
       {
         group: "owner",
         title: "Owner (u)",
-        icon: <IconSvg iconName="round-person" className="h-4 w-4" />,
+        icon: <PersonIcon className="h-4 w-4" />,
         description: "File owner",
       },
       {
         group: "group",
         title: "Group (g)",
-        icon: <IconSvg iconName="round-supervised-user-circle" className="h-4 w-4" />,
+        icon: <PersonIcon className="h-4 w-4" />,
         description: "File group",
       },
       {
         group: "public",
         title: "Others (o)",
-        icon: <IconSvg iconName="round-public" className="h-4 w-4" />,
+        icon: <GlobeIcon className="h-4 w-4" />,
         description: "Everyone else",
       },
     ];
@@ -262,7 +262,7 @@ const ChmodCalculator: React.FC = () => {
                       File Permissions Matrix
                     </Label>
                     <Button onClick={handleReset} variant="outline" size="sm">
-                      <IconSvg iconName="round-refresh" className="h-4 w-4 mr-1" />
+                      <ReloadIcon className="h-4 w-4 mr-1" />
                       Reset
                     </Button>
                   </div>

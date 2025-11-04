@@ -5,7 +5,7 @@ import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
-import { IconSvg } from "@/components/ui/IconSvg";
+import { DownloadIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
@@ -296,7 +296,7 @@ const SvgPlaceholderGenerator: React.FC = () => {
                           title="Download SVG"
                         >
                           Download
-                          <IconSvg iconName="round-download" className="w-5 h-5" width="20" height="20" />
+                          <DownloadIcon className="w-5 h-5" width="20" height="20" />
                         </Button>
                       )}
                     </div>
