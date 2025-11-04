@@ -8,10 +8,10 @@ import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Cross2Icon, ImageIcon, UploadIcon } from "@radix-ui/react-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import ImageToBase64Skeleton from "./_ImageToBase64Skeleton";
@@ -98,7 +98,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         {selectedFile ? (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <IconSvg iconName="round-image" className="w-12 h-12 text-green-500" />
+              <ImageIcon className="w-12 h-12 text-green-500" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -117,14 +117,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               }}
               className="mt-2"
             >
-              <IconSvg iconName="round-close" className="w-4 h-4 mr-1" />
+              <Cross2Icon className="w-4 h-4 mr-1" />
               Remove
             </Button>
           </div>
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <IconSvg iconName="round-file-upload" className="w-12 h-12 text-slate-400" width="48" height="48" />
+              <UploadIcon className="w-12 h-12 text-slate-400" width="48" height="48" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">

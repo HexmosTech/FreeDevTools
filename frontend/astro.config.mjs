@@ -2,7 +2,6 @@
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import compressor from "astro-compressor";
-import icon from "astro-icon";
 import { defineConfig } from "astro/config";
 import path from "path";
 
@@ -20,7 +19,6 @@ export default defineConfig({
     react(),
     tailwind(),
     compressor({ gzip: { level: 9 }, brotli: true }),
-    icon()
     // sitemap({
     //   filter: (page) => !page.includes('404') && !page.includes('_astro'),
     //   changefreq: 'daily',

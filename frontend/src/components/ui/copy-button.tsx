@@ -1,7 +1,7 @@
 import toast from "@/components/ToastProvider";
+import { ClipboardCopyIcon } from "@radix-ui/react-icons";
 import React, { useState } from "react";
 import { Button } from "./button";
-import { IconSvg } from "./IconSvg";
 
 interface CopyButtonProps {
   text: string;
@@ -50,16 +50,14 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       className={`bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 ${className}`}
     >
       {size === "icon" ? (
-        <IconSvg
-          iconName="baseline-content-copy"
+        <ClipboardCopyIcon
           width="16"
           height="16"
           className="text-slate-600 dark:text-slate-300"
         />
       ) : (
         <>
-          <IconSvg
-            iconName="baseline-content-copy"
+          <ClipboardCopyIcon
             width="16"
             height="16"
             className="mr-2 text-slate-600 dark:text-slate-300"

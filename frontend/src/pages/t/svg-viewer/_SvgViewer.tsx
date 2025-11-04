@@ -8,7 +8,7 @@ import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/ui/copy-button";
-import { IconSvg } from "@/components/ui/IconSvg";
+import { FileTextIcon, UploadIcon, DownloadIcon, EyeOpenIcon, MinusIcon, EnterFullScreenIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -105,7 +105,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         {selectedFile ? (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <IconSvg iconName="round-insert-drive-file" className="w-12 h-12 text-green-500" />
+              <FileTextIcon className="w-12 h-12 text-green-500" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -130,7 +130,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <IconSvg iconName="round-file-upload" className="w-12 h-12 text-slate-400" />
+              <UploadIcon className="w-12 h-12 text-slate-400" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -394,7 +394,7 @@ Example:
                         onClick={downloadSvg}
                         className="flex items-center gap-2"
                       >
-                        <IconSvg iconName="round-download" className="w-4 h-4" />
+                        <DownloadIcon className="w-4 h-4" />
                         Download
                       </Button>
                     )}
@@ -409,7 +409,7 @@ Example:
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <IconSvg iconName="round-remove-red-eye" className="w-5 h-5" />
+                      <EyeOpenIcon className="w-5 h-5" />
                       SVG Preview
                     </CardTitle>
                     {svgDataUrl && (
@@ -422,9 +422,9 @@ Example:
                           className="flex items-center gap-1"
                         >
                           {isFullscreen ? (
-                            <IconSvg iconName="round-minimize" className="w-4 h-4" />
+                            <MinusIcon className="w-4 h-4" />
                           ) : (
-                            <IconSvg iconName="round-maximize" className="w-4 h-4" />
+                            <EnterFullScreenIcon className="w-4 h-4" />
                           )}
                           {isFullscreen ? "Minimize" : "Fullscreen"}
                         </Button>

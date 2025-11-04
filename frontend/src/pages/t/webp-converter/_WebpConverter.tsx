@@ -7,11 +7,11 @@ import ToolHead from "@/components/tool/ToolHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { IconSvg } from "@/components/ui/IconSvg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
+import { DownloadIcon, FileIcon, TrashIcon, UploadIcon } from "@radix-ui/react-icons";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import AdBanner from "../../../components/banner/AdBanner";
 import WebpConverterSkeleton from "./_WebpConverterSkeleton";
@@ -384,7 +384,7 @@ const WebpConverter: React.FC = () => {
                       }
                     }}
                   >
-                    <IconSvg iconName="round-file-upload" className="h-12 w-12 mx-auto text-muted-foreground mb-4" width="48" height="48" />
+                    <UploadIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" width="48" height="48" />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">
                         Drag & drop images here, or click to select
@@ -429,7 +429,7 @@ const WebpConverter: React.FC = () => {
                         variant="outline"
                         size="sm"
                       >
-                        <IconSvg iconName="round-restore-from-trash" className="h-4 w-4 mr-1" />
+                        <TrashIcon className="h-4 w-4 mr-1" />
                         Clear All
                       </Button>
                     </div>
@@ -445,7 +445,7 @@ const WebpConverter: React.FC = () => {
                         >
                           <div className="flex items-center min-w-0 flex-1">
                             <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded flex items-center justify-center mr-3">
-                              <IconSvg iconName="round-file-present" className="h-4 w-4 text-primary" />
+                              <FileIcon className="h-4 w-4 text-primary" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="font-medium text-sm truncate">
@@ -465,7 +465,7 @@ const WebpConverter: React.FC = () => {
                             size="sm"
                             className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
                           >
-                            <IconSvg iconName="round-restore-from-trash" className="h-4 w-4" />
+                            <TrashIcon className="h-4 w-4" />
                           </Button>
                         </div>
                       ))}
@@ -539,7 +539,7 @@ const WebpConverter: React.FC = () => {
                               .length === 0
                           }
                         >
-                          <IconSvg iconName="round-download" className="h-4 w-4 mr-2" />
+                          <DownloadIcon className="h-4 w-4 mr-2" />
                           Download
                         </Button>
                       )}
