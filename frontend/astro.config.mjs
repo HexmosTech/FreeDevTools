@@ -5,6 +5,9 @@ import compressor from "astro-compressor";
 import { defineConfig } from "astro/config";
 import path from "path";
 
+import playformInline from '@playform/inline';
+import { wrapFDT, unwrapFDT } from './integrations/wrap-astro.mjs';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://hexmos.com/freedevtools',
@@ -15,17 +18,17 @@ export default defineConfig({
     prefetchAll: false,
     defaultStrategy: 'hover'
   },
-  integrations: [
-    react(),
-    tailwind(),
-    compressor({ gzip: { level: 9 }, brotli: true }),
-    // sitemap({
-    //   filter: (page) => !page.includes('404') && !page.includes('_astro'),
-    //   changefreq: 'daily',
-    //   priority: 0.7,
-    //   lastmod: new Date()
-    // })
-  ],
+  integrations: [react(), tailwind(), // sitemap({
+  //   filter: (page) => !page.includes('404') && !page.includes('_astro'),
+  //   changefreq: 'daily',
+  //   priority: 0.7,
+  //   lastmod: new Date()
+  // })
+  compressor({ gzip: { level: 9 }, brotli: true }),
+  wrapFDT(), // Wraps freedevtools folder around _astro for doing the critical-css inline
+  playformInline(), // Adds inline critical css to avoid render blocking
+  unwrapFDT() // Unwraps freedevtools folder around _astro
+],
   cacheDir: ".astro/cache",
   build: {
     concurrency: 64,
