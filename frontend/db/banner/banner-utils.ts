@@ -1,0 +1,138 @@
+import Database from 'better-sqlite3';
+import path from 'path';
+import type { Banner, RawBannerRow } from './banner-schema';
+
+// DB queries
+let dbInstance: Database.Database | null = null;
+
+function getDbPath(): string {
+  return path.resolve(process.cwd(), 'db/banner/banner-db.db');
+}
+
+export function getDb(): Database.Database {
+  if (dbInstance) return dbInstance;
+  const dbPath = getDbPath();
+  dbInstance = new Database(dbPath, { readonly: true });
+  // Improve read performance for build-time queries
+  dbInstance.pragma('journal_mode = OFF');
+  dbInstance.pragma('synchronous = OFF');
+  return dbInstance;
+}
+
+export function getAllBanners(limit?: number): Banner[] {
+  const db = getDb();
+  const query = limit
+    ? 'SELECT * FROM banner ORDER BY product_name, language LIMIT ?'
+    : 'SELECT * FROM banner ORDER BY product_name, language';
+  const stmt = limit ? db.prepare(query) : db.prepare(query);
+  const results = (limit ? stmt.all(limit) : stmt.all()) as RawBannerRow[];
+  return results as Banner[];
+}
+
+export function getBannersByLanguage(language: string, limit = 10): Banner[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    `SELECT * FROM banner WHERE language = ? ORDER BY product_name LIMIT ?`
+  );
+  const results = stmt.all(language, limit) as RawBannerRow[];
+  return results as Banner[];
+}
+
+export function getBannersByProduct(productName: string, limit = 10): Banner[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    `SELECT * FROM banner WHERE product_name = ? ORDER BY language LIMIT ?`
+  );
+  const results = stmt.all(productName, limit) as RawBannerRow[];
+  return results as Banner[];
+}
+
+export function getBannersByCampaign(
+  campaignName: string,
+  limit = 10
+): Banner[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    `SELECT * FROM banner WHERE campaign_name = ? ORDER BY product_name, language LIMIT ?`
+  );
+  const results = stmt.all(campaignName, limit) as RawBannerRow[];
+  return results as Banner[];
+}
+
+export function getBannersBySize(size: string, limit = 10): Banner[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    `SELECT * FROM banner WHERE size = ? ORDER BY product_name, language LIMIT ?`
+  );
+  const results = stmt.all(size, limit) as RawBannerRow[];
+  return results as Banner[];
+}
+
+export function getBannerById(id: number): Banner | null {
+  const db = getDb();
+  const stmt = db.prepare('SELECT * FROM banner WHERE id = ?');
+  const result = stmt.get(id) as RawBannerRow | undefined;
+  if (!result) return null;
+  return result as Banner;
+}
+
+export function getTotalBanners(): number {
+  const db = getDb();
+  const row = db.prepare('SELECT COUNT(*) as count FROM banner').get() as
+    | { count: number }
+    | undefined;
+  return row?.count ?? 0;
+}
+
+export function getLanguages(): string[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    'SELECT DISTINCT language FROM banner WHERE language != "" ORDER BY language'
+  );
+  const results = stmt.all() as { language: string }[];
+  return results.map((row) => row.language);
+}
+
+export function getProducts(): string[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    'SELECT DISTINCT product_name FROM banner ORDER BY product_name'
+  );
+  const results = stmt.all() as { product_name: string }[];
+  return results.map((row) => row.product_name);
+}
+
+export function getCampaigns(): string[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    'SELECT DISTINCT campaign_name FROM banner WHERE campaign_name != "" ORDER BY campaign_name'
+  );
+  const results = stmt.all() as { campaign_name: string }[];
+  return results.map((row) => row.campaign_name);
+}
+
+export function getSizes(): string[] {
+  const db = getDb();
+  const stmt = db.prepare(
+    'SELECT DISTINCT size FROM banner WHERE size != "" ORDER BY size'
+  );
+  const results = stmt.all() as { size: string }[];
+  return results.map((row) => row.size);
+}
+
+export function getRandomBanner(): Banner | null {
+  const db = getDb();
+  const total = getTotalBanners();
+  if (total === 0) return null;
+
+  // Get random ID between 1 and total
+  const randomId = Math.floor(Math.random() * total) + 1;
+
+  // Fetch banner by random offset
+  const stmt = db.prepare('SELECT * FROM banner ORDER BY id LIMIT 1 OFFSET ?');
+  const offset = Math.floor(Math.random() * total);
+  const result = stmt.get(offset) as RawBannerRow | undefined;
+
+  if (!result) return null;
+  return result as Banner;
+}
