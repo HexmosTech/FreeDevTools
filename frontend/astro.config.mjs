@@ -25,9 +25,9 @@ export default defineConfig({
   //   lastmod: new Date()
   // })
   compressor({ gzip: { level: 9 }, brotli: true }),
-  wrapFDT(),
-  playformInline(),
-  unwrapFDT()
+  wrapFDT(), // Wraps freedevtools folder around _astro for doing the critical-css inline
+  playformInline(), // Adds inline critical css to avoid render blocking
+  unwrapFDT() // Unwraps freedevtools folder around _astro
 ],
   cacheDir: ".astro/cache",
   build: {
