@@ -5,8 +5,8 @@ import compressor from "astro-compressor";
 import { defineConfig } from "astro/config";
 import path from "path";
 
-import playformInline from '@playform/inline';
-import { wrapFDT, unwrapFDT } from './integrations/wrap-astro.mjs';
+// import playformInline from '@playform/inline';
+// import { wrapFDT, unwrapFDT } from './integrations/wrap-astro.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -24,10 +24,10 @@ export default defineConfig({
   //   priority: 0.7,
   //   lastmod: new Date()
   // })
-  compressor({ gzip: { level: 9 }, brotli: true }),
-  wrapFDT(), // Wraps freedevtools folder around _astro for doing the critical-css inline
-  playformInline(), // Adds inline critical css to avoid render blocking
-  unwrapFDT() // Unwraps freedevtools folder around _astro
+  compressor({ gzip: { level: 9 }, brotli: true })
+  // wrapFDT(), // Wraps freedevtools folder around _astro for doing the critical-css inline
+  // playformInline(), // Adds inline critical css to avoid render blocking
+  // unwrapFDT() // Unwraps freedevtools folder around _astro
 ],
   cacheDir: ".astro/cache",
   build: {
