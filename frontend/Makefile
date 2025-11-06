@@ -60,3 +60,33 @@ local-env:
 # Requires: sudo dnf install -y libwebp-tools (Fedora) or sudo apt install -y webp (Debian/Ubuntu)
 convert-to-webp:
 	./scripts/convert-to-webp.sh "$(src)" "$(out)"
+
+
+
+# Pull all DB files via Git LFS
+pull-db:
+	@echo "🔎 Checking Git LFS..."
+	@git lfs version || (echo "Git LFS not installed"; exit 1)
+
+	@echo "⬇️ Fetching all LFS objects..."
+	@git lfs fetch --all
+
+	@echo "⬇️ Pulling DB-related LFS files..."
+	@git lfs pull --include="db/**,frontend/db/**" --exclude=""
+
+	@echo "📄 Listing LFS-tracked files (only DB paths)..."
+	@git lfs ls-files | grep -E "db/|frontend/db/" || echo "No DB files tracked via LFS."
+
+	@echo "📏 Showing DB file sizes..."
+	@git lfs ls-files --size | grep -E "db/|frontend/db/" || true
+
+	@echo "✅ Checking if DB files are actual binaries (not pointers)..."
+	@for f in db/*.db frontend/db/*.db; do \
+		if [ -f "$$f" ]; then \
+			echo "File: $$f"; \
+			head -n 3 $$f; \
+			echo "---"; \
+		fi; \
+	done
+
+	@echo "✅ DB pull completed."
