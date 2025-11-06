@@ -65,9 +65,12 @@ func processEmojiFile(filePath string) (*EmojiData, error) {
 		return nil, fmt.Errorf("failed to parse emoji JSON: %w", err)
 	}
 
-	// Extract folder name (slug)
-	folderPath := filepath.Dir(filePath)
-	slug := filepath.Base(folderPath)
+	// Use slug from JSON data (not folder name)
+	slug := strings.TrimSpace(emojiData.Slug)
+	if slug == "" {
+		// Skip emojis without a valid slug (same as frontend logic)
+		return nil, nil
+	}
 
 	// Extract title using the same logic as Python script
 	title := emojiData.Title
@@ -107,8 +110,8 @@ func processEmojiFile(filePath string) (*EmojiData, error) {
 		description = fmt.Sprintf("Learn about the %s emoji %s. Find meanings, shortcodes, and usage information.", title, code)
 	}
 
-	// Create the path
-	path := fmt.Sprintf("/freedevtools/emoji/%s/", slug)
+	// Create the path - use /emojis/ (plural) and the slug from JSON
+	path := fmt.Sprintf("/freedevtools/emojis/%s/", slug)
 
 	// Generate ID - sanitize to only allow alphanumeric, hyphens, and underscores
 	sanitizedSlug := sanitizeID(slug)
