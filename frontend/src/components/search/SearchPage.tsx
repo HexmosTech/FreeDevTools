@@ -1,4 +1,12 @@
-import { Cross2Icon, FileIcon, FileTextIcon, GearIcon, ImageIcon, ModulzLogoIcon, RocketIcon } from '@radix-ui/react-icons';
+import {
+  Cross2Icon,
+  FileIcon,
+  FileTextIcon,
+  GearIcon,
+  ImageIcon,
+  ModulzLogoIcon,
+  RocketIcon,
+} from '@radix-ui/react-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 
 // Types
@@ -69,6 +77,14 @@ function getCategoryDisplayName(category: string): string {
     default:
       return 'items';
   }
+}
+
+function getCategoryKeyForSearch(categoryKey: string): string {
+  // Map UI category keys to actual category names in search results
+  if (categoryKey === 'emoji') {
+    return 'emojis';
+  }
+  return categoryKey;
 }
 
 function getBadgeVariant(category: string): string {
@@ -536,18 +552,30 @@ const SearchPage: React.FC = () => {
   const getCategoryIcon = (key: string) => {
     switch (key) {
       case 'tools':
-        return <GearIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />;
+        return (
+          <GearIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+        );
       case 'tldr':
-        return <FileIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />;
+        return (
+          <FileIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+        );
       case 'cheatsheets':
-        return <FileTextIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />;
+        return (
+          <FileTextIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+        );
       case 'png_icons':
       case 'svg_icons':
-        return <ImageIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />;
+        return (
+          <ImageIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+        );
       case 'emoji':
-        return <RocketIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />;
+        return (
+          <RocketIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+        );
       case 'mcp':
-        return <ModulzLogoIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />;
+        return (
+          <ModulzLogoIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+        );
       default:
         return null;
     }
@@ -615,10 +643,11 @@ const SearchPage: React.FC = () => {
           <button
             onClick={() => handleCategoryClick('all')}
             onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
-            className={`text-xs lg:text-sm w-full flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${activeCategory === 'all'
-              ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
-              : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
-              }`}
+            className={`text-xs lg:text-sm w-full flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+              activeCategory === 'all'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+                : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+            }`}
           >
             All{' '}
             {activeCategory === 'all' &&
@@ -632,12 +661,12 @@ const SearchPage: React.FC = () => {
               const isActive =
                 activeCategory === category.key ||
                 selectedCategories.includes(category.key);
+              const searchCategoryKey = getCategoryKeyForSearch(category.key);
               const count =
-                availableCategories[category.key] ||
+                availableCategories[searchCategoryKey] ||
                 (activeCategory === 'all'
-                  ? availableCategories[category.key]
+                  ? availableCategories[searchCategoryKey]
                   : undefined);
-
 
               const buttonContent = (
                 <>
@@ -651,10 +680,11 @@ const SearchPage: React.FC = () => {
                 </>
               );
 
-              const buttonClassName = `text-xs lg:text-sm w-full flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive || selectedCategories.includes(category.key)
-                ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
-                : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
-                }`;
+              const buttonClassName = `text-xs lg:text-sm w-full flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                isActive || selectedCategories.includes(category.key)
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+                  : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
+              }`;
 
               if (isActive || selectedCategories.includes(category.key)) {
                 return (
