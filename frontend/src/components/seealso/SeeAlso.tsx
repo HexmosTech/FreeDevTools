@@ -140,6 +140,23 @@ const getCategoryIcon = (category?: string): React.ReactNode => {
   }
 };
 
+const formatCategoryLabel = (category?: string): string => {
+  if (!category) return 'General';
+  const titleCased = category
+    .toString()
+    .replace(/[_-]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+
+  // Replace specific format words with uppercase acronyms
+  return titleCased
+    .replace(/\bPng\b/g, 'PNG')
+    .replace(/\bSvg\b/g, 'SVG');
+};
+
 const shuffleArray = <T,>(array: T[]): T[] => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -280,6 +297,12 @@ const SeeAlso: React.FC = () => {
                 </div>
               )}
               <span className="text-base font-semibold text-center text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors duration-200">{item.text}</span>
+              <span
+                className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium bg-blue-100/80 border-blue-200 text-blue-800 dark:bg-blue-900/30 dark:border-blue-400/30 dark:text-blue-200"
+                aria-label={`Category: ${formatCategoryLabel(item.category)}`}
+              >
+                {formatCategoryLabel(item.category)}
+              </span>
             </a>
           ))
         )}
