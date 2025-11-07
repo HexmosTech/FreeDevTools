@@ -8,7 +8,6 @@ export function performCriticalCssInline() {
     name: 'beasties-inline-critical-css',
     hooks: {
       'astro:build:done': async ({ dir }) => {
-        // const distDir = dir.toString();
         const distDir = fileURLToPath(dir);
 
         const indexPath = path.join(distDir, 'index.html');
