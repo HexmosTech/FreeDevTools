@@ -238,7 +238,7 @@ const SeeAlso: React.FC = () => {
   }, [isVisible]);
 
   return (
-    <div ref={containerRef} className="rounded-xl border-2 border-border bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 p-8 mt-8 shadow-lg">
+    <div ref={containerRef} className="rounded-xl border-2 border-border bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 dark:from-blue-300 dark:via-purple-300 dark:to-pink-300 p-8 mt-8 mb-8 shadow-lg">
       <h3 className="text-xl font-bold mb-6 text-white dark:text-gray-900">See Also</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[140px]">
         {!isVisible ? (
