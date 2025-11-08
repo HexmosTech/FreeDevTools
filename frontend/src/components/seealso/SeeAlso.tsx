@@ -140,6 +140,23 @@ const getCategoryIcon = (category?: string): React.ReactNode => {
   }
 };
 
+const formatCategoryLabel = (category?: string): string => {
+  if (!category) return 'General';
+  const titleCased = category
+    .toString()
+    .replace(/[_-]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+
+  // Replace specific format words with uppercase acronyms
+  return titleCased
+    .replace(/\bPng\b/g, 'PNG')
+    .replace(/\bSvg\b/g, 'SVG');
+};
+
 const shuffleArray = <T,>(array: T[]): T[] => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -238,7 +255,7 @@ const SeeAlso: React.FC = () => {
   }, [isVisible]);
 
   return (
-    <div ref={containerRef} className="rounded-xl border-2 border-border bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 p-8 mt-8 shadow-lg">
+    <div ref={containerRef} className="rounded-xl border-2 border-border bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 dark:from-blue-300 dark:via-purple-300 dark:to-pink-300 p-8 mt-8 mb-8 shadow-lg">
       <h3 className="text-xl font-bold mb-6 text-white dark:text-gray-900">See Also</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[140px]">
         {!isVisible ? (
@@ -280,6 +297,12 @@ const SeeAlso: React.FC = () => {
                 </div>
               )}
               <span className="text-base font-semibold text-center text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors duration-200">{item.text}</span>
+              <span
+                className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium bg-blue-100/80 border-blue-200 text-blue-800 dark:bg-blue-900/30 dark:border-blue-400/30 dark:text-blue-200"
+                aria-label={`Category: ${formatCategoryLabel(item.category)}`}
+              >
+                {formatCategoryLabel(item.category)}
+              </span>
             </a>
           ))
         )}

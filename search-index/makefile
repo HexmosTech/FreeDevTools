@@ -43,3 +43,8 @@ sync-search-index:
 	@echo "📤 Step 2: Transferring files to remote server..."
 	./transfer-index-files.sh
 	@echo "✅ Search index sync completed!"
+
+transfer:
+	@echo "📤 Step 2: Transferring files to remote server..."
+	./transfer-index-files.sh
+	@echo "✅ Search index sync completed!"
