@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import toast from "@/components/ToastProvider";
+import ToolBody from "@/components/tool/ToolBody";
+import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
+import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
 import ToolHead from "@/components/tool/ToolHead";
-import LlmTokenCounterSkeleton from "./_OpenaiTokenCounterSkeleton";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
+import ToolVideo from "@/components/tool/ToolVideo";
 import {
   Card,
   CardContent,
@@ -18,11 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
-import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolVideo from "@/components/tool/ToolVideo";
-import { Tiktoken } from "js-tiktoken";
+import type { Tiktoken } from "js-tiktoken";
+import React, { useEffect, useRef, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import LlmTokenCounterSkeleton from "./_OpenaiTokenCounterSkeleton";
 
 // OpenAI Models Configuration
 const OPENAI_MODELS = {
@@ -203,6 +203,9 @@ Words: ${input.trim() ? input.split(/\s+/).length : 0}`;
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="OpenAI Token Counter"
         description="Count tokens accurately for OpenAI GPT models. Get exact token counts for all OpenAI models including GPT-5, GPT-4, GPT-3.5, o1, o3, and embedding models."

@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import ToolContainer from 'src/components/tool/ToolContainer';
-import ToolHead from 'src/components/tool/ToolHead';
+import toast from "@/components/ToastProvider";
+import React, { useCallback, useEffect, useState } from 'react';
+import showdown from 'showdown';
 import ToolBody from 'src/components/tool/ToolBody';
 import ToolCardWrapper from 'src/components/tool/ToolCardWrapper';
+import ToolContainer from 'src/components/tool/ToolContainer';
 import ToolContentCardWrapper from 'src/components/tool/ToolContentCardWrapper';
-import HtmlToMarkdownSkeleton from 'src/pages/t/html-to-markdown/_HtmlToMarkdownSkeleton';
-import CopyButton from 'src/components/ui/copy-button';
-import { toast } from 'src/components/ToastProvider';
+import ToolHead from 'src/components/tool/ToolHead';
+import ToolVideo from 'src/components/tool/ToolVideo';
 import { Button } from 'src/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card';
-import { Textarea } from 'src/components/ui/textarea';
+import CopyButton from 'src/components/ui/copy-button';
 import { Label } from 'src/components/ui/label';
-import ToolVideo from 'src/components/tool/ToolVideo';
-import showdown from 'showdown';
+import { Textarea } from 'src/components/ui/textarea';
+import HtmlToMarkdownSkeleton from 'src/pages/t/html-to-markdown/_HtmlToMarkdownSkeleton';
+import AdBanner from '../../../components/banner/AdBanner';
 
 const converter = new showdown.Converter();
 
@@ -75,6 +76,9 @@ const HtmlToMarkdown: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="HTML to Markdown Converter"
         description="Convert HTML to Markdown instantly with this free online tool. See the converted Markdown in real-time as you type."
@@ -120,9 +124,9 @@ const HtmlToMarkdown: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                    <Button onClick={handleClear} variant="outline" size="sm">
-                        Clear
-                    </Button>
+                  <Button onClick={handleClear} variant="outline" size="sm">
+                    Clear
+                  </Button>
                 </div>
               </CardContent>
             </Card>

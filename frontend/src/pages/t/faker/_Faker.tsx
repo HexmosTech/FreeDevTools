@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import FakerSkeleton from "./_FakerSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -19,8 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Trash2Icon, PlusIcon } from "lucide-react";
+import { PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import FakerSkeleton from "./_FakerSkeleton";
 
 // Simplified faker implementation (in a real project, you'd use @faker-js/faker)
 const createFakeData = (category: string, dataType: string): any => {
@@ -28,11 +29,11 @@ const createFakeData = (category: string, dataType: string): any => {
     person: {
       firstName: () =>
         ["John", "Jane", "Michael", "Sarah", "David", "Emma"][
-          Math.floor(Math.random() * 6)
+        Math.floor(Math.random() * 6)
         ],
       lastName: () =>
         ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia"][
-          Math.floor(Math.random() * 6)
+        Math.floor(Math.random() * 6)
         ],
       fullName: () =>
         `${createFakeData("person", "firstName")} ${createFakeData("person", "lastName")}`,
@@ -43,18 +44,18 @@ const createFakeData = (category: string, dataType: string): any => {
     address: {
       street: () =>
         ["123 Main St", "456 Oak Ave", "789 Pine Rd", "321 Elm Dr"][
-          Math.floor(Math.random() * 4)
+        Math.floor(Math.random() * 4)
         ],
       city: () =>
         ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"][
-          Math.floor(Math.random() * 5)
+        Math.floor(Math.random() * 5)
         ],
       state: () =>
         ["NY", "CA", "IL", "TX", "AZ"][Math.floor(Math.random() * 5)],
       zipCode: () => Math.floor(Math.random() * 90000) + 10000,
       country: () =>
         ["USA", "Canada", "UK", "Australia", "Germany"][
-          Math.floor(Math.random() * 5)
+        Math.floor(Math.random() * 5)
         ],
     },
     company: {
@@ -67,11 +68,11 @@ const createFakeData = (category: string, dataType: string): any => {
         ][Math.floor(Math.random() * 4)],
       department: () =>
         ["Engineering", "Marketing", "Sales", "HR", "Finance"][
-          Math.floor(Math.random() * 5)
+        Math.floor(Math.random() * 5)
         ],
       jobTitle: () =>
         ["Developer", "Manager", "Analyst", "Coordinator", "Specialist"][
-          Math.floor(Math.random() * 5)
+        Math.floor(Math.random() * 5)
         ],
     },
     datatype: {
@@ -92,7 +93,7 @@ const createFakeData = (category: string, dataType: string): any => {
     lorem: {
       word: () =>
         ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur"][
-          Math.floor(Math.random() * 6)
+        Math.floor(Math.random() * 6)
         ],
       sentence: () =>
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -315,6 +316,9 @@ const Faker: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Fake Data Generator"
         description="Generate realistic fake data instantly with our free online fake data generator. Create mock JSON, CSV, SQL data with customizable fields for testing, development, and prototyping."
@@ -485,9 +489,9 @@ const Faker: React.FC = () => {
                             onClick={() => removeField(field.id)}
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                            className="mt-6 h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
                           >
-                            <Trash2Icon className="h-4 w-4" />
+                            <TrashIcon width="20" height="20" />
                           </Button>
                         </div>
                       ))}

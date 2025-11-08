@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import JsonToCsvConverterSkeleton from "./_JsonToCsvConverterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import CopyButton from "@/components/ui/copy-button";
 import { Label } from "@/components/ui/label";
-import { Download } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Textarea } from "@/components/ui/textarea";
+import { DownloadIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import JsonToCsvConverterSkeleton from "./_JsonToCsvConverterSkeleton";
 
 // JSON to CSV conversion utility
 function convertJsonToCsv(
@@ -238,6 +239,9 @@ const JsonToCsvConverter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="JSON to CSV Converter"
         description="Convert JSON data to CSV format instantly. Transform arrays of objects to spreadsheet-ready CSV files with real-time preview and advanced formatting options."
@@ -289,7 +293,7 @@ const JsonToCsvConverter: React.FC = () => {
                             onClick={handleDownload}
                             className="flex items-center gap-1"
                           >
-                            <Download className="w-4 h-4" />
+                            <DownloadIcon className="w-4 h-4" />
                             Download
                           </Button>
                           <CopyButton text={output} size="sm" />

@@ -8,7 +8,10 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
+
+	jargon_stemmer "search-index/jargon-stemmer"
 )
 
 // MCPMetadata represents the structure of the metadata JSON file
@@ -135,7 +138,7 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 			}
 
 			// Create a unique ID for the repository
-			id := fmt.Sprintf("mcp-%s-%s", categoryKey, repoKey)
+			id := fmt.Sprintf("mcp-%s-%s", sanitizeID(categoryKey), sanitizeID(repoKey))
 
 			// Generate a path for the repository
 			path := fmt.Sprintf("/freedevtools/mcp/%s/%s/", categoryKey, repoKey)
@@ -149,10 +152,13 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 				description = fmt.Sprintf("MCP server: %s", repo.Name)
 			}
 
+			// Format the repository name properly
+			formattedName := formatRepositoryName(repo.Name)
+
 			// Create MCPData entry
 			mcpEntry := MCPData{
 				ID:          id,
-				Name:        repo.Name,
+				Name:        formattedName,
 				Description: description,
 				Path:        path,
 				Category:    "mcp",
@@ -173,8 +179,16 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 	return mcpData, nil
 }
 
-// runMCPOnly runs only the MCP data generation
-func runMCPOnly(ctx context.Context, start time.Time) {
+func formatRepositoryName(name string) string {
+	// Only capitalize the first letter, keep everything else as is
+	if len(name) == 0 {
+		return name
+	}
+	return strings.ToUpper(string(name[0])) + strings.ToLower(name[1:])
+}
+
+// RunMCPOnly runs only the MCP data generation
+func RunMCPOnly(ctx context.Context, start time.Time) {
 	fmt.Println("🔧 Generating MCP data only...")
 
 	mcpData, err := generateMCPData(ctx)
@@ -208,4 +222,12 @@ func runMCPOnly(ctx context.Context, start time.Time) {
 	}
 
 	fmt.Printf("💾 Data saved to output/mcp.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/mcp.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
 }
+

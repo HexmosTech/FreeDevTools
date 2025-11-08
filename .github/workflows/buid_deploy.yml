@@ -7,7 +7,10 @@ on:
 
 jobs:
   build-and-deploy:
+    # Prod
     runs-on: ubuntu-latest
+    # Self hosted
+    # runs-on: self-hosted
     environment: production # This tells GitHub to use the production environment secrets
 
     steps:
@@ -16,6 +19,26 @@ jobs:
         with:
           # fetch-depth: 0 is recommended for a more reliable diff across multiple commits in a push
           fetch-depth: 0
+          lfs: true
+
+      - name: Verify LFS and database file
+        run: |
+          echo "🔎 Verifying Git LFS and SQLite DB presence..."
+          git lfs version || true
+          echo "LFS-tracked files:"
+          git lfs ls-files || true
+          echo "Listing DB directories:"
+          ls -l ./db || true
+          ls -l ./frontend/db || true
+          echo "File type of DB files (if present):"
+          for f in ./db/*.db ./frontend/db/*.db; do
+            if [ -f "$f" ]; then file "$f" || true; fi
+          done
+
+      - name: Pull LFS objects explicitly (workaround)
+        run: |
+          echo "⬇️  Pulling LFS objects explicitly..."
+          git lfs pull --include="db/**,frontend/db/**" || git lfs pull || true
 
       - name: Detect changed sections
         id: detect-changes
@@ -114,13 +137,26 @@ jobs:
             echo "should_deploy=false" >> $GITHUB_OUTPUT
           fi
 
+      # - name: Setup Bun
+      #   if: steps.detect-changes.outputs.should_deploy == 'true'
+      #   uses: oven-sh/setup-bun@v1
+      #   with:
+      #     bun-version: "1.1.34"
+
+      # - name: Cache Bun dependencies
+      #   if: steps.detect-changes.outputs.should_deploy == 'true'
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/.bun
+      #     key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-bun-
+
       - name: Setup Node.js
         if: steps.detect-changes.outputs.should_deploy == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: '22.17.0'
-          cache: 'npm'
-          cache-dependency-path: ./frontend/package-lock.json
+          node-version: "22.17.0"
 
       - name: Exclude unchanged sections from build
         if: steps.detect-changes.outputs.should_deploy == 'true'
@@ -170,6 +206,13 @@ jobs:
             echo "🔧 Public assets only mode - no page exclusions needed"
           fi
 
+          # - name: Install dependencies
+          # if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+          # run: |
+          #   echo "📦 Installing dependencies with Bun..."
+          #   cd frontend
+          #   bun install
+
       - name: Install dependencies
         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
         run: |
@@ -177,13 +220,30 @@ jobs:
           cd frontend
           npm install
 
+      - name: Clean dist directory
+        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+        run: |
+          echo "🧹 Cleaning dist directory before build..."
+          cd frontend
+          rm -rf dist
+          mkdir -p dist
+
+          # - name: Build project
+          # if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+          # run: |
+          #   echo "🔨 Building project with Bun..."
+          #   cd frontend
+          #   bun run astro build
+
       - name: Build project
         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
         run: |
           echo "🔨 Building project..."
           cd frontend
-          NODE_OPTIONS="--max-old-space-size=8192" npx astro build
+          npx astro build
         env:
+          NODE_OPTIONS: "--max-old-space-size=16384"
+          UV_THREADPOOL_SIZE: "16"
           PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
           MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
 
@@ -223,11 +283,33 @@ jobs:
 
           if [[ "$changed_sections" == "public_assets_only" ]]; then
             echo "📁 Only public assets changed - syncing files only"
-            rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+            rsync -rvz --delete --no-perms --no-owner --no-group --no-times --progress ./frontend/public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+          elif [[ "$changed_sections" == "full_rebuild" ]]; then
+            echo "📦 Full deployment - deleting old files on server"
+            rsync -rvz --delete --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
           else
-            echo "📦 Full deployment"
+            echo "📦 Partial deployment - keeping existing files on server"
             rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
           fi
+
+      - name: Purge entire Cloudflare cache
+        if: steps.detect-changes.outputs.should_deploy == 'true'
+        run: |
+          echo "Purging entire Cloudflare cache..."
+          RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_CACHE_PURGE_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}')
+
+          echo "Response:"
+          echo "$RESPONSE"
+
+      - name: Generate search index data and deploy to server
+        run: |
+          echo "🔍 Generating search index data..."
+          cd search-index
+          make sync-search-index
+          echo "✅ Search index generation completed"
 
       - name: Skip deployment message
         if: steps.detect-changes.outputs.should_deploy == 'false'

@@ -1,4 +1,4 @@
-import { toast } from "@/components/ToastProvider";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
 import ToolContainer from "@/components/tool/ToolContainer";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import CopyButton from "@/components/ui/copy-button";
 import { Textarea } from "@/components/ui/textarea";
 import React, { useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
 import DockerfileLinterSkeleton from "./_DockerfileLinterSkeleton";
 
 // Docker parser functions adapted from dockerparser.js
@@ -894,6 +895,9 @@ const DockerfileLinter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Dockerfile Linter"
         description="Comprehensive Dockerfile analysis based on industry best practices and security guidelines"

@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import DeepseekTokenCounterSkeleton from "./_DeepseekTokenCounterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useRef, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import DeepseekTokenCounterSkeleton from "./_DeepseekTokenCounterSkeleton";
 
 // Deepseek Models Configuration
 const DEEPSEEK_MODELS = {
@@ -117,6 +117,9 @@ const DeepseekTokenCounter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Deepseek Token Counter"
         description="Count tokens instantly for Deepseek models. Get accurate token counts for Deepseek V2, Coder, and LLM models."

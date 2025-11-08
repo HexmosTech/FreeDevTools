@@ -7,11 +7,12 @@ interface BreadcrumbItem {
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
+  id?: string;
 }
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
+const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, id = "breadcrumb" }) => {
   return (
-    <nav className="breadcrump-container text-sm mb-6 flex flex-wrap items-center gap-2">
+    <nav id={id + "-container"} className="breadcrumb-container text-sm mb-6 flex flex-wrap items-center gap-2">
       {items.map((item, index) => (
         <React.Fragment key={index}>
           {index > 0 && <span>/</span>}

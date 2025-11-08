@@ -1,3 +1,4 @@
+import { DownloadIcon } from '@radix-ui/react-icons';
 import React, { useCallback } from 'react';
 
 interface DownloadSvgButtonProps {
@@ -15,7 +16,7 @@ const DownloadSvgButton: React.FC<DownloadSvgButtonProps> = ({ iconData }) => {
 
     if (!svgData) {
       // Extract category and icon name from current URL
-      const pathParts = window.location.pathname.split('/');
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
       const category = pathParts[pathParts.length - 2];
       const iconName = pathParts[pathParts.length - 1];
 
@@ -42,11 +43,13 @@ const DownloadSvgButton: React.FC<DownloadSvgButtonProps> = ({ iconData }) => {
   return (
     <button
       onClick={downloadAsSVG}
-      className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded transition-colors"
+      className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-black bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"
     >
-      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-      </svg>
+      <DownloadIcon
+        width="16"
+        height="16"
+        className="mr-2"
+      />
       Download SVG
     </button>
   );

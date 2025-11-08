@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "src/components/tool/ToolContainer";
-import ToolHead from "src/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
+import React, { useCallback, useEffect, useState } from "react";
 import ToolBody from "src/components/tool/ToolBody";
 import ToolCardWrapper from "src/components/tool/ToolCardWrapper";
+import ToolContainer from "src/components/tool/ToolContainer";
 import ToolContentCardWrapper from "src/components/tool/ToolContentCardWrapper";
-import RsaKeyPairGeneratorSkeleton from "src/pages/t/rsa-key-pair-generator/_RsaKeyPairGeneratorSkeleton";
-import CopyButton from "src/components/ui/copy-button";
-import { toast } from "src/components/ToastProvider";
+import ToolHead from "src/components/tool/ToolHead";
+import ToolVideo from "src/components/tool/ToolVideo";
 import { Button } from "src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
-import { Textarea } from "src/components/ui/textarea";
+import CopyButton from "src/components/ui/copy-button";
 import { Label } from "src/components/ui/label";
 import {
   Select,
@@ -18,7 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/components/ui/select";
-import ToolVideo from "src/components/tool/ToolVideo";
+import { Textarea } from "src/components/ui/textarea";
+import RsaKeyPairGeneratorSkeleton from "src/pages/t/rsa-key-pair-generator/_RsaKeyPairGeneratorSkeleton";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const KEY_SIZES = [2048, 4096];
 
@@ -94,6 +95,9 @@ const RsaKeyPairGenerator: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="RSA Key Pair Generator"
         description="Generate secure RSA public and private key pairs for encryption, decryption, and digital signatures. Choose your key size and generate keys instantly in your browser."
@@ -173,11 +177,11 @@ const RsaKeyPairGenerator: React.FC = () => {
                 )}
 
                 {privateKey && (
-                     <div className="p-3 bg-yellow-50 text-center dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                            ⚠️ Keep your private key secret. Do not share it with anyone.
-                        </p>
-                    </div>
+                  <div className="p-3 bg-yellow-50 text-center dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                      ⚠️ Keep your private key secret. Do not share it with anyone.
+                    </p>
+                  </div>
                 )}
               </CardContent>
             </Card>

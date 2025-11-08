@@ -10,7 +10,7 @@ const tldr = defineCollection({
   loader: glob({
     // In dev mode, only load specific categories; in build mode, load all files
     pattern: forceTldrBuild ? '**/*.md' : '{pnm,git}/**/*.md',
-    base: './src/pages/markdown_pages/tldr',
+    base: 'data/tldr',
   }),
   schema: z.object({
     title: z.string(),
@@ -105,4 +105,55 @@ const mcpCategoryData = defineCollection({
   }),
 });
 
-export const collections = { tldr, mcpMetadata, mcpCategoryData };
+// Define the PNG icons metadata collection
+const pngIconsMetadata = defineCollection({
+  loader: file('data/cluster_png.json', {
+    parser: (fileContent) => {
+      const data = JSON.parse(fileContent);
+      return {
+        'png-icons-metadata': data,
+      };
+    },
+  }),
+  schema: z.object({
+    clusters: z.record(
+      z.string(),
+      z.object({
+        name: z.string(),
+        source_folder: z.string(),
+        path: z.string(),
+        keywords: z.array(z.string()),
+        features: z.array(z.string()),
+        title: z.string(),
+        description: z.string(),
+        fileNames: z.array(
+          z.union([
+            z.string(), // Simple filename
+            z
+              .object({
+                fileName: z.string(),
+                description: z.string().optional(),
+                usecases: z.string().optional(),
+                synonyms: z.array(z.string()).optional(),
+                tags: z.array(z.string()).optional(),
+                industry: z.string().optional(),
+                emotional_cues: z.string().optional(),
+                enhanced: z.boolean().optional(),
+                author: z.string().optional(),
+                license: z.string().optional(),
+              })
+              .passthrough(), // Allow additional properties
+          ])
+        ),
+        enhanced: z.boolean().optional(),
+      })
+    ),
+  }),
+});
+
+export const collections = {
+  tldr,
+  mcpMetadata,
+  mcpCategoryData,
+  pngIconsMetadata,
+};

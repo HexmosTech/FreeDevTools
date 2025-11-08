@@ -49,7 +49,13 @@ export async function generateMcpCategoryPaginatedPaths({
 
   for (const entry of categoryEntries) {
     const categoryData = entry.data;
-    const categoryServers = Object.values(categoryData.repositories);
+    // Include repository ID in each server object
+    const categoryServers = Object.entries(categoryData.repositories).map(
+      ([repositoryId, server]) => ({
+        ...server,
+        repositoryId: repositoryId,
+      })
+    );
 
     // Generate paginated paths for this category
     const paginatedPaths = paginate(categoryServers, {
@@ -61,6 +67,51 @@ export async function generateMcpCategoryPaginatedPaths({
   }
 
   return allPaths.flat();
+}
+
+/**
+ * Generate paginated paths for MCP directory (all categories)
+ */
+export async function generateMcpDirectoryPaginatedPaths({
+  paginate,
+}: {
+  paginate: any;
+}) {
+  const metadataEntries = await getCollection('mcpMetadata');
+  const metadata = metadataEntries[0]?.data;
+
+  if (!metadata) {
+    throw new Error('MCP metadata not found');
+  }
+
+  // Get all categories from metadata
+  const categories = Object.entries(metadata.categories).map(
+    ([id, categoryData]) => ({
+      id,
+      name: categoryData.categoryDisplay,
+      description: '',
+      icon: id, // Use the category ID as the icon key for emoji matching
+      serverCount: categoryData.totalRepositories,
+      url: `/freedevtools/mcp/${id}/1/`,
+    })
+  );
+
+  // Add descriptions from category data
+  const categoryEntries = await getCollection('mcpCategoryData');
+  categoryEntries.forEach((entry) => {
+    const category = categories.find((c) => c.id === entry.data.category);
+    if (category) {
+      category.description = entry.data.description || '';
+    }
+  });
+
+  // Generate paginated paths for all categories
+  const paginatedPaths = paginate(categories, {
+    params: {},
+    pageSize: 30, // 30 categories per page
+  });
+
+  return paginatedPaths;
 }
 
 /**

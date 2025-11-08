@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import Base64EncoderSkeleton from "./_Base64EncoderSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import CopyButton from "@/components/ui/copy-button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { getToolByKey, type Tool } from "@/config/tools";
-import ToolVideo from "@/components/tool/ToolVideo";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import Base64EncoderSkeleton from "./_Base64EncoderSkeleton";
 // Base64 encoding/decoding utilities
 const toBase64 = (text: string): string => {
   try {
@@ -131,6 +131,9 @@ const Base64Encoder: React.FC<Base64EncoderProps> = ({ tool }) => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead name={toolConfig.name} description={toolConfig.description} />
 
       {!loaded ? (

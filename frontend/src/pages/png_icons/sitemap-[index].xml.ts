@@ -1,22 +1,22 @@
 // src/pages/svg_icons/sitemap-[index].xml.ts
-import type { APIRoute } from "astro";
-import path from "path";
+import type { APIRoute } from 'astro';
+import path from 'path';
 
 const MAX_URLS = 5000;
 
 export async function getStaticPaths() {
-  const { glob } = await import("glob");
+  const { glob } = await import('glob');
 
   // Loader function for sitemap URLs
   async function loadUrls() {
-    const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
+    const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
     const now = new Date().toISOString();
 
     // Build URLs with placeholder for site
     const urls = svgFiles.map((file) => {
       const parts = file.split(path.sep);
-      const name = parts.pop()!.replace(".svg", "");
-      const category = parts.pop() || "general";
+      const name = parts.pop()!.replace('.svg', '');
+      const category = parts.pop() || 'general';
 
       return `
         <url>
@@ -44,7 +44,7 @@ export async function getStaticPaths() {
   }
 
   // Pre-count total pages
-  const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
+  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
   const totalUrls = svgFiles.length + 1;
   const totalPages = Math.ceil(totalUrls / MAX_URLS);
 
@@ -70,19 +70,19 @@ export const GET: APIRoute = async ({ site, params, props }) => {
   const index = parseInt(params.index, 10) - 1;
   const chunk = sitemapChunks[index];
 
-  if (!chunk) return new Response("Not Found", { status: 404 });
+  if (!chunk) return new Response('Not Found', { status: 404 });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  ${chunk.join("\n")}
+  ${chunk.join('\n')}
 </urlset>`;
 
   return new Response(xml, {
     headers: {
-      "Content-Type": "application/xml",
-      "Cache-Control": "public, max-age=3600",
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 };

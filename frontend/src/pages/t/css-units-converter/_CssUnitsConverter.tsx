@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CssUnitsConverterSkeleton from "./_CssUnitsConverterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -18,7 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import ToolVideo from "@/components/tool/ToolVideo";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import CssUnitsConverterSkeleton from "./_CssUnitsConverterSkeleton";
 
 // CSS Unit conversion utilities
 const pxToRem = (px: number, baseFontSize: number = 16): number => {
@@ -290,6 +290,9 @@ const CssUnitsConverter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="CSS Units Converter"
         description="Convert CSS units instantly with our free online converter. Transform pixels to rem, viewport units (vw, vh, vmin, vmax), and more with real-time conversion and responsive design calculations."

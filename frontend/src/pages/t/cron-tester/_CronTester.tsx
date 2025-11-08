@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CronTesterSkeleton from "./_CronTesterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { RefreshCwIcon, CalendarIcon, XIcon } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Label } from "@/components/ui/label";
+import { CalendarIcon, Cross2Icon, ReloadIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import CronTesterSkeleton from "./_CronTesterSkeleton";
 
 // Using reliable npm libraries for cron parsing
 interface CronResult {
@@ -177,7 +178,8 @@ const parseCronExpression = async (expression: string): Promise<CronResult> => {
         verbose: true,
         use24HourTimeFormat: true,
       });
-    } catch (cronstrueError) {
+    } catch (_cronstrueError) {
+      console.error(_cronstrueError);
       // Fallback to basic description if cronstrue fails
       description = generateBasicDescription(minute, hour, day, month, weekday);
     }
@@ -382,26 +384,41 @@ const CronTester: React.FC = () => {
 
   // Parse cron expression whenever it changes
   useEffect(() => {
-    if (cronExpression.trim() && loaded) {
+    if (!cronExpression.trim() || !loaded) {
+      setCronResult(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    const parseAsync = async () => {
       setIsLoading(true);
-      parseCronExpression(cronExpression)
-        .then((result) => {
+      try {
+        const result = await parseCronExpression(cronExpression);
+        if (!cancelled) {
           setCronResult(result);
-        })
-        .catch((error) => {
+        }
+      } catch {
+        if (!cancelled) {
           setCronResult({
             isValid: false,
             description: "",
             nextExecutions: [],
             error: "Failed to parse cron expression",
           });
-        })
-        .finally(() => {
+        }
+      } finally {
+        if (!cancelled) {
           setIsLoading(false);
-        });
-    } else {
-      setCronResult(null);
-    }
+        }
+      }
+    };
+
+    parseAsync();
+
+    return () => {
+      cancelled = true;
+    };
   }, [cronExpression, loaded]);
 
   const handleExpressionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -421,6 +438,9 @@ const CronTester: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Cron Expression Tester"
         description="Test and validate cron expressions instantly with our free online cron tester. Parse cron jobs, validate syntax, see next execution times, and understand cron patterns with real-time feedback."
@@ -459,7 +479,7 @@ const CronTester: React.FC = () => {
                       size="sm"
                       disabled={isLoading}
                     >
-                      <RefreshCwIcon className="h-4 w-4 mr-1" />
+                      <ReloadIcon className="h-4 w-4 mr-1" />
                       Random
                     </Button>
                     <Button
@@ -468,7 +488,7 @@ const CronTester: React.FC = () => {
                       size="sm"
                       disabled={isLoading}
                     >
-                      <XIcon className="h-4 w-4" />
+                      <Cross2Icon className="h-4 w-4" />
                     </Button>
                     {cronResult?.isValid && (
                       <CopyButton text={cronExpression} />
@@ -853,7 +873,7 @@ const CronTester: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <div>
-                            <strong>Avoid Overlaps:</strong> Ensure jobs don't
+                            <strong>Avoid Overlaps:</strong> Ensure jobs don&apos;t
                             run longer than their intervals
                           </div>
                         </li>

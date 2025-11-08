@@ -1,23 +1,96 @@
 ---
-import AdBanner from '../../../components/banner/AdBanner';
+import AdBanner from '../../../components/banner/AdBanner.astro';
+import CreditsButton from '../../../components/buttons/CreditsButton';
+import ToolContainer from '../../../components/tool/ToolContainer';
+import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getCheatsheet } from '../../../lib/cheatsheets';
+import { getCheatsheet } from '../../../lib/cheatsheets-utils';
+import SeeAlsoIndex from '../../../components/seealso/SeeAlsoIndex.astro';
+
+function processCheatsheetLinks(html: string): string {
+  // First, add IDs to all headings (h1-h6) so anchor links work
+  html = html.replace(
+    /<(h[1-6])([^>]*)>([^<]+)<\/h[1-6]>/gi,
+    (match, tag, attributes, content) => {
+      // Check if heading already has an ID
+      const existingIdMatch = attributes.match(/id="([^"]*)"/);
+      let anchorId = existingIdMatch ? existingIdMatch[1] : '';
+
+      // If no existing ID, generate one from content
+      if (!anchorId) {
+        anchorId = content
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+          .replace(/\s+/g, '-') // Replace spaces with hyphens
+          .replace(/-+/g, '-') // Replace multiple hyphens with single
+          .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+      }
+
+      // Add scroll margin to offset the header - use both class and inline style
+      const existingClass = attributes.includes('class=') ? attributes : '';
+      const scrollMarginClass = existingClass
+        ? existingClass.replace(/class="([^"]*)"/, 'class="$1 scroll-mt-32"')
+        : 'class="scroll-mt-32"';
+
+      // Add inline style as backup to ensure scroll margin works
+      const existingStyle = attributes.includes('style=') ? attributes : '';
+      const scrollMarginStyle = existingStyle
+        ? existingStyle.replace(
+            /style="([^"]*)"/,
+            'style="$1; scroll-margin-top: 8rem;"'
+          )
+        : 'style="scroll-margin-top: 8rem;"';
+
+      return `<${tag} ${scrollMarginClass} ${scrollMarginStyle} id="${anchorId}">${content}</${tag}>`;
+    }
+  );
+
+  // Then process the links
+  return html.replace(
+    /<a\s+([^>]*?)href="([^"]*?)"([^>]*?)>/g,
+    (
+      match: string,
+      beforeHref: string,
+      href: string,
+      afterHref: string
+    ): string => {
+      // Keep absolute URLs (https/http) as clickable links
+      if (/^https?:\/\//i.test(href)) {
+        // Add target="_blank" for external links
+        if (!match.includes('target=')) {
+          return `<a ${beforeHref}href="${href}"${afterHref} target="_blank" rel="noopener noreferrer">`;
+        }
+        return match;
+      }
+
+      // Handle anchor links (starting with #) - keep them as clickable for scrolling
+      if (href.startsWith('#')) {
+        return match;
+      }
+
+      // Disable all relative links (/, ../, ./, etc.) by removing href and adding disabled styling
+      return `<span ${beforeHref}${afterHref}>`;
+    }
+  );
+}
 
 export async function getStaticPaths() {
-  const sheetFiles = import.meta.glob('/src/pages/html_pages/cheatsheets/**/*.html', { eager: true });
+  const sheetFiles = import.meta.glob('/data/cheatsheets/**/*.html', {
+    eager: true,
+  });
   const paths: Array<{ params: { category: string; name: string } }> = [];
-  
+
   for (const path of Object.keys(sheetFiles)) {
     const pathParts = path.split('/');
     const category = pathParts[pathParts.length - 2];
     const fileName = pathParts[pathParts.length - 1];
     const name = fileName.replace('.html', '');
-    
+
     paths.push({
-      params: { category, name }
+      params: { category, name },
     });
   }
-  
+
   return paths;
 }
 
@@ -28,70 +101,82 @@ if (!cheatsheetResult) {
   return Astro.redirect('/404');
 }
 
-const { htmlContent, metatags } = cheatsheetResult;
+const { content, metatags } = cheatsheetResult;
+
+// Process the content to handle links and add anchor IDs
+const processedContent = processCheatsheetLinks(content);
 
 // Use metatags for title and description, with fallbacks
 const title = metatags.title || name;
 const description = metatags.description || `Cheatsheet for ${name}`;
+const keywords = metatags.keywords || ["free devtools", "cheatsheets", category!, name!];
+
+// Breadcrumb items
+const breadcrumbItems = [
+  { label: 'Free DevTools', href: '/freedevtools/' },
+  { label: 'Cheatsheets', href: '/freedevtools/c/' },
+  { label: category, href: `/freedevtools/c/${category}/` },
+  { label: name },
+];
 ---
 
-<BaseLayout 
+<BaseLayout
   name={title}
   path={`/c/${category}/${name}/`}
   title={`${title} - ${category} Cheatsheets | Online Free DevTools by Hexmos`}
   description={description}
+  keywords={keywords}
   canonical={`https://hexmos.com/freedevtools/c/${category}/${name}/`}
-  themeColor="#1e40af"
-  showSidebar={false}
   showHeader={true}
 >
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <div class="max-w-4xl mx-auto px-2 md:px-6">
+  <style>
+    :global(.html-content .container .header h2) {
+      display: none !important;
+    }
+    :global(.html-content .container .header h1) {
+      display: none !important;
+    }
+  </style>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+  ></script>
+  <ToolContainer>
     <div class="mb-16 mt-[74px]">
       <AdBanner />
     </div>
-    <nav class="text-sm text-slate-600 dark:text-slate-400 mb-6">
-      <a href="/freedevtools/" class="hover:text-blue-600 dark:hover:text-blue-400">Free DevTools</a>
-      <span class="mx-2">/</span>
-      <a href="/freedevtools/c/" class="hover:text-blue-600 dark:hover:text-blue-400">Cheatsheets</a>
-      <span class="mx-2">/</span>
-      <a href={`/freedevtools/c/${category}/`} class="hover:text-blue-600 dark:hover:text-blue-400 capitalize">{category}</a>
-      <span class="mx-2">/</span>
-      <span class="font-mono">{name}</span>
-    </nav>
+    <ToolHead
+      name={title}
+      description={description}
+      breadcrumbItems={breadcrumbItems}
+    />
 
-    <article class="max-w-none">
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4 font-mono">
-          {name}
-        </h1>
-        <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">
-          {description}
-        </p>
-      </header>
-
+    <article class="max-w-none mt-6">
       <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
-        <div class="html-content prose prose-slate dark:prose-invert max-w-none" set:html={htmlContent} />
+        <div
+          class="html-content prose prose-slate dark:prose-invert max-w-none"
+          set:html={processedContent}
+        />
       </div>
     </article>
 
+    <SeeAlsoIndex />
+
     <div class="mt-8 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
       <div class="flex flex-wrap gap-4">
-        <a 
+        <a
           href={`/freedevtools/c/${category}/`}
           class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
         >
           ← Back to {category} cheatsheets
         </a>
-        <a 
+        <a
           href="/freedevtools/c/"
           class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
         >
           All cheatsheets
         </a>
+        <CreditsButton href="/freedevtools/c/credits/" />
       </div>
     </div>
-  </div>
+  </ToolContainer>
 </BaseLayout>
-
-

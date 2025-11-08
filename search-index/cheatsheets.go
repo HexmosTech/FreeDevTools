@@ -4,17 +4,20 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 	"regexp"
+	jargon_stemmer "search-index/jargon-stemmer"
 	"sort"
 	"strings"
+	"time"
 )
 
 func generateCheatsheetsData(ctx context.Context) ([]CheatsheetData, error) {
 	fmt.Println("📖 Generating cheatsheets data...")
 
 	// Path to cheatsheet files
-	basePath := "../frontend/src/pages/html_pages/cheatsheets"
+	basePath := "../frontend/data/cheatsheets"
 
 	files, err := filepath.Glob(filepath.Join(basePath, "**", "*.html"))
 	if err != nil {
@@ -90,7 +93,14 @@ func processCheatsheetFile(filePath, basePath string) (*CheatsheetData, string, 
 
 	category := pathParts[0]
 	fileName := pathParts[len(pathParts)-1]
-	name := strings.TrimSuffix(fileName, ".html")
+	fileBaseName := strings.TrimSuffix(fileName, ".html")
+
+	// Extract title from HTML content using fallback hierarchy
+	name := extractHTMLTitle(contentStr)
+	if name == "" {
+		// Fallback to formatted filename: replace _ with space and capitalize words
+		name = formatFilenameAsTitle(fileBaseName)
+	}
 
 	// Extract description from HTML (prefer meta description)
 	description := extractHTMLDescription(contentStr)
@@ -98,8 +108,8 @@ func processCheatsheetFile(filePath, basePath string) (*CheatsheetData, string, 
 		description = fmt.Sprintf("Cheatsheet for %s", name)
 	}
 
-	// Generate path
-	fullPath := fmt.Sprintf("/freedevtools/c/%s/%s/", category, name)
+	// Generate path (using fileBaseName for the URL)
+	fullPath := fmt.Sprintf("/freedevtools/c/%s/%s/", category, fileBaseName)
 
 	// Generate ID
 	id := generateCheatsheetID(fullPath)
@@ -149,6 +159,92 @@ func extractHTMLDescription(content string) string {
 	return ""
 }
 
+func extractHTMLTitle(content string) string {
+	// 1. Try <title> tag first
+	titleRegex := regexp.MustCompile(`<title[^>]*>([^<]+)</title>`)
+	match := titleRegex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
+	}
+
+	// 2. Try <meta property="og:title">
+	ogTitleRegex := regexp.MustCompile(`<meta\s+property="og:title"\s+content="([^"]+)"`)
+	match = ogTitleRegex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
+	}
+
+	// 3. Try <meta property="twitter:title">
+	twitterTitleRegex := regexp.MustCompile(`<meta\s+property="twitter:title"\s+content="([^"]+)"`)
+	match = twitterTitleRegex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
+	}
+
+	// 4. Try H1 tag
+	h1Regex := regexp.MustCompile(`<h1[^>]*>([^<]+)</h1>`)
+	match = h1Regex.FindStringSubmatch(content)
+	if len(match) > 1 {
+		title := strings.TrimSpace(match[1])
+		if title != "" {
+			return cleanTitle(title)
+		}
+	}
+
+	return ""
+}
+
+func cleanTitle(title string) string {
+	// Split by | and take only the first part
+	parts := strings.Split(title, "|")
+	if len(parts) > 0 {
+		title = strings.TrimSpace(parts[0])
+	}
+	
+	// Replace common HTML entities and Unicode escapes
+	title = strings.ReplaceAll(title, "\\u0026", "&")
+	title = strings.ReplaceAll(title, "&amp;", "&")
+	title = strings.ReplaceAll(title, "&lt;", "<")
+	title = strings.ReplaceAll(title, "&gt;", ">")
+	title = strings.ReplaceAll(title, "&quot;", "\"")
+	title = strings.ReplaceAll(title, "&#39;", "'")
+	title = strings.ReplaceAll(title, "&nbsp;", " ")
+	
+	// Remove emojis and other Unicode symbols (keep only basic ASCII letters, numbers, spaces, and common punctuation)
+	reg := regexp.MustCompile(`[^\x20-\x7E]`)
+	title = reg.ReplaceAllString(title, "")
+	
+	// Clean up multiple spaces
+	title = regexp.MustCompile(`\s+`).ReplaceAllString(title, " ")
+	title = strings.TrimSpace(title)
+	
+	return title
+}
+
+func formatFilenameAsTitle(filename string) string {
+	// Replace underscores with spaces
+	formatted := strings.ReplaceAll(filename, "_", " ")
+	
+	// Split into words and capitalize each word
+	words := strings.Fields(formatted)
+	for i, word := range words {
+		if len(word) > 0 {
+			words[i] = strings.ToUpper(string(word[0])) + strings.ToLower(word[1:])
+		}
+	}
+	
+	return strings.Join(words, " ")
+}
+
 func generateCheatsheetID(path string) string {
 	// Remove the base path
 	cleanPath := strings.Replace(path, "/freedevtools/c/", "", 1)
@@ -161,4 +257,46 @@ func generateCheatsheetID(path string) string {
 	cleanPath = reg.ReplaceAllString(cleanPath, "_")
 	// Add prefix
 	return fmt.Sprintf("cheatsheets-%s", cleanPath)
+}
+
+func RunCheatsheetsOnly(ctx context.Context, start time.Time) {
+	fmt.Println("📖 Generating cheatsheets data only...")
+
+	cheatsheets, err := generateCheatsheetsData(ctx)
+	if err != nil {
+		log.Fatalf("❌ Cheatsheets data generation failed: %v", err)
+	}
+
+	// Save to JSON
+	if err := saveToJSON("cheatsheets.json", cheatsheets); err != nil {
+		log.Fatalf("Failed to save cheatsheets data: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 Cheatsheets data generation completed in %v\n", elapsed)
+	fmt.Printf("📊 Generated %d cheatsheets\n", len(cheatsheets))
+
+	// Show sample data
+	fmt.Println("\n📝 Sample cheatsheets:")
+	for i, sheet := range cheatsheets {
+		if i >= 10 { // Show first 10
+			fmt.Printf("  ... and %d more cheatsheets\n", len(cheatsheets)-10)
+			break
+		}
+		fmt.Printf("  %d. %s (ID: %s)\n", i+1, sheet.Name, sheet.ID)
+		if sheet.Description != "" {
+			fmt.Printf("     Description: %s\n", truncateString(sheet.Description, 80))
+		}
+		fmt.Printf("     Path: %s\n", sheet.Path)
+		fmt.Println()
+	}
+
+	fmt.Printf("💾 Data saved to output/cheatsheets.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/cheatsheets.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
 }

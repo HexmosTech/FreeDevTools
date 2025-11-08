@@ -1,6 +1,5 @@
 import ToolBody from "@/components/tool/ToolBody";
 import ToolContainer from "@/components/tool/ToolContainer";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
 import ToolHead from "@/components/tool/ToolHead";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,9 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
 import DateTimeConverterSkeleton from "./_DateTimeConverterSkeleton";
 import _DateTimeConverterWiki from "./_DateTimeConverterWiki";
 
@@ -68,13 +68,14 @@ const DateTimeConverter = () => {
         case "iso":
           parsedDate = new Date(input);
           break;
-        case "timestamp":
+        case "timestamp": {
           // Handle both seconds and milliseconds timestamps
           const timestamp = parseInt(input);
           parsedDate = new Date(
             timestamp < 10000000000 ? timestamp * 1000 : timestamp
           );
           break;
+        }
         case "unix":
           parsedDate = new Date(parseInt(input) * 1000);
           break;
@@ -169,6 +170,9 @@ const DateTimeConverter = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Date Time Converter"
         description="Instantly convert any date or time between UTC, ISO, Unix, and other popular formats. Enter a date, pick from the calendar, or paste a timestamp to see all formats at once."
@@ -178,7 +182,7 @@ const DateTimeConverter = () => {
         <DateTimeConverterSkeleton />
       ) : (
         <ToolBody>
-          <ToolGridContainer>
+          <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
             {/* Input Section - Priority #1 */}
             <div className="w-full max-w-4xl mx-auto px-4 py-8 md:px-6 md:py-12">
               <div className="space-y-6">
@@ -360,7 +364,7 @@ const DateTimeConverter = () => {
                 </CardContent>
               </Card>
             )}
-          </ToolGridContainer>
+          </div>
           <_DateTimeConverterWiki />
 
           {/* Footer */}

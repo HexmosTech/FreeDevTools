@@ -1,28 +1,38 @@
+import { toast } from '@/components/ToastProvider';
+import { ClipboardCopyIcon } from '@radix-ui/react-icons';
 import React, { useCallback } from 'react';
-import { toast } from 'react-toastify';
 
 interface CopySvgButtonProps {
   iconData: {
     name: string;
     originalSvgContent: string;
     svgContent: string;
+    category?: string;
+    iconName?: string;
   };
 }
 
 const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
   const copyAsSVG = useCallback(async () => {
+    console.log('CopySvgButton clicked!', { iconData });
+
     // Load SVG content client-side if not available
     let svgData = iconData?.originalSvgContent || iconData?.svgContent || '';
 
     if (!svgData) {
-      // Extract category and icon name from current URL
-      const pathParts = window.location.pathname.split('/');
-      const category = pathParts[pathParts.length - 2];
-      const iconName = pathParts[pathParts.length - 1];
+      // Use iconData props if available, otherwise extract from URL
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      const category = iconData?.category || pathParts[pathParts.length - 2];
+      const iconName = iconData?.iconName || pathParts[pathParts.length - 1];
+
+      console.log('Fetching SVG:', { category, iconName });
 
       try {
-        const response = await fetch(`/freedevtools/svg_icons/${category}/${iconName}.svg`);
+        const response = await fetch(
+          `/freedevtools/svg_icons/${category}/${iconName}.svg`
+        );
         svgData = await response.text();
+        console.log('SVG loaded successfully');
       } catch (error) {
         console.error('Failed to load SVG:', error);
         toast.error('Failed to load SVG data');
@@ -34,6 +44,7 @@ const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
       await navigator.clipboard.writeText(svgData);
       toast.success('SVG copied to clipboard!');
     } catch (error) {
+      console.log(error);
       toast.error('Failed to copy SVG to clipboard');
     }
   }, [iconData]);
@@ -43,9 +54,11 @@ const CopySvgButton: React.FC<CopySvgButtonProps> = ({ iconData }) => {
       onClick={copyAsSVG}
       className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded transition-colors"
     >
-      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-      </svg>
+      <ClipboardCopyIcon
+        width="16"
+        height="16"
+        className="mr-2"
+      />
       Copy SVG
     </button>
   );

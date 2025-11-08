@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import OpenaiCostCalculatorSkeleton from "./_OpenaiCostCalculatorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tiktoken } from "js-tiktoken";
+import React, { useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import OpenaiCostCalculatorSkeleton from "./_OpenaiCostCalculatorSkeleton";
 
 const OPENAI_MODELS = [
 	{ name: "gpt-5", input: 1.25, cachedInput: 0.125, output: 10.0 },
@@ -132,6 +130,9 @@ const OpenaiCostCalculator: React.FC = () => {
 
 	return (
 		<ToolContainer>
+			<div className="mb-16 mt-[74px]">
+				<AdBanner />
+			</div>
 			<ToolHead
 				name="OpenAI Cost Calculator"
 				description="Estimate API costs for all OpenAI models. Enter code or document details to see dynamic pricing for GPT-4, GPT-4o, GPT-5, o1, o3, and more."

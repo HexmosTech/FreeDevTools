@@ -30,3 +30,26 @@ Make sure to follow the same format for any new sections you
 - https://pagespeed.web.dev/analysis
 - https://seositecheckup.com/
 - https://rankmath.com/tools/seo-analyzer/
+
+## Pull DBs to local repo
+
+Run `make pull-db` in FreeDevTools/frontend folder.
+
+1. List all LFS-tracked files
+
+```
+git lfs ls-files
+```
+
+2. Check whether the actual files (not pointers) are downloaded
+
+```
+git lfs status
+```
+
+3.
+
+```
+git lfs fetch --all
+git lfs ls-files --size
+```

@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CssInlinerForEmailSkeleton from "./_CssInlinerForEmailSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import ToolVideo from "@/components/tool/ToolVideo";
+import CopyButton from "@/components/ui/copy-button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import CssInlinerForEmailSkeleton from "./_CssInlinerForEmailSkeleton";
 
 // CSS Inlining utility functions
 const convertCSSToInline = (
@@ -255,7 +256,6 @@ const CssInlinerForEmail: React.FC = () => {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    font-family: Arial, sans-serif;
 }
 
 .title {
@@ -299,6 +299,9 @@ const CssInlinerForEmail: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="CSS Inliner for Email"
         description="Convert CSS styles to inline styles for email HTML instantly with our free CSS inliner. Perfect for email templates, newsletters, and ensuring cross-client compatibility with real-time conversion."

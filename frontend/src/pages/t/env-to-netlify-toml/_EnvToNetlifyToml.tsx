@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import EnvToNetlifyTomlSkeleton from "./_EnvToNetlifyTomlSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import CopyButton from "@/components/ui/copy-button";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,7 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import EnvToNetlifyTomlSkeleton from "./_EnvToNetlifyTomlSkeleton";
 
 // Environment context types for Netlify
 type ContextType = "production" | "deploy-preview" | "branch-deploy" | "dev";
@@ -158,6 +158,9 @@ DEBUG_MODE=false`;
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Env to Netlify TOML Converter"
         description="Convert .env files to Netlify TOML format instantly with our free online converter. Transform environment variables for Netlify deployment configuration with proper TOML syntax and validation."

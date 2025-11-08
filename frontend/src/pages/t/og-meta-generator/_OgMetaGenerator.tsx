@@ -10,83 +10,87 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import CopyButton from "@/components/ui/copy-button";
+import AdBanner from "../../../components/banner/AdBanner";
 
 const PAGE_TYPES = [
-	{ value: "website", label: "Website" },
-	{ value: "article", label: "Article" },
-	{ value: "book", label: "Book" },
-	{ value: "profile", label: "Profile" },
-	{ value: "music", label: "Music" },
-	{ value: "video", label: "Video" },
+  { value: "website", label: "Website" },
+  { value: "article", label: "Article" },
+  { value: "book", label: "Book" },
+  { value: "profile", label: "Profile" },
+  { value: "music", label: "Music" },
+  { value: "video", label: "Video" },
 ];
 
 function generateMetaTags({
-	pageType,
-	title,
-	description,
-	url,
-	image,
-	imageAlt,
-	twitterCard,
-	twitterSite,
-	twitterCreator,
+  pageType,
+  title,
+  description,
+  url,
+  image,
+  imageAlt,
+  twitterCard,
+  twitterSite,
+  twitterCreator,
 }: {
-	pageType: string;
-	title: string;
-	description: string;
-	url: string;
-	image: string;
-	imageAlt: string;
-	twitterCard: string;
-	twitterSite: string;
-	twitterCreator: string;
+  pageType: string;
+  title: string;
+  description: string;
+  url: string;
+  image: string;
+  imageAlt: string;
+  twitterCard: string;
+  twitterSite: string;
+  twitterCreator: string;
 }) {
-	let ogMeta = `<!-- og meta -->\n<meta property="og:type" value="${pageType}" />\n<meta property="og:title" value="${title}" />\n<meta property="og:description" value="${description}" />\n<meta property="og:url" value="${url}" />\n<meta property="og:image" value="${image}" />\n<meta property="og:image:alt" value="${imageAlt}" />`;
+  let ogMeta = `<!-- og meta -->\n<meta property="og:type" value="${pageType}" />\n<meta property="og:title" value="${title}" />\n<meta property="og:description" value="${description}" />\n<meta property="og:url" value="${url}" />\n<meta property="og:image" value="${image}" />\n<meta property="og:image:alt" value="${imageAlt}" />`;
 
-	if (pageType === "article") {
-		ogMeta += `\n<meta property="article:author" value="${twitterCreator}" />`;
-	} else if (pageType === "book") {
-		ogMeta += `\n<meta property="book:author" value="${twitterCreator}" />`;
-	} else if (pageType === "profile") {
-		ogMeta += `\n<meta property="profile:username" value="${twitterSite}" />`;
-	} else if (pageType === "music") {
-		ogMeta += `\n<meta property="music:musician" value="${twitterCreator}" />`;
-	} else if (pageType === "video") {
-		ogMeta += `\n<meta property="video:actor" value="${twitterCreator}" />`;
-	}
+  if (pageType === "article") {
+    ogMeta += `\n<meta property="article:author" value="${twitterCreator}" />`;
+  } else if (pageType === "book") {
+    ogMeta += `\n<meta property="book:author" value="${twitterCreator}" />`;
+  } else if (pageType === "profile") {
+    ogMeta += `\n<meta property="profile:username" value="${twitterSite}" />`;
+  } else if (pageType === "music") {
+    ogMeta += `\n<meta property="music:musician" value="${twitterCreator}" />`;
+  } else if (pageType === "video") {
+    ogMeta += `\n<meta property="video:actor" value="${twitterCreator}" />`;
+  }
 
-	let twitterMeta = `\n\n<!-- twitter meta -->\n<meta name="twitter:card" value="${twitterCard}" />\n<meta name="twitter:site" value="${twitterSite}" />\n<meta name="twitter:creator" value="${twitterCreator}" />\n<meta name="twitter:title" value="${title}" />\n<meta name="twitter:description" value="${description}" />\n<meta name="twitter:image" value="${image}" />\n<meta name="twitter:image:alt" value="${imageAlt}" />`;
+  let twitterMeta = `\n\n<!-- twitter meta -->\n<meta name="twitter:card" value="${twitterCard}" />\n<meta name="twitter:site" value="${twitterSite}" />\n<meta name="twitter:creator" value="${twitterCreator}" />\n<meta name="twitter:title" value="${title}" />\n<meta name="twitter:description" value="${description}" />\n<meta name="twitter:image" value="${image}" />\n<meta name="twitter:image:alt" value="${imageAlt}" />`;
 
-	return ogMeta + twitterMeta;
+  return ogMeta + twitterMeta;
 }
 
 const OgMetaGenerator: React.FC = () => {
-	const [meta, setMeta] = useState({
-		pageType: "website",
-		title: "",
-		description: "",
-		url: "",
-		image: "",
-		imageAlt: "",
-		twitterCard: "summary_large_image",
-		twitterSite: "",
-		twitterCreator: "",
-	});
-	const [loaded, setLoaded] = useState(false);
+  const [meta, setMeta] = useState({
+    pageType: "website",
+    title: "",
+    description: "",
+    url: "",
+    image: "",
+    imageAlt: "",
+    twitterCard: "summary_large_image",
+    twitterSite: "",
+    twitterCreator: "",
+  });
+  const [loaded, setLoaded] = useState(false);
 
-	useEffect(() => {
-		const timer = setTimeout(() => setLoaded(true), 100);
-		return () => clearTimeout(timer);
-	}, []);
+  useEffect(() => {
+    const timer = setTimeout(() => setLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
-	const handleMetaChange = (key: string, value: string) => {
-		setMeta((prev) => ({ ...prev, [key]: value }));
-	};
+  const handleMetaChange = (key: string, value: string) => {
+    setMeta((prev) => ({ ...prev, [key]: value }));
+  };
 
-	const metaTags = generateMetaTags(meta);
+  const metaTags = generateMetaTags(meta);
 
-	return (
+  return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Open Graph Meta Generator"
         description="Generate Open Graph and Twitter meta tags instantly. Customize page type, title, description, image, and more for perfect social sharing and SEO."

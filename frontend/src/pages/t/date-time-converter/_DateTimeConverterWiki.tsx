@@ -1,4 +1,4 @@
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
+
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import React from "react";
 function _DateTimeConverterWiki() {
   return (
     <div>
-      <ToolGridContainer className="xl:grid-cols-2 mt-0">
+      <div className="xl:grid-cols-2 mt-0 grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
         {/* Best Practices for Time Zones */}
         <Card className="tool-content-card-bg-grid">
           <CardHeader>
@@ -314,7 +314,7 @@ function _DateTimeConverterWiki() {
             </div>
           </CardContent>
         </Card>
-      </ToolGridContainer>
+      </div>
     </div>
   );
 }

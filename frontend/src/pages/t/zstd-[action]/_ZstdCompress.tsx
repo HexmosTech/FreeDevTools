@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import * as zstd from "@oneidentity/zstd-js";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
-import ZstdCompressSkeleton from "./_ZstdCompressSkeleton";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ToastProvider";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo"; // Assuming this component exists
-import { Download, UploadCloud, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import * as zstd from "@oneidentity/zstd-js";
+import { Cross2Icon, DownloadIcon, UploadIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import AdBanner from "../../../components/banner/AdBanner";
+import ZstdCompressSkeleton from "./_ZstdCompressSkeleton";
 
 const { ZstdInit } = zstd;
 
@@ -60,7 +60,7 @@ const ZstdCompress: React.FC = () => {
         const codec = await ZstdInit();
         setZstdApi(codec);
         setIsZstdReady(true);
-      } catch (err) {
+      } catch {
         setError("Failed to load compression library.");
         toast.error("Error: Could not initialize Zstd.");
       }
@@ -167,25 +167,28 @@ const ZstdCompress: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
- const handleTabChange = (value: string) => {
-   const newMode = value as Mode;
-   setMode(newMode);
-   handleClear();
-   if (newMode === "decompress") {
-     setToolName("Zstd Decompressor");
-     setToolDescription(
-       "Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required."
-     );
-   } else {
-     setToolName("Zstd Compressor");
-     setToolDescription(
-       "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
-     );
-   }
- };
+  const handleTabChange = (value: string) => {
+    const newMode = value as Mode;
+    setMode(newMode);
+    handleClear();
+    if (newMode === "decompress") {
+      setToolName("Zstd Decompressor");
+      setToolDescription(
+        "Decompress .zst files instantly using the Zstandard decompression tool. Quickly extract and restore compressed data with high speed and accuracy. Free online Zstd decompressor for developers and data analysts—no installation required."
+      );
+    } else {
+      setToolName("Zstd Compressor");
+      setToolDescription(
+        "Compress files instantly using the high-performance Zstandard (zstd) algorithm. Achieve fast, efficient, and lossless file compression online—ideal for developers and data analysts. No installation required."
+      );
+    }
+  };
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead name={toolName} description={toolDescription} />
 
       {!loaded ? (
@@ -202,7 +205,8 @@ const ZstdCompress: React.FC = () => {
               <TabsTrigger value="decompress">Decompress</TabsTrigger>
             </TabsList>
             <TabsContent value="compress">
-              <ToolGridContainer>
+              <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
+
                 {/* Compressor Input Card */}
                 <ToolCardWrapper>
                   <Card className="tool-card-bg-grid">
@@ -215,7 +219,7 @@ const ZstdCompress: React.FC = () => {
                         className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                       >
                         <input {...getInputProps()} />
-                        <UploadCloud className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" />
+                        <UploadIcon className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" width="40" height="40" />
                         {inputFile ? (
                           <p className="text-center text-slate-700 dark:text-slate-300">
                             {inputFile.name}{" "}
@@ -244,7 +248,7 @@ const ZstdCompress: React.FC = () => {
                           variant="outline"
                           disabled={isProcessing}
                         >
-                          <X className="w-4 h-4 mr-2" /> Clear
+                          <Cross2Icon className="w-4 h-4 mr-2" /> Clear
                         </Button>
                       </div>
                     </CardContent>
@@ -296,7 +300,7 @@ const ZstdCompress: React.FC = () => {
                         className="w-full"
                         disabled={!outputData || isProcessing}
                       >
-                        <Download className="w-4 h-4 mr-2" />
+                        <DownloadIcon className="w-4 h-4 mr-2" />
                         Download .zst File
                       </Button>
                       {error && (
@@ -307,10 +311,10 @@ const ZstdCompress: React.FC = () => {
                     </CardContent>
                   </Card>
                 </ToolCardWrapper>
-              </ToolGridContainer>
+              </div>
             </TabsContent>
             <TabsContent value="decompress">
-              <ToolGridContainer>
+              <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
                 {/* Decompressor Input Card */}
                 <ToolCardWrapper>
                   <Card className="tool-card-bg-grid">
@@ -323,7 +327,7 @@ const ZstdCompress: React.FC = () => {
                         className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                       >
                         <input {...getInputProps()} />
-                        <UploadCloud className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" />
+                        <UploadIcon className="w-10 h-10 mb-3 text-slate-500 dark:text-slate-400" width="40" height="40" />
                         {inputFile ? (
                           <p className="text-center text-slate-700 dark:text-slate-300">
                             {inputFile.name}{" "}
@@ -352,7 +356,7 @@ const ZstdCompress: React.FC = () => {
                           variant="outline"
                           disabled={isProcessing}
                         >
-                          <X className="w-4 h-4 mr-2" /> Clear
+                          <Cross2Icon className="w-4 h-4 mr-2" /> Clear
                         </Button>
                       </div>
                     </CardContent>
@@ -396,7 +400,7 @@ const ZstdCompress: React.FC = () => {
                         className="w-full"
                         disabled={!outputData || isProcessing}
                       >
-                        <Download className="w-4 h-4 mr-2" />
+                        <DownloadIcon className="w-4 h-4 mr-2" />
                         Download Decompressed File
                       </Button>
                       {error && (
@@ -407,7 +411,7 @@ const ZstdCompress: React.FC = () => {
                     </CardContent>
                   </Card>
                 </ToolCardWrapper>
-              </ToolGridContainer>
+              </div>
             </TabsContent>
           </Tabs>
 

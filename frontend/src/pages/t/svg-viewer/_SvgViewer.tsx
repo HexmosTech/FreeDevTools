@@ -1,27 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import SvgViewerSkeleton from "./_SvgViewerSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import CopyButton from "@/components/ui/copy-button";
+import { FileTextIcon, UploadIcon, DownloadIcon, EyeOpenIcon, MinusIcon, EnterFullScreenIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Upload,
-  FileText,
-  Eye,
-  Download,
-  Maximize2,
-  Minimize2,
-} from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import SvgViewerSkeleton from "./_SvgViewerSkeleton";
 // SVG Upload Component
 interface SvgUploadProps {
   onSvgSelect: (content: string) => void;
@@ -92,11 +86,10 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
   return (
     <div className="space-y-4">
       <div
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-          dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
-        }`}
+        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragActive
+          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+          : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
+          }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -112,7 +105,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         {selectedFile ? (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <FileText className="w-12 h-12 text-green-500" />
+              <FileTextIcon className="w-12 h-12 text-green-500" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -137,7 +130,7 @@ const SvgUpload: React.FC<SvgUploadProps> = ({
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <Upload className="w-12 h-12 text-slate-400" />
+              <UploadIcon className="w-12 h-12 text-slate-400" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -185,15 +178,17 @@ const SvgViewer: React.FC = () => {
 
     try {
       // Check if content contains SVG
-      if (!svgContent.toLowerCase().includes("<svg")) {
+      // Normalize input: unescape common HTML entities that may be pasted
+      const normalized = svgContent.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+
+      if (!normalized.toLowerCase().includes("<svg")) {
         setError("Input does not contain a valid SVG element");
         setSvgDataUrl("");
         setSvgDimensions({});
         return;
       }
-
       // Extract SVG dimensions
-      const svgMatch = svgContent.match(/<svg[^>]*>/i);
+      const svgMatch = normalized.match(/<svg[^>]*>/i);
       if (svgMatch) {
         const svgTag = svgMatch[0];
         const widthMatch = svgTag.match(/width\s*=\s*["']([^"']+)["']/i);
@@ -204,8 +199,15 @@ const SvgViewer: React.FC = () => {
         });
       }
 
+      // Ensure xmlns is present; some SVG snippets omit it which can cause rendering issues
+      let finalSvg = normalized;
+      const hasXmlns = /<svg[^>]*xmlns=["'][^"']+["']/i.test(finalSvg);
+      if (!hasXmlns) {
+        finalSvg = finalSvg.replace(/<svg(\s|>)/i, '<svg xmlns="http://www.w3.org/2000/svg"$1');
+      }
+
       // Create data URL
-      const blob = new Blob([svgContent], { type: "image/svg+xml" });
+      const blob = new Blob([finalSvg], { type: "image/svg+xml" });
       const reader = new FileReader();
 
       reader.onload = () => {
@@ -219,7 +221,8 @@ const SvgViewer: React.FC = () => {
       };
 
       reader.readAsDataURL(blob);
-    } catch (err) {
+    } catch (_err) {
+      console.log(_err);
       setError("Invalid SVG format");
       setSvgDataUrl("");
       setSvgDimensions({});
@@ -302,6 +305,9 @@ const SvgViewer: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="SVG Viewer"
         description="View and analyze SVG files instantly with our free online SVG viewer. Upload SVG files or paste SVG code to visualize, edit, and download. Real-time preview with dimension analysis."
@@ -388,7 +394,7 @@ Example:
                         onClick={downloadSvg}
                         className="flex items-center gap-2"
                       >
-                        <Download className="w-4 h-4" />
+                        <DownloadIcon className="w-4 h-4" />
                         Download
                       </Button>
                     )}
@@ -403,7 +409,7 @@ Example:
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <Eye className="w-5 h-5" />
+                      <EyeOpenIcon className="w-5 h-5" />
                       SVG Preview
                     </CardTitle>
                     {svgDataUrl && (
@@ -416,9 +422,9 @@ Example:
                           className="flex items-center gap-1"
                         >
                           {isFullscreen ? (
-                            <Minimize2 className="w-4 h-4" />
+                            <MinusIcon className="w-4 h-4" />
                           ) : (
-                            <Maximize2 className="w-4 h-4" />
+                            <EnterFullScreenIcon className="w-4 h-4" />
                           )}
                           {isFullscreen ? "Minimize" : "Fullscreen"}
                         </Button>
@@ -466,11 +472,10 @@ Example:
 
                       {/* SVG Display */}
                       <div
-                        className={`border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-white dark:bg-slate-900 overflow-auto ${
-                          isFullscreen
-                            ? "fixed inset-4 z-50 bg-white dark:bg-slate-900"
-                            : "max-h-96"
-                        }`}
+                        className={`border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-white dark:bg-slate-900 overflow-auto ${isFullscreen
+                          ? "fixed inset-4 z-50 bg-white dark:bg-slate-900"
+                          : "max-h-96"
+                          }`}
                       >
                         <div className="flex items-center justify-center min-h-[200px]">
                           <img
@@ -581,7 +586,7 @@ Example:
 
                   <div className="bg-slate-100 dark:bg-slate-700 rounded p-4 font-mono text-sm">
                     <div className="text-slate-600 dark:text-slate-400 mb-2">
-                      // Basic SVG Structure
+                      {"// Basic SVG Structure"}
                     </div>
                     <div className="text-slate-800 dark:text-slate-200">
                       <span className="text-purple-600 dark:text-purple-400">
@@ -589,11 +594,11 @@ Example:
                       </span>
                       <span className="text-blue-600 dark:text-blue-400">
                         {" "}
-                        width="100" height="100"
+                        width=&quot;100&quot; height=&quot;100&quot;
                       </span>
                       <span className="text-green-600 dark:text-green-400">
                         {" "}
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns=&quot;http://www.w3.org/2000/svg&quot;
                       </span>
                       <span className="text-purple-600 dark:text-purple-400">
                         &gt;
@@ -604,7 +609,7 @@ Example:
                       </span>
                       <span className="text-blue-600 dark:text-blue-400">
                         {" "}
-                        cx="50" cy="50" r="40" fill="blue"
+                        cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;40&quot; fill=&quot;blue&quot;
                       </span>
                       <span className="text-orange-600 dark:text-orange-400">
                         {" "}

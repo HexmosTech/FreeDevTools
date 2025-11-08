@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import LlamaTokenCounterSkeleton from "./_LlamaTokenCounterSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useRef, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import LlamaTokenCounterSkeleton from "./_LlamaTokenCounterSkeleton";
 
 const LLAMA_MODELS = {
   "llama-4": {
@@ -133,6 +133,9 @@ const LlamaTokenCounter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Llama Token Counter"
         description="Count tokens instantly for Meta Llama models. Get accurate token counts for Llama 3 and Llama 2 models. Estimate API costs, manage context limits, and optimize your prompts for Meta AI. Free, fast, and secure browser-based tool."

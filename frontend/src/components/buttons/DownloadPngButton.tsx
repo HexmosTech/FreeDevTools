@@ -135,17 +135,22 @@ const DownloadPngButton: React.FC<DownloadPngButtonProps> = ({ iconData }) => {
     <div className="inline-flex rounded overflow-hidden w-full">
       <button
         onClick={handleClick}
-        className="flex-1 px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors"
+        className="flex-1 px-2 sm:px-4 py-3 text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors"
       >
         <span className="hidden sm:inline">Download PNG</span>
         <span className="sm:hidden">PNG</span>
       </button>
       <div className="relative">
+        <label htmlFor="png-size-select" className="sr-only">
+          Select PNG size
+        </label>
         <select
+          id="png-size-select"
           ref={pngSizeSelectRef}
-          className="px-2 sm:px-3 py-3 text-xs sm:text-sm font-medium text-white bg-green-700 hover:bg-green-800 transition-colors appearance-none cursor-pointer border-l border-green-500 min-w-[60px] sm:min-w-[80px] focus:outline-none focus:ring-0 focus:border-green-500 h-full"
+          className="px-2 sm:px-3 py-3 text-xs sm:text-sm font-medium text-white bg-green-800 hover:bg-green-900 transition-colors appearance-none cursor-pointer border-l border-green-600 min-w-[60px] sm:min-w-[80px] focus:outline-none focus:ring-0 focus:border-green-600 h-full"
           defaultValue="512"
           style={{ minHeight: '48px' }}
+          aria-label="Select PNG size"
         >
           <option value="512">512px</option>
           <option value="256">256px</option>

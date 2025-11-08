@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ChmodCalculatorSkeleton from "./_ChmodCalculatorSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Terminal, Shield, User, Users, Globe, RefreshCw } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { GlobeIcon, PersonIcon, ReloadIcon } from "@radix-ui/react-icons";
+import React, { useEffect, useMemo, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import ChmodCalculatorSkeleton from "./_ChmodCalculatorSkeleton";
 
 // Types for chmod calculator
 type Scope = "read" | "write" | "execute";
@@ -160,13 +161,8 @@ const ChmodCalculator: React.FC = () => {
     toast.success("Reset to default permissions!");
   };
 
-  const handlePresetClick = (preset: Permissions, description: string) => {
-    setPermissions(preset);
-    toast.success(`Applied ${description} permissions!`);
-  };
-
   // Common permission presets
-  const presets = [
+  const _presets = [
     {
       name: "644",
       description: "Read/Write for owner, Read for group and public",
@@ -221,28 +217,31 @@ const ChmodCalculator: React.FC = () => {
     icon: React.ReactNode;
     description: string;
   }[] = [
-    {
-      group: "owner",
-      title: "Owner (u)",
-      icon: <User className="h-4 w-4" />,
-      description: "File owner",
-    },
-    {
-      group: "group",
-      title: "Group (g)",
-      icon: <Users className="h-4 w-4" />,
-      description: "File group",
-    },
-    {
-      group: "public",
-      title: "Others (o)",
-      icon: <Globe className="h-4 w-4" />,
-      description: "Everyone else",
-    },
-  ];
+      {
+        group: "owner",
+        title: "Owner (u)",
+        icon: <PersonIcon className="h-4 w-4" />,
+        description: "File owner",
+      },
+      {
+        group: "group",
+        title: "Group (g)",
+        icon: <PersonIcon className="h-4 w-4" />,
+        description: "File group",
+      },
+      {
+        group: "public",
+        title: "Others (o)",
+        icon: <GlobeIcon className="h-4 w-4" />,
+        description: "Everyone else",
+      },
+    ];
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Chmod Calculator"
         description="Calculate Unix file permissions instantly with our free online chmod calculator. Convert between octal, symbolic, and human-readable formats with real-time permission preview and command generation."
@@ -263,7 +262,7 @@ const ChmodCalculator: React.FC = () => {
                       File Permissions Matrix
                     </Label>
                     <Button onClick={handleReset} variant="outline" size="sm">
-                      <RefreshCw className="h-4 w-4 mr-1" />
+                      <ReloadIcon className="h-4 w-4 mr-1" />
                       Reset
                     </Button>
                   </div>
@@ -483,7 +482,7 @@ const ChmodCalculator: React.FC = () => {
                         <li className="flex items-start">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                           <span>
-                            <strong>Group (g):</strong> Users in the file's
+                            <strong>Group (g):</strong> Users in the file&apos;s
                             group
                           </span>
                         </li>
@@ -599,8 +598,8 @@ const ChmodCalculator: React.FC = () => {
                         Batch Operations
                       </h5>
                       <div className="bg-slate-100 dark:bg-slate-800 rounded p-3 font-mono text-sm">
-                        <div>find /path -type f -exec chmod 644 {} \;</div>
-                        <div>find /path -type d -exec chmod 755 {} \;</div>
+                        <div>find /path -type f -exec chmod 644 { } \;</div>
+                        <div>find /path -type d -exec chmod 755 { } \;</div>
                       </div>
                       <p className="text-xs text-slate-600 dark:text-slate-400">
                         Set permissions recursively for files and directories
@@ -613,7 +612,7 @@ const ChmodCalculator: React.FC = () => {
                     <p className="text-sm text-amber-800 dark:text-amber-200">
                       <strong>⚠️ Security Tip:</strong> Never use 777
                       permissions unless absolutely necessary. Start with
-                      restrictive permissions (600/700) and add only what's
+                      restrictive permissions (600/700) and add only what&apos;s
                       needed. Use
                       <code className="mx-1 px-1 py-0.5 bg-amber-100 dark:bg-amber-900 rounded">
                         ls -la

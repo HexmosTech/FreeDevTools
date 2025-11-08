@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
-import ToolBody from "@/components/tool/ToolBody";
-import ToolHead from "@/components/tool/ToolHead";
-import ToolContainer from "@/components/tool/ToolContainer";
+import toast from "@/components/ToastProvider";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ToolGridContainer from "@/components/tool/ToolGridContainer";
-import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import CopyButton from "@/components/ui/copy-button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
 import JsonToXmlSkeleton from "./_JsonToXmlSkeleton";
 
 const JsonToXml: React.FC = () => {
@@ -70,7 +69,10 @@ const JsonToXml: React.FC = () => {
       {!loaded ? (
         <JsonToXmlSkeleton />
       ) : (
-        <ToolGridContainer>
+        <div className="grid grid-cols-1 gap-x-8 gap-y-2 max-w-[1600px] mx-auto">
+          <div className="mb-16 mt-[74px]">
+            <AdBanner />
+          </div>
           <ToolHead
             name="JSON to XML Converter"
             description="Convert JSON data to XML format instantly. Fast, secure, and accurate conversion for developers and data analysts. No installation required."
@@ -144,7 +146,7 @@ const JsonToXml: React.FC = () => {
               </ul>
             </Card>
           </ToolContentCardWrapper>
-        </ToolGridContainer>
+        </div>
       )}
     </ToolContainer>
   );

@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import ImageToBase64Skeleton from "./_ImageToBase64Skeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
-import { Upload, Image as ImageIcon, X } from "lucide-react";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Cross2Icon, ImageIcon, UploadIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import ImageToBase64Skeleton from "./_ImageToBase64Skeleton";
 // Image Upload Component
 interface ImageUploadProps {
   onFileSelect: (file: File) => void;
@@ -78,11 +79,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       </Label>
 
       <div
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-          dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
-        }`}
+        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragActive
+          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+          : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500"
+          }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -117,14 +117,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               }}
               className="mt-2"
             >
-              <X className="w-4 h-4 mr-1" />
+              <Cross2Icon className="w-4 h-4 mr-1" />
               Remove
             </Button>
           </div>
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-center">
-              <Upload className="w-12 h-12 text-slate-400" />
+              <UploadIcon className="w-12 h-12 text-slate-400" width="48" height="48" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -192,6 +192,9 @@ const ImageToBase64: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Image to Base64 Converter"
         description="Convert images to Base64 format instantly. Upload your image and get Base64 string, HTML img tag, and CSS background-image code. Free, fast, and secure - everything runs in your browser."

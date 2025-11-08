@@ -5,10 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 	"regexp"
+	jargon_stemmer "search-index/jargon-stemmer"
 	"sort"
 	"strings"
+	"time"
 )
 
 func generateEmojisData(ctx context.Context) ([]EmojiData, error) {
@@ -62,9 +65,12 @@ func processEmojiFile(filePath string) (*EmojiData, error) {
 		return nil, fmt.Errorf("failed to parse emoji JSON: %w", err)
 	}
 
-	// Extract folder name (slug)
-	folderPath := filepath.Dir(filePath)
-	slug := filepath.Base(folderPath)
+	// Use slug from JSON data (not folder name)
+	slug := strings.TrimSpace(emojiData.Slug)
+	if slug == "" {
+		// Skip emojis without a valid slug (same as frontend logic)
+		return nil, nil
+	}
 
 	// Extract title using the same logic as Python script
 	title := emojiData.Title
@@ -104,11 +110,12 @@ func processEmojiFile(filePath string) (*EmojiData, error) {
 		description = fmt.Sprintf("Learn about the %s emoji %s. Find meanings, shortcodes, and usage information.", title, code)
 	}
 
-	// Create the path
-	path := fmt.Sprintf("/freedevtools/emoji/%s/", slug)
+	// Create the path - use /emojis/ (plural) and the slug from JSON
+	path := fmt.Sprintf("/freedevtools/emojis/%s/", slug)
 
-	// Generate ID
-	id := fmt.Sprintf("emojis-%s", slug)
+	// Generate ID - sanitize to only allow alphanumeric, hyphens, and underscores
+	sanitizedSlug := sanitizeID(slug)
+	id := fmt.Sprintf("emojis-%s", sanitizedSlug)
 
 	emojiDataResult := &EmojiData{
 		ID:          id,
@@ -150,4 +157,47 @@ func findNestedDefinition(emojiData EmojiJSONData) string {
 		}
 	}
 	return ""
+}
+
+
+func RunEmojisOnly(ctx context.Context, start time.Time) {
+	fmt.Println("😀 Generating emojis data only...")
+
+	emojis, err := generateEmojisData(ctx)
+	if err != nil {
+		log.Fatalf("❌ Emojis data generation failed: %v", err)
+	}
+
+	// Save to JSON
+	if err := saveToJSON("emojis.json", emojis); err != nil {
+		log.Fatalf("Failed to save emojis data: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 Emojis data generation completed in %v\n", elapsed)
+	fmt.Printf("📊 Generated %d emojis\n", len(emojis))
+
+	// Show sample data
+	fmt.Println("\n📝 Sample emojis:")
+	for i, emoji := range emojis {
+		if i >= 10 { // Show first 10
+			fmt.Printf("  ... and %d more emojis\n", len(emojis)-10)
+			break
+		}
+		fmt.Printf("  %d. %s %s (ID: %s)\n", i+1, emoji.Name, emoji.Code, emoji.ID)
+		if emoji.Description != "" {
+			fmt.Printf("     Description: %s\n", truncateString(emoji.Description, 80))
+		}
+		fmt.Printf("     Path: %s\n", emoji.Path)
+		fmt.Println()
+	}
+
+	fmt.Printf("💾 Data saved to output/emojis.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/emojis.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
 }

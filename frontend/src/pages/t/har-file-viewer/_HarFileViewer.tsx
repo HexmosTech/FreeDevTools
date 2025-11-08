@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import HarFileViewerSkeleton from "./_HarFileViewerSkeleton";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -25,7 +23,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import ToolVideo from "@/components/tool/ToolVideo";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import HarFileViewerSkeleton from "./_HarFileViewerSkeleton";
 
 // HAR file types and interfaces
 interface HarEntry {
@@ -232,6 +232,9 @@ const HarFileViewer: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="HAR File Viewer"
         description="Analyze HTTP Archive (HAR) files instantly with our free online HAR viewer. Debug network traffic, analyze web performance, and examine HTTP requests with detailed waterfall charts and table views."
@@ -252,11 +255,10 @@ const HarFileViewer: React.FC = () => {
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
-                  className={`relative flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed rounded-lg p-6 transition-colors ${
-                    dragActive
+                  className={`relative flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed rounded-lg p-6 transition-colors ${dragActive
                       ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                       : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50"
-                  }`}
+                    }`}
                 >
                   <input
                     type="file"
@@ -397,9 +399,8 @@ const HarFileViewer: React.FC = () => {
                           {filteredEntries.map((entry, index) => (
                             <TableRow
                               key={index}
-                              className={`cursor-pointer ${
-                                expandedEntry === index ? "bg-muted/50" : ""
-                              }`}
+                              className={`cursor-pointer ${expandedEntry === index ? "bg-muted/50" : ""
+                                }`}
                               onClick={() =>
                                 setExpandedEntry(
                                   expandedEntry === index ? null : index

@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 	"regexp"
+	jargon_stemmer "search-index/jargon-stemmer"
 	"sort"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
@@ -16,7 +19,7 @@ func generateTLDRData(ctx context.Context) ([]TLDRData, error) {
 	fmt.Println("📚 Generating TLDR data...")
 
 	// Path to TLDR markdown files
-	basePath := "../frontend/src/pages/markdown_pages/tldr"
+	basePath := "../frontend/data/tldr"
 
 	files, err := filepath.Glob(filepath.Join(basePath, "**", "*.md"))
 	if err != nil {
@@ -88,9 +91,12 @@ func processTLDRFile(filePath string) (*TLDRData, error) {
 		path = path + "/"
 	}
 
+	// Format the name with first letter capitalized
+	formattedName := capitalizeFirstLetter(frontmatter.Name)
+
 	tldrData := &TLDRData{
 		ID:          id,
-		Name:        frontmatter.Name,
+		Name:        formattedName,
 		Description: frontmatter.Description,
 		Path:        path,
 		Category:    "tldr", // Always set to "tldr" for all TLDR entries
@@ -102,11 +108,67 @@ func processTLDRFile(filePath string) (*TLDRData, error) {
 func generateIDFromPath(path string) string {
 	// Remove the base path and convert to ID format
 	cleanPath := strings.Replace(path, "/freedevtools/tldr/", "", 1)
+	
+	// Remove trailing slash if present
+	cleanPath = strings.TrimSuffix(cleanPath, "/")
+	
+	// Replace remaining slashes with dashes
 	cleanPath = strings.Replace(cleanPath, "/", "-", -1)
 
 	// Replace any invalid characters with underscores
 	reg := regexp.MustCompile(`[^a-zA-Z0-9\-_]`)
 	cleanPath = reg.ReplaceAllString(cleanPath, "_")
 
-	return fmt.Sprintf("tldr-%s", cleanPath)
+	return fmt.Sprintf("tldr-%s", sanitizeID(cleanPath))
+}
+
+
+func capitalizeFirstLetter(name string) string {
+	if len(name) == 0 {
+		return name
+	}
+	return strings.ToUpper(string(name[0])) + strings.ToLower(name[1:])
+}
+
+
+func RunTLDROnly(ctx context.Context, start time.Time) {
+	fmt.Println("📚 Generating TLDR data only...")
+
+	tldr, err := generateTLDRData(ctx)
+	if err != nil {
+		log.Fatalf("❌ TLDR data generation failed: %v", err)
+	}
+
+	// Save to JSON
+	if err := saveToJSON("tldr_pages.json", tldr); err != nil {
+		log.Fatalf("Failed to save TLDR data: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n🎉 TLDR data generation completed in %v\n", elapsed)
+	fmt.Printf("📊 Generated %d TLDR pages\n", len(tldr))
+
+	// Show sample data
+	fmt.Println("\n📝 Sample TLDR pages:")
+	for i, page := range tldr {
+		if i >= 10 { // Show first 10
+			fmt.Printf("  ... and %d more pages\n", len(tldr)-10)
+			break
+		}
+		fmt.Printf("  %d. %s (ID: %s, Category: %s)\n", i+1, page.Name, page.ID, page.Category)
+		if page.Description != "" {
+			fmt.Printf("     Description: %s\n", truncateString(page.Description, 80))
+		}
+		fmt.Printf("     Path: %s\n", page.Path)
+		fmt.Println()
+	}
+
+	fmt.Printf("💾 Data saved to output/tldr_pages.json\n")
+	
+	// Automatically run stem processing
+	fmt.Println("\n🔍 Running stem processing...")
+	if err := jargon_stemmer.ProcessJSONFile("output/tldr_pages.json"); err != nil {
+		log.Fatalf("❌ Stem processing failed: %v", err)
+	}
+	fmt.Println("✅ Stem processing completed!")
 }

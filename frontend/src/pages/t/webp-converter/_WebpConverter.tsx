@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import WebpConverterSkeleton from "./_WebpConverterSkeleton";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FileImageIcon, DownloadIcon, TrashIcon, Upload } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
+import { DownloadIcon, FileIcon, TrashIcon, UploadIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import WebpConverterSkeleton from "./_WebpConverterSkeleton";
 
 // WebP conversion utilities
 const MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB per file
@@ -334,6 +335,9 @@ const WebpConverter: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="WebP Converter"
         description="Convert images to WebP format instantly with our free online converter. Upload JPG, PNG, GIF images and convert to WebP with adjustable quality settings. Batch processing and download support included."
@@ -356,6 +360,14 @@ const WebpConverter: React.FC = () => {
                     onClick={() =>
                       document.getElementById("file-upload")?.click()
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        document.getElementById("file-upload")?.click();
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                     onDragOver={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -372,7 +384,7 @@ const WebpConverter: React.FC = () => {
                       }
                     }}
                   >
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <UploadIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" width="48" height="48" />
                     <div className="space-y-2">
                       <p className="text-sm font-medium">
                         Drag & drop images here, or click to select
@@ -397,6 +409,8 @@ const WebpConverter: React.FC = () => {
                   <div
                     className="space-y-4"
                     onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    role="presentation"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -426,10 +440,12 @@ const WebpConverter: React.FC = () => {
                           key={item.id}
                           className="flex items-center justify-between p-3 border rounded-lg bg-muted/30"
                           onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          role="presentation"
                         >
                           <div className="flex items-center min-w-0 flex-1">
                             <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded flex items-center justify-center mr-3">
-                              <FileImageIcon className="h-4 w-4 text-primary" />
+                              <FileIcon className="h-4 w-4 text-primary" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="font-medium text-sm truncate">
@@ -592,7 +608,7 @@ const WebpConverter: React.FC = () => {
                         <div className="text-green-600 font-medium">
                           {formatFileSize(
                             conversionStats.totalOriginal -
-                              conversionStats.totalWebP
+                            conversionStats.totalWebP
                           )}{" "}
                           saved
                         </div>

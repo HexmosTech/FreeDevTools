@@ -15,12 +15,18 @@ export const GET: APIRoute = async ({ site }) => {
   // Get all categories from the metadata
   const categories = Object.keys(metadata.categories);
 
-  // Create sitemap index for categories
+  // Calculate total pages for MCP directory pagination as
+
+  const totalCategories = categories.length;
+  const itemsPerPage = 30;
+  const totalPages = Math.ceil(totalCategories / itemsPerPage);
+
+  // Create sitemap index - MCP pages sitemap + category sitemaps
   const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>${site}/mcp/</loc>
+    <loc>${site}/mcp-pages/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
   ${categories

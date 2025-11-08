@@ -1,31 +1,22 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
-import YamlToTomlSkeleton from "./_YamlToTomlSkeleton";
-import CopyButton from "@/components/ui/copy-button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import { toast } from "@/components/ToastProvider";
+import CopyButton from "@/components/ui/copy-button";
+import React, { useEffect, useState } from "react";
 import { parse as parseYaml } from "yaml";
+import AdBanner from "../../../components/banner/AdBanner";
+import YamlToTomlSkeleton from "./_YamlToTomlSkeleton";
 
 // Browser-compatible TOML stringifier
 const stringifyToml = (obj: any, depth = 0): string => {
@@ -205,6 +196,9 @@ const YamlToToml: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="YAML to TOML Converter"
         description="Convert YAML to TOML format instantly. Paste your YAML and get valid TOML output for configuration files, development, and deployment."

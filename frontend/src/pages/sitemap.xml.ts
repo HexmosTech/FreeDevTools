@@ -30,10 +30,7 @@ export const GET: APIRoute = async ({ site }) => {
     <loc>${site}/emojis/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
-  <sitemap>
-    <loc>${site}/cars/sitemap.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
+
   <sitemap>
     <loc>${site}/mcp/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
@@ -47,3 +44,8 @@ export const GET: APIRoute = async ({ site }) => {
     },
   });
 };
+
+// <sitemap>
+// <loc>${site}/cars/sitemap.xml</loc>
+// <lastmod>${now}</lastmod>
+// </sitemap>

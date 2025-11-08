@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import CharacterCountSkeleton from "./_CharacterCountSkeleton";
+import ToolHead from "@/components/tool/ToolHead";
 import ToolVideo from "@/components/tool/ToolVideo";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import CharacterCountSkeleton from "./_CharacterCountSkeleton";
 
 const CharacterCount: React.FC = () => {
   const [text, setText] = useState("");
@@ -24,6 +25,9 @@ const CharacterCount: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="Character Count"
         description="Count characters, words, lines, and byte size instantly."

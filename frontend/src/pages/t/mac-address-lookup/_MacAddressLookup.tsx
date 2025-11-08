@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
-import ToolContainer from "@/components/tool/ToolContainer";
-import ToolHead from "@/components/tool/ToolHead";
+import toast from "@/components/ToastProvider";
 import ToolBody from "@/components/tool/ToolBody";
 import ToolCardWrapper from "@/components/tool/ToolCardWrapper";
+import ToolContainer from "@/components/tool/ToolContainer";
 import ToolContentCardWrapper from "@/components/tool/ToolContentCardWrapper";
-import MacAddressLookupSkeleton from "./_MacAddressLookupSkeleton";
-import CopyButton from "@/components/ui/copy-button";
-import { toast } from "@/components/ToastProvider";
+import ToolHead from "@/components/tool/ToolHead";
+import ToolVideo from "@/components/tool/ToolVideo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import CopyButton from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import ToolVideo from "@/components/tool/ToolVideo";
+import { Label } from "@/components/ui/label";
+import React, { useEffect, useState } from "react";
+import AdBanner from "../../../components/banner/AdBanner";
+import MacAddressLookupSkeleton from "./_MacAddressLookupSkeleton";
 
 // Real-time MAC address vendor lookup using public APIs
 interface LookupResult {
@@ -266,6 +267,9 @@ const MacAddressLookup: React.FC = () => {
 
   return (
     <ToolContainer>
+      <div className="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
       <ToolHead
         name="MAC Address Lookup"
         description="Lookup MAC address vendor information instantly with our free online MAC address lookup tool. Identify device manufacturer, organization, and network details from MAC addresses."

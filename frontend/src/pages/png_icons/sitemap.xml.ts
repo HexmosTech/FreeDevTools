@@ -1,20 +1,20 @@
-import type { APIRoute } from "astro";
+import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ site, params }) => {
-  const { glob } = await import("glob");
-  const path = await import("path");
+  const { glob } = await import('glob');
+  const path = await import('path');
 
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
   // Get all SVG files
-  const svgFiles = await glob("**/*.svg", { cwd: "./public/svg_icons" });
+  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
 
   // Map files to sitemap URLs with image info
   const urls = svgFiles.map((file) => {
     const parts = file.split(path.sep);
-    const name = parts.pop()!.replace(".svg", "");
-    const category = parts.pop() || "general";
+    const name = parts.pop()!.replace('.svg', '');
+    const category = parts.pop() || 'general';
 
     return `
       <url>
@@ -49,29 +49,31 @@ export const GET: APIRoute = async ({ site, params }) => {
     const index = parseInt(params.index, 10) - 1; // 1-based: /sitemap-1.xml
     const chunk = sitemapChunks[index];
 
-    if (!chunk) return new Response("Not Found", { status: 404 });
+    if (!chunk) return new Response('Not Found', { status: 404 });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
     <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  ${chunk.join("\n")}
+  ${chunk.join('\n')}
 </urlset>`;
-
 
     return new Response(xml, {
       headers: {
-        "Content-Type": "application/xml",
-        "Cache-Control": "public, max-age=3600",
+        'Content-Type': 'application/xml',
+        'Cache-Control': 'public, max-age=3600',
       },
     });
   }
 
-  // Otherwise, serve sitemap index
   const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
       <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
 
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${site}/png_icons_pages/sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
   ${sitemapChunks
     .map(
       (_, i) => `
@@ -80,13 +82,13 @@ export const GET: APIRoute = async ({ site, params }) => {
       <lastmod>${now}</lastmod>
     </sitemap>`
     )
-    .join("\n")}
+    .join('\n')}
 </sitemapindex>`;
 
   return new Response(indexXml, {
     headers: {
-      "Content-Type": "application/xml",
-      "Cache-Control": "public, max-age=3600",
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600',
     },
   });
 };
