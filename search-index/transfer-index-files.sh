@@ -3,7 +3,7 @@
 set -e  # Exit on any error
 
 # Configuration - hardcoded for consistency
-REMOTE_HOST="nats03-do"
+REMOTE_HOST="master-do"
 REMOTE_USER="ubuntu"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOCAL_DIR="$SCRIPT_DIR/output"
