@@ -488,6 +488,10 @@ You can track the status,logs or progress of indexing from meilisearch-ui(https:
 
 ## Updating Meilisearch search API key
 
+IMPORTANT:
+
+**Never expose the meilisearch MASTER API KEY in the frontend code**
+
 ### How to get new search API key
 
 prerequisite: you need meilisearch master key, ask around in group
