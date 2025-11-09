@@ -3,6 +3,7 @@ export interface Icon {
   cluster: string;
   name: string;
   base64: string;
+  title: string | null;
   description: string;
   usecases: string;
   synonyms: string[]; // JSON array stored as TEXT
