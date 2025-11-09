@@ -51,6 +51,19 @@ export interface EmojiImageVariants {
   'high_contrast'?: string;
 }
 
+export const categoryIconMap: Record<string, string> = {
+  "Smileys & Emotion": "😀",
+  "People & Body": "👤",
+  "Animals & Nature": "🐶",
+  "Food & Drink": "🍎",
+  "Travel & Places": "✈️",
+  "Activities": "⚽",
+  "Objects": "📱",
+  "Symbols": "❤️",
+  "Flags": "🏁",
+  "Other": "❓"
+};
+
 let emojiCache: EmojiData[] | null = null;
 let slugToFolderPath: Record<string, string> | null = null;
 
@@ -272,11 +285,14 @@ export function getEmojisByCategory(
 
 export function getEmojiCategories(): string[] {
   const allEmojis = getAllEmojis();
+  const validCategories = Object.keys(categoryIconMap);
   const categories = new Set<string>();
 
   for (const emoji of allEmojis) {
-    // In new schema, category is top-level 'category' string
-    const category = emoji.category?.trim() || 'Other';
+    const rawCategory = emoji.category?.trim();
+    const category = validCategories.includes(rawCategory)
+      ? rawCategory
+      : "Other";
     categories.add(category);
   }
 
