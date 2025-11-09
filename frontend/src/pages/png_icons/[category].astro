@@ -24,86 +24,24 @@ export async function getStaticPaths() {
 
 const { category } = Astro.params;
 
-// Function to get random content based on category name
-function getPngCategoryContent(categoryName: string) {
-  // Simple hash function to deterministically select variant based on category name
-  function hashString(str: string): number {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    return Math.abs(hash);
-  }
+// Get cluster data from database
+const clusterData = getClusterByName(category);
 
-  const hash = hashString(categoryName);
-  const aboutIndex = hash % 5;
-  const listicleIndex = (hash >> 8) % 5; // Use different part of hash for listicle
-
-  const aboutVariants = [
-    `PNG (Portable Network Graphics) icons are raster images perfect for web design, presentations, and applications. These ${categoryName} PNG icons are ready-to-use with transparent backgrounds, making them ideal for overlaying on any design. Download high-quality ${categoryName} PNG icons instantly, no conversion needed.`,
-    `Discover professional ${categoryName} PNG icons designed for modern digital projects. These raster graphics feature transparent backgrounds and high resolution, ensuring crisp visuals at any size. Perfect for websites, mobile apps, and marketing materials. Get ${categoryName} PNG icons ready to download immediately.`,
-    `Enhance your projects with premium ${categoryName} PNG icons. These Portable Network Graphics files offer lossless compression and alpha channel transparency, making them versatile for any design context. Browse our collection of ${categoryName} PNG icons and download instantly without registration.`,
-    `Our ${categoryName} PNG icon collection provides high-quality raster graphics optimized for digital use. Each icon features a transparent background and is optimized for web performance. Whether you're building websites, apps, or presentations, these ${categoryName} PNG icons are ready to use right away.`,
-    `Get access to professionally crafted ${categoryName} PNG icons with full transparency support. These raster images are perfect for designers and developers who need pixel-perfect graphics. Download ${categoryName} PNG icons in high resolution, compatible with all major design tools and platforms.`,
-  ];
-
-  const listicleVariants = [
-    [
-      'Transparent backgrounds for easy integration',
-      'High-quality raster format perfect for web use',
-      'No conversion needed - ready to use immediately',
-      'Compatible with all design software and browsers',
-    ],
-    [
-      'Lossless compression maintains image quality',
-      'Alpha channel transparency supports complex overlays',
-      'Optimized file sizes for faster page loads',
-      'Works seamlessly across all platforms and devices',
-    ],
-    [
-      'Pixel-perfect graphics at any display size',
-      'No vector conversion required - use as-is',
-      'Ideal for web graphics and digital marketing',
-      'Supports millions of colors for rich visuals',
-    ],
-    [
-      'Instant download without registration or signup',
-      'Professional quality suitable for commercial use',
-      'Transparent backgrounds enable flexible design',
-      'Compatible with Photoshop, Figma, and other tools',
-    ],
-    [
-      'High-resolution images for crisp displays',
-      'Ready-to-use format saves time and effort',
-      'Perfect for icons, logos, and UI elements',
-      'Free to use in personal and commercial projects',
-    ],
-  ];
-
-  return {
-    about: aboutVariants[aboutIndex],
-    listicle: listicleVariants[listicleIndex],
-  };
+if (!clusterData) {
+  return Astro.redirect('/freedevtools/png_icons/');
 }
 
 async function getCategoryIcons() {
   // Get icons from SQLite database
   // The category parameter is the cluster display name (from cluster.name in cluster_svg.json)
   // Look up cluster by display name to get the source_folder (actual folder name used in icon table)
-  const clusterData = getClusterByName(category);
-
-  if (!clusterData) {
-    return [];
-  }
-
   // The icon table uses cluster key (folder name = source_folder), not display name
   // Use source_folder to query icons
-  const dbIcons = getIconsByCluster(clusterData.source_folder || category);
+  // clusterData is guaranteed to exist due to check above
+  const dbIcons = getIconsByCluster(clusterData!.source_folder || category!);
 
   const icons = dbIcons.map((icon) => {
-    const iconName = icon.name.replace('.svg', '');
+    const iconName = icon.name.replace('.png', '');
 
     return {
       name: iconName,
@@ -114,6 +52,7 @@ async function getCategoryIcons() {
       license: 'MIT',
       url: `/freedevtools/png_icons/${category}/${iconName}/`,
       base64: icon.base64,
+      img_alt: icon.img_alt,
     };
   });
 
@@ -123,8 +62,21 @@ async function getCategoryIcons() {
 const categoryIcons = await getCategoryIcons();
 const totalIcons = categoryIcons.length;
 
-// Get randomized content for this category
-const pngContent = getPngCategoryContent(category);
+// Use database content for about and why_choose_us
+// Fallback to default content if not available in database
+const aboutContent =
+  clusterData.about ||
+  `Our ${category} PNG icon collection provides high-quality raster graphics optimized for digital use. Each icon features a transparent background and is optimized for web performance. Whether you're building websites, apps, or presentations, these ${category} PNG icons are ready to use right away.`;
+
+const whyChooseUsContent =
+  clusterData.why_choose_us && clusterData.why_choose_us.length > 0
+    ? clusterData.why_choose_us
+    : [
+        'Transparent backgrounds for easy integration',
+        'High-quality raster format perfect for web use',
+        'No conversion needed - ready to use immediately',
+        'Compatible with all design software and browsers',
+      ];
 
 // Breadcrumb data
 const breadcrumbItems = [
@@ -137,22 +89,26 @@ const breadcrumbItems = [
 <BaseLayout
   name={`${category.charAt(0).toUpperCase() + category.slice(1)} PNG Icons`}
   path={`/freedevtools/png_icons/${category}`}
-  title={`Free ${category} PNG Icons | Online Free DevTools by Hexmos`}
-  description={`Browse & download free ${category} PNG icons instantly. ${totalIcons} icons available.`}
+  title={clusterData.title ||
+    `Free ${category} PNG Icons | Online Free DevTools by Hexmos`}
+  description={clusterData.description ||
+    `Browse & download free ${category} PNG icons instantly. ${totalIcons} icons available.`}
   canonical={`https://hexmos.com/freedevtools/png_icons/${category}/`}
   showHeader={true}
   totalItems={totalIcons}
   category={category}
   partOf="PNG Icons"
   partOfUrl="https://hexmos.com/freedevtools/png_icons/"
-  keywords={[
-    category,
-    'png icons',
-    'raster images',
-    'transparent png',
-    'web graphics',
-    'free icons',
-  ]}
+  keywords={clusterData.keywords && clusterData.keywords.length > 0
+    ? clusterData.keywords
+    : [
+        category,
+        'png icons',
+        'raster images',
+        'transparent png',
+        'web graphics',
+        'free icons',
+      ]}
 >
   <ToolContainer>
     <div id={`png-icon-ad-banner-${category}`} class="mb-16 mt-[74px]">
@@ -174,13 +130,14 @@ const breadcrumbItems = [
           categoryIcons.map((icon) => {
             const iconName = icon.name
               .replace(/_/g, ' ')
+              .replace('.svg', '')
               .replace(/\b\w/g, (l: string) => l.toUpperCase());
 
             return (
               <a
                 href={icon.url}
                 class="bg-white rounded-lg p-4 cursor-pointer hover:bg-slate-100 border border-white hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md"
-                title={iconName + 'PNG'}
+                title={iconName + ' PNG Icon'}
               >
                 <div class="flex flex-col items-center text-center">
                   <div class="w-24 h-24 flex items-center justify-center">
@@ -190,7 +147,10 @@ const breadcrumbItems = [
                     >
                       <img
                         src={`data:image/png;base64,${icon.base64}`}
-                        alt={`${iconName} PNG icon in ${category} category`}
+                        alt={
+                          icon.img_alt ||
+                          `${iconName} PNG icon in ${category} category`
+                        }
                         class="w-20 h-20 object-contain"
                         loading="lazy"
                       />
@@ -203,36 +163,104 @@ const breadcrumbItems = [
         }
       </div>
     </div>
-    <!-- Unique informational content about PNG icons -->
-    <div
-      id={`png-icon-about-section-${category}`}
-      class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
-    >
-      <h2 id={`png-icon-about-section-title-${category}`} class="mb-2">
-        About PNG Icons
-      </h2>
-      <p>
-        {pngContent.about}
-      </p>
-    </div>
+    <!-- Practical Application section -->
+    {
+      clusterData.practical_application && (
+        <div
+          id={`png-icon-practical-application-section-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3
+            id={`png-icon-practical-application-section-title-${category}`}
+            class="mb-3"
+          >
+            Practical Application
+          </h3>
+          <p>{clusterData.practical_application}</p>
+        </div>
+      )
+    }
 
-    <!-- PNG-specific features section -->
-    <div
-      id={`png-icon-features-section-${category}`}
-      class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-    >
-      <h3
-        id={`png-icon-features-section-title-${category}`}
-        class="text-md font-semibold mb-3"
-      >
-        Why Choose our PNG Icons?
-      </h3>
-      <ul
-        class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300"
-      >
-        {pngContent.listicle.map((item) => <li>{item}</li>)}
-      </ul>
-    </div>
+    <!-- Unique informational content about PNG icons -->
+    {
+      aboutContent && (
+        <div
+          id={`png-icon-about-section-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3 id={`png-icon-about-section-title-${category}`} class="mb-3">
+            About {category.charAt(0).toUpperCase() + category.slice(1)} PNG
+            Icons
+          </h3>
+          <p>{aboutContent}</p>
+        </div>
+      )
+    }
+
+    <!-- Why Choose Us section -->
+    {
+      whyChooseUsContent && whyChooseUsContent.length > 0 && (
+        <div
+          id={`png-icon-features-section-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3 id={`png-icon-features-section-title-${category}`} class="mb-3">
+            Why Choose our PNG Icons?
+          </h3>
+          <ul class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300">
+            {whyChooseUsContent.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    <!-- Alternative Terms section -->
+    {
+      clusterData.alternative_terms &&
+        clusterData.alternative_terms.length > 0 && (
+          <div
+            id={`png-icon-alternative-terms-section-${category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3
+              id={`png-icon-alternative-terms-section-title-${category}`}
+              class="mb-3"
+            >
+              Alternative Terms
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {clusterData.alternative_terms.map((term) => (
+                <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
+                  {term}
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+    }
+
+    <!-- Tags section -->
+    {
+      clusterData.tags && clusterData.tags.length > 0 && (
+        <div
+          id={`png-icon-tags-section-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3 id={`png-icon-tags-section-title-${category}`} class="mb-3">
+            Tags
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            {clusterData.tags.map((tag) => (
+              <p class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
+                {tag}
+              </p>
+            ))}
+          </div>
+        </div>
+      )
+    }
     <!-- Credits Section -->
     <div
       id={`png-icon-credits-section-${category}`}

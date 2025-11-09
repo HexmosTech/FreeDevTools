@@ -3,6 +3,7 @@ export interface Icon {
   cluster: string;
   name: string;
   base64: string;
+  title: string;
   description: string;
   usecases: string;
   synonyms: string[]; // JSON array stored as TEXT
@@ -11,10 +12,10 @@ export interface Icon {
   emotional_cues: string;
   enhanced: number; // 0 or 1 → convert to boolean if needed
   img_alt: string;
-  ai_image_alt_generated: number; // 0 or 1
 }
 
 export interface Cluster {
+  id: number;
   name: string;
   count: number;
   source_folder: string;
@@ -23,13 +24,10 @@ export interface Cluster {
   tags: string[]; // JSON array (renamed from features)
   title: string;
   description: string;
-  ai_title_generated: number;
-  ai_desc_generated: number;
-  ai_alt_terms_generated: number;
-  ai_tags_generated: number;
-  ai_practical_application_generated: number;
   practical_application: string; // stored as TEXT
   alternative_terms: string[]; // JSON array
+  about: string;
+  why_choose_us: string[]; // JSON array
 }
 
 export interface Overview {
@@ -51,10 +49,10 @@ export interface RawIconRow {
   emotional_cues: string;
   enhanced: number;
   img_alt: string;
-  ai_image_alt_generated: number;
 }
 
 export interface RawClusterRow {
+  id: number;
   name: string;
   count: number;
   source_folder: string;
@@ -63,11 +61,8 @@ export interface RawClusterRow {
   tags: string; // JSON string (renamed from features)
   title: string;
   description: string;
-  ai_title_generated: number;
-  ai_desc_generated: number;
-  ai_alt_terms_generated: number;
-  ai_tags_generated: number;
-  ai_practical_application_generated: number;
   practical_application: string; // plain TEXT
   alternative_terms: string; // JSON string
+  about: string;
+  why_choose_us: string; // JSON string
 }
