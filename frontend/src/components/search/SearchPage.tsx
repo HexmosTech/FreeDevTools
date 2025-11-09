@@ -8,7 +8,7 @@ import {
   RocketIcon,
 } from '@radix-ui/react-icons';
 import React, { useCallback, useEffect, useState } from 'react';
-
+import { MEILI_SEARCH_API_KEY } from '@/config';
 // Types
 interface SearchResult {
   id?: string;
@@ -174,8 +174,7 @@ async function searchUtilities(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization:
-            'Bearer 1038cd79387c4c2923df4e90e8f7ac3e760ab842fed759fb9f68ae8f7a95d0f8',
+          Authorization: `Bearer ${MEILI_SEARCH_API_KEY}`,
         },
         body: JSON.stringify(searchBody),
       }
