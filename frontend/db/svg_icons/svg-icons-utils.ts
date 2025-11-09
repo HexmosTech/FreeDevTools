@@ -30,7 +30,7 @@ export function getClusterIcons(cluster: string, limit = 10): Icon[] {
   const stmt = db.prepare(
     `SELECT id, cluster, name, base64, description, usecases, 
      json(synonyms) as synonyms, json(tags) as tags, 
-     industry, emotional_cues, enhanced 
+     industry, emotional_cues, enhanced, img_alt
      FROM icon WHERE cluster = ? ORDER BY name LIMIT ?`
   );
   const results = stmt.all(cluster, limit) as RawIconRow[];
@@ -44,16 +44,19 @@ export function getClusterIcons(cluster: string, limit = 10): Icon[] {
 export function getClusters(): Cluster[] {
   const db = getDb();
   const stmt = db.prepare(
-    `SELECT name, count, source_folder, path, 
-     json(keywords) as keywords, json(features) as features, 
-     title, description 
+    `SELECT id, name, count, source_folder, path, 
+     json(keywords) as keywords, json(tags) as tags, 
+     title, description, practical_application, json(alternative_terms) as alternative_terms,
+     about, json(why_choose_us) as why_choose_us
      FROM cluster ORDER BY name`
   );
   const results = stmt.all() as RawClusterRow[];
   return results.map((row) => ({
     ...row,
     keywords: JSON.parse(row.keywords || '[]') as string[],
-    features: JSON.parse(row.features || '[]') as string[],
+    tags: JSON.parse(row.tags || '[]') as string[],
+    alternative_terms: JSON.parse(row.alternative_terms || '[]') as string[],
+    why_choose_us: JSON.parse(row.why_choose_us || '[]') as string[],
   })) as Cluster[];
 }
 
@@ -70,7 +73,7 @@ export function getIconsByCluster(cluster: string): Icon[] {
   const stmt = db.prepare(
     `SELECT id, cluster, name, base64, description, usecases, 
      json(synonyms) as synonyms, json(tags) as tags, 
-     industry, emotional_cues, enhanced 
+     industry, emotional_cues, enhanced, img_alt
      FROM icon WHERE cluster = ? ORDER BY name`
   );
   const results = stmt.all(cluster) as RawIconRow[];
@@ -84,9 +87,10 @@ export function getIconsByCluster(cluster: string): Icon[] {
 export function getClusterByName(name: string): Cluster | null {
   const db = getDb();
   const stmt = db.prepare(
-    `SELECT name, count, source_folder, path, 
-     json(keywords) as keywords, json(features) as features, 
-     title, description 
+    `SELECT id, name, count, source_folder, path, 
+     json(keywords) as keywords, json(tags) as tags, 
+     title, description, practical_application, json(alternative_terms) as alternative_terms,
+     about, json(why_choose_us) as why_choose_us
      FROM cluster WHERE name = ?`
   );
   const result = stmt.get(name) as RawClusterRow | undefined;
@@ -94,7 +98,9 @@ export function getClusterByName(name: string): Cluster | null {
   return {
     ...result,
     keywords: JSON.parse(result.keywords || '[]') as string[],
-    features: JSON.parse(result.features || '[]') as string[],
+    tags: JSON.parse(result.tags || '[]') as string[],
+    alternative_terms: JSON.parse(result.alternative_terms || '[]') as string[],
+    why_choose_us: JSON.parse(result.why_choose_us || '[]') as string[],
   } as Cluster;
 }
 
@@ -115,7 +121,7 @@ export function getIconByCategoryAndName(
   const stmt = db.prepare(
     `SELECT id, cluster, name, base64, description, usecases, 
      json(synonyms) as synonyms, json(tags) as tags, 
-     industry, emotional_cues, enhanced 
+     industry, emotional_cues, enhanced, img_alt
      FROM icon WHERE cluster = ? AND name = ?`
   );
   const result = stmt.get(clusterData.source_folder || category, filename) as
@@ -136,7 +142,7 @@ export function getIconsByTag(tag: string): Icon[] {
   const stmt = db.prepare(
     `SELECT DISTINCT i.id, i.cluster, i.name, i.base64, i.description, i.usecases, 
      json(i.synonyms) as synonyms, json(i.tags) as tags, 
-     i.industry, i.emotional_cues, i.enhanced 
+     i.industry, i.emotional_cues, i.enhanced, i.img_alt
      FROM icon i, json_each(i.tags) 
      WHERE json_each.value = ? 
      ORDER BY i.cluster, i.name`
