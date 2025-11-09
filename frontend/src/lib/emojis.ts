@@ -4,62 +4,45 @@ import { existsSync } from 'fs';
 import { getAllAppleEmojis, getAppleEmojiBySlug } from './appleEmojis';
 
 export interface EmojiData {
-  alsoKnownAs?: string[];
-  appleName?: string;
-  code: string;
-  codepointsHex?: string[];
-  components?: any[];
-  currentCldrName?: string;
-  description?: string;
-  emojiVersion?: {
-    date: number;
-    name: string;
-    slug: string;
-    status: number;
+  // Basic info
+  code: string;                       // The emoji character itself
+  slug: string;                       // Unique slug
+  title: string;                      // Human-readable title
+  description?: string;               // General description
+  category?: string;                  // Top-level category, e.g., "People & Body"
+  alsoKnownAs?: string[];             // Aliases
+
+  // Shortcodes mapped by vendor
+  shortcodes?: {
+    [vendor: string]: string;         // e.g., github, slack, discord
   };
-  id: string;
-  shortcodes?: Array<{
-    code: string;
-    vendor: {
-      slug: string;
-      title: string;
-    };
-    source?: string;
-  }>;
-  slug: string;
-  title: string;
-  type: string;
+
+  // Keywords
+  keywords?: string[];
+
+  // Senses for adjectives, verbs, nouns
+  senses?: {
+    adjectives?: string[];
+    verbs?: string[];
+    nouns?: string[];
+  };
+
+  // Version information
   version?: {
-    date: number;
-    description?: string;
-    name: string;
-    slug: string;
-    status: number;
+    'unicode-version'?: string;
+    'emoji-version'?: string;
   };
-  emoji_net_data?: {
-    category?: string;
-    keywords?: string[];
-    definition?: string;
-    name?: string;
-    unicode?: string;
-    shortcode?: string;
-    senses?: any;
-  };
-  fluentui_metadata?: {
-    cldr?: string;
-    fromVersion?: string;
-    glyph?: string;
-    glyphAsUtfInEmoticons?: string[];
-    group?: string;
-    keywords?: string[];
-    mappedToEmoticons?: string[];
-    tts?: string;
-    unicode?: string;
-  };
-  fluentui_folder?: string;
-  // Relative folder path under public/emoji_data, e.g., "smileys/grinning-face"
+
+  // Apple vendor-specific description
+  apple_vendor_description?: string;
+
+  // Unicode points (hex strings)
+  Unicode?: string[];
+
+  // Relative folder path under public/emoji_data
   folderPath?: string;
 }
+
 
 export interface EmojiImageVariants {
   '3d'?: string;
@@ -72,101 +55,87 @@ let emojiCache: EmojiData[] | null = null;
 let slugToFolderPath: Record<string, string> | null = null;
 
 export function getAllEmojis(): EmojiData[] {
-  if (emojiCache) {
-    return emojiCache;
-  }
+  if (emojiCache) return emojiCache;
 
   const emojiDataPath = join(process.cwd(), 'public/emoji_data');
   const emojis: EmojiData[] = [];
   const slugMap: Record<string, string> = {};
-  
-  try {
-    if (!existsSync(emojiDataPath)) {
-      console.warn('Emoji data directory does not exist:', emojiDataPath);
-      return [];
-    }
 
-    const topLevelEntries = readdirSync(emojiDataPath);
-
-    for (const entry of topLevelEntries) {
-      const entryPath = join(emojiDataPath, entry);
-      const entryStat = statSync(entryPath);
-
-      if (!entryStat.isDirectory()) continue;
-
-      // Case 1: Flat structure - entry is a slug folder
-      const flatJsonFile = join(entryPath, `${entry}.json`);
-      if (existsSync(flatJsonFile)) {
-        try {
-          const jsonContent = readFileSync(flatJsonFile, 'utf-8');
-          const emojiData: EmojiData = JSON.parse(jsonContent);
-          if (emojiData && emojiData.slug && emojiData.slug.trim() !== '') {
-            emojiData.folderPath = entry;
-            // No category folder in flat structure
-            emojis.push(emojiData);
-            slugMap[emojiData.slug] = entry;
-          } else {
-            console.warn(`Skipping emoji with invalid slug: ${entry}`);
-          }
-          continue;
-        } catch (error) {
-          console.warn(`Failed to read emoji data for ${entry}:`, error);
-          continue;
-        }
-      }
-
-      // Case 2: Nested structure - entry is a category folder containing slug folders
-      try {
-        const maybeSlugFolders = readdirSync(entryPath);
-        for (const slugFolder of maybeSlugFolders) {
-          const slugFolderPath = join(entryPath, slugFolder);
-          const slugStat = statSync(slugFolderPath);
-          if (!slugStat.isDirectory()) continue;
-
-          const nestedJsonFile = join(slugFolderPath, `${slugFolder}.json`);
-          if (!existsSync(nestedJsonFile)) continue;
-
-          try {
-            const jsonContent = readFileSync(nestedJsonFile, 'utf-8');
-            const emojiData: EmojiData = JSON.parse(jsonContent);
-            if (emojiData && emojiData.slug && emojiData.slug.trim() !== '') {
-              emojiData.folderPath = `${entry}/${slugFolder}`;
-              emojis.push(emojiData);
-              slugMap[emojiData.slug] = `${entry}/${slugFolder}`;
-            } else {
-              console.warn(`Skipping emoji with invalid slug: ${slugFolder} in category ${entry}`);
-            }
-          } catch (error) {
-            console.warn(`Failed to read emoji data for ${slugFolder} in ${entry}:`, error);
-          }
-        }
-      } catch (error) {
-        console.warn(`Failed to read category directory ${entry}:`, error);
-      }
-    }
-  } catch (error) {
-    console.error('Failed to read emoji data directory:', error);
+  if (!existsSync(emojiDataPath)) {
+    console.warn('Emoji data directory does not exist:', emojiDataPath);
+    return [];
   }
-  
-  // Sort emojis: base emojis first, then skin tone variants
+
+  const topLevelEntries = readdirSync(emojiDataPath);
+
+  for (const entry of topLevelEntries) {
+    const entryPath = join(emojiDataPath, entry);
+    const entryStat = statSync(entryPath);
+    if (!entryStat.isDirectory()) continue;
+
+    // Flat structure: each folder is a slug folder
+    const flatJsonFile = join(entryPath, `${entry}.json`);
+    if (existsSync(flatJsonFile)) {
+      try {
+        const jsonContent = readFileSync(flatJsonFile, 'utf-8');
+        const emojiData: EmojiData = JSON.parse(jsonContent);
+        if (emojiData?.slug) {
+          emojiData.folderPath = entry;
+          emojis.push(emojiData);
+          slugMap[emojiData.slug] = entry;
+        }
+      } catch (err) {
+        console.warn(`Failed to parse emoji JSON for ${entry}:`, err);
+      }
+      continue;
+    }
+
+    // Nested structure: category folder containing slug folders
+    try {
+      const slugFolders = readdirSync(entryPath);
+      for (const slugFolder of slugFolders) {
+        const slugFolderPath = join(entryPath, slugFolder);
+        const slugStat = statSync(slugFolderPath);
+        if (!slugStat.isDirectory()) continue;
+
+        const nestedJsonFile = join(slugFolderPath, `${slugFolder}.json`);
+        if (!existsSync(nestedJsonFile)) continue;
+
+        try {
+          const jsonContent = readFileSync(nestedJsonFile, 'utf-8');
+          const emojiData: EmojiData = JSON.parse(jsonContent);
+          if (emojiData?.slug) {
+            emojiData.folderPath = `${entry}/${slugFolder}`;
+            emojis.push(emojiData);
+            slugMap[emojiData.slug] = `${entry}/${slugFolder}`;
+          }
+        } catch (err) {
+          console.warn(`Failed to parse emoji JSON for ${slugFolder} in ${entry}:`, err);
+        }
+      }
+    } catch (err) {
+      console.warn(`Failed to read category directory ${entry}:`, err);
+    }
+  }
+
+  // Sort: base emojis first, then skin-tone variants
   emojis.sort((a, b) => {
-    const aIsSkinTone = a.slug.includes('-skin-tone') || a.slug.includes('light-skin-tone') || a.slug.includes('medium-skin-tone') || a.slug.includes('dark-skin-tone');
-    const bIsSkinTone = b.slug.includes('-skin-tone') || b.slug.includes('light-skin-tone') || b.slug.includes('medium-skin-tone') || b.slug.includes('dark-skin-tone');
-    
+    const skinToneRegex = /(light|medium|dark)?-?skin-tone/;
+    const aIsSkinTone = skinToneRegex.test(a.slug);
+    const bIsSkinTone = skinToneRegex.test(b.slug);
+
     if (aIsSkinTone && !bIsSkinTone) return 1;
     if (!aIsSkinTone && bIsSkinTone) return -1;
-    
-    // Within same type, sort by title
-    const titleA = a.title || a.fluentui_metadata?.cldr || a.slug || '';
-    const titleB = b.title || b.fluentui_metadata?.cldr || b.slug || '';
+
+    const titleA = a.title || a.slug || '';
+    const titleB = b.title || b.slug || '';
     return titleA.localeCompare(titleB);
   });
-  
+
   emojiCache = emojis;
   slugToFolderPath = slugMap;
   return emojis;
 }
-
 export function getEmojiBySlug(slug: string): EmojiData | null {
   const all = getAllEmojis();
   const found = all.find(e => e.slug === slug);
@@ -262,13 +231,16 @@ export function getEmojisByCategory1(categoryName: string, vendor?: 'apple'): Em
     });
 }
 
-export function getEmojisByCategory(categoryName: string, vendor?: 'apple'): EmojiData[] {
-  const allEmojis = getAllEmojis(); // Assume cached or loaded once globally
-  const normalized = categoryName.toLowerCase();
+export function getEmojisByCategory(
+  categoryName: string,
+  vendor?: 'apple'
+): EmojiData[] {
+  const allEmojis = getAllEmojis(); // Assume cached globally
+  const normalizedCategory = categoryName.toLowerCase();
   const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const targetSlug = slugify(categoryName);
 
-  // If apple vendor is enabled, bulk-load Apple emoji info once and index by slug
+  // If Apple vendor is requested, pre-load Apple emoji info
   let appleEmojiMap: Record<string, { latestAppleImage?: string }> = {};
   if (vendor === 'apple') {
     const allAppleEmojis = getAllAppleEmojis(); // Implement bulk fetch once
@@ -278,42 +250,35 @@ export function getEmojisByCategory(categoryName: string, vendor?: 'apple'): Emo
     }, {} as Record<string, { latestAppleImage?: string }>);
   }
 
-  // Filter once by category
+  // Filter emojis by category field in the new schema
   const filtered = allEmojis.filter((emoji) => {
-    const group = (
-      emoji.fluentui_metadata?.group ||
-      emoji.emoji_net_data?.category ||
-      (emoji as any).given_category ||
-      'Other'
-    ).toLowerCase();
-    return group === normalized || slugify(group) === targetSlug;
+    if (!emoji.category) return false;
+    const catLower = emoji.category.toLowerCase();
+    return catLower === normalizedCategory || slugify(catLower) === targetSlug;
   });
 
-  // Map with enriched Apple image if applicable
+  // Enrich with Apple images if vendor is apple
   if (vendor === 'apple') {
-    return filtered.map((emoji) => {
-      const appleEmoji = appleEmojiMap[emoji.slug];
-      return {
-        ...emoji,
-        latestAppleImage: appleEmoji?.latestAppleImage || null,
-      };
-    });
+    return filtered.map((emoji) => ({
+      ...emoji,
+      latestAppleImage: appleEmojiMap[emoji.slug]?.latestAppleImage || null,
+    }));
   }
 
   return filtered;
 }
 
 
+
 export function getEmojiCategories(): string[] {
   const allEmojis = getAllEmojis();
   const categories = new Set<string>();
+
   for (const emoji of allEmojis) {
-    const category =
-      emoji.fluentui_metadata?.group ||
-      emoji.emoji_net_data?.category ||
-      (emoji as any).given_category ||
-      'Other';
-    if (category && category.trim() !== '') categories.add(category);
+    // In new schema, category is top-level 'category' string
+    const category = emoji.category?.trim() || 'Other';
+    categories.add(category);
   }
+
   return Array.from(categories).sort();
 }
