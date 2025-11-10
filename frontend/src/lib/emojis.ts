@@ -263,15 +263,20 @@ export function getEmojisByCategory(
     }, {} as Record<string, { latestAppleImage?: string }>);
   }
 
-  // Filter emojis by category field in the new schema
-  const filtered = allEmojis.filter((emoji) => {
+  // Filter emojis by category field
+  let filtered = allEmojis.filter((emoji) => {
     if (!emoji.category) return false;
     const catLower = emoji.category.toLowerCase();
     return catLower === normalizedCategory || slugify(catLower) === targetSlug;
   });
 
-  // Enrich with Apple images if vendor is apple
+  // Exclude Apple-specific emojis if vendor is 'apple'
   if (vendor === 'apple') {
+    filtered = filtered.filter(
+      (emoji) => !apple_vendor_excluded_emojis.includes(emoji.slug)
+    );
+
+    // Enrich with Apple images
     return filtered.map((emoji) => ({
       ...emoji,
       latestAppleImage: appleEmojiMap[emoji.slug]?.latestAppleImage || null,
@@ -280,6 +285,7 @@ export function getEmojisByCategory(
 
   return filtered;
 }
+
 
 
 
@@ -298,3 +304,26 @@ export function getEmojiCategories(): string[] {
 
   return Array.from(categories).sort();
 }
+
+
+export const apple_vendor_excluded_emojis = [
+  "person-with-beard",
+  "woman-in-motorized-wheelchair-facing-right",
+
+  "person-in-bed-medium-skin-tone",
+  "person-in-bed-light-skin-tone",
+  "person-in-bed-dark-skin-tone",
+  "person-in-bed-medium-light-skin-tone",
+  "person-in-bed-medium-dark-skin-tone",
+
+  "snowboarder-medium-light-skin-tone",
+  "snowboarder-dark-skin-tone",
+  "snowboarder-medium-dark-skin-tone",
+  "snowboarder-light-skin-tone",
+  "snowboarder-medium-skin-tone",
+
+  "medical-symbol",
+  "male-sign",
+  "female-sign",
+  "woman-with-headscarf"
+];
