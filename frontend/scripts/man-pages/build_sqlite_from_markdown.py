@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Dict, Any, List, Tuple
 
 BASE_DIR = Path(__file__).parent
-MD_DIR = BASE_DIR
+MD_DIR = Path('/home/lince/ubuntu-sitemaps/content')
 DB_PATH = Path(__file__).parent.parent.parent / "db" / "man_pages" / "man-pages-db.db"
 LOG_FILE = BASE_DIR / "build_log.log"
 
@@ -287,10 +287,29 @@ def generate_slug(title: str) -> str:
         command_part = title
     
     # Clean and normalize the command part
-    # First replace special characters with spaces, then normalize spaces to single hyphens
-    slug = re.sub(r'[^\w\s-]', ' ', command_part.strip())  # Replace special chars with spaces
+    # Replace special characters directly with hyphens (more predictable)
+    slug = re.sub(r'[^\w\s-]', '-', command_part.strip())  # Replace special chars with hyphens
     slug = re.sub(r'[-\s]+', '-', slug)  # Replace multiple spaces/hyphens with single hyphen
     slug = slug.strip('-').lower()  # Remove leading/trailing hyphens and lowercase
+    
+    # Handle extremely long slugs by truncating at word boundaries
+    max_length = 25  # Reasonable URL length limit
+    if len(slug) > max_length:
+        # Find the last hyphen before the limit
+        truncated = slug[:max_length]
+        last_hyphen = truncated.rfind('-')
+        if last_hyphen > 12:  # Don't truncate too aggressively
+            slug = truncated[:last_hyphen]
+        else:
+            slug = truncated
+        slug = slug.rstrip('-')
+    
+    # Ensure we have a valid slug
+    if not slug or len(slug) < 3:
+        # Fallback to a simple hash-based slug
+        import hashlib
+        hash_slug = hashlib.md5(title.encode()).hexdigest()[:8]
+        slug = f"man-page-{hash_slug}"
     
     return slug
 
