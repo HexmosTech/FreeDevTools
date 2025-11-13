@@ -159,13 +159,55 @@ export function ImageVariants({
     }
   };
 
-  const handleCopy = (variant: ImageVariant) => {
-    if (variant.url.endsWith('.svg')) {
-      copySvgAsPng(variant.url);
-    } else {
-      copyRasterImage(variant.url);
+  const handleCopy = async (variant: ImageVariant) => {
+    try {
+      let blob: Blob;
+  
+      // Step 1: Get blob from base64 or URL
+      if (variant.url.startsWith("data:")) {
+        const [header, base64] = variant.url.split(",");
+        const mimeMatch = header.match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+        const binary = atob(base64);
+        const len = binary.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+        blob = new Blob([bytes], { type: mime });
+      } else {
+        const res = await fetch(variant.url);
+        blob = await res.blob();
+      }
+  
+      // Step 2: Convert unsupported types (WebP, SVG) → PNG for clipboard
+      if (
+        blob.type === "image/webp" ||
+        blob.type === "image/svg+xml" ||
+        blob.type === "application/octet-stream"
+      ) {
+        const img = await createImageBitmap(blob);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0);
+        blob = await new Promise<Blob>((resolve) =>
+          canvas.toBlob((b) => resolve(b!), "image/png")
+        );
+      }
+  
+      // Step 3: Write final PNG or supported image to clipboard
+      await navigator.clipboard.write([
+        new ClipboardItem({ [blob.type]: blob }),
+      ]);
+  
+      toast.success("✅ Image copied to clipboard!");
+    } catch (err) {
+      console.error("Failed to copy image:", err);
+      toast.error("❌ Failed to copy image.");
     }
   };
+  
+  
 
   if (variants.length === 0) return null;
 
