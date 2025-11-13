@@ -24,83 +24,21 @@ export async function getStaticPaths() {
 
 const { category } = Astro.params;
 
-// Function to get random content based on category name
-function getSvgCategoryContent(categoryName: string) {
-  // Simple hash function to deterministically select variant based on category name
-  function hashString(str: string): number {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    return Math.abs(hash);
-  }
+// Get cluster data from database
+const clusterData = getClusterByName(category);
 
-  const hash = hashString(categoryName);
-  const aboutIndex = hash % 5;
-  const listicleIndex = (hash >> 8) % 5; // Use different part of hash for listicle
-
-  const aboutVariants = [
-    `SVG (Scalable Vector Graphics) icons are vector-based images perfect for modern web design, mobile apps, and print media. These ${categoryName} SVG icons are infinitely scalable without quality loss, making them ideal for responsive designs and high-resolution displays. Download and edit ${categoryName} SVG icons instantly, customize colors and sizes to match your project needs.`,
-    `Explore our collection of professional ${categoryName} SVG icons built with vector graphics technology. These scalable icons maintain perfect clarity at any size, from tiny favicons to large banners. Perfect for responsive websites, mobile applications, and print materials. Get ${categoryName} SVG icons that adapt to any screen size.`,
-    `Discover premium ${categoryName} SVG icons designed for modern digital experiences. These vector graphics use XML-based markup, making them fully editable and customizable. Scale infinitely without pixelation, change colors programmatically, and optimize for performance. Download ${categoryName} SVG icons ready for your next project.`,
-    `Our ${categoryName} SVG icon library offers vector-based graphics that scale beautifully across all devices and resolutions. Each icon is crafted with precision and can be customized through CSS or JavaScript. Whether you need icons for web, mobile, or print, these ${categoryName} SVG icons deliver crisp results at any size.`,
-    `Get access to professionally designed ${categoryName} SVG icons featuring vector-based graphics for maximum flexibility. These Scalable Vector Graphics files are lightweight, editable, and perfect for responsive design. Download ${categoryName} SVG icons that work seamlessly across browsers, devices, and screen densities.`,
-  ];
-
-  const listicleVariants = [
-    [
-      'Infinitely scalable without pixelation or quality loss',
-      'Editable vector format - customize colors, shapes, and sizes',
-      'Small file sizes for faster website loading',
-      'Perfect for responsive design and retina displays',
-    ],
-    [
-      'XML-based format allows programmatic manipulation',
-      'CSS-stylable for dynamic color and style changes',
-      'Works seamlessly across all modern browsers',
-      'Ideal for icon fonts and sprite alternatives',
-    ],
-    [
-      'Vector paths ensure crisp rendering at any zoom level',
-      'Accessible and SEO-friendly with embedded text',
-      'Supports animations and interactive elements',
-      'Optimized for performance with minimal file size',
-    ],
-    [
-      'Edit directly in code editors or design tools',
-      'Perfect for single-page applications and React/Vue',
-      'Supports gradients, filters, and advanced effects',
-      'No external dependencies required for rendering',
-    ],
-    [
-      'Resolution-independent graphics for all devices',
-      'Easy to customize with CSS or JavaScript',
-      'Supports accessibility features and ARIA labels',
-      'Future-proof format with wide industry adoption',
-    ],
-  ];
-
-  return {
-    about: aboutVariants[aboutIndex],
-    listicle: listicleVariants[listicleIndex],
-  };
+if (!clusterData) {
+  return Astro.redirect('/freedevtools/svg_icons/');
 }
 
 async function getCategoryIcons() {
   // Get icons from SQLite database
   // The category parameter is the cluster display name (from cluster.name in cluster_svg.json)
   // Look up cluster by display name to get the source_folder (actual folder name used in icon table)
-  const clusterData = getClusterByName(category);
-
-  if (!clusterData) {
-    return [];
-  }
-
   // The icon table uses cluster key (folder name = source_folder), not display name
   // Use source_folder to query icons
-  const dbIcons = getIconsByCluster(clusterData.source_folder || category);
+  // clusterData is guaranteed to exist due to check above
+  const dbIcons = getIconsByCluster(clusterData!.source_folder || category!);
 
   const icons = dbIcons.map((icon) => {
     const iconName = icon.name.replace('.svg', '');
@@ -114,6 +52,7 @@ async function getCategoryIcons() {
       license: 'MIT',
       url: `/freedevtools/svg_icons/${category}/${iconName}/`,
       base64: icon.base64,
+      img_alt: icon.img_alt,
     };
   });
 
@@ -123,8 +62,21 @@ async function getCategoryIcons() {
 const categoryIcons = await getCategoryIcons();
 const totalIcons = categoryIcons.length;
 
-// Get randomized content for this category
-const svgContent = getSvgCategoryContent(category);
+// Use database content for about and why_choose_us
+// Fallback to default content if not available in database
+const aboutContent =
+  clusterData.about ||
+  `Our ${category} SVG icon library offers vector-based graphics that scale beautifully across all devices and resolutions. Each icon is crafted with precision and can be customized through CSS or JavaScript. Whether you need icons for web, mobile, or print, these ${category} SVG icons deliver crisp results at any size.`;
+
+const whyChooseUsContent =
+  clusterData.why_choose_us && clusterData.why_choose_us.length > 0
+    ? clusterData.why_choose_us
+    : [
+        'Infinitely scalable without pixelation or quality loss',
+        'Editable vector format - customize colors, shapes, and sizes',
+        'Small file sizes for faster website loading',
+        'Perfect for responsive design and retina displays',
+      ];
 
 // Breadcrumb data
 const breadcrumbItems = [
@@ -137,33 +89,42 @@ const breadcrumbItems = [
 <BaseLayout
   name={`${category.charAt(0).toUpperCase() + category.slice(1)} SVG Icons`}
   path={`/freedevtools/svg_icons/${category}`}
-  title={`${category} SVG Icons - Free Download & Edit | Online Free DevTools by Hexmos`}
-  description={`Download free ${category} SVG icons instantly. ${totalIcons} icons available.`}
+  title={clusterData.title ||
+    `${category} SVG Icons - Free Download & Edit | Online Free DevTools by Hexmos`}
+  description={clusterData.description ||
+    `Download free ${category} SVG icons instantly. ${totalIcons} icons available.`}
   canonical={`https://hexmos.com/freedevtools/svg_icons/${category}/`}
   showHeader={true}
   totalItems={totalIcons}
   category={category}
   partOf="SVG Icons"
   partOfUrl="https://hexmos.com/freedevtools/svg_icons/"
-  keywords={[
-    category,
-    'svg icons',
-    'vector graphics',
-    'scalable icons',
-    'editable svg',
-  ]}
+  keywords={clusterData.keywords && clusterData.keywords.length > 0
+    ? clusterData.keywords
+    : [
+        category,
+        'svg icons',
+        'vector graphics',
+        'scalable icons',
+        'editable svg',
+      ]}
 >
   <ToolContainer>
-    <div class="mb-16 mt-[74px]">
+    <div id={`svg_icon-ad-banner-2-${category}`} class="mb-16 mt-[74px]">
       <AdBanner />
     </div>
     <ToolHead
-      name={`${category.charAt(0).toUpperCase() + category.slice(1)} SVG Icons`}
-      description={`Discover ${totalIcons} scalable ${category} icons ready in vector SVG format`}
+      id={`svg_icon-tool-head-2-${category}`}
+      name={clusterData.title.split('|')[0] ||
+        `${category.charAt(0).toUpperCase() + category.slice(1)} SVG Icons`}
+      description={clusterData.description ||
+        `Discover ${totalIcons} scalable ${category} icons ready in vector SVG format`}
       breadcrumbItems={breadcrumbItems}
     />
-    <div class="min-h-[200px]">
+
+    <div id={`svg_icon-main-section-2-${category}`} class="min-h-[200px]">
       <div
+        id={`svg_icon-grid-2-${category}`}
         class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 mb-8 mt-3"
       >
         {
@@ -176,7 +137,7 @@ const breadcrumbItems = [
               <a
                 href={icon.url}
                 class="bg-white rounded-lg p-4 cursor-pointer hover:bg-slate-100 border border-white hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md"
-                title={iconName + ' SVG'}
+                title={iconName + ' SVG icon'}
               >
                 <div class="flex flex-col items-center text-center">
                   <div class="w-24 h-24 flex items-center justify-center">
@@ -186,7 +147,7 @@ const breadcrumbItems = [
                     >
                       <img
                         src={`data:image/png;base64,${icon.base64}`}
-                        alt={`${iconName} icon`}
+                        alt={icon.img_alt || `${iconName} icon`}
                         class="w-20 h-20 object-contain"
                         loading="lazy"
                       />
@@ -199,37 +160,123 @@ const breadcrumbItems = [
         }
       </div>
     </div>
-    <!-- Unique informational content about SVG icons -->
-    <div
-      class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
-    >
-      <h2 class="mb-2">About SVG Icons</h2>
-      <p>
-        {svgContent.about}
-      </p>
-    </div>
+    <!-- Practical Application section -->
+    {
+      clusterData.practical_application && (
+        <div
+          id={`svg_icon-practical-application-section-2-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3
+            id={`svg_icon-practical-application-section-title-2-${category}`}
+            class="mb-3"
+          >
+            Practical Application
+          </h3>
+          <p>{clusterData.practical_application}</p>
+        </div>
+      )
+    }
 
-    <!-- SVG-specific features section -->
-    <div class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg">
-      <h3 class="text-md font-semibold mb-3">Why Choose our SVG Icons?</h3>
-      <ul
-        class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300"
-      >
-        {svgContent.listicle.map((item) => <li>{item}</li>)}
-      </ul>
-    </div>
+    <!-- Unique informational content about SVG icons -->
+    {
+      aboutContent && (
+        <div
+          id={`svg_icon-about-section-2-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3 id={`svg_icon-about-section-title-2-${category}`} class="mb-3">
+            About {category.charAt(0).toUpperCase() + category.slice(1)} SVG
+            Icons
+          </h3>
+          <p>{aboutContent}</p>
+        </div>
+      )
+    }
+
+    <!-- Why Choose Us section -->
+    {
+      whyChooseUsContent && whyChooseUsContent.length > 0 && (
+        <div
+          id={`svg_icon-features-section-2-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3 id={`svg_icon-features-section-title-2-${category}`} class="mb-3">
+            Why Choose our SVG Icons?
+          </h3>
+          <ul class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300">
+            {whyChooseUsContent.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    <!-- Alternative Terms section -->
+    {
+      clusterData.alternative_terms &&
+        clusterData.alternative_terms.length > 0 && (
+          <div
+            id={`svg_icon-alternative-terms-section-2-${category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3
+              id={`svg_icon-alternative-terms-section-title-2-${category}`}
+              class="mb-3"
+            >
+              Alternative Terms
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {clusterData.alternative_terms.map((term) => (
+                <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
+                  {term}
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+    }
+
+    <!-- Tags section -->
+    {
+      clusterData.tags && clusterData.tags.length > 0 && (
+        <div
+          id={`svg_icon-tags-section-2-${category}`}
+          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+        >
+          <h3 id={`svg_icon-tags-section-title-2-${category}`} class="mb-3">
+            Tags
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            {clusterData.tags.map((tag) => (
+              <p class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
+                {tag}
+              </p>
+            ))}
+          </div>
+        </div>
+      )
+    }
     <!-- Credits Section -->
     <div
+      id={`svg_icon-credits-section-2-${category}`}
       class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
     >
-      <div class="flex flex-wrap gap-4">
+      <div
+        id={`svg_icon-credits-content-2-${category}`}
+        class="flex flex-wrap gap-4"
+      >
         <a
           href="/freedevtools/svg_icons/"
           class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
         >
           ← Back to SVG Icons
         </a>
-        <CreditsButton href="/freedevtools/svg_icons/credits/" />
+        <CreditsButton
+          href="/freedevtools/svg_icons/credits/"
+          id={`svg_icon-credits-button-2-${category}`}
+        />
       </div>
     </div>
   </ToolContainer>

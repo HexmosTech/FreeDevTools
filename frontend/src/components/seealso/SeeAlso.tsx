@@ -1,5 +1,6 @@
 import { FileTextIcon, RocketIcon, GearIcon } from '@radix-ui/react-icons';
 import React, { useEffect, useRef, useState } from 'react';
+import { MEILI_SEARCH_API_KEY } from '@/config';
 
 interface SeeAlsoItem {
   icon: React.ReactNode;
@@ -102,8 +103,7 @@ async function searchMeilisearch(query: string): Promise<SearchResponse> {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization:
-            'Bearer 509923210c1fbc863d8cd8d01ffc062bac61aa503944c5d65b155e6cafdaddb5',
+          Authorization: `Bearer ${MEILI_SEARCH_API_KEY}`,
         },
         body: JSON.stringify(searchBody),
       }

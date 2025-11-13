@@ -8,6 +8,7 @@ Indexing tools to meilisearch is a three step process:
 
 This directory contains a Go program that generates JSON data structures for search indexing across different categories of content in the FreeDevTools project.
 
+
 ## Overview
 
 The search index generator creates structured JSON files for six main categories:
@@ -483,3 +484,45 @@ Generated JSON files are saved to the [`output/`](output/) directory:
 - `mcp.json` - MCP repositories data
 
 You can track the status,logs or progress of indexing from meilisearch-ui(https://github.com/riccox/meilisearch-ui)
+
+
+## Updating Meilisearch search API key
+
+IMPORTANT:
+
+**Never expose the meilisearch MASTER API KEY in the frontend code**
+
+### How to get new search API key
+
+prerequisite: you need meilisearch master key, ask around in group
+
+- first go to the server where meilisearch docker container is running
+- list all API keys
+
+```bash
+curl -X GET 'http://localhost:7700/keys' \
+  -H 'Authorization: Bearer YOUR_MASTER_KEY'
+```
+- most probably the search key can be find from this list.
+
+- if it is not there create a new key using the below command:
+
+```
+curl -X POST 'http://localhost:7700/keys' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_MASTER_KEY' \
+  --data-binary '{
+    "description": "Search only key for fdt",
+    "actions": ["search"],
+    "indexes": ["*"],
+    "expiresAt": null
+  }'
+```
+
+replace the key in `src/config.ts`
+
+we are using meilisearch search api in two places
+- for "common search" feature
+- for "See Also"
+
+make sure those two features are up!

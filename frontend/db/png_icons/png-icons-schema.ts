@@ -3,24 +3,31 @@ export interface Icon {
   cluster: string;
   name: string;
   base64: string;
+  title: string;
   description: string;
   usecases: string;
-  synonyms: string[]; // JSON array stored as TEXT, SQLite can query with json_each()
-  tags: string[]; // JSON array stored as TEXT, SQLite can query with json_each()
+  synonyms: string[]; // JSON array stored as TEXT
+  tags: string[]; // JSON array stored as TEXT
   industry: string;
   emotional_cues: string;
-  enhanced: number; // 0 or 1, convert to boolean
+  enhanced: number; // 0 or 1 → convert to boolean if needed
+  img_alt: string;
 }
 
 export interface Cluster {
+  id: number;
   name: string;
   count: number;
   source_folder: string;
   path: string;
-  keywords: string[]; // JSON array stored as TEXT, SQLite can query with json_each()
-  features: string[]; // JSON array stored as TEXT, SQLite can query with json_each()
+  keywords: string[]; // JSON array
+  tags: string[]; // JSON array (renamed from features)
   title: string;
   description: string;
+  practical_application: string; // stored as TEXT
+  alternative_terms: string[]; // JSON array
+  about: string;
+  why_choose_us: string[]; // JSON array
 }
 
 export interface Overview {
@@ -36,20 +43,26 @@ export interface RawIconRow {
   base64: string;
   description: string;
   usecases: string;
-  synonyms: string; // JSON string before parsing
-  tags: string; // JSON string before parsing
+  synonyms: string; // JSON string
+  tags: string; // JSON string
   industry: string;
   emotional_cues: string;
   enhanced: number;
+  img_alt: string;
 }
 
 export interface RawClusterRow {
+  id: number;
   name: string;
   count: number;
   source_folder: string;
   path: string;
-  keywords: string; // JSON string before parsing
-  features: string; // JSON string before parsing
+  keywords: string; // JSON string
+  tags: string; // JSON string (renamed from features)
   title: string;
   description: string;
+  practical_application: string; // plain TEXT
+  alternative_terms: string; // JSON string
+  about: string;
+  why_choose_us: string; // JSON string
 }
