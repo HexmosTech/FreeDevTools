@@ -2,7 +2,6 @@
 """
 Sync banner program CSV to SQLite database.
 Parses NAME column to extract language, size, campaign_name, product_name.
-Filters out rows where THREE MONTH EPC is "N/A" or "$0.00 USD".
 """
 
 import csv
@@ -344,18 +343,6 @@ def process_banner_html(html: str) -> str:
     return html
 
 
-def should_include_row(epc: str) -> bool:
-    """Filter out rows where EPC is 'N/A' or '$0.00 USD'."""
-    if not epc or epc.strip() == "":
-        return False
-    epc_clean = epc.strip().upper()
-    if epc_clean == "N/A":
-        return False
-    if epc_clean == "$0.00 USD":
-        return False
-    return True
-
-
 def ensure_schema(conn: sqlite3.Connection) -> None:
     """Create the banner table schema."""
     cur = conn.cursor()
@@ -403,15 +390,9 @@ def load_csv(csv_path: Path, conn: sqlite3.Connection) -> tuple[int, int]:
             js_link = row.get("JAVASCRIPT LINKS", "").strip()
             click_url = row.get("CLICK URL", "").strip()
             link_type_raw = row.get("LINK TYPE", "").strip()
-            epc = row.get("THREE MONTH EPC", "").strip()
 
             # Skip if name or html_link is empty
             if not name or not html_link:
-                skipped += 1
-                continue
-
-            # Skip if EPC is N/A or $0.00 USD
-            if not should_include_row(epc):
                 skipped += 1
                 continue
 
@@ -420,6 +401,11 @@ def load_csv(csv_path: Path, conn: sqlite3.Connection) -> tuple[int, int]:
 
             # Parse link type
             link_type = parse_link_type(link_type_raw)
+
+            # Skip if not banner type
+            # if link_type != "banner":
+            #     skipped += 1
+            #     continue
 
             # Process HTML based on type
             if link_type == "evergreen":

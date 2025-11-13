@@ -136,3 +136,24 @@ export function getRandomBanner(): Banner | null {
   if (!result) return null;
   return result as Banner;
 }
+
+export function getRandomBannerByType(linkType: string): Banner | null {
+  const db = getDb();
+  const stmt = db.prepare(
+    'SELECT COUNT(*) as count FROM banner WHERE link_type = ?'
+  );
+  const countResult = stmt.get(linkType) as { count: number } | undefined;
+  const total = countResult?.count ?? 0;
+
+  if (total === 0) return null;
+
+  // Fetch banner by random offset filtered by link_type
+  const selectStmt = db.prepare(
+    'SELECT * FROM banner WHERE link_type = ? ORDER BY id LIMIT 1 OFFSET ?'
+  );
+  const offset = Math.floor(Math.random() * total);
+  const result = selectStmt.get(linkType, offset) as RawBannerRow | undefined;
+
+  if (!result) return null;
+  return result as Banner;
+}
