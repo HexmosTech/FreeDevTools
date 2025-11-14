@@ -53,3 +53,15 @@ git lfs status
 git lfs fetch --all
 git lfs ls-files --size
 ```
+
+## Pull DBs from blackblaze
+
+If you're adding db to a new category, first upload it.
+https://tree-iad1-0000.secure.backblaze.com/b2_browse_files2.htm
+<img width="716" height="439" alt="image" src="https://github.com/user-attachments/assets/66f2635d-3e34-4498-b589-d7bca3c0c7a6" />
+
+
+Then in buid_deploy.yml
+
+> - name: Download database files from Backblaze B2
+Add your db name in that file, do not commit the db to repo.
