@@ -1,263 +1,432 @@
-import { readFileSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readdirSync } from "fs";
+import Database from "better-sqlite3";
+import path, { join } from 'path';
 
+// === Type definitions ===
 export interface EmojiData {
-  alsoKnownAs?: string[];
-  appleName?: string;
   code: string;
-  codepointsHex?: string[];
-  components?: any[];
-  currentCldrName?: string;
-  description?: string;
-  emojiVersion?: {
-    date: number;
-    name: string;
-    slug: string;
-    status: number;
-  };
-  id: string;
-  shortcodes?: Array<{
-    code: string;
-    vendor: {
-      slug: string;
-      title: string;
-    };
-    source?: string;
-  }>;
   slug: string;
   title: string;
-  type: string;
+  description?: string;
+  category?: string;
+  apple_vendor_description?: string;
+  keywords?: string[];
+  alsoKnownAs?: string[];
   version?: {
-    date: number;
-    description?: string;
-    name: string;
-    slug: string;
-    status: number;
+    "unicode-version"?: string;
+    "emoji-version"?: string;
   };
-  emoji_net_data?: {
-    category?: string;
-    keywords?: string[];
-    definition?: string;
-    name?: string;
-    unicode?: string;
-    shortcode?: string;
-    senses?: any;
+  senses?: {
+    adjectives?: string[];
+    verbs?: string[];
+    nouns?: string[];
   };
-  fluentui_metadata?: {
-    cldr?: string;
-    fromVersion?: string;
-    glyph?: string;
-    glyphAsUtfInEmoticons?: string[];
-    group?: string;
-    keywords?: string[];
-    mappedToEmoticons?: string[];
-    tts?: string;
-    unicode?: string;
+  shortcodes?: {
+    github?: string;
+    slack?: string;
+    discord?: string;
   };
-  fluentui_folder?: string;
-  // Relative folder path under public/emoji_data, e.g., "smileys/grinning-face"
-  folderPath?: string;
+  Unicode?: string[];
 }
 
 export interface EmojiImageVariants {
-  '3d'?: string;
-  'color'?: string;
-  'flat'?: string;
-  'high_contrast'?: string;
+  "3d"?: string;
+  color?: string;
+  flat?: string;
+  high_contrast?: string;
 }
 
-let emojiCache: EmojiData[] | null = null;
-let slugToFolderPath: Record<string, string> | null = null;
+export const categoryIconMap: Record<string, string> = {
+  "Smileys & Emotion": "😀",
+  "People & Body": "👤",
+  "Animals & Nature": "🐶",
+  "Food & Drink": "🍎",
+  "Travel & Places": "✈️",
+  "Activities": "⚽",
+  "Objects": "📱",
+  "Symbols": "❤️",
+  "Flags": "🏁",
+  Other: "❓",
+};
 
-export function getAllEmojis(): EmojiData[] {
-  if (emojiCache) {
-    return emojiCache;
-  }
+// === SQLite connection handling ===
+let dbInstance: Database.Database | null = null;
 
-  const emojiDataPath = join(process.cwd(), 'public/emoji_data');
-  const emojis: EmojiData[] = [];
-  const slugMap: Record<string, string> = {};
-  
+function getDbPath(): string {
+  return path.resolve(process.cwd(), "db/emoji_data/emoji.db");
+}
+
+export function getDb(): Database.Database {
+  if (dbInstance) return dbInstance;
+  const dbPath = getDbPath();
+  dbInstance = new Database(dbPath, { readonly: true });
+  dbInstance.pragma("journal_mode = OFF");
+  dbInstance.pragma("synchronous = OFF");
+  return dbInstance;
+}
+
+// === Utility: Safe JSON parse ===
+function parseJSON<T>(value: string | null): T | undefined {
+  if (!value) return undefined;
   try {
-    if (!existsSync(emojiDataPath)) {
-      console.warn('Emoji data directory does not exist:', emojiDataPath);
-      return [];
-    }
-
-    const topLevelEntries = readdirSync(emojiDataPath);
-
-    for (const entry of topLevelEntries) {
-      const entryPath = join(emojiDataPath, entry);
-      const entryStat = statSync(entryPath);
-
-      if (!entryStat.isDirectory()) continue;
-
-      // Case 1: Flat structure - entry is a slug folder
-      const flatJsonFile = join(entryPath, `${entry}.json`);
-      if (existsSync(flatJsonFile)) {
-        try {
-          const jsonContent = readFileSync(flatJsonFile, 'utf-8');
-          const emojiData: EmojiData = JSON.parse(jsonContent);
-          if (emojiData && emojiData.slug && emojiData.slug.trim() !== '') {
-            emojiData.folderPath = entry;
-            // No category folder in flat structure
-            emojis.push(emojiData);
-            slugMap[emojiData.slug] = entry;
-          } else {
-            console.warn(`Skipping emoji with invalid slug: ${entry}`);
-          }
-          continue;
-        } catch (error) {
-          console.warn(`Failed to read emoji data for ${entry}:`, error);
-          continue;
-        }
-      }
-
-      // Case 2: Nested structure - entry is a category folder containing slug folders
-      try {
-        const maybeSlugFolders = readdirSync(entryPath);
-        for (const slugFolder of maybeSlugFolders) {
-          const slugFolderPath = join(entryPath, slugFolder);
-          const slugStat = statSync(slugFolderPath);
-          if (!slugStat.isDirectory()) continue;
-
-          const nestedJsonFile = join(slugFolderPath, `${slugFolder}.json`);
-          if (!existsSync(nestedJsonFile)) continue;
-
-          try {
-            const jsonContent = readFileSync(nestedJsonFile, 'utf-8');
-            const emojiData: EmojiData = JSON.parse(jsonContent);
-            if (emojiData && emojiData.slug && emojiData.slug.trim() !== '') {
-              emojiData.folderPath = `${entry}/${slugFolder}`;
-              emojis.push(emojiData);
-              slugMap[emojiData.slug] = `${entry}/${slugFolder}`;
-            } else {
-              console.warn(`Skipping emoji with invalid slug: ${slugFolder} in category ${entry}`);
-            }
-          } catch (error) {
-            console.warn(`Failed to read emoji data for ${slugFolder} in ${entry}:`, error);
-          }
-        }
-      } catch (error) {
-        console.warn(`Failed to read category directory ${entry}:`, error);
-      }
-    }
-  } catch (error) {
-    console.error('Failed to read emoji data directory:', error);
+    return JSON.parse(value);
+  } catch {
+    return undefined;
   }
-  
-  // Sort emojis: base emojis first, then skin tone variants
+}
+
+// === Fetch all emojis ===
+export function getAllEmojis(): EmojiData[] {
+  const db = getDb();
+  const rows = db
+    .prepare(`
+      SELECT 
+        code,
+        unicode,
+        slug,
+        title,
+        category,
+        description,
+        apple_vendor_description,
+        keywords,
+        also_known_as,
+        version,
+        senses,
+        shortcodes
+      FROM emojis
+    `)
+    .all();
+
+  const emojis: EmojiData[] = rows.map((r) => ({
+    code: r.code,
+    slug: r.slug,
+    title: r.title,
+    description: r.description,
+    category: r.category,
+    apple_vendor_description: r.apple_vendor_description,
+    Unicode: parseJSON<string[]>(r.unicode) || [],
+    keywords: parseJSON<string[]>(r.keywords) || [],
+    alsoKnownAs: parseJSON<string[]>(r.also_known_as) || [],
+    version: parseJSON(r.version),
+    senses: parseJSON(r.senses),
+    shortcodes: parseJSON(r.shortcodes),
+  }));
+
+  // Sort: base first, then tone variants
+  const toneRegex = /(light|medium|dark)?-?skin-tone/;
   emojis.sort((a, b) => {
-    const aIsSkinTone = a.slug.includes('-skin-tone') || a.slug.includes('light-skin-tone') || a.slug.includes('medium-skin-tone') || a.slug.includes('dark-skin-tone');
-    const bIsSkinTone = b.slug.includes('-skin-tone') || b.slug.includes('light-skin-tone') || b.slug.includes('medium-skin-tone') || b.slug.includes('dark-skin-tone');
-    
-    if (aIsSkinTone && !bIsSkinTone) return 1;
-    if (!aIsSkinTone && bIsSkinTone) return -1;
-    
-    // Within same type, sort by title
-    const titleA = a.title || a.fluentui_metadata?.cldr || a.slug || '';
-    const titleB = b.title || b.fluentui_metadata?.cldr || b.slug || '';
-    return titleA.localeCompare(titleB);
+    const aTone = toneRegex.test(a.slug);
+    const bTone = toneRegex.test(b.slug);
+    if (aTone && !bTone) return 1;
+    if (!aTone && bTone) return -1;
+    return (a.title || a.slug).localeCompare(b.title || b.slug);
   });
-  
-  emojiCache = emojis;
-  slugToFolderPath = slugMap;
+
   return emojis;
 }
 
+// === Fetch single emoji ===
 export function getEmojiBySlug(slug: string): EmojiData | null {
-  const all = getAllEmojis();
-  const found = all.find(e => e.slug === slug);
-  if (found) return found;
+  const db = getDb();
+  const row = db.prepare(`SELECT * FROM emojis WHERE slug = ?`).get(slug);
+  if (!row) return null;
 
-  // Fallback to filesystem direct (legacy flat layout)
-  const emojiDataPath = join(process.cwd(), 'public/emoji_data');
-  const jsonFile = join(emojiDataPath, slug, `${slug}.json`);
-  if (existsSync(jsonFile)) {
-    try {
-      const jsonContent = readFileSync(jsonFile, 'utf-8');
-      return JSON.parse(jsonContent);
-    } catch (error) {
-      console.warn(`Failed to read emoji data for ${slug}:`, error);
-    }
-  }
-  return null;
+  return {
+    code: row.code,
+    slug: row.slug,
+    title: row.title,
+    description: row.description,
+    category: row.category,
+    apple_vendor_description: row.apple_vendor_description,
+    Unicode: parseJSON<string[]>(row.unicode) || [],
+    keywords: parseJSON<string[]>(row.keywords) || [],
+    alsoKnownAs: parseJSON<string[]>(row.also_known_as) || [],
+    version: parseJSON(row.version),
+    senses: parseJSON(row.senses),
+    shortcodes: parseJSON(row.shortcodes),
+  };
 }
 
-export function getEmojiImages(slug: string): EmojiImageVariants {
-  const all = getAllEmojis();
-  const match = all.find(e => e.slug === slug);
-  const baseRelativePath = match?.folderPath || slug;
-  const emojiDataPath = join(process.cwd(), 'public/emoji_data');
-  const folderPath = join(emojiDataPath, baseRelativePath);
-  const images: EmojiImageVariants = {};
+// === Fetch categories ===
+export function getEmojiCategories(): string[] {
+  const db = getDb();
+  const rows = db
+    .prepare(`SELECT DISTINCT category FROM emojis WHERE category IS NOT NULL`)
+    .all();
+
+  const validCategories = Object.keys(categoryIconMap);
+  const normalized = rows.map((r) =>
+    validCategories.includes(r.category) ? r.category : "Other"
+  );
+
+  return Array.from(new Set(normalized)).sort();
+}
+
+// === Fetch by category ===
+export function getEmojisByCategory(category: string): EmojiData[] {
+  const db = getDb();
+  const rows = db
+    .prepare(`SELECT * FROM emojis WHERE lower(category) = lower(?)`)
+    .all(category);
+
+  return rows.map((r) => ({
+    code: r.code,
+    slug: r.slug,
+    title: r.title,
+    description: r.description,
+    category: r.category,
+    apple_vendor_description: r.apple_vendor_description,
+    Unicode: parseJSON<string[]>(r.unicode) || [],
+    keywords: parseJSON<string[]>(r.keywords) || [],
+    alsoKnownAs: parseJSON<string[]>(r.also_known_as) || [],
+    version: parseJSON(r.version),
+    senses: parseJSON(r.senses),
+    shortcodes: parseJSON(r.shortcodes),
+  }));
+}
+
+export const apple_vendor_excluded_emojis = [
+    "person-with-beard",
+    "woman-in-motorized-wheelchair-facing-right",
   
-  if (!existsSync(folderPath)) {
+    "person-in-bed-medium-skin-tone",
+    "person-in-bed-light-skin-tone",
+    "person-in-bed-dark-skin-tone",
+    "person-in-bed-medium-light-skin-tone",
+    "person-in-bed-medium-dark-skin-tone",
+  
+    "snowboarder-medium-light-skin-tone",
+    "snowboarder-dark-skin-tone",
+    "snowboarder-medium-dark-skin-tone",
+    "snowboarder-light-skin-tone",
+    "snowboarder-medium-skin-tone",
+  
+    "medical-symbol",
+    "male-sign",
+    "female-sign",
+    "woman-with-headscarf"
+  ];
+  
+
+
+  export function getEmojiImages(slug) {
+    const db = getDb();
+    const rows = db
+      .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
+      .all(slug);
+  
+    const images = {};
+  
+    for (const row of rows) {
+      const lower = row.filename.toLowerCase();
+  
+      const setImage = (variant) => {
+        if (images[variant]) return;
+  
+        const buffer = Buffer.from(row.image_data);
+        let mime = "application/octet-stream";
+  
+        // --- Detect type from header instead of extension ---
+        const head = buffer.slice(0, 20).toString("utf8");
+  
+        if (head.startsWith("<svg") || head.includes("<svg")) {
+          mime = "image/svg+xml";
+        } else if (buffer.slice(0, 4).toString("ascii") === "RIFF") {
+          mime = "image/webp";
+        } else if (buffer[0] === 0x89 && buffer.toString("ascii", 1, 4) === "PNG") {
+          mime = "image/png";
+        } else if (buffer.toString("ascii", 6, 10) === "JFIF") {
+          mime = "image/jpeg";
+        }
+  
+        const base64 = buffer.toString("base64");
+        images[variant] = `data:${mime};base64,${base64}`;
+      };
+  
+      if (/_3d|3d/i.test(lower)) setImage("3d");
+      else if (/_color|color/i.test(lower)) setImage("color");
+      else if (/_flat|flat/i.test(lower)) setImage("flat");
+      else if (/_high_contrast|high_contrast|highcontrast/i.test(lower))
+        setImage("high_contrast");
+    }
+  
     return images;
   }
   
-  try {
-    const files = readdirSync(folderPath);
-    
-    for (const file of files) {
-      if (file.endsWith('.png') || file.endsWith('.svg')) {
-        const baseName = file.replace(/\.(png|svg)$/, '');
-        const lower = baseName.toLowerCase();
+  
 
-        const setImage = (variant: keyof EmojiImageVariants) => {
-          if (!images[variant]) {
-            images[variant] = match?.folderPath
-              ? `/freedevtools/emoji_data/${match.folderPath}/${file}`
-              : `/freedevtools/emoji_data/${slug}/${file}`;
-          }
-        };
+  // ============ Apple Version =====================
 
-        // Flexible variant detection: allow extra suffixes like _dark, -medium-dark, etc.
-        const has3d = /(^|[\-_])3d([\-_]|$)/.test(lower);
-        const hasColor = /(^|[\-_])color([\-_]|$)/.test(lower);
-        const hasFlat = /(^|[\-_])flat([\-_]|$)/.test(lower);
-        const hasHighContrast = /high[\-_]?contrast/.test(lower);
 
-        if (has3d) setImage('3d');
-        if (hasColor) setImage('color');
-        if (hasFlat) setImage('flat');
-        if (hasHighContrast) setImage('high_contrast');
-      }
-    }
-  } catch (error) {
-    console.warn(`Failed to read emoji images for ${slug}:`, error);
+  // Helper to extract version numbers numerically for sorting
+function versionToNumbers(version: string): number[] {
+    const matches = version.match(/\d+/g);
+    return matches ? matches.map(Number) : [];
   }
   
-  return images;
-}
-
-export function getEmojisByCategory(categoryName: string): EmojiData[] {
-  const allEmojis = getAllEmojis();
-  const normalized = categoryName.toLowerCase();
-  const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  const targetSlug = slugify(categoryName);
-  return allEmojis.filter((emoji) => {
-    const group = (
-      emoji.fluentui_metadata?.group ||
-      emoji.emoji_net_data?.category ||
-      (emoji as any).given_category ||
-      'Other'
-    ).toLowerCase();
-    return group === normalized || slugify(group) === targetSlug;
-  });
-}
-
-export function getEmojiCategories(): string[] {
-  const allEmojis = getAllEmojis();
-  const categories = new Set<string>();
-  for (const emoji of allEmojis) {
-    const category =
-      emoji.fluentui_metadata?.group ||
-      emoji.emoji_net_data?.category ||
-      (emoji as any).given_category ||
-      'Other';
-    if (category && category.trim() !== '') categories.add(category);
+  // Extracts iOS version name from filename (e.g., iOS_17.0 → iOS 17.0)
+  function extractIOSVersion(filename: string): string {
+    const match = filename.match(/(?:iOS|iPhone[_\s]?OS)[_\s]?([0-9.]+)/i);
+    return match ? `iOS ${match[1]}` : "Unknown";
   }
-  return Array.from(categories).sort();
+  
+  // Detect MIME type
+  function detectMime(buffer: Buffer): string {
+    const ascii = buffer.toString("ascii", 0, 16);
+    if (ascii.includes("<svg")) return "image/svg+xml";
+    if (ascii.startsWith("RIFF")) return "image/webp";
+    if (buffer[0] === 0x89 && ascii.includes("PNG")) return "image/png";
+    if (ascii.includes("JFIF") || ascii.includes("Exif")) return "image/jpeg";
+    return "application/octet-stream";
+  }
+  
+  /**
+   * Fetch all Apple emojis with their versioned Apple image evolution.
+   */
+  export function getAllAppleEmojis() {
+    const db = getDb();
+  
+    const emojiRows = db
+      .prepare(
+        `SELECT 
+          code,
+          unicode,
+          slug,
+          title,
+          category,
+          description,
+          apple_vendor_description,
+          keywords,
+          also_known_as,
+          version,
+          senses,
+          shortcodes
+        FROM emojis`
+      )
+      .all();
+  
+    const allEmojis = [];
+  
+    for (const emoji of emojiRows) {
+      const slug = emoji.slug;
+  
+      const imageRows = db
+        .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
+        .all(slug);
+  
+      const appleImages = imageRows
+        .filter((row) => /iOS[_\s]?\d+/i.test(row.filename)) // only Apple evolution ones
+        .map((row) => {
+          const buffer = Buffer.from(row.image_data);
+          const mime = detectMime(buffer);
+          const base64 = buffer.toString("base64");
+  
+          return {
+            file: row.filename,
+            url: `data:${mime};base64,${base64}`,
+            version: extractIOSVersion(row.filename),
+          };
+        })
+        .sort((a, b) => {
+          const va = versionToNumbers(a.version);
+          const vb = versionToNumbers(b.version);
+          const len = Math.max(va.length, vb.length);
+          for (let i = 0; i < len; i++) {
+            const diff = (va[i] || 0) - (vb[i] || 0);
+            if (diff !== 0) return diff;
+          }
+          return 0;
+        });
+  
+      if (appleImages.length === 0) continue;
+  
+      const latestImage = appleImages[appleImages.length - 1];
+  
+      allEmojis.push({
+        ...emoji,
+        Unicode: parseJSON<string[]>(emoji.unicode) || [],
+        keywords: parseJSON<string[]>(emoji.keywords) || [],
+        alsoKnownAs: parseJSON<string[]>(emoji.also_known_as) || [],
+        version: parseJSON(emoji.version),
+        senses: parseJSON(emoji.senses),
+        shortcodes: parseJSON(emoji.shortcodes),
+        slug,
+        appleEvolutionImages: appleImages,
+        latestAppleImage: latestImage.url,
+        apple_vendor_description:
+          emoji.apple_vendor_description || emoji.description || "",
+      });
+    }
+  
+    return allEmojis;
+  }
+  
+  /**
+   * Fetch a single Apple emoji by slug.
+   */
+  export function getAppleEmojiBySlug(slug: string) {
+    const all = getAllAppleEmojis();
+    return all.find((e) => e.slug === slug);
+  }
+
+
+  export function fetchImageFromDB(slug: string, filename: string): string | null {
+    const db = getDb();
+    const row = db
+      .prepare(
+        `SELECT image_data FROM images WHERE emoji_slug = ? AND filename = ?`
+      )
+      .get(slug, filename);
+  
+    if (!row || !row.image_data) return null;
+  
+    const buffer = Buffer.from(row.image_data);
+    const head = buffer.toString("ascii", 0, 20);
+    let mime = "application/octet-stream";
+    if (head.includes("<svg")) mime = "image/svg+xml";
+    else if (head.startsWith("RIFF")) mime = "image/webp";
+    else if (buffer[0] === 0x89 && head.includes("PNG")) mime = "image/png";
+    else if (head.includes("JFIF") || head.includes("Exif")) mime = "image/jpeg";
+  
+    return `data:${mime};base64,${buffer.toString("base64")}`;
+  }
+
+
+export function fetchLatestAppleImage(slug) {
+  const db = getDb();
+
+  // Fetch all Apple emoji image filenames for this slug
+  const rows = db
+    .prepare(
+      `SELECT filename, image_data
+        FROM images
+        WHERE emoji_slug = ? AND filename LIKE '%iOS%'
+        ORDER BY filename COLLATE NOCASE`
+    )
+    .all(slug);
+
+  if (!rows.length) return null;
+
+  // Parse version numbers like iOS_14.2 → 14.2
+  const parseVersion = (name) => {
+    const match = name.match(/iOS[_\s]?([\d.]+)/i);
+    return match ? parseFloat(match[1]) : 0;
+  };
+
+  // Pick the image with the highest iOS version number
+  const latest = rows.reduce((best, row) => {
+    return parseVersion(row.filename) > parseVersion(best.filename) ? row : best;
+  }, rows[0]);
+
+  // Convert to Base64 with proper MIME detection
+  const buffer = Buffer.from(latest.image_data);
+  const head = buffer.toString("ascii", 0, 20);
+  let mime = "application/octet-stream";
+  if (head.includes("<svg")) mime = "image/svg+xml";
+  else if (head.startsWith("RIFF")) mime = "image/webp";
+  else if (buffer[0] === 0x89 && head.includes("PNG")) mime = "image/png";
+  else if (head.includes("JFIF") || head.includes("Exif")) mime = "image/jpeg";
+
+  return `data:${mime};base64,${buffer.toString("base64")}`;
 }
+  
