@@ -19,26 +19,70 @@ jobs:
         with:
           # fetch-depth: 0 is recommended for a more reliable diff across multiple commits in a push
           fetch-depth: 0
-          lfs: true
+          # lfs: true  # Commented out - using B2 instead
 
-      - name: Verify LFS and database file
-        run: |
-          echo "🔎 Verifying Git LFS and SQLite DB presence..."
-          git lfs version || true
-          echo "LFS-tracked files:"
-          git lfs ls-files || true
-          echo "Listing DB directories:"
-          ls -l ./db || true
-          ls -l ./frontend/db || true
-          echo "File type of DB files (if present):"
-          for f in ./db/*.db ./frontend/db/*.db; do
-            if [ -f "$f" ]; then file "$f" || true; fi
-          done
+      # - name: Verify LFS and database file
+      #   run: |
+      #     echo "🔎 Verifying Git LFS and SQLite DB presence..."
+      #     git lfs version || true
+      #     echo "LFS-tracked files:"
+      #     git lfs ls-files || true
+      #     echo "Listing DB directories:"
+      #     ls -l ./db || true
+      #     ls -l ./frontend/db || true
+      #     echo "File type of DB files (if present):"
+      #     for f in ./db/*.db ./frontend/db/*.db; do
+      #       if [ -f "$f" ]; then file "$f" || true; fi
+      #     done
 
-      - name: Pull LFS objects explicitly (workaround)
+      # - name: Pull LFS objects explicitly (workaround)
+      #   run: |
+      #     echo "⬇️  Pulling LFS objects explicitly..."
+      #     git lfs pull --include="db/**,frontend/db/**" || git lfs pull || true
+
+      - name: Download database files from Backblaze B2
         run: |
-          echo "⬇️  Pulling LFS objects explicitly..."
-          git lfs pull --include="db/**,frontend/db/**" || git lfs pull || true
+          echo "⬇️  Downloading database files from Backblaze B2..."
+
+          # B2 credentials from GitHub secrets
+          B2_ACCOUNT_ID="${{ secrets.B2_ACCOUNT_ID }}"
+          B2_APPLICATION_KEY="${{ secrets.B2_APPLICATION_KEY }}"
+
+          # Authorize and get token
+          echo "🔐 Authorizing with B2..."
+          AUTH_RESPONSE=$(curl -s -u "${B2_ACCOUNT_ID}:${B2_APPLICATION_KEY}" "https://api.backblazeb2.com/b2api/v2/b2_authorize_account")
+          AUTH_TOKEN=$(echo "$AUTH_RESPONSE" | grep -o '"authorizationToken":"[^"]*' | cut -d'"' -f4)
+          DOWNLOAD_URL=$(echo "$AUTH_RESPONSE" | grep -o '"downloadUrl":"[^"]*' | cut -d'"' -f4)
+
+          if [ -z "$AUTH_TOKEN" ] || [ -z "$DOWNLOAD_URL" ]; then
+            echo "❌ Failed to authorize with B2"
+            exit 1
+          fi
+
+          echo "✅ Authorized successfully"
+          echo "📥 Download URL: $DOWNLOAD_URL"
+
+          # Create database directories
+          mkdir -p frontend/db/banner
+          mkdir -p frontend/db/man_pages
+          mkdir -p frontend/db/png_icons
+          mkdir -p frontend/db/svg_icons
+
+          # Download database files
+          echo "📦 Downloading database files..."
+
+          # Banner database
+          echo "  - Downloading banner-db.db..."
+          curl -s -H "Authorization: ${AUTH_TOKEN}" "${DOWNLOAD_URL}/file/hexmos/freedevtools/content/db/banner-db.db" -o frontend/db/banner/banner-db.db || echo "⚠️  Failed to download banner-db.db"
+
+          # Man pages database
+          echo "  - Downloading man-pages-db.db..."
+          curl -s -H "Authorization: ${AUTH_TOKEN}" "${DOWNLOAD_URL}/file/hexmos/freedevtools/content/db/man_pages/man-pages-db.db" -o frontend/db/man_pages/man-pages-db.db || echo "⚠️  Failed to download man-pages-db.db"
+
+          # Verify downloads
+          echo "✅ Download complete. Verifying files..."
+          ls -lh frontend/db/banner/ || true
+          ls -lh frontend/db/man_pages/ || true
 
       - name: Detect changed sections
         id: detect-changes
@@ -163,7 +207,7 @@ jobs:
         if: steps.detect-changes.outputs.should_deploy == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: "22.17.0"
+          node-version: '22.17.0'
 
       - name: Exclude unchanged sections from build
         if: steps.detect-changes.outputs.should_deploy == 'true'
@@ -249,8 +293,8 @@ jobs:
           cd frontend
           npx astro build
         env:
-          NODE_OPTIONS: "--max-old-space-size=16384"
-          UV_THREADPOOL_SIZE: "16"
+          NODE_OPTIONS: '--max-old-space-size=16384'
+          UV_THREADPOOL_SIZE: '16'
           PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
           MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
 
