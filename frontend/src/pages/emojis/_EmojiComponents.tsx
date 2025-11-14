@@ -79,15 +79,17 @@ export function CopyButtons({ emojiChar, shortcodes }: CopyButtonsProps) {
         <div className="flex flex-wrap gap-2">
           {Object.entries(shortcodes).map(([vendor, code]) => (
             <button
-              onClick={() => copyToClipboard(vendor, code)}
-              className={`px-3 py-1 rounded text-xs font-medium transition-colors min-w-[60px] text-center ${
-                copiedVendor === vendor
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-              }`}
-            >
-              {copiedVendor === vendor ? 'Copied!' : 'Copy'}
-            </button>
+            key={vendor}
+            onClick={() => copyToClipboard(code, 'vendor', vendor)}
+            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+              copiedVendor === vendor
+                ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
+            }`}
+            title={`${code} (${vendor})`}
+          >
+            {copiedVendor === vendor ? '✓' : `${code} (${vendor})`}
+          </button>
           ))}
         </div>
       )}
@@ -296,7 +298,7 @@ export function ShortcodesTable({ emojiId, shortcodes }: ShortcodesTableProps) {
             <tr className="border-b border-slate-200 dark:border-slate-700">
               <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">Platform</th>
               <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">Shortcode</th>
-              <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400">Action</th>
+              <th className="text-left py-2 font-medium text-slate-600 dark:text-slate-400 w-24">Action</th>
             </tr>
           </thead>
 
@@ -309,8 +311,8 @@ export function ShortcodesTable({ emojiId, shortcodes }: ShortcodesTableProps) {
                 <td className="py-3 font-mono text-slate-700 dark:text-slate-300">
                   {code}
                 </td>
-                <td className="py-3">
-                <button
+                <td className="py-3 w-24">
+                  <button
                     onClick={() => copyToClipboard(vendor, code)}
                     className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                       copiedVendor === vendor
