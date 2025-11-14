@@ -48,14 +48,36 @@ jobs:
           B2_ACCOUNT_ID="${{ secrets.B2_ACCOUNT_ID }}"
           B2_APPLICATION_KEY="${{ secrets.B2_APPLICATION_KEY }}"
 
+          # Verify credentials are set
+          if [ -z "$B2_ACCOUNT_ID" ] || [ -z "$B2_APPLICATION_KEY" ]; then
+            echo "❌ B2 credentials are missing. Please check GitHub secrets."
+            exit 1
+          fi
+
           # Authorize and get token
           echo "🔐 Authorizing with B2..."
-          AUTH_RESPONSE=$(curl -s -u "${B2_ACCOUNT_ID}:${B2_APPLICATION_KEY}" "https://api.backblazeb2.com/b2api/v2/b2_authorize_account")
-          AUTH_TOKEN=$(echo "$AUTH_RESPONSE" | grep -o '"authorizationToken":"[^"]*' | cut -d'"' -f4)
-          DOWNLOAD_URL=$(echo "$AUTH_RESPONSE" | grep -o '"downloadUrl":"[^"]*' | cut -d'"' -f4)
+          AUTH_RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -u "${B2_ACCOUNT_ID}:${B2_APPLICATION_KEY}" "https://api.backblazeb2.com/b2api/v2/b2_authorize_account")
+          HTTP_CODE=$(echo "$AUTH_RESPONSE" | grep "HTTP_CODE:" | cut -d':' -f2)
+          AUTH_JSON=$(echo "$AUTH_RESPONSE" | sed '/HTTP_CODE:/d')
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ B2 authorization failed with HTTP code: $HTTP_CODE"
+            echo "Response: $AUTH_JSON"
+            exit 1
+          fi
+
+          # Parse JSON response (using grep as fallback if jq not available)
+          if command -v jq &> /dev/null; then
+            AUTH_TOKEN=$(echo "$AUTH_JSON" | jq -r '.authorizationToken // empty')
+            DOWNLOAD_URL=$(echo "$AUTH_JSON" | jq -r '.downloadUrl // empty')
+          else
+            AUTH_TOKEN=$(echo "$AUTH_JSON" | grep -o '"authorizationToken":"[^"]*' | cut -d'"' -f4)
+            DOWNLOAD_URL=$(echo "$AUTH_JSON" | grep -o '"downloadUrl":"[^"]*' | cut -d'"' -f4)
+          fi
 
           if [ -z "$AUTH_TOKEN" ] || [ -z "$DOWNLOAD_URL" ]; then
-            echo "❌ Failed to authorize with B2"
+            echo "❌ Failed to parse B2 authorization response"
+            echo "Response: $AUTH_JSON"
             exit 1
           fi
 
