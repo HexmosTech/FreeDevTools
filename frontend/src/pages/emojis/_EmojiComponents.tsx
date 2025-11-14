@@ -79,16 +79,14 @@ export function CopyButtons({ emojiChar, shortcodes }: CopyButtonsProps) {
         <div className="flex flex-wrap gap-2">
           {Object.entries(shortcodes).map(([vendor, code]) => (
             <button
-              key={vendor}
-              onClick={() => copyToClipboard(code, 'vendor', vendor)}
-              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+              onClick={() => copyToClipboard(vendor, code)}
+              className={`px-3 py-1 rounded text-xs font-medium transition-colors min-w-[60px] text-center ${
                 copiedVendor === vendor
                   ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
               }`}
-              title={`${code} (${vendor})`}
             >
-              {copiedVendor === vendor ? '✓' : `${code} (${vendor})`}
+              {copiedVendor === vendor ? 'Copied!' : 'Copy'}
             </button>
           ))}
         </div>
@@ -200,7 +198,7 @@ export function ImageVariants({
         new ClipboardItem({ [blob.type]: blob }),
       ]);
   
-      toast.success("✅ Image copied to clipboard!");
+      toast.success("Image copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy image:", err);
       toast.error("❌ Failed to copy image.");
@@ -249,20 +247,19 @@ interface ShortcodesTableProps {
   shortcodes: Record<string, string>; // vendor → shortcode
 }
 export function ShortcodesTable({ emojiId, shortcodes }: ShortcodesTableProps) {
-  const [copiedShortcode, setCopiedShortcode] = useState<string | null>(null);
+  const [copiedVendor, setCopiedVendor] = useState<string | null>(null);
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (vendor: string, text: string) => {
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
-        setCopiedShortcode(text);
-        setTimeout(() => setCopiedShortcode(null), 2000);
+        setCopiedVendor(vendor);
+        setTimeout(() => setCopiedVendor(null), 2000);
         return;
       }
-    } catch {
-      // fallback
-    }
-
+    } catch {}
+  
+    // fallback
     try {
       const textarea = document.createElement('textarea');
       textarea.value = text;
@@ -273,15 +270,16 @@ export function ShortcodesTable({ emojiId, shortcodes }: ShortcodesTableProps) {
       textarea.select();
       const success = document.execCommand('copy');
       document.body.removeChild(textarea);
-
+  
       if (success) {
-        setCopiedShortcode(text);
-        setTimeout(() => setCopiedShortcode(null), 2000);
+        setCopiedVendor(vendor);
+        setTimeout(() => setCopiedVendor(null), 2000);
       }
     } catch (err) {
       console.error('Failed to copy text:', err);
     }
   };
+  
 
   const entries = Object.entries(shortcodes);
   if (entries.length === 0) return null;
@@ -312,15 +310,15 @@ export function ShortcodesTable({ emojiId, shortcodes }: ShortcodesTableProps) {
                   {code}
                 </td>
                 <td className="py-3">
-                  <button
-                    onClick={() => copyToClipboard(code)}
+                <button
+                    onClick={() => copyToClipboard(vendor, code)}
                     className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                      copiedShortcode === code
+                      copiedVendor === vendor
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                     }`}
                   >
-                    {copiedShortcode === code ? 'Copied!' : 'Copy'}
+                    {copiedVendor === vendor ? 'Copied!' : 'Copy'}
                   </button>
                 </td>
               </tr>
