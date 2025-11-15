@@ -255,172 +255,58 @@ jobs:
             echo "🔧 Public assets only mode - no page exclusions needed"
           fi
 
-      - name: Prepare database directories
+      - name: Restore database cache
+        id: cache-all-dbs-restore
+        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+        uses: actions/cache/restore@v4
+        with:
+          path: frontend/db/all_dbs
+          key: ${{ runner.os }}-all-dbs-v1
+          restore-keys: |
+            ${{ runner.os }}-all-dbs-
+
+      - name: Sync database files from Backblaze B2
         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
         run: |
-          mkdir -p frontend/db/banner
-          mkdir -p frontend/db/man_pages
-          mkdir -p frontend/db/png_icons
-          mkdir -p frontend/db/svg_icons
-          mkdir -p frontend/db/emojis
+          echo "⬇️  Syncing database files from Backblaze B2 using rclone..."
 
-      - name: Restore database cache - Banner
-        id: cache-banner
-        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
-        uses: actions/cache@v4
-        with:
-          path: frontend/db/banner/banner-db.db
-          key: ${{ runner.os }}-banner-db-v1
-          restore-keys: |
-            ${{ runner.os }}-banner-db-
+          # Create database directory
+          mkdir -p frontend/db/all_dbs
 
-      - name: Restore database cache - Man Pages
-        id: cache-man-pages
-        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
-        uses: actions/cache@v4
-        with:
-          path: frontend/db/man_pages/man-pages-db.db
-          key: ${{ runner.os }}-man-pages-db-v1
-          restore-keys: |
-            ${{ runner.os }}-man-pages-db-
+          # Sync all databases from B2
+          # --checksum flag compares file checksums and only transfers if files differ
+          # This ensures we get updates from B2 even if cache exists
+          # If checksums match, no transfer occurs (fast)
+          echo "🔄 Syncing all databases..."
+          rclone sync \
+            b2-config:hexmos/freedevtools/content/db/ \
+            frontend/db/all_dbs/ \
+            --checksum \
+            --retries 20 \
+            --low-level-retries 30 \
+            --retries-sleep 10s \
+            --progress
 
-      - name: Restore database cache - PNG Icons
-        id: cache-png-icons
-        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
-        uses: actions/cache@v4
-        with:
-          path: frontend/db/png_icons/png-icons-db.db
-          key: ${{ runner.os }}-png-icons-db-v1
-          restore-keys: |
-            ${{ runner.os }}-png-icons-db-
+          # Verify sync
+          echo "✅ Sync complete. Verifying files..."
+          ls -lh frontend/db/all_dbs/ 2>/dev/null || true
 
-      - name: Restore database cache - SVG Icons
-        id: cache-svg-icons
-        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
-        uses: actions/cache@v4
-        with:
-          path: frontend/db/svg_icons/svg-icons-db.db
-          key: ${{ runner.os }}-svg-icons-db-v1
-          restore-keys: |
-            ${{ runner.os }}-svg-icons-db-
-
-      - name: Restore database cache - Emoji
-        id: cache-emoji
-        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
-        uses: actions/cache@v4
-        with:
-          path: frontend/db/emojis/emoji-db.db
-          key: ${{ runner.os }}-emoji-db-v1
-          restore-keys: |
-            ${{ runner.os }}-emoji-db-
-
-      - name: Download database files from Backblaze B2
-        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
-        run: |
-          echo "⬇️  Downloading database files from Backblaze B2 using rclone..."
-
-          # Create database directories
-          mkdir -p frontend/db/banner
-          mkdir -p frontend/db/man_pages
-          mkdir -p frontend/db/png_icons
-          mkdir -p frontend/db/svg_icons
-          mkdir -p frontend/db/emojis
-
-          changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
-          echo "📦 Build strategy: $changed_sections"
-
-          # Function to download a database with cache check
-          download_db() {
-            local db_name=$1
-            local b2_file=$2
-            local local_path=$3
-            local cache_id=$4
-
-            echo "  - Processing $db_name..."
-            
-            # Check if file exists and is valid (from cache or previous download)
-            if [ -f "$local_path" ] && [ -s "$local_path" ]; then
-              echo "    ✅ $db_name found in cache, skipping download"
-              return 0
-            fi
-
-            echo "    ⬇️  Cache miss - downloading $db_name from B2..."
-            # Use copyto for copying to a specific file path
-            if rclone copyto \
-              b2-config:hexmos/freedevtools/content/db/$b2_file \
-              $local_path \
-              --retries 20 \
-              --low-level-retries 30 \
-              --retries-sleep 10s \
-              --progress; then
-              if [ -f "$local_path" ] && [ -s "$local_path" ]; then
-                echo "    ✅ $db_name downloaded successfully"
-                return 0
-              else
-                echo "    ⚠️  $db_name file is missing or empty"
-                return 1
-              fi
-            else
-              echo "    ⚠️  Failed to download $db_name"
-              return 1
-            fi
-          }
-
-          # Determine which databases to download
-          databases_to_download=""
-
-          # Check if full rebuild
-          if [[ "$changed_sections" == "full_rebuild" ]]; then
-            echo "🔧 Full rebuild - downloading all databases..."
-            databases_to_download="banner man-pages png-icons svg-icons emoji"
+          # Check if any database files exist
+          db_count=$(find frontend/db/all_dbs -name "*.db" 2>/dev/null | wc -l)
+          if [ "$db_count" -eq 0 ]; then
+            echo "⚠️  No database files found after sync"
+            exit 1
           else
-            echo "🎯 Partial build - downloading required databases..."
-            # Always include banner (used across the site)
-            databases_to_download="banner"
-            
-            # Add databases based on changed sections
-            for section in $changed_sections; do
-              case "$section" in
-                "man-pages")
-                  databases_to_download="$databases_to_download man-pages"
-                  ;;
-                "png_icons")
-                  databases_to_download="$databases_to_download png-icons"
-                  ;;
-                "svg_icons")
-                  databases_to_download="$databases_to_download svg-icons"
-                  ;;
-                "emojis")
-                  databases_to_download="$databases_to_download emoji"
-                  ;;
-              esac
-            done
+            echo "✅ Found $db_count database file(s)"
           fi
 
-          # Download each database
-          for db in $databases_to_download; do
-            case "$db" in
-              "banner")
-                download_db "banner-db.db" "banner-db.db" "frontend/db/banner/banner-db.db" "banner" || exit 1
-                ;;
-              "man-pages")
-                download_db "man-pages-db.db" "man-pages-db.db" "frontend/db/man_pages/man-pages-db.db" "man-pages" || exit 1
-                ;;
-              "png-icons")
-                download_db "png-icons-db.db" "png-icons-db.db" "frontend/db/png_icons/png-icons-db.db" "png-icons" || exit 1
-                ;;
-              "svg-icons")
-                download_db "svg-icons-db.db" "svg-icons-db.db" "frontend/db/svg_icons/svg-icons-db.db" "svg-icons" || exit 1
-                ;;
-              "emoji")
-                download_db "emoji-db.db" "emoji-db.db" "frontend/db/emojis/emoji-db.db" "emoji" || exit 1
-                ;;
-            esac
-          done
-
-          # Verify downloads
-          echo "✅ Download complete. Verifying files..."
-          ls -lh frontend/db/*/ 2>/dev/null || true
+      - name: Save database cache
+        id: cache-all-dbs-save
+        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+        uses: actions/cache/save@v4
+        with:
+          path: frontend/db/all_dbs
+          key: ${{ runner.os }}-all-dbs-v1
 
           # - name: Install dependencies
           # if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'

@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env
+.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db
 
 # Build the project
 build:
@@ -64,29 +64,57 @@ convert-to-webp:
 
 
 # Pull all DB files via Git LFS
-pull-db:
-	@echo "🔎 Checking Git LFS..."
-	@git lfs version || (echo "Git LFS not installed"; exit 1)
+# pull-db:
+# 	@echo "🔎 Checking Git LFS..."
+# 	@git lfs version || (echo "Git LFS not installed"; exit 1)
 
-	@echo "⬇️ Fetching all LFS objects..."
-	@git lfs fetch --all
+# 	@echo "⬇️ Fetching all LFS objects..."
+# 	@git lfs fetch --all
 
-	@echo "⬇️ Pulling DB-related LFS files..."
-	@git lfs pull --include="db/**,frontend/db/**" --exclude=""
+# 	@echo "⬇️ Pulling DB-related LFS files..."
+# 	@git lfs pull --include="db/**,frontend/db/**" --exclude=""
 
-	@echo "📄 Listing LFS-tracked files (only DB paths)..."
-	@git lfs ls-files | grep -E "db/|frontend/db/" || echo "No DB files tracked via LFS."
+# 	@echo "📄 Listing LFS-tracked files (only DB paths)..."
+# 	@git lfs ls-files | grep -E "db/|frontend/db/" || echo "No DB files tracked via LFS."
 
-	@echo "📏 Showing DB file sizes..."
-	@git lfs ls-files --size | grep -E "db/|frontend/db/" || true
+# 	@echo "📏 Showing DB file sizes..."
+# 	@git lfs ls-files --size | grep -E "db/|frontend/db/" || true
 
-	@echo "✅ Checking if DB files are actual binaries (not pointers)..."
-	@for f in db/*.db frontend/db/*.db; do \
-		if [ -f "$$f" ]; then \
-			echo "File: $$f"; \
-			head -n 3 $$f; \
-			echo "---"; \
-		fi; \
-	done
+# 	@echo "✅ Checking if DB files are actual binaries (not pointers)..."
+# 	@for f in db/*.db frontend/db/*.db; do \
+# 		if [ -f "$$f" ]; then \
+# 			echo "File: $$f"; \
+# 			head -n 3 $$f; \
+# 			echo "---"; \
+# 		fi; \
+# 	done
 
-	@echo "✅ DB pull completed."
+# 	@echo "✅ DB pull completed."
+
+init-rclone:
+	@echo "⬇️  Initializing Rclone..."
+	@sudo -v
+	@curl https://rclone.org/install.sh | sudo bash
+	@echo "✅ rclone installed successfully"
+	@rclone version
+	@mkdir -p ~/.config/rclone
+	@echo "[b2-config]" > ~/.config/rclone/rclone.conf
+	@echo "type = b2" >> ~/.config/rclone/rclone.conf
+	@echo "account = ${B2_ACCOUNT_ID}" >> ~/.config/rclone/rclone.conf
+	@echo "key = ${B2_APPLICATION_KEY}" >> ~/.config/rclone/rclone.conf
+	@echo "hard_delete = false" >> ~/.config/rclone/rclone.conf
+	@echo "✅ rclone config created successfully"
+	@echo "✅ Rclone initialized successfully"
+
+sync-db-to-local:
+	@echo "⬇️  Syncing database files from Backblaze B2..."
+	@mkdir -p db/all_dbs
+	rclone sync \
+		b2-config:hexmos/freedevtools/content/db/ \
+		db/all_dbs/ \
+		--checksum \
+		--retries 20 \
+		--low-level-retries 30 \
+		--retries-sleep 10s \
+		--progress
+	@echo "✅ Database sync completed"
