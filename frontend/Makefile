@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db
+.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2
 
 # Build the project
 build:
@@ -93,16 +93,26 @@ convert-to-webp:
 
 init-rclone:
 	@echo "⬇️  Initializing Rclone..."
-	@sudo -v
-	@curl https://rclone.org/install.sh | sudo bash
-	@echo "✅ rclone installed successfully"
+	@if ! command -v rclone >/dev/null 2>&1; then \
+		echo "📦 Installing rclone..."; \
+		sudo -v; \
+		curl https://rclone.org/install.sh | sudo bash; \
+		echo "✅ rclone installed successfully"; \
+	else \
+		echo "✅ rclone already installed"; \
+	fi
 	@rclone version
+	@if [ ! -f .env ]; then \
+		echo "❌ Error: .env file not found"; \
+		exit 1; \
+	fi
 	@mkdir -p ~/.config/rclone
-	@echo "[b2-config]" > ~/.config/rclone/rclone.conf
-	@echo "type = b2" >> ~/.config/rclone/rclone.conf
-	@echo "account = ${B2_ACCOUNT_ID}" >> ~/.config/rclone/rclone.conf
-	@echo "key = ${B2_APPLICATION_KEY}" >> ~/.config/rclone/rclone.conf
-	@echo "hard_delete = false" >> ~/.config/rclone/rclone.conf
+	@export $$(grep -v '^#' .env | xargs) && \
+		echo "[b2-config]" > ~/.config/rclone/rclone.conf && \
+		echo "type = b2" >> ~/.config/rclone/rclone.conf && \
+		echo "account = $$(echo $$B2_ACCOUNT_ID | tr -d '\"')" >> ~/.config/rclone/rclone.conf && \
+		echo "key = $$(echo $$B2_APPLICATION_KEY | tr -d '\"')" >> ~/.config/rclone/rclone.conf && \
+		echo "hard_delete = false" >> ~/.config/rclone/rclone.conf
 	@echo "✅ rclone config created successfully"
 	@echo "✅ Rclone initialized successfully"
 
@@ -118,3 +128,30 @@ sync-db-to-local:
 		--retries-sleep 10s \
 		--progress
 	@echo "✅ Database sync completed"
+
+update-db-to-b2:
+	@FILE_PATH=$$([ -n "$(file)" ] && echo "$(file)" || echo "$(filter-out update-db-to-b2,$(MAKECMDGOALS))" | head -n1); \
+	if [ -z "$$FILE_PATH" ]; then \
+		echo "❌ Error: File path is required"; \
+		echo "Usage: make update-db-to-b2 file=<path-to-db-file>"; \
+		echo "   or: make update-db-to-b2 <path-to-db-file>"; \
+		echo "Example: make update-db-to-b2 file=db/all_dbs/banner-db.db"; \
+		exit 1; \
+	fi; \
+	if [ ! -f "$$FILE_PATH" ]; then \
+		echo "❌ Error: File '$$FILE_PATH' not found"; \
+		exit 1; \
+	fi; \
+	echo "⬆️  Uploading $$FILE_PATH to Backblaze B2..."; \
+	rclone copy \
+		"$$FILE_PATH" \
+		b2-config:hexmos/freedevtools/content/db/ \
+		--checksum \
+		--retries 20 \
+		--low-level-retries 30 \
+		--retries-sleep 10s \
+		--progress; \
+	echo "✅ Database file uploaded successfully"
+
+%:
+	@:
