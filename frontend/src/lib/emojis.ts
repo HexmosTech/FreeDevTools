@@ -1,5 +1,5 @@
-import { existsSync, readdirSync } from "fs";
-import Database from "better-sqlite3";
+import { existsSync, readdirSync } from 'fs';
+import Database from 'better-sqlite3';
 import path, { join } from 'path';
 
 // === Type definitions ===
@@ -13,8 +13,8 @@ export interface EmojiData {
   keywords?: string[];
   alsoKnownAs?: string[];
   version?: {
-    "unicode-version"?: string;
-    "emoji-version"?: string;
+    'unicode-version'?: string;
+    'emoji-version'?: string;
   };
   senses?: {
     adjectives?: string[];
@@ -30,38 +30,38 @@ export interface EmojiData {
 }
 
 export interface EmojiImageVariants {
-  "3d"?: string;
+  '3d'?: string;
   color?: string;
   flat?: string;
   high_contrast?: string;
 }
 
 export const categoryIconMap: Record<string, string> = {
-  "Smileys & Emotion": "😀",
-  "People & Body": "👤",
-  "Animals & Nature": "🐶",
-  "Food & Drink": "🍎",
-  "Travel & Places": "✈️",
-  "Activities": "⚽",
-  "Objects": "📱",
-  "Symbols": "❤️",
-  "Flags": "🏁",
-  Other: "❓",
+  'Smileys & Emotion': '😀',
+  'People & Body': '👤',
+  'Animals & Nature': '🐶',
+  'Food & Drink': '🍎',
+  'Travel & Places': '✈️',
+  Activities: '⚽',
+  Objects: '📱',
+  Symbols: '❤️',
+  Flags: '🏁',
+  Other: '❓',
 };
 
 // === SQLite connection handling ===
 let dbInstance: Database.Database | null = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), "db/emoji_data/emoji.db");
+  return path.resolve(process.cwd(), 'db/emoji/emoji-db.db');
 }
 
 export function getDb(): Database.Database {
   if (dbInstance) return dbInstance;
   const dbPath = getDbPath();
   dbInstance = new Database(dbPath, { readonly: true });
-  dbInstance.pragma("journal_mode = OFF");
-  dbInstance.pragma("synchronous = OFF");
+  dbInstance.pragma('journal_mode = OFF');
+  dbInstance.pragma('synchronous = OFF');
   return dbInstance;
 }
 
@@ -79,7 +79,8 @@ function parseJSON<T>(value: string | null): T | undefined {
 export function getAllEmojis(): EmojiData[] {
   const db = getDb();
   const rows = db
-    .prepare(`
+    .prepare(
+      `
       SELECT 
         code,
         unicode,
@@ -94,7 +95,8 @@ export function getAllEmojis(): EmojiData[] {
         senses,
         shortcodes
       FROM emojis
-    `)
+    `
+    )
     .all();
 
   const emojis: EmojiData[] = rows.map((r) => ({
@@ -156,7 +158,7 @@ export function getEmojiCategories(): string[] {
 
   const validCategories = Object.keys(categoryIconMap);
   const normalized = rows.map((r) =>
-    validCategories.includes(r.category) ? r.category : "Other"
+    validCategories.includes(r.category) ? r.category : 'Other'
   );
 
   return Array.from(new Set(normalized)).sort();
@@ -186,109 +188,107 @@ export function getEmojisByCategory(category: string): EmojiData[] {
 }
 
 export const apple_vendor_excluded_emojis = [
-    "person-with-beard",
-    "woman-in-motorized-wheelchair-facing-right",
-  
-    "person-in-bed-medium-skin-tone",
-    "person-in-bed-light-skin-tone",
-    "person-in-bed-dark-skin-tone",
-    "person-in-bed-medium-light-skin-tone",
-    "person-in-bed-medium-dark-skin-tone",
-  
-    "snowboarder-medium-light-skin-tone",
-    "snowboarder-dark-skin-tone",
-    "snowboarder-medium-dark-skin-tone",
-    "snowboarder-light-skin-tone",
-    "snowboarder-medium-skin-tone",
-  
-    "medical-symbol",
-    "male-sign",
-    "female-sign",
-    "woman-with-headscarf"
-  ];
-  
+  'person-with-beard',
+  'woman-in-motorized-wheelchair-facing-right',
 
+  'person-in-bed-medium-skin-tone',
+  'person-in-bed-light-skin-tone',
+  'person-in-bed-dark-skin-tone',
+  'person-in-bed-medium-light-skin-tone',
+  'person-in-bed-medium-dark-skin-tone',
 
-  export function getEmojiImages(slug) {
-    const db = getDb();
-    const rows = db
-      .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
-      .all(slug);
-  
-    const images = {};
-  
-    for (const row of rows) {
-      const lower = row.filename.toLowerCase();
-  
-      const setImage = (variant) => {
-        if (images[variant]) return;
-  
-        const buffer = Buffer.from(row.image_data);
-        let mime = "application/octet-stream";
-  
-        // --- Detect type from header instead of extension ---
-        const head = buffer.slice(0, 20).toString("utf8");
-  
-        if (head.startsWith("<svg") || head.includes("<svg")) {
-          mime = "image/svg+xml";
-        } else if (buffer.slice(0, 4).toString("ascii") === "RIFF") {
-          mime = "image/webp";
-        } else if (buffer[0] === 0x89 && buffer.toString("ascii", 1, 4) === "PNG") {
-          mime = "image/png";
-        } else if (buffer.toString("ascii", 6, 10) === "JFIF") {
-          mime = "image/jpeg";
-        }
-  
-        const base64 = buffer.toString("base64");
-        images[variant] = `data:${mime};base64,${base64}`;
-      };
-  
-      if (/_3d|3d/i.test(lower)) setImage("3d");
-      else if (/_color|color/i.test(lower)) setImage("color");
-      else if (/_flat|flat/i.test(lower)) setImage("flat");
-      else if (/_high_contrast|high_contrast|highcontrast/i.test(lower))
-        setImage("high_contrast");
-    }
-  
-    return images;
+  'snowboarder-medium-light-skin-tone',
+  'snowboarder-dark-skin-tone',
+  'snowboarder-medium-dark-skin-tone',
+  'snowboarder-light-skin-tone',
+  'snowboarder-medium-skin-tone',
+
+  'medical-symbol',
+  'male-sign',
+  'female-sign',
+  'woman-with-headscarf',
+];
+
+export function getEmojiImages(slug) {
+  const db = getDb();
+  const rows = db
+    .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
+    .all(slug);
+
+  const images = {};
+
+  for (const row of rows) {
+    const lower = row.filename.toLowerCase();
+
+    const setImage = (variant) => {
+      if (images[variant]) return;
+
+      const buffer = Buffer.from(row.image_data);
+      let mime = 'application/octet-stream';
+
+      // --- Detect type from header instead of extension ---
+      const head = buffer.slice(0, 20).toString('utf8');
+
+      if (head.startsWith('<svg') || head.includes('<svg')) {
+        mime = 'image/svg+xml';
+      } else if (buffer.slice(0, 4).toString('ascii') === 'RIFF') {
+        mime = 'image/webp';
+      } else if (
+        buffer[0] === 0x89 &&
+        buffer.toString('ascii', 1, 4) === 'PNG'
+      ) {
+        mime = 'image/png';
+      } else if (buffer.toString('ascii', 6, 10) === 'JFIF') {
+        mime = 'image/jpeg';
+      }
+
+      const base64 = buffer.toString('base64');
+      images[variant] = `data:${mime};base64,${base64}`;
+    };
+
+    if (/_3d|3d/i.test(lower)) setImage('3d');
+    else if (/_color|color/i.test(lower)) setImage('color');
+    else if (/_flat|flat/i.test(lower)) setImage('flat');
+    else if (/_high_contrast|high_contrast|highcontrast/i.test(lower))
+      setImage('high_contrast');
   }
-  
-  
 
-  // ============ Apple Version =====================
+  return images;
+}
 
+// ============ Apple Version =====================
 
-  // Helper to extract version numbers numerically for sorting
+// Helper to extract version numbers numerically for sorting
 function versionToNumbers(version: string): number[] {
-    const matches = version.match(/\d+/g);
-    return matches ? matches.map(Number) : [];
-  }
-  
-  // Extracts iOS version name from filename (e.g., iOS_17.0 → iOS 17.0)
-  function extractIOSVersion(filename: string): string {
-    const match = filename.match(/(?:iOS|iPhone[_\s]?OS)[_\s]?([0-9.]+)/i);
-    return match ? `iOS ${match[1]}` : "Unknown";
-  }
-  
-  // Detect MIME type
-  function detectMime(buffer: Buffer): string {
-    const ascii = buffer.toString("ascii", 0, 16);
-    if (ascii.includes("<svg")) return "image/svg+xml";
-    if (ascii.startsWith("RIFF")) return "image/webp";
-    if (buffer[0] === 0x89 && ascii.includes("PNG")) return "image/png";
-    if (ascii.includes("JFIF") || ascii.includes("Exif")) return "image/jpeg";
-    return "application/octet-stream";
-  }
-  
-  /**
-   * Fetch all Apple emojis with their versioned Apple image evolution.
-   */
-  export function getAllAppleEmojis() {
-    const db = getDb();
-  
-    const emojiRows = db
-      .prepare(
-        `SELECT 
+  const matches = version.match(/\d+/g);
+  return matches ? matches.map(Number) : [];
+}
+
+// Extracts iOS version name from filename (e.g., iOS_17.0 → iOS 17.0)
+function extractIOSVersion(filename: string): string {
+  const match = filename.match(/(?:iOS|iPhone[_\s]?OS)[_\s]?([0-9.]+)/i);
+  return match ? `iOS ${match[1]}` : 'Unknown';
+}
+
+// Detect MIME type
+function detectMime(buffer: Buffer): string {
+  const ascii = buffer.toString('ascii', 0, 16);
+  if (ascii.includes('<svg')) return 'image/svg+xml';
+  if (ascii.startsWith('RIFF')) return 'image/webp';
+  if (buffer[0] === 0x89 && ascii.includes('PNG')) return 'image/png';
+  if (ascii.includes('JFIF') || ascii.includes('Exif')) return 'image/jpeg';
+  return 'application/octet-stream';
+}
+
+/**
+ * Fetch all Apple emojis with their versioned Apple image evolution.
+ */
+export function getAllAppleEmojis() {
+  const db = getDb();
+
+  const emojiRows = db
+    .prepare(
+      `SELECT 
           code,
           unicode,
           slug,
@@ -302,95 +302,96 @@ function versionToNumbers(version: string): number[] {
           senses,
           shortcodes
         FROM emojis`
-      )
-      .all();
-  
-    const allEmojis = [];
-  
-    for (const emoji of emojiRows) {
-      const slug = emoji.slug;
-  
-      const imageRows = db
-        .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
-        .all(slug);
-  
-      const appleImages = imageRows
-        .filter((row) => /iOS[_\s]?\d+/i.test(row.filename)) // only Apple evolution ones
-        .map((row) => {
-          const buffer = Buffer.from(row.image_data);
-          const mime = detectMime(buffer);
-          const base64 = buffer.toString("base64");
-  
-          return {
-            file: row.filename,
-            url: `data:${mime};base64,${base64}`,
-            version: extractIOSVersion(row.filename),
-          };
-        })
-        .sort((a, b) => {
-          const va = versionToNumbers(a.version);
-          const vb = versionToNumbers(b.version);
-          const len = Math.max(va.length, vb.length);
-          for (let i = 0; i < len; i++) {
-            const diff = (va[i] || 0) - (vb[i] || 0);
-            if (diff !== 0) return diff;
-          }
-          return 0;
-        });
-  
-      if (appleImages.length === 0) continue;
-  
-      const latestImage = appleImages[appleImages.length - 1];
-  
-      allEmojis.push({
-        ...emoji,
-        Unicode: parseJSON<string[]>(emoji.unicode) || [],
-        keywords: parseJSON<string[]>(emoji.keywords) || [],
-        alsoKnownAs: parseJSON<string[]>(emoji.also_known_as) || [],
-        version: parseJSON(emoji.version),
-        senses: parseJSON(emoji.senses),
-        shortcodes: parseJSON(emoji.shortcodes),
-        slug,
-        appleEvolutionImages: appleImages,
-        latestAppleImage: latestImage.url,
-        apple_vendor_description:
-          emoji.apple_vendor_description || emoji.description || "",
+    )
+    .all();
+
+  const allEmojis = [];
+
+  for (const emoji of emojiRows) {
+    const slug = emoji.slug;
+
+    const imageRows = db
+      .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
+      .all(slug);
+
+    const appleImages = imageRows
+      .filter((row) => /iOS[_\s]?\d+/i.test(row.filename)) // only Apple evolution ones
+      .map((row) => {
+        const buffer = Buffer.from(row.image_data);
+        const mime = detectMime(buffer);
+        const base64 = buffer.toString('base64');
+
+        return {
+          file: row.filename,
+          url: `data:${mime};base64,${base64}`,
+          version: extractIOSVersion(row.filename),
+        };
+      })
+      .sort((a, b) => {
+        const va = versionToNumbers(a.version);
+        const vb = versionToNumbers(b.version);
+        const len = Math.max(va.length, vb.length);
+        for (let i = 0; i < len; i++) {
+          const diff = (va[i] || 0) - (vb[i] || 0);
+          if (diff !== 0) return diff;
+        }
+        return 0;
       });
-    }
-  
-    return allEmojis;
-  }
-  
-  /**
-   * Fetch a single Apple emoji by slug.
-   */
-  export function getAppleEmojiBySlug(slug: string) {
-    const all = getAllAppleEmojis();
-    return all.find((e) => e.slug === slug);
-  }
 
+    if (appleImages.length === 0) continue;
 
-  export function fetchImageFromDB(slug: string, filename: string): string | null {
-    const db = getDb();
-    const row = db
-      .prepare(
-        `SELECT image_data FROM images WHERE emoji_slug = ? AND filename = ?`
-      )
-      .get(slug, filename);
-  
-    if (!row || !row.image_data) return null;
-  
-    const buffer = Buffer.from(row.image_data);
-    const head = buffer.toString("ascii", 0, 20);
-    let mime = "application/octet-stream";
-    if (head.includes("<svg")) mime = "image/svg+xml";
-    else if (head.startsWith("RIFF")) mime = "image/webp";
-    else if (buffer[0] === 0x89 && head.includes("PNG")) mime = "image/png";
-    else if (head.includes("JFIF") || head.includes("Exif")) mime = "image/jpeg";
-  
-    return `data:${mime};base64,${buffer.toString("base64")}`;
+    const latestImage = appleImages[appleImages.length - 1];
+
+    allEmojis.push({
+      ...emoji,
+      Unicode: parseJSON<string[]>(emoji.unicode) || [],
+      keywords: parseJSON<string[]>(emoji.keywords) || [],
+      alsoKnownAs: parseJSON<string[]>(emoji.also_known_as) || [],
+      version: parseJSON(emoji.version),
+      senses: parseJSON(emoji.senses),
+      shortcodes: parseJSON(emoji.shortcodes),
+      slug,
+      appleEvolutionImages: appleImages,
+      latestAppleImage: latestImage.url,
+      apple_vendor_description:
+        emoji.apple_vendor_description || emoji.description || '',
+    });
   }
 
+  return allEmojis;
+}
+
+/**
+ * Fetch a single Apple emoji by slug.
+ */
+export function getAppleEmojiBySlug(slug: string) {
+  const all = getAllAppleEmojis();
+  return all.find((e) => e.slug === slug);
+}
+
+export function fetchImageFromDB(
+  slug: string,
+  filename: string
+): string | null {
+  const db = getDb();
+  const row = db
+    .prepare(
+      `SELECT image_data FROM images WHERE emoji_slug = ? AND filename = ?`
+    )
+    .get(slug, filename);
+
+  if (!row || !row.image_data) return null;
+
+  const buffer = Buffer.from(row.image_data);
+  const head = buffer.toString('ascii', 0, 20);
+  let mime = 'application/octet-stream';
+  if (head.includes('<svg')) mime = 'image/svg+xml';
+  else if (head.startsWith('RIFF')) mime = 'image/webp';
+  else if (buffer[0] === 0x89 && head.includes('PNG')) mime = 'image/png';
+  else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
+
+  return `data:${mime};base64,${buffer.toString('base64')}`;
+}
 
 export function fetchLatestAppleImage(slug) {
   const db = getDb();
@@ -415,18 +416,19 @@ export function fetchLatestAppleImage(slug) {
 
   // Pick the image with the highest iOS version number
   const latest = rows.reduce((best, row) => {
-    return parseVersion(row.filename) > parseVersion(best.filename) ? row : best;
+    return parseVersion(row.filename) > parseVersion(best.filename)
+      ? row
+      : best;
   }, rows[0]);
 
   // Convert to Base64 with proper MIME detection
   const buffer = Buffer.from(latest.image_data);
-  const head = buffer.toString("ascii", 0, 20);
-  let mime = "application/octet-stream";
-  if (head.includes("<svg")) mime = "image/svg+xml";
-  else if (head.startsWith("RIFF")) mime = "image/webp";
-  else if (buffer[0] === 0x89 && head.includes("PNG")) mime = "image/png";
-  else if (head.includes("JFIF") || head.includes("Exif")) mime = "image/jpeg";
+  const head = buffer.toString('ascii', 0, 20);
+  let mime = 'application/octet-stream';
+  if (head.includes('<svg')) mime = 'image/svg+xml';
+  else if (head.startsWith('RIFF')) mime = 'image/webp';
+  else if (buffer[0] === 0x89 && head.includes('PNG')) mime = 'image/png';
+  else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
 
-  return `data:${mime};base64,${buffer.toString("base64")}`;
+  return `data:${mime};base64,${buffer.toString('base64')}`;
 }
-  

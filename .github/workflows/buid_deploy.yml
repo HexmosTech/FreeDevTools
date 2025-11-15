@@ -40,9 +40,23 @@ jobs:
       #     echo "⬇️  Pulling LFS objects explicitly..."
       #     git lfs pull --include="db/**,frontend/db/**" || git lfs pull || true
 
-      - name: Download database files from Backblaze B2
+      - name: Install rclone
         run: |
-          echo "⬇️  Downloading database files from Backblaze B2..."
+          echo "📦 Checking rclone installation..."
+          if command -v rclone &> /dev/null; then
+            echo "✅ rclone is already installed"
+            rclone version
+          else
+            echo "⬇️  Installing rclone..."
+            sudo -v
+            curl https://rclone.org/install.sh | sudo bash
+            echo "✅ rclone installed successfully"
+            rclone version
+          fi
+
+      - name: Setup rclone configuration
+        run: |
+          echo "🔧 Setting up rclone configuration..."
 
           # B2 credentials from GitHub secrets
           B2_ACCOUNT_ID="${{ secrets.B2_ACCOUNT_ID }}"
@@ -54,63 +68,19 @@ jobs:
             exit 1
           fi
 
-          # Authorize and get token
-          echo "🔐 Authorizing with B2..."
-          AUTH_RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -u "${B2_ACCOUNT_ID}:${B2_APPLICATION_KEY}" "https://api.backblazeb2.com/b2api/v2/b2_authorize_account")
-          HTTP_CODE=$(echo "$AUTH_RESPONSE" | grep "HTTP_CODE:" | cut -d':' -f2)
-          AUTH_JSON=$(echo "$AUTH_RESPONSE" | sed '/HTTP_CODE:/d')
+          # Create rclone config directory
+          mkdir -p ~/.config/rclone
 
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "❌ B2 authorization failed with HTTP code: $HTTP_CODE"
-            echo "Response: $AUTH_JSON"
-            exit 1
-          fi
+          # Create rclone config file
+          cat > ~/.config/rclone/rclone.conf << EOF
+          [b2-config]
+          type = b2
+          account = ${B2_ACCOUNT_ID}
+          key = ${B2_APPLICATION_KEY}
+          hard_delete = false
+          EOF
 
-          # Parse JSON response (using grep as fallback if jq not available)
-          if command -v jq &> /dev/null; then
-            AUTH_TOKEN=$(echo "$AUTH_JSON" | jq -r '.authorizationToken // empty')
-            DOWNLOAD_URL=$(echo "$AUTH_JSON" | jq -r '.downloadUrl // empty')
-          else
-            AUTH_TOKEN=$(echo "$AUTH_JSON" | grep -o '"authorizationToken":"[^"]*' | cut -d'"' -f4)
-            DOWNLOAD_URL=$(echo "$AUTH_JSON" | grep -o '"downloadUrl":"[^"]*' | cut -d'"' -f4)
-          fi
-
-          if [ -z "$AUTH_TOKEN" ] || [ -z "$DOWNLOAD_URL" ]; then
-            echo "❌ Failed to parse B2 authorization response"
-            echo "Response: $AUTH_JSON"
-            exit 1
-          fi
-
-          echo "✅ Authorized successfully"
-          echo "📥 Download URL: $DOWNLOAD_URL"
-
-          # Create database directories
-          mkdir -p frontend/db/banner
-          mkdir -p frontend/db/man_pages
-          mkdir -p frontend/db/png_icons
-          mkdir -p frontend/db/svg_icons
-          mkdir -p frontend/db/emoji_data
-
-          # Download database files
-          echo "📦 Downloading database files..."
-
-          # Banner database
-          echo "  - Downloading banner-db.db..."
-          curl -s -H "Authorization: ${AUTH_TOKEN}" "${DOWNLOAD_URL}/file/hexmos/freedevtools/content/db/banner-db.db" -o frontend/db/banner/banner-db.db || echo "⚠️  Failed to download banner-db.db"
-
-          # Man pages database
-          echo "  - Downloading man-pages-db.db..."
-          curl -s -H "Authorization: ${AUTH_TOKEN}" "${DOWNLOAD_URL}/file/hexmos/freedevtools/content/db/man_pages/man-pages-db.db" -o frontend/db/man_pages/man-pages-db.db || echo "⚠️  Failed to download man-pages-db.db"
-
-          # Emoji database
-          echo "  - Downloading emoji.db..."
-          curl -s -H "Authorization: ${AUTH_TOKEN}" "${DOWNLOAD_URL}/file/hexmos/freedevtools/content/db/emoji.db" -o frontend/db/emoji_data/emoji.db || echo "⚠️  Failed to download emoji.db"
-
-          # Verify downloads
-          echo "✅ Download complete. Verifying files..."
-          ls -lh frontend/db/banner/ || true
-          ls -lh frontend/db/man_pages/ || true
-          ls -lh frontend/db/emoji_data/ || true
+          echo "✅ rclone configuration created"
 
       - name: Detect changed sections
         id: detect-changes
@@ -306,6 +276,84 @@ jobs:
           cd frontend
           rm -rf dist
           mkdir -p dist
+
+      - name: Download database files from Backblaze B2
+        if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+        run: |
+          echo "⬇️  Downloading database files from Backblaze B2 using rclone..."
+
+          # Create database directories
+          mkdir -p frontend/db/banner
+          mkdir -p frontend/db/man_pages
+          mkdir -p frontend/db/png_icons
+          mkdir -p frontend/db/svg_icons
+          mkdir -p frontend/db/emojis
+
+          changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
+          echo "📦 Build strategy: $changed_sections"
+
+          # Function to download a database
+          download_db() {
+            local db_name=$1
+            local b2_file=$2
+            local local_path=$3
+
+            echo "  - Downloading $db_name..."
+            if rclone copy \
+              b2-config:hexmos/freedevtools/content/db/$b2_file \
+              $local_path \
+              --retries 20 \
+              --low-level-retries 30 \
+              --retries-sleep 10s; then
+              if [ -f "$local_path" ] && [ -s "$local_path" ]; then
+                echo "    ✅ $db_name downloaded successfully"
+                return 0
+              else
+                echo "    ⚠️  $db_name file is missing or empty"
+                return 1
+              fi
+            else
+              echo "    ⚠️  Failed to download $db_name"
+              return 1
+            fi
+          }
+
+          # Check if full rebuild
+          if [[ "$changed_sections" == "full_rebuild" ]]; then
+            echo "🔧 Full rebuild - downloading all databases..."
+            download_db "banner-db.db" "banner-db.db" "frontend/db/banner/banner-db.db" || exit 1
+            download_db "man-pages-db.db" "man-pages-db.db" "frontend/db/man_pages/man-pages-db.db" || exit 1
+            download_db "png-icons-db.db" "png-icons-db.db" "frontend/db/png_icons/png-icons-db.db" || exit 1
+            download_db "svg-icons-db.db" "svg-icons-db.db" "frontend/db/svg_icons/svg-icons-db.db" || exit 1
+            download_db "emoji-db.db" "emoji-db.db" "frontend/db/emojis/emoji-db.db" || exit 1
+          else
+            echo "🎯 Partial build - downloading required databases..."
+            
+            # Always download banner (used across the site)
+            download_db "banner-db.db" "banner-db.db" "frontend/db/banner/banner-db.db" || exit 1
+
+            # Download databases based on changed sections
+            for section in $changed_sections; do
+              case "$section" in
+                "man-pages")
+                  download_db "man-pages-db.db" "man-pages-db.db" "frontend/db/man_pages/man-pages-db.db" || exit 1
+                  ;;
+                "png_icons")
+                  download_db "png-icons-db.db" "png-icons-db.db" "frontend/db/png_icons/png-icons-db.db" || exit 1
+                  ;;
+                "svg_icons")
+                  download_db "svg-icons-db.db" "svg-icons-db.db" "frontend/db/svg_icons/svg-icons-db.db" || exit 1
+                  ;;
+                "emojies")
+                  download_db "emoji-db.db" "emoji-db.db" "frontend/db/emojis/emoji-db.db" || exit 1
+                  ;;
+              esac
+            done
+          fi
+
+          # Verify downloads
+          echo "✅ Download complete. Verifying files..."
+          ls -lh frontend/db/*/ 2>/dev/null || true
 
           # - name: Build project
           # if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
