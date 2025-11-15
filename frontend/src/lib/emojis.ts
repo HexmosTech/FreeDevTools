@@ -1,6 +1,5 @@
-import { existsSync, readdirSync } from 'fs';
 import Database from 'better-sqlite3';
-import path, { join } from 'path';
+import path from 'path';
 
 // === Type definitions ===
 export interface EmojiData {
@@ -53,7 +52,7 @@ export const categoryIconMap: Record<string, string> = {
 let dbInstance: Database.Database | null = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/emoji/emoji-db.db');
+  return path.resolve(process.cwd(), 'db/emojis/emoji-db.db');
 }
 
 export function getDb(): Database.Database {
