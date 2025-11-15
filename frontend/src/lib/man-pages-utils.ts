@@ -6,7 +6,7 @@ import type { ManPage, Category, SubCategory, RawManPageRow, RawCategoryRow, Raw
 let dbInstance: any = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/man_pages/man-pages-db.db');
+  return path.resolve(process.cwd(), 'db/all_dbs/man-pages-db.db');
 }
 
 export function getDb() {

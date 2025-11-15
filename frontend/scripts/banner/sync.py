@@ -487,9 +487,9 @@ def main():
         print(f"Error: CSV file not found: {csv_path}")
         sys.exit(1)
 
-    # Database path: db/banner/banner-db.db
+    # Database path: db/all_dbs/banner-db.db
     script_dir = Path(__file__).parent
-    db_dir = script_dir.parent.parent / "db" / "banner"
+    db_dir = script_dir.parent.parent / "db" / "all_dbs"
     db_dir.mkdir(parents=True, exist_ok=True)
     db_path = db_dir / "banner-db.db"
 

@@ -6,7 +6,7 @@ import type { Banner, RawBannerRow } from './banner-schema';
 let dbInstance: Database.Database | null = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/banner/banner-db.db');
+  return path.resolve(process.cwd(), 'db/all_dbs/banner-db.db');
 }
 
 export function getDb(): Database.Database {

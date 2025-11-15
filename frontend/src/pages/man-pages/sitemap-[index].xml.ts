@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 
   // Loader function for sitemap URLs
   async function loadUrls() {
-    const dbPath = path.join(process.cwd(), 'db/man_pages/man-pages-db.db');
+    const dbPath = path.join(process.cwd(), 'db/all_dbs/man-pages-db.db');
     const db = new Database(dbPath, { readonly: true });
     const now = new Date().toISOString();
 
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
       WHERE slug IS NOT NULL AND slug != ''
       ORDER BY main_category, sub_category, slug
     `);
-    
+
     const manPages = stmt.all() as Array<{
       main_category: string;
       sub_category: string;
@@ -52,7 +52,7 @@ export async function getStaticPaths() {
       ORDER BY main_category
     `);
     const categories = categoryStmt.all() as Array<{ main_category: string }>;
-    
+
     categories.forEach(({ main_category }) => {
       urls.push(`
         <url>
@@ -69,8 +69,11 @@ export async function getStaticPaths() {
       FROM man_pages
       ORDER BY main_category, sub_category
     `);
-    const subcategories = subcategoryStmt.all() as Array<{ main_category: string; sub_category: string }>;
-    
+    const subcategories = subcategoryStmt.all() as Array<{
+      main_category: string;
+      sub_category: string;
+    }>;
+
     subcategories.forEach(({ main_category, sub_category }) => {
       urls.push(`
         <url>
@@ -89,9 +92,9 @@ export async function getStaticPaths() {
   try {
     const Database = (await import('better-sqlite3')).default;
     const path = (await import('path')).default;
-    const dbPath = path.join(process.cwd(), 'db/man_pages/man-pages-db.db');
+    const dbPath = path.join(process.cwd(), 'db/all_dbs/man-pages-db.db');
     const db = new Database(dbPath, { readonly: true });
-    
+
     const countStmt = db.prepare(`
       SELECT 
         (SELECT COUNT(*) FROM man_pages WHERE slug IS NOT NULL AND slug != '') +
@@ -102,7 +105,7 @@ export async function getStaticPaths() {
     const result = countStmt.get() as { total: number };
     const totalUrls = result.total;
     const totalPages = Math.ceil(totalUrls / MAX_URLS);
-    
+
     db.close();
 
     return Array.from({ length: totalPages }, (_, i) => ({

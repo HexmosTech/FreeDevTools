@@ -52,7 +52,7 @@ export const categoryIconMap: Record<string, string> = {
 let dbInstance: Database.Database | null = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/emojis/emoji-db.db');
+  return path.resolve(process.cwd(), 'db/all_dbs/emoji-db.db');
 }
 
 export function getDb(): Database.Database {

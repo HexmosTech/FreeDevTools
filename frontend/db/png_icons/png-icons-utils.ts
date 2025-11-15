@@ -12,7 +12,7 @@ import type {
 let dbInstance: Database.Database | null = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/png_icons/png-icons-db.db');
+  return path.resolve(process.cwd(), 'db/all_dbs/png-icons-db.db');
 }
 
 export function getDb(): Database.Database {

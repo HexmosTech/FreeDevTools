@@ -3,13 +3,13 @@ import type { APIRoute } from 'astro';
 export const GET: APIRoute = async ({ site, params }) => {
   const Database = (await import('better-sqlite3')).default;
   const path = (await import('path')).default;
-  
+
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
   try {
     // Connect to database
-    const dbPath = path.join(process.cwd(), 'db/man_pages/man-pages-db.db');
+    const dbPath = path.join(process.cwd(), 'db/all_dbs/man-pages-db.db');
     const db = new Database(dbPath, { readonly: true });
 
     // Get all man pages from database
@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ site, params }) => {
       WHERE slug IS NOT NULL AND slug != ''
       ORDER BY main_category, sub_category, slug
     `);
-    
+
     const manPages = stmt.all() as Array<{
       main_category: string;
       sub_category: string;
@@ -53,7 +53,7 @@ export const GET: APIRoute = async ({ site, params }) => {
       ORDER BY main_category
     `);
     const categories = categoryStmt.all() as Array<{ main_category: string }>;
-    
+
     categories.forEach(({ main_category }) => {
       urls.push(`
         <url>
@@ -70,8 +70,11 @@ export const GET: APIRoute = async ({ site, params }) => {
       FROM man_pages
       ORDER BY main_category, sub_category
     `);
-    const subcategories = subcategoryStmt.all() as Array<{ main_category: string; sub_category: string }>;
-    
+    const subcategories = subcategoryStmt.all() as Array<{
+      main_category: string;
+      sub_category: string;
+    }>;
+
     subcategories.forEach(({ main_category, sub_category }) => {
       urls.push(`
         <url>
@@ -133,7 +136,6 @@ export const GET: APIRoute = async ({ site, params }) => {
         'Cache-Control': 'public, max-age=3600',
       },
     });
-
   } catch (error) {
     console.error('Error generating man pages sitemap:', error);
     return new Response('Internal Server Error', { status: 500 });
