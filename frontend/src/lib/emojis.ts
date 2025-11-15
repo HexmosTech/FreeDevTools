@@ -9,6 +9,7 @@ export interface EmojiData {
   description?: string;
   category?: string;
   apple_vendor_description?: string;
+  discord_vendor_description?: string;
   keywords?: string[];
   alsoKnownAs?: string[];
   version?: {
@@ -139,6 +140,7 @@ export function getEmojiBySlug(slug: string): EmojiData | null {
     description: row.description,
     category: row.category,
     apple_vendor_description: row.apple_vendor_description,
+    discord_vendor_description: row.discord_vendor_description,
     Unicode: parseJSON<string[]>(row.unicode) || [],
     keywords: parseJSON<string[]>(row.keywords) || [],
     alsoKnownAs: parseJSON<string[]>(row.also_known_as) || [],
@@ -187,6 +189,28 @@ export function getEmojisByCategory(category: string): EmojiData[] {
 }
 
 export const apple_vendor_excluded_emojis = [
+  'person-with-beard',
+  'woman-in-motorized-wheelchair-facing-right',
+
+  'person-in-bed-medium-skin-tone',
+  'person-in-bed-light-skin-tone',
+  'person-in-bed-dark-skin-tone',
+  'person-in-bed-medium-light-skin-tone',
+  'person-in-bed-medium-dark-skin-tone',
+
+  'snowboarder-medium-light-skin-tone',
+  'snowboarder-dark-skin-tone',
+  'snowboarder-medium-dark-skin-tone',
+  'snowboarder-light-skin-tone',
+  'snowboarder-medium-skin-tone',
+
+  'medical-symbol',
+  'male-sign',
+  'female-sign',
+  'woman-with-headscarf',
+];
+
+export const discord_vendor_excluded_emojis = [
   'person-with-beard',
   'woman-in-motorized-wheelchair-facing-right',
 
@@ -295,6 +319,7 @@ export function getAllAppleEmojis() {
           category,
           description,
           apple_vendor_description,
+          discord_vendor_description,
           keywords,
           also_known_as,
           version,
@@ -360,6 +385,103 @@ export function getAllAppleEmojis() {
   return allEmojis;
 }
 
+
+export function getAllDiscordEmojis() {
+  const db = getDb();
+
+  const emojiRows = db
+    .prepare(
+      `SELECT 
+          code,
+          unicode,
+          slug,
+          title,
+          category,
+          description,
+          apple_vendor_description,
+          discord_vendor_description,
+          keywords,
+          also_known_as,
+          version,
+          senses,
+          shortcodes
+        FROM emojis`
+    )
+    .all();
+
+  const allEmojis = [];
+
+  for (const emoji of emojiRows) {
+    const slug = emoji.slug;
+
+    // Get only Discord vendor images
+    const imageRows = db
+      .prepare(
+        `SELECT filename, image_data 
+         FROM images 
+         WHERE emoji_slug = ? AND image_type = 'twemoji-vendor'`
+      )
+      .all(slug);
+
+    // Filter and normalize Discord evolution images
+    const discordImages = imageRows
+      .map((row) => {
+        const buffer = Buffer.from(row.image_data);
+        const mime = detectMime(buffer);
+        const base64 = buffer.toString('base64');
+
+        return {
+          file: row.filename,
+          url: `data:${mime};base64,${base64}`,
+          version: extractDiscordVersion(row.filename),
+        };
+      })
+      .sort((a, b) => {
+        const va = versionToNumbers(a.version);
+        const vb = versionToNumbers(b.version);
+        const len = Math.max(va.length, vb.length);
+        for (let i = 0; i < len; i++) {
+          const diff = (va[i] || 0) - (vb[i] || 0);
+          if (diff !== 0) return diff;
+        }
+        return 0;
+      });
+
+    if (discordImages.length === 0) continue;
+
+    const latestImage = discordImages[discordImages.length - 1];
+
+    allEmojis.push({
+      ...emoji,
+      Unicode: parseJSON<string[]>(emoji.unicode) || [],
+      keywords: parseJSON<string[]>(emoji.keywords) || [],
+      alsoKnownAs: parseJSON<string[]>(emoji.also_known_as) || [],
+      version: parseJSON(emoji.version),
+      senses: parseJSON(emoji.senses),
+      shortcodes: parseJSON(emoji.shortcodes),
+      slug,
+      discordEvolutionImages: discordImages,
+      latestDiscordImage: latestImage.url,
+      discord_vendor_description:
+        emoji.discord_vendor_description || emoji.description || '',
+    });
+  }
+
+  return allEmojis;
+}
+
+export function extractDiscordVersion(filename) {
+  // Matches _7.0.png or -14.1.webp etc.
+  const match = filename.match(/[_-]([\d.]+)\.(png|jpg|jpeg|webp|svg)$/i);
+  return match ? match[1] : '0';
+}
+
+export function getDiscordEmojiBySlug(slug: string) {
+  const all = getAllDiscordEmojis();
+  return all.find((e) => e.slug === slug);
+}
+
+
 /**
  * Fetch a single Apple emoji by slug.
  */
@@ -423,6 +545,47 @@ export function fetchLatestAppleImage(slug) {
   // Convert to Base64 with proper MIME detection
   const buffer = Buffer.from(latest.image_data);
   const head = buffer.toString('ascii', 0, 20);
+  let mime = 'application/octet-stream';
+  if (head.includes('<svg')) mime = 'image/svg+xml';
+  else if (head.startsWith('RIFF')) mime = 'image/webp';
+  else if (buffer[0] === 0x89 && head.includes('PNG')) mime = 'image/png';
+  else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
+
+  return `data:${mime};base64,${buffer.toString('base64')}`;
+}
+
+export function fetchLatestDiscordImage(slug) {
+  const db = getDb();
+
+  // Fetch Discord (Twemoji vendor) images for this slug
+  const rows = db
+    .prepare(
+      `SELECT filename, image_data
+       FROM images
+       WHERE emoji_slug = ? AND image_type = 'twemoji-vendor'
+       ORDER BY filename COLLATE NOCASE`
+    )
+    .all(slug);
+
+  if (!rows.length) return null;
+
+  // Extract versions from filenames like ..._7.0.png or ..._14.1.webp
+  const parseVersion = (name) => {
+    const match = name.match(/[_-]([\d.]+)\.(png|jpg|jpeg|webp|svg)$/i);
+    return match ? parseFloat(match[1]) : 0;
+  };
+
+  // Pick file with highest vendor version
+  const latest = rows.reduce((best, row) => {
+    return parseVersion(row.filename) > parseVersion(best.filename)
+      ? row
+      : best;
+  }, rows[0]);
+
+  // Convert BLOB to Base64 with MIME detection
+  const buffer = Buffer.from(latest.image_data);
+  const head = buffer.toString('ascii', 0, 20);
+
   let mime = 'application/octet-stream';
   if (head.includes('<svg')) mime = 'image/svg+xml';
   else if (head.startsWith('RIFF')) mime = 'image/webp';
