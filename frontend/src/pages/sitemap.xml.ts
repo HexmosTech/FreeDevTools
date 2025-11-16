@@ -35,13 +35,11 @@ export const GET: APIRoute = async ({ site }) => {
     <loc>${site}/mcp/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
-
-  <sitemap>
-    <loc>${site}/man-pages/sitemap.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
 </sitemapindex>`;
-
+  // <sitemap>
+  //   <loc>${site}/man-pages/sitemap.xml</loc>
+  //   <lastmod>${now}</lastmod>
+  // </sitemap>
   return new Response(sitemapIndex, {
     headers: {
       'Content-Type': 'application/xml',
