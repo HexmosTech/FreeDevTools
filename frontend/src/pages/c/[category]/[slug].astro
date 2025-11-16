@@ -1,0 +1,309 @@
+---
+import AdBanner from '../../../components/banner/AdBanner.astro';
+import Banner from '../../../components/banner/BannerIndex.astro';
+import CreditsButton from '../../../components/buttons/CreditsButton';
+import SeeAlsoIndex from '../../../components/seealso/SeeAlsoIndex.astro';
+import ToolContainer from '../../../components/tool/ToolContainer';
+import ToolHead from '../../../components/tool/ToolHead';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCheatsheet, getCheatsheetsByCategory, getAllCheatsheetCategories } from '../../../lib/cheatsheets-utils';
+import CategoryCheatsheetsPage from './_CategoryCheatsheetsPage.astro';
+
+export const prerender = false;
+
+const { category: categorySlug, slug } = Astro.params;
+const urlPath = Astro.url.pathname;
+
+if (!categorySlug || !slug) {
+  return new Response(null, { status: 404 });
+}
+
+// Redirect to add trailing slash if missing (BEFORE other checks)
+if (!urlPath.endsWith('/')) {
+  return Astro.redirect(`${urlPath}/`, 301);
+}
+
+let cheatsheetData: any = null;
+let paginationData: any = null;
+
+// Check if slug is numeric (pagination route)
+if (/^\d+$/.test(slug)) {
+  // This is actually a pagination route for the category
+  const currentPage = parseInt(slug, 10);
+
+  // Redirect /c/category/1 to /c/category
+  if (currentPage === 1) {
+    return Astro.redirect(`/freedevtools/c/${categorySlug}/`);
+  }
+
+  // Validate category exists
+  const allCategories = await getAllCheatsheetCategories();
+  const categoryIds = allCategories.map((c) => c.id);
+  if (!categoryIds.includes(categorySlug)) {
+    return new Response(null, { status: 404 });
+  }
+
+  // Find the category
+  const category = allCategories.find((c) => c.id === categorySlug);
+  if (!category) {
+    return new Response(null, { status: 404 });
+  }
+
+  const categoryName = category.name;
+
+  // Get cheatsheets for this category
+  const cheatsheets = await getCheatsheetsByCategory(categoryName);
+  const totalCheatsheets = cheatsheets.length;
+
+  // Pagination logic
+  const itemsPerPage = 30;
+  const totalPages = Math.ceil(totalCheatsheets / itemsPerPage);
+
+  // Validate page number
+  if (currentPage > totalPages || currentPage < 1) {
+    return new Response(null, { status: 404 });
+  }
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCheatsheets = cheatsheets.slice(startIndex, endIndex);
+
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Cheatsheets', href: '/freedevtools/c/' },
+    { label: categoryName, href: `/freedevtools/c/${categorySlug}/` },
+  ];
+
+  // SEO data
+  const seoTitle = `${categoryName} Cheatsheets - Page ${currentPage} | Online Free DevTools by Hexmos`;
+  const seoDescription = `Browse page ${currentPage} of ${categoryName.toLowerCase()} cheatsheets. Comprehensive reference covering commands, syntax, and key concepts.`;
+  const keywords = [
+    categoryName.toLowerCase(),
+    'cheatsheets',
+    'reference',
+    'commands',
+    'syntax',
+    'programming',
+    'documentation',
+    'page ' + currentPage,
+  ];
+
+  paginationData = {
+    categoryName,
+    categorySlug,
+    paginatedCheatsheets,
+    totalCheatsheets,
+    currentPage,
+    totalPages,
+    seoTitle,
+    seoDescription,
+    keywords,
+    breadcrumbItems,
+  };
+} else {
+  // This is a cheatsheet name (slug)
+  const cheatsheetResult = await getCheatsheet(categorySlug, slug);
+
+  if (!cheatsheetResult) {
+    return new Response(null, { status: 404 });
+  }
+
+  const { content, metatags } = cheatsheetResult;
+
+  // Process the content to handle links and add anchor IDs
+  function processCheatsheetLinks(html: string): string {
+    // First, add IDs to all headings (h1-h6) so anchor links work
+    html = html.replace(
+      /<(h[1-6])([^>]*)>([^<]+)<\/h[1-6]>/gi,
+      (match, tag, attributes, content) => {
+        // Check if heading already has an ID
+        const existingIdMatch = attributes.match(/id="([^"]*)"/);
+        let anchorId = existingIdMatch ? existingIdMatch[1] : '';
+
+        // If no existing ID, generate one from content
+        if (!anchorId) {
+          anchorId = content
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/-+/g, '-') // Replace multiple hyphens with single
+            .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+        }
+
+        // Add scroll margin to offset the header - use both class and inline style
+        const existingClass = attributes.includes('class=') ? attributes : '';
+        const scrollMarginClass = existingClass
+          ? existingClass.replace(/class="([^"]*)"/, 'class="$1 scroll-mt-32"')
+          : 'class="scroll-mt-32"';
+
+        // Add inline style as backup to ensure scroll margin works
+        const existingStyle = attributes.includes('style=') ? attributes : '';
+        const scrollMarginStyle = existingStyle
+          ? existingStyle.replace(
+              /style="([^"]*)"/,
+              'style="$1; scroll-margin-top: 8rem;"'
+            )
+          : 'style="scroll-margin-top: 8rem;"';
+
+        return `<${tag} ${scrollMarginClass} ${scrollMarginStyle} id="${anchorId}">${content}</${tag}>`;
+      }
+    );
+
+    // Then process the links
+    return html.replace(
+      /<a\s+([^>]*?)href="([^"]*?)"([^>]*?)>/g,
+      (
+        match: string,
+        beforeHref: string,
+        href: string,
+        afterHref: string
+      ): string => {
+        // Keep absolute URLs (https/http) as clickable links
+        if (/^https?:\/\//i.test(href)) {
+          // Add target="_blank" for external links
+          if (!match.includes('target=')) {
+            return `<a ${beforeHref}href="${href}"${afterHref} target="_blank" rel="noopener noreferrer">`;
+          }
+          return match;
+        }
+
+        // Handle anchor links (starting with #) - keep them as clickable for scrolling
+        if (href.startsWith('#')) {
+          return match;
+        }
+
+        // Disable all relative links (/, ../, ./, etc.) by removing href and adding disabled styling
+        return `<span ${beforeHref}${afterHref}>`;
+      }
+    );
+  }
+
+  const processedContent = processCheatsheetLinks(content);
+
+  // Use metatags for title and description, with fallbacks
+  const title = metatags.title || slug;
+  const description = metatags.description || `Cheatsheet for ${slug}`;
+  const keywords = metatags.keywords || [
+    'free devtools',
+    'cheatsheets',
+    categorySlug,
+    slug,
+  ];
+
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Cheatsheets', href: '/freedevtools/c/' },
+    { label: categorySlug, href: `/freedevtools/c/${categorySlug}/` },
+    { label: slug },
+  ];
+
+  cheatsheetData = {
+    title,
+    description,
+    keywords,
+    processedContent,
+    categorySlug,
+    slug,
+    breadcrumbItems,
+  };
+}
+---
+
+{paginationData ? (
+  <BaseLayout
+    name={`${paginationData.categoryName} Cheatsheets`}
+    path={`/c/${paginationData.categorySlug}/`}
+    title={paginationData.seoTitle}
+    description={paginationData.seoDescription}
+    canonical={`https://hexmos.com/freedevtools/c/${paginationData.categorySlug}/${paginationData.currentPage}/`}
+    keywords={paginationData.keywords}
+    showHeader={true}
+    totalItems={paginationData.totalCheatsheets}
+    features={[
+      'Quick reference',
+      'Command syntax',
+      'Easy to scan',
+      'Fast learning',
+      'Free access',
+    ]}
+    commandCategory="Reference"
+  >
+    <CategoryCheatsheetsPage
+      categoryName={paginationData.categoryName}
+      categorySlug={paginationData.categorySlug}
+      paginatedCheatsheets={paginationData.paginatedCheatsheets}
+      totalCheatsheets={paginationData.totalCheatsheets}
+      currentPage={paginationData.currentPage}
+      totalPages={paginationData.totalPages}
+      seoDescription={paginationData.seoDescription}
+      breadcrumbItems={paginationData.breadcrumbItems}
+    />
+  </BaseLayout>
+) : cheatsheetData ? (
+  <BaseLayout
+    name={cheatsheetData.title}
+    path={`/c/${cheatsheetData.categorySlug}/${cheatsheetData.slug}/`}
+    title={`${cheatsheetData.title} - ${cheatsheetData.categorySlug} Cheatsheets | Online Free DevTools by Hexmos`}
+    description={cheatsheetData.description}
+    keywords={cheatsheetData.keywords}
+    canonical={`https://hexmos.com/freedevtools/c/${cheatsheetData.categorySlug}/${cheatsheetData.slug}/`}
+    showHeader={true}
+  >
+    <style>
+      :global(.html-content .container .header h2) {
+        display: none !important;
+      }
+      :global(.html-content .container .header h1) {
+        display: none !important;
+      }
+    </style>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+    ></script>
+    <ToolContainer>
+      <div class="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
+      <ToolHead
+        name={cheatsheetData.title}
+        description={cheatsheetData.description}
+        breadcrumbItems={cheatsheetData.breadcrumbItems}
+      />
+
+      <article class="max-w-none mt-6">
+        <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+          <div
+            class="html-content prose prose-slate dark:prose-invert max-w-none"
+            set:html={cheatsheetData.processedContent}
+          />
+        </div>
+      </article>
+
+      <SeeAlsoIndex />
+      <div class="mb-10">
+        <Banner type="text" />
+      </div>
+
+      <div class="mt-8 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap gap-4">
+          <a
+            href={`/freedevtools/c/${cheatsheetData.categorySlug}/`}
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            ← Back to {cheatsheetData.categorySlug} cheatsheets
+          </a>
+          <a
+            href="/freedevtools/c/"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+          >
+            All cheatsheets
+          </a>
+          <CreditsButton href="/freedevtools/c/credits/" />
+        </div>
+      </div>
+    </ToolContainer>
+  </BaseLayout>
+) : null}
+
