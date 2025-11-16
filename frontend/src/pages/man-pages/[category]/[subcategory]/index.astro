@@ -5,16 +5,41 @@ import Pagination from '@/components/PaginationComponent.astro';
 import ToolContainer from '@/components/tool/ToolContainer';
 import ToolHead from '@/components/tool/ToolHead';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getManPagesBySubcategory, getManPagesCountBySubcategory, getManPagesBySubcategoryPaginated, generateSubcategoryStaticPaths } from '@/lib/man-pages-utils';
+import { getManPagesBySubcategory, getManPagesCountBySubcategory, getManPagesBySubcategoryPaginated, getSubCategoriesByMainCategory } from '@/lib/man-pages-utils';
 
-export async function getStaticPaths() {
-  return generateSubcategoryStaticPaths();
-}
+export const prerender = false;
 
 const { category, subcategory } = Astro.params;
+const urlPath = Astro.url.pathname;
 
 if (!category || !subcategory) {
-  throw new Error('Category and subcategory parameters are required');
+  return new Response(null, { status: 404 });
+}
+
+// Redirect to add trailing slash if missing
+if (!urlPath.endsWith('/')) {
+  return Astro.redirect(`${urlPath}/`, 301);
+}
+
+// Check if subcategory is numeric (pagination route)
+if (/^\d+$/.test(subcategory)) {
+  // This is actually a pagination route for the category
+  const currentPage = parseInt(subcategory, 10);
+  
+  // Redirect /man-pages/category/1 to /man-pages/category
+  if (currentPage === 1) {
+    return Astro.redirect(`/freedevtools/man-pages/${category}/`);
+  }
+  
+  // Redirect to category pagination route
+  return Astro.redirect(`/freedevtools/man-pages/${category}/${currentPage}/`, 301);
+}
+
+// Validate subcategory exists for this category
+const subcategories = getSubCategoriesByMainCategory(category);
+const subcategoryNames = subcategories.map((sc) => sc.name);
+if (!subcategoryNames.includes(subcategory)) {
+  return new Response(null, { status: 404 });
 }
 
 // Efficient pagination for page 1
@@ -26,8 +51,6 @@ const offset = (currentPage - 1) * itemsPerPage; // 0 for page 1
 const currentPageManPages = getManPagesBySubcategoryPaginated(category, subcategory, itemsPerPage, offset);
 const totalManPagesCount = getManPagesCountBySubcategory(category, subcategory);
 const totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
-
-console.log("totalManPagesCount:", totalManPagesCount);
 
 const breadcrumbItems = [
   { label: 'Free DevTools', href: '/freedevtools/' },
@@ -110,6 +133,7 @@ const subcategoryTitle = subcategory.replace('-', ' ').charAt(0).toUpperCase() +
       currentPage={currentPage}
       totalPages={totalPages}
       baseUrl={`/freedevtools/man-pages/${category}/${subcategory}/`}
+      alwaysIncludePageNumber={true}
     />
 
     <!-- Credits Section -->

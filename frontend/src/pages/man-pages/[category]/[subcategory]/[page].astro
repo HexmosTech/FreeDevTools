@@ -2,138 +2,331 @@
 import AdBanner from '@/components/banner/AdBanner.astro';
 import CreditsButton from '@/components/buttons/CreditsButton';
 import Pagination from '@/components/PaginationComponent.astro';
+import SeeAlsoIndex from '@/components/seealso/SeeAlsoIndex.astro';
 import ToolContainer from '@/components/tool/ToolContainer';
 import ToolHead from '@/components/tool/ToolHead';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getManPagesCountBySubcategory, getManPagesBySubcategoryPaginated, generateSubcategoryStaticPaths } from '@/lib/man-pages-utils';
+import {
+  getManPageBySlug,
+  getManPagesBySubcategoryPaginated,
+  getManPagesCountBySubcategory,
+  getSubCategoriesByMainCategory,
+} from '@/lib/man-pages-utils';
 
-// Generate static paths for paginated subcategory routes
-export async function getStaticPaths() {
-  const subcategoryPaths = generateSubcategoryStaticPaths();
-  const paths: any[] = [];
+export const prerender = false;
 
-  for (const subcategoryPath of subcategoryPaths) {
-    const { category, subcategory } = subcategoryPath.params;
-    
-    // Get total count of man pages for this subcategory to determine pagination
-    const totalManPagesCount = getManPagesCountBySubcategory(category, subcategory);
-    const itemsPerPage = 20;
-    const totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
-    
-    // Generate pagination pages (page 2, 3, 4, etc. - page 1 is handled by index.astro)
-    for (let page = 2; page <= totalPages; page++) {
-      paths.push({
-        params: { 
-          category: category,
-          subcategory: subcategory,
-          page: page.toString()
-        },
-        props: {
-          currentPage: page,
-        }
-      });
-    }
-  }
+const { category, subcategory, page } = Astro.params;
+const urlPath = Astro.url.pathname;
 
-  return paths;
+if (!category || !subcategory || !page) {
+  return new Response(null, { status: 404 });
 }
 
-const { currentPage } = Astro.props;
-const { category, subcategory } = Astro.params;
+// Redirect to add trailing slash if missing (BEFORE other checks)
+if (!urlPath.endsWith('/')) {
+  return Astro.redirect(`${urlPath}/`, 301);
+}
 
-// Calculate pagination
-const itemsPerPage = 20;
-const offset = (currentPage - 1) * itemsPerPage;
+let manPageData: any = null;
+let paginationData: any = null;
 
-// Get ONLY the man pages for current page from database (efficient!)
-const currentPageManPages = getManPagesBySubcategoryPaginated(category, subcategory, itemsPerPage, offset);
-const totalManPagesCount = getManPagesCountBySubcategory(category, subcategory);
-const totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
+// Check if page is numeric
+if (!/^\d+$/.test(page)) {
+  // If not numeric, check if it's a valid slug (man page route)
+  // This is a workaround for route priority: [page].astro matches /category/subcategory/slug before [slug].astro
+  const manPage = getManPageBySlug(category, subcategory, page);
+  if (manPage) {
+    // This is a valid man page slug - render it directly
+    const tocSections = Object.keys(manPage.content).map((section) => ({
+      id: section.toLowerCase(),
+      label: section,
+    }));
 
-const breadcrumbItems = [
-  { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'Man Pages', href: '/freedevtools/man-pages/' },
-  { label: category.replace('-', ' ').charAt(0).toUpperCase() + category.replace('-', ' ').slice(1), href: `/freedevtools/man-pages/${category}/` },
-  { label: subcategory.replace('-', ' ').charAt(0).toUpperCase() + subcategory.replace('-', ' ').slice(1), href: `/freedevtools/man-pages/${category}/${subcategory}/` },
-  { label: `Page ${currentPage}` },
-];
+    const breadcrumbItems = [
+      { label: 'Free DevTools', href: '/freedevtools/' },
+      { label: 'Man Pages', href: '/freedevtools/man-pages/' },
+      {
+        label:
+          manPage.main_category.replace('-', ' ').charAt(0).toUpperCase() +
+          manPage.main_category.replace('-', ' ').slice(1),
+        href: `/freedevtools/man-pages/${manPage.main_category}/`,
+      },
+      {
+        label:
+          manPage.sub_category.replace('-', ' ').charAt(0).toUpperCase() +
+          manPage.sub_category.replace('-', ' ').slice(1),
+        href: `/freedevtools/man-pages/${manPage.main_category}/${manPage.sub_category}/`,
+      },
+      {
+        label: manPage.slug,
+        href: `/freedevtools/man-pages/${manPage.main_category}/${manPage.sub_category}/${manPage.slug}/`,
+      },
+    ];
 
-const categoryTitle = category.replace('-', ' ').charAt(0).toUpperCase() + category.replace('-', ' ').slice(1);
-const subcategoryTitle = subcategory.replace('-', ' ').charAt(0).toUpperCase() + subcategory.replace('-', ' ').slice(1);
+    manPageData = {
+      manPage,
+      tocSections,
+      breadcrumbItems,
+      category,
+      subcategory,
+      slug: page,
+    };
+  } else {
+    // Not a valid slug or page number - 404
+    return new Response(null, { status: 404 });
+  }
+} else {
+  // Validate subcategory exists for this category
+  const subcategories = getSubCategoriesByMainCategory(category);
+  const subcategoryNames = subcategories.map((sc) => sc.name);
+  if (!subcategoryNames.includes(subcategory)) {
+    return new Response(null, { status: 404 });
+  }
+
+  const currentPage = parseInt(page, 10);
+
+  // Redirect /man-pages/category/subcategory/1 to /man-pages/category/subcategory
+  if (currentPage === 1) {
+    return Astro.redirect(`/freedevtools/man-pages/${category}/${subcategory}/`);
+  }
+
+  // Calculate pagination
+  const itemsPerPage = 20;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  // Get ONLY the man pages for current page from database (efficient!)
+  const currentPageManPages = getManPagesBySubcategoryPaginated(
+    category,
+    subcategory,
+    itemsPerPage,
+    offset
+  );
+  const totalManPagesCount = getManPagesCountBySubcategory(category, subcategory);
+  const totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
+
+  // Validate page number
+  if (currentPage > totalPages || currentPage < 1) {
+    return new Response(null, { status: 404 });
+  }
+
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Man Pages', href: '/freedevtools/man-pages/' },
+    {
+      label:
+        category.replace('-', ' ').charAt(0).toUpperCase() +
+        category.replace('-', ' ').slice(1),
+      href: `/freedevtools/man-pages/${category}/`,
+    },
+    {
+      label:
+        subcategory.replace('-', ' ').charAt(0).toUpperCase() +
+        subcategory.replace('-', ' ').slice(1),
+      href: `/freedevtools/man-pages/${category}/${subcategory}/`,
+    },
+    { label: `Page ${currentPage}` },
+  ];
+
+  const categoryTitle =
+    category.replace('-', ' ').charAt(0).toUpperCase() +
+    category.replace('-', ' ').slice(1);
+  const subcategoryTitle =
+    subcategory.replace('-', ' ').charAt(0).toUpperCase() +
+    subcategory.replace('-', ' ').slice(1);
+
+  paginationData = {
+    category,
+    subcategory,
+    currentPage,
+    currentPageManPages,
+    totalManPagesCount,
+    totalPages,
+    breadcrumbItems,
+    categoryTitle,
+    subcategoryTitle,
+  };
+}
 ---
 
-<BaseLayout
-  name={`${subcategoryTitle} Man Pages - Page ${currentPage}`}
-  title={`${subcategoryTitle} Manual Pages - Page ${currentPage} of ${totalPages} | Free DevTools by Hexmos`}
-  path={`/freedevtools/man-pages/${category}/${subcategory}/${currentPage}/`}
-  description={`Browse ${subcategoryTitle} manual pages - Page ${currentPage} of ${totalPages}. Find detailed documentation and system references.`}
-  canonical={`https://hexmos.com/freedevtools/man-pages/${category}/${subcategory}/${currentPage}/`}
-  keywords={[subcategory, category, 'man pages', 'manual', 'documentation', `page ${currentPage}`]}
-  ogImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
-  twitterImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
-  datePublished="2025-01-30"
-  softwareVersion="1.0.0"
->
-  <ToolContainer>
-    <div class="mb-16 mt-[74px]">
-      <AdBanner />
-    </div>
-    <ToolHead
-      name={`${subcategoryTitle} Man Pages`}
-      description={`Browse ${subcategoryTitle} manual pages with detailed documentation.`}
-      breadcrumbItems={breadcrumbItems}
-    />
-
-    <!-- Pagination Info -->
-    <div
-      id="pagination-info-content"
-      class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8"
-    >
-      <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-        Showing {currentPageManPages.length} of {totalManPagesCount} man pages (Page {currentPage} of {totalPages})
+{manPageData ? (
+  <BaseLayout
+    name={`${manPageData.manPage.title}`}
+    title={`${manPageData.manPage.title} - Manual Page | Free DevTools by Hexmos`}
+    path={`/freedevtools/man-pages/${manPageData.category}/${manPageData.subcategory}/${manPageData.slug}/`}
+    description={`${manPageData.manPage.title} manual page. Learn about ${manPageData.manPage.title.split(' — ')[1] || manPageData.manPage.title.split(' — ')[0]} in systems.`}
+    canonical={`https://hexmos.com/freedevtools/man-pages/${manPageData.category}/${manPageData.subcategory}/${manPageData.slug}/`}
+    keywords={[manPageData.manPage.title.split(' — ')[0], manPageData.category, manPageData.subcategory, 'man page', 'manual', 'documentation']}
+    ogImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
+    twitterImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
+    datePublished="2025-01-30"
+    softwareVersion="1.0.0"
+  >
+    <ToolContainer>
+      <div class="mb-16 mt-[74px]">
+        <AdBanner />
       </div>
-    </div>
+      <ToolHead
+        name={manPageData.manPage.title}
+        description=""
+        breadcrumbItems={manPageData.breadcrumbItems}
+      />
 
-    <!-- Man Pages Grid -->
-    <div class="mt-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentPageManPages.map((manPage) => (
+      <!-- Table of Contents -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-0 rounded-lg p-4 mb-6">
+        <h2 class="text-lg font-semibold mb-3">Contents</h2>
+        <nav class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          {manPageData.tocSections.map((section) => (
+            <a
+              href={`#${section.id}`}
+              class="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+            >
+              {section.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+        <!-- Man Page Content -->
+        <div class="space-y-8">
+          {Object.entries(manPageData.manPage.content).map(([section, content]) => (
+            <section id={section.toLowerCase()}>
+              <h2 class="text-xl font-bold font-mono mb-4 scroll-mt-32">
+                {section}
+              </h2>
+              <div 
+                class="font-mono text-sm leading-relaxed whitespace-pre-wrap bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-700 overflow-x-auto"
+                set:html={content}
+              />
+            </section>
+          ))}
+        </div>
+      </div>
+
+      <SeeAlsoIndex />
+
+      <!-- Credits Section -->
+      <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap gap-4">
           <a
-            href={`/freedevtools/man-pages/${category}/${subcategory}/${manPage.slug}/`}
-            class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-lg transition-shadow min-h-[120px]"
+            href={`/freedevtools/man-pages/${manPageData.manPage.main_category}/`}
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
           >
-            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
-              {manPage.title.split(' — ')[0]}
-            </h3>
+            View {manPageData.manPage.main_category.replace('-', ' ').charAt(0).toUpperCase() + manPageData.manPage.main_category.replace('-', ' ').slice(1)} Category
           </a>
-        ))}
+          <a
+            href={`/freedevtools/man-pages/${manPageData.manPage.main_category}/${manPageData.manPage.sub_category}/`}
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            ← Back to {manPageData.manPage.sub_category.replace('-', ' ').charAt(0).toUpperCase() + manPageData.manPage.sub_category.replace('-', ' ').slice(1)}
+          </a>
+          <CreditsButton href="/freedevtools/man-pages/credits/" />
+        </div>
       </div>
-    </div>
-
-    <!-- Pagination -->
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      baseUrl={`/freedevtools/man-pages/${category}/${subcategory}/`}
-    />
-
-    <!-- Credits Section -->
-    <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
-      <div class="flex flex-wrap gap-4">
-        <a
-          href={`/freedevtools/man-pages/${category}/`}
-          class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-        >
-          View {categoryTitle} Category
-        </a>
-        <a
-          href={`/freedevtools/man-pages/${category}/${subcategory}/`}
-          class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-        >
-          ← Back to {subcategoryTitle}
-        </a>
-        <CreditsButton href="/freedevtools/man-pages/credits/" />
+    </ToolContainer>
+  </BaseLayout>
+) : paginationData ? (
+  <BaseLayout
+    name={`${paginationData.subcategoryTitle} Man Pages - Page ${paginationData.currentPage}`}
+    title={`${paginationData.subcategoryTitle} Manual Pages - Page ${paginationData.currentPage} of ${paginationData.totalPages} | Free DevTools by Hexmos`}
+    path={`/freedevtools/man-pages/${paginationData.category}/${paginationData.subcategory}/${paginationData.currentPage}/`}
+    description={`Browse ${paginationData.subcategoryTitle} manual pages - Page ${paginationData.currentPage} of ${paginationData.totalPages}. Find detailed documentation and system references.`}
+    canonical={`https://hexmos.com/freedevtools/man-pages/${paginationData.category}/${paginationData.subcategory}/${paginationData.currentPage}/`}
+    keywords={[
+      paginationData.subcategory,
+      paginationData.category,
+      'man pages',
+      'manual',
+      'documentation',
+      `page ${paginationData.currentPage}`,
+    ]}
+    ogImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
+    twitterImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
+    datePublished="2025-01-30"
+    softwareVersion="1.0.0"
+  >
+    <ToolContainer>
+      <div class="mb-16 mt-[74px]">
+        <AdBanner />
       </div>
-    </div>
-  </ToolContainer>
-</BaseLayout>
+      <ToolHead
+        name={`${paginationData.subcategoryTitle} Man Pages`}
+        description={`Browse ${paginationData.subcategoryTitle} manual pages with detailed documentation.`}
+        breadcrumbItems={paginationData.breadcrumbItems}
+      />
+
+      <!-- Pagination Info -->
+      <div
+        id="pagination-info-content"
+        class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8"
+      >
+        <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
+          Showing {paginationData.currentPageManPages.length} of {paginationData.totalManPagesCount} man pages (Page
+          {paginationData.currentPage} of {paginationData.totalPages})
+        </div>
+      </div>
+
+      <!-- Man Pages Grid -->
+      <div class="mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {
+            paginationData.currentPageManPages.map((manPage) => (
+              <a
+                href={`/freedevtools/man-pages/${paginationData.category}/${paginationData.subcategory}/${manPage.slug}/`}
+                class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-lg transition-shadow min-h-[120px]"
+              >
+                <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
+                  {manPage.title.split(' — ')[0]}
+                </h3>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <Pagination
+        currentPage={paginationData.currentPage}
+        totalPages={paginationData.totalPages}
+        baseUrl={`/freedevtools/man-pages/${paginationData.category}/${paginationData.subcategory}/`}
+        alwaysIncludePageNumber={true}
+      />
+
+      <!-- Credits Section -->
+      <div
+        class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
+      >
+        <div class="flex flex-wrap gap-4">
+          <a
+            href={`/freedevtools/man-pages/${paginationData.category}/`}
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+          >
+            View {paginationData.categoryTitle} Category
+          </a>
+          <a
+            href={`/freedevtools/man-pages/${paginationData.category}/${paginationData.subcategory}/`}
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            ← Back to {paginationData.subcategoryTitle}
+          </a>
+          <CreditsButton href="/freedevtools/man-pages/credits/" />
+        </div>
+      </div>
+    </ToolContainer>
+  </BaseLayout>
+) : null}
+
+<style>
+  /* Custom styles for man page content */
+  .font-mono pre {
+    font-family: 'Courier New', monospace;
+  }
+  
+  /* Print styles */
+  @media print {
+    .sticky { position: static !important; }
+    .lg\\:order-2 { order: -1 !important; }
+    .lg\\:col-span-3 { grid-column: span 4 !important; }
+  }
+</style>

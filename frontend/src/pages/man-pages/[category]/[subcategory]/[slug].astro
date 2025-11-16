@@ -4,32 +4,44 @@ import CreditsButton from '@/components/buttons/CreditsButton';
 import ToolContainer from '@/components/tool/ToolContainer';
 import ToolHead from '@/components/tool/ToolHead';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getManPageBySlug, generateCommandStaticPaths } from '@/lib/man-pages-utils';
+import { getManPageBySlug } from '@/lib/man-pages-utils';
 import SeeAlsoIndex from '@/components/seealso/SeeAlsoIndex.astro';
 
-export async function getStaticPaths() {
-  try {
-    const paths = generateCommandStaticPaths();
-    return paths;
-  } catch (error) {
-    console.error('Error generating static paths:', error);
-    throw error;
-  }
-}
+export const prerender = false;
 
 const { category, subcategory, slug } = Astro.params;
+const urlPath = Astro.url.pathname;
 
 // Ensure all required params are present
 if (!category || !subcategory || !slug) {
-  return Astro.redirect('/freedevtools/man-pages/');
+  return new Response(null, { status: 404 });
+}
+
+// Redirect to add trailing slash if missing
+if (!urlPath.endsWith('/')) {
+  return Astro.redirect(`${urlPath}/`, 301);
+}
+
+// Check if slug is numeric (pagination route)
+if (/^\d+$/.test(slug)) {
+  // This is actually a pagination route
+  const currentPage = parseInt(slug, 10);
+  
+  // Redirect /man-pages/category/subcategory/1 to /man-pages/category/subcategory
+  if (currentPage === 1) {
+    return Astro.redirect(`/freedevtools/man-pages/${category}/${subcategory}/`);
+  }
+  
+  // Redirect to subcategory pagination route
+  return Astro.redirect(`/freedevtools/man-pages/${category}/${subcategory}/${currentPage}/`, 301);
 }
 
 // Get man page from database by slug
 const manPage = getManPageBySlug(category, subcategory, slug);
 
 if (!manPage) {
-  // Redirect to man pages index if not found
-  return Astro.redirect('/freedevtools/man-pages/');
+  // Return 404 if not found
+  return new Response(null, { status: 404 });
 }
 
 // Generate table of contents from sections
