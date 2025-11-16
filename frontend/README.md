@@ -31,7 +31,7 @@ Make sure to follow the same format for any new sections you
 - https://seositecheckup.com/
 - https://rankmath.com/tools/seo-analyzer/
 
-## Pull DBs to local repo
+<!-- ## Pull DBs to local repo
 
 Run `make pull-db` in FreeDevTools/frontend folder.
 
@@ -52,17 +52,37 @@ git lfs status
 ```
 git lfs fetch --all
 git lfs ls-files --size
-```
+``` -->
 
-## Pull DBs from blackblaze
+## Working with DB Files on Backblaze B2
 
-If you're adding db to a new category or updating the DB, first upload it.
-https://tree-iad1-0000.secure.backblaze.com/b2_browse_files2.htm
-<img width="716" height="439" alt="image" src="https://github.com/user-attachments/assets/66f2635d-3e34-4498-b589-d7bca3c0c7a6" />
+To add or update a database (DB) file for a category:
 
+1. **Upload or Update the DB File**
+   - Use the following command, replacing the path as needed:
 
-Then in buid_deploy.yml
+     ```
+     make update-db-to-b2 path/to/your-db.db
+     ```
 
-> - name: Download database files from Backblaze B2
+   - **Naming Convention:** Follow consistent naming for all DB files.
 
-Add your db name in that file, do not commit the db to repo.
+   - **Important:** Do **not** commit DB files to the repo.
+
+2. **Sync the Database Files from B2 to Local**
+
+   After uploading, verify the file by syncing from Backblaze B2 to your local environment:
+
+   ```
+   make sync-db-to-local
+   ```
+
+3. **Check Synced Files**
+   - List the locally synced DB files:
+     ```
+     ls db/all_dbs/
+     ```
+
+4. **Referencing in Code**
+   - Always reference database files in your code using the path:  
+     `db/all_dbs/your-db.db`
