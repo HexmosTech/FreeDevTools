@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import { apple_vendor_excluded_emojis, discord_vendor_excluded_emojis } from './emojis-consts';
 
 // === Type definitions ===
 export interface EmojiData {
@@ -166,71 +167,39 @@ export function getEmojiCategories(): string[] {
 }
 
 // === Fetch by category ===
-export function getEmojisByCategory(category: string): EmojiData[] {
+export function getEmojisByCategory(category: string, vendor?: string): EmojiData[] {
   const db = getDb();
+
   const rows = db
     .prepare(`SELECT * FROM emojis WHERE lower(category) = lower(?)`)
     .all(category);
 
-  return rows.map((r) => ({
-    code: r.code,
-    slug: r.slug,
-    title: r.title,
-    description: r.description,
-    category: r.category,
-    apple_vendor_description: r.apple_vendor_description,
-    Unicode: parseJSON<string[]>(r.unicode) || [],
-    keywords: parseJSON<string[]>(r.keywords) || [],
-    alsoKnownAs: parseJSON<string[]>(r.also_known_as) || [],
-    version: parseJSON(r.version),
-    senses: parseJSON(r.senses),
-    shortcodes: parseJSON(r.shortcodes),
-  }));
+  return rows
+    .filter(r => {
+      if (vendor === "discord") {
+        return !discord_vendor_excluded_emojis.includes(r.slug);
+      }
+      if (vendor === "apple") {
+        return !apple_vendor_excluded_emojis.includes(r.slug);
+      }
+      return true;
+    })
+    .map((r) => ({
+      code: r.code,
+      slug: r.slug,
+      title: r.title,
+      description: r.description,
+      category: r.category,
+      apple_vendor_description: r.apple_vendor_description,
+      Unicode: parseJSON<string[]>(r.unicode) || [],
+      keywords: parseJSON<string[]>(r.keywords) || [],
+      alsoKnownAs: parseJSON<string[]>(r.also_known_as) || [],
+      version: parseJSON(r.version),
+      senses: parseJSON(r.senses),
+      shortcodes: parseJSON(r.shortcodes),
+    }));
 }
 
-export const apple_vendor_excluded_emojis = [
-  'person-with-beard',
-  'woman-in-motorized-wheelchair-facing-right',
-
-  'person-in-bed-medium-skin-tone',
-  'person-in-bed-light-skin-tone',
-  'person-in-bed-dark-skin-tone',
-  'person-in-bed-medium-light-skin-tone',
-  'person-in-bed-medium-dark-skin-tone',
-
-  'snowboarder-medium-light-skin-tone',
-  'snowboarder-dark-skin-tone',
-  'snowboarder-medium-dark-skin-tone',
-  'snowboarder-light-skin-tone',
-  'snowboarder-medium-skin-tone',
-
-  'medical-symbol',
-  'male-sign',
-  'female-sign',
-  'woman-with-headscarf',
-];
-
-export const discord_vendor_excluded_emojis = [
-  'person-with-beard',
-  'woman-in-motorized-wheelchair-facing-right',
-
-  'person-in-bed-medium-skin-tone',
-  'person-in-bed-light-skin-tone',
-  'person-in-bed-dark-skin-tone',
-  'person-in-bed-medium-light-skin-tone',
-  'person-in-bed-medium-dark-skin-tone',
-
-  'snowboarder-medium-light-skin-tone',
-  'snowboarder-dark-skin-tone',
-  'snowboarder-medium-dark-skin-tone',
-  'snowboarder-light-skin-tone',
-  'snowboarder-medium-skin-tone',
-
-  'medical-symbol',
-  'male-sign',
-  'female-sign',
-  'woman-with-headscarf',
-];
 
 export function getEmojiImages(slug) {
   const db = getDb();
