@@ -2,92 +2,91 @@ import type { APIRoute } from 'astro';
 
 const MAX_URLS = 5000;
 
-export async function getStaticPaths() {
+// Loader function for sitemap URLs - extracted to work in both SSG and SSR
+async function loadUrls() {
   const Database = (await import('better-sqlite3')).default;
   const path = (await import('path')).default;
+  const dbPath = path.join(process.cwd(), 'db/all_dbs/man-pages-db.db');
+  const db = new Database(dbPath, { readonly: true });
+  const now = new Date().toISOString();
 
-  // Loader function for sitemap URLs
-  async function loadUrls() {
-    const dbPath = path.join(process.cwd(), 'db/all_dbs/man-pages-db.db');
-    const db = new Database(dbPath, { readonly: true });
-    const now = new Date().toISOString();
+  // Build URLs with placeholder for site
+  const stmt = db.prepare(`
+    SELECT main_category, sub_category, slug
+    FROM man_pages
+    WHERE slug IS NOT NULL AND slug != ''
+    ORDER BY main_category, sub_category, slug
+  `);
 
-    // Build URLs with placeholder for site
-    const stmt = db.prepare(`
-      SELECT main_category, sub_category, slug
-      FROM man_pages
-      WHERE slug IS NOT NULL AND slug != ''
-      ORDER BY main_category, sub_category, slug
-    `);
+  const manPages = stmt.all() as Array<{
+    main_category: string;
+    sub_category: string;
+    slug: string;
+  }>;
 
-    const manPages = stmt.all() as Array<{
-      main_category: string;
-      sub_category: string;
-      slug: string;
-    }>;
-
-    const urls = manPages.map((manPage) => {
-      return `
-        <url>
-          <loc>__SITE__/man-pages/${manPage.main_category}/${manPage.sub_category}/${manPage.slug}/</loc>
-          <lastmod>${now}</lastmod>
-          <changefreq>daily</changefreq>
-          <priority>0.8</priority>
-        </url>`;
-    });
-
-    // Include landing page
-    urls.unshift(`
+  const urls = manPages.map((manPage) => {
+    return `
       <url>
-        <loc>__SITE__/man-pages/</loc>
+        <loc>__SITE__/man-pages/${manPage.main_category}/${manPage.sub_category}/${manPage.slug}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
-        <priority>0.9</priority>
+        <priority>0.8</priority>
+      </url>`;
+  });
+
+  // Include landing page
+  urls.unshift(`
+    <url>
+      <loc>__SITE__/man-pages/</loc>
+      <lastmod>${now}</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.9</priority>
+    </url>`);
+
+  // Add category index pages
+  const categoryStmt = db.prepare(`
+    SELECT DISTINCT main_category
+    FROM man_pages
+    ORDER BY main_category
+  `);
+  const categories = categoryStmt.all() as Array<{ main_category: string }>;
+
+  categories.forEach(({ main_category }) => {
+    urls.push(`
+      <url>
+        <loc>__SITE__/man-pages/${main_category}/</loc>
+        <lastmod>${now}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.7</priority>
       </url>`);
+  });
 
-    // Add category index pages
-    const categoryStmt = db.prepare(`
-      SELECT DISTINCT main_category
-      FROM man_pages
-      ORDER BY main_category
-    `);
-    const categories = categoryStmt.all() as Array<{ main_category: string }>;
+  // Add subcategory index pages
+  const subcategoryStmt = db.prepare(`
+    SELECT DISTINCT main_category, sub_category
+    FROM man_pages
+    ORDER BY main_category, sub_category
+  `);
+  const subcategories = subcategoryStmt.all() as Array<{
+    main_category: string;
+    sub_category: string;
+  }>;
 
-    categories.forEach(({ main_category }) => {
-      urls.push(`
-        <url>
-          <loc>__SITE__/man-pages/${main_category}/</loc>
-          <lastmod>${now}</lastmod>
-          <changefreq>daily</changefreq>
-          <priority>0.7</priority>
-        </url>`);
-    });
+  subcategories.forEach(({ main_category, sub_category }) => {
+    urls.push(`
+      <url>
+        <loc>__SITE__/man-pages/${main_category}/${sub_category}/</loc>
+        <lastmod>${now}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.6</priority>
+      </url>`);
+  });
 
-    // Add subcategory index pages
-    const subcategoryStmt = db.prepare(`
-      SELECT DISTINCT main_category, sub_category
-      FROM man_pages
-      ORDER BY main_category, sub_category
-    `);
-    const subcategories = subcategoryStmt.all() as Array<{
-      main_category: string;
-      sub_category: string;
-    }>;
+  db.close();
+  return urls;
+}
 
-    subcategories.forEach(({ main_category, sub_category }) => {
-      urls.push(`
-        <url>
-          <loc>__SITE__/man-pages/${main_category}/${sub_category}/</loc>
-          <lastmod>${now}</lastmod>
-          <changefreq>daily</changefreq>
-          <priority>0.6</priority>
-        </url>`);
-    });
-
-    db.close();
-    return urls;
-  }
-
+export async function getStaticPaths() {
   // Pre-count total pages
   try {
     const Database = (await import('better-sqlite3')).default;
@@ -120,8 +119,10 @@ export async function getStaticPaths() {
 }
 
 export const GET: APIRoute = async ({ site, params, props }) => {
-  const loadUrls: () => Promise<string[]> = props.loadUrls;
-  let urls = await loadUrls();
+  // In SSR mode, props.loadUrls won't exist, so call loadUrls directly
+  // In SSG mode, props.loadUrls will be available
+  const loadUrlsFn: (() => Promise<string[]>) | undefined = props?.loadUrls;
+  let urls = loadUrlsFn ? await loadUrlsFn() : await loadUrls();
 
   // Replace placeholder with actual site
   urls = urls.map((u) => u.replace(/__SITE__/g, site?.toString() || ''));
