@@ -41,25 +41,11 @@ async function loadUrls() {
   return urls;
 }
 
-export async function getStaticPaths() {
-  const { glob } = await import('glob');
+export const prerender = false;
 
-  // Pre-count total pages
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
-  const totalUrls = svgFiles.length + 1;
-  const totalPages = Math.ceil(totalUrls / MAX_URLS);
-
-  return Array.from({ length: totalPages }, (_, i) => ({
-    params: { index: String(i + 1) },
-    props: { loadUrls }, // pass only the function reference
-  }));
-}
-
-export const GET: APIRoute = async ({ site, params, props }) => {
-  // In SSR mode, props.loadUrls won't exist, so call loadUrls directly
-  // In SSG mode, props.loadUrls will be available
-  const loadUrlsFn: (() => Promise<string[]>) | undefined = props?.loadUrls;
-  let urls = loadUrlsFn ? await loadUrlsFn() : await loadUrls();
+export const GET: APIRoute = async ({ site, params }) => {
+  // SSR mode: call loadUrls directly
+  let urls = await loadUrls();
 
   // Replace placeholder with actual site
   urls = urls.map((u) => u.replace(/__SITE__/g, site));
