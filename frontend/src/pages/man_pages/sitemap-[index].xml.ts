@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 
   // Loader function for sitemap URLs
   async function loadUrls() {
-    const dbPath = path.join(process.cwd(), 'db/all_dbs/man-pages-db.db');
+    const dbPath = path.join(process.cwd(), 'db/all_dbs/man_pages-db.db');
     const db = new Database(dbPath, { readonly: true });
     const now = new Date().toISOString();
 
@@ -29,7 +29,7 @@ export async function getStaticPaths() {
     const urls = manPages.map((manPage) => {
       return `
         <url>
-          <loc>__SITE__/man-pages/${manPage.main_category}/${manPage.sub_category}/${manPage.slug}/</loc>
+          <loc>__SITE__/man_pages/${manPage.main_category}/${manPage.sub_category}/${manPage.slug}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.8</priority>
@@ -39,7 +39,7 @@ export async function getStaticPaths() {
     // Include landing page
     urls.unshift(`
       <url>
-        <loc>__SITE__/man-pages/</loc>
+        <loc>__SITE__/man_pages/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
@@ -56,7 +56,7 @@ export async function getStaticPaths() {
     categories.forEach(({ main_category }) => {
       urls.push(`
         <url>
-          <loc>__SITE__/man-pages/${main_category}/</loc>
+          <loc>__SITE__/man_pages/${main_category}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.7</priority>
@@ -77,7 +77,7 @@ export async function getStaticPaths() {
     subcategories.forEach(({ main_category, sub_category }) => {
       urls.push(`
         <url>
-          <loc>__SITE__/man-pages/${main_category}/${sub_category}/</loc>
+          <loc>__SITE__/man_pages/${main_category}/${sub_category}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.6</priority>
