@@ -5,23 +5,44 @@ import Pagination from '../../../components/PaginationComponent.astro';
 import CreditsButton from '../../../components/buttons/CreditsButton';
 import ToolContainer from '../../../components/tool/ToolContainer';
 import ToolHead from '../../../components/tool/ToolHead';
-import { getEmojisByCategory, getEmojiCategories, fetchLatestAppleImage } from '../../../lib/emojis';
+import { getEmojisByCategory, getEmojiCategories, fetchLatestAppleImage, getEmojiBySlug } from '../../../lib/emojis';
 
-// Generate static paths
-export async function getStaticPaths() {
-  const categories = getEmojiCategories();
-  return categories
-    .filter((cat) => cat && cat.trim() !== '')
-    .map((cat) => ({
-      params: { category: cat.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
-      props: { category: cat },
-    }));
-}
+export const prerender = false;
 
 const { category: categorySlug } = Astro.params;
-const categoryName =
-  (Astro.props?.category as string) ||
-  categorySlug!.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+const urlPath = Astro.url.pathname;
+
+// Handle trailing slash redirect FIRST (before any logic)
+if (!urlPath.endsWith('/')) {
+  return Astro.redirect(`${urlPath}/`, 301);
+}
+
+// Check if category is numeric (pagination route)
+if (categorySlug && /^\d+$/.test(categorySlug)) {
+  // This is actually a pagination route - redirect to [slug].astro
+  return Astro.redirect(`/freedevtools/emojis/apple-emojis/${categorySlug}/`, 301);
+}
+
+// Get all categories to validate
+const allCategories = getEmojiCategories();
+const categorySlugs = allCategories.map(cat => cat.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+
+// Check if this is actually an emoji slug (not a category)
+const emoji = getEmojiBySlug(categorySlug!);
+if (emoji && !categorySlugs.includes(categorySlug!)) {
+  // This is an emoji slug, not a category - redirect to emoji page
+  return Astro.redirect(`/freedevtools/emojis/apple-emojis/${categorySlug}/`, 301);
+}
+
+// Validate category exists
+if (!categorySlug || !categorySlugs.includes(categorySlug)) {
+  return new Response(null, { status: 404 });
+}
+
+// Find the actual category name from the slug
+const categoryName = allCategories.find(
+  cat => cat.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug
+) || categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
 
 // const emojis = await getEmojisByCategory(categoryName, "apple");
 const emojis = (await getEmojisByCategory(categoryName, "apple"))

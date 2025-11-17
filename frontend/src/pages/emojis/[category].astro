@@ -4,210 +4,353 @@ import Pagination from '../../components/PaginationComponent.astro';
 import CreditsButton from '../../components/buttons/CreditsButton';
 import ToolContainer from '../../components/tool/ToolContainer';
 import ToolHead from '../../components/tool/ToolHead';
-import { getEmojisByCategory, getEmojiCategories } from '../../lib/emojis';
 import AdBanner from '../../components/banner/AdBanner.astro';
+import EachEmojiPage from './EachEmojiPage.astro';
+import { getEmojisByCategory, getEmojiCategories, getEmojiBySlug, getEmojiImages } from '../../lib/emojis';
+import { apple_vendor_excluded_emojis, discord_vendor_excluded_emojis } from '@/lib/emojis-consts';
 
-export async function getStaticPaths() {
-  const categories = getEmojiCategories();
-  
-  return categories
-    .filter((category) => category && category.trim() !== '')
-    .map((category) => ({
-      params: { category: category.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
-      props: { category }
-    }));
+export const prerender = false;
+
+const { category: categorySlug } = Astro.params;
+
+// Early return if no category param
+if (!categorySlug) {
+  return new Response(null, { status: 404 });
 }
 
-// Prefer original category from build-time props to preserve symbols like '&'
-const { category: categorySlug } = Astro.params;
-const categoryName = (Astro.props?.category as string) || categorySlug!.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+// Check if category is numeric (pagination route)
+if (/^\d+$/.test(categorySlug)) {
+  // This is actually a pagination route - redirect to [slug].astro
+  return Astro.redirect(`/freedevtools/emojis/${categorySlug}/`, 301);
+}
 
-// SEO metadata and descriptions for categories
-const categorySeo: Record<string, { title: string; description: string; keywords: string[] } > = {
-  'Activities': {
-    title: 'Activities Emojis - Sports, Events, and Hobbies | Online Free DevTools by Hexmos',
-    description: 'Explore activities emojis covering sports, games, celebrations, and hobbies. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['activities emojis', 'sports emojis', 'games emojis', 'celebration emojis', 'hobby emojis', 'copy emoji', 'emoji meanings']
-  },
-  'Animals & Nature': {
-    title: 'Animals & Nature Emojis - Wildlife, Plants, and Weather | Online Free DevTools by Hexmos',
-    description: 'Discover animals and nature emojis including wildlife, pets, plants, and weather symbols. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['animals emojis', 'nature emojis', 'wildlife emojis', 'plant emojis', 'weather emojis', 'copy emoji', 'emoji meanings']
-  },
-  'Food & Drink': {
-    title: 'Food & Drink Emojis - Meals, Beverages, and Snacks | Online Free DevTools by Hexmos',
-    description: 'Browse food and drink emojis including meals, beverages, fruits, vegetables, and snacks. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['food emojis', 'drink emojis', 'meal emojis', 'beverage emojis', 'fruit emojis', 'copy emoji', 'emoji meanings']
-  },
-  'Objects': {
-    title: 'Objects Emojis - Technology, Tools, and Items | Online Free DevTools by Hexmos',
-    description: 'Explore object emojis including technology, tools, clothing, and everyday items. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['object emojis', 'technology emojis', 'tool emojis', 'clothing emojis', 'item emojis', 'copy emoji', 'emoji meanings']
-  },
-  'People & Body': {
-    title: 'People & Body Emojis - Faces, Gestures, and Body Parts | Online Free DevTools by Hexmos',
-    description: 'Discover people and body emojis including faces, gestures, body parts, and family members. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['people emojis', 'body emojis', 'face emojis', 'gesture emojis', 'family emojis', 'copy emoji', 'emoji meanings']
-  },
-  'Smileys & Emotion': {
-    title: 'Smileys & Emotion Emojis - Faces, Feelings, and Expressions | Online Free DevTools by Hexmos',
-    description: 'Browse smileys and emotion emojis including faces, feelings, and expressions. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['smiley emojis', 'emotion emojis', 'face emojis', 'feeling emojis', 'expression emojis', 'copy emoji', 'emoji meanings']
-  },
-  'Symbols': {
-    title: 'Symbols Emojis - Signs, Shapes, and Icons | Online Free DevTools by Hexmos',
-    description: 'Explore symbol emojis including signs, shapes, icons, and special characters. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['symbol emojis', 'sign emojis', 'shape emojis', 'icon emojis', 'character emojis', 'copy emoji', 'emoji meanings']
-  },
-  'Travel & Places': {
-    title: 'Travel & Places Emojis - Destinations, Transportation, and Locations | Online Free DevTools by Hexmos',
-    description: 'Discover travel and places emojis including destinations, transportation, and location symbols. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['travel emojis', 'places emojis', 'destination emojis', 'transportation emojis', 'location emojis', 'copy emoji', 'emoji meanings']
-  },
-  'Flags': {
-    title: 'Flags Emojis - Country and Regional Flags | Online Free DevTools by Hexmos',
-    description: 'Browse flag emojis including country flags, regional flags, and special flags. Copy emoji, view meanings, and find shortcodes instantly.',
-    keywords: ['flag emojis', 'country emojis', 'regional emojis', 'national emojis', 'copy emoji', 'emoji meanings']
+// Get all categories to validate
+const allCategories = getEmojiCategories();
+const categorySlugs = allCategories.map(cat => cat.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+
+let emojiData: any = null;
+let categoryData: any = null;
+
+// Check if this is actually an emoji slug (not a category)
+// Since [category].astro matches first, we need to handle emoji slugs here
+// This is a workaround for route priority not working as expected
+const emoji = getEmojiBySlug(categorySlug);
+if (emoji && !categorySlugs.includes(categorySlug)) {
+  // This is an emoji slug, not a category - handle it here
+  const images = getEmojiImages(categorySlug);
+  
+  const cleanDescription = (text?: string) => {
+    if (!text) return '';
+    return text
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/[?]{2,}/g, '')
+      .trim();
+  };
+
+  const categoryName = (emoji.category || 'Other') as string;
+  const categorySlugForBreadcrumb = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const cleanedDescription = cleanDescription(emoji.description);
+  const seoDescription = cleanedDescription || 
+    `Learn about the ${emoji.title || emoji.slug} emoji ${emoji.code || ''}. Find meanings, shortcodes, and usage information.`;
+
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Emojis', href: '/freedevtools/emojis/' },
+    { label: categoryName, href: `/freedevtools/emojis/${categorySlugForBreadcrumb}/` },
+    { label: emoji.title || emoji.slug },
+  ];
+
+  emojiData = {
+    emoji,
+    images,
+    categoryName,
+    categorySlugForBreadcrumb,
+    breadcrumbItems,
+    seoDescription,
+  };
+} else {
+  // Validate category exists
+  if (!categorySlugs.includes(categorySlug)) {
+    return new Response(null, { status: 404 });
   }
-};
 
-const seoData = categorySeo[categoryName] || {
-  title: `${categoryName} Emojis | Online Free DevTools by Hexmos`,
-  description: `Explore ${categoryName.toLowerCase()} emojis. Copy emoji, view meanings, and find shortcodes instantly.`,
-  keywords: [`${categoryName.toLowerCase()} emojis`, 'copy emoji', 'emoji meanings', 'emoji shortcodes']
-};
+  // Find the actual category name from the slug
+  const categoryName = allCategories.find(
+    cat => cat.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug
+  ) || categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
 
-// Get emojis for this category
-const emojis = await getEmojisByCategory(categoryName);
-const totalEmojis = emojis.length;
+  // SEO metadata and descriptions for categories
+  const categorySeo: Record<string, { title: string; description: string; keywords: string[] } > = {
+    'Activities': {
+      title: 'Activities Emojis - Sports, Events, and Hobbies | Online Free DevTools by Hexmos',
+      description: 'Explore activities emojis covering sports, games, celebrations, and hobbies. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['activities emojis', 'sports emojis', 'games emojis', 'celebration emojis', 'hobby emojis', 'copy emoji', 'emoji meanings']
+    },
+    'Animals & Nature': {
+      title: 'Animals & Nature Emojis - Wildlife, Plants, and Weather | Online Free DevTools by Hexmos',
+      description: 'Discover animals and nature emojis including wildlife, pets, plants, and weather symbols. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['animals emojis', 'nature emojis', 'wildlife emojis', 'plant emojis', 'weather emojis', 'copy emoji', 'emoji meanings']
+    },
+    'Food & Drink': {
+      title: 'Food & Drink Emojis - Meals, Beverages, and Snacks | Online Free DevTools by Hexmos',
+      description: 'Browse food and drink emojis including meals, beverages, fruits, vegetables, and snacks. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['food emojis', 'drink emojis', 'meal emojis', 'beverage emojis', 'fruit emojis', 'copy emoji', 'emoji meanings']
+    },
+    'Objects': {
+      title: 'Objects Emojis - Technology, Tools, and Items | Online Free DevTools by Hexmos',
+      description: 'Explore object emojis including technology, tools, clothing, and everyday items. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['object emojis', 'technology emojis', 'tool emojis', 'clothing emojis', 'item emojis', 'copy emoji', 'emoji meanings']
+    },
+    'People & Body': {
+      title: 'People & Body Emojis - Faces, Gestures, and Body Parts | Online Free DevTools by Hexmos',
+      description: 'Discover people and body emojis including faces, gestures, body parts, and family members. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['people emojis', 'body emojis', 'face emojis', 'gesture emojis', 'family emojis', 'copy emoji', 'emoji meanings']
+    },
+    'Smileys & Emotion': {
+      title: 'Smileys & Emotion Emojis - Faces, Feelings, and Expressions | Online Free DevTools by Hexmos',
+      description: 'Browse smileys and emotion emojis including faces, feelings, and expressions. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['smiley emojis', 'emotion emojis', 'face emojis', 'feeling emojis', 'expression emojis', 'copy emoji', 'emoji meanings']
+    },
+    'Symbols': {
+      title: 'Symbols Emojis - Signs, Shapes, and Icons | Online Free DevTools by Hexmos',
+      description: 'Explore symbol emojis including signs, shapes, icons, and special characters. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['symbol emojis', 'sign emojis', 'shape emojis', 'icon emojis', 'character emojis', 'copy emoji', 'emoji meanings']
+    },
+    'Travel & Places': {
+      title: 'Travel & Places Emojis - Destinations, Transportation, and Locations | Online Free DevTools by Hexmos',
+      description: 'Discover travel and places emojis including destinations, transportation, and location symbols. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['travel emojis', 'places emojis', 'destination emojis', 'transportation emojis', 'location emojis', 'copy emoji', 'emoji meanings']
+    },
+    'Flags': {
+      title: 'Flags Emojis - Country and Regional Flags | Online Free DevTools by Hexmos',
+      description: 'Browse flag emojis including country flags, regional flags, and special flags. Copy emoji, view meanings, and find shortcodes instantly.',
+      keywords: ['flag emojis', 'country emojis', 'regional emojis', 'national emojis', 'copy emoji', 'emoji meanings']
+    }
+  };
 
-// Pagination logic for page 1
-const itemsPerPage = 36;
-const currentPage = 1;
-const totalPages = Math.ceil(totalEmojis / itemsPerPage);
-const startIndex = (currentPage - 1) * itemsPerPage;
-const endIndex = startIndex + itemsPerPage;
-const paginatedEmojis = emojis.slice(startIndex, endIndex);
+  const seoData = categorySeo[categoryName] || {
+    title: `${categoryName} Emojis | Online Free DevTools by Hexmos`,
+    description: `Explore ${categoryName.toLowerCase()} emojis. Copy emoji, view meanings, and find shortcodes instantly.`,
+    keywords: [`${categoryName.toLowerCase()} emojis`, 'copy emoji', 'emoji meanings', 'emoji shortcodes']
+  };
 
-// Breadcrumb items
-const breadcrumbItems = [
-  { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'Emojis', href: '/freedevtools/emojis/' },
-  { label: categoryName, href: `/freedevtools/emojis/${categorySlug}/` }
-];
+  // Get emojis for this category
+  const emojis = await getEmojisByCategory(categoryName);
+  const totalEmojis = emojis.length;
+
+  // Pagination logic for page 1
+  const itemsPerPage = 36;
+  const currentPage = 1;
+  const totalPages = Math.ceil(totalEmojis / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedEmojis = emojis.slice(startIndex, endIndex);
+
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Emojis', href: '/freedevtools/emojis/' },
+    { label: categoryName, href: `/freedevtools/emojis/${categorySlug}/` }
+  ];
+
+  categoryData = {
+    categoryName,
+    categorySlug,
+    seoData,
+    emojis,
+    totalEmojis,
+    itemsPerPage,
+    currentPage,
+    totalPages,
+    paginatedEmojis,
+    breadcrumbItems,
+  };
+}
 ---
 
-<BaseLayout 
-  name={categoryName}
-  path={`/emojis/${categorySlug}/`}
-  title={seoData.title}
-  description={seoData.description}
-  canonical={`https://hexmos.com/freedevtools/emojis/${categorySlug}/`}
-  keywords={seoData.keywords}
-  
-  showHeader={true}
-  totalItems={totalEmojis}
-  features={["Copy instantly", "View meanings", "Find shortcodes", "No signup required", "Free access"]}
-  emojiCategory={categoryName}
->
-  <ToolContainer>
-    <div class="mb-16 mt-[74px]">
-      <AdBanner />
-    </div>
-    <ToolHead
-      name={`${categoryName} Emojis`}
-      description={seoData.description}
-      breadcrumbItems={breadcrumbItems}
-    />
+{emojiData ? (
+  <BaseLayout
+    name="Emojis"
+    path="/emojis/"
+    title={`${emojiData.emoji.code || ''} ${emojiData.emoji.title || emojiData.emoji.slug} - Emoji Reference | Online Free DevTools by Hexmos`}
+    description={emojiData.seoDescription}
+    canonical={`https://hexmos.com/freedevtools/emojis/${emojiData.emoji.slug}/`}
+    showHeader={true}
+    keywords={emojiData.emoji.keywords || []}
+  >
+    <ToolContainer>
+      <div class="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
+      <ToolHead
+        name={`${emojiData.emoji.code || ''} ${emojiData.emoji.title || emojiData.emoji.slug}`}
+        description={emojiData.seoDescription}
+        breadcrumbItems={emojiData.breadcrumbItems}
+      />
 
-    <!-- Overview Stats -->
-    <div id="pagination-info" class="text-center mb-8">
-      <div class="grid grid-cols-2 gap-6 mt-8">
-        <div class="text-center">
-          <div class="text-3xl font-bold text-blue-600">{totalEmojis.toLocaleString()}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">Emojis</div>
+      <EachEmojiPage emoji={emojiData.emoji} images={emojiData.images} />
+
+      <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap gap-4">
+          <a
+            href="/freedevtools/emojis/"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            ← Back to Emojis
+          </a>
+          {emojiData.emoji.category ? (
+            <a
+              href={`/freedevtools/emojis/${emojiData.emoji.category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/`}
+              class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            >
+              View{' '}
+              {emojiData.emoji.category
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, (l) => l.toUpperCase())}{' '}
+              Category
+            </a>
+          ) : null}
+          {emojiData.emoji.apple_vendor_description &&
+            !apple_vendor_excluded_emojis.includes(emojiData.emoji.slug) ? (
+            <a
+              href={`/freedevtools/emojis/apple-emojis/${emojiData.emoji.slug}/`}
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            >
+              🍎 <span>View Apple Version</span>
+            </a>
+          ) : null}
+          {emojiData.emoji.discord_vendor_description &&
+            !discord_vendor_excluded_emojis.includes(emojiData.emoji.slug) ? (
+            <a
+              href={`/freedevtools/emojis/discord-emojis/${emojiData.emoji.slug}/`}
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            >
+              🎮 <span>View Discord Version</span> 
+            </a>
+          ) : null}
+          <CreditsButton href="/freedevtools/emojis/credits/" />
         </div>
-        <div class="text-center">
-          <div class="text-3xl font-bold text-green-600">{totalPages}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">Pages</div>
-        </div>
+      </div>
+    </ToolContainer>
+  </BaseLayout>
+) : categoryData ? (
+  <BaseLayout 
+    name={categoryData.categoryName}
+    path={`/emojis/${categoryData.categorySlug}/`}
+    title={categoryData.seoData.title}
+    description={categoryData.seoData.description}
+    canonical={`https://hexmos.com/freedevtools/emojis/${categoryData.categorySlug}/`}
+    keywords={categoryData.seoData.keywords}
+    showHeader={true}
+    totalItems={categoryData.totalEmojis}
+    features={["Copy instantly", "View meanings", "Find shortcodes", "No signup required", "Free access"]}
+    emojiCategory={categoryData.categoryName}
+  >
+    <ToolContainer>
+      <div class="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
+      <ToolHead
+        name={`${categoryData.categoryName} Emojis`}
+        description={categoryData.seoData.description}
+        breadcrumbItems={categoryData.breadcrumbItems}
+      />
+
+      <!-- Overview Stats -->
+      <div id="pagination-info" class="text-center mb-8">
+        <div class="grid grid-cols-2 gap-6 mt-8">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-blue-600">{categoryData.totalEmojis.toLocaleString()}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Emojis</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-green-600">{categoryData.totalPages}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Pages</div>
+          </div>
         </div>
       </div>
       
-    <!-- Pagination Info -->
-    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8">
-      <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-        Showing {paginatedEmojis.length} of {totalEmojis} emojis (Page {currentPage} of {totalPages})
+      <!-- Pagination Info -->
+      <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8">
+        <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
+          Showing {categoryData.paginatedEmojis.length} of {categoryData.totalEmojis} emojis (Page {categoryData.currentPage} of {categoryData.totalPages})
+        </div>
       </div>
-    </div>
 
-    <!-- Emojis Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
-      {paginatedEmojis.map((emoji) => {
-        const emojiChar = emoji.code || '';
-        const emojiTitle = emoji.title || emoji.slug;
+      <!-- Emojis Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
+        {categoryData.paginatedEmojis.map((emoji) => {
+          const emojiChar = emoji.code || '';
+          const emojiTitle = emoji.title || emoji.slug;
 
-        // Count visible components (graphemes) + joining characters (ZWJ)
-        const graphemeCount = [...emojiChar].length;
-        const zwjCount = (emojiChar.match(/\u200d/g) || []).length;
+          // Count visible components (graphemes) + joining characters (ZWJ)
+          const graphemeCount = [...emojiChar].length;
+          const zwjCount = (emojiChar.match(/\u200d/g) || []).length;
 
-        // Complexity heuristic
-        const complexity = graphemeCount + zwjCount * 2;
+          // Complexity heuristic
+          const complexity = graphemeCount + zwjCount * 2;
 
-        // Adjust font size dynamically
-        let emojiSizeClass = 'text-5xl';
-        if (complexity > 10) emojiSizeClass = 'text-xl'; // very complex (family, kiss variants)
-        else if (complexity > 6) emojiSizeClass = 'text-3xl'; // multi-skin or gendered sequences
-        else if (complexity > 3) emojiSizeClass = 'text-4xl'; // moderately complex (2–3 parts)
+          // Adjust font size dynamically
+          let emojiSizeClass = 'text-5xl';
+          if (complexity > 10) emojiSizeClass = 'text-xl'; // very complex (family, kiss variants)
+          else if (complexity > 6) emojiSizeClass = 'text-3xl'; // multi-skin or gendered sequences
+          else if (complexity > 3) emojiSizeClass = 'text-4xl'; // moderately complex (2–3 parts)
 
-        return (
-          <a
-            href={`/freedevtools/emojis/${emoji.slug}/`}
-            class="emoji-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-center hover:shadow-lg transition-all duration-200 cursor-pointer block"
-            data-emoji={emojiChar}
-            data-title={emojiTitle}
+          return (
+            <a
+              href={`/freedevtools/emojis/${emoji.slug}/`}
+              class="emoji-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-center hover:shadow-lg transition-all duration-200 cursor-pointer block"
+              data-emoji={emojiChar}
+              data-title={emojiTitle}
+            >
+              <div
+                class={`${emojiSizeClass} mb-2 leading-tight select-none`}
+                style={{
+                  lineHeight: '1.1',
+                  display: 'inline-block',
+                  transform: 'translateY(2px)', // visually center
+                }}
+              >
+                {emojiChar}
+              </div>
+              <div
+                class="text-xs text-slate-600 dark:text-slate-400 truncate"
+                title={emojiTitle}
+              >
+                {emojiTitle}
+              </div>
+            </a>
+          );
+        })}
+      </div>
+      <!-- Pagination -->
+      <Pagination 
+        currentPage={categoryData.currentPage}
+        totalPages={categoryData.totalPages}
+        baseUrl={`/freedevtools/emojis/${categoryData.categorySlug}/`}
+      />
+      
+      <!-- Credits Section -->
+      <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap gap-4">
+          <a 
+            href="/freedevtools/emojis/" 
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
           >
-            <div
-              class={`${emojiSizeClass} mb-2 leading-tight select-none`}
-              style={{
-                lineHeight: '1.1',
-                display: 'inline-block',
-                transform: 'translateY(2px)', // visually center
-              }}
-            >
-              {emojiChar}
-            </div>
-            <div
-              class="text-xs text-slate-600 dark:text-slate-400 truncate"
-              title={emojiTitle}
-            >
-              {emojiTitle}
-            </div>
+            ←  Back to Emojis
           </a>
-        );
-      })}
-    </div>
-    <!-- Pagination -->
-    <Pagination 
-      currentPage={currentPage}
-      totalPages={totalPages}
-      baseUrl={`/freedevtools/emojis/${categorySlug}/`}
-    />
-    
-    <!-- Credits Section -->
-    <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
-      <div class="flex flex-wrap gap-4">
-        <a 
-          href="/freedevtools/emojis/" 
-          class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-        >
-          ←  Back to Emojis
-        </a>
-        <CreditsButton href="/freedevtools/emojis/credits/" />
+          <CreditsButton href="/freedevtools/emojis/credits/" />
+        </div>
       </div>
-    </div>
-  </ToolContainer>
-</BaseLayout>
+    </ToolContainer>
+  </BaseLayout>
+) : null}
 
 <script>
   // Scroll to pagination info only if hash is present in URL
