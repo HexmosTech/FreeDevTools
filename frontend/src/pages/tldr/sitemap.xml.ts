@@ -16,7 +16,7 @@ async function getCommandsByPlatform() {
     const name = fileName.replace(/\.md$/i, '');
     if (!byPlatform[platform]) byPlatform[platform] = [];
     byPlatform[platform].push({
-      url: entry.data.path || `/freedevtools/tldr/${platform}/${name}`,
+      url: entry.data.path || `/freedevtools/tldr/${platform}/$s{name}`,
     });
   }
   return byPlatform;
