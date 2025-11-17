@@ -1,17 +1,23 @@
 // @ts-check
+import node from '@astrojs/node';
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import compressor from "astro-compressor";
 import { defineConfig } from "astro/config";
 import path from "path";
+// These integrations are only needed for static/SSG builds, not SSR mode
+// import { performCriticalCssInline } from './integrations/critical-css-inlining.mjs';
+// import { unwrapFDT, wrapFDT } from './integrations/wrap-astro.mjs';
 
-import { performCriticalCssInline } from './integrations/critical-css-inlining.mjs';
-import { unwrapFDT, wrapFDT } from './integrations/wrap-astro.mjs';
 
 // https://astro.build/config
 export default defineConfig({
+  adapter: node({
+    mode: 'standalone',
+    experimentalDisableStreaming: false
+  }),
   site: 'https://hexmos.com/freedevtools',
-  output: 'static',
+  output: 'server',
   base: "/freedevtools",
   trailingSlash: 'ignore',
   prefetch: {
@@ -26,10 +32,10 @@ export default defineConfig({
   // })
   //compressor({ gzip: { level: 9 }, brotli: true }),
   compressor({ gzip: { level: 9 }, brotli: false }),
-  wrapFDT(), // Wraps freedevtools folder around _astro for doing the critical-css inline
-  performCriticalCssInline(),
-  // playformInline(), // Adds inline critical css to avoid render blocking
-  unwrapFDT() // Unwraps freedevtools folder around _astro
+    // These integrations are only needed for static/SSG builds, not SSR mode
+    // wrapFDT(), // Wraps freedevtools folder around _astro for doing the critical-css inline
+    // performCriticalCssInline(),
+    // unwrapFDT() // Unwraps freedevtools folder around _astro
   ],
   cacheDir: ".astro/cache",
   build: {
@@ -73,3 +79,6 @@ export default defineConfig({
     logLevel: 'warn',
   },
 });
+
+
+
