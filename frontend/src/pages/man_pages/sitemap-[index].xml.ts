@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 
+// maximum URLs per sitemap file
 const MAX_URLS = 5000;
 
 export async function getStaticPaths() {
