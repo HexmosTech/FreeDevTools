@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 
   // Loader function for sitemap URLs
   async function loadUrls() {
-    const dbPath = path.join(process.cwd(), 'db/all_dbs/man_pages-db.db');
+    const dbPath = path.join(process.cwd(), 'db/all_dbs/man-pages-db.db');
     const db = new Database(dbPath, { readonly: true });
     const now = new Date().toISOString();
 
