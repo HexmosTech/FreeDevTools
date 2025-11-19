@@ -2,6 +2,7 @@
 import {
   getClusterByName,
   getClusters,
+  getClustersWithPreviewIcons,
   getIconsByCluster,
   getTotalIcons,
 } from 'db/png_icons/png-icons-utils';
@@ -14,8 +15,11 @@ import PngIcons from './_PngIcons.astro';
 
 export const prerender = false;
 
+// Track request start time
+const requestStartTime = Date.now();
 const { category } = Astro.params;
 const urlPath = Astro.url.pathname;
+console.log(`[PNG_ICONS] Request reached server: ${urlPath} at ${new Date().toISOString()}`);
 
 if (!category) {
   return new Response(null, { status: 404 });
@@ -34,38 +38,44 @@ if (/^\d+$/.test(category)) {
     return Astro.redirect('/freedevtools/png_icons/');
   }
 
-  // Fetch categories data directly (SSR mode)
-  const clusters = getClusters();
-  const allCategories = clusters.map((cluster) => {
-    const icons = getIconsByCluster(cluster.source_folder || cluster.name);
-    return {
-      id: cluster.source_folder || cluster.name,
-      name: cluster.name,
-      description: cluster.description,
-      icon: `/freedevtools/png_icons/${cluster.name}/`,
-      iconCount: icons.length,
-      url: `/freedevtools/png_icons/${cluster.name}/`,
-      keywords: cluster.keywords,
-      features: cluster.tags,
-      fileNames: icons.map((icon) => icon.name),
-    };
-  });
-
   const itemsPerPage = 30;
-  const totalPages = Math.ceil(allCategories.length / itemsPerPage);
+  
+  // Get total count of clusters for pagination (single query)
+  const totalClustersQueryStartTime = Date.now();
+  const allClusters = getClusters();
+  const totalCategories = allClusters.length;
+  const totalClustersQueryEndTime = Date.now();
+  console.log(`[PNG_ICONS] getClusters() for count took ${totalClustersQueryEndTime - totalClustersQueryStartTime}ms`);
+  
+  const totalPages = Math.ceil(totalCategories / itemsPerPage);
 
   // Validate page number
   if (currentPage > totalPages || currentPage < 1) {
     return new Response(null, { status: 404 });
   }
 
-  const totalCategories = allCategories.length;
-  const totalPngIcons = getTotalIcons();
+  // Get paginated clusters with preview icons in ONE optimized query
+  const categoriesWithIcons = getClustersWithPreviewIcons(currentPage, itemsPerPage, 6);
+  
+  // Transform to match expected format
+  const currentPageCategories = categoriesWithIcons.map((cluster) => {
+    return {
+      id: cluster.source_folder || cluster.name,
+      name: cluster.name,
+      description: cluster.description,
+      icon: `/freedevtools/png_icons/${cluster.name}/`,
+      iconCount: cluster.count,
+      url: `/freedevtools/png_icons/${cluster.name}/`,
+      keywords: cluster.keywords,
+      features: cluster.tags,
+      previewIcons: cluster.previewIcons,
+    };
+  });
 
-  // Get categories for current page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentPageCategories = allCategories.slice(startIndex, endIndex);
+  const totalIconsQueryStartTime = Date.now();
+  const totalPngIcons = getTotalIcons();
+  const totalIconsQueryEndTime = Date.now();
+  console.log(`[PNG_ICONS] getTotalIcons() took ${totalIconsQueryEndTime - totalIconsQueryStartTime}ms`);
 
   // Breadcrumb data
   const breadcrumbItems = [
@@ -91,6 +101,11 @@ if (/^\d+$/.test(category)) {
     'vector graphics library',
   ];
 
+    // Log total roundtrip time for pagination
+    const requestEndTime = Date.now();
+    const totalRoundtripTime = requestEndTime - requestStartTime;
+    console.log(`[PNG_ICONS] Total roundtrip time for ${urlPath}: ${totalRoundtripTime}ms`);
+
   paginationData = {
     currentPage,
     totalPages,
@@ -111,14 +126,20 @@ if (/^\d+$/.test(category)) {
   }
 
   // Get cluster data from database
+  const clusterQueryStartTime = Date.now();
   const clusterData = getClusterByName(category);
+  const clusterQueryEndTime = Date.now();
+  console.log(`[PNG_ICONS] getClusterByName("${category}") took ${clusterQueryEndTime - clusterQueryStartTime}ms`);
 
   if (!clusterData) {
     return new Response(null, { status: 404 });
   }
 
   async function getCategoryIcons() {
+    const iconQueryStartTime = Date.now();
     const dbIcons = getIconsByCluster(clusterData!.source_folder || category!);
+    const iconQueryEndTime = Date.now();
+    console.log(`[PNG_ICONS] getIconsByCluster("${clusterData!.source_folder || category!}") took ${iconQueryEndTime - iconQueryStartTime}ms`);
 
     const icons = dbIcons.map((icon) => {
       const iconName = icon.name.replace(/\.(png|svg)$/i, '');
@@ -141,6 +162,11 @@ if (/^\d+$/.test(category)) {
 
   const categoryIcons = await getCategoryIcons();
   const totalIcons = categoryIcons.length;
+  
+  // Log total roundtrip time
+  const requestEndTime = Date.now();
+  const totalRoundtripTime = requestEndTime - requestStartTime;
+  console.log(`[PNG_ICONS] Total roundtrip time for ${urlPath}: ${totalRoundtripTime}ms`);
 
   // Use database content for about and why_choose_us
   const aboutContent =

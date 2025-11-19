@@ -1,44 +1,58 @@
 ---
 import {
   getClusters,
-  getIconsByCluster,
+  getClustersWithPreviewIcons,
   getTotalIcons,
 } from 'db/png_icons/png-icons-utils';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PngIcons from './_PngIcons.astro';
 
-// Load SVG icons data from SQLite
-const clusters = getClusters();
+// Track request start time
+const requestStartTime = Date.now();
+const requestPath = Astro.url.pathname;
+console.log(`[PNG_ICONS] Request reached server: ${requestPath} at ${new Date().toISOString()}`);
 
-// Get all categories with their data
-const allCategories = clusters.map((cluster) => {
-  // Get icons for this cluster to count them
-  const icons = getIconsByCluster(cluster.source_folder || cluster.name);
+// Pagination logic for page 1
+const itemsPerPage = 30;
+const currentPage = 1;
 
+// Get total count of clusters for pagination (single query)
+const totalClustersQueryStartTime = Date.now();
+const allClusters = getClusters();
+const totalCategories = allClusters.length;
+const totalClustersQueryEndTime = Date.now();
+console.log(`[PNG_ICONS] getClusters() for count took ${totalClustersQueryEndTime - totalClustersQueryStartTime}ms`);
+
+// Get paginated clusters with preview icons in ONE optimized query
+const categoriesWithIcons = getClustersWithPreviewIcons(currentPage, itemsPerPage, 6);
+
+// Transform to match expected format
+const categories = categoriesWithIcons.map((cluster) => {
   return {
     id: cluster.source_folder || cluster.name,
     name: cluster.name,
     description: cluster.description,
     icon: `/freedevtools/png_icons/${cluster.name}/`,
-    iconCount: icons.length,
+    iconCount: cluster.count,
     url: `/freedevtools/png_icons/${cluster.name}/`,
     keywords: cluster.keywords,
     features: cluster.tags,
-    fileNames: icons.map((icon) => icon.name), // Include fileNames for icon previews
+    previewIcons: cluster.previewIcons, // Include preview icons
   };
 });
 
-// Calculate total SVG icons across all categories
-const totalPngIcons = getTotalIcons();
+const totalPages = Math.ceil(totalCategories / itemsPerPage);
 
-// Pagination logic for page 1
-const itemsPerPage = 30;
-const currentPage = 1;
-const totalPages = Math.ceil(allCategories.length / itemsPerPage);
-const startIndex = (currentPage - 1) * itemsPerPage;
-const endIndex = startIndex + itemsPerPage;
-const categories = allCategories.slice(startIndex, endIndex);
-const totalCategories = allCategories.length;
+// Calculate total PNG icons across all categories
+const totalIconsQueryStartTime = Date.now();
+const totalPngIcons = getTotalIcons();
+const totalIconsQueryEndTime = Date.now();
+console.log(`[PNG_ICONS] getTotalIcons() took ${totalIconsQueryEndTime - totalIconsQueryStartTime}ms`);
+
+// Log total roundtrip time
+const requestEndTime = Date.now();
+const totalRoundtripTime = requestEndTime - requestStartTime;
+console.log(`[PNG_ICONS] Total roundtrip time for ${requestPath}: ${totalRoundtripTime}ms`);
 
 // Breadcrumb data
 const breadcrumbItems = [
