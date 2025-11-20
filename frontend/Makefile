@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2
+.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy
 
 # Build the project
 build:
@@ -30,6 +30,12 @@ deploy:
 # Deploy: check PageSpeed, generate banners, build, then rsync to server
 deploy2: build
 		rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ root@master-do:/tools/; \
+
+# Deploy index.html: build then rsync index.html to a4.html
+# Note: rsync without --delete flag will only add/update files, never delete
+index-deploy: build
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master-do:/tools/a4.html
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master-do:/tools/_astro/
 
 # Run development server
 run:
