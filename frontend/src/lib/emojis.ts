@@ -557,7 +557,6 @@ export function getAppleEmojiBySlug(slug: string) {
     .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
     .all(slug);
 
-  // your existing filter EXACTLY as-is
   const appleImages = imageRows
     .filter((row) => /iOS[_\s]?\d+/i.test(row.filename))
     .map((row) => {
@@ -592,7 +591,6 @@ export function getAppleEmojiBySlug(slug: string) {
     shortcodes: parseJSON(emoji.shortcodes),
     slug,
 
-    // your existing fields
     appleEvolutionImages: appleImages,
     latestAppleImage: latestImage?.url,
     apple_vendor_description:
