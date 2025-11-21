@@ -5,35 +5,57 @@ import Pagination from '@/components/PaginationComponent.astro';
 import ToolContainer from '@/components/tool/ToolContainer';
 import ToolHead from '@/components/tool/ToolHead';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getManPagesBySubcategory, getManPagesCountBySubcategory, getManPagesBySubcategoryPaginated, generateSubcategoryStaticPaths } from '@/lib/man-pages-utils';
+import { getManPagesCountBySubcategory, getManPagesBySubcategoryPaginated, generateSubcategoryStaticPaths } from '@/lib/man-pages-utils';
 
+// Generate static paths for paginated subcategory routes
 export async function getStaticPaths() {
-  return generateSubcategoryStaticPaths();
+  const subcategoryPaths = generateSubcategoryStaticPaths();
+  const paths: any[] = [];
+
+  for (const subcategoryPath of subcategoryPaths) {
+    const { category, subcategory } = subcategoryPath.params;
+    
+    // Get total count of man pages for this subcategory to determine pagination
+    const totalManPagesCount = getManPagesCountBySubcategory(category, subcategory);
+    const itemsPerPage = 20;
+    const totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
+    
+    // Generate pagination pages (page 2, 3, 4, etc. - page 1 is handled by index.astro)
+    for (let page = 2; page <= totalPages; page++) {
+      paths.push({
+        params: { 
+          category: category,
+          subcategory: subcategory,
+          page: page.toString()
+        },
+        props: {
+          currentPage: page,
+        }
+      });
+    }
+  }
+
+  return paths;
 }
 
+const { currentPage } = Astro.props;
 const { category, subcategory } = Astro.params;
 
-if (!category || !subcategory) {
-  throw new Error('Category and subcategory parameters are required');
-}
-
-// Efficient pagination for page 1
+// Calculate pagination
 const itemsPerPage = 20;
-const currentPage = 1;
-const offset = (currentPage - 1) * itemsPerPage; // 0 for page 1
+const offset = (currentPage - 1) * itemsPerPage;
 
-// Get ONLY the man pages for page 1 from database (efficient!)
+// Get ONLY the man pages for current page from database (efficient!)
 const currentPageManPages = getManPagesBySubcategoryPaginated(category, subcategory, itemsPerPage, offset);
 const totalManPagesCount = getManPagesCountBySubcategory(category, subcategory);
 const totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
 
-console.log("totalManPagesCount:", totalManPagesCount);
-
 const breadcrumbItems = [
   { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'Man Pages', href: '/freedevtools/man_pages/' },
-  { label: category.replace('-', ' ').charAt(0).toUpperCase() + category.replace('-', ' ').slice(1), href: `/freedevtools/man_pages/${category}/` },
-  { label: subcategory.replace('-', ' ').charAt(0).toUpperCase() + subcategory.replace('-', ' ').slice(1) },
+  { label: 'Man Pages', href: '/freedevtools/man-pages/' },
+  { label: category.replace('-', ' ').charAt(0).toUpperCase() + category.replace('-', ' ').slice(1), href: `/freedevtools/man-pages/${category}/` },
+  { label: subcategory.replace('-', ' ').charAt(0).toUpperCase() + subcategory.replace('-', ' ').slice(1), href: `/freedevtools/man-pages/${category}/${subcategory}/` },
+  { label: `Page ${currentPage}` },
 ];
 
 const categoryTitle = category.replace('-', ' ').charAt(0).toUpperCase() + category.replace('-', ' ').slice(1);
@@ -41,14 +63,14 @@ const subcategoryTitle = subcategory.replace('-', ' ').charAt(0).toUpperCase() +
 ---
 
 <BaseLayout
-  name={`${subcategoryTitle} Man Pages`}
-  title={`${subcategoryTitle} Manual Pages - ${categoryTitle} | Free DevTools by Hexmos`}
-  path={`/freedevtools/man_pages/${category}/${subcategory}/`}
-  description={`Browse ${subcategoryTitle} manual pages in ${categoryTitle}. Find detailed documentation and system references.`}
-  canonical={`https://hexmos.com/freedevtools/man_pages/${category}/${subcategory}/`}
-  keywords={[subcategory, category, 'man pages', 'manual', 'documentation']}
-  ogImage="https://hexmos.com/freedevtools/tool-banners/man_pages-banner.png"
-  twitterImage="https://hexmos.com/freedevtools/tool-banners/man_pages-banner.png"
+  name={`${subcategoryTitle} Man Pages - Page ${currentPage}`}
+  title={`${subcategoryTitle} Manual Pages - Page ${currentPage} of ${totalPages} | Free DevTools by Hexmos`}
+  path={`/freedevtools/man-pages/${category}/${subcategory}/${currentPage}/`}
+  description={`Browse ${subcategoryTitle} manual pages - Page ${currentPage} of ${totalPages}. Find detailed documentation and system references.`}
+  canonical={`https://hexmos.com/freedevtools/man-pages/${category}/${subcategory}/${currentPage}/`}
+  keywords={[subcategory, category, 'man pages', 'manual', 'documentation', `page ${currentPage}`]}
+  ogImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
+  twitterImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
   datePublished="2025-01-30"
   softwareVersion="1.0.0"
 >
@@ -62,16 +84,6 @@ const subcategoryTitle = subcategory.replace('-', ' ').charAt(0).toUpperCase() +
       breadcrumbItems={breadcrumbItems}
     />
 
-    <!-- Overview Stats -->
-    <div class="text-center">
-      <div class="grid grid-cols-1 gap-6 mt-8">
-        <div class="text-center">
-          <div class="text-3xl font-bold text-green-600">{totalManPagesCount >= 1000 ? Math.round(totalManPagesCount / 1000) + 'k' : totalManPagesCount}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">Man Pages in {subcategoryTitle}</div>
-        </div>
-      </div>
-    </div>
-
     <!-- Pagination Info -->
     <div
       id="pagination-info-content"
@@ -82,15 +94,15 @@ const subcategoryTitle = subcategory.replace('-', ' ').charAt(0).toUpperCase() +
       </div>
     </div>
 
-      <!-- Man Pages Grid -->
+    <!-- Man Pages Grid -->
     <div class="mt-8">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentPageManPages.map((manPage) => (
           <a
-            href={`/freedevtools/man_pages/${category}/${subcategory}/${manPage.slug}/`}
+            href={`/freedevtools/man-pages/${category}/${subcategory}/${manPage.slug}/`}
             class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-lg transition-shadow min-h-[120px]"
           >
-            <h3 class="text-base  text-gray-900 dark:text-gray-100 leading-relaxed">
+            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
               {manPage.title.split(' — ')[0]}
             </h3>
           </a>
@@ -98,36 +110,29 @@ const subcategoryTitle = subcategory.replace('-', ' ').charAt(0).toUpperCase() +
       </div>
     </div>
 
-    <!-- Show message if no man pages -->
-    {totalManPagesCount === 0 && (
-      <div class="mt-8 text-center py-12">
-        <p class="text-gray-500 dark:text-gray-400">No man pages found in this subcategory.</p>
-      </div>
-    )}
-
     <!-- Pagination -->
     <Pagination
       currentPage={currentPage}
       totalPages={totalPages}
-      baseUrl={`/freedevtools/man_pages/${category}/${subcategory}/`}
+      baseUrl={`/freedevtools/man-pages/${category}/${subcategory}/`}
     />
 
     <!-- Credits Section -->
     <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
       <div class="flex flex-wrap gap-4">
         <a
-          href={`/freedevtools/man_pages/${category}/`}
+          href={`/freedevtools/man-pages/${category}/`}
           class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
         >
           View {categoryTitle} Category
         </a>
         <!-- <a
-          href={`/freedevtools/man_pages/${category}/${subcategory}/`}
+          href={`/freedevtools/man-pages/${category}/${subcategory}/`}
           class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
         >
           ← Back to {subcategoryTitle}
         </a> -->
-        <CreditsButton href="/freedevtools/man_pages/credits/" />
+        <CreditsButton href="/freedevtools/man-pages/credits/" />
       </div>
     </div>
   </ToolContainer>
