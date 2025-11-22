@@ -1,4 +1,4 @@
-import { getAllAppleEmojis } from "@/lib/emojis";
+import { getAllAppleEmojis } from "db/emojis/emojis-utils";
 import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {

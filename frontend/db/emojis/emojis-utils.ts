@@ -63,6 +63,7 @@ export function getDb(): Database.Database {
   dbInstance = new Database(dbPath, { readonly: true });
   dbInstance.pragma('journal_mode = OFF');
   dbInstance.pragma('synchronous = OFF');
+  dbInstance.pragma('mmap_size = 1073741824');
   return dbInstance;
 }
 
