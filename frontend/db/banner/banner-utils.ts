@@ -13,9 +13,14 @@ export function getDb(): Database.Database {
   if (dbInstance) return dbInstance;
   const dbPath = getDbPath();
   dbInstance = new Database(dbPath, { readonly: true });
-  // Improve read performance for build-time queries
+  // Optimize for read-only performance
   dbInstance.pragma('journal_mode = OFF');
   dbInstance.pragma('synchronous = OFF');
+  dbInstance.pragma('mmap_size = 1073741824');
+  
+  dbInstance.pragma('temp_store = MEMORY'); // Use memory for temp tables
+  dbInstance.pragma('query_only = ON'); // Ensure read-only mode
+  dbInstance.pragma('read_uncommitted = ON'); // Skip locking for reads
   return dbInstance;
 }
 

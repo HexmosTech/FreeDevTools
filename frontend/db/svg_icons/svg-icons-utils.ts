@@ -1,11 +1,11 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import type {
-  Cluster,
-  Icon,
-  Overview,
-  RawClusterRow,
-  RawIconRow,
+    Cluster,
+    Icon,
+    Overview,
+    RawClusterRow,
+    RawIconRow,
 } from './svg-icons-schema';
 
 // DB queries
@@ -24,9 +24,14 @@ export function getDb(): Database.Database {
   const dbPath = getDbPath();
   console.log(`[SVG_ICONS_DB] Opening new DB connection to: ${dbPath}`);
   dbInstance = new Database(dbPath, { readonly: true });
-  // Improve read performance for build-time queries
+  // Optimize for read-only performance
   dbInstance.pragma('journal_mode = OFF');
   dbInstance.pragma('synchronous = OFF');
+  dbInstance.pragma('mmap_size = 1073741824');
+  
+  dbInstance.pragma('temp_store = MEMORY'); // Use memory for temp tables
+  dbInstance.pragma('query_only = ON'); // Ensure read-only mode
+  dbInstance.pragma('read_uncommitted = ON'); // Skip locking for reads
   const dbOpenEndTime = Date.now();
   console.log(`[SVG_ICONS_DB] DB connection opened in ${dbOpenEndTime - dbOpenStartTime}ms`);
   return dbInstance;
