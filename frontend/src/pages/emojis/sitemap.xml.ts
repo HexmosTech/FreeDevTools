@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const { getAllEmojis } = await import("@/lib/emojis");
+  const { getAllEmojis } = await import("db/emojis/emojis-utils");
   const emojis = getAllEmojis();
 
   // Predefined allowed categories
