@@ -445,19 +445,160 @@ export function extractDiscordVersion(filename) {
   return match ? match[1] : '0';
 }
 
+
 export function getDiscordEmojiBySlug(slug: string) {
-  const all = getAllDiscordEmojis();
-  return all.find((e) => e.slug === slug);
+  const db = getDb();
+
+  const emoji = db
+    .prepare(
+      `SELECT 
+        code,
+        unicode,
+        slug,
+        title,
+        category,
+        description,
+        apple_vendor_description,
+        discord_vendor_description,
+        keywords,
+        also_known_as,
+        version,
+        senses,
+        shortcodes
+      FROM emojis
+      WHERE slug = ?`
+    )
+    .get(slug);
+
+  if (!emoji) return null;
+
+  // Get only Discord-vendor images
+  const imageRows = db
+    .prepare(
+      `SELECT filename, image_data 
+       FROM images 
+       WHERE emoji_slug = ? AND image_type = 'twemoji-vendor'`
+    )
+    .all(slug);
+
+  const discordImages = imageRows
+    .map((row) => {
+      const buffer = Buffer.from(row.image_data);
+      const mime = detectMime(buffer);
+      const base64 = buffer.toString("base64");
+
+      return {
+        file: row.filename,
+        url: `data:${mime};base64,${base64}`,
+        version: extractDiscordVersion(row.filename),
+      };
+    })
+    .sort((a, b) => {
+      const va = versionToNumbers(a.version);
+      const vb = versionToNumbers(b.version);
+      const len = Math.max(va.length, vb.length);
+      for (let i = 0; i < len; i++) {
+        const diff = (va[i] || 0) - (vb[i] || 0);
+        if (diff !== 0) return diff;
+      }
+      return 0;
+    });
+
+  if (discordImages.length === 0) return null;
+
+  const latestImage = discordImages[discordImages.length - 1];
+
+  return {
+    ...emoji,
+    Unicode: parseJSON<string[]>(emoji.unicode) || [],
+    keywords: parseJSON<string[]>(emoji.keywords) || [],
+    alsoKnownAs: parseJSON<string[]>(emoji.also_known_as) || [],
+    version: parseJSON(emoji.version),
+    senses: parseJSON(emoji.senses),
+    shortcodes: parseJSON(emoji.shortcodes),
+    slug,
+    discordEvolutionImages: discordImages,
+    latestDiscordImage: latestImage.url,
+    discord_vendor_description:
+      emoji.discord_vendor_description || emoji.description || "",
+  };
 }
 
 
-/**
- * Fetch a single Apple emoji by slug.
- */
 export function getAppleEmojiBySlug(slug: string) {
-  const all = getAllAppleEmojis();
-  return all.find((e) => e.slug === slug);
+  const db = getDb();
+
+  // fetch base row
+  const emoji = db
+    .prepare(
+      `SELECT 
+          code,
+          unicode,
+          slug,
+          title,
+          category,
+          description,
+          apple_vendor_description,
+          discord_vendor_description,
+          keywords,
+          also_known_as,
+          version,
+          senses,
+          shortcodes
+       FROM emojis
+       WHERE slug = ?`
+    )
+    .get(slug);
+
+  if (!emoji) return null;
+
+  // fetch all images for this emoji only
+  const imageRows = db
+    .prepare(`SELECT filename, image_data FROM images WHERE emoji_slug = ?`)
+    .all(slug);
+
+  const appleImages = imageRows
+    .filter((row) => /iOS[_\s]?\d+/i.test(row.filename))
+    .map((row) => {
+      const buffer = Buffer.from(row.image_data);
+      const mime = detectMime(buffer);
+      return {
+        file: row.filename,
+        url: `data:${mime};base64,${buffer.toString("base64")}`,
+        version: extractIOSVersion(row.filename),
+      };
+    })
+    .sort((a, b) => {
+      const va = versionToNumbers(a.version);
+      const vb = versionToNumbers(b.version);
+      const len = Math.max(va.length, vb.length);
+      for (let i = 0; i < len; i++) {
+        const diff = (va[i] || 0) - (vb[i] || 0);
+        if (diff !== 0) return diff;
+      }
+      return 0;
+    });
+
+  const latestImage = appleImages[appleImages.length - 1] || null;
+
+  return {
+    ...emoji,
+    Unicode: parseJSON<string[]>(emoji.unicode) || [],
+    keywords: parseJSON<string[]>(emoji.keywords) || [],
+    alsoKnownAs: parseJSON<string[]>(emoji.also_known_as) || [],
+    version: parseJSON(emoji.version),
+    senses: parseJSON(emoji.senses),
+    shortcodes: parseJSON(emoji.shortcodes),
+    slug,
+
+    appleEvolutionImages: appleImages,
+    latestAppleImage: latestImage?.url,
+    apple_vendor_description:
+      emoji.apple_vendor_description || emoji.description || "",
+  };
 }
+
+
 
 export function fetchImageFromDB(
   slug: string,

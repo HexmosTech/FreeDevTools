@@ -30,7 +30,7 @@ export const GET: APIRoute = async ({ site, params }) => {
     const urls = manPages.map((manPage) => {
       return `
         <url>
-          <loc>${site}/man_pages/${manPage.main_category}/${manPage.sub_category}/${manPage.slug}/</loc>
+          <loc>${site}/man-pages/${manPage.main_category}/${manPage.sub_category}/${manPage.slug}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.8</priority>
@@ -40,7 +40,7 @@ export const GET: APIRoute = async ({ site, params }) => {
     // Include the main landing pages
     urls.unshift(`
       <url>
-        <loc>${site}/man_pages/</loc>
+        <loc>${site}/man-pages/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
@@ -57,7 +57,7 @@ export const GET: APIRoute = async ({ site, params }) => {
     categories.forEach(({ main_category }) => {
       urls.push(`
         <url>
-          <loc>${site}/man_pages/${main_category}/</loc>
+          <loc>${site}/man-pages/${main_category}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.7</priority>
@@ -78,7 +78,7 @@ export const GET: APIRoute = async ({ site, params }) => {
     subcategories.forEach(({ main_category, sub_category }) => {
       urls.push(`
         <url>
-          <loc>${site}/man_pages/${main_category}/${sub_category}/</loc>
+          <loc>${site}/man-pages/${main_category}/${sub_category}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.6</priority>
@@ -123,7 +123,7 @@ export const GET: APIRoute = async ({ site, params }) => {
     .map(
       (_, i) => `
     <sitemap>
-      <loc>${site}/man_pages/sitemap-${i + 1}.xml</loc>
+      <loc>${site}/man-pages/sitemap-${i + 1}.xml</loc>
       <lastmod>${now}</lastmod>
     </sitemap>`
     )
