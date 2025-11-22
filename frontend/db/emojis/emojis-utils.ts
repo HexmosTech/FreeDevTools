@@ -152,6 +152,13 @@ export function getEmojiBySlug(slug: string): EmojiData | null {
   };
 }
 
+// === Get total emoji count ===
+export function getTotalEmojis(): number {
+  const db = getDb();
+  const row = db.prepare('SELECT COUNT(*) as count FROM emojis').get() as { count: number } | undefined;
+  return row?.count ?? 0;
+}
+
 // === Fetch categories ===
 export function getEmojiCategories(): string[] {
   const db = getDb();
@@ -165,6 +172,297 @@ export function getEmojiCategories(): string[] {
   );
 
   return Array.from(new Set(normalized)).sort() as string[];
+}
+
+// === Optimized: Get categories with preview emojis in a single query ===
+export interface CategoryWithPreviewEmojis {
+  category: string;
+  count: number;
+  previewEmojis: Array<{
+    code: string;
+    slug: string;
+    title: string;
+  }>;
+}
+
+export function getCategoriesWithPreviewEmojis(
+  previewEmojisPerCategory: number = 5
+): CategoryWithPreviewEmojis[] {
+  const db = getDb();
+  const validCategories = Object.keys(categoryIconMap);
+  const validCategoriesPlaceholders = validCategories.map(() => '?').join(',');
+  
+  // Build the query with proper parameter binding
+  const query = `
+    WITH normalized_emojis AS (
+      SELECT 
+        CASE 
+          WHEN category IN (${validCategoriesPlaceholders}) THEN category
+          ELSE 'Other'
+        END as normalized_category,
+        code,
+        slug,
+        title
+      FROM emojis
+      WHERE category IS NOT NULL
+    ),
+    normalized_categories AS (
+      SELECT DISTINCT normalized_category
+      FROM normalized_emojis
+    ),
+    category_counts AS (
+      SELECT 
+        normalized_category as category,
+        COUNT(*) as count
+      FROM normalized_emojis
+      GROUP BY normalized_category
+    ),
+    category_emojis AS (
+      SELECT 
+        nc.normalized_category as category,
+        cc.count,
+        (
+          SELECT json_group_array(
+            json_object(
+              'code', e.code,
+              'slug', e.slug,
+              'title', e.title
+            )
+          )
+          FROM (
+            SELECT code, slug, title
+            FROM normalized_emojis
+            WHERE normalized_category = nc.normalized_category
+            ORDER BY 
+              CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
+              COALESCE(title, slug) COLLATE NOCASE
+            LIMIT ?
+          ) e
+        ) as preview_emojis
+      FROM normalized_categories nc
+      JOIN category_counts cc ON nc.normalized_category = cc.category
+      ORDER BY nc.normalized_category
+    )
+    SELECT category, count, preview_emojis
+    FROM category_emojis
+    WHERE category != 'Other'
+    ORDER BY category
+  `;
+  
+  const stmt = db.prepare(query);
+  const results = stmt.all(...validCategories, previewEmojisPerCategory) as Array<{
+    category: string;
+    count: number;
+    preview_emojis: string;
+  }>;
+  
+  return results.map((row) => {
+    let previewEmojis: Array<{ code: string; slug: string; title: string }> = [];
+    try {
+      const parsed = JSON.parse(row.preview_emojis || '[]');
+      previewEmojis = Array.isArray(parsed) ? parsed.filter((emoji: any) => emoji !== null) : [];
+    } catch (e) {
+      previewEmojis = [];
+    }
+    
+    return {
+      category: row.category,
+      count: row.count,
+      previewEmojis,
+    };
+  });
+}
+
+// === Optimized: Get categories with preview emojis for Apple vendor ===
+export function getAppleCategoriesWithPreviewEmojis(
+  previewEmojisPerCategory: number = 5
+): CategoryWithPreviewEmojis[] {
+  const db = getDb();
+  const validCategories = Object.keys(categoryIconMap);
+  const validCategoriesPlaceholders = validCategories.map(() => '?').join(',');
+  const excludedSlugs = apple_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.map(() => '?').join(',');
+  
+  // Build the query with vendor exclusion filtering
+  const query = `
+    WITH normalized_emojis AS (
+      SELECT 
+        CASE 
+          WHEN category IN (${validCategoriesPlaceholders}) THEN category
+          ELSE 'Other'
+        END as normalized_category,
+        code,
+        slug,
+        title
+      FROM emojis
+      WHERE category IS NOT NULL
+        ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+    ),
+    normalized_categories AS (
+      SELECT DISTINCT normalized_category
+      FROM normalized_emojis
+    ),
+    category_counts AS (
+      SELECT 
+        normalized_category as category,
+        COUNT(*) as count
+      FROM normalized_emojis
+      GROUP BY normalized_category
+    ),
+    category_emojis AS (
+      SELECT 
+        nc.normalized_category as category,
+        cc.count,
+        (
+          SELECT json_group_array(
+            json_object(
+              'code', e.code,
+              'slug', e.slug,
+              'title', e.title
+            )
+          )
+          FROM (
+            SELECT code, slug, title
+            FROM normalized_emojis
+            WHERE normalized_category = nc.normalized_category
+            ORDER BY 
+              CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
+              COALESCE(title, slug) COLLATE NOCASE
+            LIMIT ?
+          ) e
+        ) as preview_emojis
+      FROM normalized_categories nc
+      JOIN category_counts cc ON nc.normalized_category = cc.category
+      ORDER BY nc.normalized_category
+    )
+    SELECT category, count, preview_emojis
+    FROM category_emojis
+    WHERE category != 'Other'
+    ORDER BY category
+  `;
+  
+  const params = excludedSlugs.length > 0 
+    ? [...validCategories, ...excludedSlugs, previewEmojisPerCategory]
+    : [...validCategories, previewEmojisPerCategory];
+  
+  const stmt = db.prepare(query);
+  const results = stmt.all(...params) as Array<{
+    category: string;
+    count: number;
+    preview_emojis: string;
+  }>;
+  
+  return results.map((row) => {
+    let previewEmojis: Array<{ code: string; slug: string; title: string }> = [];
+    try {
+      const parsed = JSON.parse(row.preview_emojis || '[]');
+      previewEmojis = Array.isArray(parsed) ? parsed.filter((emoji: any) => emoji !== null) : [];
+    } catch (e) {
+      previewEmojis = [];
+    }
+    
+    return {
+      category: row.category,
+      count: row.count,
+      previewEmojis,
+    };
+  });
+}
+
+// === Optimized: Get categories with preview emojis for Discord vendor ===
+export function getDiscordCategoriesWithPreviewEmojis(
+  previewEmojisPerCategory: number = 5
+): CategoryWithPreviewEmojis[] {
+  const db = getDb();
+  const validCategories = Object.keys(categoryIconMap);
+  const validCategoriesPlaceholders = validCategories.map(() => '?').join(',');
+  const excludedSlugs = discord_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.map(() => '?').join(',');
+  
+  // Build the query with vendor exclusion filtering
+  const query = `
+    WITH normalized_emojis AS (
+      SELECT 
+        CASE 
+          WHEN category IN (${validCategoriesPlaceholders}) THEN category
+          ELSE 'Other'
+        END as normalized_category,
+        code,
+        slug,
+        title
+      FROM emojis
+      WHERE category IS NOT NULL
+        ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+    ),
+    normalized_categories AS (
+      SELECT DISTINCT normalized_category
+      FROM normalized_emojis
+    ),
+    category_counts AS (
+      SELECT 
+        normalized_category as category,
+        COUNT(*) as count
+      FROM normalized_emojis
+      GROUP BY normalized_category
+    ),
+    category_emojis AS (
+      SELECT 
+        nc.normalized_category as category,
+        cc.count,
+        (
+          SELECT json_group_array(
+            json_object(
+              'code', e.code,
+              'slug', e.slug,
+              'title', e.title
+            )
+          )
+          FROM (
+            SELECT code, slug, title
+            FROM normalized_emojis
+            WHERE normalized_category = nc.normalized_category
+            ORDER BY 
+              CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
+              COALESCE(title, slug) COLLATE NOCASE
+            LIMIT ?
+          ) e
+        ) as preview_emojis
+      FROM normalized_categories nc
+      JOIN category_counts cc ON nc.normalized_category = cc.category
+      ORDER BY nc.normalized_category
+    )
+    SELECT category, count, preview_emojis
+    FROM category_emojis
+    WHERE category != 'Other'
+    ORDER BY category
+  `;
+  
+  const params = excludedSlugs.length > 0 
+    ? [...validCategories, ...excludedSlugs, previewEmojisPerCategory]
+    : [...validCategories, previewEmojisPerCategory];
+  
+  const stmt = db.prepare(query);
+  const results = stmt.all(...params) as Array<{
+    category: string;
+    count: number;
+    preview_emojis: string;
+  }>;
+  
+  return results.map((row) => {
+    let previewEmojis: Array<{ code: string; slug: string; title: string }> = [];
+    try {
+      const parsed = JSON.parse(row.preview_emojis || '[]');
+      previewEmojis = Array.isArray(parsed) ? parsed.filter((emoji: any) => emoji !== null) : [];
+    } catch (e) {
+      previewEmojis = [];
+    }
+    
+    return {
+      category: row.category,
+      count: row.count,
+      previewEmojis,
+    };
+  });
 }
 
 // === Fetch by category ===
@@ -200,6 +498,256 @@ export function getEmojisByCategory(category: string, vendor?: string): EmojiDat
       senses: parseJSON(r.senses),
       shortcodes: parseJSON(r.shortcodes),
     }));
+}
+
+// === Optimized: Get emojis by category with latest Discord images in a single query ===
+export interface EmojiWithDiscordImage extends EmojiData {
+  latestDiscordImage: string | null;
+}
+
+export function getEmojisByCategoryWithDiscordImages(category: string): EmojiWithDiscordImage[] {
+  const db = getDb();
+  const excludedSlugs = discord_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+  
+  // Get all emojis for the category
+  const emojisQuery = `
+    SELECT 
+      code,
+      slug,
+      title,
+      description,
+      category,
+      apple_vendor_description,
+      unicode,
+      keywords,
+      also_known_as,
+      version,
+      senses,
+      shortcodes
+    FROM emojis
+    WHERE lower(category) = lower(?)
+      AND slug IS NOT NULL
+      ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+  `;
+  
+  const emojisParams = excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+  const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
+    code: string;
+    slug: string;
+    title: string;
+    description: string;
+    category: string;
+    apple_vendor_description: string;
+    unicode: string;
+    keywords: string;
+    also_known_as: string;
+    version: string;
+    senses: string;
+    shortcodes: string;
+  }>;
+  
+  if (emojiRows.length === 0) return [];
+  
+  // Get all images for these emojis in a single query
+  const slugs = emojiRows.map(e => e.slug);
+  const imagePlaceholders = slugs.map(() => '?').join(',');
+  const imagesQuery = `
+    SELECT emoji_slug, filename, image_data
+    FROM images
+    WHERE emoji_slug IN (${imagePlaceholders})
+      AND image_type = 'twemoji-vendor'
+    ORDER BY emoji_slug, filename COLLATE NOCASE
+  `;
+  
+  const imageRows = db.prepare(imagesQuery).all(...slugs) as Array<{
+    emoji_slug: string;
+    filename: string;
+    image_data: Buffer;
+  }>;
+  
+  // Group images by emoji slug and find latest for each
+  const imagesBySlug = new Map<string, Array<{ filename: string; image_data: Buffer }>>();
+  for (const img of imageRows) {
+    if (!imagesBySlug.has(img.emoji_slug)) {
+      imagesBySlug.set(img.emoji_slug, []);
+    }
+    imagesBySlug.get(img.emoji_slug)!.push({
+      filename: img.filename,
+      image_data: img.image_data,
+    });
+  }
+  
+  const parseVersion = (name: string): number => {
+    const match = name.match(/[_-]([\d.]+)\.(png|jpg|jpeg|webp|svg)$/i);
+    return match ? parseFloat(match[1]) : 0;
+  };
+  
+  // Process emojis and attach latest images
+  return emojiRows.map((row) => {
+    const images = imagesBySlug.get(row.slug) || [];
+    let latestDiscordImage: string | null = null;
+    
+    if (images.length > 0) {
+      // Find image with highest version
+      const latest = images.reduce((best, img) => {
+        return parseVersion(img.filename) > parseVersion(best.filename) ? img : best;
+      }, images[0]);
+      
+      // Convert to base64
+      const buffer = Buffer.from(latest.image_data);
+      const head = buffer.toString('ascii', 0, 20);
+      
+      let mime = 'application/octet-stream';
+      if (head.includes('<svg')) mime = 'image/svg+xml';
+      else if (head.startsWith('RIFF')) mime = 'image/webp';
+      else if (buffer[0] === 0x89 && head.includes('PNG')) mime = 'image/png';
+      else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
+      
+      latestDiscordImage = `data:${mime};base64,${buffer.toString('base64')}`;
+    }
+    
+    return {
+      code: row.code,
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      category: row.category,
+      apple_vendor_description: row.apple_vendor_description,
+      Unicode: parseJSON<string[]>(row.unicode) || [],
+      keywords: parseJSON<string[]>(row.keywords) || [],
+      alsoKnownAs: parseJSON<string[]>(row.also_known_as) || [],
+      version: parseJSON(row.version) as EmojiData['version'],
+      senses: parseJSON(row.senses) as EmojiData['senses'],
+      shortcodes: parseJSON(row.shortcodes) as EmojiData['shortcodes'],
+      latestDiscordImage,
+    };
+  }).filter(e => e.latestDiscordImage !== null); // Only return emojis with images
+}
+
+// === Optimized: Get emojis by category with latest Apple images in a single query ===
+export interface EmojiWithAppleImage extends EmojiData {
+  latestAppleImage: string | null;
+}
+
+export function getEmojisByCategoryWithAppleImages(category: string): EmojiWithAppleImage[] {
+  const db = getDb();
+  const excludedSlugs = apple_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+  
+  // Get all emojis for the category
+  const emojisQuery = `
+    SELECT 
+      code,
+      slug,
+      title,
+      description,
+      category,
+      apple_vendor_description,
+      unicode,
+      keywords,
+      also_known_as,
+      version,
+      senses,
+      shortcodes
+    FROM emojis
+    WHERE lower(category) = lower(?)
+      AND slug IS NOT NULL
+      ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+  `;
+  
+  const emojisParams = excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+  const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
+    code: string;
+    slug: string;
+    title: string;
+    description: string;
+    category: string;
+    apple_vendor_description: string;
+    unicode: string;
+    keywords: string;
+    also_known_as: string;
+    version: string;
+    senses: string;
+    shortcodes: string;
+  }>;
+  
+  if (emojiRows.length === 0) return [];
+  
+  // Get all images for these emojis in a single query (Apple images have iOS in filename)
+  const slugs = emojiRows.map(e => e.slug);
+  const imagePlaceholders = slugs.map(() => '?').join(',');
+  const imagesQuery = `
+    SELECT emoji_slug, filename, image_data
+    FROM images
+    WHERE emoji_slug IN (${imagePlaceholders})
+      AND filename LIKE '%iOS%'
+    ORDER BY emoji_slug, filename COLLATE NOCASE
+  `;
+  
+  const imageRows = db.prepare(imagesQuery).all(...slugs) as Array<{
+    emoji_slug: string;
+    filename: string;
+    image_data: Buffer;
+  }>;
+  
+  // Group images by emoji slug and find latest for each
+  const imagesBySlug = new Map<string, Array<{ filename: string; image_data: Buffer }>>();
+  for (const img of imageRows) {
+    if (!imagesBySlug.has(img.emoji_slug)) {
+      imagesBySlug.set(img.emoji_slug, []);
+    }
+    imagesBySlug.get(img.emoji_slug)!.push({
+      filename: img.filename,
+      image_data: img.image_data,
+    });
+  }
+  
+  const parseIOSVersion = (name: string): number => {
+    const match = name.match(/iOS[_\s]?([\d.]+)/i);
+    return match ? parseFloat(match[1]) : 0;
+  };
+  
+  // Process emojis and attach latest images
+  return emojiRows.map((row) => {
+    const images = imagesBySlug.get(row.slug) || [];
+    let latestAppleImage: string | null = null;
+    
+    if (images.length > 0) {
+      // Find image with highest iOS version
+      const latest = images.reduce((best, img) => {
+        return parseIOSVersion(img.filename) > parseIOSVersion(best.filename) ? img : best;
+      }, images[0]);
+      
+      // Convert to base64
+      const buffer = Buffer.from(latest.image_data);
+      const head = buffer.toString('ascii', 0, 20);
+      
+      let mime = 'application/octet-stream';
+      if (head.includes('<svg')) mime = 'image/svg+xml';
+      else if (head.startsWith('RIFF')) mime = 'image/webp';
+      else if (buffer[0] === 0x89 && head.includes('PNG')) mime = 'image/png';
+      else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
+      
+      latestAppleImage = `data:${mime};base64,${buffer.toString('base64')}`;
+    }
+    
+    return {
+      code: row.code,
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      category: row.category,
+      apple_vendor_description: row.apple_vendor_description,
+      Unicode: parseJSON<string[]>(row.unicode) || [],
+      keywords: parseJSON<string[]>(row.keywords) || [],
+      alsoKnownAs: parseJSON<string[]>(row.also_known_as) || [],
+      version: parseJSON(row.version) as EmojiData['version'],
+      senses: parseJSON(row.senses) as EmojiData['senses'],
+      shortcodes: parseJSON(row.shortcodes) as EmojiData['shortcodes'],
+      latestAppleImage,
+    };
+  });
 }
 
 

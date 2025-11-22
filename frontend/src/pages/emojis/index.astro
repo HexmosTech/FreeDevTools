@@ -1,36 +1,37 @@
 ---
 import {
-  getAllEmojis,
+  getCategoriesWithPreviewEmojis,
   getEmojiCategories,
+  getTotalEmojis,
   type EmojiData,
 } from 'db/emojis/emojis-utils';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import EmojiPage from './_EmojiPage.astro';
 
-const emojis = await getAllEmojis();
-
-// Metadata-based categories
+// Get categories with preview emojis in a single optimized query
+const categoriesWithPreview = getCategoriesWithPreviewEmojis(5);
 const categories = getEmojiCategories();
-const emojisByCategory: Record<string, EmojiData[]> = {};
 
-// Group emojis by category
-for (const cat of categories) {
-  emojisByCategory[cat] = emojis.filter((e) => (e.category || 'Other') === cat);
+// Transform to match expected format
+const emojisByCategory: Record<string, EmojiData[]> = {};
+const categoryCounts: Record<string, number> = {};
+for (const catWithPreview of categoriesWithPreview) {
+  emojisByCategory[catWithPreview.category] = catWithPreview.previewEmojis.map(
+    (e) =>
+      ({
+        code: e.code,
+        slug: e.slug,
+        title: e.title,
+      }) as EmojiData
+  );
+  categoryCounts[catWithPreview.category] = catWithPreview.count;
 }
 
-// Sort categories alphabetically and exclude "Other"
-const sortedCategories = Object.keys(emojisByCategory)
+// Sort categories alphabetically (already sorted from query, but ensure)
+const sortedCategories = categoriesWithPreview
+  .map((c) => c.category)
   .filter((cat) => cat !== 'Other')
   .sort();
-
-// Sort emojis within each category by title (fallback to slug)
-for (const category of sortedCategories) {
-  emojisByCategory[category].sort((a, b) => {
-    const titleA = a.title || a.slug || '';
-    const titleB = b.title || b.slug || '';
-    return titleA.localeCompare(titleB);
-  });
-}
 
 // Pagination logic for page 1
 const itemsPerPage = 30;
@@ -106,10 +107,11 @@ const mainKeywords = [
   <EmojiPage
     categories={paginatedCategories}
     emojisByCategory={emojisByCategory}
+    categoryCounts={categoryCounts}
     currentPage={currentPage}
     totalPages={totalPages}
     totalCategories={totalCategories}
-    totalEmojis={emojis.length}
+    totalEmojis={getTotalEmojis()}
     breadcrumbItems={breadcrumbItems}
   />
 </BaseLayout>

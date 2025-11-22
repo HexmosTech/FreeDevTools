@@ -1,38 +1,37 @@
 ---
 import {
   fetchImageFromDB,
-  getAllEmojis,
+  getAppleCategoriesWithPreviewEmojis,
   getEmojiCategories,
   type EmojiData,
 } from 'db/emojis/emojis-utils';
 import AdBanner from '../../../components/banner/AdBanner';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 
-// Load all emojis
-const emojis = await getAllEmojis();
-
-// Metadata-based categories
+// Get categories with preview emojis in a single optimized query
+const categoriesWithPreview = getAppleCategoriesWithPreviewEmojis(5);
 const categories = getEmojiCategories();
-const emojisByCategory: Record<string, EmojiData[]> = {};
 
-// Group emojis by category
-for (const cat of categories) {
-  emojisByCategory[cat] = emojis.filter((e) => (e.category || 'Other') === cat);
+// Transform to match expected format
+const emojisByCategory: Record<string, EmojiData[]> = {};
+const categoryCounts: Record<string, number> = {};
+for (const catWithPreview of categoriesWithPreview) {
+  emojisByCategory[catWithPreview.category] = catWithPreview.previewEmojis.map(
+    (e) =>
+      ({
+        code: e.code,
+        slug: e.slug,
+        title: e.title,
+      }) as EmojiData
+  );
+  categoryCounts[catWithPreview.category] = catWithPreview.count;
 }
 
-// Sort categories alphabetically and exclude "Other"
-const sortedCategories = Object.keys(emojisByCategory)
+// Sort categories alphabetically (already sorted from query, but ensure)
+const sortedCategories = categoriesWithPreview
+  .map((c) => c.category)
   .filter((cat) => cat !== 'Other')
   .sort();
-
-// Sort emojis within each category by title (fallback to slug)
-for (const category of sortedCategories) {
-  emojisByCategory[category].sort((a, b) => {
-    const titleA = a.title || a.slug || '';
-    const titleB = b.title || b.slug || '';
-    return titleA.localeCompare(titleB);
-  });
-}
 
 // Pagination logic for page 1
 const itemsPerPage = 30;
@@ -205,9 +204,50 @@ export const categoryIconMap: Record<string, string> = {
                 {category}
               </a>
             </div>
-            <p class="text-sm text-slate-800 dark:text-slate-400 mb-2">
-              {emojisByCategory[category].length} emojis available
+            <p class="text-sm text-slate-800 dark:text-slate-400 mb-4 m-0">
+              {(
+                categoryCounts[category] || emojisByCategory[category].length
+              ).toLocaleString()}{' '}
+              emojis available
             </p>
+
+            <div class="space-y-2">
+              {emojisByCategory[category].slice(0, 5).map((emoji: any) => {
+                const emojiName = emoji.title || emoji.slug;
+                const truncatedName =
+                  emojiName.length > 27
+                    ? emojiName.substring(0, 27) + '...'
+                    : emojiName;
+                return (
+                  <a
+                    href={`/freedevtools/emojis/apple-emojis/${emoji.slug}/`}
+                    class="block text-sm text-blue-600 dark:text-blue-400 hover:text-black dark:hover:text-white hover:font-bold"
+                  >
+                    {emoji.code || emoji.emoji} {truncatedName}
+                  </a>
+                );
+              })}
+              {(categoryCounts[category] || emojisByCategory[category].length) >
+                5 && (
+                <p class="text-xs text-slate-500 dark:text-slate-500">
+                  +
+                  {(
+                    (categoryCounts[category] ||
+                      emojisByCategory[category].length) - 5
+                  ).toLocaleString()}{' '}
+                  more items
+                </p>
+              )}
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+              <a
+                href={`/freedevtools/emojis/apple-emojis/${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/`}
+                class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+              >
+                View all {category} emojis →
+              </a>
+            </div>
           </div>
         ))
       }
