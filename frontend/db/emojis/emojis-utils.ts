@@ -1,4 +1,4 @@
-import { default as apple_vendor_excluded_emojis, default as discord_vendor_excluded_emojis } from '@/lib/emojis-consts';
+import { apple_vendor_excluded_emojis, discord_vendor_excluded_emojis } from '@/lib/emojis-consts';
 import Database from 'better-sqlite3';
 import path from 'path';
 
@@ -176,11 +176,12 @@ export function getEmojisByCategory(category: string, vendor?: string): EmojiDat
 
   return rows
     .filter(r => {
+      if (!r.slug) return false;
       if (vendor === "discord") {
-        return !discord_vendor_excluded_emojis.includes(r.slug);
+        return !discord_vendor_excluded_emojis?.includes(r.slug);
       }
       if (vendor === "apple") {
-        return !apple_vendor_excluded_emojis.includes(r.slug);
+        return !apple_vendor_excluded_emojis?.includes(r.slug);
       }
       return true;
     })
