@@ -43,6 +43,7 @@ export default defineConfig({
     resolve: {
       alias: {
         "@": path.resolve("./src"),
+        "db": path.resolve("./db"),
       },
     },
     logLevel: 'info',
