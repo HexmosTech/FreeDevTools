@@ -6,7 +6,7 @@ import ToolContainer from '../../components/tool/ToolContainer';
 import ToolHead from '../../components/tool/ToolHead';
 import AdBanner from '../../components/banner/AdBanner.astro';
 import EachEmojiPage from './EachEmojiPage.astro';
-import { getEmojisByCategory, getEmojiCategories, getEmojiBySlug, getEmojiImages, getAllEmojis } from 'db/emojis/emojis-utils';
+import { getEmojisByCategory, getEmojiCategories, getEmojiBySlug, getEmojiImages, getCategoriesWithPreviewEmojis, getEmojisByCategoryPaginated } from 'db/emojis/emojis-utils';
 import { apple_vendor_excluded_emojis, discord_vendor_excluded_emojis } from '@/lib/emojis-consts';
 
 export const prerender = false;
@@ -31,31 +31,36 @@ let paginationData: any = null;
 if (/^\d+$/.test(categorySlug)) {
   // This is actually a pagination route - handle it directly
   const currentPage = parseInt(categorySlug, 10);
-  const emojis = await getAllEmojis();
   const categories = getEmojiCategories();
-  const emojisByCategory: Record<string, any[]> = {};
+  const itemsPerPage = 30;
   
-  for (const cat of categories) {
-    emojisByCategory[cat] = emojis.filter(
-      (e) =>
-        (e.category || 'Other') === cat
-    );
-  }
+  // Use optimized query to get paginated categories with preview emojis
+  const categoriesWithPreview = getCategoriesWithPreviewEmojis(5);
+  const sortedCategories = categoriesWithPreview
+    .map((c) => c.category)
+    .filter((cat) => cat !== 'Other')
+    .sort();
   
-  const sortedCategories = Object.keys(emojisByCategory).sort();
-  for (const category of sortedCategories) {
-    emojisByCategory[category].sort((a, b) => {
-      const titleA = a.title || a.slug || '';
-      const titleB = b.title || b.slug || '';
-      return titleA.localeCompare(titleB);
-    });
-  }
-  
-  const itemsPerPage = 36;
   const totalPages = Math.ceil(sortedCategories.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedCategories = sortedCategories.slice(startIndex, endIndex);
+  
+  // Build emojisByCategory from paginated categories
+  const emojisByCategory: Record<string, any[]> = {};
+  const categoryCounts: Record<string, number> = {};
+  for (const catWithPreview of categoriesWithPreview) {
+    if (paginatedCategories.includes(catWithPreview.category)) {
+      emojisByCategory[catWithPreview.category] = catWithPreview.previewEmojis.map(
+        (e) => ({
+          code: e.code,
+          slug: e.slug,
+          title: e.title,
+        })
+      );
+      categoryCounts[catWithPreview.category] = catWithPreview.count;
+    }
+  }
   
   const categoryIconMap: Record<string, string> = {
     'Smileys & Emotion': '😀',
@@ -81,7 +86,7 @@ if (/^\d+$/.test(categorySlug)) {
     sortedCategories,
     paginatedCategories,
     emojisByCategory,
-    emojis,
+    categoryCounts,
     categoryIconMap,
     breadcrumbItems,
   };
@@ -198,17 +203,11 @@ if (!paginationData) {
       keywords: [`${categoryName.toLowerCase()} emojis`, 'copy emoji', 'emoji meanings', 'emoji shortcodes']
     };
 
-    // Get emojis for this category
-    const emojis = await getEmojisByCategory(categoryName);
-    const totalEmojis = emojis.length;
-
-    // Pagination logic for page 1
+    // Get emojis for this category (paginated for page 1)
     const itemsPerPage = 36;
     const currentPage = 1;
+    const { emojis: paginatedEmojis, total: totalEmojis } = getEmojisByCategoryPaginated(categoryName, currentPage, itemsPerPage);
     const totalPages = Math.ceil(totalEmojis / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedEmojis = emojis.slice(startIndex, endIndex);
 
     // Breadcrumb items
     const breadcrumbItems = [
@@ -307,7 +306,7 @@ if (!paginationData) {
               </div>
 
               <p class="text-sm text-slate-800 dark:text-slate-400 mb-4 m-0">
-                {paginationData.emojisByCategory[category].length} emojis available
+                {(paginationData.categoryCounts?.[category] || paginationData.emojisByCategory[category].length).toLocaleString()} emojis available
               </p>
 
               <div class="space-y-2">
@@ -327,9 +326,9 @@ if (!paginationData) {
                     </a>
                   );
                 })}
-                {paginationData.emojisByCategory[category].length > 5 && (
+                {(paginationData.categoryCounts?.[category] || paginationData.emojisByCategory[category].length) > 5 && (
                   <p class="text-xs text-slate-500 dark:text-slate-500">
-                    +{paginationData.emojisByCategory[category].length - 5} more items
+                    +{((paginationData.categoryCounts?.[category] || paginationData.emojisByCategory[category].length) - 5).toLocaleString()} more items
                   </p>
                 )}
               </div>

@@ -2,8 +2,8 @@ import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const { getAllEmojis } = await import("db/emojis/emojis-utils");
-  const emojis = getAllEmojis();
+  const { getSitemapEmojis } = await import("db/emojis/emojis-utils");
+  const emojis = getSitemapEmojis();
 
   // Predefined allowed categories
   const allowedCategories = [
@@ -36,12 +36,7 @@ export const GET: APIRoute = async ({ site }) => {
   const categories = new Set<string>();
 
   for (const e of emojis) {
-    const cat =
-      e.fluentui_metadata?.group ||
-      e.emoji_net_data?.category ||
-      (e as any).given_category ||
-      "other";
-
+    const cat = e.category || "other";
     const slug = cat.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
     if (allowedSlugs.has(slug)) {

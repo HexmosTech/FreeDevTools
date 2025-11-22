@@ -500,6 +500,101 @@ export function getEmojisByCategory(category: string, vendor?: string): EmojiDat
     }));
 }
 
+// === Paginated: Get emojis by category with count ===
+export interface PaginatedEmojisResult {
+  emojis: EmojiData[];
+  total: number;
+}
+
+export function getEmojisByCategoryPaginated(
+  category: string,
+  page: number = 1,
+  itemsPerPage: number = 36,
+  vendor?: string
+): PaginatedEmojisResult {
+  const db = getDb();
+  const offset = (page - 1) * itemsPerPage;
+  const excludedSlugs = vendor === "discord" 
+    ? (discord_vendor_excluded_emojis || [])
+    : vendor === "apple"
+    ? (apple_vendor_excluded_emojis || [])
+    : [];
+  const excludedPlaceholders = excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+  
+  // Get total count
+  const countQuery = `
+    SELECT COUNT(*) as count
+    FROM emojis
+    WHERE lower(category) = lower(?)
+      AND slug IS NOT NULL
+      ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+  `;
+  const countParams = excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+  const countRow = db.prepare(countQuery).get(...countParams) as { count: number } | undefined;
+  const total = countRow?.count ?? 0;
+  
+  // Get paginated emojis
+  const emojisQuery = `
+    SELECT 
+      code,
+      slug,
+      title,
+      description,
+      category,
+      apple_vendor_description,
+      unicode,
+      keywords,
+      also_known_as,
+      version,
+      senses,
+      shortcodes
+    FROM emojis
+    WHERE lower(category) = lower(?)
+      AND slug IS NOT NULL
+      ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+    ORDER BY 
+      CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
+      COALESCE(title, slug) COLLATE NOCASE
+    LIMIT ? OFFSET ?
+  `;
+  
+  const emojisParams = excludedSlugs.length > 0 
+    ? [category, ...excludedSlugs, itemsPerPage, offset]
+    : [category, itemsPerPage, offset];
+  
+  const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
+    code: string;
+    slug: string;
+    title: string;
+    description: string;
+    category: string;
+    apple_vendor_description: string;
+    unicode: string;
+    keywords: string;
+    also_known_as: string;
+    version: string;
+    senses: string;
+    shortcodes: string;
+  }>;
+  
+  const emojis = emojiRows.map((r) => ({
+    code: r.code,
+    slug: r.slug,
+    title: r.title,
+    description: r.description,
+    category: r.category,
+    apple_vendor_description: r.apple_vendor_description,
+    Unicode: parseJSON<string[]>(r.unicode) || [],
+    keywords: parseJSON<string[]>(r.keywords) || [],
+    alsoKnownAs: parseJSON<string[]>(r.also_known_as) || [],
+    version: parseJSON(r.version),
+    senses: parseJSON(r.senses),
+    shortcodes: parseJSON(r.shortcodes),
+  }));
+  
+  return { emojis, total };
+}
+
 // === Optimized: Get emojis by category with latest Discord images in a single query ===
 export interface EmojiWithDiscordImage extends EmojiData {
   latestDiscordImage: string | null;
@@ -625,6 +720,162 @@ export function getEmojisByCategoryWithDiscordImages(category: string): EmojiWit
   }).filter(e => e.latestDiscordImage !== null); // Only return emojis with images
 }
 
+// === Paginated: Get emojis by category with latest Discord images ===
+export interface PaginatedEmojisWithDiscordImagesResult {
+  emojis: EmojiWithDiscordImage[];
+  total: number;
+}
+
+export function getEmojisByCategoryWithDiscordImagesPaginated(
+  category: string,
+  page: number = 1,
+  itemsPerPage: number = 36
+): PaginatedEmojisWithDiscordImagesResult {
+  const db = getDb();
+  const offset = (page - 1) * itemsPerPage;
+  const excludedSlugs = discord_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+  
+  // Get total count (only emojis that have Discord images)
+  const countQuery = `
+    SELECT COUNT(DISTINCT e.slug) as count
+    FROM emojis e
+    INNER JOIN images i ON e.slug = i.emoji_slug
+    WHERE lower(e.category) = lower(?)
+      AND e.slug IS NOT NULL
+      AND i.image_type = 'twemoji-vendor'
+      ${excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+  `;
+  const countParams = excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+  const countRow = db.prepare(countQuery).get(...countParams) as { count: number } | undefined;
+  const total = countRow?.count ?? 0;
+  
+  // Get paginated emojis
+  const emojisQuery = `
+    SELECT DISTINCT
+      e.code,
+      e.slug,
+      e.title,
+      e.description,
+      e.category,
+      e.apple_vendor_description,
+      e.unicode,
+      e.keywords,
+      e.also_known_as,
+      e.version,
+      e.senses,
+      e.shortcodes
+    FROM emojis e
+    INNER JOIN images i ON e.slug = i.emoji_slug
+    WHERE lower(e.category) = lower(?)
+      AND e.slug IS NOT NULL
+      AND i.image_type = 'twemoji-vendor'
+      ${excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+    ORDER BY 
+      CASE WHEN e.slug LIKE '%-skin-tone%' OR e.slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
+      COALESCE(e.title, e.slug) COLLATE NOCASE
+    LIMIT ? OFFSET ?
+  `;
+  
+  const emojisParams = excludedSlugs.length > 0 
+    ? [category, ...excludedSlugs, itemsPerPage, offset]
+    : [category, itemsPerPage, offset];
+  
+  const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
+    code: string;
+    slug: string;
+    title: string;
+    description: string;
+    category: string;
+    apple_vendor_description: string;
+    unicode: string;
+    keywords: string;
+    also_known_as: string;
+    version: string;
+    senses: string;
+    shortcodes: string;
+  }>;
+  
+  if (emojiRows.length === 0) return { emojis: [], total };
+  
+  // Get all images for these emojis in a single query
+  const slugs = emojiRows.map(e => e.slug);
+  const imagePlaceholders = slugs.map(() => '?').join(',');
+  const imagesQuery = `
+    SELECT emoji_slug, filename, image_data
+    FROM images
+    WHERE emoji_slug IN (${imagePlaceholders})
+      AND image_type = 'twemoji-vendor'
+    ORDER BY emoji_slug, filename COLLATE NOCASE
+  `;
+  
+  const imageRows = db.prepare(imagesQuery).all(...slugs) as Array<{
+    emoji_slug: string;
+    filename: string;
+    image_data: Buffer;
+  }>;
+  
+  // Group images by emoji slug and find latest for each
+  const imagesBySlug = new Map<string, Array<{ filename: string; image_data: Buffer }>>();
+  for (const img of imageRows) {
+    if (!imagesBySlug.has(img.emoji_slug)) {
+      imagesBySlug.set(img.emoji_slug, []);
+    }
+    imagesBySlug.get(img.emoji_slug)!.push({
+      filename: img.filename,
+      image_data: img.image_data,
+    });
+  }
+  
+  const parseVersion = (name: string): number => {
+    const match = name.match(/[_-]([\d.]+)\.(png|jpg|jpeg|webp|svg)$/i);
+    return match ? parseFloat(match[1]) : 0;
+  };
+  
+  // Process emojis and attach latest images
+  const emojis = emojiRows.map((row) => {
+    const images = imagesBySlug.get(row.slug) || [];
+    let latestDiscordImage: string | null = null;
+    
+    if (images.length > 0) {
+      // Find image with highest version
+      const latest = images.reduce((best, img) => {
+        return parseVersion(img.filename) > parseVersion(best.filename) ? img : best;
+      }, images[0]);
+      
+      // Convert to base64
+      const buffer = Buffer.from(latest.image_data);
+      const head = buffer.toString('ascii', 0, 20);
+      
+      let mime = 'application/octet-stream';
+      if (head.includes('<svg')) mime = 'image/svg+xml';
+      else if (head.startsWith('RIFF')) mime = 'image/webp';
+      else if (buffer[0] === 0x89 && head.includes('PNG')) mime = 'image/png';
+      else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
+      
+      latestDiscordImage = `data:${mime};base64,${buffer.toString('base64')}`;
+    }
+    
+    return {
+      code: row.code,
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      category: row.category,
+      apple_vendor_description: row.apple_vendor_description,
+      Unicode: parseJSON<string[]>(row.unicode) || [],
+      keywords: parseJSON<string[]>(row.keywords) || [],
+      alsoKnownAs: parseJSON<string[]>(row.also_known_as) || [],
+      version: parseJSON(row.version) as EmojiData['version'],
+      senses: parseJSON(row.senses) as EmojiData['senses'],
+      shortcodes: parseJSON(row.shortcodes) as EmojiData['shortcodes'],
+      latestDiscordImage,
+    };
+  });
+  
+  return { emojis, total };
+}
+
 // === Optimized: Get emojis by category with latest Apple images in a single query ===
 export interface EmojiWithAppleImage extends EmojiData {
   latestAppleImage: string | null;
@@ -748,6 +999,162 @@ export function getEmojisByCategoryWithAppleImages(category: string): EmojiWithA
       latestAppleImage,
     };
   });
+}
+
+// === Paginated: Get emojis by category with latest Apple images ===
+export interface PaginatedEmojisWithAppleImagesResult {
+  emojis: EmojiWithAppleImage[];
+  total: number;
+}
+
+export function getEmojisByCategoryWithAppleImagesPaginated(
+  category: string,
+  page: number = 1,
+  itemsPerPage: number = 36
+): PaginatedEmojisWithAppleImagesResult {
+  const db = getDb();
+  const offset = (page - 1) * itemsPerPage;
+  const excludedSlugs = apple_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+  
+  // Get total count (only emojis that have Apple images)
+  const countQuery = `
+    SELECT COUNT(DISTINCT e.slug) as count
+    FROM emojis e
+    INNER JOIN images i ON e.slug = i.emoji_slug
+    WHERE lower(e.category) = lower(?)
+      AND e.slug IS NOT NULL
+      AND i.filename LIKE '%iOS%'
+      ${excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+  `;
+  const countParams = excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+  const countRow = db.prepare(countQuery).get(...countParams) as { count: number } | undefined;
+  const total = countRow?.count ?? 0;
+  
+  // Get paginated emojis
+  const emojisQuery = `
+    SELECT DISTINCT
+      e.code,
+      e.slug,
+      e.title,
+      e.description,
+      e.category,
+      e.apple_vendor_description,
+      e.unicode,
+      e.keywords,
+      e.also_known_as,
+      e.version,
+      e.senses,
+      e.shortcodes
+    FROM emojis e
+    INNER JOIN images i ON e.slug = i.emoji_slug
+    WHERE lower(e.category) = lower(?)
+      AND e.slug IS NOT NULL
+      AND i.filename LIKE '%iOS%'
+      ${excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+    ORDER BY 
+      CASE WHEN e.slug LIKE '%-skin-tone%' OR e.slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
+      COALESCE(e.title, e.slug) COLLATE NOCASE
+    LIMIT ? OFFSET ?
+  `;
+  
+  const emojisParams = excludedSlugs.length > 0 
+    ? [category, ...excludedSlugs, itemsPerPage, offset]
+    : [category, itemsPerPage, offset];
+  
+  const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
+    code: string;
+    slug: string;
+    title: string;
+    description: string;
+    category: string;
+    apple_vendor_description: string;
+    unicode: string;
+    keywords: string;
+    also_known_as: string;
+    version: string;
+    senses: string;
+    shortcodes: string;
+  }>;
+  
+  if (emojiRows.length === 0) return { emojis: [], total };
+  
+  // Get all images for these emojis in a single query (Apple images have iOS in filename)
+  const slugs = emojiRows.map(e => e.slug);
+  const imagePlaceholders = slugs.map(() => '?').join(',');
+  const imagesQuery = `
+    SELECT emoji_slug, filename, image_data
+    FROM images
+    WHERE emoji_slug IN (${imagePlaceholders})
+      AND filename LIKE '%iOS%'
+    ORDER BY emoji_slug, filename COLLATE NOCASE
+  `;
+  
+  const imageRows = db.prepare(imagesQuery).all(...slugs) as Array<{
+    emoji_slug: string;
+    filename: string;
+    image_data: Buffer;
+  }>;
+  
+  // Group images by emoji slug and find latest for each
+  const imagesBySlug = new Map<string, Array<{ filename: string; image_data: Buffer }>>();
+  for (const img of imageRows) {
+    if (!imagesBySlug.has(img.emoji_slug)) {
+      imagesBySlug.set(img.emoji_slug, []);
+    }
+    imagesBySlug.get(img.emoji_slug)!.push({
+      filename: img.filename,
+      image_data: img.image_data,
+    });
+  }
+  
+  const parseIOSVersion = (name: string): number => {
+    const match = name.match(/iOS[_\s]?([\d.]+)/i);
+    return match ? parseFloat(match[1]) : 0;
+  };
+  
+  // Process emojis and attach latest images
+  const emojis = emojiRows.map((row) => {
+    const images = imagesBySlug.get(row.slug) || [];
+    let latestAppleImage: string | null = null;
+    
+    if (images.length > 0) {
+      // Find image with highest iOS version
+      const latest = images.reduce((best, img) => {
+        return parseIOSVersion(img.filename) > parseIOSVersion(best.filename) ? img : best;
+      }, images[0]);
+      
+      // Convert to base64
+      const buffer = Buffer.from(latest.image_data);
+      const head = buffer.toString('ascii', 0, 20);
+      
+      let mime = 'application/octet-stream';
+      if (head.includes('<svg')) mime = 'image/svg+xml';
+      else if (head.startsWith('RIFF')) mime = 'image/webp';
+      else if (buffer[0] === 0x89 && head.includes('PNG')) mime = 'image/png';
+      else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
+      
+      latestAppleImage = `data:${mime};base64,${buffer.toString('base64')}`;
+    }
+    
+    return {
+      code: row.code,
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      category: row.category,
+      apple_vendor_description: row.apple_vendor_description,
+      Unicode: parseJSON<string[]>(row.unicode) || [],
+      keywords: parseJSON<string[]>(row.keywords) || [],
+      alsoKnownAs: parseJSON<string[]>(row.also_known_as) || [],
+      version: parseJSON(row.version) as EmojiData['version'],
+      senses: parseJSON(row.senses) as EmojiData['senses'],
+      shortcodes: parseJSON(row.shortcodes) as EmojiData['shortcodes'],
+      latestAppleImage,
+    };
+  });
+  
+  return { emojis, total };
 }
 
 
@@ -1253,4 +1660,62 @@ export function fetchLatestDiscordImage(slug) {
   else if (head.includes('JFIF') || head.includes('Exif')) mime = 'image/jpeg';
 
   return `data:${mime};base64,${buffer.toString('base64')}`;
+}
+
+// === Lightweight functions for sitemaps (only slug and category) ===
+export interface SitemapEmoji {
+  slug: string;
+  category: string;
+}
+
+export function getSitemapEmojis(): SitemapEmoji[] {
+  const db = getDb();
+  const rows = db
+    .prepare(`SELECT slug, category FROM emojis WHERE slug IS NOT NULL`)
+    .all() as Array<{ slug: string; category: string }>;
+  return rows.map(r => ({ slug: r.slug, category: r.category }));
+}
+
+export function getSitemapAppleEmojis(): SitemapEmoji[] {
+  const db = getDb();
+  const excludedSlugs = apple_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+  
+  const query = `
+    SELECT slug, category
+    FROM emojis
+    WHERE slug IS NOT NULL
+      AND EXISTS (
+        SELECT 1 FROM images 
+        WHERE images.emoji_slug = emojis.slug 
+        AND images.filename LIKE '%iOS%'
+      )
+      ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+  `;
+  
+  const params = excludedSlugs.length > 0 ? excludedSlugs : [];
+  const rows = db.prepare(query).all(...params) as Array<{ slug: string; category: string }>;
+  return rows.map(r => ({ slug: r.slug, category: r.category }));
+}
+
+export function getSitemapDiscordEmojis(): SitemapEmoji[] {
+  const db = getDb();
+  const excludedSlugs = discord_vendor_excluded_emojis || [];
+  const excludedPlaceholders = excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+  
+  const query = `
+    SELECT slug, category
+    FROM emojis
+    WHERE slug IS NOT NULL
+      AND EXISTS (
+        SELECT 1 FROM images 
+        WHERE images.emoji_slug = emojis.slug 
+        AND images.image_type = 'twemoji-vendor'
+      )
+      ${excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+  `;
+  
+  const params = excludedSlugs.length > 0 ? excludedSlugs : [];
+  const rows = db.prepare(query).all(...params) as Array<{ slug: string; category: string }>;
+  return rows.map(r => ({ slug: r.slug, category: r.category }));
 }
