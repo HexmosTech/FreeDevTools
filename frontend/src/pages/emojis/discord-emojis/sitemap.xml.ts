@@ -1,5 +1,5 @@
-import { getAllDiscordEmojis } from "@/lib/emojis";
 import type { APIRoute } from "astro";
+import { getAllDiscordEmojis } from "db/emojis/emojis-utils";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();

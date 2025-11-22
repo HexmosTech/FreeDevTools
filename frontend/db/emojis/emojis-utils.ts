@@ -1,6 +1,6 @@
+import { default as apple_vendor_excluded_emojis, default as discord_vendor_excluded_emojis } from '@/lib/emojis-consts';
 import Database from 'better-sqlite3';
 import path from 'path';
-import { apple_vendor_excluded_emojis, discord_vendor_excluded_emojis } from './emojis-consts';
 
 // === Type definitions ===
 export interface EmojiData {
@@ -163,7 +163,7 @@ export function getEmojiCategories(): string[] {
     validCategories.includes(r.category) ? r.category : 'Other'
   );
 
-  return Array.from(new Set(normalized)).sort();
+  return Array.from(new Set(normalized)).sort() as string[];
 }
 
 // === Fetch by category ===
