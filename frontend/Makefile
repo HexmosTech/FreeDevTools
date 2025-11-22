@@ -31,6 +31,13 @@ deploy:
 deploy2: build
 		rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/ root@master-do:/tools/; \
 
+# Deploy index.html: build then rsync index.html to a4.html
+# Note: rsync without --delete flag will only add/update files, never delete
+index-deploy:
+	npm run build:index
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master:/tools/a4.html
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master:/tools/_astro/
+
 # Run development server
 run:
 	npm run dev
