@@ -25,14 +25,29 @@ if (!category || !subcategory) {
 // e.g. /man-pages/linux/2/ -> category="linux", subcategory="2" (page 2 of linux category)
 const isNumericPage = /^\d+$/.test(subcategory);
 
+// --- VARIABLES FOR BOTH VIEWS ---
+let pageTitle = '';
+let pageDescription = '';
+let breadcrumbItems: any[] = [];
+let currentPage = 1;
+let totalPages = 1;
+let items: any[] = [];
+let totalCount = 0;
+let isCategoryPagination = false;
+
+// Variables specific to category pagination
+let totalManPagesInCategory = 0;
+
 if (isNumericPage) {
   // --- CATEGORY PAGINATION LOGIC (formerly [page].astro) ---
-  const currentPage = parseInt(subcategory, 10);
+  isCategoryPagination = true;
+  currentPage = parseInt(subcategory, 10);
 
   // Get subcategories count for this category to determine pagination
   const totalSubcategoriesCount = getSubCategoriesCountByMainCategory(category);
+  totalCount = totalSubcategoriesCount;
   const itemsPerPage = 12;
-  const totalPages = Math.ceil(totalSubcategoriesCount / itemsPerPage);
+  totalPages = Math.ceil(totalSubcategoriesCount / itemsPerPage);
 
   // Redirect if page is out of range or invalid
   if (currentPage < 1 || (totalPages > 0 && currentPage > totalPages)) {
@@ -43,168 +58,66 @@ if (isNumericPage) {
   const offset = (currentPage - 1) * itemsPerPage;
 
   // Get ONLY the subcategories for current page from database (efficient!)
-  const currentPageSubcategories = getSubCategoriesByMainCategoryPaginated(
+  items = getSubCategoriesByMainCategoryPaginated(
     category,
     itemsPerPage,
     offset
   );
-  const totalManPagesInCategory = getTotalManPagesCountByMainCategory(category);
-
-  const breadcrumbItems = [
-    { label: 'Free DevTools', href: '/freedevtools/' },
-    { label: 'Man Pages', href: '/freedevtools/man-pages/' },
-    {
-      label:
-        category.replace('-', ' ').charAt(0).toUpperCase() +
-        category.replace('-', ' ').slice(1),
-      href: `/freedevtools/man-pages/${category}/`,
-    },
-    { label: `Page ${currentPage}` },
-  ];
+  totalManPagesInCategory = getTotalManPagesCountByMainCategory(category);
 
   const categoryTitle =
     category.replace('-', ' ').charAt(0).toUpperCase() +
     category.replace('-', ' ').slice(1);
 
-  return Astro.render`
-    <${BaseLayout}
-      name="${categoryTitle} Man Pages - Page ${currentPage}"
-      title="${categoryTitle} Manual Pages - Page ${currentPage} of ${totalPages} | Free DevTools by Hexmos"
-      path="/freedevtools/man-pages/${category}/${currentPage}/"
-      description="Browse ${categoryTitle} manual page subcategories - Page ${currentPage} of ${totalPages}. Find detailed documentation and system references."
-      canonical="https://hexmos.com/freedevtools/man-pages/${category}/${currentPage}/"
-      keywords="${[category, 'man pages', 'manual', 'documentation', `page ${currentPage}`]}"
-      ogImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
-      twitterImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
-      datePublished="2025-01-30"
-      softwareVersion="1.0.0"
-    >
-      <${ToolContainer}>
-        <div class="mb-16 mt-[74px]">
-          <${AdBanner} />
-        </div>
-        <${ToolHead}
-          name="${categoryTitle} Man Pages"
-          description="Browse ${categoryTitle} manual page subcategories with detailed documentation."
-          breadcrumbItems="${breadcrumbItems}"
-        />
-    
-        <!-- Overview Stats -->
-        <div class="text-center">
-          <div class="grid grid-cols-2 gap-6 mt-8">
-            <div class="text-center">
-              <div class="text-3xl font-bold text-blue-600">${totalSubcategoriesCount >= 1000 ? Math.round(totalSubcategoriesCount / 1000) + 'k' : totalSubcategoriesCount}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-400">Subcategories</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-green-600">${totalManPagesInCategory >= 1000 ? Math.round(totalManPagesInCategory / 1000) + 'k' : totalManPagesInCategory}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-400">Man Pages</div>
-            </div>
-          </div>
-        </div>
-    
-        <!-- Pagination Info -->
-        <div
-          id="pagination-info-content"
-          class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8"
-        >
-          <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-            Showing ${currentPageSubcategories.length} of ${totalSubcategoriesCount} subcategories (Page ${currentPage} of ${totalPages})
-          </div>
-        </div>
-    
-        <!-- Subcategories Grid -->
-        <div class="mt-8">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            ${currentPageSubcategories.map(
-              (sub) => `
-              <a
-                href="/freedevtools/man-pages/${category}/${sub.name}/"
-                class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-lg transition-shadow"
-              >
-                <div class="flex items-start justify-between mb-3">
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">
-                    ${sub.name.replace('-', ' ')}
-                  </h3>
-                  <span class="text-xs font-mono bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 px-2 py-1 rounded">
-                    ${sub.count} pages
-                  </span>
-                </div>
-                ${
-                  sub.description
-                    ? `
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    ${sub.description}
-                  </p>
-                `
-                    : ''
-                }
-              </a>
-            `
-            )}
-          </div>
-        </div>
-    
-        <!-- Pagination -->
-        <${Pagination}
-          currentPage="${currentPage}"
-          totalPages="${totalPages}"
-          baseUrl="/freedevtools/man-pages/${category}/"
-        />
-    
-        <!-- Credits Section -->
-        <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
-          <div class="flex flex-wrap gap-4">
-            <a
-              href="/freedevtools/man-pages/"
-              class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-            >
-              ← Back to Man Pages
-            </a>
-            <${CreditsButton} href="/freedevtools/man-pages/credits/" />
-          </div>
-        </div>
-      </${ToolContainer}>
-    </${BaseLayout}>
-  `;
+  pageTitle = `${categoryTitle} Man Pages - Page ${currentPage}`;
+  pageDescription = `Browse ${categoryTitle} manual page subcategories - Page ${currentPage} of ${totalPages}. Find detailed documentation and system references.`;
+
+  breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Man Pages', href: '/freedevtools/man-pages/' },
+    { label: categoryTitle, href: `/freedevtools/man-pages/${category}/` },
+    { label: `Page ${currentPage}` },
+  ];
+} else {
+  // --- SUBCATEGORY INDEX LOGIC (formerly [subcategory]/index.astro) ---
+  isCategoryPagination = false;
+
+  // Efficient pagination for page 1
+  const itemsPerPage = 20;
+  currentPage = 1;
+  const offset = (currentPage - 1) * itemsPerPage; // 0 for page 1
+
+  // Get ONLY the man pages for page 1 from database (efficient!)
+  items = getManPagesBySubcategoryPaginated(
+    category,
+    subcategory,
+    itemsPerPage,
+    offset
+  );
+  const totalManPagesCount = getManPagesCountBySubcategory(
+    category,
+    subcategory
+  );
+  totalCount = totalManPagesCount;
+  totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
+
+  const categoryTitle =
+    category.replace('-', ' ').charAt(0).toUpperCase() +
+    category.replace('-', ' ').slice(1);
+  const subcategoryTitle =
+    subcategory.replace('-', ' ').charAt(0).toUpperCase() +
+    subcategory.replace('-', ' ').slice(1);
+
+  pageTitle = `${subcategoryTitle} Man Pages`;
+  pageDescription = `Browse ${subcategoryTitle} manual pages in ${categoryTitle}. Find detailed documentation and system references.`;
+
+  breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Man Pages', href: '/freedevtools/man-pages/' },
+    { label: categoryTitle, href: `/freedevtools/man-pages/${category}/` },
+    { label: subcategoryTitle },
+  ];
 }
-
-// --- SUBCATEGORY INDEX LOGIC (formerly [subcategory]/index.astro) ---
-
-// Efficient pagination for page 1
-const itemsPerPage = 20;
-const currentPage = 1;
-const offset = (currentPage - 1) * itemsPerPage; // 0 for page 1
-
-// Get ONLY the man pages for page 1 from database (efficient!)
-const currentPageManPages = getManPagesBySubcategoryPaginated(
-  category,
-  subcategory,
-  itemsPerPage,
-  offset
-);
-const totalManPagesCount = getManPagesCountBySubcategory(category, subcategory);
-const totalPages = Math.ceil(totalManPagesCount / itemsPerPage);
-
-// If no man pages found, it might be an invalid subcategory
-// But we'll let the template handle the "No man pages found" message
-// Or we could redirect to 404 if strictly invalid, but let's keep it soft for now
-
-const breadcrumbItems = [
-  { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'Man Pages', href: '/freedevtools/man-pages/' },
-  {
-    label:
-      category.replace('-', ' ').charAt(0).toUpperCase() +
-      category.replace('-', ' ').slice(1),
-    href: `/freedevtools/man-pages/${category}/`,
-  },
-  {
-    label:
-      subcategory.replace('-', ' ').charAt(0).toUpperCase() +
-      subcategory.replace('-', ' ').slice(1),
-  },
-];
 
 const categoryTitle =
   category.replace('-', ' ').charAt(0).toUpperCase() +
@@ -215,10 +128,10 @@ const subcategoryTitle =
 ---
 
 <BaseLayout
-  name={`${subcategoryTitle} Man Pages`}
-  title={`${subcategoryTitle} Manual Pages - ${categoryTitle} | Free DevTools by Hexmos`}
+  name={pageTitle}
+  title={`${pageTitle} | Free DevTools by Hexmos`}
   path={`/freedevtools/man-pages/${category}/${subcategory}/`}
-  description={`Browse ${subcategoryTitle} manual pages in ${categoryTitle}. Find detailed documentation and system references.`}
+  description={pageDescription}
   canonical={`https://hexmos.com/freedevtools/man-pages/${category}/${subcategory}/`}
   keywords={[subcategory, category, 'man pages', 'manual', 'documentation']}
   ogImage="https://hexmos.com/freedevtools/tool-banners/man-pages-banner.png"
@@ -231,26 +144,52 @@ const subcategoryTitle =
       <AdBanner />
     </div>
     <ToolHead
-      name={`${subcategoryTitle} Man Pages`}
-      description={`Browse ${subcategoryTitle} manual pages with detailed documentation.`}
+      name={isCategoryPagination
+        ? `${categoryTitle} Man Pages`
+        : `${subcategoryTitle} Man Pages`}
+      description={isCategoryPagination
+        ? `Browse ${categoryTitle} manual page subcategories with detailed documentation.`
+        : `Browse ${subcategoryTitle} manual pages with detailed documentation.`}
       breadcrumbItems={breadcrumbItems}
     />
 
     <!-- Overview Stats -->
     <div class="text-center">
-      <div class="grid grid-cols-1 gap-6 mt-8">
+      <div
+        class={`grid ${isCategoryPagination ? 'grid-cols-2' : 'grid-cols-1'} gap-6 mt-8`}
+      >
         <div class="text-center">
-          <div class="text-3xl font-bold text-green-600">
+          <div
+            class={`text-3xl font-bold ${isCategoryPagination ? 'text-blue-600' : 'text-green-600'}`}
+          >
             {
-              totalManPagesCount >= 1000
-                ? Math.round(totalManPagesCount / 1000) + 'k'
-                : totalManPagesCount
+              totalCount >= 1000
+                ? Math.round(totalCount / 1000) + 'k'
+                : totalCount
             }
           </div>
           <div class="text-sm text-gray-600 dark:text-gray-400">
-            Man Pages in {subcategoryTitle}
+            {
+              isCategoryPagination
+                ? 'Subcategories'
+                : `Man Pages in ${subcategoryTitle}`
+            }
           </div>
         </div>
+        {
+          isCategoryPagination && (
+            <div class="text-center">
+              <div class="text-3xl font-bold text-green-600">
+                {totalManPagesInCategory >= 1000
+                  ? Math.round(totalManPagesInCategory / 1000) + 'k'
+                  : totalManPagesInCategory}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                Man Pages
+              </div>
+            </div>
+          )
+        }
       </div>
     </div>
 
@@ -260,41 +199,65 @@ const subcategoryTitle =
       class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8"
     >
       <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-        Showing {currentPageManPages.length} of {totalManPagesCount} man pages (Page
-        {currentPage} of {totalPages})
+        Showing {items.length} of {totalCount}
+        {isCategoryPagination ? 'subcategories' : 'man pages'} (Page {
+          currentPage
+        } of {totalPages})
       </div>
     </div>
 
-    <!-- Man Pages Grid -->
+    <!-- Grid Content -->
     <div class="mt-8">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
-          currentPageManPages.map((manPage) => (
+          items.map((item) => (
             <a
-              href={`/freedevtools/man-pages/${category}/${subcategory}/${manPage.slug}/`}
+              href={
+                isCategoryPagination
+                  ? `/freedevtools/man-pages/${category}/${item.name}/`
+                  : `/freedevtools/man-pages/${category}/${subcategory}/${item.slug}/`
+              }
               class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-lg transition-shadow min-h-[120px]"
             >
-              <h3
-                class="text-base text-gray-900 dark:text-gray-100 leading-relaxed break-words"
-                style="word-break:break-all; overflow:hidden; max-width:100%;"
-                title={manPage.title}
-              >
-                {manPage.title.length > 60
-                  ? manPage.title.slice(0, 57) + '...'
-                  : manPage.title}
-              </h3>
+              {isCategoryPagination ? (
+                <>
+                  <div class="flex items-start justify-between mb-3">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">
+                      {item.name.replace('-', ' ')}
+                    </h3>
+                    <span class="text-xs font-mono bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 px-2 py-1 rounded">
+                      {item.count} pages
+                    </span>
+                  </div>
+                  {item.description && (
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                      {item.description}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <h3
+                  class="text-base text-gray-900 dark:text-gray-100 leading-relaxed break-words"
+                  style="word-break:break-all; overflow:hidden; max-width:100%;"
+                  title={item.title}
+                >
+                  {item.title.length > 60
+                    ? item.title.slice(0, 57) + '...'
+                    : item.title}
+                </h3>
+              )}
             </a>
           ))
         }
       </div>
     </div>
 
-    <!-- Show message if no man pages -->
+    <!-- Show message if no items -->
     {
-      totalManPagesCount === 0 && (
+      totalCount === 0 && (
         <div class="mt-8 text-center py-12">
           <p class="text-gray-500 dark:text-gray-400">
-            No man pages found in this subcategory.
+            No {isCategoryPagination ? 'subcategories' : 'man pages'} found.
           </p>
         </div>
       )
@@ -304,7 +267,9 @@ const subcategoryTitle =
     <Pagination
       currentPage={currentPage}
       totalPages={totalPages}
-      baseUrl={`/freedevtools/man-pages/${category}/${subcategory}/`}
+      baseUrl={isCategoryPagination
+        ? `/freedevtools/man-pages/${category}/`
+        : `/freedevtools/man-pages/${category}/${subcategory}/`}
     />
 
     <!-- Credits Section -->
