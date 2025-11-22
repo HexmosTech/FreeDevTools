@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/man-pages-utils';
 import type { APIRoute } from 'astro';
 
+const MAX_URLS = 5000;
 const PRODUCTION_SITE = 'https://hexmos.com/freedevtools';
 
 // Escape XML special characters
@@ -13,25 +14,16 @@ function escapeXml(unsafe: string): string {
     .replace(/'/g, '&apos;');
 }
 
-export const prerender = false;
-
-export const GET: APIRoute = async ({ site }) => {
+// Loader function for sitemap URLs
+async function loadUrls() {
   const db = getDb();
   const now = new Date().toISOString();
-  const MAX_URLS = 5000;
-
-  // Use production site if localhost or undefined
-  const siteUrl =
-    site && !String(site).includes('localhost')
-      ? String(site)
-      : PRODUCTION_SITE;
-
   const urls: string[] = [];
 
   // Root man-pages page
   urls.push(
     `  <url>
-      <loc>${siteUrl}/man-pages/</loc>
+      <loc>__SITE__/man-pages/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.9</priority>
@@ -66,7 +58,7 @@ export const GET: APIRoute = async ({ site }) => {
     const escapedCategory = escapeXml(main_category);
     urls.push(
       `  <url>
-        <loc>${siteUrl}/man-pages/${escapedCategory}/</loc>
+        <loc>__SITE__/man-pages/${escapedCategory}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.7</priority>
@@ -77,7 +69,7 @@ export const GET: APIRoute = async ({ site }) => {
     for (let i = 2; i <= totalCategoryPages; i++) {
       urls.push(
         `  <url>
-          <loc>${siteUrl}/man-pages/${escapedCategory}/${i}/</loc>
+          <loc>__SITE__/man-pages/${escapedCategory}/${i}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.6</priority>
@@ -119,7 +111,7 @@ export const GET: APIRoute = async ({ site }) => {
       const escapedSubCategory = escapeXml(sub_category);
       urls.push(
         `  <url>
-          <loc>${siteUrl}/man-pages/${escapedCategory}/${escapedSubCategory}/</loc>
+          <loc>__SITE__/man-pages/${escapedCategory}/${escapedSubCategory}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.6</priority>
@@ -130,7 +122,7 @@ export const GET: APIRoute = async ({ site }) => {
       for (let i = 2; i <= totalSubcategoryPages; i++) {
         urls.push(
           `  <url>
-            <loc>${siteUrl}/man-pages/${escapedCategory}/${escapedSubCategory}/${i}/</loc>
+            <loc>__SITE__/man-pages/${escapedCategory}/${escapedSubCategory}/${i}/</loc>
             <lastmod>${now}</lastmod>
             <changefreq>daily</changefreq>
             <priority>0.5</priority>
@@ -140,41 +132,39 @@ export const GET: APIRoute = async ({ site }) => {
     }
   }
 
-  // If total URLs <= MAX_URLS, return the single sitemap
-  if (urls.length <= MAX_URLS) {
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.join('\n')}
-</urlset>`;
+  return urls;
+}
 
-    return new Response(xml, {
-      headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    });
-  }
+export const prerender = false;
 
-  // Otherwise, split URLs into chunks and return a sitemap index
+export const GET: APIRoute = async ({ site, params }) => {
+  // SSR mode: call loadUrls directly
+  let urls = await loadUrls();
+
+  // Replace placeholder with actual site - use production site if localhost or undefined
+  const siteUrl =
+    site && !String(site).includes('localhost')
+      ? String(site)
+      : PRODUCTION_SITE;
+  urls = urls.map((u) => u.replace(/__SITE__/g, siteUrl));
+
+  // Split into chunks
   const sitemapChunks: string[][] = [];
   for (let i = 0; i < urls.length; i += MAX_URLS) {
     sitemapChunks.push(urls.slice(i, i + MAX_URLS));
   }
 
-  const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${sitemapChunks
-    .map(
-      (_, i) => `
-    <sitemap>
-      <loc>${siteUrl}/man-pages_pages/sitemap-${i + 1}.xml</loc>
-      <lastmod>${now}</lastmod>
-    </sitemap>`
-    )
-    .join('\n')}
-</sitemapindex>`;
+  const index = parseInt(params?.index || '1', 10) - 1;
+  const chunk = sitemapChunks[index];
 
-  return new Response(indexXml, {
+  if (!chunk) return new Response('Not Found', { status: 404 });
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${chunk.join('\n')}
+</urlset>`;
+
+  return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml',
       'Cache-Control': 'public, max-age=3600',

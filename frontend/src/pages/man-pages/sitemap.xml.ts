@@ -15,7 +15,7 @@ function escapeXml(unsafe: string): string {
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ site, params }) => {
+export const GET: APIRoute = async ({ site }) => {
   const db = getDb();
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
@@ -105,22 +105,11 @@ export const GET: APIRoute = async ({ site, params }) => {
       </url>`);
   });
 
-  // Split URLs into chunks of MAX_URLS
-  const sitemapChunks: string[][] = [];
-  for (let i = 0; i < urls.length; i += MAX_URLS) {
-    sitemapChunks.push(urls.slice(i, i + MAX_URLS));
-  }
-
-  // If ?index param exists, serve a chunked sitemap
-  if (params?.index) {
-    const index = parseInt(params.index, 10) - 1; // 1-based: /sitemap-1.xml
-    const chunk = sitemapChunks[index];
-
-    if (!chunk) return new Response('Not Found', { status: 404 });
-
+  // If total URLs <= MAX_URLS, return the single sitemap
+  if (urls.length <= MAX_URLS) {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${chunk.join('\n')}
+  ${urls.join('\n')}
 </urlset>`;
 
     return new Response(xml, {
@@ -131,12 +120,14 @@ export const GET: APIRoute = async ({ site, params }) => {
     });
   }
 
+  // Otherwise, split URLs into chunks and return a sitemap index
+  const sitemapChunks: string[][] = [];
+  for (let i = 0; i < urls.length; i += MAX_URLS) {
+    sitemapChunks.push(urls.slice(i, i + MAX_URLS));
+  }
+
   const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>${siteUrl}/man-pages_pages/sitemap.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
   ${sitemapChunks
     .map(
       (_, i) => `
