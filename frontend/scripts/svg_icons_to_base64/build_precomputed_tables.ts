@@ -249,8 +249,26 @@ async function insertPrecomputedData(
 async function createIndexes(db: sqlite3.Database): Promise<void> {
   console.log('[BUILD_PRECOMPUTED] Creating indexes...');
 
+  // Drop old indexes if they exist
+  await promisifyRun(db, 'DROP INDEX IF EXISTS idx_cluster_preview_precomputed_name;');
+  await promisifyRun(db, 'DROP INDEX IF EXISTS idx_cluster_name;');
+  await promisifyRun(db, 'DROP INDEX IF EXISTS idx_icon_cluster_name;');
+  
+  // Create cluster index
   await promisifyRun(db, `
-    CREATE INDEX IF NOT EXISTS idx_cluster_preview_precomputed_name
+    CREATE INDEX IF NOT EXISTS idx_cluster_name
+    ON cluster(name);
+  `);
+
+  // Create icon index
+  await promisifyRun(db, `
+    CREATE INDEX IF NOT EXISTS idx_icon_cluster_name
+    ON icon(cluster, name);
+  `);
+
+  // Create cluster_preview_precomputed index
+  await promisifyRun(db, `
+    CREATE INDEX IF NOT EXISTS idx_cluster_preview_name
     ON cluster_preview_precomputed(name);
   `);
 
