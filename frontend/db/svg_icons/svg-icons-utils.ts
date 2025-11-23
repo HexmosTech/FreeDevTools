@@ -53,10 +53,18 @@ function initDbConnection(): Promise<sqlite3.Database> {
           runPragma(db, 'read_uncommitted = ON'), // Skip locking for reads
           runPragma(db, 'page_size = 4096'), // Ensure optimal page size
         ])
-          .then(() => resolve(db))
+          .then(() => {
+            // Enable parallel execution mode (sticky - applies to all queries on this connection)
+            // This allows queries to run in parallel instead of being serialized
+            // See: https://github.com/TryGhost/node-sqlite3/wiki/Control-Flow#databaseparallelizecallback
+            db.parallelize();
+            resolve(db);
+          })
           .catch((pragmaErr) => {
             // If pragmas fail, still resolve the connection (some may not work)
             console.warn(`[SVG_ICONS_DB] Some pragmas failed, continuing anyway:`, pragmaErr);
+            // Still enable parallelize mode even if some pragmas failed
+            db.parallelize();
             resolve(db);
           });
       }
