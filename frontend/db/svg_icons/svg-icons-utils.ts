@@ -188,36 +188,6 @@ export async function getIconsByCluster(cluster: string): Promise<Icon[]> {
   });
 }
 
-// Optimized function to get only a limited number of icons for preview
-export async function getIconsByClusterLimit(cluster: string, limit: number = 6): Promise<Icon[]> {
-  const queryStartTime = Date.now();
-  const db = await getDb();
-  
-  return new Promise((resolve, reject) => {
-    db.all(
-      `SELECT id, cluster, name, base64, description, usecases, 
-       json(synonyms) as synonyms, json(tags) as tags, 
-       industry, emotional_cues, enhanced, img_alt
-       FROM icon WHERE cluster = ? ORDER BY name LIMIT ?`,
-      [cluster, limit],
-      (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const queryEndTime = Date.now();
-        console.log(`[SVG_ICONS_DB] getIconsByClusterLimit("${cluster}", ${limit}) DB query took ${queryEndTime - queryStartTime}ms`);
-        const results = (rows || []) as RawIconRow[];
-        resolve(results.map((row) => ({
-          ...row,
-          synonyms: JSON.parse(row.synonyms || '[]') as string[],
-          tags: JSON.parse(row.tags || '[]') as string[],
-        })) as Icon[]);
-      }
-    );
-  });
-}
-
 // Optimized function: Get paginated clusters with preview icons in ONE query
 export interface ClusterWithPreviewIcons {
   id: number;
