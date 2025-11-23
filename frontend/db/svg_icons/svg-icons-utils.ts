@@ -111,37 +111,6 @@ export async function getDb(): Promise<sqlite3.Database> {
   return pool[index];
 }
 
-export async function getClusters(): Promise<Cluster[]> {
-  const queryStartTime = Date.now();
-  const db = await getDb();
-  
-  return new Promise((resolve, reject) => {
-    db.all(
-      `SELECT id, name, count, source_folder, path, 
-       json(keywords) as keywords, json(tags) as tags, 
-       title, description, practical_application, json(alternative_terms) as alternative_terms,
-       about, json(why_choose_us) as why_choose_us
-       FROM cluster ORDER BY name`,
-      (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const queryEndTime = Date.now();
-        console.log(`[SVG_ICONS_DB] getClusters() DB query took ${queryEndTime - queryStartTime}ms`);
-        const results = (rows || []) as RawClusterRow[];
-        resolve(results.map((row) => ({
-          ...row,
-          keywords: JSON.parse(row.keywords || '[]') as string[],
-          tags: JSON.parse(row.tags || '[]') as string[],
-          alternative_terms: JSON.parse(row.alternative_terms || '[]') as string[],
-          why_choose_us: JSON.parse(row.why_choose_us || '[]') as string[],
-        })) as Cluster[]);
-      }
-    );
-  });
-}
-
 export async function getTotalIcons(): Promise<number> {
   const queryStartTime = Date.now();
   const db = await getDb();
@@ -156,6 +125,24 @@ export async function getTotalIcons(): Promise<number> {
       // console.log(`[SVG_ICONS_DB] getTotalIcons() DB query took ${queryEndTime - queryStartTime}ms`);
       const result = row as Overview | undefined;
       resolve(result?.total_count ?? 0);
+    });
+  });
+}
+
+export async function getTotalClusters(): Promise<number> {
+  const queryStartTime = Date.now();
+  const db = await getDb();
+  
+  return new Promise((resolve, reject) => {
+    db.get('SELECT COUNT(*) as count FROM cluster', (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const queryEndTime = Date.now();
+      // console.log(`[SVG_ICONS_DB] getTotalClusters() DB query took ${queryEndTime - queryStartTime}ms`);
+      const result = row as { count: number } | undefined;
+      resolve(result?.count ?? 0);
     });
   });
 }
@@ -348,6 +335,3 @@ export async function getIconByCategoryAndName(
     );
   });
 }
-
-
-
