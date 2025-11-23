@@ -4,6 +4,7 @@ import type {
   Cluster,
   Icon,
   Overview,
+  RawClusterPreviewPrecomputedRow,
   RawClusterRow,
   RawIconRow,
 } from './svg-icons-schema';
@@ -222,40 +223,15 @@ export async function getClustersWithPreviewIcons(
   
   return new Promise((resolve, reject) => {
     db.all(
-      `WITH paginated_clusters AS (
-        SELECT id, name, count, source_folder, path,
-               json(keywords) as keywords, json(tags) as tags,
-               title, description, practical_application, 
-               json(alternative_terms) as alternative_terms,
-               about, json(why_choose_us) as why_choose_us
-        FROM cluster
-        ORDER BY name
-        LIMIT ? OFFSET ?
-      )
-      SELECT 
-        pc.id, pc.name, pc.count, pc.source_folder, pc.path,
-        pc.keywords, pc.tags, pc.title, pc.description, pc.practical_application,
-        pc.alternative_terms, pc.about, pc.why_choose_us,
-        (
-          SELECT json_group_array(
-            json_object(
-              'id', i.id,
-              'name', i.name,
-              'base64', i.base64,
-              'img_alt', i.img_alt
-            )
-          )
-          FROM (
-            SELECT id, name, base64, img_alt
-            FROM icon
-            WHERE cluster = pc.source_folder OR cluster = pc.name
-            ORDER BY name
-            LIMIT ?
-          ) i
-        ) as preview_icons
-      FROM paginated_clusters pc
-      ORDER BY pc.name`,
-      [itemsPerPage, offset, previewIconsPerCluster],
+      `SELECT id, name, count, source_folder, path,
+       keywords_json, tags_json,
+       title, description, practical_application, 
+       alternative_terms_json,
+       about, why_choose_us_json, preview_icons_json
+       FROM cluster_preview_precomputed
+       ORDER BY name
+       LIMIT ? OFFSET ?`,
+      [itemsPerPage, offset],
       (err, rows) => {
         if (err) {
           reject(err);
@@ -264,27 +240,12 @@ export async function getClustersWithPreviewIcons(
         const queryEndTime = Date.now();
         console.log(`[SVG_ICONS_DB] getClustersWithPreviewIcons(page=${page}, itemsPerPage=${itemsPerPage}) DB query took ${queryEndTime - queryStartTime}ms`);
         
-        const results = (rows || []) as Array<{
-          id: number;
-          name: string;
-          count: number;
-          source_folder: string;
-          path: string;
-          keywords: string;
-          tags: string;
-          title: string;
-          description: string;
-          practical_application: string;
-          alternative_terms: string;
-          about: string;
-          why_choose_us: string;
-          preview_icons: string;
-        }>;
+        const results = (rows || []) as RawClusterPreviewPrecomputedRow[];
         
         resolve(results.map((row) => {
           let previewIcons: Array<{ id: number; name: string; base64: string; img_alt: string }> = [];
           try {
-            const parsed = JSON.parse(row.preview_icons || '[]');
+            const parsed = JSON.parse(row.preview_icons_json || '[]');
             previewIcons = Array.isArray(parsed) ? parsed.filter((icon: any) => icon !== null) : [];
           } catch (e) {
             previewIcons = [];
@@ -296,14 +257,14 @@ export async function getClustersWithPreviewIcons(
             count: row.count,
             source_folder: row.source_folder,
             path: row.path,
-            keywords: JSON.parse(row.keywords || '[]') as string[],
-            tags: JSON.parse(row.tags || '[]') as string[],
+            keywords: JSON.parse(row.keywords_json || '[]') as string[],
+            tags: JSON.parse(row.tags_json || '[]') as string[],
             title: row.title,
             description: row.description,
             practical_application: row.practical_application,
-            alternative_terms: JSON.parse(row.alternative_terms || '[]') as string[],
+            alternative_terms: JSON.parse(row.alternative_terms_json || '[]') as string[],
             about: row.about,
-            why_choose_us: JSON.parse(row.why_choose_us || '[]') as string[],
+            why_choose_us: JSON.parse(row.why_choose_us_json || '[]') as string[],
             previewIcons,
           };
         }));

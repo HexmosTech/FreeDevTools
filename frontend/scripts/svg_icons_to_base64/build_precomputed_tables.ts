@@ -5,7 +5,7 @@
  * This script:
  * 1. Reads cluster and icon data from existing tables
  * 2. Precomputes preview icons for each cluster
- * 3. Creates optimized cluster_flat table with precomputed preview_icons_json
+ * 3. Creates optimized cluster_preview_precomputed table with precomputed preview_icons_json
  * 4. Inserts precomputed data
  * 5. Creates indexes for fast queries
  * 
@@ -171,11 +171,11 @@ async function createMaterializedTables(db: sqlite3.Database): Promise<void> {
   console.log('[BUILD_PRECOMPUTED] Creating materialized table...');
 
   // Drop existing table if it exists
-  await promisifyRun(db, 'DROP TABLE IF EXISTS cluster_flat;');
+  await promisifyRun(db, 'DROP TABLE IF EXISTS cluster_preview_precomputed;');
 
-  // Create cluster_flat table with precomputed preview_icons_json
+  // Create cluster_preview_precomputed table with precomputed preview_icons_json
   await promisifyRun(db, `
-    CREATE TABLE cluster_flat (
+    CREATE TABLE cluster_preview_precomputed (
       id INTEGER PRIMARY KEY,
       name TEXT,
       source_folder TEXT,
@@ -206,7 +206,7 @@ async function insertPrecomputedData(
   const startTime = Date.now();
 
   const insertClusterSql = `
-    INSERT INTO cluster_flat (
+    INSERT INTO cluster_preview_precomputed (
       id, name, source_folder, path, count,
       keywords_json, tags_json, title, description,
       practical_application, alternative_terms_json,
@@ -250,8 +250,8 @@ async function createIndexes(db: sqlite3.Database): Promise<void> {
   console.log('[BUILD_PRECOMPUTED] Creating indexes...');
 
   await promisifyRun(db, `
-    CREATE INDEX IF NOT EXISTS idx_cluster_flat_name
-    ON cluster_flat(name);
+    CREATE INDEX IF NOT EXISTS idx_cluster_preview_precomputed_name
+    ON cluster_preview_precomputed(name);
   `);
 
   console.log('[BUILD_PRECOMPUTED] Indexes created');
@@ -263,14 +263,14 @@ async function verifyTables(db: sqlite3.Database): Promise<void> {
 
   const clusterCount = await promisifyGet<{ count: number }>(
     db,
-    'SELECT COUNT(*) as count FROM cluster_flat'
+    'SELECT COUNT(*) as count FROM cluster_preview_precomputed'
   );
-  console.log(`[BUILD_PRECOMPUTED] cluster_flat: ${clusterCount?.count || 0} rows`);
+  console.log(`[BUILD_PRECOMPUTED] cluster_preview_precomputed: ${clusterCount?.count || 0} rows`);
 
   // Sample preview icons
   const sampleCluster = await promisifyGet<{ name: string; preview_icons_json: string }>(
     db,
-    'SELECT name, preview_icons_json FROM cluster_flat LIMIT 1'
+    'SELECT name, preview_icons_json FROM cluster_preview_precomputed LIMIT 1'
   );
   if (sampleCluster) {
     const previewIcons = JSON.parse(sampleCluster.preview_icons_json || '[]');
