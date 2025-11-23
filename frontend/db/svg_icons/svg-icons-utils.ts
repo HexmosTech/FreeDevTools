@@ -32,21 +32,35 @@ function runPragma(db: sqlite3.Database, pragma: string): Promise<void> {
 function initDbConnection(): Promise<sqlite3.Database> {
   const dbPath = getDbPath();
   return new Promise((resolve, reject) => {
-    const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+    // Open in READWRITE mode to enable WAL, then use for reads
+    // WAL mode requires write access to create the WAL file
+    const db = new sqlite3.Database(
+      dbPath,
+      sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+      (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
 
-      // Optimize for read-only performance (only pragmas that work with read-only databases)
-      Promise.all([
-        runPragma(db, 'mmap_size = 1073741824'),
-        runPragma(db, 'temp_store = MEMORY'),
-        runPragma(db, 'read_uncommitted = ON'),
-      ])
-        .then(() => resolve(db))
-        .catch((pragmaErr) => reject(pragmaErr));
-    });
+        // Enable WAL mode first (requires write access)
+        // Then set other optimizations
+        Promise.all([
+          runPragma(db, 'journal_mode = WAL'), // Enable WAL for concurrent reads
+          runPragma(db, 'cache_size = -64000'), // 64MB cache (negative = KB, so -64000 = 64MB)
+          runPragma(db, 'mmap_size = 524288000'), // 500MB memory-mapped I/O
+          runPragma(db, 'temp_store = MEMORY'), // Use memory for temp tables
+          runPragma(db, 'read_uncommitted = ON'), // Skip locking for reads
+          runPragma(db, 'page_size = 4096'), // Ensure optimal page size
+        ])
+          .then(() => resolve(db))
+          .catch((pragmaErr) => {
+            // If pragmas fail, still resolve the connection (some may not work)
+            console.warn(`[SVG_ICONS_DB] Some pragmas failed, continuing anyway:`, pragmaErr);
+            resolve(db);
+          });
+      }
+    );
   });
 }
 
