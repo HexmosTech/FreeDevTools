@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy
+.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy local-prod-build
 
 # Build the project
 build:
@@ -159,6 +159,10 @@ update-db-to-b2:
 		--retries-sleep 10s \
 		--progress; \
 	echo "✅ Database file uploaded successfully"
+
+# trigger build locally and deploy to production server via rsync
+local-prod-build:
+	bash ./scripts/local-prod-build.sh
 
 %:
 	@:
