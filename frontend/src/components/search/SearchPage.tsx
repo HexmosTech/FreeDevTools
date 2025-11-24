@@ -6,6 +6,7 @@ import {
   ImageIcon,
   ModulzLogoIcon,
   RocketIcon,
+  ReaderIcon
 } from '@radix-ui/react-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { MEILI_SEARCH_API_KEY } from '@/config';
@@ -355,7 +356,12 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
             <div
               className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
             >
-              {result.category}
+              {(result.category as string).includes('_')
+                ? (result.category as string)
+                    .split('_')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')
+                : result.category}
             </div>
           )}
           <div className="pr-16 mb-2">
@@ -581,7 +587,7 @@ const SearchPage: React.FC = () => {
         );
       case 'man_pages':
         return (
-          <FileIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+          <ReaderIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
         );
       default:
         return null;
