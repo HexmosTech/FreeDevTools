@@ -110,3 +110,49 @@ type EmojiJSONData struct {
 	FluentUIMetadata   map[string]interface{} `json:"fluentui_metadata"`
 	// Add other fields as needed based on the actual structure
 }
+
+
+
+// InstallerpediaData represents one indexed installation guide entry
+type InstallerpediaData struct {
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`     // repo name (ex: "localsend")
+	Description string             `json:"description"`
+	Path        string             `json:"path"`     // filesystem or frontend route
+	Category    string             `json:"category"` // ex: "installerpedia"
+
+	RepoType    string             `json:"repo_type"`
+	Stars       int                `json:"stars"`
+	Note        string             `json:"note"`
+
+	HasInstallation     bool                `json:"has_installation"`
+	Prerequisites       []Prerequisite      `json:"prerequisites"`
+	InstallationMethods []InstallMethod     `json:"installation_methods"`
+	PostInstallation    []string            `json:"post_installation"`
+	ResourcesOfInterest []Resource          `json:"resources_of_interest"`
+}
+type Prerequisite struct {
+	Type        string   `json:"type"`
+	Name        string   `json:"name"`
+	Version     string   `json:"version"`
+	Description string   `json:"description"`
+	Optional    bool     `json:"optional"`
+	AppliesTo   []string `json:"applies_to"`
+}
+
+type InstallMethod struct {
+	Title        string               `json:"title"`
+	Instructions []InstallInstruction  `json:"instructions"`
+}
+
+type InstallInstruction struct {
+	Command string `json:"command"`
+	Meaning string `json:"meaning"`
+}
+
+type Resource struct {
+	Type      string `json:"type"`
+	Title     string `json:"title"`
+	URLOrPath string `json:"url_or_path"`
+	Reason    string `json:"reason"`
+}

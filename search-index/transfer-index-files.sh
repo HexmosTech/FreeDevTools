@@ -8,7 +8,7 @@ REMOTE_USER="ubuntu"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOCAL_DIR="$SCRIPT_DIR/output"
 REMOTE_DIR="/tmp/freedevtools-index"
-FILES=("tools.json" "tldr_pages.json" "emojis.json" "svg_icons.json" "cheatsheets.json" "mcp.json" "png_icons.json")
+FILES=("tools.json" "tldr_pages.json" "emojis.json" "svg_icons.json" "cheatsheets.json" "mcp.json" "png_icons.json" "installerpedia.json")
 
 echo "🚀 Starting transfer to $REMOTE_HOST..."
 echo "📁 Working directory: $SCRIPT_DIR"

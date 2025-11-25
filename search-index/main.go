@@ -15,6 +15,8 @@ import (
 )
 
 func main() {
+
+	
 	start := time.Now()
 
 	// Create output directory if it doesn't exist
@@ -55,10 +57,11 @@ func main() {
 	pngIconsChan := make(chan []SVGIconData, 1)
 	cheatsheetsChan := make(chan []CheatsheetData, 1)
 	mcpChan := make(chan []MCPData, 1)
+	installerpediaChan := make(chan []InstallerpediaData, 1)
 	errorsChan := make(chan error, 6)
 
 	// Start all collection goroutines
-	wg.Add(7)
+	wg.Add(8)
 
 	go func() {
 		defer wg.Done()
@@ -131,6 +134,17 @@ func main() {
 		mcpChan <- mcp
 	}()
 
+	go func() {
+		defer wg.Done()
+		data, err := generateInstallerpediaData(ctx)
+		if err != nil {
+			errorsChan <- fmt.Errorf("Installerpedia data generation failed: %w", err)
+			return
+		}
+		installerpediaChan <- data
+	}()
+	
+
 	// Wait for all goroutines to complete
 	go func() {
 		wg.Wait()
@@ -141,6 +155,7 @@ func main() {
 		close(pngIconsChan)
 		close(cheatsheetsChan)
 		close(mcpChan)
+		close(installerpediaChan)
 		close(errorsChan)
 	}()
 
@@ -152,11 +167,12 @@ func main() {
 	var pngIcons []SVGIconData
 	var cheatsheets []CheatsheetData
 	var mcp []MCPData
+	var installerpedia []InstallerpediaData
 	var errors []error
 
 	// Track which channels we've received data from
 	receivedChannels := 0
-	totalChannels := 7
+	totalChannels := 8
 
 	for receivedChannels < totalChannels {
 		select {
@@ -202,6 +218,12 @@ func main() {
 				fmt.Printf("✅ MCP data collected: %d items\n", len(m))
 			}
 			receivedChannels++
+		case ip, ok := <-installerpediaChan:
+			if ok {
+				installerpedia = ip
+				fmt.Printf("✅ Installerpedia data collected: %d items\n", len(ip))
+			}
+			receivedChannels++		
 		case err, ok := <-errorsChan:
 			if ok {
 				errors = append(errors, err)
@@ -269,6 +291,10 @@ doneWithErrors:
 		log.Fatalf("Failed to save MCP data: %v", err)
 	}
 
+	if err := saveToJSON("installerpedia.json", installerpedia); err != nil {
+		log.Fatalf("Failed to save Installerpedia data: %v", err)
+	}	
+
 	elapsed := time.Since(start)
 	fmt.Printf("\n🎉 Search index generation completed successfully in %v\n", elapsed)
 	fmt.Printf("📊 Generated data:\n")
@@ -279,6 +305,7 @@ doneWithErrors:
 	fmt.Printf("  - PNG Icons: %d items\n", len(pngIcons))
 	fmt.Printf("  - Cheatsheets: %d items\n", len(cheatsheets))
 	fmt.Printf("  - MCP: %d items\n", len(mcp))
+	fmt.Printf("  - Installerpedia: %d items\n", len(installerpedia))
 	fmt.Printf("\n💾 All files saved to ./output/ directory\n")
 	
 	// Automatically run stem processing on all generated files
@@ -371,6 +398,8 @@ func runSingleCategory(category string) {
 		RunCheatsheetsOnly(ctx, start)
 	case "mcp":
 		RunMCPOnly(ctx, start)
+	case "installerpedia":
+		RunInstallerPediaOnly(ctx, start)
 	default:
 		fmt.Printf("❌ Unknown category: %s\n", category)
 		fmt.Println("Available categories: tools, tldr, emojis, svg_icons, png_icons, cheatsheets, mcp")

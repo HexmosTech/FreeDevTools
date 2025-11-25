@@ -199,7 +199,7 @@ export function getReposByTypePaginated(category: string, limit: number, offset:
    * Get a repository by its slug (repo name)
    */
   export function getRepoBySlug(slug: string): RepoData | null {
-    const stmt = db.prepare('SELECT * FROM ipm_data WHERE repo = ?');
+    const stmt = db.prepare('SELECT * FROM ipm_data WHERE repo_slug = ?');
     const row = stmt.get(slug) as RawRepoRow | undefined;
   
     if (!row) return null;
