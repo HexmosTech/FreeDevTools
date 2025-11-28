@@ -145,6 +145,29 @@ A curated collection of 1,25,000+ free resources, icons, cheat sheets, and TLDRs
 
 ---
 
+
+
+
+
+## Installing InstallerPedia Manager (ipm)
+InstallerPedia Manager (ipm) is a CLI tool that installs from repositories using reliable installation instructions.
+
+It currently supports
+
+`ipm install reponame` - Launches the installation process for installing from the repository.
+ 
+`ipm show reponame` - Shows details about a repository and its installation.
+
+`ipm search reponame` - Search for a specific repository.
+
+You can install `ipm` via this command
+
+```
+curl -fsSL https://raw.githubusercontent.com/HexmosTech/freeDevTools/main/install_ipm.sh | bash
+```
+
+To get the latest updates, run `ipm update`.
+
 ## Related Projects
 
 **[LiveReview](https://hexmos.com/livereview)** - I'm building a private AI code review tool that runs on your LLM key (OpenAI, Gemini, etc.) with flat, no-seat pricing — designed for small teams. Check it out, if that's your kind of thing.
