@@ -1,5 +1,6 @@
 import {
     getAllClusters,
+    getClusterPreviews,
     getPagesByCluster,
 } from '../../db/tldr/tldr-utils';
 
@@ -103,4 +104,27 @@ export async function getTldrPlatformCommands(platform: string) {
     description: page.description || `Documentation for ${page.name} command`,
     category: page.platform,
   }));
+}
+
+/**
+ * Get previews for all platforms (top 3 commands each)
+ */
+export async function getTldrPlatformPreviews() {
+  const clusters = await getAllClusters();
+  const previewsMap = await getClusterPreviews(clusters);
+  
+  return clusters.map((cluster) => {
+    const commands = previewsMap.get(cluster.name) || [];
+    return {
+      name: cluster.name,
+      count: cluster.count,
+      url: `/freedevtools/tldr/${cluster.name}/`,
+      commands: commands.map(cmd => ({
+        name: cmd.name,
+        url: cmd.path || `/freedevtools/tldr/${cluster.name}/${cmd.name}/`,
+        description: cmd.description,
+        category: cmd.platform
+      }))
+    };
+  });
 }

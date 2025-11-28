@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 import type {
@@ -106,6 +107,30 @@ export async function getDb(): Promise<sqlite3.Database> {
   return pool[index];
 }
 
+// Hashing functions
+function createFullHash(category: string, lastPath: string): string {
+  // Normalize input: remove leading/trailing slashes, lowercase
+  const normCategory = category.trim().toLowerCase();
+  const normLastPath = lastPath.trim().toLowerCase();
+  
+  // Create unique string
+  const uniqueStr = `${normCategory}/${normLastPath}`;
+  
+  // Compute SHA-256 hash
+  return crypto.createHash('sha256').update(uniqueStr).digest('hex');
+}
+
+function get8Bytes(fullHash: string): bigint {
+  // Take first 16 hex chars (8 bytes)
+  const hexPart = fullHash.substring(0, 16);
+  // Convert to BigInt (signed 64-bit)
+  // We need to handle the signed nature manually if we want exact match with Python's struct.unpack('>q')
+  // Python's struct.unpack('>q') treats the 8 bytes as a signed 64-bit integer (two's complement)
+  
+  const buffer = Buffer.from(hexPart, 'hex');
+  return buffer.readBigInt64BE(0);
+}
+
 export async function getTotalPages(): Promise<number> {
   const db = await getDb();
   return new Promise((resolve, reject) => {
@@ -155,9 +180,9 @@ export async function getPagesByCluster(cluster: string): Promise<Page[]> {
   const db = await getDb();
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT id, cluster, name, platform, title, description,
+      `SELECT url_hash as id, cluster, name, platform, title, description,
        more_info_url, keywords, features, examples, raw_content, path
-       FROM page WHERE cluster = ? ORDER BY name`,
+       FROM url_lookup WHERE cluster = ? ORDER BY name`,
       [cluster],
       (err, rows) => {
         if (err) {
@@ -200,12 +225,17 @@ export async function getClusterByName(name: string): Promise<Cluster | null> {
 
 export async function getPageByClusterAndName(cluster: string, name: string): Promise<Page | null> {
   const db = await getDb();
+  
+  // Calculate hash for direct lookup
+  const fullHash = createFullHash(cluster, name);
+  const urlHash = get8Bytes(fullHash);
+  
   return new Promise((resolve, reject) => {
     db.get(
-      `SELECT id, cluster, name, platform, title, description,
+      `SELECT url_hash as id, cluster, name, platform, title, description,
        more_info_url, keywords, features, examples, raw_content, path
-       FROM page WHERE cluster = ? AND name = ?`,
-      [cluster, name],
+       FROM url_lookup WHERE url_hash = ?`,
+      [urlHash],
       (err, row) => {
         if (err) {
           reject(err);
@@ -222,6 +252,49 @@ export async function getPageByClusterAndName(cluster: string, name: string): Pr
           features: JSON.parse(result.features || '[]'),
           examples: JSON.parse(result.examples || '[]'),
         } as Page);
+      }
+    );
+  });
+}
+
+export async function getClusterPreviews(clusters: Cluster[]): Promise<Map<string, Page[]>> {
+  const db = await getDb();
+  return new Promise((resolve, reject) => {
+    // Efficiently fetch top 3 commands for all clusters using window function
+    // Note: We only need basic info for preview
+    db.all(
+      `SELECT * FROM (
+         SELECT url_hash as id, cluster, name, platform, description,
+         ROW_NUMBER() OVER (PARTITION BY cluster ORDER BY name) as rn 
+         FROM url_lookup
+       ) WHERE rn <= 3`,
+      (err, rows) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        
+        const resultMap = new Map<string, Page[]>();
+        const results = (rows || []) as any[];
+        
+        // Group by cluster
+        results.forEach(row => {
+          if (!resultMap.has(row.cluster)) {
+            resultMap.set(row.cluster, []);
+          }
+          resultMap.get(row.cluster)?.push({
+            ...row,
+            keywords: [],
+            features: [],
+            examples: [],
+            raw_content: '',
+            path: '',
+            title: '',
+            more_info_url: ''
+          } as Page);
+        });
+        
+        resolve(resultMap);
       }
     );
   });

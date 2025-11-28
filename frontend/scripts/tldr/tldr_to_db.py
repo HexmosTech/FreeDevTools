@@ -4,14 +4,16 @@ Build a SQLite database from TLDR markdown files.
 
 - Scans data/tldr/*/*.md
 - Creates SQLite DB at db/all_dbs/tldr-db.db
-- Table: page(...)
-- Table: cluster(...)
-- Table: overview(...)
+- Table: url_lookup (WITHOUT ROWID)
+- Table: cluster
+- Table: overview
 """
 
+import hashlib
 import json
 import re
 import sqlite3
+import struct
 import yaml
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -21,14 +23,38 @@ DATA_DIR = BASE_DIR.parent.parent / "data" / "tldr"
 DB_PATH = BASE_DIR.parent.parent / "db" / "all_dbs" / "tldr-db.db"
 
 
+def create_full_hash(category: str, last_path: str) -> str:
+    """Create a SHA-256 hash from category and name."""
+    # Normalize input: remove leading/trailing slashes, lowercase
+    category = category.strip().lower()
+    last_path = last_path.strip().lower()
+    
+    # Create unique string
+    unique_str = f"{category}/{last_path}"
+    
+    # Compute SHA-256 hash
+    return hashlib.sha256(unique_str.encode("utf-8")).hexdigest()
+
+
+def get_8_bytes(full_hash: str) -> int:
+    """Get the first 8 bytes of the hash as a signed 64-bit integer."""
+    # Take first 16 hex chars (8 bytes)
+    hex_part = full_hash[:16]
+    # Convert to bytes
+    bytes_val = bytes.fromhex(hex_part)
+    # Unpack as signed 64-bit integer (big-endian)
+    return struct.unpack(">q", bytes_val)[0]
+
+
 def ensure_schema(conn: sqlite3.Connection) -> None:
     cur = conn.cursor()
 
-    # Main table for TLDR pages
+    # Main table for TLDR pages using consistent hashing
     cur.execute(
         """
-        CREATE TABLE IF NOT EXISTS page (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+        CREATE TABLE IF NOT EXISTS url_lookup (
+            url_hash INTEGER PRIMARY KEY,
+            url TEXT NOT NULL,
             cluster TEXT NOT NULL,          -- Directory name (e.g., 'git', 'aws')
             name TEXT NOT NULL,             -- Command name (e.g., 'git-commit')
             platform TEXT DEFAULT '',       -- From frontmatter 'category' (e.g., 'common', 'linux')
@@ -40,14 +66,12 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
             examples TEXT DEFAULT '[]',     -- JSON array of {description, cmd}
             raw_content TEXT DEFAULT '',    -- Full markdown content
             path TEXT DEFAULT ''            -- URL path from frontmatter
-        );
+        ) WITHOUT ROWID;
         """
     )
 
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_page_cluster ON page(cluster);")
-    cur.execute(
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_page_cluster_name ON page(cluster, name);"
-    )
+    # Index for efficient cluster grouping
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_url_lookup_cluster ON url_lookup(cluster);")
 
     # Cluster table (categories)
     cur.execute(
@@ -55,7 +79,7 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS cluster (
             name TEXT PRIMARY KEY,
             count INTEGER NOT NULL,
-            description TEXT DEFAULT ''
+            description TEXT DEFAULT '' -- Kept empty as per previous implementation
         );
         """
     )
@@ -158,9 +182,27 @@ def parse_tldr_file(file_path: Path) -> Optional[Dict[str, Any]]:
 
     description = " ".join(description_lines)
     
+    # Calculate hash
+    # path_url is like "tldr/common/git"
+    # we need "common" and "git"
+    # platform is "common"
+    # name is "git" (from file stem)
+    
+    cluster = file_path.parent.name
+    name = file_path.stem
+    
+    # Use platform and name for hashing to match URL structure
+    # If platform is empty, fallback to cluster
+    hash_category = platform if platform else cluster
+    
+    full_hash = create_full_hash(hash_category, name)
+    url_hash = get_8_bytes(full_hash)
+    
     return {
-        "cluster": file_path.parent.name,
-        "name": file_path.stem,
+        "url_hash": url_hash,
+        "url": f"{hash_category}/{name}",
+        "cluster": cluster,
+        "name": name,
         "platform": platform,
         "title": title,
         "description": description,
@@ -179,10 +221,10 @@ def process_all_files(conn: sqlite3.Connection) -> None:
     
     # Prepare SQL
     insert_sql = """
-    INSERT OR REPLACE INTO page (
-        cluster, name, platform, title, description, more_info_url,
+    INSERT OR REPLACE INTO url_lookup (
+        url_hash, url, cluster, name, platform, title, description, more_info_url,
         keywords, features, examples, raw_content, path
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     
     files = list(DATA_DIR.glob("**/*.md"))
@@ -195,6 +237,8 @@ def process_all_files(conn: sqlite3.Connection) -> None:
         data = parse_tldr_file(file_path)
         if data:
             batch.append((
+                data["url_hash"],
+                data["url"],
                 data["cluster"],
                 data["name"],
                 data["platform"],
@@ -232,7 +276,7 @@ def populate_cluster_and_overview(conn: sqlite3.Connection) -> None:
     cur.execute("""
         INSERT INTO cluster (name, count, description)
         SELECT cluster, COUNT(*), '' 
-        FROM page 
+        FROM url_lookup 
         GROUP BY cluster
     """)
     
@@ -240,7 +284,7 @@ def populate_cluster_and_overview(conn: sqlite3.Connection) -> None:
     cur.execute("DELETE FROM overview")
     cur.execute("""
         INSERT INTO overview (id, total_count)
-        SELECT 1, COUNT(*) FROM page
+        SELECT 1, COUNT(*) FROM url_lookup
     """)
     
     conn.commit()
