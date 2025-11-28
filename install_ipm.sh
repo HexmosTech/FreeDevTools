@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
 set -e
 
-# Installer for ipm CLI
 APPNAME="ipm"
-VERSION="v0.1.0"
 INSTALL_DIR="$HOME/.local/share/$APPNAME"
 BIN_PATH="/usr/local/bin/$APPNAME"
 
-# GitHub release URL 
-DOWNLOAD_URL="https://github.com/HexmosTech/freeDevTools/releases/download/$VERSION/ipm"
+# Get latest version (info only)
+LATEST_VERSION=$(curl -s https://api.github.com/repos/HexmosTech/freeDevTools/releases/latest \
+    | grep '"tag_name":' \
+    | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
 
-echo "==> Installing $APPNAME ($VERSION) to $INSTALL_DIR ..."
+echo "==> Latest version available: $LATEST_VERSION"
 
-# Create install directory
+# Always download the latest asset
+DOWNLOAD_URL="https://github.com/HexmosTech/freeDevTools/releases/latest/download/ipm"
+
+echo "==> Installing $APPNAME (latest) to $INSTALL_DIR ..."
 mkdir -p "$INSTALL_DIR"
 
-# Download binary
-echo "==> Downloading $APPNAME from $DOWNLOAD_URL ..."
+echo "==> Downloading from $DOWNLOAD_URL ..."
 curl -L "$DOWNLOAD_URL" -o "$INSTALL_DIR/$APPNAME"
 
-# Make executable
 chmod +x "$INSTALL_DIR/$APPNAME"
 
-# Create global symlink
 echo "==> Creating symlink at $BIN_PATH ..."
 sudo ln -sf "$INSTALL_DIR/$APPNAME" "$BIN_PATH"
 
 echo "==> Installation complete!"
-echo "Run it from anywhere using: $APPNAME"
+echo "Run it using: $APPNAME"

@@ -154,17 +154,19 @@ InstallerPedia Manager (ipm) is a CLI tool that installs from repositories using
 
 It currently supports
 
-`ipm install reponame` - launches the installation process for installing from repo
+`ipm install reponame` - Launches the installation process for installing from the repository.
  
-`ipm show reponame` - show details about a repo and its installation
+`ipm show reponame` - Shows details about a repository and its installation.
 
-`ipm search reponame` - Search for a specific repo
+`ipm search reponame` - Search for a specific repository.
 
 You can install `ipm` via this command
 
 ```
 curl -fsSL https://raw.githubusercontent.com/HexmosTech/freeDevTools/main/install_ipm.sh | bash
 ```
+
+To get the latest updates, run `ipm update`.
 
 ## Related Projects
 
