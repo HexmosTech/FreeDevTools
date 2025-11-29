@@ -183,20 +183,21 @@ def parse_tldr_file(file_path: Path) -> Optional[Dict[str, Any]]:
     description = " ".join(description_lines)
     
     # Calculate hash
-    # path_url is like "tldr/common/git"
-    # we need "common" and "git"
-    # platform is "common"
-    # name is "git" (from file stem)
-    
-    cluster = file_path.parent.name
+    # Use platform (category) from frontmatter as cluster if available
+    # Otherwise fallback to directory name
+    cluster = platform if platform else file_path.parent.name
     name = file_path.stem
     
-    # Use platform and name for hashing to match URL structure
-    # If platform is empty, fallback to cluster
-    hash_category = platform if platform else cluster
+    # Use cluster and name for hashing to match URL structure
+    # The URL is /tldr/[cluster]/[name]
+    hash_category = cluster
     
     full_hash = create_full_hash(hash_category, name)
     url_hash = get_8_bytes(full_hash)
+    
+    # Update path to match the new URL structure
+    # This overrides the path from frontmatter which might be inconsistent
+    path_url = f"{cluster}/{name}/"
     
     return {
         "url_hash": url_hash,
