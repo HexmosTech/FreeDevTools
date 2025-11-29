@@ -6,7 +6,7 @@
 BINARY := sitemap-checker
 
 # Default flags (can be overridden from CLI)
-SITEMAP ?= 
+SITEMAP ?= http://localhost:4321/freedevtools/tldr/sitemap.xml
 INPUT ?= 
 CONCURRENCY ?= 24 
 MODE ?= local
@@ -53,3 +53,7 @@ apple-emojis:
 	make run SITEMAP=http://localhost:4321/freedevtools/emojis/apple-emojis/sitemap.xml
 
 .PHONY: build run run-bin clean apple-emojis
+
+tldr:
+	make run SITEMAP=http://localhost:4321/freedevtools/tldr/sitemap.xml
+	
