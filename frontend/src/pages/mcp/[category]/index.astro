@@ -1,21 +1,140 @@
 ---
-import { getCollection } from 'astro:content';
+import { getAllMcpCategoryIds } from '@/lib/mcp-utils';
+import { getAllMcpCategories, getMcpMetadata } from '@/lib/mcp-utils';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Mcp from '../_Mcp.astro';
 
-export async function getStaticPaths() {
-  const categoryEntries = await getCollection('mcpCategoryData');
-  
-  return categoryEntries.map(entry => ({
-    params: { category: entry.data.category }
-  }));
-}
+export const prerender = false;
 
-// Redirect to page 1 of the category
 const { category } = Astro.params;
+const urlPath = Astro.url.pathname;
 
 if (!category) {
-  throw new Error('Category parameter is required');
+  return new Response(null, { status: 404 });
 }
 
-// Redirect to the first page
-return Astro.redirect(`/freedevtools/mcp/${category}/1/`);
+let paginationData: any = null;
+let shouldRedirect = false;
+let redirectUrl = '';
+
+// If category is numeric, this is actually a pagination route
+// Render pagination content directly (workaround for route priority)
+if (/^\d+$/.test(category)) {
+  const currentPage = parseInt(category, 10);
+
+  // Fetch categories data directly (SSR mode)
+  const allCategories = await getAllMcpCategories();
+  const itemsPerPage = 30;
+  const totalPages = Math.ceil(allCategories.length / itemsPerPage);
+
+  // Validate page number
+  if (currentPage > totalPages || currentPage < 1) {
+    return new Response(null, { status: 404 });
+  }
+
+  // Get categories for current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPageCategories = allCategories.slice(startIndex, endIndex);
+
+  // Load MCP metadata
+  const metadata = await getMcpMetadata();
+
+  if (!metadata) {
+    throw new Error('MCP metadata not found');
+  }
+
+  // Calculate totals
+  const totalServers = metadata.totalRepositories;
+  const totalTools = Object.values(metadata.categories).reduce(
+    (sum, cat) => sum + cat.npmPackages,
+    0
+  );
+  const totalClients = 0;
+
+  // SEO data
+  const title = `Awesome MCP Servers Directory – Discover ${allCategories.length} Model Context Protocol Tools & Categories (Page ${currentPage} of ${totalPages}) | Free DevTools by Hexmos`;
+  const description = `Explore ${totalServers}+ verified MCP servers, tools, and clients used by Claude, Cursor, and Windsurf. Find Model Context Protocol integrations for your AI apps — free, open source, and easy to use.`;
+  const keywords = [
+    'MCP',
+    'Model Context Protocol',
+    'MCP servers',
+    'MCP tools',
+    'MCP clients',
+    'AI tools',
+    'developer tools',
+    'open source',
+    'repositories',
+    'directory',
+    'pagination',
+  ];
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'MCP Directory', href: '/freedevtools/mcp/1/' },
+  ];
+
+  paginationData = {
+    currentPage,
+    totalPages,
+    totalCategories: allCategories.length,
+    categories: currentPageCategories,
+    totalServers,
+    totalTools,
+    totalClients,
+    breadcrumbItems,
+    title,
+    description,
+    keywords,
+  };
+} else {
+  // Validate category exists
+  const allCategoryIds = await getAllMcpCategoryIds();
+  if (!allCategoryIds.includes(category)) {
+    return new Response(null, { status: 404 });
+  }
+
+  // Redirect to the first page
+  shouldRedirect = true;
+  redirectUrl = `/freedevtools/mcp/${category}/1/`;
+}
+
+if (shouldRedirect) {
+  return Astro.redirect(redirectUrl, 301);
+}
 ---
+
+{paginationData ? (
+  <BaseLayout
+    name="MCP Directory"
+    title={paginationData.title}
+    path="/freedevtools/mcp/1/"
+    description={paginationData.description}
+    canonical={`https://hexmos.com/freedevtools/mcp/${paginationData.currentPage === 1 ? '' : paginationData.currentPage + '/'}`}
+    keywords={paginationData.keywords}
+    ogImage="https://hexmos.com/freedevtools/tool-banners/mcp-directory-banner.png"
+    twitterImage="https://hexmos.com/freedevtools/tool-banners/mcp-directory-banner.png"
+    datePublished="2025-01-30"
+    softwareVersion="1.0.0"
+    features={[
+      `Browse ${paginationData.totalCategories} MCP categories`,
+      `Page ${paginationData.currentPage} of ${paginationData.totalPages}`,
+      'Filter by category and license',
+      'Search and sort functionality',
+    ]}
+  >
+    <Mcp
+      serversCount={paginationData.totalServers}
+      toolsCount={paginationData.totalTools}
+      clientsCount={paginationData.totalClients}
+      categoriesCount={paginationData.totalCategories}
+      categories={paginationData.categories}
+      breadcrumbItems={paginationData.breadcrumbItems}
+      currentPage={paginationData.currentPage}
+      lastPage={paginationData.totalPages}
+      totalPages={paginationData.totalPages}
+      pageUrl={paginationData.currentPage === 1 ? '/freedevtools/mcp/1/' : `/freedevtools/mcp/${paginationData.currentPage}/`}
+    />
+  </BaseLayout>
+) : null}
