@@ -314,5 +314,12 @@ def main() -> None:
         else:
             print("Total pages in DB: 0")
 
+        # Verify schema
+        print("\nVerifying schema for 'url_lookup'...")
+        cur.execute("PRAGMA table_info(url_lookup)")
+        columns = cur.fetchall()
+        for col in columns:
+            print(col)
+
 if __name__ == "__main__":
     main()

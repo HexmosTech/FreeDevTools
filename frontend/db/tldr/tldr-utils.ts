@@ -2,11 +2,11 @@ import crypto from 'crypto';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 import type {
-  Cluster,
-  Overview,
-  Page,
-  RawClusterRow,
-  RawPageRow,
+    Cluster,
+    Overview,
+    Page,
+    RawClusterRow,
+    RawPageRow,
 } from './tldr-schema';
 
 // Connection pool for parallel queries
@@ -49,9 +49,10 @@ function initDbConnection(): Promise<sqlite3.Database> {
         Promise.all([
           runPragma(db, 'journal_mode = WAL'), // Enable WAL for concurrent reads
           runPragma(db, 'cache_size = -64000'), // 64MB cache (negative = KB, so -64000 = 64MB)
-          runPragma(db, 'mmap_size = 524288000'), // 500MB memory-mapped I/O
+          runPragma(db, 'mmap_size = 268435456'), // 256MB memory-mapped I/O
           runPragma(db, 'temp_store = MEMORY'), // Use memory for temp tables
           runPragma(db, 'read_uncommitted = ON'), // Skip locking for reads
+          runPragma(db, 'query_only = ON'), // Read-only mode
           runPragma(db, 'page_size = 4096'), // Ensure optimal page size
         ])
           .then(() => {
