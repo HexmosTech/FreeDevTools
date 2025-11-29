@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import crypto from 'crypto';
 import type {
   Category,
   ManPage,
@@ -15,7 +16,7 @@ import type {
 let dbInstance: any = null;
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/all_dbs/man-pages-db.db');
+  return path.resolve(process.cwd(), 'db/all_dbs/man-pages-new-db-1.db');
 }
 
 export function getDb() {
@@ -78,7 +79,7 @@ export function getCategories(): Category[] {
 export function getSubCategories(): SubCategory[] {
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT name, count, description, 
+    SELECT hash_id, main_category, name, count, description, 
            json(keywords) as keywords, path
     FROM sub_category 
     ORDER BY name
@@ -112,43 +113,35 @@ export function getSubCategoriesByMainCategory(
   mainCategory: string
 ): SubCategory[] {
   const db = getDb();
-  // Query directly from man_pages table to get all subcategories for this main category
-  // This ensures we get all subcategories that exist in man_pages, even if they're not in sub_category table
   const stmt = db.prepare(`
-    SELECT 
-      sub_category as name,
-      COUNT(*) as count,
-      'Subcategory for ' || sub_category as description,
-      json_array(sub_category) as keywords,
-      '/' || sub_category as path
-    FROM man_pages 
+    SELECT hash_id, main_category, name, count, description, 
+           json(keywords) as keywords, path
+    FROM sub_category 
     WHERE main_category = ?
-    GROUP BY sub_category
-    ORDER BY sub_category
+    ORDER BY name
   `);
 
-  const results = stmt.all(mainCategory) as Array<{
-    name: string;
-    count: number;
-    description: string;
-    keywords: string;
-    path: string;
-  }>;
-
+  const results = stmt.all(mainCategory) as RawSubCategoryRow[];
   return results.map((row) => ({
-    name: row.name,
-    count: row.count,
-    description: row.description,
+    ...row,
     keywords: JSON.parse(row.keywords || '[]'),
-    path: row.path,
   })) as SubCategory[];
+}
+
+
+
+// Helper to generate hash ID
+function hashUrlToKey(mainCategory: string, subCategory: string, slug: string): bigint {
+  const combined = `${mainCategory}${subCategory}${slug}`;
+  const hash = crypto.createHash('sha256').update(combined).digest();
+  return hash.readBigInt64BE(0);
 }
 
 // Get man pages by category
 export function getManPagesByCategory(category: string): ManPage[] {
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT id, main_category, sub_category, title, slug, filename, 
+    SELECT hash_id, main_category, sub_category, title, slug, filename, 
            json(content) as content
     FROM man_pages 
     WHERE main_category = ?
@@ -169,7 +162,7 @@ export function getManPagesBySubcategory(
 ): ManPage[] {
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT id, main_category, sub_category, title, slug, filename, 
+    SELECT hash_id, main_category, sub_category, title, slug, filename, 
            json(content) as content
     FROM man_pages 
     WHERE main_category = ? AND sub_category = ?
@@ -183,17 +176,17 @@ export function getManPagesBySubcategory(
   })) as ManPage[];
 }
 
-// Get single man page by ID
-export function getManPageById(id: string | number): ManPage | null {
+// Get single man page by Hash ID
+export function getManPageByHashId(hashId: bigint | string): ManPage | null {
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT id, main_category, sub_category, title, slug, filename, 
+    SELECT hash_id, main_category, sub_category, title, slug, filename, 
            json(content) as content
     FROM man_pages 
-    WHERE id = ?
+    WHERE hash_id = ?
   `);
 
-  const result = stmt.get(id) as RawManPageRow | undefined;
+  const result = stmt.get(hashId.toString()) as RawManPageRow | undefined;
   if (!result) return null;
 
   return {
@@ -206,12 +199,12 @@ export function getManPageById(id: string | number): ManPage | null {
 export function generateManPageStaticPaths() {
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT id, main_category, sub_category 
+    SELECT hash_id, main_category, sub_category 
     FROM man_pages
   `);
 
   const rows = stmt.all() as Array<{
-    id: number;
+    hash_id: bigint;
     main_category: string;
     sub_category: string;
   }>;
@@ -220,7 +213,7 @@ export function generateManPageStaticPaths() {
     params: {
       category: row.main_category,
       subcategory: row.sub_category,
-      page: row.id.toString(),
+      page: row.hash_id.toString(),
     },
   }));
 }
@@ -246,8 +239,8 @@ export function generateCategoryStaticPaths() {
 export function generateSubcategoryStaticPaths() {
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT DISTINCT mp.main_category, mp.sub_category 
-    FROM man_pages mp
+    SELECT main_category, name as sub_category 
+    FROM sub_category
   `);
 
   const rows = stmt.all() as Array<{
@@ -269,20 +262,21 @@ export function getManPageByPath(
   subcategory: string,
   filename: string
 ): ManPage | null {
+  // Try to find by filename first
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT id, main_category, sub_category, title, filename, 
+    SELECT hash_id, main_category, sub_category, title, filename, 
            json(content) as content
     FROM man_pages 
-    WHERE main_category = ? AND sub_category = ? AND (filename = ? OR id = ?)
+    WHERE main_category = ? AND sub_category = ? AND filename = ?
   `);
 
   const result = stmt.get(
     category,
     subcategory,
-    filename,
-    parseInt(filename) || 0
+    filename
   ) as RawManPageRow | undefined;
+
   if (!result) return null;
 
   return {
@@ -298,14 +292,18 @@ export function getManPageByCommandName(
   commandName: string
 ): ManPage | null {
   const db = getDb();
+
+  // Use hash lookup for O(1) performance
+  const hashId = hashUrlToKey(category, subcategory, commandName);
+
   const stmt = db.prepare(`
-    SELECT id, main_category, sub_category, title, slug, filename, 
+    SELECT hash_id, main_category, sub_category, title, slug, filename, 
            json(content) as content
     FROM man_pages 
-    WHERE main_category = ? AND sub_category = ? AND slug = ?
+    WHERE hash_id = ?
   `);
 
-  const result = stmt.get(category, subcategory, commandName) as
+  const result = stmt.get(hashId.toString()) as
     | RawManPageRow
     | undefined;
   if (!result) return null;
@@ -360,6 +358,8 @@ export function generateCommandStaticPaths(): Array<{
   return paths;
 }
 
+
+
 // Efficient paginated queries for better performance
 
 export function getSubCategoriesCountByMainCategory(
@@ -367,8 +367,8 @@ export function getSubCategoriesCountByMainCategory(
 ): number {
   const db = getDb();
   const stmt = db.prepare(`
-    SELECT COUNT(DISTINCT sub_category) as count
-    FROM man_pages 
+    SELECT COUNT(*) as count
+    FROM sub_category 
     WHERE main_category = ?
   `);
 
@@ -387,20 +387,19 @@ export function getSubCategoriesByMainCategoryPaginated(
   const offsetInt = Math.floor(offset);
 
   const stmt = db.prepare(`
-    SELECT 
-      sub_category as name,
-      COUNT(*) as count,
-      'Subcategory for ' || sub_category as description,
-      json_array(sub_category) as keywords,
-      '/' || sub_category as path
-    FROM man_pages 
+    SELECT hash_id, main_category, name, count, description, 
+           json(keywords) as keywords, path
+    FROM sub_category 
     WHERE main_category = ?
-    GROUP BY sub_category
-    ORDER BY sub_category
+    ORDER BY name
     LIMIT ? OFFSET ?
   `);
 
-  return stmt.all(mainCategory, limitInt, offsetInt) as SubCategory[];
+  const results = stmt.all(mainCategory, limitInt, offsetInt) as RawSubCategoryRow[];
+  return results.map((row) => ({
+    ...row,
+    keywords: JSON.parse(row.keywords || '[]'),
+  })) as SubCategory[];
 }
 
 export function getTotalManPagesCountByMainCategory(
@@ -429,7 +428,7 @@ export function getManPagesBySubcategoryPaginated(
   const offsetInt = Math.floor(offset);
 
   const stmt = db.prepare(`
-    SELECT id, main_category, sub_category, title, slug, filename, content
+    SELECT hash_id, main_category, sub_category, title, slug, filename, content
     FROM man_pages 
     WHERE main_category = ? AND sub_category = ?
     ORDER BY title
@@ -442,7 +441,7 @@ export function getManPagesBySubcategoryPaginated(
     limitInt,
     offsetInt
   ) as Array<{
-    id: number;
+    hash_id: bigint;
     main_category: string;
     sub_category: string;
     title: string;
@@ -452,7 +451,7 @@ export function getManPagesBySubcategoryPaginated(
   }>;
 
   return rows.map((row) => ({
-    id: row.id,
+    hash_id: row.hash_id,
     main_category: row.main_category,
     sub_category: row.sub_category,
     title: row.title,

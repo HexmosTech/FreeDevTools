@@ -15,7 +15,7 @@ import type {
  */
 export function parseManPageRow(row: RawManPageRow): ManPage {
   return {
-    id: row.id,
+    hash_id: row.hash_id,
     main_category: row.main_category,
     sub_category: row.sub_category,
     title: row.title,
@@ -43,6 +43,8 @@ export function parseCategoryRow(row: RawCategoryRow): Category {
  */
 export function parseSubCategoryRow(row: RawSubCategoryRow): SubCategory {
   return {
+    hash_id: row.hash_id,
+    main_category: row.main_category,
     name: row.name,
     count: row.count,
     description: row.description,
@@ -64,8 +66,9 @@ export function parseOverviewRow(row: RawOverviewRow): Overview {
 /**
  * Convert a ManPage object to a format suitable for database insertion
  */
-export function serializeManPageForDb(manPage: Omit<ManPage, 'id'>): Omit<RawManPageRow, 'id'> {
+export function serializeManPageForDb(manPage: ManPage): RawManPageRow {
   return {
+    hash_id: manPage.hash_id,
     main_category: manPage.main_category,
     sub_category: manPage.sub_category,
     title: manPage.title,
@@ -93,6 +96,8 @@ export function serializeCategoryForDb(category: Category): RawCategoryRow {
  */
 export function serializeSubCategoryForDb(subCategory: SubCategory): RawSubCategoryRow {
   return {
+    hash_id: subCategory.hash_id,
+    main_category: subCategory.main_category,
     name: subCategory.name,
     count: subCategory.count,
     description: subCategory.description,
@@ -134,7 +139,7 @@ export function stripHtmlTags(html: string): string {
  */
 export function searchInContent(content: ManPageContent, query: string): boolean {
   const lowerQuery = query.toLowerCase();
-  
+
   for (const section of Object.values(content)) {
     if (section) {
       const plainText = stripHtmlTags(section).toLowerCase();
@@ -143,6 +148,6 @@ export function searchInContent(content: ManPageContent, query: string): boolean
       }
     }
   }
-  
+
   return false;
 }
