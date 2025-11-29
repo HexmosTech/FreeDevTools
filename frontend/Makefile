@@ -171,7 +171,7 @@ pm2logs:
 	@python3 scripts/pm2_logs.py "$(LABEL)"
 
 
-test-svg-req:
+test-svg-req-pm2:
 	clear
 	# npm run build
 	clear
@@ -203,4 +203,32 @@ test-svg-req:
 	fi
 	@echo ""
 	@echo "⬇️  Showing PM2 logs -----------"
-	make pm2logs LABEL=test-svg-req
+	make pm2logs LABEL=test-svg-req-pm2
+
+test-svg-req-pd:
+	clear
+	# npm run build
+	clear
+	rm -rf logs/*
+	pmdaemon delete all --force 2>/dev/null || true
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	pmdaemon --config ecosystem.json start
+	@sleep 2
+	pmdaemon list
+	./pin-pd.sh
+	./verifypin-pd.sh
+	@echo "⬇️  Server up -----------"
+	@sleep 2
+	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
+	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	@sleep 2
+	@echo "⬇️  Requesting SVG icon -----------"
+	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	@sleep 2
+	@echo "⬇️  Showing logs -----------"
+	@pmdaemon logs astro-4321 --lines 50
+	@pmdaemon logs astro-4322 --lines 50
