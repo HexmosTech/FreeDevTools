@@ -2,290 +2,440 @@
 import {
   getClusterByName,
   getClusters,
+  getClustersWithPreviewIcons,
   getIconsByCluster,
+  getTotalIcons,
 } from 'db/png_icons/png-icons-utils';
 import AdBanner from '../../components/banner/AdBanner.astro';
 import CreditsButton from '../../components/buttons/CreditsButton';
 import ToolContainer from '../../components/tool/ToolContainer';
 import ToolHead from '../../components/tool/ToolHead';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PngIcons from './_PngIcons.astro';
 
-export async function getStaticPaths() {
-  const clusters = getClusters();
+export const prerender = false;
 
-  // Use cluster names for URLs (these match cluster_svg.json cluster.name)
-  const categories = clusters.map((cluster) => cluster.name);
-
-  return categories.map((category) => ({
-    params: { category },
-    props: { category },
-  }));
-}
-
+// Track request start time
+const requestStartTime = Date.now();
 const { category } = Astro.params;
+const urlPath = Astro.url.pathname;
+console.log(`[PNG_ICONS] Request reached server: ${urlPath} at ${new Date().toISOString()}`);
 
-// Get cluster data from database
-const clusterData = getClusterByName(category);
-
-if (!clusterData) {
-  return Astro.redirect('/freedevtools/png_icons/');
+if (!category) {
+  return new Response(null, { status: 404 });
 }
 
-async function getCategoryIcons() {
-  // Get icons from SQLite database
-  // The category parameter is the cluster display name (from cluster.name in cluster_svg.json)
-  // Look up cluster by display name to get the source_folder (actual folder name used in icon table)
-  // The icon table uses cluster key (folder name = source_folder), not display name
-  // Use source_folder to query icons
-  // clusterData is guaranteed to exist due to check above
-  const dbIcons = getIconsByCluster(clusterData!.source_folder || category!);
+let paginationData: any = null;
+let categoryData: any = null;
 
-  const icons = dbIcons.map((icon) => {
-    const iconName = icon.name.replace(/\.(png|svg)$/i, '');
+// If category is numeric, this is actually a pagination route
+// Handle it directly (workaround for route priority)
+if (/^\d+$/.test(category)) {
+  const currentPage = parseInt(category, 10);
 
+  // Redirect /png_icons/1 to /png_icons
+  if (currentPage === 1) {
+    return Astro.redirect('/freedevtools/png_icons/');
+  }
+
+  const itemsPerPage = 30;
+  
+  // Get total count of clusters for pagination (single query)
+  const totalClustersQueryStartTime = Date.now();
+  const allClusters = getClusters();
+  const totalCategories = allClusters.length;
+  const totalClustersQueryEndTime = Date.now();
+  console.log(`[PNG_ICONS] getClusters() for count took ${totalClustersQueryEndTime - totalClustersQueryStartTime}ms`);
+  
+  const totalPages = Math.ceil(totalCategories / itemsPerPage);
+
+  // Validate page number
+  if (currentPage > totalPages || currentPage < 1) {
+    return new Response(null, { status: 404 });
+  }
+
+  // Get paginated clusters with preview icons in ONE optimized query
+  const categoriesWithIcons = getClustersWithPreviewIcons(currentPage, itemsPerPage, 6);
+  
+  // Transform to match expected format
+  const currentPageCategories = categoriesWithIcons.map((cluster) => {
     return {
-      name: iconName,
-      description: icon.description || `Free ${iconName} icon`,
-      category: category,
-      tags: icon.tags || [],
-      author: 'Free DevTools',
-      license: 'MIT',
-      url: `/freedevtools/png_icons/${category}/${iconName}/`,
-      base64: icon.base64,
-      img_alt: icon.img_alt,
+      id: cluster.source_folder || cluster.name,
+      name: cluster.name,
+      description: cluster.description,
+      icon: `/freedevtools/png_icons/${cluster.name}/`,
+      iconCount: cluster.count,
+      url: `/freedevtools/png_icons/${cluster.name}/`,
+      keywords: cluster.keywords,
+      features: cluster.tags,
+      previewIcons: cluster.previewIcons,
     };
   });
 
-  return icons;
+  const totalIconsQueryStartTime = Date.now();
+  const totalPngIcons = getTotalIcons();
+  const totalIconsQueryEndTime = Date.now();
+  console.log(`[PNG_ICONS] getTotalIcons() took ${totalIconsQueryEndTime - totalIconsQueryStartTime}ms`);
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'PNG Icons', href: '/freedevtools/png_icons/' },
+    { label: `Page ${currentPage}` },
+  ];
+
+  // SEO data
+  const seoTitle = `Free PNG Icons - Page ${currentPage} | Online Free DevTools by Hexmos | No Registration Required`;
+  const seoDescription = `Page ${currentPage} of ${totalPages} in our PNG icon archive. Get free vector icons with fast, no-login downloads.`;
+  const canonical = `https://hexmos.com/freedevtools/png_icons/${currentPage}/`;
+
+  const paginatedKeywords = [
+    'png icons',
+    'vector graphics',
+    'free icons',
+    'download icons',
+    'edit icons',
+    `page ${currentPage}`,
+    'pagination',
+    'icon collection',
+    'vector graphics library',
+  ];
+
+    // Log total roundtrip time for pagination
+    const requestEndTime = Date.now();
+    const totalRoundtripTime = requestEndTime - requestStartTime;
+    console.log(`[PNG_ICONS] Total roundtrip time for ${urlPath}: ${totalRoundtripTime}ms`);
+
+  paginationData = {
+    currentPage,
+    totalPages,
+    totalCategories,
+    totalPngIcons,
+    categories: currentPageCategories,
+    breadcrumbItems,
+    seoTitle,
+    seoDescription,
+    canonical,
+    paginatedKeywords,
+    itemsPerPage,
+  };
+} else {
+  // Redirect to add trailing slash if missing
+  if (!urlPath.endsWith('/')) {
+    return Astro.redirect(`${urlPath}/`, 301);
+  }
+
+  // Get cluster data from database
+  const clusterQueryStartTime = Date.now();
+  const clusterData = getClusterByName(category);
+  const clusterQueryEndTime = Date.now();
+  console.log(`[PNG_ICONS] getClusterByName("${category}") took ${clusterQueryEndTime - clusterQueryStartTime}ms`);
+
+  if (!clusterData) {
+    return new Response(null, { status: 404 });
+  }
+
+  async function getCategoryIcons() {
+    const iconQueryStartTime = Date.now();
+    const dbIcons = getIconsByCluster(clusterData!.source_folder || category!);
+    const iconQueryEndTime = Date.now();
+    console.log(`[PNG_ICONS] getIconsByCluster("${clusterData!.source_folder || category!}") took ${iconQueryEndTime - iconQueryStartTime}ms`);
+
+    const icons = dbIcons.map((icon) => {
+      const iconName = icon.name.replace(/\.(png|svg)$/i, '');
+
+      return {
+        name: iconName,
+        description: icon.description || `Free ${iconName} icon`,
+        category: category,
+        tags: icon.tags || [],
+        author: 'Free DevTools',
+        license: 'MIT',
+        url: `/freedevtools/png_icons/${category}/${iconName}/`,
+        base64: icon.base64,
+        img_alt: icon.img_alt,
+      };
+    });
+
+    return icons;
+  }
+
+  const categoryIcons = await getCategoryIcons();
+  const totalIcons = categoryIcons.length;
+  
+  // Log total roundtrip time
+  const requestEndTime = Date.now();
+  const totalRoundtripTime = requestEndTime - requestStartTime;
+  console.log(`[PNG_ICONS] Total roundtrip time for ${urlPath}: ${totalRoundtripTime}ms`);
+
+  // Use database content for about and why_choose_us
+  const aboutContent =
+    clusterData.about ||
+    `Our ${category} PNG icon collection provides high-quality raster graphics optimized for digital use. Each icon features a transparent background and is optimized for web performance. Whether you're building websites, apps, or presentations, these ${category} PNG icons are ready to use right away.`;
+
+  const whyChooseUsContent =
+    clusterData.why_choose_us && clusterData.why_choose_us.length > 0
+      ? clusterData.why_choose_us
+      : [
+          'Transparent backgrounds for easy integration',
+          'High-quality raster format perfect for web use',
+          'No conversion needed - ready to use immediately',
+          'Compatible with all design software and browsers',
+        ];
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'PNG Icons', href: '/freedevtools/png_icons/' },
+    { label: category },
+  ];
+
+  categoryData = {
+    category,
+    clusterData,
+    categoryIcons,
+    totalIcons,
+    aboutContent,
+    whyChooseUsContent,
+    breadcrumbItems,
+  };
 }
-
-const categoryIcons = await getCategoryIcons();
-const totalIcons = categoryIcons.length;
-
-// Use database content for about and why_choose_us
-// Fallback to default content if not available in database
-const aboutContent =
-  clusterData.about ||
-  `Our ${category} PNG icon collection provides high-quality raster graphics optimized for digital use. Each icon features a transparent background and is optimized for web performance. Whether you're building websites, apps, or presentations, these ${category} PNG icons are ready to use right away.`;
-
-const whyChooseUsContent =
-  clusterData.why_choose_us && clusterData.why_choose_us.length > 0
-    ? clusterData.why_choose_us
-    : [
-        'Transparent backgrounds for easy integration',
-        'High-quality raster format perfect for web use',
-        'No conversion needed - ready to use immediately',
-        'Compatible with all design software and browsers',
-      ];
-
-// Breadcrumb data
-const breadcrumbItems = [
-  { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'PNG Icons', href: '/freedevtools/png_icons/' },
-  { label: category },
-];
 ---
 
-<BaseLayout
-  name={`${category.charAt(0).toUpperCase() + category.slice(1)} PNG Icons`}
-  path={`/freedevtools/png_icons/${category}`}
-  title={clusterData.title ||
-    `Free ${category} PNG Icons | Online Free DevTools by Hexmos`}
-  description={clusterData.description ||
-    `Browse & download free ${category} PNG icons instantly. ${totalIcons} icons available.`}
-  canonical={`https://hexmos.com/freedevtools/png_icons/${category}/`}
-  showHeader={true}
-  totalItems={totalIcons}
-  category={category}
-  partOf="PNG Icons"
-  partOfUrl="https://hexmos.com/freedevtools/png_icons/"
-  keywords={clusterData.keywords && clusterData.keywords.length > 0
-    ? clusterData.keywords
-    : [
-        category,
-        'png icons',
-        'raster images',
-        'transparent png',
-        'web graphics',
-        'free icons',
-      ]}
->
-  <ToolContainer>
-    <div id={`png-icon-ad-banner-${category}`} class="mb-16 mt-[74px]">
-      <AdBanner />
-    </div>
-    <ToolHead
-      id={`png-icon-tool-head-${category}`}
-      name={clusterData.title.split('|')[0] ||
-        `${category.charAt(0).toUpperCase() + category.slice(1)} PNG Icons Collection`}
-      description={clusterData.description ||
-        `Browse ${totalIcons} ready-to-use ${category} images, instantly downloadable without restrictions`}
-      breadcrumbItems={breadcrumbItems}
+{paginationData ? (
+  <BaseLayout
+    name="PNG Icons"
+    path={`/freedevtools/png_icons/${paginationData.currentPage}/`}
+    title={paginationData.seoTitle}
+    description={paginationData.seoDescription}
+    canonical={paginationData.canonical}
+    showHeader={true}
+    totalItems={paginationData.totalCategories}
+    itemsPerPage={paginationData.itemsPerPage}
+    currentPage={paginationData.currentPage}
+    category="PNG Icons"
+    partOf="Free DevTools"
+    partOfUrl="https://hexmos.com/freedevtools/"
+    keywords={paginationData.paginatedKeywords}
+    features={[
+      'Download',
+      'Edit colors',
+      'Add backgrounds',
+      'Customize',
+      'No registration',
+    ]}
+  >
+    <PngIcons
+      categories={paginationData.categories}
+      currentPage={paginationData.currentPage}
+      totalPages={paginationData.totalPages}
+      totalCategories={paginationData.totalCategories}
+      totalPngIcons={paginationData.totalPngIcons}
+      breadcrumbItems={paginationData.breadcrumbItems}
     />
+  </BaseLayout>
+) : categoryData ? (
+  <BaseLayout
+    name={`${categoryData.category.charAt(0).toUpperCase() + categoryData.category.slice(1)} PNG Icons`}
+    path={`/freedevtools/png_icons/${categoryData.category}`}
+    title={categoryData.clusterData.title ||
+      `Free ${categoryData.category} PNG Icons | Online Free DevTools by Hexmos`}
+    description={categoryData.clusterData.description ||
+      `Browse & download free ${categoryData.category} PNG icons instantly. ${categoryData.totalIcons} icons available.`}
+    canonical={`https://hexmos.com/freedevtools/png_icons/${categoryData.category}/`}
+    showHeader={true}
+    totalItems={categoryData.totalIcons}
+    category={categoryData.category}
+    partOf="PNG Icons"
+    partOfUrl="https://hexmos.com/freedevtools/png_icons/"
+    keywords={categoryData.clusterData.keywords && categoryData.clusterData.keywords.length > 0
+      ? categoryData.clusterData.keywords
+      : [
+          categoryData.category,
+          'png icons',
+          'raster images',
+          'transparent png',
+          'web graphics',
+          'free icons',
+        ]}
+  >
+    <ToolContainer>
+      <div id={`png-icon-ad-banner-${categoryData.category}`} class="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
+      <ToolHead
+        id={`png-icon-tool-head-${categoryData.category}`}
+        name={categoryData.clusterData.title.split('|')[0] ||
+          `${categoryData.category.charAt(0).toUpperCase() + categoryData.category.slice(1)} PNG Icons Collection`}
+        description={categoryData.clusterData.description ||
+          `Browse ${categoryData.totalIcons} ready-to-use ${categoryData.category} images, instantly downloadable without restrictions`}
+        breadcrumbItems={categoryData.breadcrumbItems}
+      />
 
-    <div id={`png-icon-main-section-${category}`} class="min-h-[200px]">
-      <div
-        id={`png-icon-grid-${category}`}
-        class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 mb-8 mt-3"
-      >
-        {
-          categoryIcons.map((icon) => {
-            const iconName = icon.name
-              .replace(/_/g, ' ')
-              .replace(/\.(png|svg)$/i, '')
-              .replace(/\b\w/g, (l: string) => l.toUpperCase());
+      <div id={`png-icon-main-section-${categoryData.category}`} class="min-h-[200px]">
+        <div
+          id={`png-icon-grid-${categoryData.category}`}
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 mb-8 mt-3"
+        >
+          {
+            categoryData.categoryIcons.map((icon) => {
+              const iconName = icon.name
+                .replace(/_/g, ' ')
+                .replace(/\.(png|svg)$/i, '')
+                .replace(/\b\w/g, (l: string) => l.toUpperCase());
 
-            return (
-              <a
-                href={icon.url}
-                class="bg-white rounded-lg p-4 cursor-pointer hover:bg-slate-100 border border-white hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md"
-                title={iconName + ' PNG Icon'}
-              >
-                <div class="flex flex-col items-center text-center">
-                  <div class="w-24 h-24 flex items-center justify-center">
-                    <div
-                      class="w-24 h-24 text-slate-600"
-                      style="display: flex; align-items: center; justify-content: center; overflow: hidden;"
-                    >
-                      <img
-                        src={`data:image/png;base64,${icon.base64}`}
-                        alt={
-                          icon.img_alt ||
-                          `${iconName} PNG icon in ${category} category`
-                        }
-                        class="w-20 h-20 object-contain"
-                        loading="lazy"
-                      />
+              return (
+                <a
+                  href={icon.url}
+                  class="bg-white rounded-lg p-4 cursor-pointer hover:bg-slate-100 border border-white hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md"
+                  title={iconName + ' PNG Icon'}
+                >
+                  <div class="flex flex-col items-center text-center">
+                    <div class="w-24 h-24 flex items-center justify-center">
+                      <div
+                        class="w-24 h-24 text-slate-600"
+                        style="display: flex; align-items: center; justify-content: center; overflow: hidden;"
+                      >
+                        <img
+                          src={`data:image/png;base64,${icon.base64}`}
+                          alt={
+                            icon.img_alt ||
+                            `${iconName} PNG icon in ${categoryData.category} category`
+                          }
+                          class="w-20 h-20 object-contain"
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
-            );
-          })
-        }
+                </a>
+              );
+            })
+          }
+        </div>
       </div>
-    </div>
-    <!-- Practical Application section -->
-    {
-      clusterData.practical_application && (
-        <div
-          id={`png-icon-practical-application-section-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3
-            id={`png-icon-practical-application-section-title-${category}`}
-            class="mb-3"
-          >
-            Practical Application
-          </h3>
-          <p>{clusterData.practical_application}</p>
-        </div>
-      )
-    }
-
-    <!-- Unique informational content about PNG icons -->
-    {
-      aboutContent && (
-        <div
-          id={`png-icon-about-section-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3 id={`png-icon-about-section-title-${category}`} class="mb-3">
-            About {category.charAt(0).toUpperCase() + category.slice(1)} PNG
-            Icons
-          </h3>
-          <p>{aboutContent}</p>
-        </div>
-      )
-    }
-
-    <!-- Why Choose Us section -->
-    {
-      whyChooseUsContent && whyChooseUsContent.length > 0 && (
-        <div
-          id={`png-icon-features-section-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3 id={`png-icon-features-section-title-${category}`} class="mb-3">
-            Why Choose our PNG Icons?
-          </h3>
-          <ul class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300">
-            {whyChooseUsContent.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )
-    }
-
-    <!-- Alternative Terms section -->
-    {
-      clusterData.alternative_terms &&
-        clusterData.alternative_terms.length > 0 && (
+      <!-- Practical Application section -->
+      {
+        categoryData.clusterData.practical_application && (
           <div
-            id={`png-icon-alternative-terms-section-${category}`}
+            id={`png-icon-practical-application-section-${categoryData.category}`}
             class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
           >
             <h3
-              id={`png-icon-alternative-terms-section-title-${category}`}
+              id={`png-icon-practical-application-section-title-${categoryData.category}`}
               class="mb-3"
             >
-              Alternative Terms
+              Practical Application
+            </h3>
+            <p>{categoryData.clusterData.practical_application}</p>
+          </div>
+        )
+      }
+
+      <!-- Unique informational content about PNG icons -->
+      {
+        categoryData.aboutContent && (
+          <div
+            id={`png-icon-about-section-${categoryData.category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3 id={`png-icon-about-section-title-${categoryData.category}`} class="mb-3">
+              About {categoryData.category.charAt(0).toUpperCase() + categoryData.category.slice(1)} PNG
+              Icons
+            </h3>
+            <p>{categoryData.aboutContent}</p>
+          </div>
+        )
+      }
+
+      <!-- Why Choose Us section -->
+      {
+        categoryData.whyChooseUsContent && categoryData.whyChooseUsContent.length > 0 && (
+          <div
+            id={`png-icon-features-section-${categoryData.category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3 id={`png-icon-features-section-title-${categoryData.category}`} class="mb-3">
+              Why Choose our PNG Icons?
+            </h3>
+            <ul class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300">
+              {categoryData.whyChooseUsContent.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <!-- Alternative Terms section -->
+      {
+        categoryData.clusterData.alternative_terms &&
+          categoryData.clusterData.alternative_terms.length > 0 && (
+            <div
+              id={`png-icon-alternative-terms-section-${categoryData.category}`}
+              class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+            >
+              <h3
+                id={`png-icon-alternative-terms-section-title-${categoryData.category}`}
+                class="mb-3"
+              >
+                Alternative Terms
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                {categoryData.clusterData.alternative_terms.map((term) => (
+                  <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
+                    {term}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )
+      }
+
+      <!-- Tags section -->
+      {
+        categoryData.clusterData.tags && categoryData.clusterData.tags.length > 0 && (
+          <div
+            id={`png-icon-tags-section-${categoryData.category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3 id={`png-icon-tags-section-title-${categoryData.category}`} class="mb-3">
+              Tags
             </h3>
             <div class="flex flex-wrap gap-2">
-              {clusterData.alternative_terms.map((term) => (
-                <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
-                  {term}
-                </span>
+              {categoryData.clusterData.tags.map((tag) => (
+                <p class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
+                  {tag}
+                </p>
               ))}
             </div>
           </div>
         )
-    }
-
-    <!-- Tags section -->
-    {
-      clusterData.tags && clusterData.tags.length > 0 && (
-        <div
-          id={`png-icon-tags-section-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3 id={`png-icon-tags-section-title-${category}`} class="mb-3">
-            Tags
-          </h3>
-          <div class="flex flex-wrap gap-2">
-            {clusterData.tags.map((tag) => (
-              <p class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
-                {tag}
-              </p>
-            ))}
-          </div>
-        </div>
-      )
-    }
-    <!-- Credits Section -->
-    <div
-      id={`png-icon-credits-section-${category}`}
-      class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
-    >
+      }
+      <!-- Credits Section -->
       <div
-        id={`png-icon-credits-content-${category}`}
-        class="flex flex-wrap gap-4"
+        id={`png-icon-credits-section-${categoryData.category}`}
+        class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
       >
-        <a
-          href="/freedevtools/png_icons/"
-          class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+        <div
+          id={`png-icon-credits-content-${categoryData.category}`}
+          class="flex flex-wrap gap-4"
         >
-          ← Back to PNG Icons
-        </a>
-        <CreditsButton
-          href="/freedevtools/png_icons/credits/"
-          id={`png-icon-credits-button-${category}`}
-        />
+          <a
+            href="/freedevtools/png_icons/"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            ← Back to PNG Icons
+          </a>
+          <CreditsButton
+            href="/freedevtools/png_icons/credits/"
+            id={`png-icon-credits-button-${categoryData.category}`}
+          />
+        </div>
       </div>
-    </div>
-  </ToolContainer>
-</BaseLayout>
+    </ToolContainer>
+  </BaseLayout>
+) : null}
 
 <style>
   .icon-preview svg {

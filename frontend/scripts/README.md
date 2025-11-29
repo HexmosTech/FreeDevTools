@@ -114,8 +114,3 @@ This local build system mirrors the GitHub Actions workflow logic:
 3. Test the build output with `npm run preview`
 4. Deploy or commit changes
 5. For full site testing, run `npm run build` occasionally
-
-
-## Local to Prod Build Procedure
-- run `./local-prod-build.sh`
-- Make sure the env secrets are present

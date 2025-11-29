@@ -1,5 +1,5 @@
-import { getAllDiscordEmojis } from "@/lib/emojis";
 import type { APIRoute } from "astro";
+import { getSitemapDiscordEmojis } from "db/emojis/emojis-utils";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
@@ -24,8 +24,8 @@ export const GET: APIRoute = async ({ site }) => {
     )
   );
 
-  // Fetch Discord emojis
-  const emojis = getAllDiscordEmojis();
+  // Fetch Discord emojis (lightweight - only slug and category)
+  const emojis = getSitemapDiscordEmojis();
   const urls: string[] = [];
 
   // Landing Page
@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ site }) => {
   const categories = new Set<string>();
 
   for (const e of emojis) {
-    const cat = (e as any).category as string | undefined;
+    const cat = e.category;
     if (!cat) continue;
 
     const slug = cat.toLowerCase().replace(/[^a-z0-9]+/g, "-");

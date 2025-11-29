@@ -33,6 +33,7 @@ export interface Cluster {
 export interface Overview {
   id: number;
   total_count: number;
+  name?: string;
 }
 
 // Raw database row types (before JSON parsing)
@@ -65,4 +66,48 @@ export interface RawClusterRow {
   alternative_terms: string; // JSON string
   about: string;
   why_choose_us: string; // JSON string
+}
+
+// Preview icon structure (used in cluster_preview_precomputed)
+export interface PreviewIcon {
+  id: number;
+  name: string;
+  base64: string;
+  img_alt: string;
+}
+
+// Materialized cluster table with precomputed preview icons
+export interface ClusterPreviewPrecomputed {
+  id: number;
+  name: string;
+  source_folder: string;
+  path: string;
+  count: number;
+  keywords: string[]; // Parsed from JSON
+  tags: string[]; // Parsed from JSON
+  title: string;
+  description: string;
+  practical_application: string;
+  alternative_terms: string[]; // Parsed from JSON
+  about: string;
+  why_choose_us: string[]; // Parsed from JSON
+  preview_icons: PreviewIcon[]; // Parsed from JSON
+}
+
+// Raw database row for cluster_preview_precomputed (before JSON parsing)
+export interface RawClusterPreviewPrecomputedRow {
+  id: number;
+  name: string;
+  source_folder: string;
+  path: string;
+  count: number;
+  keywords_json: string; // JSON string
+  tags_json: string; // JSON string
+  title: string;
+  description: string;
+  practical_application: string;
+  alternative_terms_json: string; // JSON string
+  about: string;
+  why_choose_us_json: string; // JSON string
+  preview_icons_json: string; // JSON string
 }

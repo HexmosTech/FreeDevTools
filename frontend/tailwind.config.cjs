@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-import typography from '@tailwindcss/typography';
+const typography = require('@tailwindcss/typography');
 
 module.exports = {
   mode: 'jit',
@@ -75,3 +75,4 @@ module.exports = {
     },
   },
 };
+
