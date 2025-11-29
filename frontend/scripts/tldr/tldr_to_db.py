@@ -183,9 +183,9 @@ def parse_tldr_file(file_path: Path) -> Optional[Dict[str, Any]]:
     description = " ".join(description_lines)
     
     # Calculate hash
-    # Use platform (category) from frontmatter as cluster if available
-    # Otherwise fallback to directory name
-    cluster = platform if platform else file_path.parent.name
+    # Use directory name as cluster (e.g., 'adb', 'common')
+    # This ensures consistent grouping by physical location
+    cluster = file_path.parent.name
     name = file_path.stem
     
     # Use cluster and name for hashing to match URL structure
