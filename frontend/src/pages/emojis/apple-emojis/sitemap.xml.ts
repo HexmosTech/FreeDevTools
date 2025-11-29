@@ -1,4 +1,4 @@
-import { getAllAppleEmojis } from "@/lib/emojis";
+import { getSitemapAppleEmojis } from "db/emojis/emojis-utils";
 import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {
@@ -24,8 +24,8 @@ export const GET: APIRoute = async ({ site }) => {
     )
   );
 
-  // Fetch Apple emojis
-  const emojis = getAllAppleEmojis();
+  // Fetch Apple emojis (lightweight - only slug and category)
+  const emojis = getSitemapAppleEmojis();
   const urls: string[] = [];
 
   // Landing Page
@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ site }) => {
   const categories = new Set<string>();
 
   for (const e of emojis) {
-    const cat = (e as any).category as string | undefined;
+    const cat = e.category;
     if (!cat) continue;
 
     const slug = cat.toLowerCase().replace(/[^a-z0-9]+/g, "-");

@@ -5,37 +5,76 @@ import Pagination from '../../../components/PaginationComponent.astro';
 import CreditsButton from '../../../components/buttons/CreditsButton';
 import ToolContainer from '../../../components/tool/ToolContainer';
 import ToolHead from '../../../components/tool/ToolHead';
-import { getEmojisByCategory, getEmojiCategories, fetchLatestAppleImage } from '../../../lib/emojis';
+import { getEmojiCategories, getEmojiBySlug, getAppleEmojiBySlug, getEmojisByCategoryWithAppleImagesPaginated } from 'db/emojis/emojis-utils';
+import VendorEmojiPage from '@/components/VendorEmojiPage';
+import { discord_vendor_excluded_emojis } from '@/lib/emojis-consts';
 
-// Generate static paths
-export async function getStaticPaths() {
-  const categories = getEmojiCategories();
-  return categories
-    .filter((cat) => cat && cat.trim() !== '')
-    .map((cat) => ({
-      params: { category: cat.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
-      props: { category: cat },
-    }));
-}
+export const prerender = false;
 
 const { category: categorySlug } = Astro.params;
-const categoryName =
-  (Astro.props?.category as string) ||
-  categorySlug!.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+const urlPath = Astro.url.pathname;
 
-// const emojis = await getEmojisByCategory(categoryName, "apple");
-const emojis = (await getEmojisByCategory(categoryName, "apple"))
-  .map(e => ({
-    ...e,
-    latestAppleImage: fetchLatestAppleImage(e.slug)
-  }));
-
-if (emojis.length === 0) {
-  return Astro.redirect('/freedevtools/emojis/apple-emojis/');
+// Handle trailing slash redirect FIRST (before any logic)
+if (!urlPath.endsWith('/')) {
+  return Astro.redirect(`${urlPath}/`, 301);
 }
 
-// --- Apple-specific category descriptions ---
-export const appleCategoryDescriptions = {
+// Get all categories to validate
+const allCategories = getEmojiCategories();
+const categorySlugs = allCategories.map(cat => cat.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+
+// Check if category is numeric (pagination route) - 404 since there's no pagination on apple-emojis index
+if (categorySlug && /^\d+$/.test(categorySlug)) {
+  return new Response(null, { status: 404 });
+}
+
+let emojiData: any = null;
+let categoryData: any = null;
+
+// Check if this is actually an emoji slug (not a category)
+// Since [category].astro matches first, we need to handle emoji slugs here
+const emoji = getEmojiBySlug(categorySlug!);
+if (emoji && !categorySlugs.includes(categorySlug!)) {
+  // This is an emoji slug, not a category - handle it here
+  const appleEmoji = getAppleEmojiBySlug(categorySlug!);
+  
+  if (!appleEmoji) {
+    return new Response(null, { status: 404 });
+  }
+  
+  const cleanDescription = (text?: string) => {
+    if (!text) return '';
+    return text
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/[?]{2,}/g, '')
+      .trim();
+  };
+  
+  const cleanedDescription = cleanDescription(appleEmoji.apple_vendor_description || appleEmoji.description);
+  
+  emojiData = {
+    emoji: appleEmoji,
+    cleanedDescription,
+  };
+} else {
+  // Validate category exists
+  if (!categorySlug || !categorySlugs.includes(categorySlug)) {
+    return new Response(null, { status: 404 });
+  }
+
+  // Find the actual category name from the slug
+  const categoryName = allCategories.find(
+    cat => cat.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug
+  ) || categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+
+  // --- Apple-specific category descriptions ---
+  const appleCategoryDescriptions: Record<string, string> = {
   "Smileys & Emotion": "Apple's Smileys feature glossy shading and expressive faces that set the tone for iMessage and social platforms. The distinctive rounded eyes and vibrant gradients are signature Apple touches.",
   "People & Body": "Apple leads on inclusivity—supporting diverse skin tones, gender options, and custom Memoji. People and gestures have soft edges and subtle shadows, making them feel inviting and lively on iOS.",
   "Animals & Nature": "Animals in Apple's emoji set are playful and detailed, often with friendly eyes and vivid colors. Nature motifs leverage semi-realistic illustrations that feel right at home in iOS dark and light mode.",
@@ -45,57 +84,132 @@ export const appleCategoryDescriptions = {
   "Objects": "Apple renders everyday objects with photorealistic vibes—from high-res tech gadgets to lifelike accessories—ensuring each emoji looks detailed and familiar across Apple devices.",
   "Symbols": "Apple's symbols blend clarity with style. Glassy gradients, subtle depth, and clean shapes set apart icons like hearts, arrows, and warning signs from standard flat glyphs.",
   "Flags": "Apple flags maintain accurate proportions and vibrant colors for easy recognition, with an extra emphasis on clarity and accessibility for global users.",
-  "Other": "Apple's unique emojis in the 'Other' category often represent novelty, tech, and recent trends, all interpreted with its signature visual polish and device-optimized detail."
-};
+    "Other": "Apple's unique emojis in the 'Other' category often represent novelty, tech, and recent trends, all interpreted with its signature visual polish and device-optimized detail."
+  };
 
-// --- Pagination setup ---
-const totalEmojis = emojis.length;
-const itemsPerPage = 36;
-const currentPage = 1;
-const totalPages = Math.ceil(totalEmojis / itemsPerPage);
-const startIndex = (currentPage - 1) * itemsPerPage;
-const endIndex = startIndex + itemsPerPage;
-const paginatedEmojis = emojis.slice(startIndex, endIndex);
+  // --- Pagination setup (optimized query) ---
+  const itemsPerPage = 36;
+  const currentPage = 1;
+  const { emojis: paginatedEmojis, total: totalEmojis } = getEmojisByCategoryWithAppleImagesPaginated(categoryName, currentPage, itemsPerPage);
+  const totalPages = Math.ceil(totalEmojis / itemsPerPage);
 
-// --- Breadcrumbs ---
-const breadcrumbItems = [
-  { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'Emojis', href: '/freedevtools/emojis/' },
-  { label: 'Apple Emojis', href: '/freedevtools/emojis/apple-emojis/' },
-  { label: categoryName, href: `/freedevtools/emojis/apple-emojis/${categorySlug}/` }
-];
+  if (paginatedEmojis.length === 0) {
+    return Astro.redirect('/freedevtools/emojis/apple-emojis/');
+  }
+
+  // --- Breadcrumbs ---
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'Emojis', href: '/freedevtools/emojis/' },
+    { label: 'Apple Emojis', href: '/freedevtools/emojis/apple-emojis/' },
+    { label: categoryName, href: `/freedevtools/emojis/apple-emojis/${categorySlug}/` }
+  ];
+
+  categoryData = {
+    categoryName,
+    categorySlug,
+    totalEmojis,
+    itemsPerPage,
+    currentPage,
+    totalPages,
+    paginatedEmojis,
+    breadcrumbItems,
+    appleCategoryDescriptions,
+  };
+}
 ---
 
-<BaseLayout
-  name={categoryName}
-  path={`/emojis/apple-emojis/${categorySlug}/`}
-  title={`${categoryName} - Apple Emojis | Online Free DevTools by Hexmos`}
-  description={`Browse Apple-style ${categoryName} emojis. Copy, preview, and explore how they appear on iOS.`}
-  canonical={`https://hexmos.com/freedevtools/emojis/apple-emojis/${categorySlug}/`}
-  keywords={[`${categoryName.toLowerCase()} apple emojis`, 'apple emoji set', 'ios emoji style', 'emoji meanings']}
-  themeColor="#16a34a"
-  showHeader={true}
->
+{emojiData ? (
+  <BaseLayout
+    name="Apple Emojis"
+    path="/emojis/apple-emojis/"
+    title={`${emojiData.emoji.title || emojiData.emoji.slug} (Apple Style) - Emoji Evolution`}
+    description={emojiData.cleanedDescription}
+    canonical={`https://hexmos.com/freedevtools/emojis/apple-emojis/${emojiData.emoji.slug}/`}
+    showSidebar={false}
+    showHeader={true}
+  >
+    <div class="max-w-6xl mx-auto px-4 md:px-6 mt-[74px]">
+      <div class="mb-16">
+        <AdBanner />
+      </div>
+      <div class="mb-8">
+        <nav class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+          <a href="/freedevtools/" class="hover:text-blue-600 dark:hover:text-blue-400">Free DevTools</a>
+          <span class="mx-2">/</span>
+          <a href="/freedevtools/emojis/" class="hover:text-blue-600 dark:hover:text-blue-400">Emojis</a>
+          <span class="mx-2">/</span>
+          <a href="/freedevtools/emojis/apple-emojis" class="hover:text-blue-600 dark:hover:text-blue-400">Apple Emojis</a>
+          <span class="mx-2">/</span>
+          <span>{emojiData.emoji.title || emojiData.emoji.slug}</span>
+        </nav>
+      </div>
+    
+      <VendorEmojiPage client:load emoji={emojiData.emoji} vendor="apple"/>
+      
+      <!-- Navigation -->
+      <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap gap-4">
+          <a 
+            href="/freedevtools/emojis/apple-emojis" 
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            ←  Back to Apple Emojis
+          </a>
+
+          {emojiData.emoji.category ? (
+            <a
+              href={`/freedevtools/emojis/apple-emojis/${emojiData.emoji.category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/`}
+              class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            >
+              View {emojiData.emoji.category.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())} Category
+            </a>
+          ) : null}
+
+          {emojiData.emoji.discord_vendor_description &&
+            !discord_vendor_excluded_emojis.includes(emojiData.emoji.slug) ? (
+              <a
+                href={`/freedevtools/emojis/discord-emojis/${emojiData.emoji.slug}/`}
+                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                🎮 <span>View Discord Version</span> 
+              </a>
+            ) : null}
+        </div>
+      </div>
+    </div>
+  </BaseLayout>
+) : categoryData ? (
+  <BaseLayout
+    name={categoryData.categoryName}
+    path={`/emojis/apple-emojis/${categoryData.categorySlug}/`}
+    title={`${categoryData.categoryName} - Apple Emojis | Online Free DevTools by Hexmos`}
+    description={`Browse Apple-style ${categoryData.categoryName} emojis. Copy, preview, and explore how they appear on iOS.`}
+    canonical={`https://hexmos.com/freedevtools/emojis/apple-emojis/${categoryData.categorySlug}/`}
+    keywords={[`${categoryData.categoryName.toLowerCase()} apple emojis`, 'apple emoji set', 'ios emoji style', 'emoji meanings']}
+    themeColor="#16a34a"
+    showHeader={true}
+  >
   <ToolContainer>
     <div class="mb-16 mt-[74px]">
       <AdBanner />
     </div>
 
     <ToolHead
-      name={`${categoryName} (Apple)`}
-      description={appleCategoryDescriptions[categoryName] || "Explore how Apple brings unique flair to this emoji group, optimized for every Apple device."}
-      breadcrumbItems={breadcrumbItems}
+      name={`${categoryData.categoryName} (Apple)`}
+      description={categoryData.appleCategoryDescriptions[categoryData.categoryName] || "Explore how Apple brings unique flair to this emoji group, optimized for every Apple device."}
+      breadcrumbItems={categoryData.breadcrumbItems}
     />
 
     <!-- Overview Stats -->
     <div id="pagination-info" class="text-center mb-8">
       <div class="grid grid-cols-2 gap-6 mt-8">
         <div class="text-center">
-          <div class="text-3xl font-bold text-green-600">{totalEmojis.toLocaleString()}</div>
+          <div class="text-3xl font-bold text-green-600">{categoryData.totalEmojis.toLocaleString()}</div>
           <div class="text-sm text-gray-600 dark:text-gray-400">Emojis</div>
         </div>
         <div class="text-center">
-          <div class="text-3xl font-bold text-blue-600">{totalPages}</div>
+          <div class="text-3xl font-bold text-blue-600">{categoryData.totalPages}</div>
           <div class="text-sm text-gray-600 dark:text-gray-400">Pages</div>
         </div>
       </div>
@@ -104,13 +218,13 @@ const breadcrumbItems = [
     <!-- Pagination info box -->
     <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8">
       <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-        Showing {paginatedEmojis.length} of {totalEmojis} emojis (Page {currentPage} of {totalPages})
+        Showing {categoryData.paginatedEmojis.length} of {categoryData.totalEmojis} emojis (Page {categoryData.currentPage} of {categoryData.totalPages})
       </div>
     </div>
 
     <!-- Emojis Grid -->
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
-      {paginatedEmojis.map((emoji) => {
+      {categoryData.paginatedEmojis.map((emoji) => {
         const emojiChar = emoji.code || '';
         const graphemeCount = [...emojiChar].length;
         const zwjCount = (emojiChar.match(/\u200d/g) || []).length;
@@ -152,9 +266,9 @@ const breadcrumbItems = [
 
     <!-- Pagination -->
     <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      baseUrl={`/freedevtools/emojis/apple-emojis/${categorySlug}/`}
+      currentPage={categoryData.currentPage}
+      totalPages={categoryData.totalPages}
+      baseUrl={`/freedevtools/emojis/apple-emojis/${categoryData.categorySlug}/`}
     />
 
     <!-- Credits and Back -->
@@ -171,6 +285,7 @@ const breadcrumbItems = [
     </div>
   </ToolContainer>
 </BaseLayout>
+) : null}
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
