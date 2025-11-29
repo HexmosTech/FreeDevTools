@@ -1,286 +1,415 @@
 ---
 import {
   getClusterByName,
-  getClusters,
+  getClustersWithPreviewIcons,
   getIconsByCluster,
+  getTotalClusters,
+  getTotalIcons,
+  type ClusterTransformed,
 } from 'db/svg_icons/svg-icons-utils';
 import AdBanner from '../../components/banner/AdBanner.astro';
 import CreditsButton from '../../components/buttons/CreditsButton';
 import ToolContainer from '../../components/tool/ToolContainer';
 import ToolHead from '../../components/tool/ToolHead';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SvgIcons from './_SvgIcons.astro';
 
-export async function getStaticPaths() {
-  const clusters = getClusters();
+export const prerender = false;
 
-  // Use cluster names for URLs (these match cluster_svg.json cluster.name)
-  const categories = clusters.map((cluster) => cluster.name);
-
-  return categories.map((category) => ({
-    params: { category },
-    props: { category },
-  }));
-}
-
+// Track request start time
+const requestStartTime = Date.now();
 const { category } = Astro.params;
+const urlPath = Astro.url.pathname;
 
-// Get cluster data from database
-const clusterData = getClusterByName(category);
-
-if (!clusterData) {
-  return Astro.redirect('/freedevtools/svg_icons/');
+if (!category) {
+  return new Response(null, { status: 404 });
 }
 
-async function getCategoryIcons() {
-  // Get icons from SQLite database
-  // The category parameter is the cluster display name (from cluster.name in cluster_svg.json)
-  // Look up cluster by display name to get the source_folder (actual folder name used in icon table)
-  // The icon table uses cluster key (folder name = source_folder), not display name
-  // Use source_folder to query icons
-  // clusterData is guaranteed to exist due to check above
-  const dbIcons = getIconsByCluster(clusterData!.source_folder || category!);
+let paginationData: any = null;
+let categoryData: any = null;
+let dataPhaseDuration = 0;
 
-  const icons = dbIcons.map((icon) => {
-    const iconName = icon.name.replace('.svg', '');
+// If category is numeric, this is actually a pagination route
+// Handle it directly (workaround for route priority)
+if (/^\d+$/.test(category)) {
+  const currentPage = parseInt(category, 10);
 
-    return {
-      name: iconName,
-      description: icon.description || `Free ${iconName} icon`,
-      category: category,
-      tags: icon.tags || [],
-      author: 'Free DevTools',
-      license: 'MIT',
-      url: `/freedevtools/svg_icons/${category}/${iconName}/`,
-      base64: icon.base64,
-      img_alt: icon.img_alt,
-    };
-  });
+  // Redirect /svg_icons/1 to /svg_icons
+  if (currentPage === 1) {
+    return Astro.redirect('/freedevtools/svg_icons/');
+  }
 
-  return icons;
+  const itemsPerPage = 30;
+  
+  // Get total count of clusters for pagination (simple COUNT query)
+  const totalClustersQueryStartTime = Date.now();
+  const totalCategories = await getTotalClusters();
+  const totalClustersQueryEndTime = Date.now();
+  console.log(`[SVG_ICONS] getTotalClusters() took ${totalClustersQueryEndTime - totalClustersQueryStartTime}ms`);
+  
+  const totalPages = Math.ceil(totalCategories / itemsPerPage);
+
+  // Validate page number
+  if (currentPage > totalPages || currentPage < 1) {
+    return new Response(null, { status: 404 });
+  }
+
+  // Get paginated clusters with preview icons in ONE optimized query (transformed format)
+  const currentPageCategories = await getClustersWithPreviewIcons(
+    currentPage,
+    itemsPerPage,
+    6,
+    true // transform = true to get transformed format
+  ) as ClusterTransformed[];
+
+  const totalIconsQueryStartTime = Date.now();
+  const totalSvgIcons = await getTotalIcons();
+  const totalIconsQueryEndTime = Date.now();
+  console.log(`[SVG_ICONS] getTotalIcons() took ${totalIconsQueryEndTime - totalIconsQueryStartTime}ms`);
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'SVG Icons', href: '/freedevtools/svg_icons/' },
+    { label: `Page ${currentPage}` },
+  ];
+
+  // SEO data
+  const seoTitle = `Free SVG Icons - Page ${currentPage} | Online Free DevTools by Hexmos`;
+  const seoDescription = `Browse page ${currentPage} of ${totalPages} pages in our free SVG icons collection. Download thousands of vector graphics instantly. No registration required.`;
+  const canonical = `https://hexmos.com/freedevtools/svg_icons/${currentPage}/`;
+
+  const paginatedKeywords = [
+    'svg icons',
+    'vector graphics',
+    'free icons',
+    'download icons',
+    'edit icons',
+    `page ${currentPage}`,
+    'pagination',
+    'icon collection',
+    'vector graphics library',
+  ];
+
+    // Log total roundtrip time for pagination
+    const requestEndTime = Date.now();
+    const totalRoundtripTime = requestEndTime - requestStartTime;
+    console.log(
+      `[SVG_ICONS] Data preparation for ${urlPath} (pagination) took ${totalRoundtripTime}ms`
+    );
+    dataPhaseDuration = totalRoundtripTime;
+
+    paginationData = {
+    currentPage,
+    totalPages,
+    totalCategories,
+    totalSvgIcons,
+    categories: currentPageCategories,
+    breadcrumbItems,
+    seoTitle,
+    seoDescription,
+    canonical,
+    paginatedKeywords,
+    itemsPerPage,
+  };
+} else {
+  // Redirect to add trailing slash if missing
+  if (!urlPath.endsWith('/')) {
+    return Astro.redirect(`${urlPath}/`, 301);
+  }
+
+  // Get cluster data from database
+  const clusterQueryStartTime = Date.now();
+  const clusterData = await getClusterByName(category);
+  const clusterQueryEndTime = Date.now();
+  console.log(`[SVG_ICONS] getClusterByName("${category}") took ${clusterQueryEndTime - clusterQueryStartTime}ms`);
+
+  if (!clusterData) {
+    return new Response(null, { status: 404 });
+  }
+
+  async function getCategoryIcons() {
+    const iconQueryStartTime = Date.now();
+    const icons = await getIconsByCluster(clusterData!.source_folder || category!, category!);
+    const iconQueryEndTime = Date.now();
+    console.log(`[SVG_ICONS] getIconsByCluster("${clusterData!.source_folder || category!}") took ${iconQueryEndTime - iconQueryStartTime}ms`);
+    return icons;
+  }
+
+  const categoryIcons = await getCategoryIcons();
+  const totalIcons = categoryIcons.length;
+  
+  // Log total roundtrip time
+  const requestEndTime = Date.now();
+  const totalRoundtripTime = requestEndTime - requestStartTime;
+  console.log(
+    `[SVG_ICONS] Data preparation for ${urlPath} (category) took ${totalRoundtripTime}ms`
+  );
+  dataPhaseDuration = totalRoundtripTime;
+
+  // Use database content for about and why_choose_us
+  const aboutContent =
+    clusterData.about ||
+    `Our ${category} SVG icon library offers vector-based graphics that scale beautifully across all devices and resolutions. Each icon is crafted with precision and can be customized through CSS or JavaScript. Whether you need icons for web, mobile, or print, these ${category} SVG icons deliver crisp results at any size.`;
+
+  const whyChooseUsContent =
+    clusterData.why_choose_us && clusterData.why_choose_us.length > 0
+      ? clusterData.why_choose_us
+      : [
+          'Infinitely scalable without pixelation or quality loss',
+          'Editable vector format - customize colors, shapes, and sizes',
+          'Small file sizes for faster website loading',
+          'Perfect for responsive design and retina displays',
+        ];
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'SVG Icons', href: '/freedevtools/svg_icons/' },
+    { label: category },
+  ];
+
+  categoryData = {
+    category,
+    clusterData,
+    categoryIcons,
+    totalIcons,
+    aboutContent,
+    whyChooseUsContent,
+    breadcrumbItems,
+  };
 }
-
-const categoryIcons = await getCategoryIcons();
-const totalIcons = categoryIcons.length;
-
-// Use database content for about and why_choose_us
-// Fallback to default content if not available in database
-const aboutContent =
-  clusterData.about ||
-  `Our ${category} SVG icon library offers vector-based graphics that scale beautifully across all devices and resolutions. Each icon is crafted with precision and can be customized through CSS or JavaScript. Whether you need icons for web, mobile, or print, these ${category} SVG icons deliver crisp results at any size.`;
-
-const whyChooseUsContent =
-  clusterData.why_choose_us && clusterData.why_choose_us.length > 0
-    ? clusterData.why_choose_us
-    : [
-        'Infinitely scalable without pixelation or quality loss',
-        'Editable vector format - customize colors, shapes, and sizes',
-        'Small file sizes for faster website loading',
-        'Perfect for responsive design and retina displays',
-      ];
-
-// Breadcrumb data
-const breadcrumbItems = [
-  { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'SVG Icons', href: '/freedevtools/svg_icons/' },
-  { label: category },
-];
 ---
 
-<BaseLayout
-  name={`${category.charAt(0).toUpperCase() + category.slice(1)} SVG Icons`}
-  path={`/freedevtools/svg_icons/${category}`}
-  title={clusterData.title ||
-    `${category} SVG Icons - Free Download & Edit | Online Free DevTools by Hexmos`}
-  description={clusterData.description ||
-    `Download free ${category} SVG icons instantly. ${totalIcons} icons available.`}
-  canonical={`https://hexmos.com/freedevtools/svg_icons/${category}/`}
-  showHeader={true}
-  totalItems={totalIcons}
-  category={category}
-  partOf="SVG Icons"
-  partOfUrl="https://hexmos.com/freedevtools/svg_icons/"
-  keywords={clusterData.keywords && clusterData.keywords.length > 0
-    ? clusterData.keywords
-    : [
-        category,
-        'svg icons',
-        'vector graphics',
-        'scalable icons',
-        'editable svg',
-      ]}
->
-  <ToolContainer>
-    <div id={`svg_icon-ad-banner-2-${category}`} class="mb-16 mt-[74px]">
-      <AdBanner />
-    </div>
-    <ToolHead
-      id={`svg_icon-tool-head-2-${category}`}
-      name={clusterData.title.split('|')[0] ||
-        `${category.charAt(0).toUpperCase() + category.slice(1)} SVG Icons`}
-      description={clusterData.description ||
-        `Discover ${totalIcons} scalable ${category} icons ready in vector SVG format`}
-      breadcrumbItems={breadcrumbItems}
+{paginationData ? (
+  <BaseLayout
+    name="SVG Icons"
+    path={`/freedevtools/svg_icons/${paginationData.currentPage}/`}
+    title={paginationData.seoTitle}
+    description={paginationData.seoDescription}
+    canonical={paginationData.canonical}
+    showHeader={true}
+    totalItems={paginationData.totalCategories}
+    itemsPerPage={paginationData.itemsPerPage}
+    currentPage={paginationData.currentPage}
+    category="SVG Icons"
+    partOf="Free DevTools"
+    partOfUrl="https://hexmos.com/freedevtools/"
+    keywords={paginationData.paginatedKeywords}
+    features={[
+      'Download',
+      'Edit colors',
+      'Add backgrounds',
+      'Customize',
+      'No registration',
+    ]}
+  >
+    <SvgIcons
+      categories={paginationData.categories}
+      currentPage={paginationData.currentPage}
+      totalPages={paginationData.totalPages}
+      totalCategories={paginationData.totalCategories}
+      totalSvgIcons={paginationData.totalSvgIcons}
+      breadcrumbItems={paginationData.breadcrumbItems}
     />
+  </BaseLayout>
+) : categoryData ? (
+  <BaseLayout
+    name={`${categoryData.category.charAt(0).toUpperCase() + categoryData.category.slice(1)} SVG Icons`}
+    path={`/freedevtools/svg_icons/${categoryData.category}`}
+    title={categoryData.clusterData.title ||
+      `${categoryData.category} SVG Icons - Free Download & Edit | Online Free DevTools by Hexmos`}
+    description={categoryData.clusterData.description ||
+      `Download free ${categoryData.category} SVG icons instantly. ${categoryData.totalIcons} icons available.`}
+    canonical={`https://hexmos.com/freedevtools/svg_icons/${categoryData.category}/`}
+    showHeader={true}
+    totalItems={categoryData.totalIcons}
+    category={categoryData.category}
+    partOf="SVG Icons"
+    partOfUrl="https://hexmos.com/freedevtools/svg_icons/"
+    keywords={categoryData.clusterData.keywords && categoryData.clusterData.keywords.length > 0
+      ? categoryData.clusterData.keywords
+      : [
+          categoryData.category,
+          'svg icons',
+          'vector graphics',
+          'scalable icons',
+          'editable svg',
+        ]}
+  >
+    <ToolContainer>
+      <div id={`svg_icon-ad-banner-2-${categoryData.category}`} class="mb-16 mt-[74px]">
+        <AdBanner />
+      </div>
+      <ToolHead
+        id={`svg_icon-tool-head-2-${categoryData.category}`}
+        name={categoryData.clusterData.title.split('|')[0] ||
+          `${categoryData.category.charAt(0).toUpperCase() + categoryData.category.slice(1)} SVG Icons`}
+        description={categoryData.clusterData.description ||
+          `Discover ${categoryData.totalIcons} scalable ${categoryData.category} icons ready in vector SVG format`}
+        breadcrumbItems={categoryData.breadcrumbItems}
+      />
 
-    <div id={`svg_icon-main-section-2-${category}`} class="min-h-[200px]">
-      <div
-        id={`svg_icon-grid-2-${category}`}
-        class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 mb-8 mt-3"
-      >
-        {
-          categoryIcons.map((icon) => {
-            const iconName = icon.name
-              .replace(/_/g, ' ')
-              .replace(/\b\w/g, (l: string) => l.toUpperCase());
+      <div id={`svg_icon-main-section-2-${categoryData.category}`} class="min-h-[200px]">
+        <div
+          id={`svg_icon-grid-2-${categoryData.category}`}
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 mb-8 mt-3"
+        >
+          {
+            categoryData.categoryIcons.map((icon) => {
+              const iconName = icon.name
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, (l: string) => l.toUpperCase());
 
-            return (
-              <a
-                href={icon.url}
-                class="bg-white rounded-lg p-4 cursor-pointer hover:bg-slate-100 border border-white hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md"
-                title={iconName + ' SVG icon'}
-              >
-                <div class="flex flex-col items-center text-center">
-                  <div class="w-24 h-24 flex items-center justify-center">
-                    <div
-                      class="w-24 h-24 text-slate-600"
-                      style="display: flex; align-items: center; justify-content: center; overflow: hidden;"
-                    >
-                      <img
-                        src={`data:image/png;base64,${icon.base64}`}
-                        alt={icon.img_alt || `${iconName} icon`}
-                        class="w-20 h-20 object-contain"
-                        loading="lazy"
-                      />
+              return (
+                <a
+                  href={icon.url}
+                  class="bg-white rounded-lg p-4 cursor-pointer hover:bg-slate-100 border border-white hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md"
+                  title={iconName + ' SVG icon'}
+                >
+                  <div class="flex flex-col items-center text-center">
+                    <div class="w-24 h-24 flex items-center justify-center">
+                      <div
+                        class="w-24 h-24 text-slate-600"
+                        style="display: flex; align-items: center; justify-content: center; overflow: hidden;"
+                      >
+                        <img
+                          src={`data:image/png;base64,${icon.base64}`}
+                          alt={icon.img_alt || `${iconName} icon`}
+                          class="w-20 h-20 object-contain"
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
-            );
-          })
-        }
+                </a>
+              );
+            })
+          }
+        </div>
       </div>
-    </div>
-    <!-- Practical Application section -->
-    {
-      clusterData.practical_application && (
-        <div
-          id={`svg_icon-practical-application-section-2-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3
-            id={`svg_icon-practical-application-section-title-2-${category}`}
-            class="mb-3"
-          >
-            Practical Application
-          </h3>
-          <p>{clusterData.practical_application}</p>
-        </div>
-      )
-    }
-
-    <!-- Unique informational content about SVG icons -->
-    {
-      aboutContent && (
-        <div
-          id={`svg_icon-about-section-2-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3 id={`svg_icon-about-section-title-2-${category}`} class="mb-3">
-            About {category.charAt(0).toUpperCase() + category.slice(1)} SVG
-            Icons
-          </h3>
-          <p>{aboutContent}</p>
-        </div>
-      )
-    }
-
-    <!-- Why Choose Us section -->
-    {
-      whyChooseUsContent && whyChooseUsContent.length > 0 && (
-        <div
-          id={`svg_icon-features-section-2-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3 id={`svg_icon-features-section-title-2-${category}`} class="mb-3">
-            Why Choose our SVG Icons?
-          </h3>
-          <ul class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300">
-            {whyChooseUsContent.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )
-    }
-
-    <!-- Alternative Terms section -->
-    {
-      clusterData.alternative_terms &&
-        clusterData.alternative_terms.length > 0 && (
+      <!-- Practical Application section -->
+      {
+        categoryData.clusterData.practical_application && (
           <div
-            id={`svg_icon-alternative-terms-section-2-${category}`}
+            id={`svg_icon-practical-application-section-2-${categoryData.category}`}
             class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
           >
             <h3
-              id={`svg_icon-alternative-terms-section-title-2-${category}`}
+              id={`svg_icon-practical-application-section-title-2-${categoryData.category}`}
               class="mb-3"
             >
-              Alternative Terms
+              Practical Application
+            </h3>
+            <p>{categoryData.clusterData.practical_application}</p>
+          </div>
+        )
+      }
+
+      <!-- Unique informational content about SVG icons -->
+      {
+        categoryData.aboutContent && (
+          <div
+            id={`svg_icon-about-section-2-${categoryData.category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3 id={`svg_icon-about-section-title-2-${categoryData.category}`} class="mb-3">
+              About {categoryData.category.charAt(0).toUpperCase() + categoryData.category.slice(1)} SVG
+              Icons
+            </h3>
+            <p>{categoryData.aboutContent}</p>
+          </div>
+        )
+      }
+
+      <!-- Why Choose Us section -->
+      {
+        categoryData.whyChooseUsContent && categoryData.whyChooseUsContent.length > 0 && (
+          <div
+            id={`svg_icon-features-section-2-${categoryData.category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3 id={`svg_icon-features-section-title-2-${categoryData.category}`} class="mb-3">
+              Why Choose our SVG Icons?
+            </h3>
+            <ul class="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300">
+              {categoryData.whyChooseUsContent.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <!-- Alternative Terms section -->
+      {
+        categoryData.clusterData.alternative_terms &&
+          categoryData.clusterData.alternative_terms.length > 0 && (
+            <div
+              id={`svg_icon-alternative-terms-section-2-${categoryData.category}`}
+              class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+            >
+              <h3
+                id={`svg_icon-alternative-terms-section-title-2-${categoryData.category}`}
+                class="mb-3"
+              >
+                Alternative Terms
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                {categoryData.clusterData.alternative_terms.map((term) => (
+                  <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
+                    {term}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )
+      }
+
+      <!-- Tags section -->
+      {
+        categoryData.clusterData.tags && categoryData.clusterData.tags.length > 0 && (
+          <div
+            id={`svg_icon-tags-section-2-${categoryData.category}`}
+            class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
+          >
+            <h3 id={`svg_icon-tags-section-title-2-${categoryData.category}`} class="mb-3">
+              Tags
             </h3>
             <div class="flex flex-wrap gap-2">
-              {clusterData.alternative_terms.map((term) => (
-                <span class="inline-block bg-gray-200 dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-200 px-2 py-1 rounded-full select-none">
-                  {term}
-                </span>
+              {categoryData.clusterData.tags.map((tag) => (
+                <p class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
+                  {tag}
+                </p>
               ))}
             </div>
           </div>
         )
-    }
-
-    <!-- Tags section -->
-    {
-      clusterData.tags && clusterData.tags.length > 0 && (
-        <div
-          id={`svg_icon-tags-section-2-${category}`}
-          class="mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg"
-        >
-          <h3 id={`svg_icon-tags-section-title-2-${category}`} class="mb-3">
-            Tags
-          </h3>
-          <div class="flex flex-wrap gap-2">
-            {clusterData.tags.map((tag) => (
-              <p class="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 select-none cursor-default dark:bg-blue-800 dark:text-blue-100">
-                {tag}
-              </p>
-            ))}
-          </div>
-        </div>
-      )
-    }
-    <!-- Credits Section -->
-    <div
-      id={`svg_icon-credits-section-2-${category}`}
-      class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
-    >
+      }
+      <!-- Credits Section -->
       <div
-        id={`svg_icon-credits-content-2-${category}`}
-        class="flex flex-wrap gap-4"
+        id={`svg_icon-credits-section-2-${categoryData.category}`}
+        class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
       >
-        <a
-          href="/freedevtools/svg_icons/"
-          class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+        <div
+          id={`svg_icon-credits-content-2-${categoryData.category}`}
+          class="flex flex-wrap gap-4"
         >
-          ← Back to SVG Icons
-        </a>
-        <CreditsButton
-          href="/freedevtools/svg_icons/credits/"
-          id={`svg_icon-credits-button-2-${category}`}
-        />
+          <a
+            href="/freedevtools/svg_icons/"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            ← Back to SVG Icons
+          </a>
+          <CreditsButton
+            href="/freedevtools/svg_icons/credits/"
+            id={`svg_icon-credits-button-2-${categoryData.category}`}
+          />
+        </div>
       </div>
-    </div>
-  </ToolContainer>
-</BaseLayout>
+    </ToolContainer>
+  </BaseLayout>
+) : null}
 
 <style>
   .icon-preview svg {
@@ -292,3 +421,16 @@ const breadcrumbItems = [
     object-fit: contain;
   }
 </style>
+
+{(() => {
+  if (!dataPhaseDuration) {
+    return null;
+  }
+  const renderEndTime = Date.now();
+  const totalRenderTime = renderEndTime - requestStartTime;
+  const renderPhaseDuration = Math.max(0, totalRenderTime - dataPhaseDuration);
+  console.log(
+    `[SVG_ICONS] Full SSR render for ${urlPath} took ${totalRenderTime}ms (data prep ${dataPhaseDuration}ms, layout/render ${renderPhaseDuration}ms)`
+  );
+  return null;
+})()}

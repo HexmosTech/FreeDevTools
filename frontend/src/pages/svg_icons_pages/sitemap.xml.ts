@@ -5,7 +5,7 @@ export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
 
   // Get clusters from SQLite database
-  const clusters = getClusters();
+  const clusters = await getClusters();
 
   // Calculate total pages (30 categories per page)
   const itemsPerPage = 30;

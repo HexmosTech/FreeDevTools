@@ -1,44 +1,60 @@
 ---
 import {
-  getClusters,
-  getIconsByCluster,
+  getClustersWithPreviewIcons,
+  getTotalClusters,
   getTotalIcons,
+  type ClusterTransformed,
 } from 'db/svg_icons/svg-icons-utils';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SvgIcons from './_SvgIcons.astro';
 
-// Load SVG icons data from SQLite
-const clusters = getClusters();
-
-// Get all categories with their data
-const allCategories = clusters.map((cluster) => {
-  // Get icons for this cluster to count them
-  const icons = getIconsByCluster(cluster.source_folder || cluster.name);
-
-  return {
-    id: cluster.source_folder || cluster.name,
-    name: cluster.name,
-    description: cluster.description,
-    icon: `/freedevtools/svg_icons/${cluster.name}/`,
-    iconCount: icons.length,
-    url: `/freedevtools/svg_icons/${cluster.name}/`,
-    keywords: cluster.keywords,
-    features: cluster.tags,
-    fileNames: icons.map((icon) => icon.name), // Include fileNames for icon previews
-  };
-});
-
-// Calculate total SVG icons across all categories
-const totalSvgIcons = getTotalIcons();
+// Track request start time
+const requestStartTime = Date.now();
+const requestPath = Astro.url.pathname;
 
 // Pagination logic for page 1
 const itemsPerPage = 30;
 const currentPage = 1;
-const totalPages = Math.ceil(allCategories.length / itemsPerPage);
-const startIndex = (currentPage - 1) * itemsPerPage;
-const endIndex = startIndex + itemsPerPage;
-const categories = allCategories.slice(startIndex, endIndex);
-const totalCategories = allCategories.length;
+
+// Get total count of clusters for pagination (simple COUNT query)
+const totalClustersQueryStartTime = Date.now();
+const totalCategories = await getTotalClusters();
+const totalClustersQueryEndTime = Date.now();
+console.log(
+  `[SVG_ICONS] getTotalClusters() took ${totalClustersQueryEndTime - totalClustersQueryStartTime}ms`
+);
+
+// Get paginated clusters with preview icons in ONE optimized query (transformed format)
+const clustersQueryStartTime = Date.now();
+const categories = (await getClustersWithPreviewIcons(
+  currentPage,
+  itemsPerPage,
+  6,
+  true // transform = true to get transformed format
+)) as ClusterTransformed[];
+const clustersQueryEndTime = Date.now();
+console.log(
+  `[SVG_ICONS] getClustersWithPreviewIcons() took ${
+    clustersQueryEndTime - clustersQueryStartTime
+  }ms`
+);
+
+const totalPages = Math.ceil(totalCategories / itemsPerPage);
+
+// Calculate total SVG icons across all categories
+const totalIconsQueryStartTime = Date.now();
+const totalSvgIcons = await getTotalIcons();
+const totalIconsQueryEndTime = Date.now();
+console.log(
+  `[SVG_ICONS] getTotalIcons() took ${totalIconsQueryEndTime - totalIconsQueryStartTime}ms`
+);
+
+// Log total roundtrip time
+const requestEndTime = Date.now();
+const totalRoundtripTime = requestEndTime - requestStartTime;
+console.log(
+  `[SVG_ICONS] Server scripts (before template render) for ${requestPath} took ${totalRoundtripTime}ms`
+);
 
 // Breadcrumb data
 const breadcrumbItems = [
