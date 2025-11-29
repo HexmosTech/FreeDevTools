@@ -2,11 +2,11 @@ import crypto from 'crypto';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 import type {
-    Cluster,
-    Overview,
-    Page,
-    RawClusterRow,
-    RawPageRow,
+  Cluster,
+  Overview,
+  Page,
+  RawClusterRow,
+  RawPageRow,
 } from './tldr-schema';
 
 // Connection pool for parallel queries
@@ -232,10 +232,8 @@ export async function getPageByClusterAndName(cluster: string, name: string): Pr
   
   return new Promise((resolve, reject) => {
     db.get(
-      `SELECT url_hash as id, cluster, name, platform, title, description,
-       more_info_url, keywords, features, examples, raw_content, path
-       FROM url_lookup WHERE url_hash = ?`,
-      [urlHash],
+      `SELECT * FROM url_lookup WHERE url_hash = ?`,
+      [urlHash.toString()],
       (err, row) => {
         if (err) {
           reject(err);
