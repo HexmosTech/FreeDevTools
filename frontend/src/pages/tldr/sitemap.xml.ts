@@ -1,23 +1,33 @@
 import type { APIRoute } from 'astro';
-import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
 import {
-  generateTldrPlatformStaticPaths,
-  generateTldrStaticPaths,
+    generateTldrPlatformStaticPaths,
+    generateTldrStaticPaths,
 } from '../../lib/tldr-utils';
 
+import {
+    getAllClusters,
+    getPagesByCluster,
+} from '../../../db/tldr/tldr-utils';
+
 async function getCommandsByPlatform() {
-  const entries: CollectionEntry<'tldr'>[] = await getCollection('tldr');
+  const clusters = await getAllClusters();
   const byPlatform: Record<string, { url: string }[]> = {};
-  for (const entry of entries) {
-    const parts = entry.id.split('/');
-    const platform = parts[parts.length - 2];
-    const fileName = parts[parts.length - 1];
-    const name = fileName.replace(/\.md$/i, '');
-    if (!byPlatform[platform]) byPlatform[platform] = [];
-    byPlatform[platform].push({
-      url: entry.data.path || `/freedevtools/tldr/${platform}/$s{name}`,
-    });
+  
+  // Fetch all pages for all clusters in parallel
+  const clusterPagesPromises = clusters.map(async (cluster) => {
+    const pages = await getPagesByCluster(cluster.name);
+    return { cluster: cluster.name, pages };
+  });
+
+  const allClusterPages = await Promise.all(clusterPagesPromises);
+
+  for (const { cluster, pages } of allClusterPages) {
+    if (!byPlatform[cluster]) byPlatform[cluster] = [];
+    for (const page of pages) {
+      byPlatform[cluster].push({
+        url: page.path || `/freedevtools/tldr/${cluster}/${page.name}/`,
+      });
+    }
   }
   return byPlatform;
 }
