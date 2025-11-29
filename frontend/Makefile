@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy local-prod-build
+.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy
 
 # Build the project
 build:
@@ -35,8 +35,8 @@ deploy2: build
 # Note: rsync without --delete flag will only add/update files, never delete
 index-deploy:
 	npm run build:index
-	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master-do:/tools/a4.html
-	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master-do:/tools/_astro/
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master:/tools/a4.html
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master:/tools/_astro/
 
 # Run development server
 run:
@@ -160,9 +160,47 @@ update-db-to-b2:
 		--progress; \
 	echo "✅ Database file uploaded successfully"
 
-# trigger build locally and deploy to production server via rsync
-local-prod-build:
-	bash ./scripts/local-prod-build.sh
-
 %:
 	@:
+
+pm2logs:
+	@if [ -z "$(LABEL)" ]; then \
+		echo "❌ Please provide LABEL=some-name"; \
+		exit 1; \
+	fi
+	@python3 scripts/pm2_logs.py "$(LABEL)"
+
+
+test-svg-req:
+	clear
+	# npm run build
+	clear
+	rm -rf logs/*
+	pm2 flush
+	pm2 restart all
+	pm2 ls
+	./pin.sh
+	./verifypin.sh
+	@echo "⬇️  Server up -----------"
+	@sleep 2
+	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
+	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	@sleep 2
+	@pm2 flush
+	@echo "⬇️  Requesting SVG icon -----------"
+	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	@sleep 2
+	@echo "⬇️  Showing logs -----------"
+	@LOG_FILES=$$(ls -1t ~/.pm2/logs/astro-*-out-*.log 2>/dev/null | head -n2); \
+	if [ -n "$$LOG_FILES" ]; then \
+		for LOG_FILE in $$LOG_FILES; do \
+			echo "=== $$(basename $$LOG_FILE) ==="; \
+			cat "$$LOG_FILE"; \
+			echo ""; \
+		done; \
+	else \
+		echo "No astro-out log yet."; \
+	fi
+	@echo ""
+	@echo "⬇️  Showing PM2 logs -----------"
+	make pm2logs LABEL=test-svg-req
