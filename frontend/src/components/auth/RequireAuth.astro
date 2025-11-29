@@ -1,59 +1,106 @@
----
-// No server-side JS needed here
----
+<style>
+  /* Hide whole page until auth is confirmed */
+  body {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
 
 <script is:inline>
-    if (typeof window !== "undefined") {
-      const currentUrl = window.location.href; // move inside client script
-      const params = new URLSearchParams(window.location.search);
-      const hasDataParam = params.has("data");
-      let jwt = sessionStorage.getItem("lr_jwt");
-  
-      // --- 1. If ?data= exists, parse and store user info ---
-      if (hasDataParam) {
-        const raw = params.get("data");
-        if (raw) {
-          try {
-            const decoded = decodeURIComponent(raw);
-            const parsed = JSON.parse(decoded);
-  
-            const extractedJwt = parsed?.result?.jwt;
-            const email = parsed?.result?.data?.email || parsed?.result?.data?.username;
-            if (extractedJwt && email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-              const first = parsed?.result?.data?.first_name?.trim() || "";
-              const last = parsed?.result?.data?.last_name?.trim() || "";
-              let name = (first + (last && last !== first ? " " + last : "")).trim();
-              if (!name) {
-                const username = parsed?.result?.data?.username;
-                if (username && !username.includes("@")) name = username;
-                else name = email.split("@")[0];
-              }
-              const avatarUrl = parsed?.result?.data?.profilePicUrl;
-  
-              const userObj = { email, name, jwt: extractedJwt, avatarUrl };
-              try { sessionStorage.setItem("lr_jwt", extractedJwt); } catch {}
-              try { sessionStorage.setItem("lr_user_json", JSON.stringify(userObj)); } catch {}
-              jwt = extractedJwt; // update local variable for redirect check
-            }
-          } catch (e) {
-            console.error("[LiveReview] Failed to parse ?data= param", e);
-          }
-        }
-  
-        // --- 2. Clean URL after parsing ---
-        try {
-          window.history.replaceState(null, "", window.location.pathname);
-        } catch (e) {
-          console.warn("[LiveReview] Failed to clean URL", e);
-        }
-      }
-  
-      // --- 3. Redirect only if JWT does not exist ---
-      if (!jwt) {
-        const signinUrl =
-          `https://hexmos.com/signin?app=livereview&appRedirectURI=${encodeURIComponent(currentUrl)}`;
-        window.location.href = signinUrl;
-      }
+if (typeof window !== "undefined") {
+
+  // Run as early as possible (no DOMContentLoaded delay)
+  function parseJwt(token) {
+    try {
+      const payload = token.split(".")[1];
+      const decoded = atob(payload);
+      return JSON.parse(decoded);
+    } catch (e) {
+      return null;
     }
-  </script>
-  
+  }
+
+  const allowedUids = ["VSZJE60AQM"]; // UID whitelist
+  const currentUrl = window.location.href;
+  const params = new URLSearchParams(window.location.search);
+  const hasDataParam = params.has("data");
+
+  function redirectToLogin() {
+    try { sessionStorage.removeItem("lr_jwt"); } catch {}
+    try { sessionStorage.removeItem("lr_user_json"); } catch {}
+
+    const signinUrl =
+      `https://hexmos.com/signin?app=freedevtools&appRedirectURI=${encodeURIComponent(currentUrl)}`;
+
+    window.location.href = signinUrl;
+    throw new Error("Redirecting to login");
+  }
+
+  let jwt = sessionStorage.getItem("lr_jwt");
+
+  // --- 0. Check existing JWT first ---
+  if (jwt) {
+    const payload = parseJwt(jwt);
+    if (!payload || !allowedUids.includes(payload.uId)) {
+      console.warn("Unauthorized UID, redirecting...");
+      redirectToLogin();
+    }
+  }
+
+  // --- 1. Parse ?data= login response ---
+  if (hasDataParam) {
+    const raw = params.get("data");
+    try {
+      const decoded = decodeURIComponent(raw);
+      const parsed = JSON.parse(decoded);
+
+      const extractedJwt = parsed?.result?.jwt;
+      const email = parsed?.result?.data?.email || parsed?.result?.data?.username;
+
+      if (extractedJwt && email) {
+        const first = parsed?.result?.data?.first_name?.trim() || "";
+        const last = parsed?.result?.data?.last_name?.trim() || "";
+        let name = (first + (last && last !== first ? " " + last : "")).trim();
+        if (!name) {
+          const username = parsed?.result?.data?.username;
+          name = username && !username.includes("@") ? username : email.split("@")[0];
+        }
+        const avatarUrl = parsed?.result?.data?.profilePicUrl;
+
+        const userObj = { email, name, jwt: extractedJwt, avatarUrl };
+        try { sessionStorage.setItem("lr_jwt", extractedJwt); } catch {}
+        try { sessionStorage.setItem("lr_user_json", JSON.stringify(userObj)); } catch {}
+        jwt = extractedJwt;
+
+        // UID whitelist check after login callback
+        const payload = parseJwt(extractedJwt);
+        if (!payload || !allowedUids.includes(payload.uId)) {
+          console.warn("UID not allowed after login callback");
+          redirectToLogin();
+        }
+      } else {
+        redirectToLogin();
+      }
+    } catch (e) {
+      console.error("Login callback parse failed", e);
+      redirectToLogin();
+    }
+
+    // Clean URL
+    try { window.history.replaceState(null, "", window.location.pathname); } catch {}
+  }
+
+  // --- 2. If no JWT at all -> force login ---
+  if (!jwt) {
+    redirectToLogin();
+  }
+
+  // --- 3. Authorized → reveal page ---
+  window.addEventListener("DOMContentLoaded", () => {
+    document.body.style.opacity = "1";
+    document.body.style.pointerEvents = "auto";
+    console.log("Access granted");
+  });
+
+}
+</script>
