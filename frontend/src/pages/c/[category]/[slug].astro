@@ -1,12 +1,16 @@
 ---
-import AdBanner from '../../../components/banner/AdBanner.astro';
-import Banner from '../../../components/banner/BannerIndex.astro';
-import CreditsButton from '../../../components/buttons/CreditsButton';
-import SeeAlsoIndex from '../../../components/seealso/SeeAlsoIndex.astro';
-import ToolContainer from '../../../components/tool/ToolContainer';
-import ToolHead from '../../../components/tool/ToolHead';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getCheatsheet, getCheatsheetsByCategory, getAllCheatsheetCategories } from '../../../lib/cheatsheets-utils';
+import AdBanner from '@/components/banner/AdBanner.astro';
+import Banner from '@/components/banner/BannerIndex.astro';
+import CreditsButton from '@/components/buttons/CreditsButton';
+import SeeAlsoIndex from '@/components/seealso/SeeAlsoIndex.astro';
+import ToolContainer from '@/components/tool/ToolContainer';
+import ToolHead from '@/components/tool/ToolHead';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { 
+  getCheatsheetByCategoryAndSlug, 
+  getCheatsheetsByCategory, 
+  getCategoryBySlug,
+} from '../../../../db/cheatsheets/cheatsheets-utils';
 import CategoryCheatsheetsPage from './_CategoryCheatsheetsPage.astro';
 
 export const prerender = false;
@@ -37,14 +41,7 @@ if (/^\d+$/.test(slug)) {
   }
 
   // Validate category exists
-  const allCategories = await getAllCheatsheetCategories();
-  const categoryIds = allCategories.map((c) => c.id);
-  if (!categoryIds.includes(categorySlug)) {
-    return new Response(null, { status: 404 });
-  }
-
-  // Find the category
-  const category = allCategories.find((c) => c.id === categorySlug);
+  const category = await getCategoryBySlug(categorySlug);
   if (!category) {
     return new Response(null, { status: 404 });
   }
@@ -52,7 +49,7 @@ if (/^\d+$/.test(slug)) {
   const categoryName = category.name;
 
   // Get cheatsheets for this category
-  const cheatsheets = await getCheatsheetsByCategory(categoryName);
+  const cheatsheets = await getCheatsheetsByCategory(categorySlug);
   const totalCheatsheets = cheatsheets.length;
 
   // Pagination logic
@@ -92,7 +89,11 @@ if (/^\d+$/.test(slug)) {
   paginationData = {
     categoryName,
     categorySlug,
-    paginatedCheatsheets,
+    paginatedCheatsheets: paginatedCheatsheets.map(c => ({
+        name: c.slug,
+        url: `/freedevtools/c/${categorySlug}/${c.slug}/`,
+        description: c.description
+    })),
     totalCheatsheets,
     currentPage,
     totalPages,
@@ -103,13 +104,13 @@ if (/^\d+$/.test(slug)) {
   };
 } else {
   // This is a cheatsheet name (slug)
-  const cheatsheetResult = await getCheatsheet(categorySlug, slug);
+  const cheatsheetResult = await getCheatsheetByCategoryAndSlug(categorySlug, slug);
 
   if (!cheatsheetResult) {
     return new Response(null, { status: 404 });
   }
 
-  const { content, metatags } = cheatsheetResult;
+  const { content, title: metaTitle, description: metaDesc, keywords: metaKeywords } = cheatsheetResult;
 
   // Process the content to handle links and add anchor IDs
   function processCheatsheetLinks(html: string): string {
@@ -182,9 +183,9 @@ if (/^\d+$/.test(slug)) {
   const processedContent = processCheatsheetLinks(content);
 
   // Use metatags for title and description, with fallbacks
-  const title = metatags.title || slug;
-  const description = metatags.description || `Cheatsheet for ${slug}`;
-  const keywords = metatags.keywords || [
+  const title = metaTitle || slug;
+  const description = metaDesc || `Cheatsheet for ${slug}`;
+  const keywords = metaKeywords || [
     'free devtools',
     'cheatsheets',
     categorySlug,
