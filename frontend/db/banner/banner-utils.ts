@@ -1,21 +1,26 @@
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import path from 'path';
 import type { Banner, RawBannerRow } from './banner-schema';
 
 // DB queries
-let dbInstance: Database.Database | null = null;
+let dbInstance: Database | null = null;
 
 function getDbPath(): string {
   return path.resolve(process.cwd(), 'db/all_dbs/banner-db.db');
 }
 
-export function getDb(): Database.Database {
+export function getDb(): Database {
   if (dbInstance) return dbInstance;
   const dbPath = getDbPath();
   dbInstance = new Database(dbPath, { readonly: true });
-  // Improve read performance for build-time queries
-  dbInstance.pragma('journal_mode = OFF');
-  dbInstance.pragma('synchronous = OFF');
+  // Optimize for read-only performance
+  dbInstance.run('PRAGMA journal_mode = OFF');
+  dbInstance.run('PRAGMA synchronous = OFF');
+  dbInstance.run('PRAGMA mmap_size = 1073741824');
+  
+  dbInstance.run('PRAGMA temp_store = MEMORY'); // Use memory for temp tables
+  dbInstance.run('PRAGMA query_only = ON'); // Ensure read-only mode
+  dbInstance.run('PRAGMA read_uncommitted = ON'); // Skip locking for reads
   return dbInstance;
 }
 
