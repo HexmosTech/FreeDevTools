@@ -12,8 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card
 import CopyButton from 'src/components/ui/copy-button';
 import { Label } from 'src/components/ui/label';
 import { Textarea } from 'src/components/ui/textarea';
-import HtmlToMarkdownSkeleton from 'src/pages/t/html-to-markdown/_HtmlToMarkdownSkeleton';
 import AdBanner from '../../../components/banner/AdBanner';
+import HtmlToMarkdownSkeleton from './_HtmlToMarkdownSkeleton';
 
 const converter = new showdown.Converter();
 
