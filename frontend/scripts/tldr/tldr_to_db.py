@@ -197,7 +197,7 @@ def parse_tldr_file(file_path: Path) -> Optional[Dict[str, Any]]:
     
     # Update path to match the new URL structure
     # This overrides the path from frontmatter which might be inconsistent
-    path_url = f"{cluster}/{name}/"
+    path_url = f"/freedevtools/tldr/{cluster}/{name}/"
     
     return {
         "url_hash": url_hash,
