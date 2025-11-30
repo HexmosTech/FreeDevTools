@@ -1,4 +1,9 @@
-import { getDb } from 'db/man_pages/man-pages-utils';
+import {
+  getManPageCategories,
+  getSubCategoriesCountByMainCategory,
+  getSubCategoriesByMainCategory,
+  getManPagesCountBySubcategory,
+} from 'db/man_pages/man-pages-utils';
 import type { APIRoute } from 'astro';
 
 const MAX_URLS = 5000;
@@ -16,7 +21,6 @@ function escapeXml(unsafe: string): string {
 
 // Loader function for sitemap URLs
 async function loadUrls() {
-  const db = getDb();
   const now = new Date().toISOString();
   const urls: string[] = [];
 
@@ -31,25 +35,13 @@ async function loadUrls() {
   );
 
   // Get all categories
-  const categoryStmt = db.prepare(`
-    SELECT DISTINCT main_category
-    FROM man_pages
-    ORDER BY main_category
-  `);
-  const categories = categoryStmt.all() as Array<{ main_category: string }>;
+  const categories = await getManPageCategories();
 
   // Category pagination (12 items per page)
   const categoryItemsPerPage = 12;
-  for (const { main_category } of categories) {
+  for (const { category: main_category } of categories) {
     // Get subcategories count for this category
-    const subcategoryCountStmt = db.prepare(`
-      SELECT COUNT(DISTINCT sub_category) as count
-      FROM man_pages 
-      WHERE main_category = ?
-    `);
-    const subcategoryCount =
-      (subcategoryCountStmt.get(main_category) as { count: number } | undefined)
-        ?.count || 0;
+    const subcategoryCount = await getSubCategoriesCountByMainCategory(main_category);
     const totalCategoryPages = Math.ceil(
       subcategoryCount / categoryItemsPerPage
     );
@@ -78,31 +70,13 @@ async function loadUrls() {
     }
 
     // Get all subcategories for this category
-    const subcategoryStmt = db.prepare(`
-      SELECT DISTINCT sub_category
-      FROM man_pages
-      WHERE main_category = ?
-      ORDER BY sub_category
-    `);
-    const subcategories = subcategoryStmt.all(main_category) as Array<{
-      sub_category: string;
-    }>;
+    const subcategories = await getSubCategoriesByMainCategory(main_category);
 
     // Subcategory pagination (20 items per page)
     const subcategoryItemsPerPage = 20;
-    for (const { sub_category } of subcategories) {
+    for (const { name: sub_category } of subcategories) {
       // Get man pages count for this subcategory
-      const manPagesCountStmt = db.prepare(`
-        SELECT COUNT(*) as count
-        FROM man_pages 
-        WHERE main_category = ? AND sub_category = ?
-      `);
-      const manPagesCount =
-        (
-          manPagesCountStmt.get(main_category, sub_category) as
-            | { count: number }
-            | undefined
-        )?.count || 0;
+      const manPagesCount = await getManPagesCountBySubcategory(main_category, sub_category);
       const totalSubcategoryPages = Math.ceil(
         manPagesCount / subcategoryItemsPerPage
       );

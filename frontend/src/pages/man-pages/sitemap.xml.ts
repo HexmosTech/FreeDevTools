@@ -1,4 +1,4 @@
-import { getDb } from 'db/man_pages/man-pages-utils';
+import { generateCommandStaticPaths } from '../../../db/man_pages/man-pages-utils';
 import type { APIRoute } from 'astro';
 
 const PRODUCTION_SITE = 'https://hexmos.com/freedevtools';
@@ -16,7 +16,6 @@ function escapeXml(unsafe: string): string {
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site }) => {
-  const db = getDb();
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
@@ -27,24 +26,13 @@ export const GET: APIRoute = async ({ site }) => {
       : PRODUCTION_SITE;
 
   // Get all man pages from database
-  const stmt = db.prepare(`
-    SELECT main_category, sub_category, slug
-    FROM man_pages
-    WHERE slug IS NOT NULL AND slug != ''
-    ORDER BY main_category, sub_category, slug
-  `);
-
-  const manPages = stmt.all() as Array<{
-    main_category: string;
-    sub_category: string;
-    slug: string;
-  }>;
+  const manPages = await generateCommandStaticPaths();
 
   // Map man pages to sitemap URLs
   const urls = manPages.map((manPage) => {
-    const escapedCategory = escapeXml(manPage.main_category);
-    const escapedSubCategory = escapeXml(manPage.sub_category);
-    const escapedSlug = escapeXml(manPage.slug);
+    const escapedCategory = escapeXml(manPage.params.category);
+    const escapedSubCategory = escapeXml(manPage.params.subcategory);
+    const escapedSlug = escapeXml(manPage.params.slug);
     return `
       <url>
         <loc>${siteUrl}/man-pages/${escapedCategory}/${escapedSubCategory}/${escapedSlug}/</loc>
@@ -63,16 +51,21 @@ export const GET: APIRoute = async ({ site }) => {
       <priority>0.9</priority>
     </url>`);
 
-  // Add category index pages
-  const categoryStmt = db.prepare(`
-    SELECT DISTINCT main_category
-    FROM man_pages
-    ORDER BY main_category
-  `);
-  const categories = categoryStmt.all() as Array<{ main_category: string }>;
+  // Add category index pages (we need to fetch these if we want them, but for now let's rely on what we have or add a new query)
+  // Since we don't have a direct "getAllCategories" exposed for sitemap in the worker yet, 
+  // we can either add it or just skip for now if the user didn't ask for full sitemap fidelity,
+  // BUT the original code had it.
+  // Let's use the existing utils we have.
 
-  categories.forEach(({ main_category }) => {
-    const escapedCategory = escapeXml(main_category);
+  // Note: The original code used direct DB access. We should use the worker functions.
+  // However, we don't have a "getAllCategories" that returns just names for sitemap.
+  // We have `getManPageCategories` which returns ManPageCategory[].
+
+  const { getManPageCategories, getSubCategories } = await import('../../../db/man_pages/man-pages-utils');
+
+  const categories = await getManPageCategories();
+  categories.forEach(({ category }) => {
+    const escapedCategory = escapeXml(category);
     urls.push(`
       <url>
         <loc>${siteUrl}/man-pages/${escapedCategory}/</loc>
@@ -82,20 +75,10 @@ export const GET: APIRoute = async ({ site }) => {
       </url>`);
   });
 
-  // Add subcategory index pages
-  const subcategoryStmt = db.prepare(`
-    SELECT DISTINCT main_category, sub_category
-    FROM man_pages
-    ORDER BY main_category, sub_category
-  `);
-  const subcategories = subcategoryStmt.all() as Array<{
-    main_category: string;
-    sub_category: string;
-  }>;
-
-  subcategories.forEach(({ main_category, sub_category }) => {
+  const subcategories = await getSubCategories();
+  subcategories.forEach(({ main_category, name }) => {
     const escapedCategory = escapeXml(main_category);
-    const escapedSubCategory = escapeXml(sub_category);
+    const escapedSubCategory = escapeXml(name);
     urls.push(`
       <url>
         <loc>${siteUrl}/man-pages/${escapedCategory}/${escapedSubCategory}/</loc>
