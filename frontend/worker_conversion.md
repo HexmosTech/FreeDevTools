@@ -8,7 +8,7 @@
 2. Replace `{CATEGORY_UPPER}` with uppercase version (e.g., `EMOJI`, `MAN_PAGES`, `MCP`)
 3. Replace `{CATEGORY_PLURAL}` with plural form if different (e.g., `emojis`, `man-pages`, `mcps`)
 4. Replace `{URL_PREFIX}` with the URL path prefix (e.g., `/freedevtools/emojis/`, `/freedevtools/man-pages/`)
-5. Replace `{DB_PATH}` with database file path (e.g., `db/all_dbs/emoji-db.db`)
+5. Replace `{DB_PATH}` with database file path (e.g., `db/all_dbs/emoji-db-v1.db`)
 6. Replace `{FILE_EXTENSION}` with file extension if applicable (e.g., `.svg`, `.png`, or empty string)
 7. Follow each phase sequentially, checking off items as you complete them
 
@@ -18,7 +18,7 @@
 - `{CATEGORY_UPPER}` → `EMOJI`
 - `{CATEGORY_PLURAL}` → `emojis`
 - `{URL_PREFIX}` → `/freedevtools/emojis/`
-- `{DB_PATH}` → `db/all_dbs/emoji-db.db`
+- `{DB_PATH}` → `db/all_dbs/emoji-db-v1.db`
 - `{FILE_EXTENSION}` → (empty, no extension)
 
 ---
@@ -89,12 +89,13 @@ Before starting, verify:
    - [ ] Add `hash_name: string` to main category/cluster interface (bigint stored as string)
    - [ ] Add `url_hash: string` to item/icon interface if applicable (bigint stored as string)
    - [ ] Update `RawClusterRow` or equivalent to use `_json` column names:
+
 - `keywords_json`, `tags_json`, `alternative_terms_json`, `why_choose_us_json`
 - Add `hash_name: string`
-   - [ ] Add `preview_icons_json` related interfaces if needed:
+  - [ ] Add `preview_icons_json` related interfaces if needed:
 - `PreviewIcon` interface
 - `ClusterWithPreviewIcons` interface
-     - `RawClusterPreviewPrecomputedRow` interface
+  - `RawClusterPreviewPrecomputedRow` interface
 
 **Note:** Database columns should already match (from migration), only TypeScript types need updating.
 
@@ -127,7 +128,10 @@ Before starting, verify:
    function findProjectRoot(): string {
      let current = __dirname;
      while (current !== path.dirname(current)) {
-       if (existsSync(path.join(current, 'package.json')) || existsSync(path.join(current, 'node_modules'))) {
+       if (
+         existsSync(path.join(current, 'package.json')) ||
+         existsSync(path.join(current, 'node_modules'))
+       ) {
          return current;
        }
        current = path.dirname(current);
@@ -153,7 +157,7 @@ Before starting, verify:
    ```typescript
    // OLD (can fail if running from different directory):
    const projectRoot = process.cwd();
-   
+
    // NEW (reliable path resolution):
    const projectRoot = findProjectRoot();
    ```
@@ -170,7 +174,7 @@ Before starting, verify:
 
    Add this after creating the worker, before `worker.on('message', ...)`
 
-6. **Verify query interface matches:**
+7. **Verify query interface matches:**
    - [ ] Export `query` object with same methods as SVG version
    - [ ] All query methods delegate to `executeQuery()`
 
@@ -390,6 +394,7 @@ Before starting, verify:
    - [ ] No direct database imports remain
 
 4. **Check for direct DB access:**
+
    ```bash
    grep -n "getDb()\|Database\|bun:sqlite" src/pages/{CATEGORY_PLURAL}/*.astro
    ```
@@ -467,6 +472,7 @@ Before starting, verify:
 ### Issue: Worker file not found
 
 **Error Message:**
+
 ```
 Worker file not found. Checked:
   - /path/to/project/dev/dist/server/chunks/db/{CATEGORY}/{CATEGORY}-worker.js (production)
@@ -486,7 +492,10 @@ The worker pool uses `process.cwd()` to resolve paths, which can be wrong if the
    function findProjectRoot(): string {
      let current = __dirname;
      while (current !== path.dirname(current)) {
-       if (existsSync(path.join(current, 'package.json')) || existsSync(path.join(current, 'node_modules'))) {
+       if (
+         existsSync(path.join(current, 'package.json')) ||
+         existsSync(path.join(current, 'node_modules'))
+       ) {
          return current;
        }
        current = path.dirname(current);
@@ -510,7 +519,7 @@ The worker pool uses `process.cwd()` to resolve paths, which can be wrong if the
    ```typescript
    // Replace this:
    const projectRoot = process.cwd();
-   
+
    // With this:
    const projectRoot = findProjectRoot();
    ```
