@@ -1,4 +1,4 @@
-import { buildIconUrl, hashUrlToKey } from '../../src/lib/hash-utils';
+import { buildIconUrl, hashUrlToKey, hashNameToKey } from '../../src/lib/hash-utils';
 import type { Cluster, ClusterWithPreviewIcons, Icon } from './svg-icons-schema';
 import { query } from './svg-worker-pool';
 
@@ -46,7 +46,8 @@ export async function getClustersWithPreviewIcons(
 }
 
 export async function getClusterByName(name: string): Promise<Cluster | null> {
-  return query.getClusterByName(name);
+  const hashName = hashNameToKey(name);
+  return query.getClusterByName(hashName);
 }
 
 export async function getClusters(): Promise<Cluster[]> {

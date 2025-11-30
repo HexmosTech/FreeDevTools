@@ -4,6 +4,7 @@
  */
 
 import { Database } from 'bun:sqlite';
+import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parentPort, workerData } from 'worker_threads';
@@ -60,22 +61,22 @@ const statements = {
      title, COALESCE(description, '') as description, practical_application,
      alternative_terms_json,
      about, why_choose_us_json, preview_icons_json
-     FROM cluster_preview_precomputed
+     FROM cluster
      ORDER BY name
      LIMIT ? OFFSET ?`
   ),
   clusterByName: db.prepare(
-    `SELECT id, name, count, source_folder, path, 
-     json(keywords) as keywords, json(tags) as tags, 
-     title, description, practical_application, json(alternative_terms) as alternative_terms,
-     about, json(why_choose_us) as why_choose_us
-     FROM cluster WHERE name = ?`
+    `SELECT id, hash_name, name, count, source_folder, path, 
+     keywords_json, tags_json, 
+     title, description, practical_application, alternative_terms_json,
+     about, why_choose_us_json
+     FROM cluster WHERE hash_name = ?`
   ),
   clusters: db.prepare(
-    `SELECT id, name, count, source_folder, path,
-      json(keywords) as keywords, json(tags) as tags,
-      title, description, practical_application, json(alternative_terms) as alternative_terms,
-      about, json(why_choose_us) as why_choose_us
+    `SELECT id, hash_name, name, count, source_folder, path,
+      keywords_json, tags_json,
+      title, description, practical_application, alternative_terms_json,
+      about, why_choose_us_json
       FROM cluster ORDER BY name`
   ),
   iconByCategory: db.prepare(
@@ -282,21 +283,22 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getClusterByName': {
-        const { name } = params;
-        const row = statements.clusterByName.get([name]) as {
+        const { name: hashName } = params; // hashName is the hash, not the name
+        const row = statements.clusterByName.get([hashName]) as {
           id: number;
+          hash_name: string;
           name: string;
           count: number;
           source_folder: string;
           path: string;
-          keywords: string;
-          tags: string;
+          keywords_json: string;
+          tags_json: string;
           title: string;
           description: string;
           practical_application: string;
-          alternative_terms: string;
+          alternative_terms_json: string;
           about: string;
-          why_choose_us: string;
+          why_choose_us_json: string;
         } | undefined;
 
         if (!row) {
@@ -304,18 +306,19 @@ parentPort?.on('message', (message: QueryMessage) => {
         } else {
           result = {
             id: row.id,
+            hash_name: row.hash_name,
             name: row.name,
             count: row.count,
             source_folder: row.source_folder,
             path: row.path,
-            keywords: JSON.parse(row.keywords || '[]') as string[],
-            tags: JSON.parse(row.tags || '[]') as string[],
+            keywords: JSON.parse(row.keywords_json || '[]') as string[],
+            tags: JSON.parse(row.tags_json || '[]') as string[],
             title: row.title,
             description: row.description,
             practical_application: row.practical_application,
-            alternative_terms: JSON.parse(row.alternative_terms || '[]') as string[],
+            alternative_terms: JSON.parse(row.alternative_terms_json || '[]') as string[],
             about: row.about,
-            why_choose_us: JSON.parse(row.why_choose_us || '[]') as string[],
+            why_choose_us: JSON.parse(row.why_choose_us_json || '[]') as string[],
           };
         }
         break;
@@ -324,41 +327,46 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getClusters': {
         const rows = statements.clusters.all() as Array<{
           id: number;
+          hash_name: string;
           name: string;
           count: number;
           source_folder: string;
           path: string;
-          keywords: string;
-          tags: string;
+          keywords_json: string;
+          tags_json: string;
           title: string;
           description: string;
           practical_application: string;
-          alternative_terms: string;
+          alternative_terms_json: string;
           about: string;
-          why_choose_us: string;
+          why_choose_us_json: string;
         }>;
         result = rows.map((row) => ({
           id: row.id,
+          hash_name: row.hash_name,
           name: row.name,
           count: row.count,
           source_folder: row.source_folder,
           path: row.path,
-          keywords: JSON.parse(row.keywords || '[]') as string[],
-          tags: JSON.parse(row.tags || '[]') as string[],
+          keywords: JSON.parse(row.keywords_json || '[]') as string[],
+          tags: JSON.parse(row.tags_json || '[]') as string[],
           title: row.title,
           description: row.description,
           practical_application: row.practical_application,
-          alternative_terms: JSON.parse(row.alternative_terms || '[]') as string[],
+          alternative_terms: JSON.parse(row.alternative_terms_json || '[]') as string[],
           about: row.about,
-          why_choose_us: JSON.parse(row.why_choose_us || '[]') as string[],
+          why_choose_us: JSON.parse(row.why_choose_us_json || '[]') as string[],
         }));
         break;
       }
 
       case 'getIconByCategoryAndName': {
         const { category, iconName } = params;
-        // First get cluster
-        const clusterRow = statements.clusterByName.get([category]) as {
+        // Hash the category name to get hash_name for cluster lookup
+        const hash = crypto.createHash('sha256').update(category).digest();
+        const hashName = hash.readBigInt64BE(0).toString();
+        // First get cluster by hash_name
+        const clusterRow = statements.clusterByName.get([hashName]) as {
           source_folder: string;
         } | undefined;
 
