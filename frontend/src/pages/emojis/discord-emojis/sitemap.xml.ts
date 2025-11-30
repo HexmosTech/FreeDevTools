@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ site }) => {
   );
 
   // Fetch Discord emojis (lightweight - only slug and category)
-  const emojis = getSitemapDiscordEmojis();
+  const emojis = await getSitemapDiscordEmojis();
   const urls: string[] = [];
 
   // Landing Page
