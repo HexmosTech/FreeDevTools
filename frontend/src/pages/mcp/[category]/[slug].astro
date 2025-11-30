@@ -1,6 +1,12 @@
 ---
-import { getEntry } from 'astro:content';
 import { marked } from 'marked';
+import { 
+  getMcpCategory, 
+  getMcpPagesByCategory, 
+  getMcpPage, 
+  getTotalMcpPagesByCategory,
+  hashUrlToKey
+} from '../../../../db/mcp/mcp-utils';
 import AdBanner from '../../../components/banner/AdBanner.astro';
 import CreditsButton from '../../../components/buttons/CreditsButton';
 import SeeAlsoIndex from '../../../components/seealso/SeeAlsoIndex.astro';
@@ -87,16 +93,14 @@ const isNumericPage = /^\d+$/.test(slug);
 const pageNumber = isNumericPage ? parseInt(slug, 10) : null;
 const repositoryId = !isNumericPage ? slug : null;
 
-// Get category data using getEntry (same as original)
-// This will return null if category doesn't exist
-const categoryEntry = await getEntry('mcpCategoryData', category);
+// Get category data
+const categoryData = getMcpCategory(category);
 
-if (!categoryEntry) {
+if (!categoryData) {
   return new Response(null, { status: 404 });
 }
 
-const categoryData = categoryEntry.data;
-const categoryName = categoryData.categoryDisplay;
+const categoryName = categoryData.name;
 const categoryDescription = categoryData.description || '';
 
 let pageData: any = null;
@@ -106,15 +110,9 @@ let repositoryData: any = null;
 if (pageNumber !== null) {
   // Page 1 is valid - don't redirect (category index redirects to /category/1/)
 
-  // Get all repositories for this category
-  const allRepositories = Object.entries(categoryData.repositories).map(
-    ([repositoryId, server]) => ({
-      ...server,
-      repositoryId: repositoryId,
-    })
-  );
   const itemsPerPage = 30;
-  const totalPages = Math.ceil(allRepositories.length / itemsPerPage);
+  const totalRepositories = getTotalMcpPagesByCategory(category);
+  const totalPages = Math.ceil(totalRepositories / itemsPerPage);
 
   // Validate page number
   if (pageNumber > totalPages || pageNumber < 1) {
@@ -122,13 +120,23 @@ if (pageNumber !== null) {
   }
 
   // Get repositories for current page
-  const startIndex = (pageNumber - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentPageRepositories = allRepositories.slice(startIndex, endIndex);
+  const dbRepositories = getMcpPagesByCategory(category, pageNumber, itemsPerPage);
+  
+  const currentPageRepositories = dbRepositories.map(repo => ({
+    ...repo.data,
+    repositoryId: repo.key,
+    // Ensure these fields are available at top level if needed, or just rely on data
+    name: repo.name,
+    description: repo.description,
+    owner: repo.owner,
+    stars: repo.stars,
+    updated_at: repo.updated_at,
+    license: repo.license
+  }));
 
   // SEO data
-  const title = `${categoryName} MCP Servers & Repositories – ${allRepositories.length} Model Context Protocol Tools (Page ${pageNumber} of ${totalPages}) | Free DevTools by Hexmos`;
-  const description = `Discover ${allRepositories.length} ${categoryName} MCP servers and repositories for Model Context Protocol integrations. Browse tools compatible with Claude, Cursor, and Windsurf — free, open source, and easy to explore.`;
+  const title = `${categoryName} MCP Servers & Repositories – ${totalRepositories} Model Context Protocol Tools (Page ${pageNumber} of ${totalPages}) | Free DevTools by Hexmos`;
+  const description = `Discover ${totalRepositories} ${categoryName} MCP servers and repositories for Model Context Protocol integrations. Browse tools compatible with Claude, Cursor, and Windsurf — free, open source, and easy to explore.`;
   const keywords = [
     'MCP',
     'Model Context Protocol',
@@ -154,7 +162,7 @@ if (pageNumber !== null) {
     categoryDescription,
     currentPage: pageNumber,
     totalPages,
-    totalRepositories: allRepositories.length,
+    totalRepositories,
     repositories: currentPageRepositories,
     breadcrumbItems,
     title,
@@ -163,27 +171,29 @@ if (pageNumber !== null) {
   };
 } else if (repositoryId) {
   // Handle repository route: /mcp/[category]/[repositoryId]
-  const repositories = categoryData.repositories;
-  const server = repositories[repositoryId];
+  const hashId = hashUrlToKey(category, repositoryId);
+  const repoPage = getMcpPage(hashId);
 
-  if (!server) {
+  if (!repoPage) {
     return new Response(null, { status: 404 });
   }
+
+  const server = repoPage.data;
 
   // Format repository name
   const formattedName = formatRepositoryName(server.name);
 
   // Process README content
   let processedReadmeContent: string = '';
-  if (server.readme_content) {
+  if (repoPage.readme_content) {
     try {
       // Convert markdown to HTML
-      let htmlContent = await marked(server.readme_content);
+      let htmlContent = await marked(repoPage.readme_content);
       // Process links: keep absolute URLs and anchor links, disable relative links
       processedReadmeContent = processMcpReadmeLinks(htmlContent);
     } catch (error) {
       console.warn('Error processing README content:', error);
-      processedReadmeContent = server.readme_content;
+      processedReadmeContent = repoPage.readme_content;
     }
   }
 

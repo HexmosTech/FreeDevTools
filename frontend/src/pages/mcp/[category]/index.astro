@@ -1,6 +1,9 @@
 ---
-import { getAllMcpCategoryIds } from '@/lib/mcp-utils';
-import { getAllMcpCategories, getMcpMetadata } from '@/lib/mcp-utils';
+import { 
+  getAllMcpCategories, 
+  getMcpCategory,
+  getTotalMcpCount
+} from '../../../../db/mcp/mcp-utils';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Mcp from '../_Mcp.astro';
 
@@ -23,7 +26,7 @@ if (/^\d+$/.test(category)) {
   const currentPage = parseInt(category, 10);
 
   // Fetch categories data directly (SSR mode)
-  const allCategories = await getAllMcpCategories();
+  const allCategories = getAllMcpCategories();
   const itemsPerPage = 30;
   const totalPages = Math.ceil(allCategories.length / itemsPerPage);
 
@@ -35,21 +38,22 @@ if (/^\d+$/.test(category)) {
   // Get categories for current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPageCategories = allCategories.slice(startIndex, endIndex);
+  
+  // Map DB categories to the format expected by the component
+  const mappedCategories = allCategories.map(cat => ({
+    id: cat.slug,
+    name: cat.name,
+    description: cat.description,
+    icon: cat.slug,
+    serverCount: cat.count,
+    url: `/freedevtools/mcp/${cat.slug}/1/`
+  }));
 
-  // Load MCP metadata
-  const metadata = await getMcpMetadata();
-
-  if (!metadata) {
-    throw new Error('MCP metadata not found');
-  }
+  const currentPageCategories = mappedCategories.slice(startIndex, endIndex);
 
   // Calculate totals
-  const totalServers = metadata.totalRepositories;
-  const totalTools = Object.values(metadata.categories).reduce(
-    (sum, cat) => sum + cat.npmPackages,
-    0
-  );
+  const totalServers = getTotalMcpCount();
+  const totalTools = 0; // We don't track tool count separately in DB yet
   const totalClients = 0;
 
   // SEO data
@@ -90,8 +94,8 @@ if (/^\d+$/.test(category)) {
   };
 } else {
   // Validate category exists
-  const allCategoryIds = await getAllMcpCategoryIds();
-  if (!allCategoryIds.includes(category)) {
+  const categoryData = getMcpCategory(category);
+  if (!categoryData) {
     return new Response(null, { status: 404 });
   }
 
