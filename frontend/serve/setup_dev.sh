@@ -3,6 +3,16 @@ set -e
 
 echo "🔧 Setting up development environment..."
 
+# Check if bun is installed
+if ! command -v bun &> /dev/null; then
+    echo "📦 bun is not installed. Installing bun..."
+    cd ..
+    make install
+    cd serve
+else
+    echo "✅ bun is already installed"
+fi
+
 # Update package list
 echo "📦 Updating package list..."
 sudo apt update

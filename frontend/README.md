@@ -1,3 +1,49 @@
+## How to setup project
+
+```
+cd frontend/serve
+bash setup_dev.sh
+```
+
+### Dev
+
+```
+cd frontend
+make run
+```
+
+### Build
+
+```
+cd frontend
+make build
+```
+
+### Serve Built files via bun (simple)
+
+```
+cd frontend
+make serve
+```
+
+### Serve built files via nginx -> pmdaemon -> bun (prod equivalent)
+
+```
+cd frontend
+make serve-prod
+```
+
+### Test all kind of pages
+
+```
+cd frontend/serve
+make curl-all-kind-of-page
+```
+
+###
+
+---
+
 ## How to Test SEO for Your Project
 
 Once your tool is partially or fully completed, you can run validation steps to identify any SEO issues.
@@ -30,29 +76,6 @@ Make sure to follow the same format for any new sections you
 - https://pagespeed.web.dev/analysis
 - https://seositecheckup.com/
 - https://rankmath.com/tools/seo-analyzer/
-
-<!-- ## Pull DBs to local repo
-
-Run `make pull-db` in FreeDevTools/frontend folder.
-
-1. List all LFS-tracked files
-
-```
-git lfs ls-files
-```
-
-2. Check whether the actual files (not pointers) are downloaded
-
-```
-git lfs status
-```
-
-3.
-
-```
-git lfs fetch --all
-git lfs ls-files --size
-``` -->
 
 ## Working with DB Files on Backblaze B2
 

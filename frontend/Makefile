@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy
+.PHONY: build deploy run clean install gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy serve prod-serve prod-stop
 
 # Run development server
 run:
@@ -20,12 +20,15 @@ install:
 build:
 	bun run build
 
-run-prod:
-	cd dev
+serve:
+	bun run serve-ssr
+
+serve-prod:
+	cd serve
 	pmdaemon --config pmd.json start
 
 stop-prod:
-	cd dev	
+	cd serve	
 	pmdaemon stop all
 	bash kill-ports.sh
 	bash kill-ports.sh
