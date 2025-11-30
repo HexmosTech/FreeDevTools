@@ -1,7 +1,6 @@
-import type { ClusterWithPreviewIcons } from '../png_icons/png-icons-utils';
-import { buildIconUrl, hashUrlToKey } from './hash-utils';
-import type { Cluster, Icon } from './svg-icons-schema';
-import { query } from './worker-pool';
+import { buildIconUrl, hashUrlToKey, hashNameToKey } from '../../src/lib/hash-utils';
+import type { Cluster, ClusterWithPreviewIcons, Icon } from './svg-icons-schema';
+import { query } from './svg-worker-pool';
 
 export async function getTotalIcons(): Promise<number> {
   return query.getTotalIcons();
@@ -47,7 +46,8 @@ export async function getClustersWithPreviewIcons(
 }
 
 export async function getClusterByName(name: string): Promise<Cluster | null> {
-  return query.getClusterByName(name);
+  const hashName = hashNameToKey(name);
+  return query.getClusterByName(hashName);
 }
 
 export async function getClusters(): Promise<Cluster[]> {
