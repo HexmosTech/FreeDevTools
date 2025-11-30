@@ -1,5 +1,21 @@
 .PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy
 
+# Run development server
+run:
+	bun run dev
+
+# Clean build artifacts
+clean:
+	rm -rf dist/
+	rm -rf .astro/
+
+install:
+	curl -fsSL https://bun.com/install | bash
+	echo "export PATH=\"$$BUN_INSTALL/bin:$$PATH\"" >> ~/.bashrc
+	source ~/.bashrc
+	make clean
+	bun install
+
 # Build the project
 build:
 	bun run build
@@ -37,15 +53,6 @@ index-deploy:
 	bun run build:index
 	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master:/tools/a4.html
 	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master:/tools/_astro/
-
-# Run development server
-run:
-	bun run dev
-
-# Clean build artifacts
-clean:
-	rm -rf dist/
-	rm -rf .astro/
 
 # Generate a new tool (usage: make gen tool-name)
 gen:
