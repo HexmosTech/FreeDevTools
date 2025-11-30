@@ -1,194 +1,512 @@
-now we have the @svg_icons @svg_icons_pages @svg_icons 
+# Convert {CATEGORY} to Worker Pool Architecture
 
-Likewise we need to convert @png_icons @png_icons_pages @png_icons  
+## Usage Instructions
 
-Write detailed spec plan etc
-Becuse i need to reuse that plan for other categories aswell.
+**To use this template:**
 
-Basicall the old system is using direct db query using single connection or something
+1. Replace all instances of `{CATEGORY}` with your category name (e.g., `emoji`, `man_pages`, `mcp`)
+2. Replace `{CATEGORY_UPPER}` with uppercase version (e.g., `EMOJI`, `MAN_PAGES`, `MCP`)
+3. Replace `{CATEGORY_PLURAL}` with plural form if different (e.g., `emojis`, `man-pages`, `mcps`)
+4. Replace `{URL_PREFIX}` with the URL path prefix (e.g., `/freedevtools/emojis/`, `/freedevtools/man-pages/`)
+5. Replace `{DB_PATH}` with database file path (e.g., `db/all_dbs/emoji-db.db`)
+6. Replace `{FILE_EXTENSION}` with file extension if applicable (e.g., `.svg`, `.png`, or empty string)
+7. Follow each phase sequentially, checking off items as you complete them
 
-We need to create workers for each category svg will have 2 workers, png will have 2 workers so on..
+**Example:** To convert Emoji category:
 
-then anything to be modified in integrations folder ? check that aswell 
+- `{CATEGORY}` → `emoji`
+- `{CATEGORY_UPPER}` → `EMOJI`
+- `{CATEGORY_PLURAL}` → `emojis`
+- `{URL_PREFIX}` → `/freedevtools/emojis/`
+- `{DB_PATH}` → `db/all_dbs/emoji-db.db`
+- `{FILE_EXTENSION}` → (empty, no extension)
 
-db/svg_icons
-src/pages/svg_icons
-
-check sitemap of target converstion category aswell 
-
-all queries must be optimized to use hash of category table or hash_url of icon table or similar in other category
-
-Have offset for paginated queries for example look at svg_icons 
-
-
-
-# Convert PNG Icons to Worker Pool Architecture
+---
 
 ## Overview
 
-Convert PNG icons from direct database access (`bun:sqlite`) to worker pool architecture using worker threads, matching the SVG icons implementation. This ensures consistent architecture, better performance, and scalability.
+Convert {CATEGORY} from direct database access (`bun:sqlite`) to worker pool architecture using worker threads, matching the SVG icons implementation. This ensures consistent architecture, better performance, and scalability.
+
+## Prerequisites
+
+Before starting, verify:
+
+- [ ] Reference implementation exists: `db/svg_icons/` (svg-worker-pool.ts, svg-worker.ts, svg-icons-utils.ts)
+- [ ] Target category has: `db/{CATEGORY}/` directory with utils file
+- [ ] Target category has: `src/pages/{CATEGORY_PLURAL}/` directory
+- [ ] Database exists at: `{DB_PATH}`
+- [ ] Database tables have been migrated to use hash-based primary keys (if applicable)
 
 ## Current State Analysis
 
-### SVG Icons (Reference Implementation)
+### SVG Icons (Reference Implementation - DO NOT MODIFY)
 
 - **Database Layer**: `db/svg_icons/`
-- `svg-worker-pool.ts` - Worker pool manager (2 workers, round-robin)
-- `svg-worker.ts` - Worker thread with SQLite queries
-- `svg-icons-utils.ts` - Public API using worker pool
-- `svg-icons-schema.ts` - TypeScript interfaces with `hash_name`, `url_hash`, `_json` columns
+  - `svg-worker-pool.ts` - Worker pool manager (2 workers, round-robin)
+  - `svg-worker.ts` - Worker thread with SQLite queries
+  - `svg-icons-utils.ts` - Public API using worker pool
+  - `svg-icons-schema.ts` - TypeScript interfaces with `hash_name`, `url_hash`, `_json` columns
 
-### PNG Icons (Current State)
+### {CATEGORY} (Current State - TO BE CONVERTED)
 
-- **Database Layer**: `db/png_icons/`
-- `png-icons-utils.ts` - Direct DB access using `bun:sqlite` (needs conversion)
-- `png-icons-schema.ts` - Missing `hash_name`, `url_hash`, `preview_icons_json` types
-- Missing: `png-worker-pool.ts`
-- Missing: `png-worker.ts`
+- **Database Layer**: `db/{CATEGORY}/`
+  - `{CATEGORY}-utils.ts` - Direct DB access using `bun:sqlite` (needs conversion)
+  - `{CATEGORY}-schema.ts` - May be missing hash types
+  - Missing: `{CATEGORY}-worker-pool.ts`
+  - Missing: `{CATEGORY}-worker.ts`
 
 ### Pages
 
-- `src/pages/png_icons_pages/sitemap.xml.ts` - Uses content collections (needs DB query)
-- `src/pages/svg_icons_pages/sitemap.xml.ts` - Uses `getClusters()` from database
+- `src/pages/{CATEGORY_PLURAL}_pages/sitemap.xml.ts` - May use content collections (needs DB query)
+- `src/pages/{CATEGORY_PLURAL}/*.astro` - May use direct DB access (needs async conversion)
+
+---
 
 ## Implementation Plan
 
 ### Phase 1: Database Schema Updates
 
-**File**: `db/png_icons/png-icons-schema.ts`
+**File**: `db/{CATEGORY}/{CATEGORY}-schema.ts`
 
-1. Add `hash_name: string` to `Cluster` interface (bigint stored as string)
-2. Add `url_hash: string` to `Icon` interface (bigint stored as string)
-3. Update `RawClusterRow` to use `_json` column names:
+**Steps:**
 
-- `keywords_json`, `tags_json`, `alternative_terms_json`, `why_choose_us_json`
-- Add `hash_name: string`
+1. **Check if database uses cluster/category table with hash_name:**
 
-4. Add `preview_icons_json` related interfaces:
+   ```bash
+   sqlite3 {DB_PATH} "PRAGMA table_info(cluster);"
+   # OR
+   sqlite3 {DB_PATH} "PRAGMA table_info(category);"
+   ```
 
-- `PreviewIcon` interface
-- `ClusterWithPreviewIcons` interface
-- `RawClusterPreviewPrecomputedRow` interface (if needed)
+   - If `hash_name` column exists → database is ready
+   - If not → run migration script first (see `db/bench/{CATEGORY}/generate-{CATEGORY}-hashes.js`)
 
-**Note**: Database columns already match (from previous migration), only TypeScript types need updating.
+2. **Update TypeScript interfaces:**
+   - [ ] Add `hash_name: string` to main category/cluster interface (bigint stored as string)
+   - [ ] Add `url_hash: string` to item/icon interface if applicable (bigint stored as string)
+   - [ ] Update `RawClusterRow` or equivalent to use `_json` column names:
+     - `keywords_json`, `tags_json`, `alternative_terms_json`, `why_choose_us_json`
+     - Add `hash_name: string`
+   - [ ] Add `preview_icons_json` related interfaces if needed:
+     - `PreviewIcon` interface
+     - `ClusterWithPreviewIcons` interface
+     - `RawClusterPreviewPrecomputedRow` interface
+
+**Note:** Database columns should already match (from migration), only TypeScript types need updating.
+
+**Reference:** See `db/svg_icons/svg-icons-schema.ts` for complete structure.
+
+---
 
 ### Phase 2: Create Worker Pool Infrastructure
 
-**File**: `db/png_icons/png-worker-pool.ts` (NEW)
+**File**: `db/{CATEGORY}/{CATEGORY}-worker-pool.ts` (NEW)
 
-1. Copy structure from `db/svg_icons/svg-worker-pool.ts`
-2. Replace all `SVG_ICONS_DB` references with `PNG_ICONS_DB`
-3. Update `getDbPath()` to return `db/all_dbs/png-icons-db.db`
-4. Update worker path resolution:
+**Steps:**
 
-- Source: `db/png_icons/png-worker`
-- Dist: `dist/server/chunks/db/png_icons/png-worker`
+1. **Copy template:**
 
-5. Export `query` object with same interface as SVG version
+   ```bash
+   cp db/svg_icons/svg-worker-pool.ts db/{CATEGORY}/{CATEGORY}-worker-pool.ts
+   ```
 
-**File**: `db/png_icons/png-worker.ts` (NEW)
+2. **Find and replace:**
+   - [ ] `SVG_ICONS_DB` → `{CATEGORY_UPPER}_DB` (all occurrences)
+   - [ ] `svg_icons` → `{CATEGORY}` (in paths)
+   - [ ] `svg-icons-db.db` → `{CATEGORY}-db.db` (in getDbPath)
+   - [ ] `svg-worker` → `{CATEGORY}-worker` (in worker paths)
 
-1. Copy structure from `db/svg_icons/svg-worker.ts`
-2. Replace all `SVG_ICONS_DB` log labels with `PNG_ICONS_DB`
-3. Update database path in `workerData`
-4. Update SQL queries to match PNG table structure:
+3. **Update getDbPath():**
 
-- Use `keywords_json`, `tags_json`, etc. (already in DB)
-- Use `hash_name` for cluster lookups
-- Use `url_hash` for icon lookups
-- Include `preview_icons_json` in cluster queries
+   ```typescript
+   function getDbPath(): string {
+     return path.resolve(process.cwd(), '{DB_PATH}');
+   }
+   ```
 
-5. Update query handlers to parse JSON columns correctly
-6. Ensure `getIconByUrlHash` uses correct URL pattern (`/freedevtools/png_icons/`)
+4. **Update worker path resolution:**
+   - Source: `db/{CATEGORY}/{CATEGORY}-worker`
+   - Dist: `dist/server/chunks/db/{CATEGORY}/{CATEGORY}-worker`
 
-### Phase 3: Update Utils to Use Worker Pool
+5. **Add max listeners (prevent memory leak warnings):**
 
-**File**: `db/png_icons/png-icons-utils.ts`
+   ```typescript
+   worker.setMaxListeners(100);
+   ```
 
-1. Remove direct `Database` import and `getDb()` function
-2. Import `query` from `./png-worker-pool` instead
-3. Convert all functions to async (matching SVG pattern):
+   Add this after creating the worker, before `worker.on('message', ...)`
 
-- `getTotalIcons()` → `async function getTotalIcons(): Promise<number>`
-- `getTotalClusters()` → `async function getTotalClusters(): Promise<number>`
-- `getClusters()` → `async function getClusters(): Promise<Cluster[]>`
-- `getClusterByName(name: string)` → Use `hashNameToKey()` helper
-- `getIconsByCluster()` → `async function getIconsByCluster()`
-- `getClustersWithPreviewIcons()` → Use worker pool query
-- `getIconByCategoryAndName()` → Use `hashUrlToKey()` and `getIconByUrlHash`
+6. **Verify query interface matches:**
+   - [ ] Export `query` object with same methods as SVG version
+   - [ ] All query methods delegate to `executeQuery()`
 
-4. Import hash utilities: `hashUrlToKey`, `hashNameToKey` from `../../src/lib/hash-utils`
-5. Remove all direct SQL queries - delegate to worker pool
-6. Update return types to match SVG utils interface
+**Reference:** See `db/svg_icons/svg-worker-pool.ts` for complete implementation.
 
-### Phase 4: Build Integration
+---
+
+### Phase 3: Create Worker Thread
+
+**File**: `db/{CATEGORY}/{CATEGORY}-worker.ts` (NEW)
+
+**Steps:**
+
+1. **Copy template:**
+
+   ```bash
+   cp db/svg_icons/svg-worker.ts db/{CATEGORY}/{CATEGORY}-worker.ts
+   ```
+
+2. **Find and replace:**
+   - [ ] `SVG_ICONS_DB` → `{CATEGORY_UPPER}_DB` (all log labels)
+   - [ ] Update comment: "Handles all query types for the {CATEGORY} database"
+
+3. **Update SQL queries:**
+   - [ ] Check table names match your database (may be `cluster`, `category`, `emoji`, etc.)
+   - [ ] Use `keywords_json`, `tags_json`, etc. if columns exist
+   - [ ] Use `hash_name` for category/cluster lookups
+   - [ ] Use `url_hash` for item lookups (if applicable)
+   - [ ] Include `preview_icons_json` in queries if column exists
+
+4. **Update URL patterns:**
+   - [ ] In `getIconsByCluster` or equivalent: Update URL to `{URL_PREFIX}`
+   - [ ] In `getIconByCategoryAndName`: Update file extension handling (`.svg` → `{FILE_EXTENSION}`)
+   - [ ] In transform mode: Update icon/url paths to `{URL_PREFIX}`
+
+5. **Update query handlers:**
+   - [ ] Parse JSON columns correctly (`keywords_json`, `tags_json`, etc.)
+   - [ ] Handle `hash_name` lookups properly
+   - [ ] Ensure all return types match schema interfaces
+
+6. **Verify all query types:**
+   - [ ] `getTotalIcons` / `getTotalItems`
+   - [ ] `getTotalClusters` / `getTotalCategories`
+   - [ ] `getIconsByCluster` / `getItemsByCategory`
+   - [ ] `getClustersWithPreviewIcons` / `getCategoriesWithPreview`
+   - [ ] `getClusterByName` / `getCategoryByName`
+   - [ ] `getClusters` / `getCategories`
+   - [ ] `getIconByUrlHash` / `getItemByUrlHash`
+   - [ ] `getIconByCategoryAndName` / `getItemByCategoryAndName`
+
+**Reference:** See `db/svg_icons/svg-worker.ts` for complete query implementations.
+
+---
+
+### Phase 4: Update Utils to Use Worker Pool
+
+**File**: `db/{CATEGORY}/{CATEGORY}-utils.ts`
+
+**Steps:**
+
+1. **Remove direct database access:**
+   - [ ] Remove `import { Database } from 'bun:sqlite'`
+   - [ ] Remove `getDb()` function
+   - [ ] Remove `dbInstance` variable
+
+2. **Add worker pool import:**
+
+   ```typescript
+   import { query } from './{CATEGORY}-worker-pool';
+   ```
+
+3. **Import hash utilities:**
+
+   ```typescript
+   import { hashUrlToKey, hashNameToKey } from '../../src/lib/hash-utils';
+   ```
+
+4. **Create category-specific URL builder (if needed):**
+
+   ```typescript
+   function build{CATEGORY}Url(category: string, name: string): string {
+     const segments = [category, name]
+       .filter((segment) => typeof segment === 'string' && segment.length > 0)
+       .map((segment) => encodeURIComponent(segment));
+     return '{URL_PREFIX}' + segments.join('/');
+   }
+   ```
+
+   Only needed if URL pattern differs from SVG (which uses `/` + segments).
+
+5. **Convert all functions to async:**
+   - [ ] `getTotalIcons()` → `async function getTotalIcons(): Promise<number>`
+   - [ ] `getTotalClusters()` → `async function getTotalClusters(): Promise<number>`
+   - [ ] `getClusters()` → `async function getClusters(): Promise<Cluster[]>`
+   - [ ] `getClusterByName(name: string)` → Use `hashNameToKey()` helper:
+     ```typescript
+     export async function getClusterByName(
+       name: string
+     ): Promise<Cluster | null> {
+       const hashName = hashNameToKey(name);
+       return query.getClusterByName(hashName);
+     }
+     ```
+   - [ ] `getIconsByCluster()` → `async function getIconsByCluster()`
+   - [ ] `getClustersWithPreviewIcons()` → Use worker pool query
+   - [ ] `getIconByCategoryAndName()` → Use `hashUrlToKey()` and `getIconByUrlHash`:
+     ```typescript
+     export async function getIconByCategoryAndName(
+       category: string,
+       iconName: string
+     ): Promise<Icon | null> {
+       const clusterData = await getClusterByName(category);
+       if (!clusterData) return null;
+       const filename = iconName.replace('{FILE_EXTENSION}', '');
+       const url = build{CATEGORY}Url(clusterData.source_folder || category, filename);
+       const hashKey = hashUrlToKey(url);
+       return query.getIconByUrlHash(hashKey);
+     }
+     ```
+
+6. **Remove all direct SQL queries:**
+   - [ ] Replace all `db.prepare()` calls with `query.*()` calls
+   - [ ] Remove all database connection code
+
+7. **Update return types:**
+   - [ ] Ensure all return types match SVG utils interface
+   - [ ] Add `IconWithMetadata` interface if needed
+   - [ ] Add `ClusterTransformed` interface if needed
+
+**Reference:** See `db/svg_icons/svg-icons-utils.ts` for complete structure.
+
+---
+
+### Phase 5: Build Integration
 
 **File**: `integrations/copy-worker.mjs`
 
-1. Add PNG worker file copying alongside SVG worker
-2. Update `astro:build:done` hook to copy both:
+**Steps:**
 
-- `db/svg_icons/svg-worker.ts` → `dist/server/chunks/db/svg_icons/svg-worker.js`
-- `db/png_icons/png-worker.ts` → `dist/server/chunks/db/png_icons/png-worker.js`
+1. **Locate the workers array:**
+   Find the `workers` array that contains SVG and PNG worker configs.
 
-3. Use same esbuild compilation approach for both
+2. **Add new worker entry:**
 
-### Phase 5: Update Page Files
+   ```javascript
+   {
+     source: path.join(projectRoot, 'db', '{CATEGORY}', '{CATEGORY}-worker.ts'),
+     dist: path.join(distDir, 'server', 'chunks', 'db', '{CATEGORY}', '{CATEGORY}-worker.js'),
+     name: '{CATEGORY_UPPER}',
+   },
+   ```
 
-**File**: `src/pages/png_icons_pages/sitemap.xml.ts`
+3. **Verify:**
+   - [ ] Worker entry is added to the array
+   - [ ] Paths use correct category name
+   - [ ] Name is uppercase version
 
-1. Replace content collection import with database query
-2. Import `getClusters` from `db/png_icons/png-icons-utils`
-3. Use `await getClusters()` instead of `getCollection('pngIconsMetadata')`
-4. Calculate pagination from cluster count (matching SVG pattern)
+**Reference:** See `integrations/copy-worker.mjs` for current structure.
 
-**Files**: `src/pages/png_icons/*.astro`
+---
 
-1. Verify all pages use async utils functions correctly
-2. Update any direct DB access to use worker pool
-3. Ensure `getClusterByName` uses hashed lookups
+### Phase 6: Update Page Files
 
-### Phase 6: Testing & Verification
+#### 6.1: Update Sitemap
 
-1. Verify worker pool initializes correctly
-2. Test all query types work through worker pool
-3. Verify build process compiles worker files
-4. Check page rendering with new architecture
-5. Verify sitemap generation works
+**File**: `src/pages/{CATEGORY_PLURAL}_pages/sitemap.xml.ts`
 
-## Reusability Notes
+**Steps:**
 
-This plan can be adapted for other icon categories by:
+1. **Replace content collection import (if exists):**
 
-1. Replacing `png` with category name (e.g., `jpg`, `webp`)
-2. Updating database paths and table names
-3. Adjusting URL patterns in hash functions
-4. Following same worker pool pattern
+   ```typescript
+   // REMOVE:
+   const { getCollection } = await import('astro:content');
+   const entries = await getCollection('{category}Metadata');
 
-## Key Differences from SVG
+   // ADD:
+   import { getClusters } from 'db/{CATEGORY}/{CATEGORY}-utils';
+   const clusters = await getClusters();
+   ```
 
-- PNG uses `.png` extension in URLs (vs `.svg`)
-- PNG database path: `db/all_dbs/png-icons-db.db`
-- PNG URL prefix: `/freedevtools/png_icons/`
-- All other patterns match SVG implementation
+2. **Update pagination calculation:**
 
-## Files to Create/Modify
+   ```typescript
+   const itemsPerPage = 30;
+   const totalPages = Math.ceil(clusters.length / itemsPerPage);
+   ```
 
-**New Files:**
+3. **Update URL generation:**
+   - [ ] Use `{URL_PREFIX}` for all URLs
+   - [ ] Ensure pagination URLs match pattern
 
-- `db/png_icons/png-worker-pool.ts`
-- `db/png_icons/png-worker.ts`
+**Reference:** See `src/pages/svg_icons_pages/sitemap.xml.ts` for complete example.
 
-**Modified Files:**
+#### 6.2: Update Main Pages
 
-- `db/png_icons/png-icons-utils.ts` (major refactor)
-- `db/png_icons/png-icons-schema.ts` (add missing types)
-- `integrations/copy-worker.mjs` (add PNG worker copy)
-- `src/pages/png_icons_pages/sitemap.xml.ts` (use DB queries)
+**Files**: `src/pages/{CATEGORY_PLURAL}/*.astro`
 
-**Reference Files:**
+**Steps:**
+
+1. **Find all function calls:**
+
+   ```bash
+   grep -n "getClusters\|getClusterByName\|getIconsByCluster\|getClustersWithPreviewIcons\|getTotalIcons\|getIconByCategoryAndName" src/pages/{CATEGORY_PLURAL}/*.astro
+   ```
+
+2. **Add `await` to all async calls:**
+   - [ ] `getClusters()` → `await getClusters()`
+   - [ ] `getClusterByName()` → `await getClusterByName()`
+   - [ ] `getIconsByCluster()` → `await getIconsByCluster()`
+   - [ ] `getClustersWithPreviewIcons()` → `await getClustersWithPreviewIcons()`
+   - [ ] `getTotalIcons()` → `await getTotalIcons()`
+   - [ ] `getIconByCategoryAndName()` → `await getIconByCategoryAndName()`
+
+3. **Verify imports:**
+   - [ ] All imports from `db/{CATEGORY}/{CATEGORY}-utils` are correct
+   - [ ] No direct database imports remain
+
+4. **Check for direct DB access:**
+   ```bash
+   grep -n "getDb()\|Database\|bun:sqlite" src/pages/{CATEGORY_PLURAL}/*.astro
+   ```
+
+   - [ ] Remove any direct database access
+   - [ ] Replace with worker pool calls
+
+**Reference:** See `src/pages/svg_icons/*.astro` for examples.
+
+---
+
+### Phase 7: Testing & Verification
+
+**Checklist:**
+
+1. **Worker Pool Initialization:**
+   - [ ] Start dev server: `npm run dev` or `bun run dev`
+   - [ ] Check console for: `[{CATEGORY_UPPER}_DB] Initializing worker pool with 2 workers...`
+   - [ ] Verify: `[{CATEGORY_UPPER}_DB] Worker pool initialized in Xms`
+   - [ ] No errors about missing worker files
+
+2. **Query Functionality:**
+   - [ ] Test main listing page: `/{URL_PREFIX}`
+   - [ ] Test category page: `/{URL_PREFIX}{category}/`
+   - [ ] Test item page: `/{URL_PREFIX}{category}/{item}/`
+   - [ ] Check console logs for query execution times
+   - [ ] Verify no SQL errors
+
+3. **Build Process:**
+   - [ ] Run build: `npm run build` or `bun run build`
+   - [ ] Verify worker file compiled: `dist/server/chunks/db/{CATEGORY}/{CATEGORY}-worker.js`
+   - [ ] Check build logs for: `✅ Compiled {CATEGORY_UPPER} worker.js using esbuild`
+
+4. **Page Rendering:**
+   - [ ] All pages render without errors
+   - [ ] Data displays correctly
+   - [ ] Pagination works
+   - [ ] Sitemap generates correctly
+
+5. **Performance:**
+   - [ ] Query times are reasonable (< 100ms for simple queries)
+   - [ ] No memory leaks (check worker pool logs)
+   - [ ] Worker pool handles concurrent requests
+
+---
+
+## Category-Specific Notes
+
+### For Icon Categories (SVG, PNG, etc.)
+
+- Use `cluster` table name
+- Use `icon` table name
+- URL pattern: `/freedevtools/{category}_icons/{cluster}/{icon}/`
+- File extension: `.svg` or `.png`
+
+### For Emoji Categories
+
+- May use `emoji` table instead of `icon`
+- May use `category` instead of `cluster`
+- URL pattern: `/freedevtools/emojis/{category}/`
+- No file extension in URLs
+- May have different schema structure
+
+### For Other Categories
+
+- Check actual table names in database
+- Check URL patterns in existing pages
+- Adapt query names to match category terminology
+- Verify hash column names match database structure
+
+---
+
+## Common Issues & Solutions
+
+### Issue: Worker file not found
+
+**Solution:**
+
+- Check worker file exists: `db/{CATEGORY}/{CATEGORY}-worker.ts`
+- Verify build integration copied file to dist
+- Check worker path resolution in worker-pool.ts
+
+### Issue: SQLiteError: no such column
+
+**Solution:**
+
+- Verify database schema matches TypeScript types
+- Check if migration script was run
+- Verify column names use `_json` suffix if applicable
+
+### Issue: Query timeout
+
+**Solution:**
+
+- Check if database file exists at correct path
+- Verify database is not locked by another process
+- Check worker pool initialization completed
+
+### Issue: Type errors
+
+**Solution:**
+
+- Ensure schema types match database structure
+- Verify all interfaces include required fields
+- Check return types match function signatures
+
+---
+
+## Files Checklist
+
+**New Files to Create:**
+
+- [ ] `db/{CATEGORY}/{CATEGORY}-worker-pool.ts`
+- [ ] `db/{CATEGORY}/{CATEGORY}-worker.ts`
+
+**Files to Modify:**
+
+- [ ] `db/{CATEGORY}/{CATEGORY}-utils.ts` (major refactor)
+- [ ] `db/{CATEGORY}/{CATEGORY}-schema.ts` (add missing types)
+- [ ] `integrations/copy-worker.mjs` (add worker copy)
+- [ ] `src/pages/{CATEGORY_PLURAL}_pages/sitemap.xml.ts` (use DB queries)
+- [ ] `src/pages/{CATEGORY_PLURAL}/*.astro` (add await, update imports)
+
+**Reference Files (DO NOT MODIFY):**
 
 - `db/svg_icons/svg-worker-pool.ts` (template)
 - `db/svg_icons/svg-worker.ts` (template)
 - `db/svg_icons/svg-icons-utils.ts` (template)
 - `src/pages/svg_icons_pages/sitemap.xml.ts` (template)
+
+---
+
+## Completion Checklist
+
+- [ ] Phase 1: Schema updated
+- [ ] Phase 2: Worker pool created
+- [ ] Phase 3: Worker thread created
+- [ ] Phase 4: Utils refactored
+- [ ] Phase 5: Build integration updated
+- [ ] Phase 6: All pages updated
+- [ ] Phase 7: All tests passing
+- [ ] No linter errors
+- [ ] Build succeeds
+- [ ] Pages render correctly
+
+---
+
+## Next Steps After Conversion
+
+1. Update any documentation referencing the old architecture
+2. Remove any unused database connection code
+3. Consider adding performance monitoring
+4. Update any related scripts or tools
+5. Test in production-like environment
