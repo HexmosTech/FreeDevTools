@@ -16,7 +16,7 @@ import path from 'path';
 import sqlite3 from 'sqlite3';
 import type { Cluster, Icon, RawClusterRow, RawIconRow } from '../../db/svg_icons/svg-icons-schema';
 
-const DB_PATH = path.resolve(process.cwd(), 'db/all_dbs/svg-icons-db.db');
+const DB_PATH = path.resolve(process.cwd(), 'db/all_dbs/svg-icons-db-v1.db');
 
 interface PreviewIcon {
   id: number;

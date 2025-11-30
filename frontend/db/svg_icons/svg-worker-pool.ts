@@ -46,7 +46,7 @@ interface QueryResponse {
 
 function getDbPath(): string {
   const projectRoot = findProjectRoot();
-  return path.resolve(projectRoot, 'db/all_dbs/svg-icons-db.db');
+  return path.resolve(projectRoot, 'db/all_dbs/svg-icons-db-v1.db');
 }
 
 /**
