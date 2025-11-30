@@ -6,7 +6,7 @@
 BINARY := sitemap-checker
 
 # Default flags (can be overridden from CLI)
-SITEMAP ?= http://localhost:4321/freedevtools/tldr/sitemap.xml
+SITEMAP ?= 
 INPUT ?= 
 CONCURRENCY ?= 24 
 MODE ?= local
