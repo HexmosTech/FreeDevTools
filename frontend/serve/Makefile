@@ -48,6 +48,8 @@ test-svg-req-pm2:
 	@echo ""
 	@echo "⬇️  Showing PM2 logs -----------"
 	make pm2logs LABEL=test-svg-req-pm2
+	pm2 stop all
+	pm2 delete all --force 2>/dev/null || true
 
 test-svg-req-pmd:
 	clear
@@ -68,13 +70,27 @@ test-svg-req-pmd:
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/emojis/two-hump-camel/
+	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
 	@sleep 2
 	@echo "⬇️  Requesting SVG icon -----------"
-	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/emojis/two-hump-camel/
+	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
+	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
+	if [ -n "$$LOG_FILES" ]; then \
+		for LOG_FILE in $$LOG_FILES; do \
+			echo "=== $$(basename $$LOG_FILE) ==="; \
+			cat "$$LOG_FILE"; \
+			echo ""; \
+		done; \
+	else \
+		echo "No astro-out log yet."; \
+	fi
+	@echo ""
+	@echo "⬇️  Showing PMDaemon logs -----------"
 	make pmdlogs LABEL=test-svg-req-pmd
+	pmdaemon stop all
+	pmdaemon delete all --force 2>/dev/null || true
 
 curl-all-kind-of-page:
 	@echo "SVG Icon (localhost:4321):"
