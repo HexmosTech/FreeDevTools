@@ -8,6 +8,13 @@ export interface ManPage {
   content: ManPageContent; // JSON object with dynamic sections
 }
 
+export interface ManPageCategory {
+  category: string;
+  count: number;
+  description: string;
+}
+
+
 export interface ManPageContent {
   NAME?: string;
   SYNOPSIS?: string;

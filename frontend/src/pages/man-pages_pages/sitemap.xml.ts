@@ -1,4 +1,4 @@
-import { getDb } from '@/lib/man-pages-utils';
+import { getDb } from 'db/man_pages/man-pages-utils';
 import type { APIRoute } from 'astro';
 
 const PRODUCTION_SITE = 'https://hexmos.com/freedevtools';
@@ -108,8 +108,8 @@ export const GET: APIRoute = async ({ site }) => {
       const manPagesCount =
         (
           manPagesCountStmt.get(main_category, sub_category) as
-            | { count: number }
-            | undefined
+          | { count: number }
+          | undefined
         )?.count || 0;
       const totalSubcategoryPages = Math.ceil(
         manPagesCount / subcategoryItemsPerPage
@@ -164,14 +164,14 @@ ${urls.join('\n')}
   const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${sitemapChunks
-    .map(
-      (_, i) => `
+      .map(
+        (_, i) => `
     <sitemap>
       <loc>${siteUrl}/man-pages_pages/sitemap-${i + 1}.xml</loc>
       <lastmod>${now}</lastmod>
     </sitemap>`
-    )
-    .join('\n')}
+      )
+      .join('\n')}
 </sitemapindex>`;
 
   return new Response(indexXml, {

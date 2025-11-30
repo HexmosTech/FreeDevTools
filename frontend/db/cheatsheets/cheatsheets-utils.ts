@@ -1,5 +1,5 @@
 import path from 'path';
-import sqlite3 from 'sqlite3';
+import Database from 'bun:sqlite';
 import crypto from 'crypto';
 import type {
   Category,
@@ -10,62 +10,37 @@ import type {
 } from './cheatsheets-schema';
 
 // Simple database connection
-let dbInstance: sqlite3.Database | null = null;
+let dbInstance: Database | null = null;
 
 function getDbPath(): string {
   return path.resolve(process.cwd(), 'db/all_dbs/cheatsheets-db.db');
 }
 
-export async function getDb(): Promise<sqlite3.Database> {
-  if (dbInstance) {
-    return dbInstance;
-  }
-
+export function getDb() {
+  if (dbInstance) return dbInstance;
   const dbPath = getDbPath();
-  return new Promise((resolve, reject) => {
-    const db = new sqlite3.Database(
-      dbPath,
-      sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
-      (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        dbInstance = db;
-        resolve(db);
-      }
-    );
-  });
+  dbInstance = new Database(dbPath, { readonly: true });
+  dbInstance.run('PRAGMA journal_mode = WAL');
+  dbInstance.run('PRAGMA cache_size = -64000'); // 64MB cache per connection
+  dbInstance.run('PRAGMA temp_store = MEMORY');
+  dbInstance.run('PRAGMA mmap_size = 268435456'); // 256MB memory-mapped I/O
+  dbInstance.run('PRAGMA query_only = ON'); // Read-only mode
+  dbInstance.run('PRAGMA page_size = 4096'); // Optimal page size
+  return dbInstance;
 }
 
-export async function getTotalCheatsheets(): Promise<number> {
-  const db = await getDb();
-
-  return new Promise((resolve, reject) => {
-    db.get('SELECT total_count FROM overview WHERE id = 1', (err, row) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const result = row as Overview | undefined;
-      resolve(result?.total_count ?? 0);
-    });
-  });
+export function getTotalCheatsheets(): number {
+  const db = getDb();
+  const stmt = db.prepare('SELECT total_count FROM overview WHERE id = 1');
+  const result = stmt.get() as Overview | undefined;
+  return result?.total_count ?? 0;
 }
 
-export async function getTotalCategories(): Promise<number> {
-  const db = await getDb();
-
-  return new Promise((resolve, reject) => {
-    db.get('SELECT COUNT(*) as count FROM category', (err, row) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const result = row as { count: number } | undefined;
-      resolve(result?.count ?? 0);
-    });
-  });
+export function getTotalCategories(): number {
+  const db = getDb();
+  const stmt = db.prepare('SELECT COUNT(*) as count FROM category');
+  const result = stmt.get() as { count: number } | undefined;
+  return result?.count ?? 0;
 }
 
 export interface CategoryWithPreviews extends Category {
@@ -73,94 +48,68 @@ export interface CategoryWithPreviews extends Category {
   previewCheatsheets: Array<{ slug: string }>;
 }
 
-export async function getAllCategories(
+export function getAllCategories(
   page: number = 1,
   itemsPerPage: number = 30
-): Promise<CategoryWithPreviews[]> {
-  const db = await getDb();
+): CategoryWithPreviews[] {
+  const db = getDb();
   const offset = (page - 1) * itemsPerPage;
 
-  return new Promise((resolve, reject) => {
-    db.all(
-      `SELECT 
-         c.id, c.name, c.slug, c.description, 
-         (SELECT COUNT(*) FROM cheatsheet WHERE category = c.slug) as cheatsheetCount,
-         (SELECT json_group_array(json_object('slug', slug)) 
-          FROM (SELECT slug FROM cheatsheet WHERE category = c.slug ORDER BY slug LIMIT 3)
-         ) as previewCheatsheets
-       FROM category c
-       ORDER BY c.name
-       LIMIT ? OFFSET ?`,
-      [itemsPerPage, offset],
-      (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const results = (rows || []) as any[];
-        resolve(results.map((row) => ({
-          ...row,
-          previewCheatsheets: JSON.parse(row.previewCheatsheets || '[]'),
-        })) as CategoryWithPreviews[]);
-      }
-    );
-  });
+  const stmt = db.prepare(`
+    SELECT 
+      c.id, c.name, c.slug, c.description, 
+      (SELECT COUNT(*) FROM cheatsheet WHERE category = c.slug) as cheatsheetCount,
+      (SELECT json_group_array(json_object('slug', slug)) 
+       FROM (SELECT slug FROM cheatsheet WHERE category = c.slug ORDER BY slug LIMIT 3)
+      ) as previewCheatsheets
+    FROM category c
+    ORDER BY c.name
+    LIMIT ? OFFSET ?
+  `);
+
+  const rows = stmt.all(itemsPerPage, offset) as any[];
+
+  return rows.map((row) => ({
+    ...row,
+    previewCheatsheets: JSON.parse(row.previewCheatsheets || '[]'),
+  })) as CategoryWithPreviews[];
 }
 
-export async function getCheatsheetsByCategory(categorySlug: string): Promise<Cheatsheet[]> {
-  const db = await getDb();
+export function getCheatsheetsByCategory(categorySlug: string): Cheatsheet[] {
+  const db = getDb();
+  const stmt = db.prepare(`
+    SELECT hash_id, category, slug, content, title, description, 
+           json(keywords) as keywords
+    FROM cheatsheet 
+    WHERE category = ? 
+    ORDER BY slug
+  `);
 
-  return new Promise((resolve, reject) => {
-    db.all(
-      `SELECT hash_id, category, slug, content, title, description, 
-       json(keywords) as keywords
-       FROM cheatsheet WHERE category = ? ORDER BY slug`,
-      [categorySlug],
-      (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const results = (rows || []) as RawCheatsheetRow[];
-        resolve(results.map((row) => ({
-          ...row,
-          keywords: JSON.parse(row.keywords || '[]') as string[],
-        })) as unknown as Cheatsheet[]);
-      }
-    );
-  });
+  const rows = stmt.all(categorySlug) as RawCheatsheetRow[];
+  return rows.map((row) => ({
+    ...row,
+    keywords: JSON.parse(row.keywords || '[]'),
+  })) as unknown as Cheatsheet[];
 }
 
-export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  const db = await getDb();
+export function getCategoryBySlug(slug: string): Category | null {
+  const db = getDb();
+  const stmt = db.prepare(`
+    SELECT id, name, slug, description, 
+           json(keywords) as keywords, json(features) as features
+    FROM category 
+    WHERE slug = ?
+  `);
 
-  return new Promise((resolve, reject) => {
-    db.get(
-      `SELECT id, name, slug, description, 
-       json(keywords) as keywords, json(features) as features
-       FROM category WHERE slug = ?`,
-      [slug],
-      (err, row) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const result = row as RawCategoryRow | undefined;
-        if (!result) {
-          resolve(null);
-          return;
-        }
-        resolve({
-          ...result,
-          keywords: JSON.parse(result.keywords || '[]') as string[],
-          features: JSON.parse(result.features || '[]') as string[],
-        } as Category);
-      }
-    );
-  });
+  const row = stmt.get(slug) as RawCategoryRow | undefined;
+  if (!row) return null;
+
+  return {
+    ...row,
+    keywords: JSON.parse(row.keywords || '[]'),
+    features: JSON.parse(row.features || '[]'),
+  } as Category;
 }
-
-
 
 function hashUrlToKey(category: string, slug: string): bigint {
   const combined = `${category}${slug}`;
@@ -168,36 +117,25 @@ function hashUrlToKey(category: string, slug: string): bigint {
   return hash.readBigInt64BE(0);
 }
 
-export async function getCheatsheetByCategoryAndSlug(
+export function getCheatsheetByCategoryAndSlug(
   categorySlug: string,
   cheatsheetSlug: string
-): Promise<Cheatsheet | null> {
-  const db = await getDb();
+): Cheatsheet | null {
+  const db = getDb();
   const hashId = hashUrlToKey(categorySlug, cheatsheetSlug);
 
+  const stmt = db.prepare(`
+    SELECT hash_id, category, slug, content, title, description, 
+           json(keywords) as keywords
+    FROM cheatsheet 
+    WHERE hash_id = ?
+  `);
 
+  const row = stmt.get(hashId.toString()) as RawCheatsheetRow | undefined;
+  if (!row) return null;
 
-  return new Promise((resolve, reject) => {
-    db.get(
-      `SELECT hash_id, category, slug, content, title, description, 
-       json(keywords) as keywords
-       FROM cheatsheet WHERE hash_id = ?`,
-      [hashId.toString()],
-      (err, row) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const result = row as RawCheatsheetRow | undefined;
-        if (!result) {
-          resolve(null);
-          return;
-        }
-        resolve({
-          ...result,
-          keywords: JSON.parse(result.keywords || '[]') as string[],
-        } as unknown as Cheatsheet);
-      }
-    );
-  });
+  return {
+    ...row,
+    keywords: JSON.parse(row.keywords || '[]'),
+  } as unknown as Cheatsheet;
 }

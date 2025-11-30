@@ -1,4 +1,4 @@
-import { getDb } from '@/lib/man-pages-utils';
+import { getDb } from 'db/man_pages/man-pages-utils';
 import type { APIRoute } from 'astro';
 
 const MAX_URLS = 5000;

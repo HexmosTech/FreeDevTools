@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import Database from 'better-sqlite3';
+import Database from 'bun:sqlite';
 import path from 'path';
 import type { McpCategory, McpPage, ParsedMcpPage } from './mcp-schema';
 
@@ -12,12 +12,12 @@ function getDbPath(): string {
 export function getDb() {
     if (!dbInstance) {
         dbInstance = new Database(getDbPath(), { readonly: true });
-        dbInstance.pragma('journal_mode = WAL');
-        dbInstance.pragma('cache_size = -64000'); // 64MB cache per connection
-        dbInstance.pragma('temp_store = MEMORY');
-        dbInstance.pragma('mmap_size = 268435456'); // 256MB memory-mapped I/O
-        dbInstance.pragma('query_only = ON'); // Read-only mode
-        dbInstance.pragma('page_size = 4096'); // Optimal page size
+        dbInstance.run('PRAGMA journal_mode = WAL');
+        dbInstance.run('PRAGMA cache_size = -64000'); // 64MB cache per connection
+        dbInstance.run('PRAGMA temp_store = MEMORY');
+        dbInstance.run('PRAGMA mmap_size = 268435456'); // 256MB memory-mapped I/O
+        dbInstance.run('PRAGMA query_only = ON'); // Read-only mode
+        dbInstance.run('PRAGMA page_size = 4096'); // Optimal page size
     }
     return dbInstance;
 }

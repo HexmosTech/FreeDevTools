@@ -1,4 +1,4 @@
-import { getDb } from '@/lib/man-pages-utils';
+import { getDb } from 'db/man_pages/man-pages-utils';
 import type { APIRoute } from 'astro';
 
 const PRODUCTION_SITE = 'https://hexmos.com/freedevtools';
@@ -129,14 +129,14 @@ export const GET: APIRoute = async ({ site }) => {
   const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${sitemapChunks
-    .map(
-      (_, i) => `
+      .map(
+        (_, i) => `
     <sitemap>
       <loc>${siteUrl}/man-pages/sitemap-${i + 1}.xml</loc>
       <lastmod>${now}</lastmod>
     </sitemap>`
-    )
-    .join('\n')}
+      )
+      .join('\n')}
 </sitemapindex>`;
 
   return new Response(indexXml, {
