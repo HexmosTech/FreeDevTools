@@ -12,6 +12,7 @@ export interface Icon {
   emotional_cues: string;
   enhanced: number; // 0 or 1 → convert to boolean if needed
   img_alt: string;
+  url_hash: string;
 }
 
 export interface Cluster {
@@ -92,6 +93,29 @@ export interface ClusterPreviewPrecomputed {
   about: string;
   why_choose_us: string[]; // Parsed from JSON
   preview_icons: PreviewIcon[]; // Parsed from JSON
+}
+
+// Optimized function: Get paginated clusters with preview icons in ONE query
+export interface ClusterWithPreviewIcons {
+  id: number;
+  name: string;
+  count: number;
+  source_folder: string;
+  path: string;
+  keywords: string[];
+  tags: string[];
+  title: string;
+  description: string;
+  practical_application: string;
+  alternative_terms: string[];
+  about: string;
+  why_choose_us: string[];
+  previewIcons: Array<{
+    id: number;
+    name: string;
+    base64: string;
+    img_alt: string;
+  }>;
 }
 
 // Raw database row for cluster_preview_precomputed (before JSON parsing)

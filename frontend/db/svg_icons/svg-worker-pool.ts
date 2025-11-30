@@ -50,9 +50,9 @@ async function initWorkers(): Promise<void> {
   initPromise = new Promise((resolve, reject) => {
     // Resolve worker path - try multiple locations
     const projectRoot = process.cwd();
-    const sourceWorkerPath = path.join(projectRoot, 'db', 'svg_icons', 'worker');
-    const distWorkerPath = path.join(projectRoot, 'dist', 'server', 'chunks', 'db', 'svg_icons', 'worker');
-    const relativeWorkerPath = path.join(__dirname, 'worker');
+    const sourceWorkerPath = path.join(projectRoot, 'db', 'svg_icons', 'svg-worker');
+    const distWorkerPath = path.join(projectRoot, 'dist', 'server', 'chunks', 'db', 'svg_icons', 'svg-worker');
+    const relativeWorkerPath = path.join(__dirname, 'svg-worker');
     
     // Try .js first (for compiled output), then .ts (for development/TypeScript)
     // Priority: dist (built) > source (dev) > relative (fallback)
@@ -83,7 +83,7 @@ async function initWorkers(): Promise<void> {
         `  - ${distWorkerPath}.js (production)\n` +
         `  - ${sourceWorkerPath}.ts (development)\n` +
         `  - ${relativeWorkerPath}.ts (fallback)\n` +
-        `Make sure the db/svg_icons/worker.ts file exists and is copied during build.`
+        `Make sure the db/svg_icons/svg-worker.ts file exists and is copied during build.`
       );
       reject(error);
       return;
