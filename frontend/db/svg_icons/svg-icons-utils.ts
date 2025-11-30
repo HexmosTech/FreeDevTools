@@ -1,7 +1,6 @@
-import type { ClusterWithPreviewIcons } from '../png_icons/png-icons-utils';
-import { buildIconUrl, hashUrlToKey } from './hash-utils';
-import type { Cluster, Icon } from './svg-icons-schema';
-import { query } from './worker-pool';
+import { buildIconUrl, hashUrlToKey } from '../../src/lib/hash-utils';
+import type { Cluster, ClusterWithPreviewIcons, Icon } from './svg-icons-schema';
+import { query } from './svg-worker-pool';
 
 export async function getTotalIcons(): Promise<number> {
   return query.getTotalIcons();

@@ -13,22 +13,22 @@ export function copyWorkerFile() {
         const projectRoot = process.cwd();
         // Always use project root's dist directory, not the dir parameter which may point to client
         const distDir = path.join(projectRoot, 'dist');
-        
-        const sourceWorkerPath = path.join(projectRoot, 'db', 'svg_icons', 'worker.ts');
-        const distWorkerPath = path.join(distDir, 'server', 'chunks', 'db', 'svg_icons', 'worker.js');
-        
+
+        const sourceWorkerPath = path.join(projectRoot, 'db', 'svg_icons', 'svg-worker.ts');
+        const distWorkerPath = path.join(distDir, 'server', 'chunks', 'db', 'svg_icons', 'svg-worker.js');
+
         // Create directory structure if it doesn't exist
         const distWorkerDir = path.dirname(distWorkerPath);
         if (!fs.existsSync(distWorkerDir)) {
           fs.mkdirSync(distWorkerDir, { recursive: true });
         }
-        
+
         // Check if source file exists
         if (!fs.existsSync(sourceWorkerPath)) {
           console.warn(`⚠️  Worker file not found at ${sourceWorkerPath}`);
           return;
         }
-        
+
         try {
           // Try to use esbuild (available through Vite)
           const esbuild = await import('esbuild').catch(() => null);
