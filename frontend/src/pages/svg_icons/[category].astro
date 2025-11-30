@@ -5,6 +5,7 @@ import {
   getIconsByCluster,
   getTotalClusters,
   getTotalIcons,
+  type ClusterTransformed,
 } from 'db/svg_icons/svg-icons-utils';
 import AdBanner from '../../components/banner/AdBanner.astro';
 import CreditsButton from '../../components/buttons/CreditsButton';
@@ -19,7 +20,6 @@ export const prerender = false;
 const requestStartTime = Date.now();
 const { category } = Astro.params;
 const urlPath = Astro.url.pathname;
-console.log(`[SVG_ICONS] Request reached server: ${urlPath} at ${new Date().toISOString()}`);
 
 if (!category) {
   return new Response(null, { status: 404 });
@@ -27,6 +27,7 @@ if (!category) {
 
 let paginationData: any = null;
 let categoryData: any = null;
+let dataPhaseDuration = 0;
 
 // If category is numeric, this is actually a pagination route
 // Handle it directly (workaround for route priority)
@@ -53,23 +54,13 @@ if (/^\d+$/.test(category)) {
     return new Response(null, { status: 404 });
   }
 
-  // Get paginated clusters with preview icons in ONE optimized query
-  const categoriesWithIcons = await getClustersWithPreviewIcons(currentPage, itemsPerPage, 6);
-  
-  // Transform to match expected format
-  const currentPageCategories = categoriesWithIcons.map((cluster) => {
-    return {
-      id: cluster.source_folder || cluster.name,
-      name: cluster.name,
-      description: cluster.description,
-      icon: `/freedevtools/svg_icons/${cluster.name}/`,
-      iconCount: cluster.count,
-      url: `/freedevtools/svg_icons/${cluster.name}/`,
-      keywords: cluster.keywords,
-      features: cluster.tags,
-      previewIcons: cluster.previewIcons,
-    };
-  });
+  // Get paginated clusters with preview icons in ONE optimized query (transformed format)
+  const currentPageCategories = await getClustersWithPreviewIcons(
+    currentPage,
+    itemsPerPage,
+    6,
+    true // transform = true to get transformed format
+  ) as ClusterTransformed[];
 
   const totalIconsQueryStartTime = Date.now();
   const totalSvgIcons = await getTotalIcons();
@@ -103,7 +94,10 @@ if (/^\d+$/.test(category)) {
     // Log total roundtrip time for pagination
     const requestEndTime = Date.now();
     const totalRoundtripTime = requestEndTime - requestStartTime;
-    console.log(`[SVG_ICONS] Total roundtrip time for ${urlPath}: ${totalRoundtripTime}ms`);
+    console.log(
+      `[SVG_ICONS] Data preparation for ${urlPath} (pagination) took ${totalRoundtripTime}ms`
+    );
+    dataPhaseDuration = totalRoundtripTime;
 
     paginationData = {
     currentPage,
@@ -136,26 +130,9 @@ if (/^\d+$/.test(category)) {
 
   async function getCategoryIcons() {
     const iconQueryStartTime = Date.now();
-    const dbIcons = await getIconsByCluster(clusterData!.source_folder || category!);
+    const icons = await getIconsByCluster(clusterData!.source_folder || category!, category!);
     const iconQueryEndTime = Date.now();
     console.log(`[SVG_ICONS] getIconsByCluster("${clusterData!.source_folder || category!}") took ${iconQueryEndTime - iconQueryStartTime}ms`);
-
-    const icons = dbIcons.map((icon) => {
-      const iconName = icon.name.replace('.svg', '');
-
-      return {
-        name: iconName,
-        description: icon.description || `Free ${iconName} icon`,
-        category: category,
-        tags: icon.tags || [],
-        author: 'Free DevTools',
-        license: 'MIT',
-        url: `/freedevtools/svg_icons/${category}/${iconName}/`,
-        base64: icon.base64,
-        img_alt: icon.img_alt,
-      };
-    });
-
     return icons;
   }
 
@@ -165,7 +142,10 @@ if (/^\d+$/.test(category)) {
   // Log total roundtrip time
   const requestEndTime = Date.now();
   const totalRoundtripTime = requestEndTime - requestStartTime;
-  console.log(`[SVG_ICONS] Total roundtrip time for ${urlPath}: ${totalRoundtripTime}ms`);
+  console.log(
+    `[SVG_ICONS] Data preparation for ${urlPath} (category) took ${totalRoundtripTime}ms`
+  );
+  dataPhaseDuration = totalRoundtripTime;
 
   // Use database content for about and why_choose_us
   const aboutContent =
@@ -441,3 +421,16 @@ if (/^\d+$/.test(category)) {
     object-fit: contain;
   }
 </style>
+
+{(() => {
+  if (!dataPhaseDuration) {
+    return null;
+  }
+  const renderEndTime = Date.now();
+  const totalRenderTime = renderEndTime - requestStartTime;
+  const renderPhaseDuration = Math.max(0, totalRenderTime - dataPhaseDuration);
+  console.log(
+    `[SVG_ICONS] Full SSR render for ${urlPath} took ${totalRenderTime}ms (data prep ${dataPhaseDuration}ms, layout/render ${renderPhaseDuration}ms)`
+  );
+  return null;
+})()}

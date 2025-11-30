@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import path from 'path';
 import type {
     Cluster,
@@ -9,13 +9,13 @@ import type {
 } from './png-icons-schema';
 
 // DB queries
-let dbInstance: Database.Database | null = null;
+let dbInstance: Database | null = null;
 
 function getDbPath(): string {
   return path.resolve(process.cwd(), 'db/all_dbs/png-icons-db.db');
 }
 
-export function getDb(): Database.Database {
+export function getDb(): Database {
   if (dbInstance) {
     console.log(`[PNG_ICONS_DB] Reusing existing DB connection`);
     return dbInstance;
@@ -25,13 +25,13 @@ export function getDb(): Database.Database {
   console.log(`[PNG_ICONS_DB] Opening new DB connection to: ${dbPath}`);
   dbInstance = new Database(dbPath, { readonly: true });
   // Optimize for read-only performance
-  dbInstance.pragma('journal_mode = OFF');
-  dbInstance.pragma('synchronous = OFF');
-  dbInstance.pragma('mmap_size = 1073741824');
+  dbInstance.run('PRAGMA journal_mode = OFF');
+  dbInstance.run('PRAGMA synchronous = OFF');
+  dbInstance.run('PRAGMA mmap_size = 1073741824');
   
-  dbInstance.pragma('temp_store = MEMORY'); // Use memory for temp tables
-  dbInstance.pragma('query_only = ON'); // Ensure read-only mode
-  dbInstance.pragma('read_uncommitted = ON'); // Skip locking for reads
+  dbInstance.run('PRAGMA temp_store = MEMORY'); // Use memory for temp tables
+  dbInstance.run('PRAGMA query_only = ON'); // Ensure read-only mode
+  dbInstance.run('PRAGMA read_uncommitted = ON'); // Skip locking for reads
   const dbOpenEndTime = Date.now();
   console.log(`[PNG_ICONS_DB] DB connection opened in ${dbOpenEndTime - dbOpenStartTime}ms`);
   return dbInstance;

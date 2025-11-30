@@ -1,299 +1,57 @@
-import path from 'path';
-import sqlite3 from 'sqlite3';
-import type {
-  Cluster,
-  Icon,
-  Overview,
-  RawClusterPreviewPrecomputedRow,
-  RawClusterRow,
-  RawIconRow,
-} from './svg-icons-schema';
-
-// Connection pool for parallel queries
-const POOL_SIZE = 10; // Number of database connections in the pool
-let dbPool: sqlite3.Database[] = [];
-let poolInitPromise: Promise<sqlite3.Database[]> | null = null;
-let poolIndex = 0; // Round-robin counter
-
-function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/all_dbs/svg-icons-db.db');
-}
-
-// Helper to run pragma statements
-function runPragma(db: sqlite3.Database, pragma: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    db.run(`PRAGMA ${pragma}`, (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-}
-
-// Initialize a single database connection
-function initDbConnection(): Promise<sqlite3.Database> {
-  const dbPath = getDbPath();
-  return new Promise((resolve, reject) => {
-    // Open in READWRITE mode to enable WAL, then use for reads
-    // WAL mode requires write access to create the WAL file
-    const db = new sqlite3.Database(
-      dbPath,
-      sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
-      (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        // Enable WAL mode first (requires write access)
-        // Then set other optimizations
-        Promise.all([
-          runPragma(db, 'journal_mode = WAL'), // Enable WAL for concurrent reads
-          runPragma(db, 'cache_size = -64000'), // 64MB cache (negative = KB, so -64000 = 64MB)
-          runPragma(db, 'mmap_size = 524288000'), // 500MB memory-mapped I/O
-          runPragma(db, 'temp_store = MEMORY'), // Use memory for temp tables
-          runPragma(db, 'read_uncommitted = ON'), // Skip locking for reads
-          runPragma(db, 'page_size = 4096'), // Ensure optimal page size
-        ])
-          .then(() => {
-            // Enable parallel execution mode (sticky - applies to all queries on this connection)
-            // This allows queries to run in parallel instead of being serialized
-            // See: https://github.com/TryGhost/node-sqlite3/wiki/Control-Flow#databaseparallelizecallback
-            db.parallelize();
-            resolve(db);
-          })
-          .catch((pragmaErr) => {
-            // If pragmas fail, still resolve the connection (some may not work)
-            console.warn(`[SVG_ICONS_DB] Some pragmas failed, continuing anyway:`, pragmaErr);
-            // Still enable parallelize mode even if some pragmas failed
-            db.parallelize();
-            resolve(db);
-          });
-      }
-    );
-  });
-}
-
-// Initialize the connection pool
-async function initPool(): Promise<sqlite3.Database[]> {
-  if (dbPool.length > 0) {
-    return dbPool;
-  }
-
-  if (poolInitPromise) {
-    return poolInitPromise;
-  }
-
-  const poolInitStartTime = Date.now();
-  console.log(`[SVG_ICONS_DB] Initializing connection pool with ${POOL_SIZE} connections...`);
-
-  poolInitPromise = Promise.all(
-    Array.from({ length: POOL_SIZE }, () => initDbConnection())
-  ).then((connections) => {
-    dbPool = connections;
-    const poolInitEndTime = Date.now();
-    console.log(`[SVG_ICONS_DB] Connection pool initialized in ${poolInitEndTime - poolInitStartTime}ms`);
-    poolInitPromise = null;
-    return dbPool;
-  }).catch((err) => {
-    poolInitPromise = null;
-    throw err;
-  });
-
-  return poolInitPromise;
-}
-
-// Get a database connection from the pool (round-robin)
-export async function getDb(): Promise<sqlite3.Database> {
-  const pool = await initPool();
-  // Round-robin selection for load balancing
-  const index = poolIndex % pool.length;
-  poolIndex = (poolIndex + 1) % pool.length;
-  return pool[index];
-}
+import type { ClusterWithPreviewIcons } from '../png_icons/png-icons-utils';
+import { buildIconUrl, hashUrlToKey } from './hash-utils';
+import type { Cluster, Icon } from './svg-icons-schema';
+import { query } from './worker-pool';
 
 export async function getTotalIcons(): Promise<number> {
-  const queryStartTime = Date.now();
-  const db = await getDb();
-  
-  return new Promise((resolve, reject) => {
-    db.get('SELECT total_count FROM overview WHERE id = 1', (err, row) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const queryEndTime = Date.now();
-      // console.log(`[SVG_ICONS_DB] getTotalIcons() DB query took ${queryEndTime - queryStartTime}ms`);
-      const result = row as Overview | undefined;
-      resolve(result?.total_count ?? 0);
-    });
-  });
+  return query.getTotalIcons();
 }
 
 export async function getTotalClusters(): Promise<number> {
-  const queryStartTime = Date.now();
-  const db = await getDb();
-  
-  return new Promise((resolve, reject) => {
-    db.get('SELECT COUNT(*) as count FROM cluster', (err, row) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const queryEndTime = Date.now();
-      // console.log(`[SVG_ICONS_DB] getTotalClusters() DB query took ${queryEndTime - queryStartTime}ms`);
-      const result = row as { count: number } | undefined;
-      resolve(result?.count ?? 0);
-    });
-  });
+  return query.getTotalClusters();
 }
 
-export async function getIconsByCluster(cluster: string): Promise<Icon[]> {
-  const queryStartTime = Date.now();
-  const db = await getDb();
-  
-  return new Promise((resolve, reject) => {
-    db.all(
-      `SELECT id, cluster, name, base64, description, usecases, 
-       json(synonyms) as synonyms, json(tags) as tags, 
-       industry, emotional_cues, enhanced, img_alt
-       FROM icon WHERE cluster = ? ORDER BY name`,
-      [cluster],
-      (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const queryEndTime = Date.now();
-        // console.log(`[SVG_ICONS_DB] getIconsByCluster("${cluster}") DB query took ${queryEndTime - queryStartTime}ms`);
-        const results = (rows || []) as RawIconRow[];
-        resolve(results.map((row) => ({
-          ...row,
-          synonyms: JSON.parse(row.synonyms || '[]') as string[],
-          tags: JSON.parse(row.tags || '[]') as string[],
-        })) as Icon[]);
-      }
-    );
-  });
+export interface IconWithMetadata extends Icon {
+  category?: string;
+  author?: string;
+  license?: string;
+  url?: string;
 }
 
-// Optimized function: Get paginated clusters with preview icons in ONE query
-export interface ClusterWithPreviewIcons {
-  id: number;
+export interface ClusterTransformed {
+  id: string;
   name: string;
-  count: number;
-  source_folder: string;
-  path: string;
-  keywords: string[];
-  tags: string[];
-  title: string;
   description: string;
-  practical_application: string;
-  alternative_terms: string[];
-  about: string;
-  why_choose_us: string[];
-  previewIcons: Array<{
-    id: number;
-    name: string;
-    base64: string;
-    img_alt: string;
-  }>;
+  icon: string;
+  iconCount: number;
+  url: string;
+  keywords: string[];
+  features: string[];
+  previewIcons: Array<{ id: number; name: string; base64: string; img_alt: string }>;
+}
+
+export async function getIconsByCluster(
+  cluster: string,
+  categoryName?: string
+): Promise<IconWithMetadata[]> {
+  return query.getIconsByCluster(cluster, categoryName);
 }
 
 export async function getClustersWithPreviewIcons(
   page: number = 1,
   itemsPerPage: number = 30,
-  previewIconsPerCluster: number = 6
-): Promise<ClusterWithPreviewIcons[]> {
-  const queryStartTime = Date.now();
-  const db = await getDb();
-  const offset = (page - 1) * itemsPerPage;
-  
-  return new Promise((resolve, reject) => {
-    db.all(
-      `SELECT id, name, count, source_folder, path,
-       keywords_json, tags_json,
-       title, description, practical_application, 
-       alternative_terms_json,
-       about, why_choose_us_json, preview_icons_json
-       FROM cluster_preview_precomputed
-       ORDER BY name
-       LIMIT ? OFFSET ?`,
-      [itemsPerPage, offset],
-      (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const queryEndTime = Date.now();
-        console.log(`[SVG_ICONS_DB] getClustersWithPreviewIcons(page=${page}, itemsPerPage=${itemsPerPage}) DB query took ${queryEndTime - queryStartTime}ms`);
-        
-        const results = (rows || []) as RawClusterPreviewPrecomputedRow[];
-        
-        resolve(results.map((row) => {
-          let previewIcons: Array<{ id: number; name: string; base64: string; img_alt: string }> = [];
-          try {
-            const parsed = JSON.parse(row.preview_icons_json || '[]');
-            previewIcons = Array.isArray(parsed) ? parsed.filter((icon: any) => icon !== null) : [];
-          } catch (e) {
-            previewIcons = [];
-          }
-          
-          return {
-            id: row.id,
-            name: row.name,
-            count: row.count,
-            source_folder: row.source_folder,
-            path: row.path,
-            keywords: JSON.parse(row.keywords_json || '[]') as string[],
-            tags: JSON.parse(row.tags_json || '[]') as string[],
-            title: row.title,
-            description: row.description,
-            practical_application: row.practical_application,
-            alternative_terms: JSON.parse(row.alternative_terms_json || '[]') as string[],
-            about: row.about,
-            why_choose_us: JSON.parse(row.why_choose_us_json || '[]') as string[],
-            previewIcons,
-          };
-        }));
-      }
-    );
-  });
+  previewIconsPerCluster: number = 6,
+  transform: boolean = false
+): Promise<ClusterWithPreviewIcons[] | ClusterTransformed[]> {
+  return query.getClustersWithPreviewIcons(page, itemsPerPage, previewIconsPerCluster, transform);
 }
 
 export async function getClusterByName(name: string): Promise<Cluster | null> {
-  const queryStartTime = Date.now();
-  const db = await getDb();
-  
-  return new Promise((resolve, reject) => {
-    db.get(
-      `SELECT id, name, count, source_folder, path, 
-       json(keywords) as keywords, json(tags) as tags, 
-       title, description, practical_application, json(alternative_terms) as alternative_terms,
-       about, json(why_choose_us) as why_choose_us
-       FROM cluster WHERE name = ?`,
-      [name],
-      (err, row) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const queryEndTime = Date.now();
-        // console.log(`[SVG_ICONS_DB] getClusterByName("${name}") DB query took ${queryEndTime - queryStartTime}ms`);
-        const result = row as RawClusterRow | undefined;
-        if (!result) {
-          resolve(null);
-          return;
-        }
-        resolve({
-          ...result,
-          keywords: JSON.parse(result.keywords || '[]') as string[],
-          tags: JSON.parse(result.tags || '[]') as string[],
-          alternative_terms: JSON.parse(result.alternative_terms || '[]') as string[],
-          why_choose_us: JSON.parse(result.why_choose_us || '[]') as string[],
-        } as Cluster);
-      }
-    );
-  });
+  return query.getClusterByName(name);
+}
+
+export async function getClusters(): Promise<Cluster[]> {
+  return query.getClusters();
 }
 
 // Get icon by category (cluster display name) and icon name (without .svg extension)
@@ -301,37 +59,11 @@ export async function getIconByCategoryAndName(
   category: string,
   iconName: string
 ): Promise<Icon | null> {
-  const db = await getDb();
-  // First, get the cluster to find the source_folder (actual cluster key)
   const clusterData = await getClusterByName(category);
   if (!clusterData) return null;
 
-  // Build the filename with .svg extension
-  const filename = iconName.includes('.svg') ? iconName : `${iconName}.svg`;
-
-  return new Promise((resolve, reject) => {
-    db.get(
-      `SELECT id, cluster, name, base64, description, usecases, 
-       json(synonyms) as synonyms, json(tags) as tags, 
-       industry, emotional_cues, enhanced, img_alt
-       FROM icon WHERE cluster = ? AND name = ?`,
-      [clusterData.source_folder || category, filename],
-      (err, row) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const result = row as RawIconRow | undefined;
-        if (!result) {
-          resolve(null);
-          return;
-        }
-        resolve({
-          ...result,
-          synonyms: JSON.parse(result.synonyms || '[]') as string[],
-          tags: JSON.parse(result.tags || '[]') as string[],
-        } as Icon);
-      }
-    );
-  });
+  const filename = iconName.replace('.svg', '');
+  const url = buildIconUrl(clusterData.source_folder || category, filename);
+  const hashKey = hashUrlToKey(url);
+  return query.getIconByUrlHash(hashKey);
 }

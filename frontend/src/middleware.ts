@@ -1,7 +1,34 @@
-import type { MiddlewareHandler } from 'astro';
+import { defineMiddleware } from 'astro:middleware';
 
-// Middleware removed - [page].astro handles platform routes directly
-// No middleware needed as route priority is handled in the route file itself
-export const onRequest: MiddlewareHandler = async (context, next) => {
-  return next();
-};
+const ansiColors = {
+  reset: '\u001b[0m',
+  timestamp: '\u001b[35m',
+  green: '\u001b[32m',
+  yellow: '\u001b[33m',
+} as const;
+
+const highlight = (text: string, color: string) => `${color}${text}${ansiColors.reset}`;
+
+export const onRequest = defineMiddleware(async (context, next) => {
+  const pathname = context.url.pathname;
+
+  if (!pathname.startsWith('/freedevtools/svg_icons/')) {
+    return next();
+  }
+
+  const requestStart = Date.now();
+  const timestampLabel = highlight(`[${new Date().toISOString()}]`, ansiColors.timestamp);
+  const requestLabel = highlight('Request reached server:', ansiColors.green);
+  console.log(`${timestampLabel} ${requestLabel} ${pathname}`);
+
+  const handlerStart = Date.now();
+  const response = await next();
+  const handlerDuration = Date.now() - handlerStart;
+
+  const requestDuration = Date.now() - requestStart;
+  const durationLabel = highlight('Total request time for', ansiColors.yellow);
+  const durationTimestamp = highlight(`[${new Date().toISOString()}]`, ansiColors.timestamp);
+  console.log(`${durationTimestamp} ${durationLabel} ${pathname}: ${requestDuration}ms`);
+
+  return response;
+});

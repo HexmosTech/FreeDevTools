@@ -7,6 +7,7 @@ import path from "path";
 // These integrations are only needed for static/SSG builds, not SSR mode
 // import { performCriticalCssInline } from './integrations/critical-css-inlining.mjs';
 // import { unwrapFDT, wrapFDT } from './integrations/wrap-astro.mjs';
+import { copyWorkerFile } from './integrations/copy-worker.mjs';
 
 
 // https://astro.build/config
@@ -22,7 +23,9 @@ export default defineConfig({
     prefetchAll: false,
     defaultStrategy: 'hover'
   },
-  integrations: [react(), tailwind(), // sitemap({
+  integrations: [react(), tailwind({
+    configFile: './tailwind.config.cjs',
+  }), copyWorkerFile(), // sitemap({
     //   filter: (page) => !page.includes('404') && !page.includes('_astro'),
     //   changefreq: 'daily',
     //   priority: 0.7,

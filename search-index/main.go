@@ -55,10 +55,11 @@ func main() {
 	pngIconsChan := make(chan []SVGIconData, 1)
 	cheatsheetsChan := make(chan []CheatsheetData, 1)
 	mcpChan := make(chan []MCPData, 1)
-	errorsChan := make(chan error, 6)
+	manPagesChan := make(chan []ManPageData, 1)
+	errorsChan := make(chan error, 7)
 
 	// Start all collection goroutines
-	wg.Add(7)
+	wg.Add(8)
 
 	go func() {
 		defer wg.Done()
@@ -109,7 +110,6 @@ func main() {
 		}
 		pngIconsChan <- pngIcons
 	}()
-	
 
 	go func() {
 		defer wg.Done()
@@ -131,6 +131,16 @@ func main() {
 		mcpChan <- mcp
 	}()
 
+	go func() {
+		defer wg.Done()
+		manPages, err := generateManPagesData(ctx)
+		if err != nil {
+			errorsChan <- fmt.Errorf("man pages data generation failed: %w", err)
+			return
+		}
+		manPagesChan <- manPages
+	}()
+
 	// Wait for all goroutines to complete
 	go func() {
 		wg.Wait()
@@ -141,6 +151,7 @@ func main() {
 		close(pngIconsChan)
 		close(cheatsheetsChan)
 		close(mcpChan)
+		close(manPagesChan)
 		close(errorsChan)
 	}()
 
@@ -152,11 +163,12 @@ func main() {
 	var pngIcons []SVGIconData
 	var cheatsheets []CheatsheetData
 	var mcp []MCPData
+	var manPages []ManPageData
 	var errors []error
 
 	// Track which channels we've received data from
 	receivedChannels := 0
-	totalChannels := 7
+	totalChannels := 8
 
 	for receivedChannels < totalChannels {
 		select {
@@ -200,6 +212,12 @@ func main() {
 			if ok {
 				mcp = m
 				fmt.Printf("✅ MCP data collected: %d items\n", len(m))
+			}
+			receivedChannels++
+		case mp, ok := <-manPagesChan:
+			if ok {
+				manPages = mp
+				fmt.Printf("✅ Man Pages data collected: %d items\n", len(mp))
 			}
 			receivedChannels++
 		case err, ok := <-errorsChan:
@@ -259,7 +277,6 @@ doneWithErrors:
 	if err := saveToJSON("png_icons.json", pngIcons); err != nil {
 		log.Fatalf("Failed to save PNG icons data: %v", err)
 	}
-	
 
 	if err := saveToJSON("cheatsheets.json", cheatsheets); err != nil {
 		log.Fatalf("Failed to save cheatsheets data: %v", err)
@@ -267,6 +284,10 @@ doneWithErrors:
 
 	if err := saveToJSON("mcp.json", mcp); err != nil {
 		log.Fatalf("Failed to save MCP data: %v", err)
+	}
+
+	if err := saveToJSON("man_pages.json", manPages); err != nil {
+		log.Fatalf("Failed to save man pages data: %v", err)
 	}
 
 	elapsed := time.Since(start)
@@ -279,11 +300,12 @@ doneWithErrors:
 	fmt.Printf("  - PNG Icons: %d items\n", len(pngIcons))
 	fmt.Printf("  - Cheatsheets: %d items\n", len(cheatsheets))
 	fmt.Printf("  - MCP: %d items\n", len(mcp))
+	fmt.Printf("  - Man Pages: %d items\n", len(manPages))
 	fmt.Printf("\n💾 All files saved to ./output/ directory\n")
-	
+
 	// Automatically run stem processing on all generated files
 	fmt.Println("\n🔍 Running stem processing on all files...")
-	
+
 	// Get all JSON files from output directory
 	outputDir := "output"
 	files, err := os.ReadDir(outputDir)
@@ -291,7 +313,7 @@ doneWithErrors:
 		log.Printf("❌ Failed to read output directory: %v", err)
 		return
 	}
-	
+
 	for _, file := range files {
 		if strings.HasSuffix(file.Name(), ".json") {
 			filePath := filepath.Join(outputDir, file.Name())
@@ -303,7 +325,7 @@ doneWithErrors:
 			}
 		}
 	}
-	
+
 	fmt.Println("🎉 All stem processing completed!")
 }
 
@@ -327,24 +349,24 @@ func parseStem() string {
 
 func runStemProcessing(stemArgs string) {
 	start := time.Now()
-	
+
 	// Use the file path directly
 	filePath := strings.TrimSpace(stemArgs)
-	
+
 	// Check if the file exists
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		fmt.Printf("❌ File not found: %s\n", filePath)
 		fmt.Println("Make sure the file exists.")
 		os.Exit(1)
 	}
-	
+
 	fmt.Printf("🔍 Processing file: %s\n", filePath)
-	
+
 	// Use the reusable function from jargon-stemmer package
 	if err := jargon_stemmer.ProcessJSONFile(filePath); err != nil {
 		log.Fatalf("❌ Stem processing failed: %v", err)
 	}
-	
+
 	elapsed := time.Since(start)
 	fmt.Printf("\n🎉 Stem processing completed in %v\n", elapsed)
 	fmt.Printf("💾 Processed file: %s\n", filePath)
@@ -366,11 +388,13 @@ func runSingleCategory(category string) {
 	case "svg_icons", "svg-icons":
 		RunSVGIconsOnly(ctx, start)
 	case "png_icons", "png-icons":
-		RunPNGIconsOnly(ctx, start)	
+		RunPNGIconsOnly(ctx, start)
 	case "cheatsheets":
 		RunCheatsheetsOnly(ctx, start)
 	case "mcp":
 		RunMCPOnly(ctx, start)
+	case "man_pages":
+		RunManPagesOnly(ctx, start.Unix())
 	default:
 		fmt.Printf("❌ Unknown category: %s\n", category)
 		fmt.Println("Available categories: tools, tldr, emojis, svg_icons, png_icons, cheatsheets, mcp")

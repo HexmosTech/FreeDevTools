@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import path from 'path';
 import crypto from 'crypto';
 import type {
@@ -13,7 +13,7 @@ import type {
 } from '../../db/man_pages/man-pages-schema';
 
 // DB queries
-let dbInstance: any = null;
+let dbInstance: Database | null = null;
 
 function getDbPath(): string {
   return path.resolve(process.cwd(), 'db/all_dbs/man-pages-new-db-1.db');
@@ -24,8 +24,8 @@ export function getDb() {
   const dbPath = getDbPath();
   dbInstance = new Database(dbPath, { readonly: true });
   // Improve read performance for build-time queries
-  dbInstance.pragma('journal_mode = OFF');
-  dbInstance.pragma('synchronous = OFF');
+  dbInstance.run('PRAGMA journal_mode = OFF');
+  dbInstance.run('PRAGMA synchronous = OFF');
   return dbInstance;
 }
 
@@ -113,6 +113,8 @@ export function getSubCategoriesByMainCategory(
   mainCategory: string
 ): SubCategory[] {
   const db = getDb();
+  // Query directly from man_pages table to get all subcategories for this main category
+  // This ensures we get all subcategories that exist in man_pages, even if they're not in sub_category table
   const stmt = db.prepare(`
     SELECT hash_id, main_category, name, count, description, 
            json(keywords) as keywords, path
@@ -123,8 +125,11 @@ export function getSubCategoriesByMainCategory(
 
   const results = stmt.all(mainCategory) as RawSubCategoryRow[];
   return results.map((row) => ({
-    ...row,
+    name: row.name,
+    count: row.count,
+    description: row.description,
     keywords: JSON.parse(row.keywords || '[]'),
+    path: row.path,
   })) as SubCategory[];
 }
 

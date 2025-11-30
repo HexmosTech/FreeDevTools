@@ -6,6 +6,7 @@ import {
   ImageIcon,
   ModulzLogoIcon,
   RocketIcon,
+  ReaderIcon
 } from '@radix-ui/react-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { MEILI_SEARCH_API_KEY } from '@/config';
@@ -74,6 +75,8 @@ function getCategoryDisplayName(category: string): string {
       return 'TLDRs';
     case 'cheatsheets':
       return 'cheatsheets';
+    case 'man_pages':
+      return 'man pages';
     default:
       return 'items';
   }
@@ -103,6 +106,8 @@ function getBadgeVariant(category: string): string {
       return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
     case 'mcp':
       return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
+    case 'man_pages':
+      return 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200';
     default:
       return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
   }
@@ -351,7 +356,12 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
             <div
               className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${getBadgeVariant(result.category)}`}
             >
-              {result.category}
+              {(result.category as string).includes('_')
+                ? (result.category as string)
+                    .split('_')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')
+                : result.category}
             </div>
           )}
           <div className="pr-16 mb-2">
@@ -575,6 +585,10 @@ const SearchPage: React.FC = () => {
         return (
           <ModulzLogoIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
         );
+      case 'man_pages':
+        return (
+          <ReaderIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
+        );
       default:
         return null;
     }
@@ -589,6 +603,7 @@ const SearchPage: React.FC = () => {
     { key: 'svg_icons', label: 'SVG Icons' },
     { key: 'emoji', label: 'Emojis' },
     { key: 'mcp', label: 'MCP' },
+    { key: 'man_pages', label: 'Man Pages' },
   ];
 
   const formatCount = (count: number | undefined): string => {

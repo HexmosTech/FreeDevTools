@@ -33,6 +33,7 @@ export interface Cluster {
 export interface Overview {
   id: number;
   total_count: number;
+  name?: string;
 }
 
 // Raw database row types (before JSON parsing)

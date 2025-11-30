@@ -27,18 +27,22 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS icon (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER,
+            url_hash INTEGER PRIMARY KEY,
             cluster TEXT NOT NULL,
             name TEXT NOT NULL,
             base64 TEXT NOT NULL,
             description TEXT DEFAULT '',
-            usecases TEXT DEFAULT '',
+            usecases TEXT DEFAULT '[]',
             synonyms TEXT DEFAULT '[]',
             tags TEXT DEFAULT '[]',
             industry TEXT DEFAULT '',
             emotional_cues TEXT DEFAULT '',
-            enhanced INTEGER DEFAULT 0
-        );
+            enhanced INTEGER DEFAULT 0,
+            img_alt TEXT DEFAULT '',
+            ai_image_alt_generated INTEGER DEFAULT 0,
+            url TEXT NOT NULL
+        ) WITHOUT ROWID;
         """
     )
     cur.execute("CREATE INDEX IF NOT EXISTS idx_icon_cluster ON icon(cluster);")
@@ -66,11 +70,17 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS overview (
-            id INTEGER PRIMARY KEY CHECK(id = 1),
-            total_count INTEGER NOT NULL
+            id INTEGER PRIMARY KEY,
+            total_count INTEGER NOT NULL,
+            name TEXT
         );
         """
     )
+    try:
+        cur.execute("ALTER TABLE overview ADD COLUMN name TEXT;")
+    except sqlite3.OperationalError:
+        # Column already exists
+        pass
     conn.commit()
 
 
@@ -210,8 +220,19 @@ def populate_cluster_and_overview(conn: sqlite3.Connection) -> None:
     cur.execute("SELECT COUNT(*) FROM icon;")
     total_count = cur.fetchone()[0]
 
+    # Compute cluster count for overview
+    cur.execute("SELECT COUNT(*) FROM cluster;")
+    cluster_count = cur.fetchone()[0]
+
     cur.execute("DELETE FROM overview;")
-    cur.execute("INSERT INTO overview (id, total_count) VALUES (1, ?);", (total_count,))
+    cur.execute(
+        "INSERT INTO overview (id, total_count, name) VALUES (1, ?, 'icons');",
+        (total_count,),
+    )
+    cur.execute(
+        "INSERT INTO overview (id, total_count, name) VALUES (2, ?, 'cluster');",
+        (cluster_count,),
+    )
 
     conn.commit()
     print(f"✓ Populated cluster and overview tables")
