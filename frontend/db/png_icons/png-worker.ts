@@ -1,6 +1,6 @@
 /**
  * Worker thread for SQLite queries using bun:sqlite
- * Handles all query types for the SVG icons database
+ * Handles all query types for the PNG icons database
  */
 
 import { Database } from 'bun:sqlite';
@@ -119,7 +119,7 @@ parentPort?.on('message', (message: QueryMessage) => {
   const { id, type, params } = message;
   const startTime = new Date();
   const timestampLabel = highlight(`[${startTime.toISOString()}]`, logColors.timestamp);
-  const dbLabel = highlight('[SVG_ICONS_DB]', logColors.dbLabel);
+  const dbLabel = highlight('[PNG_ICONS_DB]', logColors.dbLabel);
   console.log(`${timestampLabel} ${dbLabel} Worker ${workerId} handling ${type}`);
 
   try {
@@ -172,7 +172,7 @@ parentPort?.on('message', (message: QueryMessage) => {
             category: categoryName,
             author: 'Free DevTools',
             license: 'MIT',
-            url: `/freedevtools/svg_icons/${categoryName}/${row.name}/`,
+            url: `/freedevtools/png_icons/${categoryName}/${row.name}/`,
           }));
         } else {
           result = rows.map((row) => ({
@@ -234,9 +234,9 @@ parentPort?.on('message', (message: QueryMessage) => {
               id: row.source_folder || row.name,
               name: row.name,
               description: row.description,
-              icon: `/freedevtools/svg_icons/${row.name}/`,
+              icon: `/freedevtools/png_icons/${row.name}/`,
               iconCount: row.count,
-              url: `/freedevtools/svg_icons/${row.name}/`,
+              url: `/freedevtools/png_icons/${row.name}/`,
               keywords: JSON.parse(row.keywords_json || '[]') as string[],
               features: JSON.parse(row.tags_json || '[]') as string[],
               previewIcons,
@@ -376,7 +376,7 @@ parentPort?.on('message', (message: QueryMessage) => {
         }
 
         // Then get icon
-        const filename = iconName.replace('.svg', '');
+        const filename = iconName.replace('.png', '');
         const iconRow = statements.iconByCategory.get([
           clusterRow.source_folder || category,
           filename,
@@ -464,7 +464,7 @@ parentPort?.on('message', (message: QueryMessage) => {
     });
     const endTime = new Date();
     const endTimestamp = highlight(`[${endTime.toISOString()}]`, logColors.timestamp);
-    const endDbLabel = highlight('[SVG_ICONS_DB]', logColors.dbLabel);
+    const endDbLabel = highlight('[PNG_ICONS_DB]', logColors.dbLabel);
     console.log(
       `${endTimestamp} ${endDbLabel} Worker ${workerId} ${type} finished in ${
         endTime.getTime() - startTime.getTime()

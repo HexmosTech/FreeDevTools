@@ -224,10 +224,10 @@ test-svg-req-pd:
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/png_icons/8bit/sharp-solid-alien-8bit/
 	@sleep 2
 	@echo "⬇️  Requesting SVG icon -----------"
-	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/png_icons/8bit/sharp-solid-alien-8bit/
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
 	@pmdaemon logs astro-4321 --lines 50
