@@ -91,6 +91,7 @@ test-svg-req-pmd:
 	make pmdlogs LABEL=test-svg-req-pmd
 	pmdaemon stop all
 	pmdaemon delete all --force 2>/dev/null || true
+	bash kill-ports.sh
 
 curl-all-kind-of-page:
 	@echo "SVG Icon (localhost:4321):"
