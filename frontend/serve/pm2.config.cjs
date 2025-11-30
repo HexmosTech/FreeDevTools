@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "astro-4321",
-      script: "../dev/start-server.sh",
+      script: "start-server.sh",
       instances: 1,
       exec_mode: "fork",
       env: {
@@ -13,7 +13,7 @@ module.exports = {
     },
     {
       name: "astro-4322",
-      script: "../dev/start-server.sh",
+      script: "start-server.sh",
       instances: 1,
       exec_mode: "fork",
       env: {

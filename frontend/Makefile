@@ -22,7 +22,7 @@ build:
 
 run-prod:
 	cd dev
-	pmdaemon --config ../ecosystem.json start
+	pmdaemon --config pmd.json start
 
 stop-prod:
 	cd dev	

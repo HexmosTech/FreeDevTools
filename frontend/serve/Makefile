@@ -21,10 +21,10 @@ test-svg-req-pm2:
 	rm -rf logs/*
 	pm2 flush
 	pm2 stop all
-	pm2 start ../ecosystem.config.cjs
+	pm2 start pm2.config.cjs
 	pm2 ls
-	./pin.sh
-	./verifypin.sh
+	./pm2-pin.sh
+	./pm2-verifypin.sh
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
@@ -60,11 +60,11 @@ test-svg-req-pmd:
 	@sleep 2
 	bash kill-ports.sh
 	@sleep 2
-	pmdaemon --config ../ecosystem.json start
+	pmdaemon --config pmd.config.json start
 	@sleep 2
 	pmdaemon list
-	./pin-pmd.sh
-	./verifypin-pmd.sh
+	./pmd-pin.sh
+	./pmd-verifypin.sh
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
