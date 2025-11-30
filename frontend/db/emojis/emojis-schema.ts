@@ -24,6 +24,8 @@ export interface Emoji {
     slack?: string;
     discord?: string;
   }; // JSON object (github/slack/discord)
+  slug_hash: string; // bigint stored as string - SHA256 hash of slug
+  category_hash: string; // bigint stored as string - SHA256 hash of category
 }
 
 export interface EmojiImage {
@@ -49,6 +51,8 @@ export interface RawEmojiRow {
   version: string | null; // JSON string before parsing
   senses: string | null; // JSON string before parsing
   shortcodes: string | null; // JSON string before parsing
+  slug_hash: number | null; // INTEGER - SHA256 hash of slug (bigint)
+  category_hash: number | null; // INTEGER - SHA256 hash of category (bigint)
 }
 
 export interface RawEmojiImageRow {
