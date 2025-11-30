@@ -16,7 +16,7 @@ import path from 'path';
 
 type DatabaseInstance = InstanceType<typeof Database>;
 
-const DB_PATH = path.resolve(process.cwd(), 'db/bench/png/png-icons-db.db');
+const DB_PATH = path.resolve(process.cwd(), 'db/bench/png/png-icons-db-v1.db');
 
 interface PreviewIcon {
   id: number;

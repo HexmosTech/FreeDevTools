@@ -19,7 +19,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 JSON_DIR = BASE_DIR / "base64_svg_icons"
 CLUSTER_PNG_PATH = BASE_DIR.parent.parent / "data" / "cluster_png.json"
-DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "png-icons-db.db"
+DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "png-icons-db-v1.db"
 
 
 def ensure_schema(conn: sqlite3.Connection) -> None:

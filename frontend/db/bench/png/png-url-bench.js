@@ -3,7 +3,7 @@
  * PNG Icon URL Lookup Benchmark
  *
  * Runs the same multi-process / multi-worker hash benchmark as `url-bench.js`
- * but targets `png-icons-db.db` and the pre-built `png_urls.json`.
+ * but targets `png-icons-db-v1.db` and the pre-built `png_urls.json`.
  */
 
 import Database from 'better-sqlite3';
@@ -20,7 +20,7 @@ const config = {
   cpus: 2,
   cpuPins: [0, 1],
   workers: [1, 2],
-  dbPath: path.join(__dirname, 'png-icons-db.db'),
+  dbPath: path.join(__dirname, 'png-icons-db-v1.db'),
   urlsPath: path.join(__dirname, 'png_urls.json')
 };
 
@@ -159,7 +159,7 @@ async function main() {
   console.log('╚════════════════════════════════════════════════════════════════════╝\n');
 
   if (!fs.existsSync(config.dbPath) || !fs.existsSync(config.urlsPath)) {
-    console.error('❌ png-icons-db.db or png_urls.json is missing. Run png-icon-hashes first.');
+    console.error('❌ png-icons-db-v1.db or png_urls.json is missing. Run png-icon-hashes first.');
     process.exit(1);
   }
 
