@@ -342,12 +342,12 @@ parentPort?.on('message', (message: QueryMessage) => {
           ORDER BY category
         `;
         
-        const params = excludedSlugs && excludedSlugs.length > 0 
+        const queryParams = excludedSlugs && excludedSlugs.length > 0 
           ? [...validCategories, ...excludedSlugs, previewEmojisPerCategory]
           : [...validCategories, previewEmojisPerCategory];
         
         const stmt = db.prepare(query);
-        const results = stmt.all(...params) as Array<{
+        const results = stmt.all(...queryParams) as Array<{
           category: string;
           count: number;
           preview_emojis: string;
@@ -444,12 +444,12 @@ parentPort?.on('message', (message: QueryMessage) => {
           ORDER BY category
         `;
         
-        const params = excludedSlugs && excludedSlugs.length > 0 
+        const queryParams = excludedSlugs && excludedSlugs.length > 0 
           ? [...validCategories, ...excludedSlugs, previewEmojisPerCategory]
           : [...validCategories, previewEmojisPerCategory];
         
         const stmt = db.prepare(query);
-        const results = stmt.all(...params) as Array<{
+        const results = stmt.all(...queryParams) as Array<{
           category: string;
           count: number;
           preview_emojis: string;
@@ -1064,8 +1064,8 @@ parentPort?.on('message', (message: QueryMessage) => {
             ${excludedSlugs && excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
         `;
         
-        const params = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs : [];
-        const rows = db.prepare(query).all(...params) as Array<{ slug: string; category: string }>;
+        const queryParams = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs : [];
+        const rows = db.prepare(query).all(...queryParams) as Array<{ slug: string; category: string }>;
         result = rows.map(r => ({ slug: r.slug, category: r.category }));
         break;
       }
@@ -1086,8 +1086,8 @@ parentPort?.on('message', (message: QueryMessage) => {
             ${excludedSlugs && excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
         `;
         
-        const params = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs : [];
-        const rows = db.prepare(query).all(...params) as Array<{ slug: string; category: string }>;
+        const queryParams = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs : [];
+        const rows = db.prepare(query).all(...queryParams) as Array<{ slug: string; category: string }>;
         result = rows.map(r => ({ slug: r.slug, category: r.category }));
         break;
       }
