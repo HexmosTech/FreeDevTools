@@ -12,3 +12,7 @@ export function hashUrlToKey(url: string): string {
   return hash.readBigInt64BE(0).toString();
 }
 
+export function hashNameToKey(name: string): string {
+  const hash = crypto.createHash('sha256').update(name).digest();
+  return hash.readBigInt64BE(0).toString();
+}
