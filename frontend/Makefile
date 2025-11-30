@@ -10,11 +10,7 @@ clean:
 	rm -rf .astro/
 
 install:
-	curl -fsSL https://bun.com/install | bash
-	echo "export PATH=\"$$BUN_INSTALL/bin:$$PATH\"" >> ~/.bashrc
-	source ~/.bashrc
-	make clean
-	bun install
+	cd serve && bash setup_dev.sh
 
 # Build the project
 build:

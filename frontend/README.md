@@ -1,8 +1,8 @@
 ## How to setup project
 
 ```
-cd frontend/serve
-bash setup_dev.sh
+cd frontend
+make install
 ```
 
 ### Dev
