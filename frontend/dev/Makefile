@@ -6,12 +6,12 @@ pm2logs:
 	fi
 	@python3 pm2_logs.py "$(LABEL)"
 
-pdlogs:
+pmdlogs:
 	@if [ -z "$(LABEL)" ]; then \
 		echo "❌ Please provide LABEL=some-name"; \
 		exit 1; \
 	fi
-	@python3 pdlogs.py "$(LABEL)"
+	@python3 pmd_logs.py "$(LABEL)"
 
 
 test-svg-req-pm2:
@@ -49,7 +49,7 @@ test-svg-req-pm2:
 	@echo "⬇️  Showing PM2 logs -----------"
 	make pm2logs LABEL=test-svg-req-pm2
 
-test-svg-req-pd:
+test-svg-req-pmd:
 	clear
 	# npm run build
 	clear
@@ -63,8 +63,8 @@ test-svg-req-pd:
 	pmdaemon --config ../ecosystem.json start
 	@sleep 2
 	pmdaemon list
-	./pin-pd.sh
-	./verifypin-pd.sh
+	./pin-pmd.sh
+	./verifypin-pmd.sh
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
@@ -74,6 +74,4 @@ test-svg-req-pd:
 	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/emojis/two-hump-camel/
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
-	@pmdaemon logs astro-4321 
-	@pmdaemon logs astro-4322 
-	make pdlogs LABEL=test-svg-req-pd
+	make pmdlogs LABEL=test-svg-req-pmd

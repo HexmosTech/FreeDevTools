@@ -9,8 +9,6 @@ import argparse
 import os
 import re
 import shutil
-import subprocess
-import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -82,7 +80,7 @@ def summarize_file(path):
         "worker_events": 0,
     }
     dispatch_pattern = r"\[(SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB)\]"
-    request_pattern = r"\[(SVG_ICONS|PNG_ICONS|EMOJI)\] Request reached"
+    request_pattern = r"\[(SVG_ICONS|PNG_ICONS|EMOJI)\] Request reached|Request reached server:"
     worker_pattern = r"\[(SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB)\]\["
     timestamp_re = re.compile(r"\[([0-9T:\-\.]+Z)\]")
     durations = {}
@@ -306,57 +304,6 @@ def analyze_request_times(log_files: List[Path]) -> None:
             print(f"  {path}: {stats['count']} requests, {stats['total']}ms total, {stats['total']/stats['count']:.2f}ms avg")
 
 
-def get_pmdaemon_processes():
-    """Get list of astro processes from pmdaemon."""
-    try:
-        result = subprocess.run(
-            ['pmdaemon', 'list'],
-            capture_output=True,
-            text=True,
-            timeout=5
-        )
-        if result.returncode != 0:
-            return []
-        
-        # Parse the output to find astro processes
-        processes = []
-        for line in result.stdout.split('\n'):
-            # Look for lines with astro process names
-            if 'astro-' in line:
-                # Extract process name (e.g., astro-4321, astro-4322)
-                match = re.search(r'astro-(\d+)', line)
-                if match:
-                    process_name = f"astro-{match.group(1)}"
-                    processes.append(process_name)
-        
-        return processes
-    except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.SubprocessError):
-        return []
-
-
-def capture_pmdaemon_logs(process_name: str, output_file: Path):
-    """Capture logs from pmdaemon for a specific process."""
-    try:
-        # Use pmdaemon logs command to get logs
-        # Note: pmdaemon logs might output to stdout, so we capture it
-        result = subprocess.run(
-            ['pmdaemon', 'logs', process_name],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
-        
-        if result.returncode == 0 or result.stdout:
-            with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(result.stdout)
-            if result.stderr:
-                with open(output_file, 'a', encoding='utf-8') as f:
-                    f.write(result.stderr)
-            return True
-        return False
-    except (subprocess.TimeoutExpired, subprocess.SubprocessError) as e:
-        print(f"Warning: Failed to capture logs for {process_name}: {e}")
-        return False
 
 
 def main():
@@ -366,30 +313,35 @@ def main():
     parser.add_argument("label", help="folder name under logs/")
     args = parser.parse_args()
 
+    pmdaemon_dir = Path.home() / ".pmdaemon" / "logs"
+    if not pmdaemon_dir.exists():
+        raise SystemExit(f"PMDaemon log directory not found: {pmdaemon_dir}")
+
     out_dir = Path("logs") / args.label
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Get list of astro processes from pmdaemon
-    processes = get_pmdaemon_processes()
-    
-    if not processes:
-        raise SystemExit("No astro processes found in pmdaemon. Run 'pmdaemon list' to check.")
-
-    log_files = []
-    
-    # Capture logs for each process
-    for process_name in processes:
-        # Create log file name similar to PM2 format: astro-4321-out.log
-        log_file = out_dir / f"{process_name}-out.log"
-        
-        if capture_pmdaemon_logs(process_name, log_file):
-            log_files.append(log_file)
-            print(f"Captured logs for {process_name} -> {log_file}")
-        else:
-            print(f"Warning: No logs captured for {process_name}")
+    # Find all astro log files (both out and error logs)
+    log_files = sorted(pmdaemon_dir.glob("astro-*-out.log")) + sorted(
+        pmdaemon_dir.glob("astro-*-error.log")
+    )
 
     if not log_files:
-        raise SystemExit("No astro logs captured from pmdaemon")
+        raise SystemExit("No astro logs found under ~/.pmdaemon/logs/")
+
+    # Copy log files to output directory
+    copied_log_files = []
+    for log_path in log_files:
+        target = out_dir / log_path.name
+        shutil.copy2(log_path, target)
+        copied_log_files.append(target)
+        print(f"Copied {log_path.name} -> {target}")
+        try:
+            log_path.unlink()
+            print(f"Removed source log: {log_path.name}")
+        except OSError as exc:
+            print(f"Failed to remove {log_path.name}: {exc}")
+
+    log_files = copied_log_files
 
     aggregate = {
         "total_lines": 0,
@@ -407,6 +359,7 @@ def main():
         stats, durations, timestamps = summarize_file(log_path)
         print(f"Processed {log_path.name}")
         
+        # Extract process name from filename (e.g., astro-4321-out.log -> astro-4321)
         # Extract process name from filename (e.g., astro-4321-out.log -> astro-4321)
         proc_match = re.search(r"(astro-\d+)", log_path.name)
         proc_key = proc_match.group(1) if proc_match else log_path.stem
