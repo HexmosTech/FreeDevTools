@@ -25,6 +25,11 @@ export function copyWorkerFile() {
             dist: path.join(distDir, 'server', 'chunks', 'db', 'png_icons', 'png-worker.js'),
             name: 'PNG',
           },
+          {
+            source: path.join(projectRoot, 'db', 'cheatsheets', 'cheatsheets-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'cheatsheets', 'cheatsheets-worker.js'),
+            name: 'CHEATSHEETS',
+          },
         ];
 
         // Try to use esbuild (available through Vite)
