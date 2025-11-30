@@ -1,23 +1,15 @@
 import type { APIRoute } from 'astro';
+import { getClusters } from 'db/png_icons/png-icons-utils';
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const { getCollection } = await import('astro:content');
 
-  // Get PNG icons metadata to calculate total pages
-  const pngIconsEntries = await getCollection('pngIconsMetadata');
-  const iconsData = pngIconsEntries[0]?.data;
-
-  if (!iconsData) {
-    return new Response('PNG icons metadata not found', { status: 500 });
-  }
-
-  // Get all categories from metadata
-  const allCategories = Object.keys(iconsData.clusters);
+  // Get clusters from SQLite database
+  const clusters = await getClusters();
 
   // Calculate total pages (30 categories per page)
   const itemsPerPage = 30;
-  const totalPages = Math.ceil(allCategories.length / itemsPerPage);
+  const totalPages = Math.ceil(clusters.length / itemsPerPage);
 
   const urls: string[] = [];
 
