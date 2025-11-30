@@ -20,6 +20,16 @@ install:
 build:
 	bun run build
 
+run-prod:
+	cd dev
+	pmdaemon --config ../ecosystem.json start
+
+stop-prod:
+	cd dev	
+	pmdaemon stop all
+	bash kill-ports.sh
+	bash kill-ports.sh
+
 # Generate all tool banners
 banners:
 	node scripts/generate-all-banners.cjs || true

@@ -11,6 +11,19 @@ import { Worker } from 'worker_threads';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Find project root by looking for package.json or node_modules
+function findProjectRoot(): string {
+  let current = __dirname;
+  while (current !== path.dirname(current)) {
+    if (existsSync(path.join(current, 'package.json')) || existsSync(path.join(current, 'node_modules'))) {
+      return current;
+    }
+    current = path.dirname(current);
+  }
+  // Fallback to process.cwd() if we can't find project root
+  return process.cwd();
+}
+
 const WORKER_COUNT = 2;
 let workers: Worker[] = [];
 let workerIndex = 0;
@@ -29,7 +42,8 @@ interface QueryResponse {
 }
 
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/all_dbs/emoji-db.db');
+  const projectRoot = findProjectRoot();
+  return path.resolve(projectRoot, 'db/all_dbs/emoji-db.db');
 }
 
 /**
@@ -49,7 +63,7 @@ async function initWorkers(): Promise<void> {
 
   initPromise = new Promise((resolve, reject) => {
     // Resolve worker path - try multiple locations
-    const projectRoot = process.cwd();
+    const projectRoot = findProjectRoot();
     const sourceWorkerPath = path.join(projectRoot, 'db', 'emojis', 'emoji-worker');
     const distWorkerPath = path.join(projectRoot, 'dist', 'server', 'chunks', 'db', 'emojis', 'emoji-worker');
     const relativeWorkerPath = path.join(__dirname, 'emoji-worker');

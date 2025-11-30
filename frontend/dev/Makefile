@@ -71,7 +71,7 @@ test-svg-req-pd:
 	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/emojis/two-hump-camel/
 	@sleep 2
 	@echo "⬇️  Requesting SVG icon -----------"
-	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/emojis/two-hump-camel/
+	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/emojis/two-hump-camel/
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
 	@pmdaemon logs astro-4321 
