@@ -75,3 +75,22 @@ test-svg-req-pmd:
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
 	make pmdlogs LABEL=test-svg-req-pmd
+
+curl-all-kind-of-page:
+	@echo "SVG Icon (localhost:4321):"
+	@hey -n 10 -c 1 http://localhost:4321/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/ 2>&1 | grep -A 10 "Status code distribution" || echo "  No status codes found"
+	@echo ""
+	@echo "PNG Icon (localhost:4321):"
+	@hey -n 10 -c 1 http://localhost:4321/freedevtools/png_icons/8bit/sharp-solid-alien-8bit/ 2>&1 | grep -A 10 "Status code distribution" || echo "  No status codes found"
+	@echo ""
+	@echo "Emoji (localhost:4321):"
+	@hey -n 10 -c 1 http://localhost:4321/freedevtools/emojis/two-hump-camel/ 2>&1 | grep -A 10 "Status code distribution" || echo "  No status codes found"
+	@echo ""
+	@echo "PNG Icon (nginx:127.0.0.1):"
+	@hey -n 10 -c 1 http://127.0.0.1/freedevtools/png_icons/8bit/sharp-solid-alien-8bit/ 2>&1 | grep -A 10 "Status code distribution" || echo "  No status codes found"
+	@echo ""
+	@echo "SVG Icon (nginx:127.0.0.1):"
+	@hey -n 10 -c 1 http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/ 2>&1 | grep -A 10 "Status code distribution" || echo "  No status codes found"
+	@echo ""
+	@echo "Emoji (nginx:127.0.0.1):"
+	@hey -n 10 -c 1 http://127.0.0.1/freedevtools/emojis/two-hump-camel/ 2>&1 | grep -A 10 "Status code distribution" || echo "  No status codes found"
