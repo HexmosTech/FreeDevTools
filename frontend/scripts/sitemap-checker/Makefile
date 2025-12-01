@@ -13,6 +13,7 @@ MODE ?= local
 MAXPAGES ?= 0
 OUTPUT ?= pdf
 HEAD ?= false
+COMPARE_PROD ?= false
 
 # -----------------------------
 # Targets
@@ -32,6 +33,7 @@ run:
 		--maxPages=$(MAXPAGES) \
 		--output=$(OUTPUT) \
 		--head=$(HEAD)
+		
 
 # Run the built binary
 run-bin: build
@@ -42,7 +44,8 @@ run-bin: build
 		--mode=$(MODE) \
 		--maxPages=$(MAXPAGES) \
 		--output=$(OUTPUT) \
-		--head=$(HEAD)
+		--head=$(HEAD) \
+		--compare-prod=$(COMPARE_PROD)
 
 # Clean the binary
 clean:
@@ -55,5 +58,5 @@ apple-emojis:
 .PHONY: build run run-bin clean apple-emojis
 
 tldr:
-	make run SITEMAP=http://localhost:4321/freedevtools/tldr/sitemap.xml
+	make run-bin SITEMAP=http://localhost:4321/freedevtools/tldr/sitemap.xml COMPARE_PROD=true
 	

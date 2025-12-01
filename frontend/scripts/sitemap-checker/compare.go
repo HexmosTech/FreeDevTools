@@ -11,6 +11,8 @@ import (
 type SitemapComparison struct {
 	MissingInLocal []string
 	ExtraInLocal   []string
+	ProdTotal      int
+	LocalTotal     int
 }
 
 func fetchRawSitemapUrls(sitemapUrl string) []string {
@@ -84,5 +86,7 @@ func compareSitemaps(prodUrls, localUrls []string) *SitemapComparison {
 	return &SitemapComparison{
 		MissingInLocal: missing,
 		ExtraInLocal:   extra,
+		ProdTotal:      len(prodUrls),
+		LocalTotal:     len(localUrls),
 	}
 }
