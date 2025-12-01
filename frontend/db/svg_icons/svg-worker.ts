@@ -53,7 +53,7 @@ const statements = {
      COALESCE(emotional_cues, '') as emotional_cues,
      enhanced,
      COALESCE(img_alt, '') as img_alt
-     FROM icon WHERE cluster = ? ORDER BY hash_name`
+     FROM icon WHERE cluster = ? ORDER BY url_hash`
   ),
   clustersWithPreviewIcons: db.prepare(
     `SELECT name, count, source_folder, preview_icons_json
