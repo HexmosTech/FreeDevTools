@@ -26,6 +26,11 @@ export function copyWorkerFile() {
             name: 'PNG',
           },
           {
+            source: path.join(projectRoot, 'db', 'emojis', 'emoji-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'emojis', 'emoji-worker.js'),
+            name: 'EMOJI',
+          },
+          {
             source: path.join(projectRoot, 'db', 'cheatsheets', 'cheatsheets-worker.ts'),
             dist: path.join(distDir, 'server', 'chunks', 'db', 'cheatsheets', 'cheatsheets-worker.js'),
             name: 'CHEATSHEETS',

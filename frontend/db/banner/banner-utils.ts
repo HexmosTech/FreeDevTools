@@ -1,26 +1,59 @@
 import { Database } from 'bun:sqlite';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 import type { Banner, RawBannerRow } from './banner-schema';
 
 // DB queries
 let dbInstance: Database | null = null;
 
+function findProjectRoot(): string {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  let current = __dirname;
+  while (current !== path.dirname(current)) {
+    if (existsSync(path.join(current, 'package.json')) || existsSync(path.join(current, 'node_modules'))) {
+      return current;
+    }
+    current = path.dirname(current);
+  }
+  // Fallback to process.cwd() if we can't find project root
+  return process.cwd();
+}
+
 function getDbPath(): string {
-  return path.resolve(process.cwd(), 'db/all_dbs/banner-db.db');
+  const projectRoot = findProjectRoot();
+  return path.resolve(projectRoot, 'db/all_dbs/banner-db.db');
 }
 
 export function getDb(): Database {
   if (dbInstance) return dbInstance;
   const dbPath = getDbPath();
-  dbInstance = new Database(dbPath, { readonly: true });
-  // Optimize for read-only performance
-  dbInstance.run('PRAGMA journal_mode = OFF');
-  dbInstance.run('PRAGMA synchronous = OFF');
-  dbInstance.run('PRAGMA mmap_size = 1073741824');
   
-  dbInstance.run('PRAGMA temp_store = MEMORY'); // Use memory for temp tables
-  dbInstance.run('PRAGMA query_only = ON'); // Ensure read-only mode
-  dbInstance.run('PRAGMA read_uncommitted = ON'); // Skip locking for reads
+  // Check if database file exists before trying to open it
+  if (!existsSync(dbPath)) {
+    throw new Error(`Banner database not found at: ${dbPath}`);
+  }
+  
+  dbInstance = new Database(dbPath, { readonly: true });
+  
+  // Wrap PRAGMAs in try-catch to avoid locking issues with multiple processes
+  const setPragma = (pragma: string) => {
+    try {
+      dbInstance!.run(pragma);
+    } catch (e) {
+      // Ignore PRAGMA errors - they're optimizations, not critical
+    }
+  };
+  
+  // Optimize for read-only performance
+  setPragma('PRAGMA journal_mode = OFF');
+  setPragma('PRAGMA synchronous = OFF');
+  setPragma('PRAGMA mmap_size = 1073741824');
+  setPragma('PRAGMA temp_store = MEMORY'); // Use memory for temp tables
+  setPragma('PRAGMA query_only = ON'); // Ensure read-only mode
+  setPragma('PRAGMA read_uncommitted = ON'); // Skip locking for reads
+  
   return dbInstance;
 }
 

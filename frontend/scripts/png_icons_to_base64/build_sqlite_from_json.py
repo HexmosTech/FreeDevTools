@@ -4,7 +4,7 @@ Build a SQLite database from base64 SVG JSON files and verify contents.
 
 - Scans scripts/svg_icons_to_base64/base64_svg_icons/*.json
 - Reads data/cluster_svg.json for metadata
-- Creates SQLite DB at db/all_dbs/svg-icons-db.db
+- Creates SQLite DB at db/all_dbs/svg-icons-db-v1.db
 - Table: icon(id INTEGER PRIMARY KEY AUTOINCREMENT, cluster TEXT, name TEXT, base64 TEXT, ...)
 - Table: cluster(name TEXT PRIMARY KEY, count INTEGER, source_folder TEXT, ...)
 - Table: overview(id INTEGER PRIMARY KEY CHECK(id = 1), total_count INTEGER)
@@ -19,7 +19,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 JSON_DIR = BASE_DIR / "base64_svg_icons"
 CLUSTER_PNG_PATH = BASE_DIR.parent.parent / "data" / "cluster_png.json"
-DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "png-icons-db.db"
+DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "png-icons-db-v1.db"
 
 
 def ensure_schema(conn: sqlite3.Connection) -> None:

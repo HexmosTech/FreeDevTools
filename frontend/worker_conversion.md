@@ -8,7 +8,7 @@
 2. Replace `{CATEGORY_UPPER}` with uppercase version (e.g., `EMOJI`, `MAN_PAGES`, `MCP`)
 3. Replace `{CATEGORY_PLURAL}` with plural form if different (e.g., `emojis`, `man-pages`, `mcps`)
 4. Replace `{URL_PREFIX}` with the URL path prefix (e.g., `/freedevtools/emojis/`, `/freedevtools/man-pages/`)
-5. Replace `{DB_PATH}` with database file path (e.g., `db/all_dbs/emoji-db.db`)
+5. Replace `{DB_PATH}` with database file path (e.g., `db/all_dbs/emoji-db-v1.db`)
 6. Replace `{FILE_EXTENSION}` with file extension if applicable (e.g., `.svg`, `.png`, or empty string)
 7. Follow each phase sequentially, checking off items as you complete them
 
@@ -18,7 +18,7 @@
 - `{CATEGORY_UPPER}` → `EMOJI`
 - `{CATEGORY_PLURAL}` → `emojis`
 - `{URL_PREFIX}` → `/freedevtools/emojis/`
-- `{DB_PATH}` → `db/all_dbs/emoji-db.db`
+- `{DB_PATH}` → `db/all_dbs/emoji-db-v1.db`
 - `{FILE_EXTENSION}` → (empty, no extension)
 
 ---
@@ -37,15 +37,19 @@ Before starting, verify:
 - [ ] Database exists at: `{DB_PATH}`
 - [ ] Database tables have been migrated to use hash-based primary keys (if applicable)
 
+## ⚠️ Important: Path Resolution Fix
+
+**CRITICAL**: Always use `findProjectRoot()` instead of `process.cwd()` in worker-pool.ts to avoid path resolution issues when running from different directories (e.g., `dev/` subdirectory). See Phase 2, Step 3 for the implementation. This prevents "Worker file not found" errors when the server runs from a subdirectory.
+
 ## Current State Analysis
 
 ### SVG Icons (Reference Implementation - DO NOT MODIFY)
 
 - **Database Layer**: `db/svg_icons/`
-  - `svg-worker-pool.ts` - Worker pool manager (2 workers, round-robin)
-  - `svg-worker.ts` - Worker thread with SQLite queries
-  - `svg-icons-utils.ts` - Public API using worker pool
-  - `svg-icons-schema.ts` - TypeScript interfaces with `hash_name`, `url_hash`, `_json` columns
+- `svg-worker-pool.ts` - Worker pool manager (2 workers, round-robin)
+- `svg-worker.ts` - Worker thread with SQLite queries
+- `svg-icons-utils.ts` - Public API using worker pool
+- `svg-icons-schema.ts` - TypeScript interfaces with `hash_name`, `url_hash`, `_json` columns
 
 ### {CATEGORY} (Current State - TO BE CONVERTED)
 
@@ -85,12 +89,13 @@ Before starting, verify:
    - [ ] Add `hash_name: string` to main category/cluster interface (bigint stored as string)
    - [ ] Add `url_hash: string` to item/icon interface if applicable (bigint stored as string)
    - [ ] Update `RawClusterRow` or equivalent to use `_json` column names:
-     - `keywords_json`, `tags_json`, `alternative_terms_json`, `why_choose_us_json`
-     - Add `hash_name: string`
-   - [ ] Add `preview_icons_json` related interfaces if needed:
-     - `PreviewIcon` interface
-     - `ClusterWithPreviewIcons` interface
-     - `RawClusterPreviewPrecomputedRow` interface
+
+- `keywords_json`, `tags_json`, `alternative_terms_json`, `why_choose_us_json`
+- Add `hash_name: string`
+  - [ ] Add `preview_icons_json` related interfaces if needed:
+- `PreviewIcon` interface
+- `ClusterWithPreviewIcons` interface
+  - `RawClusterPreviewPrecomputedRow` interface
 
 **Note:** Database columns should already match (from migration), only TypeScript types need updating.
 
@@ -116,19 +121,52 @@ Before starting, verify:
    - [ ] `svg-icons-db.db` → `{CATEGORY}-db.db` (in getDbPath)
    - [ ] `svg-worker` → `{CATEGORY}-worker` (in worker paths)
 
-3. **Update getDbPath():**
+3. **Add findProjectRoot() function (IMPORTANT - fixes path resolution issues):**
 
    ```typescript
-   function getDbPath(): string {
-     return path.resolve(process.cwd(), '{DB_PATH}');
+   // Find project root by looking for package.json or node_modules
+   function findProjectRoot(): string {
+     let current = __dirname;
+     while (current !== path.dirname(current)) {
+       if (
+         existsSync(path.join(current, 'package.json')) ||
+         existsSync(path.join(current, 'node_modules'))
+       ) {
+         return current;
+       }
+       current = path.dirname(current);
+     }
+     // Fallback to process.cwd() if we can't find project root
+     return process.cwd();
    }
    ```
 
-4. **Update worker path resolution:**
-   - Source: `db/{CATEGORY}/{CATEGORY}-worker`
-   - Dist: `dist/server/chunks/db/{CATEGORY}/{CATEGORY}-worker`
+4. **Update getDbPath():**
 
-5. **Add max listeners (prevent memory leak warnings):**
+   ```typescript
+   function getDbPath(): string {
+     const projectRoot = findProjectRoot();
+     return path.resolve(projectRoot, '{DB_PATH}');
+   }
+   ```
+
+5. **Update worker path resolution in initWorkers():**
+
+   Replace `process.cwd()` with `findProjectRoot()`:
+
+   ```typescript
+   // OLD (can fail if running from different directory):
+   const projectRoot = process.cwd();
+
+   // NEW (reliable path resolution):
+   const projectRoot = findProjectRoot();
+   ```
+
+   This ensures the worker file is found regardless of the current working directory (e.g., when running from `dev/` subdirectory).
+
+   **Why this matters**: If your server runs from a subdirectory (like `dev/`), `process.cwd()` will point to that subdirectory, causing the worker pool to look for files in the wrong location (e.g., `dev/dist/...` instead of `dist/...`). The `findProjectRoot()` function walks up from `__dirname` to find the actual project root.
+
+6. **Add max listeners (prevent memory leak warnings):**
 
    ```typescript
    worker.setMaxListeners(100);
@@ -136,7 +174,7 @@ Before starting, verify:
 
    Add this after creating the worker, before `worker.on('message', ...)`
 
-6. **Verify query interface matches:**
+7. **Verify query interface matches:**
    - [ ] Export `query` object with same methods as SVG version
    - [ ] All query methods delegate to `executeQuery()`
 
@@ -356,6 +394,7 @@ Before starting, verify:
    - [ ] No direct database imports remain
 
 4. **Check for direct DB access:**
+
    ```bash
    grep -n "getDb()\|Database\|bun:sqlite" src/pages/{CATEGORY_PLURAL}/*.astro
    ```
@@ -432,11 +471,65 @@ Before starting, verify:
 
 ### Issue: Worker file not found
 
+**Error Message:**
+
+```
+Worker file not found. Checked:
+  - /path/to/project/dev/dist/server/chunks/db/{CATEGORY}/{CATEGORY}-worker.js (production)
+  - /path/to/project/dev/db/{CATEGORY}/{CATEGORY}-worker.ts (development)
+  - /path/to/project/dist/server/chunks/{CATEGORY}-worker.ts (fallback)
+```
+
+**Root Cause:**
+The worker pool uses `process.cwd()` to resolve paths, which can be wrong if the server runs from a different directory (e.g., `dev/` subdirectory). Notice the paths include `dev/` in them, indicating `process.cwd()` is pointing to the wrong directory.
+
 **Solution:**
 
-- Check worker file exists: `db/{CATEGORY}/{CATEGORY}-worker.ts`
-- Verify build integration copied file to dist
-- Check worker path resolution in worker-pool.ts
+1. **CRITICAL FIX**: Add `findProjectRoot()` function to worker-pool.ts (see Phase 2, Step 3):
+
+   ```typescript
+   // Find project root by looking for package.json or node_modules
+   function findProjectRoot(): string {
+     let current = __dirname;
+     while (current !== path.dirname(current)) {
+       if (
+         existsSync(path.join(current, 'package.json')) ||
+         existsSync(path.join(current, 'node_modules'))
+       ) {
+         return current;
+       }
+       current = path.dirname(current);
+     }
+     // Fallback to process.cwd() if we can't find project root
+     return process.cwd();
+   }
+   ```
+
+2. **Update getDbPath()** to use `findProjectRoot()`:
+
+   ```typescript
+   function getDbPath(): string {
+     const projectRoot = findProjectRoot();
+     return path.resolve(projectRoot, '{DB_PATH}');
+   }
+   ```
+
+3. **Update initWorkers()** to use `findProjectRoot()`:
+
+   ```typescript
+   // Replace this:
+   const projectRoot = process.cwd();
+
+   // With this:
+   const projectRoot = findProjectRoot();
+   ```
+
+4. **Additional checks:**
+   - Verify worker file exists: `db/{CATEGORY}/{CATEGORY}-worker.ts`
+   - Verify build integration copied file to dist: `dist/server/chunks/db/{CATEGORY}/{CATEGORY}-worker.js`
+   - Check the compiled worker file exists at the expected dist path
+   - Ensure build was run after adding the worker files
+   - Restart the server after making these changes
 
 ### Issue: SQLiteError: no such column
 
