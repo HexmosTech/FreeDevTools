@@ -46,7 +46,7 @@ interface QueryResponse {
 
 function getDbPath(): string {
   const projectRoot = findProjectRoot();
-  return path.resolve(projectRoot, 'db/all_dbs/svg-icons-db-v1.db');
+  return path.resolve(projectRoot, 'db/all_dbs/emoji-db-v1.db');
 }
 
 /**
@@ -63,7 +63,7 @@ async function initWorkers(): Promise<void> {
 
   const initStartTime = Date.now();
   console.log(
-    `[SVG_ICONS_DB] Initializing worker pool with ${WORKER_COUNT} workers...`
+    `[EMOJI_DB] Initializing worker pool with ${WORKER_COUNT} workers...`
   );
 
   initPromise = new Promise((resolve, reject) => {
@@ -72,8 +72,8 @@ async function initWorkers(): Promise<void> {
     const sourceWorkerPath = path.join(
       projectRoot,
       'db',
-      'svg_icons',
-      'svg-worker'
+      'emojis',
+      'emoji-worker'
     );
     const distWorkerPath = path.join(
       projectRoot,
@@ -81,10 +81,10 @@ async function initWorkers(): Promise<void> {
       'server',
       'chunks',
       'db',
-      'svg_icons',
-      'svg-worker'
+      'emojis',
+      'emoji-worker'
     );
-    const relativeWorkerPath = path.join(__dirname, 'svg-worker');
+    const relativeWorkerPath = path.join(__dirname, 'emoji-worker');
 
     // Try .js first (for compiled output), then .ts (for development/TypeScript)
     // Priority: dist (built) > source (dev) > relative (fallback)
@@ -115,7 +115,7 @@ async function initWorkers(): Promise<void> {
           `  - ${distWorkerPath}.js (production)\n` +
           `  - ${sourceWorkerPath}.ts (development)\n` +
           `  - ${relativeWorkerPath}.ts (fallback)\n` +
-          `Make sure the db/svg_icons/svg-worker.ts file exists and is copied during build.`
+          `Make sure the db/emojis/emoji-worker.ts file exists and is copied during build.`
       );
       reject(error);
       return;
@@ -144,7 +144,7 @@ async function initWorkers(): Promise<void> {
             workers = pendingWorkers;
             const initEndTime = Date.now();
             console.log(
-              `[SVG_ICONS_DB] Worker pool initialized in ${initEndTime - initStartTime}ms`
+              `[EMOJI_DB] Worker pool initialized in ${initEndTime - initStartTime}ms`
             );
             initPromise = null;
             resolve();
@@ -153,14 +153,14 @@ async function initWorkers(): Promise<void> {
       });
 
       worker.on('error', (err) => {
-        console.error(`[SVG_ICONS_DB] Worker ${i} error:`, err);
+        console.error(`[EMOJI_DB] Worker ${i} error:`, err);
         initPromise = null;
         reject(err);
       });
 
       worker.on('exit', (code) => {
         if (code !== 0) {
-          console.error(`[SVG_ICONS_DB] Worker ${i} exited with code ${code}`);
+          console.error(`[EMOJI_DB] Worker ${i} exited with code ${code}`);
         }
       });
 
@@ -182,7 +182,7 @@ async function executeQuery(type: string, params: any): Promise<any> {
   workerIndex = (workerIndex + 1) % workers.length;
 
   const startTime = new Date();
-  console.log(`[SVG_ICONS_DB][${startTime.toISOString()}] Dispatching ${type}`);
+  console.log(`[EMOJI_DB][${startTime.toISOString()}] Dispatching ${type}`);
   return new Promise((resolve, reject) => {
     const queryId = `${Date.now()}-${Math.random()}`;
     const timeout = setTimeout(() => {
@@ -198,7 +198,7 @@ async function executeQuery(type: string, params: any): Promise<any> {
         } else {
           const endTime = new Date();
           console.log(
-            `[SVG_ICONS_DB][${endTime.toISOString()}] ${type} completed in ${
+            `[EMOJI_DB][${endTime.toISOString()}] ${type} completed in ${
               endTime.getTime() - startTime.getTime()
             }ms`
           );
@@ -239,31 +239,83 @@ export function cleanupWorkers(): Promise<void> {
 
 // Export query functions
 export const query = {
-  getTotalIcons: () => executeQuery('getTotalIcons', {}),
-  getTotalClusters: () => executeQuery('getTotalClusters', {}),
-  getIconsByCluster: (cluster: string, categoryName?: string) =>
-    executeQuery('getIconsByCluster', { cluster, categoryName }),
-  getClustersWithPreviewIcons: (
+  getEmojiBySlug: (slug: string) => executeQuery('getEmojiBySlug', { slug }),
+  getEmojiBySlugHash: (slugHash: string) =>
+    executeQuery('getEmojiBySlugHash', { slugHash }),
+  getTotalEmojis: () => executeQuery('getTotalEmojis', {}),
+  getEmojiCategories: () => executeQuery('getEmojiCategories', {}),
+  getCategoriesWithPreviewEmojis: (previewEmojisPerCategory: number) =>
+    executeQuery('getCategoriesWithPreviewEmojis', {
+      previewEmojisPerCategory,
+    }),
+  getAppleCategoriesWithPreviewEmojis: (
+    previewEmojisPerCategory: number,
+    excludedSlugs: string[]
+  ) =>
+    executeQuery('getAppleCategoriesWithPreviewEmojis', {
+      previewEmojisPerCategory,
+      excludedSlugs,
+    }),
+  getDiscordCategoriesWithPreviewEmojis: (
+    previewEmojisPerCategory: number,
+    excludedSlugs: string[]
+  ) =>
+    executeQuery('getDiscordCategoriesWithPreviewEmojis', {
+      previewEmojisPerCategory,
+      excludedSlugs,
+    }),
+  getEmojisByCategoryPaginated: (
+    category: string,
     page: number,
     itemsPerPage: number,
-    previewIconsPerCluster: number,
-    transform: boolean
+    vendor?: string,
+    excludedSlugs?: string[]
   ) =>
-    executeQuery('getClustersWithPreviewIcons', {
+    executeQuery('getEmojisByCategoryPaginated', {
+      category,
       page,
       itemsPerPage,
-      previewIconsPerCluster,
-      transform,
+      vendor,
+      excludedSlugs,
     }),
-  getClusterByName: (name: string) =>
-    executeQuery('getClusterByName', { name }),
-  getClusters: () => executeQuery('getClusters', {}),
-  getIconByUrlHash: (hash: string) =>
-    executeQuery('getIconByUrlHash', { hash }),
-  getIconByCategoryAndName: (category: string, iconName: string) =>
-    executeQuery('getIconByCategoryAndName', { category, iconName }),
+  getEmojisByCategoryWithDiscordImagesPaginated: (
+    category: string,
+    page: number,
+    itemsPerPage: number,
+    excludedSlugs?: string[]
+  ) =>
+    executeQuery('getEmojisByCategoryWithDiscordImagesPaginated', {
+      category,
+      page,
+      itemsPerPage,
+      excludedSlugs,
+    }),
+  getEmojisByCategoryWithAppleImagesPaginated: (
+    category: string,
+    page: number,
+    itemsPerPage: number,
+    excludedSlugs?: string[]
+  ) =>
+    executeQuery('getEmojisByCategoryWithAppleImagesPaginated', {
+      category,
+      page,
+      itemsPerPage,
+      excludedSlugs,
+    }),
+  getEmojiImages: (slug: string) => executeQuery('getEmojiImages', { slug }),
+  getDiscordEmojiBySlug: (slug: string) =>
+    executeQuery('getDiscordEmojiBySlug', { slug }),
+  getAppleEmojiBySlug: (slug: string) =>
+    executeQuery('getAppleEmojiBySlug', { slug }),
+  fetchImageFromDB: (slug: string, filename: string) =>
+    executeQuery('fetchImageFromDB', { slug, filename }),
+  getSitemapEmojis: () => executeQuery('getSitemapEmojis', {}),
+  getSitemapAppleEmojis: (excludedSlugs: string[]) =>
+    executeQuery('getSitemapAppleEmojis', { excludedSlugs }),
+  getSitemapDiscordEmojis: (excludedSlugs: string[]) =>
+    executeQuery('getSitemapDiscordEmojis', { excludedSlugs }),
 };
 
 void initWorkers().catch((err) => {
-  console.error('[SVG_ICONS_DB] Failed to warm worker pool:', err);
+  console.error('[EMOJI_DB] Failed to warm worker pool:', err);
 });

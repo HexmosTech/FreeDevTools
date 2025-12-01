@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const config = {
-  dbPath: path.join(__dirname, 'png-icons-db.db'),
+  dbPath: path.join(__dirname, 'png-icons-db-v1.db'),
   jsonPath: path.join(__dirname, 'png_urls.json')
 };
 

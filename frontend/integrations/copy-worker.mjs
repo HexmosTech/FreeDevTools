@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * Astro integration to compile and copy worker.ts to dist directory during build
- * This ensures the worker file is available at runtime in production as JavaScript
+ * Astro integration to compile and copy worker.ts files to dist directory during build
+ * This ensures the worker files are available at runtime in production as JavaScript
  */
 export function copyWorkerFile() {
   return {
@@ -14,43 +14,58 @@ export function copyWorkerFile() {
         // Always use project root's dist directory, not the dir parameter which may point to client
         const distDir = path.join(projectRoot, 'dist');
 
-        const sourceWorkerPath = path.join(projectRoot, 'db', 'svg_icons', 'svg-worker.ts');
-        const distWorkerPath = path.join(distDir, 'server', 'chunks', 'db', 'svg_icons', 'svg-worker.js');
+        const workers = [
+          {
+            source: path.join(projectRoot, 'db', 'svg_icons', 'svg-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'svg_icons', 'svg-worker.js'),
+            name: 'SVG',
+          },
+          {
+            source: path.join(projectRoot, 'db', 'png_icons', 'png-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'png_icons', 'png-worker.js'),
+            name: 'PNG',
+          },
+          {
+            source: path.join(projectRoot, 'db', 'emojis', 'emoji-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'emojis', 'emoji-worker.js'),
+            name: 'EMOJI',
+          },
+        ];
 
-        // Create directory structure if it doesn't exist
-        const distWorkerDir = path.dirname(distWorkerPath);
-        if (!fs.existsSync(distWorkerDir)) {
-          fs.mkdirSync(distWorkerDir, { recursive: true });
+        // Try to use esbuild (available through Vite)
+        const esbuild = await import('esbuild').catch(() => null);
+        if (!esbuild) {
+          throw new Error('esbuild not available');
         }
 
-        // Check if source file exists
-        if (!fs.existsSync(sourceWorkerPath)) {
-          console.warn(`⚠️  Worker file not found at ${sourceWorkerPath}`);
-          return;
-        }
+        for (const worker of workers) {
+          // Create directory structure if it doesn't exist
+          const distWorkerDir = path.dirname(worker.dist);
+          if (!fs.existsSync(distWorkerDir)) {
+            fs.mkdirSync(distWorkerDir, { recursive: true });
+          }
 
-        try {
-          // Try to use esbuild (available through Vite)
-          const esbuild = await import('esbuild').catch(() => null);
-          if (esbuild) {
+          // Check if source file exists
+          if (!fs.existsSync(worker.source)) {
+            console.warn(`⚠️  ${worker.name} worker file not found at ${worker.source}`);
+            continue;
+          }
+
+          try {
             await esbuild.default.build({
-              entryPoints: [sourceWorkerPath],
-              outfile: distWorkerPath,
+              entryPoints: [worker.source],
+              outfile: worker.dist,
               format: 'esm',
               target: 'node18',
               bundle: false,
               platform: 'node',
               sourcemap: false,
             });
-            console.log(`✅ Compiled worker.js using esbuild to ${distWorkerPath}`);
-          } else {
-            throw new Error('esbuild not available');
+            console.log(`✅ Compiled ${worker.name} worker.js using esbuild to ${worker.dist}`);
+          } catch (error) {
+            console.error(`❌ Failed to compile ${worker.name} worker.ts with esbuild: ${error.message}`);
+            throw new Error(`${worker.name} worker compilation failed. Please ensure esbuild is available or compile manually.`);
           }
-        } catch (error) {
-          console.error(`❌ Failed to compile worker.ts with esbuild: ${error.message}`);
-          console.error(`   Attempting fallback: copying as .js (may not work if TypeScript syntax is used)`);
-          // Last resort: try to copy and rename (won't work but shows the attempt)
-          throw new Error(`Worker compilation failed. Please ensure esbuild is available or compile manually.`);
         }
       },
     },

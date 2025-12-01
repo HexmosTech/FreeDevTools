@@ -1,8 +1,31 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy
+.PHONY: build deploy run clean install gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy serve prod-serve prod-stop
+
+# Run development server
+run:
+	bun run dev
+
+# Clean build artifacts
+clean:
+	rm -rf dist/
+	rm -rf .astro/
+
+install:
+	cd serve && bash setup_dev.sh
 
 # Build the project
 build:
-	npm run build
+	bun run build
+
+serve:
+	bun run serve-ssr
+
+serve-prod:
+	cd serve && pmdaemon --config pmd.config.json start
+
+
+stop-prod:
+	cd serve && pmdaemon stop all && bash kill-ports.sh && bash kill-ports.sh
+
 
 # Generate all tool banners
 banners:
@@ -34,18 +57,9 @@ deploy2: build
 # Deploy index.html: build then rsync index.html to a4.html
 # Note: rsync without --delete flag will only add/update files, never delete
 index-deploy:
-	npm run build:index
+	bun run build:index
 	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master:/tools/a4.html
 	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master:/tools/_astro/
-
-# Run development server
-run:
-	npm run dev
-
-# Clean build artifacts
-clean:
-	rm -rf dist/
-	rm -rf .astro/
 
 # Generate a new tool (usage: make gen tool-name)
 gen:
@@ -67,36 +81,6 @@ local-env:
 # Requires: sudo dnf install -y libwebp-tools (Fedora) or sudo apt install -y webp (Debian/Ubuntu)
 convert-to-webp:
 	./scripts/convert-to-webp.sh "$(src)" "$(out)"
-
-
-
-# Pull all DB files via Git LFS
-# pull-db:
-# 	@echo "🔎 Checking Git LFS..."
-# 	@git lfs version || (echo "Git LFS not installed"; exit 1)
-
-# 	@echo "⬇️ Fetching all LFS objects..."
-# 	@git lfs fetch --all
-
-# 	@echo "⬇️ Pulling DB-related LFS files..."
-# 	@git lfs pull --include="db/**,frontend/db/**" --exclude=""
-
-# 	@echo "📄 Listing LFS-tracked files (only DB paths)..."
-# 	@git lfs ls-files | grep -E "db/|frontend/db/" || echo "No DB files tracked via LFS."
-
-# 	@echo "📏 Showing DB file sizes..."
-# 	@git lfs ls-files --size | grep -E "db/|frontend/db/" || true
-
-# 	@echo "✅ Checking if DB files are actual binaries (not pointers)..."
-# 	@for f in db/*.db frontend/db/*.db; do \
-# 		if [ -f "$$f" ]; then \
-# 			echo "File: $$f"; \
-# 			head -n 3 $$f; \
-# 			echo "---"; \
-# 		fi; \
-# 	done
-
-# 	@echo "✅ DB pull completed."
 
 init-rclone:
 	@echo "⬇️  Initializing Rclone..."
@@ -162,73 +146,3 @@ update-db-to-b2:
 
 %:
 	@:
-
-pm2logs:
-	@if [ -z "$(LABEL)" ]; then \
-		echo "❌ Please provide LABEL=some-name"; \
-		exit 1; \
-	fi
-	@python3 scripts/pm2_logs.py "$(LABEL)"
-
-
-test-svg-req-pm2:
-	clear
-	# npm run build
-	clear
-	rm -rf logs/*
-	pm2 flush
-	pm2 restart all
-	pm2 ls
-	./pin.sh
-	./verifypin.sh
-	@echo "⬇️  Server up -----------"
-	@sleep 2
-	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
-	@sleep 2
-	@pm2 flush
-	@echo "⬇️  Requesting SVG icon -----------"
-	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
-	@sleep 2
-	@echo "⬇️  Showing logs -----------"
-	@LOG_FILES=$$(ls -1t ~/.pm2/logs/astro-*-out-*.log 2>/dev/null | head -n2); \
-	if [ -n "$$LOG_FILES" ]; then \
-		for LOG_FILE in $$LOG_FILES; do \
-			echo "=== $$(basename $$LOG_FILE) ==="; \
-			cat "$$LOG_FILE"; \
-			echo ""; \
-		done; \
-	else \
-		echo "No astro-out log yet."; \
-	fi
-	@echo ""
-	@echo "⬇️  Showing PM2 logs -----------"
-	make pm2logs LABEL=test-svg-req-pm2
-
-test-svg-req-pd:
-	clear
-	# npm run build
-	clear
-	rm -rf logs/*
-	pmdaemon delete all --force 2>/dev/null || true
-	@sleep 2
-	bash kill-ports.sh
-	@sleep 2
-	bash kill-ports.sh
-	@sleep 2
-	pmdaemon --config ecosystem.json start
-	@sleep 2
-	pmdaemon list
-	./pin-pd.sh
-	./verifypin-pd.sh
-	@echo "⬇️  Server up -----------"
-	@sleep 2
-	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
-	@sleep 2
-	@echo "⬇️  Requesting SVG icon -----------"
-	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
-	@sleep 2
-	@echo "⬇️  Showing logs -----------"
-	@pmdaemon logs astro-4321 --lines 50
-	@pmdaemon logs astro-4322 --lines 50

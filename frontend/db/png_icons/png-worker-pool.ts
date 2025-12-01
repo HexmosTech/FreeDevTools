@@ -46,7 +46,7 @@ interface QueryResponse {
 
 function getDbPath(): string {
   const projectRoot = findProjectRoot();
-  return path.resolve(projectRoot, 'db/all_dbs/svg-icons-db-v1.db');
+  return path.resolve(projectRoot, 'db/all_dbs/png-icons-db-v1.db');
 }
 
 /**
@@ -63,7 +63,7 @@ async function initWorkers(): Promise<void> {
 
   const initStartTime = Date.now();
   console.log(
-    `[SVG_ICONS_DB] Initializing worker pool with ${WORKER_COUNT} workers...`
+    `[PNG_ICONS_DB] Initializing worker pool with ${WORKER_COUNT} workers...`
   );
 
   initPromise = new Promise((resolve, reject) => {
@@ -72,8 +72,8 @@ async function initWorkers(): Promise<void> {
     const sourceWorkerPath = path.join(
       projectRoot,
       'db',
-      'svg_icons',
-      'svg-worker'
+      'png_icons',
+      'png-worker'
     );
     const distWorkerPath = path.join(
       projectRoot,
@@ -81,10 +81,10 @@ async function initWorkers(): Promise<void> {
       'server',
       'chunks',
       'db',
-      'svg_icons',
-      'svg-worker'
+      'png_icons',
+      'png-worker'
     );
-    const relativeWorkerPath = path.join(__dirname, 'svg-worker');
+    const relativeWorkerPath = path.join(__dirname, 'png-worker');
 
     // Try .js first (for compiled output), then .ts (for development/TypeScript)
     // Priority: dist (built) > source (dev) > relative (fallback)
@@ -115,7 +115,7 @@ async function initWorkers(): Promise<void> {
           `  - ${distWorkerPath}.js (production)\n` +
           `  - ${sourceWorkerPath}.ts (development)\n` +
           `  - ${relativeWorkerPath}.ts (fallback)\n` +
-          `Make sure the db/svg_icons/svg-worker.ts file exists and is copied during build.`
+          `Make sure the db/png_icons/png-worker.ts file exists and is copied during build.`
       );
       reject(error);
       return;
@@ -144,7 +144,7 @@ async function initWorkers(): Promise<void> {
             workers = pendingWorkers;
             const initEndTime = Date.now();
             console.log(
-              `[SVG_ICONS_DB] Worker pool initialized in ${initEndTime - initStartTime}ms`
+              `[PNG_ICONS_DB] Worker pool initialized in ${initEndTime - initStartTime}ms`
             );
             initPromise = null;
             resolve();
@@ -153,14 +153,14 @@ async function initWorkers(): Promise<void> {
       });
 
       worker.on('error', (err) => {
-        console.error(`[SVG_ICONS_DB] Worker ${i} error:`, err);
+        console.error(`[PNG_ICONS_DB] Worker ${i} error:`, err);
         initPromise = null;
         reject(err);
       });
 
       worker.on('exit', (code) => {
         if (code !== 0) {
-          console.error(`[SVG_ICONS_DB] Worker ${i} exited with code ${code}`);
+          console.error(`[PNG_ICONS_DB] Worker ${i} exited with code ${code}`);
         }
       });
 
@@ -182,7 +182,7 @@ async function executeQuery(type: string, params: any): Promise<any> {
   workerIndex = (workerIndex + 1) % workers.length;
 
   const startTime = new Date();
-  console.log(`[SVG_ICONS_DB][${startTime.toISOString()}] Dispatching ${type}`);
+  console.log(`[PNG_ICONS_DB][${startTime.toISOString()}] Dispatching ${type}`);
   return new Promise((resolve, reject) => {
     const queryId = `${Date.now()}-${Math.random()}`;
     const timeout = setTimeout(() => {
@@ -198,7 +198,7 @@ async function executeQuery(type: string, params: any): Promise<any> {
         } else {
           const endTime = new Date();
           console.log(
-            `[SVG_ICONS_DB][${endTime.toISOString()}] ${type} completed in ${
+            `[PNG_ICONS_DB][${endTime.toISOString()}] ${type} completed in ${
               endTime.getTime() - startTime.getTime()
             }ms`
           );
@@ -265,5 +265,5 @@ export const query = {
 };
 
 void initWorkers().catch((err) => {
-  console.error('[SVG_ICONS_DB] Failed to warm worker pool:', err);
+  console.error('[PNG_ICONS_DB] Failed to warm worker pool:', err);
 });

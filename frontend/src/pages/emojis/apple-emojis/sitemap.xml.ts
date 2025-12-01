@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ site }) => {
   );
 
   // Fetch Apple emojis (lightweight - only slug and category)
-  const emojis = getSitemapAppleEmojis();
+  const emojis = await getSitemapAppleEmojis();
   const urls: string[] = [];
 
   // Landing Page

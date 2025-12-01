@@ -3,7 +3,7 @@
  * SVG Icon URL Lookup Benchmark
  *
  * Runs the same multi-process / multi-worker hash benchmark as `url-bench.js`
- * but targets `svg-icons-db.db` and the pre-built `svg_urls.json`.
+ * but targets `svg-icons-db-v1.db` and the pre-built `svg_urls.json`.
  */
 
 import Database from 'better-sqlite3';
@@ -20,7 +20,7 @@ const config = {
   cpus: 2,
   cpuPins: [0, 1],
   workers: [1, 2],
-  dbPath: path.join(__dirname, 'svg-icons-db.db'),
+  dbPath: path.join(__dirname, 'svg-icons-db-v1.db'),
   urlsPath: path.join(__dirname, 'svg_urls.json')
 };
 
@@ -159,7 +159,7 @@ async function main() {
   console.log('╚════════════════════════════════════════════════════════════════════╝\n');
 
   if (!fs.existsSync(config.dbPath) || !fs.existsSync(config.urlsPath)) {
-    console.error('❌ svg-icons-db.db or svg_urls.json is missing. Run svg-icon-hashes first.');
+    console.error('❌ svg-icons-db-v1.db or svg_urls.json is missing. Run svg-icon-hashes first.');
     process.exit(1);
   }
 

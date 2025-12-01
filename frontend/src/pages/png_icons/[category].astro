@@ -1,10 +1,10 @@
 ---
 import {
-  getClusterByName,
-  getClusters,
-  getClustersWithPreviewIcons,
-  getIconsByCluster,
-  getTotalIcons,
+getClusterByName,
+getClustersWithPreviewIcons,
+getIconsByCluster,
+getTotalClusters,
+getTotalIcons,
 } from 'db/png_icons/png-icons-utils';
 import AdBanner from '../../components/banner/AdBanner.astro';
 import CreditsButton from '../../components/buttons/CreditsButton';
@@ -40,12 +40,15 @@ if (/^\d+$/.test(category)) {
 
   const itemsPerPage = 30;
   
-  // Get total count of clusters for pagination (single query)
-  const totalClustersQueryStartTime = Date.now();
-  const allClusters = getClusters();
-  const totalCategories = allClusters.length;
-  const totalClustersQueryEndTime = Date.now();
-  console.log(`[PNG_ICONS] getClusters() for count took ${totalClustersQueryEndTime - totalClustersQueryStartTime}ms`);
+  // Run all queries in parallel for better performance
+  const queriesStartTime = Date.now();
+  const [totalCategories, categoriesWithIconsResult, totalPngIcons] = await Promise.all([
+    getTotalClusters(),
+    getClustersWithPreviewIcons(currentPage, itemsPerPage, 6, true) as Promise<any[]>,
+    getTotalIcons(),
+  ]);
+  const queriesEndTime = Date.now();
+  console.log(`[PNG_ICONS] All queries (parallel) took ${queriesEndTime - queriesStartTime}ms`);
   
   const totalPages = Math.ceil(totalCategories / itemsPerPage);
 
@@ -54,28 +57,17 @@ if (/^\d+$/.test(category)) {
     return new Response(null, { status: 404 });
   }
 
-  // Get paginated clusters with preview icons in ONE optimized query
-  const categoriesWithIcons = getClustersWithPreviewIcons(currentPage, itemsPerPage, 6);
-  
   // Transform to match expected format
-  const currentPageCategories = categoriesWithIcons.map((cluster) => {
+  const currentPageCategories = categoriesWithIconsResult.map((cluster) => {
     return {
       id: cluster.source_folder || cluster.name,
       name: cluster.name,
-      description: cluster.description,
       icon: `/freedevtools/png_icons/${cluster.name}/`,
-      iconCount: cluster.count,
+      iconCount: cluster.iconCount || cluster.count,
       url: `/freedevtools/png_icons/${cluster.name}/`,
-      keywords: cluster.keywords,
-      features: cluster.tags,
-      previewIcons: cluster.previewIcons,
+      previewIcons: cluster.previewIcons || [],
     };
   });
-
-  const totalIconsQueryStartTime = Date.now();
-  const totalPngIcons = getTotalIcons();
-  const totalIconsQueryEndTime = Date.now();
-  console.log(`[PNG_ICONS] getTotalIcons() took ${totalIconsQueryEndTime - totalIconsQueryStartTime}ms`);
 
   // Breadcrumb data
   const breadcrumbItems = [
@@ -127,7 +119,7 @@ if (/^\d+$/.test(category)) {
 
   // Get cluster data from database
   const clusterQueryStartTime = Date.now();
-  const clusterData = getClusterByName(category);
+  const clusterData = await getClusterByName(category);
   const clusterQueryEndTime = Date.now();
   console.log(`[PNG_ICONS] getClusterByName("${category}") took ${clusterQueryEndTime - clusterQueryStartTime}ms`);
 
@@ -137,7 +129,7 @@ if (/^\d+$/.test(category)) {
 
   async function getCategoryIcons() {
     const iconQueryStartTime = Date.now();
-    const dbIcons = getIconsByCluster(clusterData!.source_folder || category!);
+    const dbIcons = await getIconsByCluster(clusterData!.source_folder || category!);
     const iconQueryEndTime = Date.now();
     console.log(`[PNG_ICONS] getIconsByCluster("${clusterData!.source_folder || category!}") took ${iconQueryEndTime - iconQueryStartTime}ms`);
 
