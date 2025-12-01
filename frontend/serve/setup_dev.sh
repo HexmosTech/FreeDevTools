@@ -29,9 +29,26 @@ sudo apt update
 echo "📦 Installing nginx..."
 sudo apt install -y nginx
 
+# Check if cargo is installed
+if ! command -v cargo &> /dev/null; then
+    echo "📦 cargo is not installed. Installing Rust and cargo..."
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
+    # Add cargo to PATH for the current session
+    export PATH="$HOME/.cargo/bin:$PATH"
+    # Add cargo to PATH in ~/.bashrc if not already present
+    if ! grep -q "\.cargo/bin" ~/.bashrc; then
+        echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+        echo "✅ Added cargo to ~/.bashrc"
+    fi
+    echo "✅ Rust and cargo have been installed"
+else
+    echo "✅ cargo is already installed"
+fi
+
 # Install pmdaemon
 echo "📦 Installing pmdaemon..."
-
+# Ensure cargo is in PATH
+export PATH="$HOME/.cargo/bin:$PATH"
 cargo install pmdaemon
 
 # Install hey (HTTP load testing tool)
