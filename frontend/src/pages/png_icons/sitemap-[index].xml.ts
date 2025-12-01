@@ -47,8 +47,13 @@ export const GET: APIRoute = async ({ site, params }) => {
   // SSR mode: call loadUrls directly
   let urls = await loadUrls();
 
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+
   // Replace placeholder with actual site
-  urls = urls.map((u) => u.replace(/__SITE__/g, site));
+  urls = urls.map((u) => u.replace(/__SITE__/g, siteUrl));
 
   // Split into chunks
   const sitemapChunks: string[][] = [];

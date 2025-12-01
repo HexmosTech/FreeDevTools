@@ -4,6 +4,11 @@ import { getClusters } from 'db/png_icons/png-icons-utils';
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
 
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+
   // Get clusters from SQLite database
   const clusters = await getClusters();
 
@@ -16,7 +21,7 @@ export const GET: APIRoute = async ({ site }) => {
   // Root PNG icons page
   urls.push(
     `  <url>
-      <loc>${site}/png_icons/</loc>
+      <loc>${siteUrl}/png_icons/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.9</priority>
@@ -27,7 +32,7 @@ export const GET: APIRoute = async ({ site }) => {
   for (let i = 2; i <= totalPages; i++) {
     urls.push(
       `  <url>
-        <loc>${site}/png_icons/${i}/</loc>
+        <loc>${siteUrl}/png_icons/${i}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>

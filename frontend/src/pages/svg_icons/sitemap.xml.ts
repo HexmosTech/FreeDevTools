@@ -7,6 +7,14 @@ export const GET: APIRoute = async ({ site, params }) => {
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
+  // Always use site from .env file (SITE variable) or astro.config.mjs
+  // NODE_ENV can be "dev" or "prod" (lowercase)
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  
+  // Use SITE from .env if available, otherwise use site parameter, otherwise fallback
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+
   // Get all SVG files
   const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
 
@@ -18,12 +26,12 @@ export const GET: APIRoute = async ({ site, params }) => {
 
     return `
       <url>
-        <loc>${site}/svg_icons/${category}/${name}/</loc>
+        <loc>${siteUrl}/svg_icons/${category}/${name}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
         <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-          <image:loc>${site}/svg_icons/${category}/${name}.svg</image:loc>
+          <image:loc>${siteUrl}/svg_icons/${category}/${name}.svg</image:loc>
           <image:title>Free ${name} SVG Icon Download</image:title>
         </image:image>
       </url>`;
@@ -32,7 +40,7 @@ export const GET: APIRoute = async ({ site, params }) => {
   // Include the landing page
   urls.unshift(`
     <url>
-      <loc>${site}/svg_icons/</loc>
+      <loc>${siteUrl}/svg_icons/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.9</priority>
@@ -71,14 +79,14 @@ export const GET: APIRoute = async ({ site, params }) => {
 
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>${site}/svg_icons_pages/sitemap.xml</loc>
+    <loc>${siteUrl}/svg_icons_pages/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
   ${sitemapChunks
     .map(
       (_, i) => `
     <sitemap>
-      <loc>${site}/svg_icons/sitemap-${i + 1}.xml</loc>
+      <loc>${siteUrl}/svg_icons/sitemap-${i + 1}.xml</loc>
       <lastmod>${now}</lastmod>
     </sitemap>`
     )

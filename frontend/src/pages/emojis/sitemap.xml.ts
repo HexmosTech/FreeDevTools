@@ -2,6 +2,12 @@ import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
+  
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+  
   const { getSitemapEmojis } = await import("db/emojis/emojis-utils");
   const emojis = await getSitemapEmojis();
 
@@ -29,7 +35,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   // Category landing
   urls.push(
-    `  <url>\n    <loc>${site}/emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
+    `  <url>\n    <loc>${siteUrl}/emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
   );
 
   // Per-category pages (only allowed ones)
@@ -46,7 +52,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   for (const cat of Array.from(categories)) {
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
@@ -55,7 +61,7 @@ export const GET: APIRoute = async ({ site }) => {
     if (!e.slug) continue;
 
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 

@@ -15,7 +15,7 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
-  site: 'https://hexmos.com/freedevtools',
+  site: process.env.SITE || 'http://localhost:4321/freedevtools',
   output: 'server',
   base: "/freedevtools",
   trailingSlash: 'ignore',
