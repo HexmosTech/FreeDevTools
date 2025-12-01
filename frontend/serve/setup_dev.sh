@@ -39,8 +39,8 @@ sudo apt install -y hey
 
 # Create nginx configuration
 echo "📝 Creating nginx configuration..."
-sudo touch /etc/nginx/sites-available/hexmos.com
-sudo tee /etc/nginx/sites-available/hexmos.com > /dev/null <<'EOF'
+sudo touch /etc/nginx/sites-available/hexmos-local.com
+sudo tee /etc/nginx/sites-available/hexmos-local.com > /dev/null <<'EOF'
 # Upstream for /freedevtools load balancing
 upstream freedevtools_upstream {
     least_conn;
@@ -50,13 +50,13 @@ upstream freedevtools_upstream {
 
 server {
     listen 80;
-    server_name www.hexmos.com hexmos.com;
-    access_log /var/log/nginx/hexmos.com.log;
-    error_log  /var/log/nginx/hexmos.com.error.log;
+    server_name www.hexmos-local.com hexmos-local.com;
+    access_log /var/log/nginx/hexmos-local.com.log;
+    error_log  /var/log/nginx/hexmos-local.com.error.log;
 
     # SSL config omitted on this host (no certbot files)
-    # ssl_certificate /etc/letsencrypt/live/hexmos.com/fullchain.pem;
-    # ssl_certificate_key /etc/letsencrypt/live/hexmos.com/privkey.pem;
+    # ssl_certificate /etc/letsencrypt/live/hexmos-local.com/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/hexmos-local.com/privkey.pem;
     # include /etc/letsencrypt/options-ssl-nginx.conf;
 
     proxy_max_temp_file_size 0;
@@ -77,11 +77,11 @@ EOF
 
 # Create symlink to sites-enabled
 echo "🔗 Creating symlink to sites-enabled..."
-if [ -L /etc/nginx/sites-enabled/hexmos.com ]; then
+if [ -L /etc/nginx/sites-enabled/hexmos-local.com ]; then
     echo "   Symlink already exists, removing old one..."
-    sudo rm /etc/nginx/sites-enabled/hexmos.com
+    sudo rm /etc/nginx/sites-enabled/hexmos-local.com
 fi
-sudo ln -s /etc/nginx/sites-available/hexmos.com /etc/nginx/sites-enabled/hexmos.com
+sudo ln -s /etc/nginx/sites-available/hexmos-local.com /etc/nginx/sites-enabled/hexmos-local.com
 
 # Test nginx configuration
 echo "🧪 Testing nginx configuration..."
