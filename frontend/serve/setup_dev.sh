@@ -31,7 +31,8 @@ sudo apt install -y nginx
 
 # Install pmdaemon
 echo "📦 Installing pmdaemon..."
-sudo apt install -y pmdaemon
+
+cargo install pmdaemon
 
 # Install hey (HTTP load testing tool)
 echo "📦 Installing hey..."
