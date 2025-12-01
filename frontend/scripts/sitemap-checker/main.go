@@ -1,17 +1,17 @@
 package main
 
 import (
-    "encoding/json"
-    "encoding/xml"
-    "flag"
-    "fmt"
-    "io"
-    "net/http"
-    "os"
-    "runtime"
-    "sync"
-    "sync/atomic"
-    "time"
+	"encoding/json"
+	"encoding/xml"
+	"flag"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"runtime"
+	"sync"
+	"sync/atomic"
+	"time"
 )
 
 var (
@@ -147,7 +147,7 @@ func main() {
 // -------------------------
 
 func loadUrlsFromSitemap(sitemapUrl string) []string {
-
+    fmt.Println("Fetching sitemap:", sitemapUrl)
     resp, err := client.Get(sitemapUrl)
     if err != nil {
         fmt.Println("Failed to load sitemap:", err)
@@ -160,26 +160,38 @@ func loadUrlsFromSitemap(sitemapUrl string) []string {
     var urlset UrlSet
     var smIndex SitemapIndex
 
+    // Try parsing as UrlSet
     if err := xml.Unmarshal(body, &urlset); err == nil && len(urlset.URLs) > 0 {
+        fmt.Printf("Found %d URLs in sitemap: %s\n", len(urlset.URLs), sitemapUrl)
         for _, u := range urlset.URLs {
             urls = append(urls, ToOfflineUrl(u.Loc))
         }
     } else if err := xml.Unmarshal(body, &smIndex); err == nil && len(smIndex.Sitemaps) > 0 {
+        // Try parsing as SitemapIndex
+        fmt.Printf("Found Sitemap Index with %d sub-sitemaps: %s\n", len(smIndex.Sitemaps), sitemapUrl)
         for _, sm := range smIndex.Sitemaps {
+            fmt.Println("  -> Fetching sub-sitemap:", sm.Loc)
             subResp, err := client.Get(sm.Loc)
             if err != nil {
+                fmt.Printf("  [ERROR] Failed to fetch sub-sitemap %s: %v\n", sm.Loc, err)
                 continue
             }
+            
             data, _ := io.ReadAll(subResp.Body)
             subResp.Body.Close()
 
             var subUrlset UrlSet
             if err := xml.Unmarshal(data, &subUrlset); err == nil {
+                fmt.Printf("     Found %d URLs in sub-sitemap\n", len(subUrlset.URLs))
                 for _, u := range subUrlset.URLs {
                     urls = append(urls, ToOfflineUrl(u.Loc))
                 }
+            } else {
+                 fmt.Printf("  [ERROR] Failed to parse sub-sitemap %s: %v\n", sm.Loc, err)
             }
         }
+    } else {
+        fmt.Println("Warning: No URLs or Sub-Sitemaps found in:", sitemapUrl)
     }
 
     return urls
