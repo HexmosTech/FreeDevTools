@@ -1,15 +1,44 @@
 package main
 
 import (
-    "fmt"
-    "strings"
+	"fmt"
+	"strings"
 
-    "github.com/go-pdf/fpdf"
+	"github.com/go-pdf/fpdf"
 )
 
-func generatePDF(results []UrlResult, filename string) {
+func generatePDF(results []UrlResult, filename string, comparison *SitemapComparison) {
     pdf := fpdf.New("P", "mm", "A4", "")
     pdf.SetFont("Arial", "B", 16)
+
+    // Add Comparison Page if comparison data exists
+    if comparison != nil {
+        pdf.AddPage()
+        pdf.Cell(0, 10, "Sitemap Comparison Report")
+        pdf.Ln(15)
+
+        pdf.SetFont("Arial", "B", 12)
+        pdf.Cell(0, 10, fmt.Sprintf("Missing in Local: %d", len(comparison.MissingInLocal)))
+        pdf.Ln(10)
+        pdf.SetFont("Arial", "", 10)
+        pdf.SetTextColor(255, 0, 0) // Red
+        for _, u := range comparison.MissingInLocal {
+            pdf.MultiCell(0, 5, u, "", "L", false)
+        }
+        pdf.SetTextColor(0, 0, 0) // Reset
+        pdf.Ln(10)
+
+        pdf.SetFont("Arial", "B", 12)
+        pdf.Cell(0, 10, fmt.Sprintf("Extra in Local: %d", len(comparison.ExtraInLocal)))
+        pdf.Ln(10)
+        pdf.SetFont("Arial", "", 10)
+        pdf.SetTextColor(0, 0, 255) // Blue
+        for _, u := range comparison.ExtraInLocal {
+            pdf.MultiCell(0, 5, u, "", "L", false)
+        }
+        pdf.SetTextColor(0, 0, 0) // Reset
+        pdf.Ln(10)
+    }
 
     // Separate failed and passed results
     var failedRows, passedRows []UrlResult
