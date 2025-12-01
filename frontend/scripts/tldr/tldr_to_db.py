@@ -4,7 +4,7 @@ Build a SQLite database from TLDR markdown files.
 
 - Scans data/tldr/*/*.md
 - Creates SQLite DB at db/all_dbs/tldr-db.db
-- Table: url_lookup (WITHOUT ROWID)
+- Table: pages (WITHOUT ROWID)
 - Table: cluster
 - Table: overview
 """
@@ -46,13 +46,21 @@ def get_8_bytes(full_hash: str) -> int:
     return struct.unpack(">q", bytes_val)[0]
 
 
+def hash_name_to_key(name: str) -> str:
+    """Hash a name to a signed 64-bit integer string."""
+    hash_bytes = hashlib.sha256(name.encode("utf-8")).digest()
+    # Take first 8 bytes and interpret as big-endian signed 64-bit integer
+    val = struct.unpack(">q", hash_bytes[:8])[0]
+    return str(val)
+
+
 def ensure_schema(conn: sqlite3.Connection) -> None:
     cur = conn.cursor()
 
     # Main table for TLDR pages using consistent hashing
     cur.execute(
         """
-        CREATE TABLE IF NOT EXISTS url_lookup (
+        CREATE TABLE IF NOT EXISTS pages (
             url_hash INTEGER PRIMARY KEY,
             url TEXT NOT NULL,
             cluster TEXT NOT NULL,          -- Directory name (e.g., 'git', 'aws')
@@ -71,18 +79,22 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
     )
 
     # Index for efficient cluster grouping
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_url_lookup_cluster ON url_lookup(cluster);")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_pages_cluster ON pages(cluster);")
 
     # Cluster table (categories)
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS cluster (
             name TEXT PRIMARY KEY,
+            hash_name TEXT NOT NULL,
             count INTEGER NOT NULL,
             description TEXT DEFAULT '' -- Kept empty as per previous implementation
         );
         """
     )
+    
+    # Index for hash_name lookup
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_cluster_hash_name ON cluster(hash_name);")
 
     # Overview table
     cur.execute(
@@ -222,7 +234,7 @@ def process_all_files(conn: sqlite3.Connection) -> None:
     
     # Prepare SQL
     insert_sql = """
-    INSERT OR REPLACE INTO url_lookup (
+    INSERT OR REPLACE INTO pages (
         url_hash, url, cluster, name, platform, title, description, more_info_url,
         keywords, features, examples, raw_content, path
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -274,18 +286,32 @@ def populate_cluster_and_overview(conn: sqlite3.Connection) -> None:
     
     print("Populating cluster table...")
     cur.execute("DELETE FROM cluster")
+    
+    # Get all clusters and counts
     cur.execute("""
-        INSERT INTO cluster (name, count, description)
-        SELECT cluster, COUNT(*), '' 
-        FROM url_lookup 
+        SELECT cluster, COUNT(*) 
+        FROM pages 
         GROUP BY cluster
     """)
+    rows = cur.fetchall()
+    
+    batch = []
+    for row in rows:
+        cluster_name = row[0]
+        count = row[1]
+        hash_name = hash_name_to_key(cluster_name)
+        batch.append((cluster_name, hash_name, count, ''))
+        
+    cur.executemany("""
+        INSERT INTO cluster (name, hash_name, count, description)
+        VALUES (?, ?, ?, ?)
+    """, batch)
     
     print("Populating overview table...")
     cur.execute("DELETE FROM overview")
     cur.execute("""
         INSERT INTO overview (id, total_count)
-        SELECT 1, COUNT(*) FROM url_lookup
+        SELECT 1, COUNT(*) FROM pages
     """)
     
     conn.commit()
@@ -315,8 +341,14 @@ def main() -> None:
             print("Total pages in DB: 0")
 
         # Verify schema
-        print("\nVerifying schema for 'url_lookup'...")
-        cur.execute("PRAGMA table_info(url_lookup)")
+        print("\nVerifying schema for 'pages'...")
+        cur.execute("PRAGMA table_info(pages)")
+        columns = cur.fetchall()
+        for col in columns:
+            print(col)
+            
+        print("\nVerifying schema for 'cluster'...")
+        cur.execute("PRAGMA table_info(cluster)")
         columns = cur.fetchall()
         for col in columns:
             print(col)

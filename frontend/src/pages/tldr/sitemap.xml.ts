@@ -7,7 +7,7 @@ import {
 import {
     getAllClusters,
     getPagesByCluster,
-} from '../../../db/tldr/tldr-utils';
+} from '../../../db/tldrs/tldr-utils';
 
 async function getCommandsByPlatform() {
   const clusters = await getAllClusters();

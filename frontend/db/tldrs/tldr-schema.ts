@@ -20,6 +20,7 @@ export interface Page {
 
 export interface Cluster {
   name: string;
+  hash_name: string;
   count: number;
   description: string;
 }
@@ -31,7 +32,8 @@ export interface Overview {
 
 // Raw database row types (before JSON parsing)
 export interface RawPageRow {
-  id: number;
+  url_hash: number;
+  url: string;
   cluster: string;
   name: string;
   platform: string;
@@ -47,6 +49,7 @@ export interface RawPageRow {
 
 export interface RawClusterRow {
   name: string;
+  hash_name: string;
   count: number;
   description: string;
 }

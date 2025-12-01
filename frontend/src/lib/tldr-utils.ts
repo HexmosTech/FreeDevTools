@@ -2,7 +2,7 @@ import {
     getAllClusters,
     getClusterPreviews,
     getPagesByCluster,
-} from '../../db/tldr/tldr-utils';
+} from '../../db/tldrs/tldr-utils';
 
 /**
  * Generate paginated paths for TLDR platforms
