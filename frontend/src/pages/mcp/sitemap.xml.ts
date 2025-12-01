@@ -1,25 +1,11 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
+import { getAllMcpCategories } from '../../../db/mcp/mcp-utils';
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
 
-  // Get all categories from the metadata
-  const metadataEntries = await getCollection('mcpMetadata' as any);
-  const metadata = (metadataEntries[0] as any)?.data;
-
-  if (!metadata) {
-    return new Response('Metadata not found', { status: 500 });
-  }
-
-  // Get all categories from the metadata
-  const categories = Object.keys(metadata.categories);
-
-  // Calculate total pages for MCP directory pagination as
-
-  const totalCategories = categories.length;
-  const itemsPerPage = 30;
-  const totalPages = Math.ceil(totalCategories / itemsPerPage);
+  // Get all categories from the database
+  const categories = await getAllMcpCategories();
 
   // Create sitemap index - MCP pages sitemap + category sitemaps
   const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
@@ -30,14 +16,14 @@ export const GET: APIRoute = async ({ site }) => {
     <lastmod>${now}</lastmod>
   </sitemap>
   ${categories
-    .map(
-      (category) => `
+      .map(
+        (category) => `
   <sitemap>
-    <loc>${site}/mcp/${category}/sitemap.xml</loc>
+    <loc>${site}/mcp/${category.slug}/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>`
-    )
-    .join('')}
+      )
+      .join('')}
 </sitemapindex>`;
 
   return new Response(sitemapIndex, {
