@@ -60,3 +60,6 @@ apple-emojis:
 tldr:
 	make run-bin SITEMAP=http://localhost:4321/freedevtools/tldr/sitemap.xml COMPARE_PROD=true
 	
+svg:
+	make run-bin SITEMAP=http://localhost:4321/freedevtools/svg_icons/sitemap.xml COMPARE_PROD=true
+	

@@ -20,7 +20,51 @@ var (
     mode        string
     maxPages    int
     client      *http.Client
+    rateLimiter *RateLimiter
 )
+
+// RateLimiter limits the number of requests per second
+type RateLimiter struct {
+    tokens chan struct{}
+    ticker *time.Ticker
+}
+
+// NewRateLimiter creates a new rate limiter that allows maxRequests per second
+func NewRateLimiter(maxRequestsPerSecond int) *RateLimiter {
+    interval := time.Second / time.Duration(maxRequestsPerSecond)
+    rl := &RateLimiter{
+        tokens: make(chan struct{}, maxRequestsPerSecond),
+        ticker: time.NewTicker(interval),
+    }
+    
+    // Start the token generator - adds one token every interval
+    // This ensures exactly maxRequestsPerSecond tokens per second
+    go func() {
+        for range rl.ticker.C {
+            select {
+            case rl.tokens <- struct{}{}:
+                // Token added successfully
+            default:
+                // Channel is full (all tokens consumed), skip adding
+                // This prevents accumulation beyond the rate limit
+            }
+        }
+    }()
+    
+    return rl
+}
+
+// Acquire waits for a token to be available
+func (rl *RateLimiter) Acquire() {
+    <-rl.tokens
+}
+
+// Stop stops the rate limiter
+func (rl *RateLimiter) Stop() {
+    if rl.ticker != nil {
+        rl.ticker.Stop()
+    }
+}
 
 type UrlSet struct {
     URLs []struct {
@@ -113,6 +157,7 @@ func main() {
         urls = loadUrlsFromJSON(inputJSON)
     } else {
         fmt.Println("Usage: go run main.go --sitemap=<url> OR --input=<file.json> [--concurrency=200] [--mode=prod|local] [--maxPages=10] [--output=pdf|json|both] [--compare-prod]")
+        fmt.Println("Note: Rate limited to 50 requests/second")
         os.Exit(1)
     }
 
@@ -121,6 +166,11 @@ func main() {
     }
 
     fmt.Printf("Total URLs to check: %d\n", len(urls))
+
+    // Initialize rate limiter: max 50 requests per second
+    rateLimiter = NewRateLimiter(50)
+    defer rateLimiter.Stop()
+    fmt.Println("Rate limiter: 50 requests/second")
 
     jobs := make(chan string, len(urls))
     results := make(chan UrlResult, len(urls))
@@ -133,6 +183,8 @@ func main() {
         go func(workerID int) {
             defer wg.Done()
             for url := range jobs {
+                // Acquire rate limit token before making request
+                rateLimiter.Acquire()
                 res := checkUrl(url, useHead)
                 results <- res
                 atomic.AddInt32(&completed, 1)
