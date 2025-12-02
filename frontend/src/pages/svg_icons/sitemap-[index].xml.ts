@@ -7,7 +7,17 @@ const MAX_URLS = 5000;
 // Loader function for sitemap URLs - extracted to work in both SSG and SSR
 async function loadUrls() {
   const { glob } = await import('glob');
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+
+  // Use process.cwd() for reliable path resolution in both dev and build
+  // In build mode, process.cwd() points to project root
+  const projectRoot = process.cwd();
+  const svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
+
+  const svgFiles = await glob('**/*.svg', {
+    cwd: svgIconsDir,
+    absolute: false,
+    ignore: ['node_modules/**'],
+  });
   const now = new Date().toISOString();
 
   // Build URLs with placeholder for site

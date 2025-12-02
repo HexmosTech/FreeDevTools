@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ site, params }) => {
   const { glob } = await import('glob');
   const path = await import('path');
@@ -11,12 +13,21 @@ export const GET: APIRoute = async ({ site, params }) => {
   // NODE_ENV can be "dev" or "prod" (lowercase)
   const envSite = process.env.SITE;
   const siteStr = site?.toString() || '';
-  
+
   // Use SITE from .env if available, otherwise use site parameter, otherwise fallback
   const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
 
-  // Get all SVG files
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+  // Use process.cwd() for reliable path resolution in both dev and build
+  // In build mode, process.cwd() points to project root
+  const projectRoot = process.cwd();
+  const svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
+
+  // Get all SVG files using absolute path
+  const svgFiles = await glob('**/*.svg', {
+    cwd: svgIconsDir,
+    absolute: false,
+    ignore: ['node_modules/**'],
+  });
 
   // Map files to sitemap URLs with image info
   const urls = svgFiles.map((file) => {
