@@ -20,14 +20,12 @@ serve:
 	bun run serve-ssr
 
 serve-prod:
-	cd serve
-	pmdaemon --config pmd.json start
+	cd serve && pmdaemon --config pmd.config.json start
+
 
 stop-prod:
-	cd serve	
-	pmdaemon stop all
-	bash kill-ports.sh
-	bash kill-ports.sh
+	cd serve && pmdaemon stop all && bash kill-ports.sh && bash kill-ports.sh
+
 
 # Generate all tool banners
 banners:

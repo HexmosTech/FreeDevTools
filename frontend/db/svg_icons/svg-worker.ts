@@ -53,16 +53,12 @@ const statements = {
      COALESCE(emotional_cues, '') as emotional_cues,
      enhanced,
      COALESCE(img_alt, '') as img_alt
-     FROM icon WHERE cluster = ? ORDER BY name`
+     FROM icon WHERE cluster = ? ORDER BY url_hash`
   ),
   clustersWithPreviewIcons: db.prepare(
-    `SELECT id, name, count, source_folder, path,
-     keywords_json, tags_json,
-     title, COALESCE(description, '') as description, practical_application,
-     alternative_terms_json,
-     about, why_choose_us_json, preview_icons_json
+    `SELECT name, count, source_folder, preview_icons_json
      FROM cluster
-     ORDER BY name
+     ORDER BY hash_name
      LIMIT ? OFFSET ?`
   ),
   clusterByName: db.prepare(
@@ -197,19 +193,9 @@ parentPort?.on('message', (message: QueryMessage) => {
         const { page, itemsPerPage, transform } = params;
         const offset = (page - 1) * itemsPerPage;
         const rows = statements.clustersWithPreviewIcons.all([itemsPerPage, offset]) as Array<{
-          id: number;
           name: string;
           count: number;
           source_folder: string;
-          path: string;
-          keywords_json: string;
-          tags_json: string;
-          title: string;
-          description: string;
-          practical_application: string;
-          alternative_terms_json: string;
-          about: string;
-          why_choose_us_json: string;
           preview_icons_json: string;
         }>;
 
@@ -233,12 +219,9 @@ parentPort?.on('message', (message: QueryMessage) => {
             return {
               id: row.source_folder || row.name,
               name: row.name,
-              description: row.description,
               icon: `/freedevtools/svg_icons/${row.name}/`,
               iconCount: row.count,
               url: `/freedevtools/svg_icons/${row.name}/`,
-              keywords: JSON.parse(row.keywords_json || '[]') as string[],
-              features: JSON.parse(row.tags_json || '[]') as string[],
               previewIcons,
             };
           });
@@ -260,21 +243,19 @@ parentPort?.on('message', (message: QueryMessage) => {
             }
 
             return {
-              id: row.id,
+              id: row.source_folder || row.name,
               name: row.name,
               count: row.count,
               source_folder: row.source_folder,
-              path: row.path,
-              keywords: JSON.parse(row.keywords_json || '[]') as string[],
-              tags: JSON.parse(row.tags_json || '[]') as string[],
-              title: row.title,
-              description: row.description || '',
-              practical_application: row.practical_application,
-              alternative_terms: JSON.parse(
-                row.alternative_terms_json || '[]'
-              ) as string[],
-              about: row.about,
-              why_choose_us: JSON.parse(row.why_choose_us_json || '[]') as string[],
+              path: '',
+              keywords: [] as string[],
+              tags: [] as string[],
+              title: '',
+              description: '',
+              practical_application: '',
+              alternative_terms: [] as string[],
+              about: '',
+              why_choose_us: [] as string[],
               previewIcons,
             };
           });

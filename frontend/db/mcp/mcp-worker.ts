@@ -43,7 +43,8 @@ const statements = {
     allCategories: db.prepare('SELECT * FROM category ORDER BY name'),
     categoryBySlug: db.prepare('SELECT * FROM category WHERE slug = ?'),
     mcpPagesByCategory: db.prepare(`
-    SELECT * FROM mcp_pages 
+    SELECT hash_id, category, key, name, description, owner, stars, forks, language, license, updated_at, data
+    FROM mcp_pages 
     WHERE category = ? 
     ORDER BY stars DESC, name ASC 
     LIMIT ? OFFSET ?

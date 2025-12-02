@@ -1,7 +1,7 @@
 ---
 import {
-  getClusters,
   getClustersWithPreviewIcons,
+  getTotalClusters,
   getTotalIcons,
 } from 'db/png_icons/png-icons-utils';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -10,49 +10,49 @@ import PngIcons from './_PngIcons.astro';
 // Track request start time
 const requestStartTime = Date.now();
 const requestPath = Astro.url.pathname;
-console.log(`[PNG_ICONS] Request reached server: ${requestPath} at ${new Date().toISOString()}`);
+console.log(
+  `[PNG_ICONS] Request reached server: ${requestPath} at ${new Date().toISOString()}`
+);
 
 // Pagination logic for page 1
 const itemsPerPage = 30;
 const currentPage = 1;
 
-// Get total count of clusters for pagination (single query)
-const totalClustersQueryStartTime = Date.now();
-const allClusters = await getClusters();
-const totalCategories = allClusters.length;
-const totalClustersQueryEndTime = Date.now();
-console.log(`[PNG_ICONS] getClusters() for count took ${totalClustersQueryEndTime - totalClustersQueryStartTime}ms`);
-
-// Get paginated clusters with preview icons in ONE optimized query
-const categoriesWithIcons = await getClustersWithPreviewIcons(currentPage, itemsPerPage, 6);
+// Run all queries in parallel for better performance
+const queriesStartTime = Date.now();
+const [totalCategories, categoriesWithIconsResult, totalPngIcons] =
+  await Promise.all([
+    getTotalClusters(),
+    getClustersWithPreviewIcons(currentPage, itemsPerPage, 6, true) as Promise<
+      any[]
+    >,
+    getTotalIcons(),
+  ]);
+const queriesEndTime = Date.now();
+console.log(
+  `[PNG_ICONS] All queries (parallel) took ${queriesEndTime - queriesStartTime}ms`
+);
 
 // Transform to match expected format
-const categories = categoriesWithIcons.map((cluster) => {
+const categories = categoriesWithIconsResult.map((cluster) => {
   return {
     id: cluster.source_folder || cluster.name,
     name: cluster.name,
-    description: cluster.description,
     icon: `/freedevtools/png_icons/${cluster.name}/`,
-    iconCount: cluster.count,
+    iconCount: cluster.iconCount || cluster.count,
     url: `/freedevtools/png_icons/${cluster.name}/`,
-    keywords: cluster.keywords,
-    features: cluster.tags,
-    previewIcons: cluster.previewIcons, // Include preview icons
+    previewIcons: cluster.previewIcons || [],
   };
 });
 
 const totalPages = Math.ceil(totalCategories / itemsPerPage);
 
-// Calculate total PNG icons across all categories
-const totalIconsQueryStartTime = Date.now();
-const totalPngIcons = await getTotalIcons();
-const totalIconsQueryEndTime = Date.now();
-console.log(`[PNG_ICONS] getTotalIcons() took ${totalIconsQueryEndTime - totalIconsQueryStartTime}ms`);
-
 // Log total roundtrip time
 const requestEndTime = Date.now();
 const totalRoundtripTime = requestEndTime - requestStartTime;
-console.log(`[PNG_ICONS] Total roundtrip time for ${requestPath}: ${totalRoundtripTime}ms`);
+console.log(
+  `[PNG_ICONS] Total roundtrip time for ${requestPath}: ${totalRoundtripTime}ms`
+);
 
 // Breadcrumb data
 const breadcrumbItems = [

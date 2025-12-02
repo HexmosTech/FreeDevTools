@@ -39,7 +39,7 @@ interface QueryResponse {
 }
 
 function getDbPath(): string {
-    return path.resolve(process.cwd(), 'db/all_dbs/man-pages-new-db-1.db');
+    return path.resolve(process.cwd(), 'db/all_dbs/man-pages-db.db');
 }
 
 /**

@@ -84,6 +84,7 @@ def build_db():
     
     # Create Indexes
     cur.execute("CREATE INDEX idx_mcp_pages_category ON mcp_pages(category);")
+    cur.execute("CREATE INDEX idx_mcp_category_stars_name ON mcp_pages(category, stars DESC, name ASC);")
     
     # 2. Process JSON Files
     
