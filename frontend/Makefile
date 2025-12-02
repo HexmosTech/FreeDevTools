@@ -24,7 +24,7 @@ serve-prod:
 
 
 stop-prod:
-	cd serve && pmdaemon stop all && bash kill-ports.sh && bash kill-ports.sh
+	cd serve && pmdaemon delete all --force && bash kill-ports.sh && bash kill-ports.sh
 
 
 # Generate all tool banners
