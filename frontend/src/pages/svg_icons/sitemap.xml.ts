@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ site, params }) => {
   const { glob } = await import('glob');
   const path = await import('path');
@@ -7,8 +9,48 @@ export const GET: APIRoute = async ({ site, params }) => {
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
-  // Get all SVG files
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+  // Always use site from .env file (SITE variable) or astro.config.mjs
+  // NODE_ENV can be "dev" or "prod" (lowercase)
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+
+  // Use SITE from .env if available, otherwise use site parameter, otherwise fallback
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+
+  // Resolve project root - handle both dev (project root) and prod (serve/ directory)
+  // Try multiple possible locations
+  let projectRoot = process.cwd();
+
+  // If we're in serve/ directory, go up one level
+  if (projectRoot.endsWith('/serve') || projectRoot.endsWith('\\serve')) {
+    projectRoot = path.resolve(projectRoot, '..');
+  }
+
+  // Verify we have the public directory, if not try to find it
+  let svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
+  const fs = await import('fs');
+  if (!fs.existsSync(svgIconsDir)) {
+    // Try going up from current working directory to find project root
+    let current = process.cwd();
+    for (let i = 0; i < 5; i++) {
+      const testDir = path.join(current, 'public', 'svg_icons');
+      if (fs.existsSync(testDir)) {
+        svgIconsDir = testDir;
+        projectRoot = current;
+        break;
+      }
+      const parent = path.dirname(current);
+      if (parent === current) break; // Reached filesystem root
+      current = parent;
+    }
+  }
+
+  // Get all SVG files using absolute path
+  const svgFiles = await glob('**/*.svg', {
+    cwd: svgIconsDir,
+    absolute: false,
+    ignore: ['node_modules/**'],
+  });
 
   // Map files to sitemap URLs with image info
   const urls = svgFiles.map((file) => {
@@ -18,12 +60,12 @@ export const GET: APIRoute = async ({ site, params }) => {
 
     return `
       <url>
-        <loc>${site}/svg_icons/${category}/${name}/</loc>
+        <loc>${siteUrl}/svg_icons/${category}/${name}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
         <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-          <image:loc>${site}/svg_icons/${category}/${name}.svg</image:loc>
+          <image:loc>${siteUrl}/svg_icons/${category}/${name}.svg</image:loc>
           <image:title>Free ${name} SVG Icon Download</image:title>
         </image:image>
       </url>`;
@@ -32,7 +74,7 @@ export const GET: APIRoute = async ({ site, params }) => {
   // Include the landing page
   urls.unshift(`
     <url>
-      <loc>${site}/svg_icons/</loc>
+      <loc>${siteUrl}/svg_icons/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.9</priority>
@@ -71,14 +113,14 @@ export const GET: APIRoute = async ({ site, params }) => {
 
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>${site}/svg_icons_pages/sitemap.xml</loc>
+    <loc>${siteUrl}/svg_icons_pages/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
   ${sitemapChunks
     .map(
       (_, i) => `
     <sitemap>
-      <loc>${site}/svg_icons/sitemap-${i + 1}.xml</loc>
+      <loc>${siteUrl}/svg_icons/sitemap-${i + 1}.xml</loc>
       <lastmod>${now}</lastmod>
     </sitemap>`
     )

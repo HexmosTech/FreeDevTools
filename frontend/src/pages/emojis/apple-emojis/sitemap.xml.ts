@@ -1,8 +1,13 @@
-import { getSitemapAppleEmojis } from "db/emojis/emojis-utils";
 import type { APIRoute } from "astro";
+import { getSitemapAppleEmojis } from "db/emojis/emojis-utils";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
+
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
 
   // Predefined allowed categories
   const allowedCategories = [
@@ -30,7 +35,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   // Landing Page
   urls.push(
-    `  <url>\n    <loc>${site}/emojis/apple-emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
+    `  <url>\n    <loc>${siteUrl}/emojis/apple-emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
   );
 
   // Category pages (only allowed categories)
@@ -49,7 +54,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   for (const cat of Array.from(categories)) {
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/apple-emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/apple-emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
@@ -58,7 +63,7 @@ export const GET: APIRoute = async ({ site }) => {
     if (!e.slug) continue;
 
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/apple-emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/apple-emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 

@@ -7,7 +7,40 @@ const MAX_URLS = 5000;
 // Loader function for sitemap URLs - extracted to work in both SSG and SSR
 async function loadUrls() {
   const { glob } = await import('glob');
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+
+  // Resolve project root - handle both dev (project root) and prod (serve/ directory)
+  // Try multiple possible locations
+  let projectRoot = process.cwd();
+
+  // If we're in serve/ directory, go up one level
+  if (projectRoot.endsWith('/serve') || projectRoot.endsWith('\\serve')) {
+    projectRoot = path.resolve(projectRoot, '..');
+  }
+
+  // Verify we have the public directory, if not try to find it
+  let svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
+  const fs = await import('fs');
+  if (!fs.existsSync(svgIconsDir)) {
+    // Try going up from current working directory to find project root
+    let current = process.cwd();
+    for (let i = 0; i < 5; i++) {
+      const testDir = path.join(current, 'public', 'svg_icons');
+      if (fs.existsSync(testDir)) {
+        svgIconsDir = testDir;
+        projectRoot = current;
+        break;
+      }
+      const parent = path.dirname(current);
+      if (parent === current) break; // Reached filesystem root
+      current = parent;
+    }
+  }
+
+  const svgFiles = await glob('**/*.svg', {
+    cwd: svgIconsDir,
+    absolute: false,
+    ignore: ['node_modules/**'],
+  });
   const now = new Date().toISOString();
 
   // Build URLs with placeholder for site
@@ -47,8 +80,13 @@ export const GET: APIRoute = async ({ site, params }) => {
   // SSR mode: call loadUrls directly
   let urls = await loadUrls();
 
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+
   // Replace placeholder with actual site
-  urls = urls.map((u) => u.replace(/__SITE__/g, site));
+  urls = urls.map((u) => u.replace(/__SITE__/g, siteUrl));
 
   // Split into chunks
   const sitemapChunks: string[][] = [];
@@ -56,7 +94,7 @@ export const GET: APIRoute = async ({ site, params }) => {
     sitemapChunks.push(urls.slice(i, i + MAX_URLS));
   }
 
-  const index = parseInt(params.index, 10) - 1;
+  const index = parseInt(params?.index || '1', 10) - 1;
   const chunk = sitemapChunks[index];
 
   if (!chunk) return new Response('Not Found', { status: 404 });
