@@ -14,6 +14,7 @@ MAXPAGES ?= 0
 OUTPUT ?= pdf
 HEAD ?= false
 COMPARE_PROD ?= false
+LOG_FILE ?=
 
 # -----------------------------
 # Targets
@@ -45,7 +46,8 @@ run-bin: build
 		--maxPages=$(MAXPAGES) \
 		--output=$(OUTPUT) \
 		--head=$(HEAD) \
-		--compare-prod=$(COMPARE_PROD)
+		--compare-prod=$(COMPARE_PROD) \
+		--log-file=$(LOG_FILE)
 
 # Clean the binary
 clean:
@@ -61,5 +63,6 @@ tldr:
 	make run-bin SITEMAP=http://localhost:4321/freedevtools/tldr/sitemap.xml COMPARE_PROD=true
 	
 svg:
-	make run-bin SITEMAP=http://localhost:4321/freedevtools/svg_icons/sitemap.xml COMPARE_PROD=true
+	@mkdir -p logs
+	@make run-bin SITEMAP=http://127.0.0.1/freedevtools/svg_icons/sitemap.xml COMPARE_PROD=true LOG_FILE=logs/sitemap-checker-$$(date +%Y%m%d-%H%M%S).log
 	
