@@ -50,6 +50,13 @@ export default defineConfig({
       },
     },
     logLevel: 'info',
+    server: {
+      watch: {
+        ignored: [
+          '**/public/**',
+        ],
+      },
+    },
   },
 });
 
