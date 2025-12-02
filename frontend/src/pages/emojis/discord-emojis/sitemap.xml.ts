@@ -4,6 +4,11 @@ import { getSitemapDiscordEmojis } from "db/emojis/emojis-utils";
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
 
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+
   // Predefined allowed categories (as given)
   const allowedCategories = [
     "Activities",
@@ -30,7 +35,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   // Landing Page
   urls.push(
-    `  <url>\n    <loc>${site}/emojis/discord-emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
+    `  <url>\n    <loc>${siteUrl}/emojis/discord-emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
   );
 
   // Collect emoji categories only if they belong to allowed ones
@@ -50,7 +55,7 @@ export const GET: APIRoute = async ({ site }) => {
   // Per-category URLs (only allowed categories)
   for (const cat of Array.from(categories)) {
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/discord-emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/discord-emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
@@ -58,7 +63,7 @@ export const GET: APIRoute = async ({ site }) => {
   for (const e of emojis) {
     if (!e.slug) continue;
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/discord-emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/discord-emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
