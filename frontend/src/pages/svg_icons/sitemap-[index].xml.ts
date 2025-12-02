@@ -8,10 +8,33 @@ const MAX_URLS = 5000;
 async function loadUrls() {
   const { glob } = await import('glob');
 
-  // Use process.cwd() for reliable path resolution in both dev and build
-  // In build mode, process.cwd() points to project root
-  const projectRoot = process.cwd();
-  const svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
+  // Resolve project root - handle both dev (project root) and prod (serve/ directory)
+  // Try multiple possible locations
+  let projectRoot = process.cwd();
+
+  // If we're in serve/ directory, go up one level
+  if (projectRoot.endsWith('/serve') || projectRoot.endsWith('\\serve')) {
+    projectRoot = path.resolve(projectRoot, '..');
+  }
+
+  // Verify we have the public directory, if not try to find it
+  let svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
+  const fs = await import('fs');
+  if (!fs.existsSync(svgIconsDir)) {
+    // Try going up from current working directory to find project root
+    let current = process.cwd();
+    for (let i = 0; i < 5; i++) {
+      const testDir = path.join(current, 'public', 'svg_icons');
+      if (fs.existsSync(testDir)) {
+        svgIconsDir = testDir;
+        projectRoot = current;
+        break;
+      }
+      const parent = path.dirname(current);
+      if (parent === current) break; // Reached filesystem root
+      current = parent;
+    }
+  }
 
   const svgFiles = await glob('**/*.svg', {
     cwd: svgIconsDir,
