@@ -99,6 +99,12 @@ const statements = {
      COALESCE(img_alt, '') as img_alt
      FROM icon WHERE url_hash = ?`
   ),
+  sitemapIcons: db.prepare(
+    `SELECT i.cluster, i.name, c.name as category_name
+     FROM icon i
+     JOIN cluster c ON i.cluster = c.source_folder
+     ORDER BY c.name, i.name`
+  ),
 };
 
 // Signal ready
@@ -432,6 +438,20 @@ parentPort?.on('message', (message: QueryMessage) => {
             img_alt: iconRow.img_alt,
           };
         }
+        break;
+      }
+
+      case 'getSitemapIcons': {
+        const rows = statements.sitemapIcons.all() as Array<{
+          cluster: string;
+          name: string;
+          category_name: string;
+        }>;
+        result = rows.map((row) => ({
+          cluster: row.cluster,
+          name: row.name,
+          category: row.category_name,
+        }));
         break;
       }
 

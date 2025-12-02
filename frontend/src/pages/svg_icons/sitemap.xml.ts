@@ -3,9 +3,6 @@ import type { APIRoute } from 'astro';
 export const prerender = false;
 
 export const GET: APIRoute = async ({ site, params }) => {
-  const { glob } = await import('glob');
-  const path = await import('path');
-
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
@@ -17,46 +14,14 @@ export const GET: APIRoute = async ({ site, params }) => {
   // Use SITE from .env if available, otherwise use site parameter, otherwise fallback
   const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
 
-  // Resolve project root - handle both dev (project root) and prod (serve/ directory)
-  // Try multiple possible locations
-  let projectRoot = process.cwd();
+  // Get all icons from database instead of globbing files
+  const { query } = await import('db/svg_icons/svg-worker-pool');
+  const icons = await query.getSitemapIcons();
 
-  // If we're in serve/ directory, go up one level
-  if (projectRoot.endsWith('/serve') || projectRoot.endsWith('\\serve')) {
-    projectRoot = path.resolve(projectRoot, '..');
-  }
-
-  // Verify we have the public directory, if not try to find it
-  let svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
-  const fs = await import('fs');
-  if (!fs.existsSync(svgIconsDir)) {
-    // Try going up from current working directory to find project root
-    let current = process.cwd();
-    for (let i = 0; i < 5; i++) {
-      const testDir = path.join(current, 'public', 'svg_icons');
-      if (fs.existsSync(testDir)) {
-        svgIconsDir = testDir;
-        projectRoot = current;
-        break;
-      }
-      const parent = path.dirname(current);
-      if (parent === current) break; // Reached filesystem root
-      current = parent;
-    }
-  }
-
-  // Get all SVG files using absolute path
-  const svgFiles = await glob('**/*.svg', {
-    cwd: svgIconsDir,
-    absolute: false,
-    ignore: ['node_modules/**'],
-  });
-
-  // Map files to sitemap URLs with image info
-  const urls = svgFiles.map((file) => {
-    const parts = file.split(path.sep);
-    const name = parts.pop()!.replace('.svg', '');
-    const category = parts.pop() || 'general';
+  // Map icons to sitemap URLs with image info
+  const urls = icons.map((icon) => {
+    const category = icon.category || icon.cluster;
+    const name = icon.name;
 
     return `
       <url>

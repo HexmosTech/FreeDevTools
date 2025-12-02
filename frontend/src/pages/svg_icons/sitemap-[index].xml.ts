@@ -1,53 +1,19 @@
 // src/pages/svg_icons/sitemap-[index].xml.ts
 import type { APIRoute } from 'astro';
-import path from 'path';
 
 const MAX_URLS = 5000;
 
 // Loader function for sitemap URLs - extracted to work in both SSG and SSR
 async function loadUrls() {
-  const { glob } = await import('glob');
-
-  // Resolve project root - handle both dev (project root) and prod (serve/ directory)
-  // Try multiple possible locations
-  let projectRoot = process.cwd();
-
-  // If we're in serve/ directory, go up one level
-  if (projectRoot.endsWith('/serve') || projectRoot.endsWith('\\serve')) {
-    projectRoot = path.resolve(projectRoot, '..');
-  }
-
-  // Verify we have the public directory, if not try to find it
-  let svgIconsDir = path.join(projectRoot, 'public', 'svg_icons');
-  const fs = await import('fs');
-  if (!fs.existsSync(svgIconsDir)) {
-    // Try going up from current working directory to find project root
-    let current = process.cwd();
-    for (let i = 0; i < 5; i++) {
-      const testDir = path.join(current, 'public', 'svg_icons');
-      if (fs.existsSync(testDir)) {
-        svgIconsDir = testDir;
-        projectRoot = current;
-        break;
-      }
-      const parent = path.dirname(current);
-      if (parent === current) break; // Reached filesystem root
-      current = parent;
-    }
-  }
-
-  const svgFiles = await glob('**/*.svg', {
-    cwd: svgIconsDir,
-    absolute: false,
-    ignore: ['node_modules/**'],
-  });
+  // Get all icons from database instead of globbing files
+  const { query } = await import('db/svg_icons/svg-worker-pool');
+  const icons = await query.getSitemapIcons();
   const now = new Date().toISOString();
 
   // Build URLs with placeholder for site
-  const urls = svgFiles.map((file) => {
-    const parts = file.split(path.sep);
-    const name = parts.pop()!.replace('.svg', '');
-    const category = parts.pop() || 'general';
+  const urls = icons.map((icon) => {
+    const category = icon.category || icon.cluster;
+    const name = icon.name;
 
     return `
       <url>
