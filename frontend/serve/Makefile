@@ -93,6 +93,54 @@ test-svg-req-pmd:
 	pmdaemon delete all --force 2>/dev/null || true
 	bash kill-ports.sh
 
+
+test-tldr-req-pmd:
+	clear
+	# npm run build
+	clear
+	rm -rf logs/*
+	pmdaemon delete all --force 2>/dev/null || true
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	pmdaemon --config pmd.config.json start
+	@sleep 2
+	pmdaemon list
+	./pmd-pin.sh
+	./pmd-verifypin.sh
+	@echo "⬇️  Server up -----------"
+	@sleep 2
+	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/common/jco/
+	@sleep 2
+	@echo "⬇️  Requesting SVG icon -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/common/jco/
+	@sleep 2
+	@echo "⬇️  Showing logs -----------"
+	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
+	if [ -n "$$LOG_FILES" ]; then \
+		for LOG_FILE in $$LOG_FILES; do \
+			echo "=== $$(basename $$LOG_FILE) ==="; \
+			cat "$$LOG_FILE"; \
+			echo ""; \
+		done; \
+	else \
+		echo "No astro-out log yet."; \
+	fi
+	@echo ""
+	@echo "⬇️  Showing PMDaemon logs -----------"
+	make pmdlogs LABEL=test-svg-req-pmd
+# 	pmdaemon stop all
+	pmdaemon delete all --force 2>/dev/null || true
+	bash kill-ports.sh
+
+serve:
+	cd .. && bun run serve-ssr
+
+
+
 curl-all-kind-of-page:
 	@echo "SVG Icon (localhost:4321):"
 	@hey -n 10 -c 1 http://localhost:4321/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/ 2>&1 | grep -A 10 "Status code distribution" || echo "  No status codes found"
