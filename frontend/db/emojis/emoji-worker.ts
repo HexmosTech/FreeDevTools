@@ -4,6 +4,7 @@
  */
 
 import { Database } from 'bun:sqlite';
+import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parentPort, workerData } from 'worker_threads';
@@ -76,6 +77,50 @@ function extractDiscordVersion(filename: string): string {
   return match ? match[1] : '0';
 }
 
+// Hash utility functions (matching SVG pattern)
+function hashSlugToKey(slug: string): string {
+  const hash = crypto.createHash('sha256').update(slug).digest();
+  return hash.readBigInt64BE(0).toString();
+}
+
+function hashCategoryToKey(category: string): string {
+  const hash = crypto.createHash('sha256').update(category).digest();
+  return hash.readBigInt64BE(0).toString();
+}
+
+// Prepared statements for hash-based queries (created after DB is opened)
+const statements = {
+  emojiBySlugHash: null as any,
+  emojisByCategoryHash: null as any,
+  emojisByCategoryHashWithDiscord: null as any,
+  emojisByCategoryHashWithApple: null as any,
+  countByCategoryHash: null as any,
+  countByCategoryHashWithDiscord: null as any,
+  countByCategoryHashWithApple: null as any,
+};
+
+// Initialize prepared statements
+statements.emojiBySlugHash = db.prepare('SELECT * FROM emojis WHERE slug_hash = ?');
+statements.emojisByCategoryHash = db.prepare(`
+  SELECT 
+    code, slug, title, description, category,
+    apple_vendor_description, unicode, keywords, also_known_as,
+    version, senses, shortcodes
+  FROM emojis
+  WHERE category_hash = ?
+    AND slug IS NOT NULL
+  ORDER BY 
+    CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
+    COALESCE(title, slug) COLLATE NOCASE
+  LIMIT ? OFFSET ?
+`);
+statements.countByCategoryHash = db.prepare(`
+  SELECT COUNT(*) as count
+  FROM emojis
+  WHERE category_hash = ?
+    AND slug IS NOT NULL
+`);
+
 // Signal ready
 parentPort?.postMessage({ ready: true });
 
@@ -99,7 +144,8 @@ parentPort?.on('message', (message: QueryMessage) => {
     switch (type) {
       case 'getEmojiBySlug': {
         const { slug } = params;
-        const row = db.prepare('SELECT * FROM emojis WHERE slug = ?').get(slug) as any;
+        const slugHash = hashSlugToKey(slug);
+        const row = statements.emojiBySlugHash.get(slugHash) as any;
         if (!row) {
           result = null;
           break;
@@ -476,17 +522,21 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getEmojisByCategoryPaginated': {
         const { category, page, itemsPerPage, vendor, excludedSlugs } = params;
         const offset = (page - 1) * itemsPerPage;
-        const excludedPlaceholders = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+        const categoryHash = hashCategoryToKey(category);
+        const excludedSlugHashes = excludedSlugs && excludedSlugs.length > 0 
+          ? excludedSlugs.map(slug => hashSlugToKey(slug))
+          : [];
+        const excludedPlaceholders = excludedSlugHashes.length > 0 ? excludedSlugHashes.map(() => '?').join(',') : '';
         
         // Get total count
         const countQuery = `
           SELECT COUNT(*) as count
           FROM emojis
-          WHERE lower(category) = lower(?)
+          WHERE category_hash = ?
             AND slug IS NOT NULL
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND slug_hash NOT IN (${excludedPlaceholders})` : ''}
         `;
-        const countParams = excludedSlugs && excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+        const countParams = excludedSlugHashes.length > 0 ? [categoryHash, ...excludedSlugHashes] : [categoryHash];
         const countRow = db.prepare(countQuery).get(...countParams) as { count: number } | undefined;
         const total = countRow?.count ?? 0;
         
@@ -506,18 +556,18 @@ parentPort?.on('message', (message: QueryMessage) => {
             senses,
             shortcodes
           FROM emojis
-          WHERE lower(category) = lower(?)
+          WHERE category_hash = ?
             AND slug IS NOT NULL
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND slug_hash NOT IN (${excludedPlaceholders})` : ''}
           ORDER BY 
             CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
             COALESCE(title, slug) COLLATE NOCASE
           LIMIT ? OFFSET ?
         `;
         
-        const emojisParams = excludedSlugs && excludedSlugs.length > 0 
-          ? [category, ...excludedSlugs, itemsPerPage, offset]
-          : [category, itemsPerPage, offset];
+        const emojisParams = excludedSlugHashes.length > 0 
+          ? [categoryHash, ...excludedSlugHashes, itemsPerPage, offset]
+          : [categoryHash, itemsPerPage, offset];
         
         const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
           code: string;
@@ -556,19 +606,23 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getEmojisByCategoryWithDiscordImagesPaginated': {
         const { category, page, itemsPerPage, excludedSlugs } = params;
         const offset = (page - 1) * itemsPerPage;
-        const excludedPlaceholders = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+        const categoryHash = hashCategoryToKey(category);
+        const excludedSlugHashes = excludedSlugs && excludedSlugs.length > 0 
+          ? excludedSlugs.map(slug => hashSlugToKey(slug))
+          : [];
+        const excludedPlaceholders = excludedSlugHashes.length > 0 ? excludedSlugHashes.map(() => '?').join(',') : '';
         
         // Get total count (only emojis that have Discord images)
         const countQuery = `
           SELECT COUNT(DISTINCT e.slug) as count
           FROM emojis e
           INNER JOIN images i ON e.slug = i.emoji_slug
-          WHERE lower(e.category) = lower(?)
+          WHERE e.category_hash = ?
             AND e.slug IS NOT NULL
             AND i.image_type = 'twemoji-vendor'
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND e.slug_hash NOT IN (${excludedPlaceholders})` : ''}
         `;
-        const countParams = excludedSlugs && excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+        const countParams = excludedSlugHashes.length > 0 ? [categoryHash, ...excludedSlugHashes] : [categoryHash];
         const countRow = db.prepare(countQuery).get(...countParams) as { count: number } | undefined;
         const total = countRow?.count ?? 0;
         
@@ -589,19 +643,19 @@ parentPort?.on('message', (message: QueryMessage) => {
             e.shortcodes
           FROM emojis e
           INNER JOIN images i ON e.slug = i.emoji_slug
-          WHERE lower(e.category) = lower(?)
+          WHERE e.category_hash = ?
             AND e.slug IS NOT NULL
             AND i.image_type = 'twemoji-vendor'
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND e.slug_hash NOT IN (${excludedPlaceholders})` : ''}
           ORDER BY 
             CASE WHEN e.slug LIKE '%-skin-tone%' OR e.slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
             COALESCE(e.title, e.slug) COLLATE NOCASE
           LIMIT ? OFFSET ?
         `;
         
-        const emojisParams = excludedSlugs && excludedSlugs.length > 0 
-          ? [category, ...excludedSlugs, itemsPerPage, offset]
-          : [category, itemsPerPage, offset];
+        const emojisParams = excludedSlugHashes.length > 0 
+          ? [categoryHash, ...excludedSlugHashes, itemsPerPage, offset]
+          : [categoryHash, itemsPerPage, offset];
         
         const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
           code: string;
@@ -698,19 +752,23 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getEmojisByCategoryWithAppleImagesPaginated': {
         const { category, page, itemsPerPage, excludedSlugs } = params;
         const offset = (page - 1) * itemsPerPage;
-        const excludedPlaceholders = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+        const categoryHash = hashCategoryToKey(category);
+        const excludedSlugHashes = excludedSlugs && excludedSlugs.length > 0 
+          ? excludedSlugs.map(slug => hashSlugToKey(slug))
+          : [];
+        const excludedPlaceholders = excludedSlugHashes.length > 0 ? excludedSlugHashes.map(() => '?').join(',') : '';
         
         // Get total count (only emojis that have Apple images)
         const countQuery = `
           SELECT COUNT(DISTINCT e.slug) as count
           FROM emojis e
           INNER JOIN images i ON e.slug = i.emoji_slug
-          WHERE lower(e.category) = lower(?)
+          WHERE e.category_hash = ?
             AND e.slug IS NOT NULL
             AND i.filename LIKE '%iOS%'
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND e.slug_hash NOT IN (${excludedPlaceholders})` : ''}
         `;
-        const countParams = excludedSlugs && excludedSlugs.length > 0 ? [category, ...excludedSlugs] : [category];
+        const countParams = excludedSlugHashes.length > 0 ? [categoryHash, ...excludedSlugHashes] : [categoryHash];
         const countRow = db.prepare(countQuery).get(...countParams) as { count: number } | undefined;
         const total = countRow?.count ?? 0;
         
@@ -731,19 +789,19 @@ parentPort?.on('message', (message: QueryMessage) => {
             e.shortcodes
           FROM emojis e
           INNER JOIN images i ON e.slug = i.emoji_slug
-          WHERE lower(e.category) = lower(?)
+          WHERE e.category_hash = ?
             AND e.slug IS NOT NULL
             AND i.filename LIKE '%iOS%'
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND e.slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND e.slug_hash NOT IN (${excludedPlaceholders})` : ''}
           ORDER BY 
             CASE WHEN e.slug LIKE '%-skin-tone%' OR e.slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
             COALESCE(e.title, e.slug) COLLATE NOCASE
           LIMIT ? OFFSET ?
         `;
         
-        const emojisParams = excludedSlugs && excludedSlugs.length > 0 
-          ? [category, ...excludedSlugs, itemsPerPage, offset]
-          : [category, itemsPerPage, offset];
+        const emojisParams = excludedSlugHashes.length > 0 
+          ? [categoryHash, ...excludedSlugHashes, itemsPerPage, offset]
+          : [categoryHash, itemsPerPage, offset];
         
         const emojiRows = db.prepare(emojisQuery).all(...emojisParams) as Array<{
           code: string;
@@ -870,24 +928,8 @@ parentPort?.on('message', (message: QueryMessage) => {
 
       case 'getDiscordEmojiBySlug': {
         const { slug } = params;
-        const emoji = db.prepare(`
-          SELECT 
-            code,
-            unicode,
-            slug,
-            title,
-            category,
-            description,
-            apple_vendor_description,
-            discord_vendor_description,
-            keywords,
-            also_known_as,
-            version,
-            senses,
-            shortcodes
-          FROM emojis
-          WHERE slug = ?
-        `).get(slug) as any;
+        const slugHash = hashSlugToKey(slug);
+        const emoji = statements.emojiBySlugHash.get(slugHash) as any;
         
         if (!emoji) {
           result = null;
@@ -952,24 +994,8 @@ parentPort?.on('message', (message: QueryMessage) => {
 
       case 'getAppleEmojiBySlug': {
         const { slug } = params;
-        const emoji = db.prepare(`
-          SELECT 
-            code,
-            unicode,
-            slug,
-            title,
-            category,
-            description,
-            apple_vendor_description,
-            discord_vendor_description,
-            keywords,
-            also_known_as,
-            version,
-            senses,
-            shortcodes
-          FROM emojis
-          WHERE slug = ?
-        `).get(slug) as any;
+        const slugHash = hashSlugToKey(slug);
+        const emoji = statements.emojiBySlugHash.get(slugHash) as any;
         
         if (!emoji) {
           result = null;
@@ -1050,7 +1076,10 @@ parentPort?.on('message', (message: QueryMessage) => {
 
       case 'getSitemapAppleEmojis': {
         const { excludedSlugs } = params;
-        const excludedPlaceholders = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+        const excludedSlugHashes = excludedSlugs && excludedSlugs.length > 0 
+          ? excludedSlugs.map(slug => hashSlugToKey(slug))
+          : [];
+        const excludedPlaceholders = excludedSlugHashes.length > 0 ? excludedSlugHashes.map(() => '?').join(',') : '';
         
         const query = `
           SELECT slug, category
@@ -1061,10 +1090,10 @@ parentPort?.on('message', (message: QueryMessage) => {
               WHERE images.emoji_slug = emojis.slug 
               AND images.filename LIKE '%iOS%'
             )
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND slug_hash NOT IN (${excludedPlaceholders})` : ''}
         `;
         
-        const queryParams = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs : [];
+        const queryParams = excludedSlugHashes.length > 0 ? excludedSlugHashes : [];
         const rows = db.prepare(query).all(...queryParams) as Array<{ slug: string; category: string }>;
         result = rows.map(r => ({ slug: r.slug, category: r.category }));
         break;
@@ -1072,7 +1101,10 @@ parentPort?.on('message', (message: QueryMessage) => {
 
       case 'getSitemapDiscordEmojis': {
         const { excludedSlugs } = params;
-        const excludedPlaceholders = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs.map(() => '?').join(',') : '';
+        const excludedSlugHashes = excludedSlugs && excludedSlugs.length > 0 
+          ? excludedSlugs.map(slug => hashSlugToKey(slug))
+          : [];
+        const excludedPlaceholders = excludedSlugHashes.length > 0 ? excludedSlugHashes.map(() => '?').join(',') : '';
         
         const query = `
           SELECT slug, category
@@ -1083,10 +1115,10 @@ parentPort?.on('message', (message: QueryMessage) => {
               WHERE images.emoji_slug = emojis.slug 
               AND images.image_type = 'twemoji-vendor'
             )
-            ${excludedSlugs && excludedSlugs.length > 0 ? `AND slug NOT IN (${excludedPlaceholders})` : ''}
+            ${excludedSlugHashes.length > 0 ? `AND slug_hash NOT IN (${excludedPlaceholders})` : ''}
         `;
         
-        const queryParams = excludedSlugs && excludedSlugs.length > 0 ? excludedSlugs : [];
+        const queryParams = excludedSlugHashes.length > 0 ? excludedSlugHashes : [];
         const rows = db.prepare(query).all(...queryParams) as Array<{ slug: string; category: string }>;
         result = rows.map(r => ({ slug: r.slug, category: r.category }));
         break;
