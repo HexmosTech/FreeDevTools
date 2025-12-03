@@ -1,20 +1,19 @@
 // src/pages/png_icons/sitemap-[index].xml.ts
 import type { APIRoute } from 'astro';
-import path from 'path';
 
 const MAX_URLS = 5000;
 
 // Loader function for sitemap URLs - extracted to work in both SSG and SSR
 async function loadUrls() {
-  const { glob } = await import('glob');
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+  // Get all icons from database instead of globbing files
+  const { query } = await import('db/png_icons/png-worker-pool');
+  const icons = await query.getSitemapIcons();
   const now = new Date().toISOString();
 
-  // Build URLs with placeholder for site
-  const urls = svgFiles.map((file) => {
-    const parts = file.split(path.sep);
-    const name = parts.pop()!.replace('.svg', '');
-    const category = parts.pop() || 'general';
+  // Build URLs with placeholder for site (no image tag for PNG)
+  const urls = icons.map((icon) => {
+    const category = icon.category || icon.cluster;
+    const name = icon.name;
 
     return `
       <url>
@@ -22,10 +21,6 @@ async function loadUrls() {
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
-        <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-          <image:loc>__SITE__/svg_icons/${category}/${name}.svg</image:loc>
-          <image:title>Free ${name} PNG Icon Download</image:title>
-        </image:image>
       </url>`;
   });
 
@@ -68,8 +63,7 @@ export const GET: APIRoute = async ({ site, params }) => {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${chunk.join('\n')}
 </urlset>`;
 
