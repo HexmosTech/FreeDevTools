@@ -1,5 +1,4 @@
 ---
-import { marked } from 'marked';
 import { getPageByClusterAndName } from '../../../../db/tldrs/tldr-utils';
 import AdBanner from '../../../components/banner/AdBanner.astro';
 import Banner from '../../../components/banner/BannerIndex.astro';
@@ -96,24 +95,35 @@ if (pageNumber !== null) {
 } else if (command) {
   // Handle command route: /tldr/[platform]/[command]
   // Find the entry by platform and command
+  // Measure Hash DB Fetch
+  const startDb = Date.now();
   const page = await getPageByClusterAndName(platform, command);
+  console.log('[DEBUG] Page keys:', page ? Object.keys(page) : 'null');
+  console.log('[DEBUG] Page html_content length:', page?.html_content?.length);
+  if ((Astro.locals as any).timings) {
+    (Astro.locals as any).timings['db fetch'] = Date.now() - startDb;
+  }
 
   if (!page) {
     return Astro.redirect('/404');
   }
 
-  // Parse markdown content
-  // Strip frontmatter first (content between first two ---)
-  const rawContent = page.raw_content || '';
-  const contentParts = rawContent.split('---');
-  // If there is frontmatter, the body is usually after the second '---'
-  // But split might give empty string as first element if file starts with ---
-  let markdownBody = rawContent;
-  if (contentParts.length >= 3) {
-    markdownBody = contentParts.slice(2).join('---').trim();
-  }
+  // Use pre-rendered HTML from DB
+  htmlContent = page.html_content || '';
+  
+  console.log('[DEBUG] Page:', { 
+    name: page.name, 
+    hasHtml: !!page.html_content, 
+    htmlLen: page.html_content?.length,
+    hasRaw: !!page.raw_content 
+  });
 
-  htmlContent = await marked.parse(markdownBody);
+  // Fallback for pages not yet migrated
+  if (!htmlContent && page.raw_content) {
+     console.warn('[WARN] Missing html_content for', page.name);
+     // Show raw content temporarily for debugging
+     htmlContent = `<pre>${page.raw_content}</pre>`;
+  }
   
   const title = page.title || command;
   const description =
@@ -207,9 +217,8 @@ if (pageNumber !== null) {
       <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 mt-6">
         <div
           class="prose prose-slate dark:prose-invert max-w-none prose-headings:text-slate-900 dark:prose-headings:text-slate-100 prose-p:text-slate-700 dark:prose-p:text-slate-300 prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-slate-100 dark:prose-code:bg-slate-700 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-pre:border prose-pre:border-slate-200 dark:prose-pre:border-slate-600 prose-blockquote:border-l-blue-500 prose-blockquote:bg-slate-100 dark:prose-blockquote:bg-slate-700 prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:rounded prose-ul:space-y-1 prose-li:text-slate-700 dark:prose-li:text-slate-300"
-        >
-          <Fragment set:html={htmlContent} />
-        </div>
+          set:html={htmlContent}
+        />
       </div>
       
       <div

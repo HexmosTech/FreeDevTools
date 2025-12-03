@@ -51,17 +51,17 @@ const statements = {
   ),
   pagesByCluster: db.prepare(
     `SELECT url_hash, url, cluster, name, platform, title, description,
-     more_info_url, keywords, features, examples, raw_content, path
+     more_info_url, keywords, features, examples, raw_content, html_content, path
      FROM pages WHERE cluster = ? ORDER BY name`
   ),
   pageByUrlHash: db.prepare(
     `SELECT url_hash, url, cluster, name, platform, title, description,
-     more_info_url, keywords, features, examples, raw_content, path
+     more_info_url, keywords, features, examples, raw_content, html_content, path
      FROM pages WHERE url_hash = ?`
   ),
   pageByClusterAndName: db.prepare(
     `SELECT url_hash, url, cluster, name, platform, title, description,
-     more_info_url, keywords, features, examples, raw_content, path
+     more_info_url, keywords, features, examples, raw_content, html_content, path
      FROM pages WHERE cluster = ? AND name = ?`
   ),
   clusterPreviews: db.prepare(

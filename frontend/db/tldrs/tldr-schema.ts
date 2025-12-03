@@ -15,6 +15,7 @@ export interface Page {
   features: string[]; // JSON array
   examples: Example[]; // JSON array of {description, cmd}
   raw_content: string;
+  html_content: string;
   path: string;
 }
 
@@ -44,6 +45,7 @@ export interface RawPageRow {
   features: string; // JSON string
   examples: string; // JSON string
   raw_content: string;
+  html_content: string;
   path: string;
 }
 
