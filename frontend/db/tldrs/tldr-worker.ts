@@ -85,10 +85,10 @@ interface QueryMessage {
 // Handle incoming queries
 parentPort?.on('message', (message: QueryMessage) => {
   const { id, type, params } = message;
-  // const startTime = new Date();
-  // const timestampLabel = highlight(`[${startTime.toISOString()}]`, logColors.timestamp);
-  // const dbLabel = highlight('[TLDR_DB]', logColors.dbLabel);
-  // console.log(`${timestampLabel} ${dbLabel} Worker ${workerId} handling ${type}`);
+  const startTime = new Date();
+  const timestampLabel = highlight(`[${startTime.toISOString()}]`, logColors.timestamp);
+  const dbLabel = highlight('[TLDR_DB]', logColors.dbLabel);
+  console.log(`${timestampLabel} ${dbLabel} Worker ${workerId} handling ${type}`);
 
   try {
     let result: any;
@@ -192,14 +192,14 @@ parentPort?.on('message', (message: QueryMessage) => {
       id,
       result,
     });
-    // const endTime = new Date();
-    // const endTimestamp = highlight(`[${endTime.toISOString()}]`, logColors.timestamp);
-    // const endDbLabel = highlight('[TLDR_DB]', logColors.dbLabel);
-    // console.log(
-    //   `${endTimestamp} ${endDbLabel} Worker ${workerId} ${type} finished in ${
-    //     endTime.getTime() - startTime.getTime()
-    //   }ms`
-    // );
+    const endTime = new Date();
+    const endTimestamp = highlight(`[${endTime.toISOString()}]`, logColors.timestamp);
+    const endDbLabel = highlight('[TLDR_DB]', logColors.dbLabel);
+    console.log(
+      `${endTimestamp} ${endDbLabel} Worker ${workerId} ${type} finished in ${
+        endTime.getTime() - startTime.getTime()
+      }ms`
+    );
   } catch (error: any) {
     parentPort?.postMessage({
       id,

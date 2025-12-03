@@ -115,21 +115,21 @@ test-tldr-req-pmd:
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
 	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/common/jco/
 	@sleep 2
-	@echo "⬇️  Requesting SVG icon -----------"
+	@echo "⬇️  Requesting tldr -----------"
 	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/common/jco/
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
-	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
-	if [ -n "$$LOG_FILES" ]; then \
-		for LOG_FILE in $$LOG_FILES; do \
-			echo "=== $$(basename $$LOG_FILE) ==="; \
-			cat "$$LOG_FILE"; \
-			echo ""; \
-		done; \
-	else \
-		echo "No astro-out log yet."; \
-	fi
-	@echo ""
+# 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
+# 	if [ -n "$$LOG_FILES" ]; then \
+# 		for LOG_FILE in $$LOG_FILES; do \
+# 			echo "=== $$(basename $$LOG_FILE) ==="; \
+# 			cat "$$LOG_FILE"; \
+# 			echo ""; \
+# 		done; \
+# 	else \
+# 		echo "No astro-out log yet."; \
+# 	fi
+# 	@echo ""
 	@echo "⬇️  Showing PMDaemon logs -----------"
 	make pmdlogs LABEL=test-svg-req-pmd
 # 	pmdaemon stop all
