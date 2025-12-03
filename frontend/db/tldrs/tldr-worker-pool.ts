@@ -46,7 +46,7 @@ interface QueryResponse {
 
 function getDbPath(): string {
   const projectRoot = findProjectRoot();
-  return path.resolve(projectRoot, 'db/all_dbs/tldr-test.db');
+  return path.resolve(projectRoot, 'db/all_dbs/tldr-db.db');
 }
 
 /**
@@ -122,9 +122,6 @@ async function initWorkers(): Promise<void> {
     }
 
     const dbPath = getDbPath();
-
-    console.log(`[TLDR_DB] Selected worker path: ${workerPath}`);
-    console.log(`[TLDR_DB] Using database path: ${dbPath}`);
 
     const pendingWorkers: Worker[] = [];
     let initializedCount = 0;

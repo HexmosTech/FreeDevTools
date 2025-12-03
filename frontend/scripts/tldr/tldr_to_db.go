@@ -25,8 +25,10 @@ import (
 // Paths
 const (
 	DataDir = "../../data/tldr"
-	DbPath  = "../../db/all_dbs/tldr-test.db"
+	DbPath  = "../../db/all_dbs/tldr-db.db"
 )
+
+// ... (keep structs)
 
 // Structs matching DB schema
 type Page struct {
@@ -123,7 +125,14 @@ func parseTldrFile(path string) (*Page, error) {
 	}
 
 	frontmatterRaw := parts[1]
-	markdownBody := parts[2]
+	markdownBody := strings.TrimSpace(parts[2])
+
+	// Strip first H1 (# Title)
+	lines := strings.Split(markdownBody, "\n")
+	if len(lines) > 0 && strings.HasPrefix(strings.TrimSpace(lines[0]), "# ") {
+		markdownBody = strings.Join(lines[1:], "\n")
+	}
+	markdownBody = strings.TrimSpace(markdownBody)
 
 	// Parse Frontmatter
 	var fm Frontmatter
@@ -140,7 +149,8 @@ func parseTldrFile(path string) (*Page, error) {
 	moreInfoUrl := ""
 	examples := []Example{}
 
-	lines := strings.Split(strings.TrimSpace(markdownBody), "\n")
+	// Re-split for processing examples/description (using the stripped body)
+	lines = strings.Split(markdownBody, "\n")
 	for i := 0; i < len(lines); i++ {
 		line := strings.TrimSpace(lines[i])
 		if strings.HasPrefix(line, ">") {
@@ -323,8 +333,7 @@ func main() {
 	defer stmt.Close()
 
 	// Walk Data Dir
-	// Only processing 'adb' folder for testing as requested
-	targetDir := filepath.Join(DataDir, "adb")
+	targetDir := DataDir
 	fmt.Printf("Scanning %s...\n", targetDir)
 
 	count := 0
