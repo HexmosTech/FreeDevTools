@@ -37,6 +37,7 @@ const setPragma = (pragma: string) => {
 setPragma('PRAGMA cache_size = -64000'); // 64MB cache per connection
 setPragma('PRAGMA temp_store = MEMORY');
 setPragma('PRAGMA mmap_size = 268435456'); // 256MB memory-mapped I/O
+setPragma('PRAGMA journal_mode = WAL'); // WAL mode for better concurrent read performance
 setPragma('PRAGMA query_only = ON'); // Read-only mode
 setPragma('PRAGMA page_size = 4096'); // Optimal page size
 

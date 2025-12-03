@@ -36,6 +36,7 @@ const setPragma = (pragma: string) => {
 setPragma('PRAGMA cache_size = -64000'); // 64MB cache per connection
 setPragma('PRAGMA temp_store = MEMORY');
 setPragma('PRAGMA mmap_size = 268435456'); // 256MB memory-mapped I/O
+setPragma('PRAGMA journal_mode = WAL'); // WAL mode for better concurrent read performance
 setPragma('PRAGMA query_only = ON'); // Read-only mode
 setPragma('PRAGMA page_size = 4096'); // Optimal page size
 
@@ -200,116 +201,55 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getEmojiCategories': {
-        const rows = db.prepare('SELECT DISTINCT category FROM emojis WHERE category IS NOT NULL').all() as Array<{ category: string }>;
-        const validCategories = [
-          'Smileys & Emotion',
-          'People & Body',
-          'Animals & Nature',
-          'Food & Drink',
-          'Travel & Places',
-          'Activities',
-          'Objects',
-          'Symbols',
-          'Flags',
-        ];
-        const normalized = rows.map((r) =>
-          validCategories.includes(r.category) ? r.category : 'Other'
-        );
-        result = Array.from(new Set(normalized)).sort();
+        // Use category table instead of querying emojis
+        const rows = db.prepare('SELECT category FROM category ORDER BY category').all() as Array<{ category: string }>;
+        result = rows.map((r) => r.category);
         break;
       }
 
       case 'getCategoriesWithPreviewEmojis': {
-        const { previewEmojisPerCategory } = params;
-        const validCategories = [
-          'Smileys & Emotion',
-          'People & Body',
-          'Animals & Nature',
-          'Food & Drink',
-          'Travel & Places',
-          'Activities',
-          'Objects',
-          'Symbols',
-          'Flags',
-        ];
-        const validCategoriesPlaceholders = validCategories.map(() => '?').join(',');
-        
-        const query = `
-          WITH normalized_emojis AS (
-            SELECT 
-              CASE 
-                WHEN category IN (${validCategoriesPlaceholders}) THEN category
-                ELSE 'Other'
-              END as normalized_category,
-              code,
-              slug,
-              title
-            FROM emojis
-            WHERE category IS NOT NULL
-          ),
-          normalized_categories AS (
-            SELECT DISTINCT normalized_category
-            FROM normalized_emojis
-          ),
-          category_counts AS (
-            SELECT 
-              normalized_category as category,
-              COUNT(*) as count
-            FROM normalized_emojis
-            GROUP BY normalized_category
-          ),
-          category_emojis AS (
-            SELECT 
-              nc.normalized_category as category,
-              cc.count,
-              (
-                SELECT json_group_array(
-                  json_object(
-                    'code', e.code,
-                    'slug', e.slug,
-                    'title', e.title
-                  )
-                )
-                FROM (
-                  SELECT code, slug, title
-                  FROM normalized_emojis
-                  WHERE normalized_category = nc.normalized_category
-                  ORDER BY 
-                    CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END,
-                    COALESCE(title, slug) COLLATE NOCASE
-                  LIMIT ?
-                ) e
-              ) as preview_emojis
-            FROM normalized_categories nc
-            JOIN category_counts cc ON nc.normalized_category = cc.category
-            ORDER BY nc.normalized_category
-          )
-          SELECT category, count, preview_emojis
-          FROM category_emojis
-          WHERE category != 'Other'
-          ORDER BY category
-        `;
-        
-        const stmt = db.prepare(query);
-        const results = stmt.all(...validCategories, previewEmojisPerCategory) as Array<{
+        // Use category table - much faster, no complex queries needed
+        const rows = db.prepare('SELECT category, count, preview_emojis_json FROM category ORDER BY category').all() as Array<{
           category: string;
           count: number;
-          preview_emojis: string;
+          preview_emojis_json: string;
         }>;
         
-        result = results.map((row) => {
-          let previewEmojis: Array<{ code: string; slug: string; title: string }> = [];
+        result = rows.map((row) => {
+          let previewEmojis: Array<{
+            id: number;
+            code: string;
+            unicode: string;
+            slug: string;
+            title: string;
+            category: string;
+            description?: string;
+            apple_vendor_description?: string;
+            keywords?: string[];
+            also_known_as?: string[];
+            version?: any;
+            senses?: any;
+            shortcodes?: any;
+            discord_vendor_description?: string;
+            slug_hash: string;
+            category_hash: string;
+          }> = [];
           try {
-            const parsed = JSON.parse(row.preview_emojis || '[]');
+            const parsed = parseJSON<Array<any>>(row.preview_emojis_json);
             previewEmojis = Array.isArray(parsed) ? parsed.filter((emoji: any) => emoji !== null) : [];
           } catch (e) {
             previewEmojis = [];
           }
           
+          // Map to expected format (code, slug, title for compatibility)
           return {
             category: row.category,
             count: row.count,
-            previewEmojis,
+            previewEmojis: previewEmojis.map(e => ({
+              code: e.code,
+              slug: e.slug,
+              title: e.title,
+            })),
           };
         });
         break;

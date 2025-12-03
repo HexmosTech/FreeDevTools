@@ -46,7 +46,7 @@ interface QueryResponse {
 
 function getDbPath(): string {
   const projectRoot = findProjectRoot();
-  return path.resolve(projectRoot, 'db/all_dbs/emoji-db-v1.db');
+  return path.resolve(projectRoot, 'db/all_dbs/emoji-db-v2.db');
 }
 
 /**
