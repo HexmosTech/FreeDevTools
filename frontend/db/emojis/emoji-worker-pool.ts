@@ -183,17 +183,14 @@ async function executeQuery(type: string, params: any): Promise<any> {
 
   const startTime = new Date();
   console.log(`[EMOJI_DB][${startTime.toISOString()}] Dispatching ${type}`);
-
-  // Longer timeout for image queries (they process large blobs)
-  const timeoutDuration = type === 'fetchImageFromDB' ? 60000 : 30000; // 60s for images, 30s for others
-
   return new Promise((resolve, reject) => {
     const queryId = `${Date.now()}-${Math.random()}`;
-    let isResolved = false;
+    const timeout = setTimeout(() => {
+      reject(new Error(`Query timeout: ${type}`));
+    }, 30000); // 30 second timeout
 
     const messageHandler = (response: QueryResponse) => {
-      if (response.id === queryId && !isResolved) {
-        isResolved = true;
+      if (response.id === queryId) {
         clearTimeout(timeout);
         worker.off('message', messageHandler);
         if (response.error) {
@@ -209,14 +206,6 @@ async function executeQuery(type: string, params: any): Promise<any> {
         }
       }
     };
-
-    const timeout = setTimeout(() => {
-      if (!isResolved) {
-        isResolved = true;
-        worker.off('message', messageHandler);
-        reject(new Error(`Query timeout: ${type} (${timeoutDuration}ms)`));
-      }
-    }, timeoutDuration);
 
     worker.on('message', messageHandler);
 
