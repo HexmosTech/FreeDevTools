@@ -23,7 +23,7 @@ export async function getClusterByName(name: string): Promise<Cluster | null> {
   return query.getClusterByName(hashName);
 }
 
-export async function getPageByClusterAndName(cluster: string, name: string): Promise<Page | null> {
+export async function getPageByNameViaHash(cluster: string, name: string): Promise<Page | null> {
   // Use hash-based lookup for O(1) performance
   const url = `${cluster}/${name}`;
   const hash = hashUrlToKey(url);
