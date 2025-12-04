@@ -1,0 +1,68 @@
+---
+// No server-side JS needed here
+---
+
+<script is:inline>
+  if (typeof window !== 'undefined') {
+    const currentUrl = window.location.href; // move inside client script
+    const params = new URLSearchParams(window.location.search);
+    const hasDataParam = params.has('data');
+    let jwt = sessionStorage.getItem('lr_jwt');
+
+    // --- 1. If ?data= exists, parse and store user info ---
+    if (hasDataParam) {
+      const raw = params.get('data');
+      if (raw) {
+        try {
+          const decoded = decodeURIComponent(raw);
+          const parsed = JSON.parse(decoded);
+
+          const extractedJwt = parsed?.result?.jwt;
+          const email =
+            parsed?.result?.data?.email || parsed?.result?.data?.username;
+          if (
+            extractedJwt &&
+            email &&
+            /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
+          ) {
+            const first = parsed?.result?.data?.first_name?.trim() || '';
+            const last = parsed?.result?.data?.last_name?.trim() || '';
+            let name = (
+              first + (last && last !== first ? ' ' + last : '')
+            ).trim();
+            if (!name) {
+              const username = parsed?.result?.data?.username;
+              if (username && !username.includes('@')) name = username;
+              else name = email.split('@')[0];
+            }
+            const avatarUrl = parsed?.result?.data?.profilePicUrl;
+
+            const userObj = { email, name, jwt: extractedJwt, avatarUrl };
+            try {
+              sessionStorage.setItem('lr_jwt', extractedJwt);
+            } catch {}
+            try {
+              sessionStorage.setItem('lr_user_json', JSON.stringify(userObj));
+            } catch {}
+            jwt = extractedJwt; // update local variable for redirect check
+          }
+        } catch (e) {
+          console.error('[LiveReview] Failed to parse ?data= param', e);
+        }
+      }
+
+      // --- 2. Clean URL after parsing ---
+      try {
+        window.history.replaceState(null, '', window.location.pathname);
+      } catch (e) {
+        console.warn('[LiveReview] Failed to clean URL', e);
+      }
+    }
+
+    // --- 3. Redirect only if JWT does not exist ---
+    if (!jwt) {
+      const signinUrl = `https://hexmos.com/signin?app=livereview&appRedirectURI=${encodeURIComponent(currentUrl)}`;
+      window.location.href = signinUrl;
+    }
+  }
+</script>
