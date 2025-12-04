@@ -43,14 +43,18 @@ const statements = {
     allCategories: db.prepare('SELECT * FROM category ORDER BY name'),
     categoryBySlug: db.prepare('SELECT * FROM category WHERE slug = ?'),
     mcpPagesByCategory: db.prepare(`
-    SELECT hash_id, category, key, name, description, owner, stars, forks, language, license, updated_at, data
+    SELECT hash_id, category, key, name, description, owner, stars, forks, language, license, updated_at, image_url, npm_downloads
     FROM mcp_pages 
     WHERE category = ? 
     ORDER BY stars DESC, name ASC 
     LIMIT ? OFFSET ?
   `),
     totalMcpPagesByCategory: db.prepare('SELECT COUNT(*) as count FROM mcp_pages WHERE category = ?'),
-    mcpPageByHashId: db.prepare('SELECT * FROM mcp_pages WHERE hash_id = ?'),
+    mcpPageByHashId: db.prepare(`
+        SELECT *
+        FROM mcp_pages
+        WHERE hash_id = ?
+    `),
     totalMcpCount: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
     totalCategoryCount: db.prepare('SELECT COUNT(*) as count FROM category'),
 };
@@ -80,7 +84,7 @@ parentPort?.on('message', (message: QueryMessage) => {
     const startTime = new Date();
     const timestampLabel = highlight(`[${startTime.toISOString()}]`, logColors.timestamp);
     const dbLabel = highlight('[MCP_DB]', logColors.dbLabel);
-    // console.log(`${timestampLabel} ${dbLabel} Worker ${workerId} handling ${type}`);
+    console.log(`${timestampLabel} ${dbLabel} Worker ${workerId} handling ${type}`);
 
     try {
         let result: any;
@@ -103,7 +107,7 @@ parentPort?.on('message', (message: QueryMessage) => {
                 const rows = statements.mcpPagesByCategory.all(categorySlug, limit, offset) as Array<any>;
                 result = rows.map((row) => ({
                     ...row,
-                    data: JSON.parse(row.data || '{}'),
+
                 }));
                 break;
             }
@@ -126,7 +130,7 @@ parentPort?.on('message', (message: QueryMessage) => {
                 } else {
                     result = {
                         ...row,
-                        data: JSON.parse(row.data || '{}'),
+                        keywords: (row.keywords && row.keywords !== '') ? JSON.parse(row.keywords) : [],
                     };
                 }
                 break;
@@ -161,11 +165,10 @@ parentPort?.on('message', (message: QueryMessage) => {
         const endTime = new Date();
         const endTimestamp = highlight(`[${endTime.toISOString()}]`, logColors.timestamp);
         const endDbLabel = highlight('[MCP_DB]', logColors.dbLabel);
-        // console.log(
-        //   `${endTimestamp} ${endDbLabel} Worker ${workerId} ${type} finished in ${
-        //     endTime.getTime() - startTime.getTime()
-        //   }ms`
-        // );
+        console.log(
+            `${endTimestamp} ${endDbLabel} Worker ${workerId} ${type} finished in ${endTime.getTime() - startTime.getTime()
+            }ms`
+        );
     } catch (error: any) {
         parentPort?.postMessage({
             id,

@@ -18,7 +18,11 @@ export interface McpPage {
     license: string;
     updated_at: string;
     readme_content: string;
-    data: string; // JSON string
+    url?: string;
+    image_url?: string;
+    npm_url?: string;
+    npm_downloads?: number;
+    keywords?: string[];
 }
 
 export interface ParsedMcpPage extends Omit<McpPage, 'data'> {

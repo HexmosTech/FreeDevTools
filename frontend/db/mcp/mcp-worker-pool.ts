@@ -185,7 +185,7 @@ async function executeQuery(type: string, params: any): Promise<any> {
     workerIndex = (workerIndex + 1) % workers.length;
 
     const startTime = new Date();
-    // console.log(`[MCP_DB][${startTime.toISOString()}] Dispatching ${type}`);
+    console.log(`[MCP_DB][${startTime.toISOString()}] Dispatching ${type}`);
     return new Promise((resolve, reject) => {
         const queryId = `${Date.now()}-${Math.random()}`;
         const timeout = setTimeout(() => {
@@ -196,6 +196,11 @@ async function executeQuery(type: string, params: any): Promise<any> {
         pendingQueries.set(queryId, {
             resolve: (val) => {
                 clearTimeout(timeout);
+                const endTime = new Date();
+                console.log(
+                    `[MCP_DB][${endTime.toISOString()}] ${type} completed in ${endTime.getTime() - startTime.getTime()
+                    }ms`
+                );
                 resolve(val);
             },
             reject: (err) => {

@@ -8,14 +8,17 @@ Destination: db/all_dbs/mcp-db.db
 Tables:
 - overview: id, total_count
 - category: slug, name, description, count
-- mcp_pages: hash_id, category_slug, mcp_key, name, description, owner, stars, forks, language, license, updated_at, readme_content, data
+- mcp_pages: hash_id, category_slug, mcp_key, name, description, owner, stars, forks, language, license, updated_at, readme_content, url, image_url, npm_url, npm_downloads, keywords
 """
 
 import sqlite3
 import json
 import hashlib
 import glob
+import re
 from pathlib import Path
+import markdown
+from bs4 import BeautifulSoup
 
 BASE_DIR = Path(__file__).parent.parent.parent
 INPUT_DIR = BASE_DIR / "public" / "mcp" / "input"
@@ -29,6 +32,64 @@ def generate_hash_id(category_slug: str, mcp_key: str) -> int:
     hash_bytes = hashlib.sha256(combined.encode('utf-8')).digest()
     # Take first 8 bytes, interpret as big-endian signed integer
     return int.from_bytes(hash_bytes[:8], byteorder='big', signed=True)
+
+def process_readme_content(markdown_text: str) -> str:
+    """
+    Convert Markdown to HTML and apply transformations:
+    - Add IDs to headings
+    - Add scroll margin to headings
+    - Open external links in new tab
+    - Disable relative links
+    """
+    if not markdown_text:
+        return ''
+
+    try:
+        # Convert Markdown to HTML
+        html = markdown.markdown(markdown_text, extensions=['fenced_code', 'tables'])
+        soup = BeautifulSoup(html, 'html.parser')
+
+        # Process Headings
+        for tag in soup.find_all(re.compile('^h[1-6]$')):
+            # Generate ID
+            text = tag.get_text()
+            anchor_id = re.sub(r'[^a-z0-9\s-]', '', text.lower())
+            anchor_id = re.sub(r'\s+', '-', anchor_id)
+            anchor_id = re.sub(r'-+', '-', anchor_id).strip('-')
+            
+            tag['id'] = anchor_id
+            
+            # Add scroll margin class and style
+            existing_class = tag.get('class', [])
+            if 'scroll-mt-32' not in existing_class:
+                existing_class.append('scroll-mt-32')
+            tag['class'] = existing_class
+            
+            # Add inline style
+            existing_style = tag.get('style', '')
+            tag['style'] = f"{existing_style}; scroll-margin-top: 8rem;".strip('; ')
+
+        # Process Links
+        for tag in soup.find_all('a'):
+            href = tag.get('href', '')
+            
+            if href.startswith(('http://', 'https://')):
+                tag['target'] = '_blank'
+                tag['rel'] = 'noopener noreferrer'
+            elif href.startswith('#'):
+                # Keep anchor links
+                pass
+            else:
+                # Disable relative links by changing tag to span
+                tag.name = 'span'
+                # Remove href attribute
+                del tag['href']
+                # Add disabled styling if needed (optional, logic in frontend was just span)
+
+        return str(soup)
+    except Exception as e:
+        print(f"Error processing README: {e}")
+        return markdown_text
 
 def build_db():
     # Ensure DB directory exists
@@ -78,7 +139,11 @@ def build_db():
             license TEXT DEFAULT '',
             updated_at TEXT DEFAULT '',
             readme_content TEXT DEFAULT '',
-            data TEXT DEFAULT '{}'
+            url TEXT DEFAULT '',
+            image_url TEXT DEFAULT '',
+            npm_url TEXT DEFAULT '',
+            npm_downloads INTEGER DEFAULT 0,
+            keywords TEXT DEFAULT ''
         ) WITHOUT ROWID;
     """)
     
@@ -146,7 +211,15 @@ def build_db():
             language = repo_data.get('language', '')
             license_name = repo_data.get('license', '')
             updated_at = repo_data.get('updated_at', '')
-            readme_content = repo_data.get('readme_content', '')
+            
+            raw_readme = repo_data.get('readme_content', '')
+            readme_content = process_readme_content(raw_readme)
+            
+            url = repo_data.get('url', '')
+            image_url = repo_data.get('imageUrl', '')
+            npm_url = repo_data.get('npm_url', '')
+            npm_downloads = repo_data.get('npm_downloads', 0)
+            keywords = json.dumps(repo_data.get('keywords', []))
             
             # Store full JSON data
             full_data = json.dumps(repo_data)
@@ -157,13 +230,13 @@ def build_db():
                     INSERT INTO mcp_pages (
                         hash_id, category, key, name, description, 
                         owner, stars, forks, language, license, updated_at, 
-                        readme_content, data
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        readme_content, url, image_url, npm_url, npm_downloads, keywords
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         hash_id, category_slug, mcp_key, name, description,
                         owner, stars, forks, language, license_name, updated_at,
-                        readme_content, full_data
+                        readme_content, url, image_url, npm_url, npm_downloads, keywords
                     )
                 )
                 processed_count += 1
