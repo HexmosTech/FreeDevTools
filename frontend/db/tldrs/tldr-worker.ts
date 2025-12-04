@@ -62,11 +62,8 @@ const statements = {
 
  
   clusterPreviews: db.prepare( 
-    `SELECT * FROM (
-       SELECT url_hash, url, cluster, name, platform, description,
-       ROW_NUMBER() OVER (PARTITION BY cluster ORDER BY name) as rn 
-       FROM pages
-     ) WHERE rn <= 3`
+    `SELECT url_hash, url, cluster, name, platform, description 
+     FROM cluster_previews ORDER BY cluster, name`
   )
 };
 

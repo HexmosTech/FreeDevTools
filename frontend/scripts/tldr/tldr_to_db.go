@@ -278,6 +278,25 @@ func ensureSchema(db *sql.DB) error {
 		return err
 	}
 
+	// Cluster Previews table
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS cluster_previews (
+			url_hash INTEGER PRIMARY KEY,
+			url TEXT NOT NULL,
+			cluster TEXT NOT NULL,
+			name TEXT NOT NULL,
+			platform TEXT DEFAULT '',
+			description TEXT DEFAULT ''
+		);
+	`)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec("CREATE INDEX IF NOT EXISTS idx_cluster_previews_cluster ON cluster_previews(cluster);")
+	if err != nil {
+		return err
+	}
+
 	// Overview table
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS overview (
@@ -426,6 +445,25 @@ func main() {
 		}
 	}
 	if err := clusterTx.Commit(); err != nil {
+		log.Fatal(err)
+	}
+
+	// Populate Cluster Previews
+	fmt.Println("\nPopulating cluster previews...")
+	if _, err := db.Exec("DELETE FROM cluster_previews"); err != nil {
+		log.Fatal(err)
+	}
+	
+	_, err = db.Exec(`
+		INSERT INTO cluster_previews (url_hash, url, cluster, name, platform, description)
+		SELECT url_hash, url, cluster, name, platform, description
+		FROM (
+			SELECT url_hash, url, cluster, name, platform, description,
+			ROW_NUMBER() OVER (PARTITION BY cluster ORDER BY name) as rn 
+			FROM pages
+		) WHERE rn <= 3
+	`)
+	if err != nil {
 		log.Fatal(err)
 	}
 
