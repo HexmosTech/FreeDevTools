@@ -88,7 +88,7 @@ parentPort?.on('message', (message: QueryMessage) => {
   const startTime = new Date();
   const timestampLabel = highlight(`[${startTime.toISOString()}]`, logColors.timestamp);
   const dbLabel = highlight('[TLDR_DB]', logColors.dbLabel);
-  console.log(`${timestampLabel} ${dbLabel} Worker ${workerId} handling ${type}`);
+  console.log(`${timestampLabel} ${dbLabel} Worker ${workerId} START ${type} params=${JSON.stringify(params)}`);
 
   try {
     let result: any;
@@ -162,25 +162,29 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getClusterPreviews': {
-        const rows = statements.clusterPreviews.all() as any[];
-        // Group by cluster
-        const resultMap: Record<string, any[]> = {};
-        rows.forEach(row => {
-          if (!resultMap[row.cluster]) {
-            resultMap[row.cluster] = [];
-          }
-          resultMap[row.cluster].push({
-            ...row,
-            keywords: [],
-            features: [],
-            examples: [],
-            raw_content: '',
-            path: '',
-            title: '',
-            more_info_url: ''
+        // Cache the result in memory since it's expensive and data is read-only
+        if (!(global as any).clusterPreviewsCache) {
+          const rows = statements.clusterPreviews.all() as any[];
+          // Group by cluster
+          const resultMap: Record<string, any[]> = {};
+          rows.forEach(row => {
+            if (!resultMap[row.cluster]) {
+              resultMap[row.cluster] = [];
+            }
+            resultMap[row.cluster].push({
+              ...row,
+              keywords: [],
+              features: [],
+              examples: [],
+              raw_content: '',
+              path: '',
+              title: '',
+              more_info_url: ''
+            });
           });
-        });
-        result = resultMap;
+          (global as any).clusterPreviewsCache = resultMap;
+        }
+        result = (global as any).clusterPreviewsCache;
         break;
       }
 
@@ -196,7 +200,7 @@ parentPort?.on('message', (message: QueryMessage) => {
     const endTimestamp = highlight(`[${endTime.toISOString()}]`, logColors.timestamp);
     const endDbLabel = highlight('[TLDR_DB]', logColors.dbLabel);
     console.log(
-      `${endTimestamp} ${endDbLabel} Worker ${workerId} ${type} finished in ${
+      `${endTimestamp} ${endDbLabel} Worker ${workerId} END ${type} finished in ${
         endTime.getTime() - startTime.getTime()
       }ms`
     );

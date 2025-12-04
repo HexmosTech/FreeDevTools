@@ -46,7 +46,7 @@ interface QueryResponse {
 
 function getDbPath(): string {
   const projectRoot = findProjectRoot();
-  return path.resolve(projectRoot, 'db/all_dbs/tldr-db.db');
+  return path.resolve(projectRoot, 'db/all_dbs/tldr-db-v1.db');
 }
 
 /**
@@ -182,7 +182,7 @@ async function executeQuery(type: string, params: any): Promise<any> {
   workerIndex = (workerIndex + 1) % workers.length;
 
   const startTime = new Date();
-  console.log(`[TLDR_DB][${startTime.toISOString()}] Dispatching ${type}`);
+  console.log(`[TLDR_DB][${startTime.toISOString()}] Dispatching ${type} params=${JSON.stringify(params)}`);
   return new Promise((resolve, reject) => {
     const queryId = `${Date.now()}-${Math.random()}`;
     const timeout = setTimeout(() => {

@@ -25,7 +25,7 @@ import (
 // Paths
 const (
 	DataDir = "../../data/tldr"
-	DbPath  = "../../db/all_dbs/tldr-db.db"
+	DbPath  = "../../db/all_dbs/tldr-db-v1.db"
 )
 
 // ... (keep structs)
