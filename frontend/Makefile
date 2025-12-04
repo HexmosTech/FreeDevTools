@@ -26,6 +26,23 @@ serve-prod:
 stop-prod:
 	cd serve && pmdaemon delete all --force && bash kill-ports.sh && bash kill-ports.sh
 
+deploy-ssr:
+	@echo "⬆️  Deploying SSR build to server..."
+
+	@rsync -rvz --delete --info=progress2 --no-perms --no-owner --no-group --no-times \
+		./dist/ \
+		ubuntu@nats03:FreeDevTools/frontend/dist/
+
+	@rsync -rvz --delete --info=progress2 --no-perms --no-owner --no-group --no-times \
+		./.astro/ \
+		ubuntu@nats03:FreeDevTools/frontend/.astro/
+
+	@rsync -rvz --delete --info=progress2 --no-perms --no-owner --no-group --no-times \
+		./db/ \
+		ubuntu@nats03:FreeDevTools/frontend/db/
+
+	@echo "✅ SSR deployment completed successfully"
+
 
 # Generate all tool banners
 banners:
