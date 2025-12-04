@@ -246,8 +246,7 @@ export const query = {
     executeQuery('getClusterByName', { hashName }),
   getPagesByCluster: (cluster: string) =>
     executeQuery('getPagesByCluster', { cluster }),
-  getPageByClusterAndName: (cluster: string, name: string) =>
-    executeQuery('getPageByClusterAndName', { cluster, name }),
+
   getClusterPreviews: () => executeQuery('getClusterPreviews', {}),
   getPageByUrlHash: (hash: string) =>
     executeQuery('getPageByUrlHash', { hash }),

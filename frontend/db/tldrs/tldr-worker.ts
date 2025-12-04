@@ -59,12 +59,9 @@ const statements = {
      more_info_url, keywords, features, examples, html_content, path
      FROM pages WHERE url_hash = ?`
   ),
-  pageByClusterAndName: db.prepare(
-    `SELECT url_hash, url, cluster, name, platform, title, description,
-     more_info_url, keywords, features, examples, html_content, path
-     FROM pages WHERE cluster = ? AND name = ?`
-  ),
-  clusterPreviews: db.prepare(
+
+ 
+  clusterPreviews: db.prepare( 
     `SELECT * FROM (
        SELECT url_hash, url, cluster, name, platform, description,
        ROW_NUMBER() OVER (PARTITION BY cluster ORDER BY name) as rn 
@@ -72,6 +69,10 @@ const statements = {
      ) WHERE rn <= 3`
   )
 };
+
+// clusterPreviews is taking 0.5 seconds need to improve db structure for this
+// pageByClusterAndName is taking 1 ms 
+
 
 // Signal ready
 parentPort?.postMessage({ ready: true });
@@ -129,21 +130,7 @@ parentPort?.on('message', (message: QueryMessage) => {
         break;
       }
 
-      case 'getPageByClusterAndName': {
-        const { cluster, name } = params;
-        const row = statements.pageByClusterAndName.get(cluster, name) as any;
-        if (!row) {
-          result = null;
-        } else {
-          result = {
-            ...row,
-            keywords: JSON.parse(row.keywords || '[]'),
-            features: JSON.parse(row.features || '[]'),
-            examples: JSON.parse(row.examples || '[]'),
-          };
-        }
-        break;
-      }
+
       
       case 'getPageByUrlHash': {
         const { hash } = params;
@@ -162,29 +149,25 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getClusterPreviews': {
-        // Cache the result in memory since it's expensive and data is read-only
-        if (!(global as any).clusterPreviewsCache) {
-          const rows = statements.clusterPreviews.all() as any[];
-          // Group by cluster
-          const resultMap: Record<string, any[]> = {};
-          rows.forEach(row => {
-            if (!resultMap[row.cluster]) {
-              resultMap[row.cluster] = [];
-            }
-            resultMap[row.cluster].push({
-              ...row,
-              keywords: [],
-              features: [],
-              examples: [],
-              raw_content: '',
-              path: '',
-              title: '',
-              more_info_url: ''
-            });
+        const rows = statements.clusterPreviews.all() as any[];
+        // Group by cluster
+        const resultMap: Record<string, any[]> = {};
+        rows.forEach(row => {
+          if (!resultMap[row.cluster]) {
+            resultMap[row.cluster] = [];
+          }
+          resultMap[row.cluster].push({
+            ...row,
+            keywords: [],
+            features: [],
+            examples: [],
+            raw_content: '',
+            path: '',
+            title: '',
+            more_info_url: ''
           });
-          (global as any).clusterPreviewsCache = resultMap;
-        }
-        result = (global as any).clusterPreviewsCache;
+        });
+        result = resultMap;
         break;
       }
 
