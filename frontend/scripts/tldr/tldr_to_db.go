@@ -39,7 +39,7 @@ type Page struct {
 }
 
 type MainPage struct {
-	Hash       string
+	Hash       int64
 	Data       string // JSON
 	TotalCount int
 }
@@ -204,10 +204,10 @@ func ensureSchema(db *sql.DB) error {
 	// MainPages table - Pre-calculated lists
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS main_pages (
-			hash TEXT PRIMARY KEY,
+			hash INTEGER PRIMARY KEY,
 			data TEXT DEFAULT '{}', -- JSON
 			total_count INTEGER NOT NULL
-		);
+		) WITHOUT ROWID;
 	`)
 	if err != nil {
 		return err
@@ -365,7 +365,7 @@ func main() {
 
 			// Hash: cluster/page (e.g., common/1)
 			hashKey := fmt.Sprintf("%s/%d", cluster, pageNum)
-			hash := hashString(hashKey)
+			hash := get8Bytes(hashString(hashKey))
 
 			_, err = stmt.Exec(hash, string(dataJson), totalCount)
 			if err != nil {
@@ -402,7 +402,7 @@ func main() {
 
 		// Hash: index/page (e.g., index/1)
 		hashKey := fmt.Sprintf("index/%d", pageNum)
-		hash := hashString(hashKey)
+		hash := get8Bytes(hashString(hashKey))
 
 		_, err = stmt.Exec(hash, string(dataJson), totalPlatforms)
 		if err != nil {
