@@ -1,7 +1,9 @@
 import {
-    getAllClusters,
-    getClusterPreviews,
-    getPagesByCluster,
+  getAllClusters,
+  getClusterPreviews,
+  getCountPagesByCluster,
+  getPagesByCluster,
+  getPagesByClusterPaginated
 } from '../../db/tldrs/tldr-utils';
 
 /**
@@ -104,6 +106,31 @@ export async function getTldrPlatformCommands(platform: string) {
     description: page.description || `Documentation for ${page.name} command`,
     category: page.platform,
   }));
+}
+
+/**
+ * Get paginated commands for a specific platform
+ */
+export async function getTldrPlatformCommandsPaginated(platform: string, page: number, itemsPerPage: number) {
+  const offset = (page - 1) * itemsPerPage;
+  
+  const [totalCount, pages] = await Promise.all([
+    getCountPagesByCluster(platform),
+    getPagesByClusterPaginated(platform, itemsPerPage, offset)
+  ]);
+
+  const commands = pages.map((page) => ({
+    name: page.name,
+    url: page.path || `/freedevtools/tldr/${platform}/${page.name}/`,
+    description: page.description || `Documentation for ${page.name} command`,
+    category: page.platform,
+  }));
+
+  return {
+    commands,
+    totalCount,
+    totalPages: Math.ceil(totalCount / itemsPerPage)
+  };
 }
 
 /**

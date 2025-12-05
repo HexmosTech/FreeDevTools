@@ -246,6 +246,10 @@ export const query = {
     executeQuery('getClusterByName', { hashName }),
   getPagesByCluster: (cluster: string) =>
     executeQuery('getPagesByCluster', { cluster }),
+  getCountPagesByCluster: (cluster: string) =>
+    executeQuery('getCountPagesByCluster', { cluster }),
+  getPagesByClusterPaginated: (cluster: string, limit: number, offset: number) =>
+    executeQuery('getPagesByClusterPaginated', { cluster, limit, offset }),
 
   getClusterPreviews: () => executeQuery('getClusterPreviews', {}),
   getPageByUrlHash: (hash: string) =>

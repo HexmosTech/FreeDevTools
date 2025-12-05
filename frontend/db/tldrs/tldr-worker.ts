@@ -53,6 +53,13 @@ const statements = {
     `SELECT url_hash, url, cluster, name, platform, title, description, features, path
      FROM pages WHERE cluster = ? ORDER BY name`
   ),
+  countPagesByCluster: db.prepare(
+    `SELECT COUNT(*) as count FROM pages WHERE cluster = ?`
+  ),
+  pagesByClusterPaginated: db.prepare(
+    `SELECT url_hash, url, cluster, name, platform, title, description, features, path
+     FROM pages WHERE cluster = ? ORDER BY name LIMIT ? OFFSET ?`
+  ),
   pageByUrlHash: db.prepare(
     `SELECT title, description, keywords, html_content
      FROM pages WHERE url_hash = ?`
@@ -116,6 +123,23 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getPagesByCluster': {
         const { cluster } = params;
         const rows = statements.pagesByCluster.all(cluster) as any[];
+        result = rows.map((row) => ({
+          ...row,
+          features: JSON.parse(row.features || '[]'),
+        }));
+        break;
+      }
+
+      case 'getCountPagesByCluster': {
+        const { cluster } = params;
+        const row = statements.countPagesByCluster.get(cluster) as { count: number } | undefined;
+        result = row?.count ?? 0;
+        break;
+      }
+
+      case 'getPagesByClusterPaginated': {
+        const { cluster, limit, offset } = params;
+        const rows = statements.pagesByClusterPaginated.all(cluster, limit, offset) as any[];
         result = rows.map((row) => ({
           ...row,
           features: JSON.parse(row.features || '[]'),

@@ -18,6 +18,14 @@ export async function getPagesByCluster(cluster: string): Promise<Page[]> {
   return query.getPagesByCluster(cluster);
 }
 
+export async function getCountPagesByCluster(cluster: string): Promise<number> {
+  return query.getCountPagesByCluster(cluster);
+}
+
+export async function getPagesByClusterPaginated(cluster: string, limit: number, offset: number): Promise<Page[]> {
+  return query.getPagesByClusterPaginated(cluster, limit, offset);
+}
+
 export async function getClusterByName(name: string): Promise<Cluster | null> {
   const hashName = hashNameToKey(name);
   return query.getClusterByName(hashName);
