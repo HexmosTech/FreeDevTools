@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import {
-  getTldrPlatformCommands,
-  getTldrPlatformPreviews,
+  getAllTldrPlatforms,
+  getTldrPlatformCommandsPaginated,
 } from '../../../lib/tldr-utils';
 import Tldr from '../_Tldr.astro';
 import TldrPlatform from '../_TldrPlatform.astro';
@@ -18,7 +18,7 @@ if (!platform) {
 let paginationData: any = null;
 let platformData: any = null;
 
-// If platform is numeric, this is actually a pagination route
+// If platform is numeric, this is actually a pagination route for the main index
 // Render pagination content directly (workaround for route priority)
 if (/^\d+$/.test(platform)) {
   const currentPage = parseInt(platform, 10);
@@ -28,32 +28,31 @@ if (/^\d+$/.test(platform)) {
     return Astro.redirect('/freedevtools/tldr/');
   }
 
-  // Fetch platforms data directly (SSR mode)
+  // Fetch paginated platforms data
   const start = Date.now();
-  const allPlatforms = await getTldrPlatformPreviews();
+  const result = await getAllTldrPlatforms(currentPage);
   console.log(
-    `[TLDR_PLATFORM_PAGE] getTldrPlatformPreviews finished in ${Date.now() - start}ms`
+    `[TLDR_PLATFORM_PAGE] getAllTldrPlatforms(${currentPage}) finished in ${Date.now() - start}ms`
   );
-  const itemsPerPage = 30;
-  const totalPages = Math.ceil(allPlatforms.length / itemsPerPage);
 
-  // Validate page number
-  if (currentPage > totalPages || currentPage < 1) {
+  if (!result) {
     return Astro.redirect('/404');
   }
 
-  const totalPlatforms = allPlatforms.length;
+  const {
+    platforms: currentPagePlatforms,
+    total: totalPlatforms,
+    total_pages: totalPages,
+    page,
+    total_commands: totalCommands,
+  } = result;
 
-  // Get platforms for current page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentPagePlatforms = allPlatforms.slice(startIndex, endIndex);
+  // Validate page number
+  if (page > totalPages || page < 1) {
+    return Astro.redirect('/404');
+  }
 
-  // Calculate total commands across all platforms
-  const totalCommands = allPlatforms.reduce(
-    (total: number, platform: any) => total + platform.count,
-    0
-  );
+  const itemsPerPage = 30;
 
   // Breadcrumb data
   const breadcrumbItems = [
@@ -92,25 +91,24 @@ if (/^\d+$/.test(platform)) {
     itemsPerPage,
   };
 } else {
-  // Get all commands for this platform
+  // Get commands for this platform (Page 1)
   const start = Date.now();
-  const allCommands = await getTldrPlatformCommands(platform);
+  const result = await getTldrPlatformCommandsPaginated(platform, 1);
   console.log(
-    `[TLDR_PLATFORM_PAGE] getTldrPlatformCommands(${platform}) finished in ${Date.now() - start}ms`
+    `[TLDR_PLATFORM_PAGE] getTldrPlatformCommandsPaginated(${platform}, 1) finished in ${Date.now() - start}ms`
   );
 
-  if (!allCommands || allCommands.length === 0) {
+  if (!result) {
     return Astro.redirect('/404');
   }
 
-  // Pagination logic for page 1
+  const {
+    commands,
+    total: totalCommands,
+    total_pages: totalPages,
+    page: currentPage,
+  } = result;
   const itemsPerPage = 30;
-  const currentPage = 1;
-  const totalPages = Math.ceil(allCommands.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const commands = allCommands.slice(startIndex, endIndex);
-  const totalCommands = allCommands.length;
 
   // Breadcrumb data
   const breadcrumbItems = [

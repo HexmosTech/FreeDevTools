@@ -1,52 +1,46 @@
-export interface Example {
-  description: string;
-  cmd: string;
-}
-
-export interface Page {
-  id: number;
-  cluster: string;
-  name: string;
-  platform: string;
-  title: string;
-  description: string;
-  more_info_url?: string;
-  keywords?: string[]; // JSON array
-  features: string[]; // JSON array
-  examples?: Example[]; // JSON array of {description, cmd}
-  raw_content?: string;
-  html_content?: string;
-  path: string;
-}
-
-export interface Cluster {
-  name: string;
-  hash_name: string;
-  count: number;
-  description: string;
-}
-
-export interface Overview {
-  id: number;
-  total_count: number;
-}
-
-// Raw database row types (before JSON parsing)
-export interface RawPageRow {
-  url_hash: number;
+export interface PageMetadata {
   url: string;
   cluster: string;
   name: string;
   platform: string;
   title: string;
   description: string;
-  more_info_url: string;
-  keywords: string; // JSON string
-  features: string; // JSON string
-  examples: string; // JSON string
-  raw_content: string;
+  keywords: string[];
+  features: string[];
+}
+
+export interface Page {
+  url_hash: number;
   html_content: string;
-  path: string;
+  metadata: PageMetadata;
+}
+
+export interface CommandSummary {
+  name: string;
+  url: string;
+  description: string;
+  category: string;
+  features: string[];
+}
+
+export interface PlatformSummary {
+  name: string;
+  count: number;
+  url: string;
+}
+
+export interface MainPageData {
+  commands?: CommandSummary[];
+  platforms?: PlatformSummary[];
+  total: number;
+  page: number;
+  total_pages: number;
+}
+
+export interface MainPage {
+  hash: string;
+  data: MainPageData;
+  total_count: number;
 }
 
 export interface RawClusterRow {

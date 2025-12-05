@@ -1,157 +1,47 @@
-import {
-  getAllClusters,
-  getClusterPreviews,
-  getCountPagesByCluster,
-  getPagesByCluster,
-  getPagesByClusterPaginated
-} from '../../db/tldrs/tldr-utils';
+import { query } from '../../db/tldrs/tldr-worker-pool';
 
-/**
- * Generate paginated paths for TLDR platforms
- */
-export async function generateTldrStaticPaths() {
-  const clusters = await getAllClusters();
-
-  const platforms = clusters.map((cluster) => ({
-    name: cluster.name,
-    count: cluster.count,
-    url: `/freedevtools/tldr/${cluster.name}/`,
-  }));
-
-  const itemsPerPage = 30;
-  const totalPages = Math.ceil(platforms.length / itemsPerPage);
-  const paths: any[] = [];
-
-  // Generate pagination pages (2, 3, 4, etc. - page 1 is handled by index.astro)
-  for (let i = 2; i <= totalPages; i++) {
-    paths.push({
-      params: { page: i.toString() },
-      props: {
-        type: 'pagination',
-        page: i,
-        itemsPerPage,
-        totalPages,
-        platforms,
-      },
-    });
-  }
-
-  return paths;
+// Helper to hash string to 8-byte int (matching Go logic)
+async function getHash(key: string): Promise<string> {
+  const msgUint8 = new TextEncoder().encode(key);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  // Take first 8 bytes
+  const bytes = hashArray.slice(0, 8);
+  // Convert to 64-bit signed integer (BigEndian)
+  const view = new DataView(new Uint8Array(bytes).buffer);
+  return view.getBigInt64(0, false).toString(); // Return as string to preserve precision
 }
 
-/**
- * Generate paginated paths for TLDR platform commands
- */
-export async function generateTldrPlatformStaticPaths() {
-  const clusters = await getAllClusters();
-  const paths: any[] = [];
-
-  // Fetch all pages for all clusters in parallel to speed up build
-  const clusterPagesPromises = clusters.map(async (cluster) => {
-    const pages = await getPagesByCluster(cluster.name);
-    return { cluster: cluster.name, pages };
-  });
-
-  const allClusterPages = await Promise.all(clusterPagesPromises);
-
-  for (const { cluster, pages } of allClusterPages) {
-    const itemsPerPage = 30;
-    const totalPages = Math.ceil(pages.length / itemsPerPage);
-
-    // Generate pagination pages for this platform (2, 3, 4, etc. - page 1 is handled by [platform]/index.astro)
-    for (let i = 2; i <= totalPages; i++) {
-      paths.push({
-        params: { platform: cluster, page: i.toString() },
-        props: {
-          type: 'pagination',
-          page: i,
-          itemsPerPage,
-          totalPages,
-          commands: pages.map((page) => ({
-            name: page.name,
-            url: page.path || `/freedevtools/tldr/${cluster}/${page.name}/`,
-            description: page.description || `Documentation for ${page.name} command`,
-            category: page.platform,
-          })),
-        },
-      });
-    }
-  }
-
-  return paths;
+export async function getTldrPlatformCommandsPaginated(
+  platform: string,
+  page: number = 1
+) {
+  const hashKey = `${platform}/${page}`;
+  const hash = await getHash(hashKey);
+  const result = await query.getMainPage(hash);
+  return result;
 }
 
-/**
- * Get all TLDR platforms with their data
- */
-export async function getAllTldrPlatforms() {
-  const clusters = await getAllClusters();
-
-  return clusters.map((cluster) => ({
-    name: cluster.name,
-    count: cluster.count,
-    url: `/freedevtools/tldr/${cluster.name}/`,
-  }));
+export async function getAllTldrPlatforms(page: number = 1) {
+  const hashKey = `index/${page}`;
+  const hash = await getHash(hashKey);
+  const result = await query.getMainPage(hash);
+  return result;
 }
 
-/**
- * Get commands for a specific platform
- */
-export async function getTldrPlatformCommands(platform: string) {
-  const pages = await getPagesByCluster(platform);
-
-  return pages.map((page) => ({
-    name: page.name,
-    url: page.path || `/freedevtools/tldr/${platform}/${page.name}/`,
-    description: page.description || `Documentation for ${page.name} command`,
-    category: page.platform,
-  }));
-}
-
-/**
- * Get paginated commands for a specific platform
- */
-export async function getTldrPlatformCommandsPaginated(platform: string, page: number, itemsPerPage: number) {
-  const offset = (page - 1) * itemsPerPage;
+export async function getTldrPage(platform: string, slug: string) {
+  const hashKey = `${platform}/${slug}`;
+  const hash = await getHash(hashKey);
+  const page = await query.getPage(hash);
   
-  const [totalCount, pages] = await Promise.all([
-    getCountPagesByCluster(platform),
-    getPagesByClusterPaginated(platform, itemsPerPage, offset)
-  ]);
-
-  const commands = pages.map((page) => ({
-    name: page.name,
-    url: page.path || `/freedevtools/tldr/${platform}/${page.name}/`,
-    description: page.description || `Documentation for ${page.name} command`,
-    category: page.platform,
-  }));
+  if (!page) return null;
 
   return {
-    commands,
-    totalCount,
-    totalPages: Math.ceil(totalCount / itemsPerPage)
+    ...page,
+    ...page.metadata,
   };
 }
 
-/**
- * Get previews for all platforms (top 3 commands each)
- */
-export async function getTldrPlatformPreviews() {
-  const clusters = await getAllClusters();
-  const previewsMap = await getClusterPreviews(clusters);
-  
-  return clusters.map((cluster) => {
-    const commands = previewsMap.get(cluster.name) || [];
-    return {
-      name: cluster.name,
-      count: cluster.count,
-      url: `/freedevtools/tldr/${cluster.name}/`,
-      commands: commands.map(cmd => ({
-        name: cmd.name,
-        url: cmd.path || `/freedevtools/tldr/${cluster.name}/${cmd.name}/`,
-        description: cmd.description,
-        category: cmd.platform
-      }))
-    };
-  });
+export async function getTldrOverview() {
+  return await query.getOverview();
 }

@@ -239,21 +239,9 @@ export function cleanupWorkers(): Promise<void> {
 
 // Export query functions
 export const query = {
-  getTotalPages: () => executeQuery('getTotalPages', {}),
-  getTotalClusters: () => executeQuery('getTotalClusters', {}),
-  getClusters: () => executeQuery('getClusters', {}),
-  getClusterByName: (hashName: string) =>
-    executeQuery('getClusterByName', { hashName }),
-  getPagesByCluster: (cluster: string) =>
-    executeQuery('getPagesByCluster', { cluster }),
-  getCountPagesByCluster: (cluster: string) =>
-    executeQuery('getCountPagesByCluster', { cluster }),
-  getPagesByClusterPaginated: (cluster: string, limit: number, offset: number) =>
-    executeQuery('getPagesByClusterPaginated', { cluster, limit, offset }),
-
-  getClusterPreviews: () => executeQuery('getClusterPreviews', {}),
-  getPageByUrlHash: (hash: string) =>
-    executeQuery('getPageByUrlHash', { hash }),
+  getOverview: () => executeQuery('getOverview', {}),
+  getMainPage: (hash: string) => executeQuery('getMainPage', { hash }),
+  getPage: (hash: string) => executeQuery('getPage', { hash }),
 };
 
 void initWorkers().catch((err) => {

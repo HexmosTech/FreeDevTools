@@ -393,10 +393,11 @@ func main() {
 
 		chunk := platforms[startIdx:endIdx]
 		data := map[string]interface{}{
-			"platforms":   chunk,
-			"total":       totalPlatforms,
-			"page":        pageNum,
-			"total_pages": totalIndexPages,
+			"platforms":      chunk,
+			"total":          totalPlatforms,
+			"page":           pageNum,
+			"total_pages":    totalIndexPages,
+			"total_commands": len(allPages),
 		}
 		dataJson, _ := json.Marshal(data)
 

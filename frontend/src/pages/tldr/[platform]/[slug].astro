@@ -1,5 +1,4 @@
 ---
-import { getPageByNameViaHash } from '../../../../db/tldrs/tldr-utils';
 import AdBanner from '../../../components/banner/AdBanner.astro';
 import Banner from '../../../components/banner/BannerIndex.astro';
 import CreditsButton from '../../../components/buttons/CreditsButton';
@@ -7,7 +6,7 @@ import SeeAlsoIndex from '../../../components/seealso/SeeAlsoIndex.astro';
 import ToolContainer from '../../../components/tool/ToolContainer';
 import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getTldrPlatformCommandsPaginated } from '../../../lib/tldr-utils';
+import { getTldrPage, getTldrPlatformCommandsPaginated } from '../../../lib/tldr-utils';
 import TldrPlatform from '../_TldrPlatform.astro';
 
 export const prerender = false;
@@ -16,41 +15,32 @@ const { platform, slug } = Astro.params;
 console.log(`[TLDR_SLUG_PAGE] Start rendering ${platform}/${slug}`);
 const startRender = Date.now();
 
-// [slug] route should never match the index route, but if it does, return 404 immediately
-// This prevents any redirect loops
 if (!platform || !slug) {
   return new Response(null, { status: 404 });
 }
 
-// slug from [slug] route is a string (single segment)
-const slugValue = slug;
-
 // Check if slug is a page number (pagination) or a command name
-const isNumericPage = slugValue && /^\d+$/.test(slugValue);
-const pageNumber = isNumericPage ? parseInt(slugValue, 10) : null;
-const command = !isNumericPage ? slugValue : null;
+const isNumericPage = /^\d+$/.test(slug);
+const pageNumber = isNumericPage ? parseInt(slug, 10) : null;
+const command = !isNumericPage ? slug : null;
 
 let pageData: any = null;
 let commandData: any = null;
 let htmlContent: string = '';
-console.log(`[TLDR_SLUG_PAGE] Initialized variables in ${Date.now() - startRender}ms`);
 
-// Handle pagination route: /tldr/[platform]/[page]
 if (pageNumber !== null) {
-  // Redirect page 1 to platform index
+  // Handle pagination route: /tldr/[platform]/[page]
   if (pageNumber === 1) {
     return Astro.redirect(`/freedevtools/tldr/${platform}/`);
   }
 
-  const itemsPerPage = 30;
-  const currentPage = pageNumber;
-
-  // Get paginated commands for this platform
-  const start = Date.now();
-  const { commands: currentPageCommands, totalCount: totalCommands, totalPages } = 
-    await getTldrPlatformCommandsPaginated(platform, currentPage, itemsPerPage);
+  const result = await getTldrPlatformCommandsPaginated(platform, pageNumber);
   
-  console.log(`[TLDR_SLUG_PAGE] getTldrPlatformCommandsPaginated(${platform}, ${currentPage}) finished in ${Date.now() - start}ms`);
+  if (!result) {
+    return Astro.redirect('/404');
+  }
+
+  const { commands: currentPageCommands, total: totalCommands, total_pages: totalPages, page: currentPage } = result;
 
   // Validate page number
   if (currentPage > totalPages || currentPage < 1) {
@@ -95,12 +85,11 @@ if (pageNumber !== null) {
   };
 } else if (command) {
   // Handle command route: /tldr/[platform]/[command]
-  // Find the entry by platform and command
-  // Measure Hash DB Fetch
   const startDb = Date.now();
-  const page = await getPageByNameViaHash(platform, command);
+  const page = await getTldrPage(platform, command);
   const duration = Date.now() - startDb;
-  console.log(`[TLDR_SLUG_PAGE] getPageByNameViaHash(${platform}, ${command}) finished in ${duration}ms`);
+  console.log(`[TLDR_SLUG_PAGE] getTldrPage(${platform}, ${command}) finished in ${duration}ms`);
+  
   if ((Astro.locals as any).timings) {
     (Astro.locals as any).timings['db fetch'] = duration;
   }
@@ -109,14 +98,11 @@ if (pageNumber !== null) {
     return Astro.redirect('/404');
   }
 
-  // Use pre-rendered HTML from DB
   htmlContent = page.html_content || '';
   
   const title = page.title || command;
-  const description =
-    page.description || `Documentation for ${command} command`;
+  const description = page.description || `Documentation for ${command} command`;
 
-  // Breadcrumb items
   const breadcrumbItems = [
     { label: 'Free DevTools', href: '/freedevtools/' },
     { label: 'TLDR', href: '/freedevtools/tldr/' },
@@ -130,7 +116,6 @@ if (pageNumber !== null) {
     description,
     breadcrumbItems,
   };
-  console.log(`[TLDR_SLUG_PAGE] commandData prepared in ${Date.now() - startRender}ms`);
 } else {
   return Astro.redirect('/404');
 }

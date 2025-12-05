@@ -39,37 +39,15 @@ setPragma('PRAGMA query_only = ON'); // Read-only mode
 setPragma('PRAGMA page_size = 4096'); // Optimal page size
 
 const statements = {
-  totalPages: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
-  totalClusters: db.prepare('SELECT COUNT(*) as count FROM cluster'),
-  clusters: db.prepare(
-    `SELECT name, hash_name, count, description 
-     FROM cluster ORDER BY name`
-  ),
-  clusterByName: db.prepare(
-    `SELECT name, hash_name, count, description 
-     FROM cluster WHERE hash_name = ?`
-  ),
-  pagesByCluster: db.prepare(
-    `SELECT url_hash, url, cluster, name, platform, title, description, features, path
-     FROM pages WHERE cluster = ? ORDER BY name`
-  ),
-  countPagesByCluster: db.prepare(
-    `SELECT COUNT(*) as count FROM pages WHERE cluster = ?`
-  ),
-  pagesByClusterPaginated: db.prepare(
-    `SELECT url_hash, url, cluster, name, platform, title, description, features, path
-     FROM pages WHERE cluster = ? ORDER BY name LIMIT ? OFFSET ?`
-  ),
-  pageByUrlHash: db.prepare(
-    `SELECT title, description, keywords, html_content
-     FROM pages WHERE url_hash = ?`
+  getOverview: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
+  
+  getMainPage: db.prepare(
+    `SELECT data, total_count FROM main_pages WHERE hash = ?`
   ),
 
- 
-  clusterPreviews: db.prepare( 
-    `SELECT url_hash, url, cluster, name, platform, description 
-     FROM cluster_previews ORDER BY cluster, name`
-  )
+  getPage: db.prepare(
+    `SELECT html_content, metadata FROM pages WHERE url_hash = ?`
+  ),
 };
 
 // clusterPreviews is taking 0.5 seconds need to improve db structure for this
@@ -97,94 +75,37 @@ parentPort?.on('message', (message: QueryMessage) => {
     let result: any;
 
     switch (type) {
-      case 'getTotalPages': {
-        const row = statements.totalPages.get() as { total_count: number } | undefined;
+      case 'getOverview': {
+        const row = statements.getOverview.get() as { total_count: number } | undefined;
         result = row?.total_count ?? 0;
         break;
       }
 
-      case 'getTotalClusters': {
-        const row = statements.totalClusters.get() as { count: number } | undefined;
-        result = row?.count ?? 0;
-        break;
-      }
-
-      case 'getClusters': {
-        result = statements.clusters.all();
-        break;
-      }
-
-      case 'getClusterByName': {
-        const { hashName } = params;
-        result = statements.clusterByName.get(hashName);
-        break;
-      }
-
-      case 'getPagesByCluster': {
-        const { cluster } = params;
-        const rows = statements.pagesByCluster.all(cluster) as any[];
-        result = rows.map((row) => ({
-          ...row,
-          features: JSON.parse(row.features || '[]'),
-        }));
-        break;
-      }
-
-      case 'getCountPagesByCluster': {
-        const { cluster } = params;
-        const row = statements.countPagesByCluster.get(cluster) as { count: number } | undefined;
-        result = row?.count ?? 0;
-        break;
-      }
-
-      case 'getPagesByClusterPaginated': {
-        const { cluster, limit, offset } = params;
-        const rows = statements.pagesByClusterPaginated.all(cluster, limit, offset) as any[];
-        result = rows.map((row) => ({
-          ...row,
-          features: JSON.parse(row.features || '[]'),
-        }));
-        break;
-      }
-
-
-      
-      case 'getPageByUrlHash': {
+      case 'getMainPage': {
         const { hash } = params;
-        const row = statements.pageByUrlHash.get(hash) as any;
-        if (!row) {
-          result = null;
-        } else {
+        const row = statements.getMainPage.get(hash) as { data: string; total_count: number } | undefined;
+        if (row) {
           result = {
-            ...row,
-            keywords: JSON.parse(row.keywords || '[]'),
-            features: JSON.parse(row.features || '[]'),
-            examples: JSON.parse(row.examples || '[]'),
+            ...JSON.parse(row.data),
+            total_count: row.total_count
           };
+        } else {
+          result = null;
         }
         break;
       }
 
-      case 'getClusterPreviews': {
-        const rows = statements.clusterPreviews.all() as any[];
-        // Group by cluster
-        const resultMap: Record<string, any[]> = {};
-        rows.forEach(row => {
-          if (!resultMap[row.cluster]) {
-            resultMap[row.cluster] = [];
-          }
-          resultMap[row.cluster].push({
-            ...row,
-            keywords: [],
-            features: [],
-            examples: [],
-            raw_content: '',
-            path: '',
-            title: '',
-            more_info_url: ''
-          });
-        });
-        result = resultMap;
+      case 'getPage': {
+        const { hash } = params;
+        const row = statements.getPage.get(hash) as { html_content: string; metadata: string } | undefined;
+        if (row) {
+          result = {
+            html_content: row.html_content,
+            ...JSON.parse(row.metadata)
+          };
+        } else {
+          result = null;
+        }
         break;
       }
 
