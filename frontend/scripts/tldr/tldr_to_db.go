@@ -328,11 +328,26 @@ func main() {
 		totalPages := int(math.Ceil(float64(totalCount) / float64(itemsPerPage)))
 
 		// Add to platforms list for index
-		platforms = append(platforms, map[string]interface{}{
-			"name":  cluster,
-			"count": totalCount,
-			"url":   fmt.Sprintf("/freedevtools/tldr/%s/", cluster),
-		})
+		// Get top 5 commands for preview
+		var commandPreviews []map[string]string
+		previewCount := 5
+		if len(pages) < previewCount {
+			previewCount = len(pages)
+		}
+		for k := 0; k < previewCount; k++ {
+			commandPreviews = append(commandPreviews, map[string]string{
+				"name": pages[k].Name,
+				"url":  fmt.Sprintf("/freedevtools/tldr/%s/%s/", cluster, pages[k].Name),
+			})
+		}
+
+		platformData := map[string]interface{}{
+			"name":     cluster,
+			"count":    totalCount,
+			"url":      fmt.Sprintf("/freedevtools/tldr/%s/", cluster),
+			"commands": commandPreviews,
+		}
+		platforms = append(platforms, platformData)
 
 		// Generate paginated lists for this cluster
 		for i := 0; i < totalPages; i++ {

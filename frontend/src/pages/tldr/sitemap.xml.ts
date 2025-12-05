@@ -1,91 +1,98 @@
 import type { APIRoute } from 'astro';
 import {
-    generateTldrPlatformStaticPaths,
-    generateTldrStaticPaths,
+    getAllTldrPlatforms,
+    getTldrPlatformCommandsPaginated,
 } from '../../lib/tldr-utils';
 
-import {
-    getAllClusters,
-    getPagesByCluster,
-} from '../../../db/tldrs/tldr-utils';
+async function getAllData() {
+  const platforms: any[] = [];
+  const commandsByPlatform: Record<string, any[]> = {};
+  const platformPaginationCounts: Record<string, number> = {};
 
-async function getCommandsByPlatform() {
-  const clusters = await getAllClusters();
-  const byPlatform: Record<string, { url: string }[]> = {};
-  
-  // Fetch all pages for all clusters in parallel
-  const clusterPagesPromises = clusters.map(async (cluster) => {
-    const pages = await getPagesByCluster(cluster.name);
-    return { cluster: cluster.name, pages };
-  });
+  // 1. Fetch all platforms
+  const firstPage = await getAllTldrPlatforms(1);
+  if (!firstPage) return { platforms, commandsByPlatform, totalIndexPages: 0, platformPaginationCounts };
 
-  const allClusterPages = await Promise.all(clusterPagesPromises);
+  const totalIndexPages = firstPage.total_pages;
+  platforms.push(...firstPage.platforms);
 
-  for (const { cluster, pages } of allClusterPages) {
-    if (!byPlatform[cluster]) byPlatform[cluster] = [];
-    for (const page of pages) {
-      byPlatform[cluster].push({
-        url: page.path || `/freedevtools/tldr/${cluster}/${page.name}/`,
-      });
+  for (let i = 2; i <= totalIndexPages; i++) {
+    const page = await getAllTldrPlatforms(i);
+    if (page) {
+      platforms.push(...page.platforms);
     }
   }
-  return byPlatform;
+
+  // 2. Fetch all commands for each platform
+  for (const platform of platforms) {
+    const platformName = platform.name;
+    commandsByPlatform[platformName] = [];
+    
+    const firstCmdPage = await getTldrPlatformCommandsPaginated(platformName, 1);
+    if (firstCmdPage) {
+      platformPaginationCounts[platformName] = firstCmdPage.total_pages;
+      commandsByPlatform[platformName].push(...firstCmdPage.commands);
+
+      for (let i = 2; i <= firstCmdPage.total_pages; i++) {
+        const cmdPage = await getTldrPlatformCommandsPaginated(platformName, i);
+        if (cmdPage) {
+          commandsByPlatform[platformName].push(...cmdPage.commands);
+        }
+      }
+    }
+  }
+
+  return { platforms, commandsByPlatform, totalIndexPages, platformPaginationCounts };
 }
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const byPlatform = await getCommandsByPlatform();
-  const paginationPaths = await generateTldrStaticPaths();
-  const platformPaginationPaths = await generateTldrPlatformStaticPaths();
+  const { platforms, commandsByPlatform, totalIndexPages, platformPaginationCounts } = await getAllData();
 
   if (!site) {
     throw new Error('Site is not defined');
   }
 
   const urls: string[] = [];
+  
   // Category landing
   urls.push(
     `  <url>\n    <loc>${site}/tldr/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
   );
+
   // Platform pages
-  for (const platform of Object.keys(byPlatform)) {
+  for (const platform of platforms) {
     urls.push(
-      `  <url>\n    <loc>${site}/tldr/${platform}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${site}/tldr/${platform.name}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
-  // Main TLDR pagination pages (tldr/2/, tldr/3/, etc.)
-  for (const path of paginationPaths) {
-    const page = path.params.page;
+  // Main TLDR pagination pages
+  for (let i = 2; i <= totalIndexPages; i++) {
     urls.push(
-      `  <url>\n    <loc>${site}/tldr/${page}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${site}/tldr/${i}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
-  // Platform pagination pages (tldr/linux/2/, tldr/windows/2/, etc.)
-  for (const path of platformPaginationPaths) {
-    const { platform, page } = path.params;
-    urls.push(
-      `  <url>\n    <loc>${site}/tldr/${platform}/${page}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
-    );
-  }
-  // Individual command pages
-  for (const [_platform, commands] of Object.entries(byPlatform)) {
-    for (const cmd of commands) {
-      // Remove /freedevtools prefix and ensure proper URL construction
-      const cleanUrl = cmd.url.replace('/freedevtools', '');
-      // Convert site URL to string and ensure proper URL construction
-      const siteStr = site.toString();
-      const baseUrl = siteStr.endsWith('/') ? siteStr.slice(0, -1) : siteStr;
-      // Don't add extra slash - cleanUrl already has the correct path
-      const finalUrl = cleanUrl.startsWith('/') ? cleanUrl : `/${cleanUrl}`;
+  // Platform pagination pages
+  for (const [platformName, totalPages] of Object.entries(platformPaginationCounts)) {
+    for (let i = 2; i <= totalPages; i++) {
       urls.push(
-        `  <url>\n    <loc>${baseUrl}${finalUrl}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+        `  <url>\n    <loc>${site}/tldr/${platformName}/${i}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
       );
     }
   }
 
-  // Sort URLs in ascending order by extracting the <loc> value
+  // Individual command pages
+  for (const [platformName, commands] of Object.entries(commandsByPlatform)) {
+    for (const cmd of commands) {
+      urls.push(
+        `  <url>\n    <loc>${site}/tldr/${platformName}/${cmd.name}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      );
+    }
+  }
+
+  // Sort URLs
   urls.sort((a, b) => {
     const urlA = a.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
     const urlB = b.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
