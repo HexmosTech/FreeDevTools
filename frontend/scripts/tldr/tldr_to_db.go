@@ -9,9 +9,11 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -28,10 +30,22 @@ const (
 	DbPath  = "../../db/all_dbs/tldr-db-v1.db"
 )
 
-// ... (keep structs)
-
 // Structs matching DB schema
 type Page struct {
+	UrlHash     int64
+	Url         string // Kept for reference
+	HtmlContent string
+	Metadata    string // JSON
+}
+
+type MainPage struct {
+	Hash       string
+	Data       string // JSON
+	TotalCount int
+}
+
+// Intermediate struct for processing
+type ProcessedPage struct {
 	UrlHash     int64
 	Url         string
 	Cluster     string
@@ -39,17 +53,21 @@ type Page struct {
 	Platform    string
 	Title       string
 	Description string
-	Keywords    string // JSON
-	Features    string // JSON
+	Keywords    []string
+	Features    []string
 	HtmlContent string
 	Path        string
 }
 
-type Cluster struct {
-	Name        string
-	HashName    string
-	Count       int
-	Description string
+type PageMetadata struct {
+	Url         string   `json:"url"`
+	Cluster     string   `json:"cluster"`
+	Name        string   `json:"name"`
+	Platform    string   `json:"platform"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Keywords    []string `json:"keywords"`
+	Features    []string `json:"features"` // Kept in metadata but removed from table
 }
 
 type Frontmatter struct {
@@ -60,12 +78,7 @@ type Frontmatter struct {
 	Features []string `yaml:"features"`
 }
 
-type Example struct {
-	Description string `json:"description"`
-	Cmd         string `json:"cmd"`
-}
-
-// --- Hashing Functions (Replicating Python logic) ---
+// --- Hashing Functions ---
 
 func createFullHash(category, lastPath string) string {
 	category = strings.ToLower(strings.TrimSpace(category))
@@ -76,47 +89,37 @@ func createFullHash(category, lastPath string) string {
 }
 
 func get8Bytes(fullHash string) int64 {
-	// Take first 16 hex chars (8 bytes)
 	hexPart := fullHash[:16]
 	bytesVal, err := hex.DecodeString(hexPart)
 	if err != nil {
 		log.Fatalf("Failed to decode hex: %v", err)
 	}
-	// Unpack as signed 64-bit integer (big-endian)
 	return int64(binary.BigEndian.Uint64(bytesVal))
 }
 
-func hashNameToKey(name string) string {
-	hash := sha256.Sum256([]byte(name))
-	// Take first 8 bytes and interpret as big-endian signed 64-bit integer
-	val := int64(binary.BigEndian.Uint64(hash[:8]))
-	return fmt.Sprintf("%d", val)
+func hashString(s string) string {
+	hash := sha256.Sum256([]byte(s))
+	return hex.EncodeToString(hash[:])
 }
 
 // --- Markdown Parsing ---
 
-func parseTldrFile(path string) (*Page, error) {
+func parseTldrFile(path string) (*ProcessedPage, error) {
 	contentBytes, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 	content := string(contentBytes)
 
-	// Split frontmatter
 	parts := regexp.MustCompile(`(?m)^---\s*$`).Split(content, 3)
 	if len(parts) < 3 {
-		// Try to handle cases where file starts with ---
 		if strings.HasPrefix(content, "---") {
 			parts = regexp.MustCompile(`(?m)^---\s*$`).Split(content, 3)
-			// If split results in empty first part, shift
 			if len(parts) >= 3 && parts[0] == "" {
-				// parts[1] is frontmatter, parts[2] is body
 			} else {
-				log.Printf("Skipping %s: Invalid frontmatter format", filepath.Base(path))
 				return nil, nil
 			}
 		} else {
-			log.Printf("Skipping %s: No frontmatter found", filepath.Base(path))
 			return nil, nil
 		}
 	}
@@ -124,43 +127,33 @@ func parseTldrFile(path string) (*Page, error) {
 	frontmatterRaw := parts[1]
 	markdownBody := strings.TrimSpace(parts[2])
 
-	// Strip first H1 (# Title)
 	lines := strings.Split(markdownBody, "\n")
 	if len(lines) > 0 && strings.HasPrefix(strings.TrimSpace(lines[0]), "# ") {
 		markdownBody = strings.Join(lines[1:], "\n")
 	}
 	markdownBody = strings.TrimSpace(markdownBody)
 
-	// Parse Frontmatter
 	var fm Frontmatter
 	if err := yaml.Unmarshal([]byte(frontmatterRaw), &fm); err != nil {
 		log.Printf("Error parsing YAML in %s: %v", filepath.Base(path), err)
 		return nil, nil
 	}
 
-	// Clean title
 	title := strings.Split(fm.Title, " | ")[0]
-
-	// Parse Markdown Body for metadata
 	descriptionLines := []string{}
-
-	// Re-split for processing examples/description (using the stripped body)
+	
 	lines = strings.Split(markdownBody, "\n")
 	for i := 0; i < len(lines); i++ {
 		line := strings.TrimSpace(lines[i])
 		if strings.HasPrefix(line, ">") {
 			cleanLine := strings.TrimSpace(strings.TrimPrefix(line, ">"))
-			if strings.HasPrefix(cleanLine, "More information:") {
-				// Skip more info
-			} else {
+			if !strings.HasPrefix(cleanLine, "More information:") {
 				descriptionLines = append(descriptionLines, cleanLine)
 			}
 		}
 	}
-
 	description := strings.Join(descriptionLines, " ")
 
-	// Convert Markdown to HTML
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse([]byte(markdownBody))
@@ -171,19 +164,13 @@ func parseTldrFile(path string) (*Page, error) {
 	htmlBytes := markdown.Render(doc, renderer)
 	htmlContent := string(htmlBytes)
 
-	// Calculate Hash
 	cluster := filepath.Base(filepath.Dir(path))
 	name := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	fullHash := createFullHash(cluster, name)
 	urlHash := get8Bytes(fullHash)
-
-	// JSON fields
-	keywordsJson, _ := json.Marshal(fm.Keywords)
-	featuresJson, _ := json.Marshal(fm.Features)
-
 	pathUrl := fmt.Sprintf("/freedevtools/tldr/%s/%s/", cluster, name)
 
-	return &Page{
+	return &ProcessedPage{
 		UrlHash:     urlHash,
 		Url:         fmt.Sprintf("%s/%s", cluster, name),
 		Cluster:     cluster,
@@ -191,8 +178,8 @@ func parseTldrFile(path string) (*Page, error) {
 		Platform:    fm.Category,
 		Title:       title,
 		Description: description,
-		Keywords:    string(keywordsJson),
-		Features:    string(featuresJson),
+		Keywords:    fm.Keywords,
+		Features:    fm.Features,
 		HtmlContent: htmlContent,
 		Path:        pathUrl,
 	}, nil
@@ -201,63 +188,27 @@ func parseTldrFile(path string) (*Page, error) {
 // --- Database ---
 
 func ensureSchema(db *sql.DB) error {
-	// Pages table
+	// Pages table - Simplified
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS pages (
 			url_hash INTEGER PRIMARY KEY,
-			url TEXT NOT NULL,
-			cluster TEXT NOT NULL,
-			name TEXT NOT NULL,
-			platform TEXT DEFAULT '',
-			title TEXT DEFAULT '',
-			description TEXT DEFAULT '',
-			keywords TEXT DEFAULT '[]',
-			features TEXT DEFAULT '[]',
+			url TEXT NOT NULL, -- Kept for reference
 			html_content TEXT DEFAULT '',
-			path TEXT DEFAULT ''
+			metadata TEXT DEFAULT '{}' -- JSON
 		) WITHOUT ROWID;
 	`)
 	if err != nil {
 		return err
 	}
 
-	_, err = db.Exec("CREATE INDEX IF NOT EXISTS idx_pages_cluster ON pages(cluster);")
-	if err != nil {
-		return err
-	}
-
-	// Cluster table
+	// MainPages table - Pre-calculated lists
 	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS cluster (
-			name TEXT PRIMARY KEY,
-			hash_name TEXT NOT NULL,
-			count INTEGER NOT NULL,
-			description TEXT DEFAULT ''
+		CREATE TABLE IF NOT EXISTS main_pages (
+			hash TEXT PRIMARY KEY,
+			data TEXT DEFAULT '{}', -- JSON
+			total_count INTEGER NOT NULL
 		);
 	`)
-	if err != nil {
-		return err
-	}
-	_, err = db.Exec("CREATE INDEX IF NOT EXISTS idx_cluster_hash_name ON cluster(hash_name);")
-	if err != nil {
-		return err
-	}
-
-	// Cluster Previews table
-	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS cluster_previews (
-			url_hash INTEGER PRIMARY KEY,
-			url TEXT NOT NULL,
-			cluster TEXT NOT NULL,
-			name TEXT NOT NULL,
-			platform TEXT DEFAULT '',
-			description TEXT DEFAULT ''
-		);
-	`)
-	if err != nil {
-		return err
-	}
-	_, err = db.Exec("CREATE INDEX IF NOT EXISTS idx_cluster_previews_cluster ON cluster_previews(cluster);")
 	if err != nil {
 		return err
 	}
@@ -275,11 +226,10 @@ func ensureSchema(db *sql.DB) error {
 func main() {
 	start := time.Now()
 
-	// Ensure output dir
 	if err := os.MkdirAll(filepath.Dir(DbPath), 0755); err != nil {
 		log.Fatal(err)
 	}
-	os.Remove(DbPath) // Start fresh
+	os.Remove(DbPath)
 
 	db, err := sql.Open("sqlite3", DbPath)
 	if err != nil {
@@ -287,43 +237,15 @@ func main() {
 	}
 	defer db.Close()
 
-	// Performance optimizations - Removed to match tldr_to_db.py defaults
-	// if _, err := db.Exec("PRAGMA synchronous = OFF"); err != nil {
-	// 	log.Fatal(err)
-	// }
-	// if _, err := db.Exec("PRAGMA journal_mode = WAL"); err != nil {
-	// 	log.Fatal(err)
-	// }
-
 	if err := ensureSchema(db); err != nil {
 		log.Fatal(err)
 	}
 
-	// Prepare Insert
-	insertSQL := `
-		INSERT OR REPLACE INTO pages (
-			url_hash, url, cluster, name, platform, title, description,
-			keywords, features, html_content, path
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`
-	tx, err := db.Begin()
-	if err != nil {
-		log.Fatal(err)
-	}
-	stmt, err := tx.Prepare(insertSQL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-
-	// Walk Data Dir
-	targetDir := DataDir
-	fmt.Printf("Scanning %s...\n", targetDir)
-
-	count := 0
-	batchSize := 1000
-
-	err = filepath.WalkDir(targetDir, func(path string, d fs.DirEntry, err error) error {
+	// 1. Parse all files into memory
+	fmt.Printf("Scanning %s...\n", DataDir)
+	var allPages []*ProcessedPage
+	
+	err = filepath.WalkDir(DataDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -333,113 +255,168 @@ func main() {
 				log.Printf("Error parsing %s: %v", path, err)
 				return nil
 			}
-			if page == nil {
-				return nil
-			}
-
-			_, err = stmt.Exec(
-				page.UrlHash, page.Url, page.Cluster, page.Name, page.Platform,
-				page.Title, page.Description, page.Keywords,
-				page.Features, page.HtmlContent, page.Path,
-			)
-			if err != nil {
-				log.Printf("Error inserting %s: %v", page.Name, err)
-				return nil
-			}
-
-			count++
-			if count%batchSize == 0 {
-				stmt.Close()
-				if err := tx.Commit(); err != nil {
-					return err
-				}
-				tx, err = db.Begin()
-				if err != nil {
-					return err
-				}
-				stmt, err = tx.Prepare(insertSQL)
-				if err != nil {
-					return err
-				}
-				fmt.Printf("\rProcessed %d pages...", count)
+			if page != nil {
+				allPages = append(allPages, page)
 			}
 		}
 		return nil
 	})
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := tx.Commit(); err != nil {
-		log.Fatal(err)
-	}
-
-	// Populate Cluster & Overview
-	fmt.Println("\nPopulating cluster and overview...")
-	
-	// Cluster
-	if _, err := db.Exec("DELETE FROM cluster"); err != nil {
-		log.Fatal(err)
-	}
-	rows, err := db.Query("SELECT cluster, COUNT(*) FROM pages GROUP BY cluster")
+	// 2. Insert Pages
+	fmt.Println("Inserting pages...")
+	tx, err := db.Begin()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer rows.Close()
-
-	clusterTx, err := db.Begin()
+	stmt, err := tx.Prepare("INSERT INTO pages (url_hash, url, html_content, metadata) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
-	clusterStmt, err := clusterTx.Prepare("INSERT INTO cluster (name, hash_name, count, description) VALUES (?, ?, ?, ?)")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer clusterStmt.Close()
+	defer stmt.Close()
 
-	for rows.Next() {
-		var name string
-		var count int
-		if err := rows.Scan(&name, &count); err != nil {
-			log.Fatal(err)
+	for _, p := range allPages {
+		meta := PageMetadata{
+			Url:         p.Url,
+			Cluster:     p.Cluster,
+			Name:        p.Name,
+			Platform:    p.Platform,
+			Title:       p.Title,
+			Description: p.Description,
+			Keywords:    p.Keywords,
+			Features:    p.Features,
 		}
-		hashName := hashNameToKey(name)
-		if _, err := clusterStmt.Exec(name, hashName, count, ""); err != nil {
-			log.Fatal(err)
+		metaJson, _ := json.Marshal(meta)
+		
+		_, err = stmt.Exec(p.UrlHash, p.Url, p.HtmlContent, string(metaJson))
+		if err != nil {
+			log.Printf("Error inserting page %s: %v", p.Name, err)
 		}
 	}
-	if err := clusterTx.Commit(); err != nil {
-		log.Fatal(err)
+	tx.Commit()
+
+	// 3. Generate MainPages (Cluster Lists)
+	fmt.Println("Generating cluster lists...")
+	pagesByCluster := make(map[string][]*ProcessedPage)
+	for _, p := range allPages {
+		pagesByCluster[p.Cluster] = append(pagesByCluster[p.Cluster], p)
 	}
 
-	// Populate Cluster Previews
-	fmt.Println("\nPopulating cluster previews...")
-	if _, err := db.Exec("DELETE FROM cluster_previews"); err != nil {
+	tx, err = db.Begin()
+	if err != nil {
 		log.Fatal(err)
 	}
-	
-	_, err = db.Exec(`
-		INSERT INTO cluster_previews (url_hash, url, cluster, name, platform, description)
-		SELECT url_hash, url, cluster, name, platform, description
-		FROM (
-			SELECT url_hash, url, cluster, name, platform, description,
-			ROW_NUMBER() OVER (PARTITION BY cluster ORDER BY name) as rn 
-			FROM pages
-		) WHERE rn <= 3
-	`)
+	stmt, err = tx.Prepare("INSERT INTO main_pages (hash, data, total_count) VALUES (?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Overview
-	if _, err := db.Exec("DELETE FROM overview"); err != nil {
-		log.Fatal(err)
+	itemsPerPage := 30
+	
+	// For Index Page (List of Platforms)
+	var platforms []map[string]interface{}
+	
+	for cluster, pages := range pagesByCluster {
+		// Sort pages by name
+		sort.Slice(pages, func(i, j int) bool {
+			return pages[i].Name < pages[j].Name
+		})
+
+		totalCount := len(pages)
+		totalPages := int(math.Ceil(float64(totalCount) / float64(itemsPerPage)))
+
+		// Add to platforms list for index
+		platforms = append(platforms, map[string]interface{}{
+			"name":  cluster,
+			"count": totalCount,
+			"url":   fmt.Sprintf("/freedevtools/tldr/%s/", cluster),
+		})
+
+		// Generate paginated lists for this cluster
+		for i := 0; i < totalPages; i++ {
+			pageNum := i + 1
+			startIdx := i * itemsPerPage
+			endIdx := startIdx + itemsPerPage
+			if endIdx > totalCount {
+				endIdx = totalCount
+			}
+
+			chunk := pages[startIdx:endIdx]
+			var commands []map[string]interface{}
+			for _, p := range chunk {
+				commands = append(commands, map[string]interface{}{
+					"name":        p.Name,
+					"url":         p.Path,
+					"description": p.Description,
+					"category":    p.Platform,
+					"features":    p.Features,
+				})
+			}
+
+			data := map[string]interface{}{
+				"commands":    commands,
+				"total":       totalCount,
+				"page":        pageNum,
+				"total_pages": totalPages,
+			}
+			dataJson, _ := json.Marshal(data)
+
+			// Hash: cluster/page (e.g., common/1)
+			hashKey := fmt.Sprintf("%s/%d", cluster, pageNum)
+			hash := hashString(hashKey)
+
+			_, err = stmt.Exec(hash, string(dataJson), totalCount)
+			if err != nil {
+				log.Printf("Error inserting cluster page %s: %v", hashKey, err)
+			}
+		}
 	}
-	if _, err := db.Exec("INSERT INTO overview (id, total_count) SELECT 1, COUNT(*) FROM pages"); err != nil {
+
+	// 4. Generate MainPages (Index)
+	fmt.Println("Generating index...")
+	sort.Slice(platforms, func(i, j int) bool {
+		return platforms[i]["name"].(string) < platforms[j]["name"].(string)
+	})
+
+	totalPlatforms := len(platforms)
+	totalIndexPages := int(math.Ceil(float64(totalPlatforms) / float64(itemsPerPage)))
+
+	for i := 0; i < totalIndexPages; i++ {
+		pageNum := i + 1
+		startIdx := i * itemsPerPage
+		endIdx := startIdx + itemsPerPage
+		if endIdx > totalPlatforms {
+			endIdx = totalPlatforms
+		}
+
+		chunk := platforms[startIdx:endIdx]
+		data := map[string]interface{}{
+			"platforms":   chunk,
+			"total":       totalPlatforms,
+			"page":        pageNum,
+			"total_pages": totalIndexPages,
+		}
+		dataJson, _ := json.Marshal(data)
+
+		// Hash: index/page (e.g., index/1)
+		hashKey := fmt.Sprintf("index/%d", pageNum)
+		hash := hashString(hashKey)
+
+		_, err = stmt.Exec(hash, string(dataJson), totalPlatforms)
+		if err != nil {
+			log.Printf("Error inserting index page %s: %v", hashKey, err)
+		}
+	}
+	tx.Commit()
+
+	// 5. Overview
+	if _, err := db.Exec("INSERT INTO overview (id, total_count) VALUES (1, ?)", len(allPages)); err != nil {
 		log.Fatal(err)
 	}
 
 	elapsed := time.Since(start)
-	fmt.Printf("Finished! Processed %d pages in %s.\n", count, elapsed)
+	fmt.Printf("Finished! Processed %d pages in %s.\n", len(allPages), elapsed)
 }
+
