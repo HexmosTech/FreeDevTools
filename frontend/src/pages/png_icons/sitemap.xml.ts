@@ -1,9 +1,6 @@
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ site, params }) => {
-  const { glob } = await import('glob');
-  const path = await import('path');
-
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
@@ -12,14 +9,14 @@ export const GET: APIRoute = async ({ site, params }) => {
   const siteStr = site?.toString() || '';
   const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
 
-  // Get all SVG files
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+  // Get all icons from database instead of globbing files
+  const { query } = await import('db/png_icons/png-worker-pool');
+  const icons = await query.getSitemapIcons();
 
-  // Map files to sitemap URLs with image info
-  const urls = svgFiles.map((file) => {
-    const parts = file.split(path.sep);
-    const name = parts.pop()!.replace('.svg', '');
-    const category = parts.pop() || 'general';
+  // Map icons to sitemap URLs (no image tag for PNG)
+  const urls = icons.map((icon) => {
+    const category = icon.category || icon.cluster;
+    const name = icon.name;
 
     return `
       <url>
@@ -27,10 +24,6 @@ export const GET: APIRoute = async ({ site, params }) => {
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
-        <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-          <image:loc>${siteUrl}/svg_icons/${category}/${name}.svg</image:loc>
-          <image:title>Free ${name} PNG Icon Download</image:title>
-        </image:image>
       </url>`;
   });
 
@@ -58,8 +51,7 @@ export const GET: APIRoute = async ({ site, params }) => {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
     <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${chunk.join('\n')}
 </urlset>`;
 

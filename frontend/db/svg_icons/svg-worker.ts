@@ -37,6 +37,7 @@ const setPragma = (pragma: string) => {
 setPragma('PRAGMA cache_size = -64000'); // 64MB cache per connection
 setPragma('PRAGMA temp_store = MEMORY');
 setPragma('PRAGMA mmap_size = 268435456'); // 256MB memory-mapped I/O
+setPragma('PRAGMA journal_mode = WAL'); // WAL mode for better concurrent read performance
 setPragma('PRAGMA query_only = ON'); // Read-only mode
 setPragma('PRAGMA page_size = 4096'); // Optimal page size
 
@@ -98,6 +99,12 @@ const statements = {
      enhanced,
      COALESCE(img_alt, '') as img_alt
      FROM icon WHERE url_hash = ?`
+  ),
+  sitemapIcons: db.prepare(
+    `SELECT i.cluster, i.name, c.name as category_name
+     FROM icon i
+     JOIN cluster c ON i.cluster = c.source_folder
+     ORDER BY c.name, i.name`
   ),
 };
 
@@ -432,6 +439,20 @@ parentPort?.on('message', (message: QueryMessage) => {
             img_alt: iconRow.img_alt,
           };
         }
+        break;
+      }
+
+      case 'getSitemapIcons': {
+        const rows = statements.sitemapIcons.all() as Array<{
+          cluster: string;
+          name: string;
+          category_name: string;
+        }>;
+        result = rows.map((row) => ({
+          cluster: row.cluster,
+          name: row.name,
+          category: row.category_name,
+        }));
         break;
       }
 

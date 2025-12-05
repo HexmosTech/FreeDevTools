@@ -66,3 +66,7 @@ svg:
 	@mkdir -p logs
 	@make run-bin SITEMAP=http://127.0.0.1/freedevtools/svg_icons/sitemap.xml COMPARE_PROD=true LOG_FILE=logs/sitemap-checker-$$(date +%Y%m%d-%H%M%S).log
 	
+png:
+	@mkdir -p logs
+	@make run-bin SITEMAP=http://127.0.0.1/freedevtools/png_icons/sitemap.xml COMPARE_PROD=true LOG_FILE=logs/sitemap-checker-$$(date +%Y%m%d-%H%M%S).log
+	

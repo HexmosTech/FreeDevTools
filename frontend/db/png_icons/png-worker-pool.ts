@@ -262,6 +262,7 @@ export const query = {
     executeQuery('getIconByUrlHash', { hash }),
   getIconByCategoryAndName: (category: string, iconName: string) =>
     executeQuery('getIconByCategoryAndName', { category, iconName }),
+  getSitemapIcons: () => executeQuery('getSitemapIcons', {}),
 };
 
 void initWorkers().catch((err) => {
