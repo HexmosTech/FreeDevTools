@@ -10,7 +10,7 @@ export interface PageMetadata {
 }
 
 export interface Page {
-  url_hash: number;
+  url_hash: string;
   html_content: string;
   metadata: PageMetadata;
 }

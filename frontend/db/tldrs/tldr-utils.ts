@@ -26,6 +26,14 @@ export async function getTldrPage(platform: string, slug: string) {
   };
 }
 
+export async function getTldrContent(platform: string, slug: string) {
+  return query.getTldrContent(platform, slug);
+}
+
+export async function getTldrIndex(page: number = 1) {
+  return query.getTldrIndex(page);
+}
+
 export async function getTldrOverview() {
   return await query.getOverview();
 }

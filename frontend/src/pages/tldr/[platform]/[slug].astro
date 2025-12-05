@@ -6,137 +6,47 @@ import SeeAlsoIndex from '../../../components/seealso/SeeAlsoIndex.astro';
 import ToolContainer from '../../../components/tool/ToolContainer';
 import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getTldrPage, getTldrPlatformCommandsPaginated } from '../../../../db/tldrs/tldr-utils';
+import { getTldrContent } from '../../../../db/tldrs/tldr-utils';
 import TldrPlatform from '../_TldrPlatform.astro';
 
 export const prerender = false;
 
 const { platform, slug } = Astro.params;
-// console.log(`[TLDR_SLUG_PAGE] Start rendering ${platform}/${slug}`);
-const startRender = Date.now();
 
 if (!platform || !slug) {
   return new Response(null, { status: 404 });
 }
 
-// Check if slug is a page number (pagination) or a command name
-const isNumericPage = /^\d+$/.test(slug);
-const pageNumber = isNumericPage ? parseInt(slug, 10) : null;
-const command = !isNumericPage ? slug : null;
+const startRender = Date.now();
+const result = await getTldrContent(platform, slug);
+const duration = Date.now() - startRender;
 
-let pageData: any = null;
-let commandData: any = null;
-let htmlContent: string = '';
+if ((Astro.locals as any).timings) {
+  (Astro.locals as any).timings['worker fetch'] = duration;
+}
 
-if (pageNumber !== null) {
-  // Handle pagination route: /tldr/[platform]/[page]
-  if (pageNumber === 1) {
-    return Astro.redirect(`/freedevtools/tldr/${platform}/`);
-  }
-
-  const result = await getTldrPlatformCommandsPaginated(platform, pageNumber);
-  
-  if (!result) {
-    return Astro.redirect('/404');
-  }
-
-  const { commands: currentPageCommands, total: totalCommands, total_pages: totalPages, page: currentPage } = result;
-
-  // Validate page number
-  if (currentPage > totalPages || currentPage < 1) {
-    return Astro.redirect('/404');
-  }
-
-  // Breadcrumb data
-  const breadcrumbItems = [
-    { label: 'Free DevTools', href: '/freedevtools/' },
-    { label: 'TLDR', href: '/freedevtools/tldr/' },
-    { label: platform, href: `/freedevtools/tldr/${platform}/` },
-    { label: `Page ${currentPage}` },
-  ];
-
-  // SEO data
-  const seoTitle = `${platform} Commands - Page ${currentPage} | Online Free DevTools by Hexmos`;
-  const seoDescription = `Browse page ${currentPage} of ${totalPages} pages in our ${platform} command documentation. Learn ${platform} commands quickly with practical examples.`;
-  const canonical = `https://hexmos.com/freedevtools/tldr/${platform}/${currentPage}/`;
-
-  const paginatedPlatformKeywords = [
-    `${platform} commands`,
-    `${platform} cli`,
-    `${platform} documentation`,
-    'command line',
-    'cli documentation',
-    'terminal commands',
-    `page ${currentPage}`,
-    'pagination',
-    'command reference',
-  ];
-
-  pageData = {
-    currentPage,
-    totalPages,
-    totalCommands,
-    currentPageCommands,
-    breadcrumbItems,
-    seoTitle,
-    seoDescription,
-    canonical,
-    paginatedPlatformKeywords,
-  };
-} else if (command) {
-  // Handle command route: /tldr/[platform]/[command]
-  const startDb = Date.now();
-  const page = await getTldrPage(platform, command);
-  const duration = Date.now() - startDb;
-  // console.log(`[TLDR_SLUG_PAGE] getTldrPage(${platform}, ${command}) finished in ${duration}ms`);
-  
-  if ((Astro.locals as any).timings) {
-    (Astro.locals as any).timings['db fetch'] = duration;
-  }
-
-  if (!page) {
-    return Astro.redirect('/404');
-  }
-
-  htmlContent = page.html_content || '';
-  
-  const title = page.title || command;
-  const description = page.description || `Documentation for ${command} command`;
-
-  const breadcrumbItems = [
-    { label: 'Free DevTools', href: '/freedevtools/' },
-    { label: 'TLDR', href: '/freedevtools/tldr/' },
-    { label: platform, href: `/freedevtools/tldr/${platform}/` },
-    { label: command },
-  ];
-
-  commandData = {
-    page,
-    title,
-    description,
-    breadcrumbItems,
-  };
-} else {
+if (!result) {
   return Astro.redirect('/404');
 }
 
+const { type, data } = result;
 ---
 
-{pageData ? (
+{type === 'list' ? (
   <BaseLayout
     name={`${platform} Commands`}
-    path={`/freedevtools/tldr/${platform}/${pageData.currentPage}/`}
-    title={pageData.seoTitle}
-    description={pageData.seoDescription}
-    canonical={pageData.canonical}
+    path={`/freedevtools/tldr/${platform}/${data.currentPage}/`}
+    title={data.seoTitle}
+    description={data.seoDescription}
+    canonical={data.canonical}
     showHeader={true}
-    totalItems={pageData.totalCommands}
+    totalItems={data.totalCommands}
     itemsPerPage={30}
-    currentPage={pageData.currentPage}
+    currentPage={data.currentPage}
     category={`${platform} Commands`}
     partOf="TLDR"
     partOfUrl="https://hexmos.com/freedevtools/tldr/"
-    keywords={pageData.paginatedPlatformKeywords}
+    keywords={data.paginatedPlatformKeywords}
     features={[
       'Quick Reference',
       'Platform Specific',
@@ -145,23 +55,23 @@ if (pageNumber !== null) {
     ]}
   >
     <TldrPlatform
-      commands={pageData.currentPageCommands}
-      currentPage={pageData.currentPage}
-      totalPages={pageData.totalPages}
-      totalCommands={pageData.totalCommands}
+      commands={data.currentPageCommands}
+      currentPage={data.currentPage}
+      totalPages={data.totalPages}
+      totalCommands={data.totalCommands}
       platform={platform}
-      breadcrumbItems={pageData.breadcrumbItems}
+      breadcrumbItems={data.breadcrumbItems}
     />
   </BaseLayout>
-) : commandData ? (
+) : type === 'command' ? (
   <BaseLayout
-    name={commandData.title}
-    path={`/tldr/${platform}/${command}/`}
-    title={`${commandData.title} - ${platform} Commands - TLDR | Online Free DevTools by Hexmos`}
-    description={commandData.description}
-    canonical={`https://hexmos.com/freedevtools/tldr/${platform}/${command}/`}
+    name={data.title}
+    path={`/tldr/${platform}/${slug}/`}
+    title={`${data.title} - ${platform} Commands - TLDR | Online Free DevTools by Hexmos`}
+    description={data.description}
+    canonical={`https://hexmos.com/freedevtools/tldr/${platform}/${slug}/`}
     showHeader={true}
-    keywords={commandData.page.keywords || ['free devtools', 'tldr', platform, command]}
+    keywords={data.page.keywords || ['free devtools', 'tldr', platform, slug]}
   >
     <style>
       :global(.prose h1) {
@@ -183,15 +93,15 @@ if (pageNumber !== null) {
         <AdBanner />
       </div>
       <ToolHead
-        name={commandData.title}
-        description={commandData.description}
-        breadcrumbItems={commandData.breadcrumbItems}
+        name={data.title}
+        description={data.description}
+        breadcrumbItems={data.breadcrumbItems}
       />
 
       <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 mt-6">
         <div
           class="prose prose-slate dark:prose-invert max-w-none prose-headings:text-slate-900 dark:prose-headings:text-slate-100 prose-p:text-slate-700 dark:prose-p:text-slate-300 prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-slate-100 dark:prose-code:bg-slate-700 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-pre:border prose-pre:border-slate-200 dark:prose-pre:border-slate-600 prose-blockquote:border-l-blue-500 prose-blockquote:bg-slate-100 dark:prose-blockquote:bg-slate-700 prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:rounded prose-ul:space-y-1 prose-li:text-slate-700 dark:prose-li:text-slate-300"
-          set:html={htmlContent}
+          set:html={data.page.html_content}
         />
       </div>
       
