@@ -15,6 +15,8 @@ import (
 )
 
 func main() {
+
+	
 	start := time.Now()
 
 	// Create output directory if it doesn't exist
@@ -55,11 +57,13 @@ func main() {
 	pngIconsChan := make(chan []SVGIconData, 1)
 	cheatsheetsChan := make(chan []CheatsheetData, 1)
 	mcpChan := make(chan []MCPData, 1)
+	installerpediaChan := make(chan []InstallerpediaData, 1)
 	manPagesChan := make(chan []ManPageData, 1)
-	errorsChan := make(chan error, 7)
+	errorsChan := make(chan error, 6)
+
 
 	// Start all collection goroutines
-	wg.Add(8)
+	wg.Add(9)
 
 	go func() {
 		defer wg.Done()
@@ -110,6 +114,7 @@ func main() {
 		}
 		pngIconsChan <- pngIcons
 	}()
+	
 
 	go func() {
 		defer wg.Done()
@@ -133,6 +138,15 @@ func main() {
 
 	go func() {
 		defer wg.Done()
+		data, err := generateInstallerpediaData(ctx)
+		if err != nil {
+			errorsChan <- fmt.Errorf("Installerpedia data generation failed: %w", err)
+			return
+		}
+		installerpediaChan <- data
+	}()
+	
+	go func() {
 		manPages, err := generateManPagesData(ctx)
 		if err != nil {
 			errorsChan <- fmt.Errorf("man pages data generation failed: %w", err)
@@ -151,6 +165,7 @@ func main() {
 		close(pngIconsChan)
 		close(cheatsheetsChan)
 		close(mcpChan)
+		close(installerpediaChan)
 		close(manPagesChan)
 		close(errorsChan)
 	}()
@@ -163,12 +178,13 @@ func main() {
 	var pngIcons []SVGIconData
 	var cheatsheets []CheatsheetData
 	var mcp []MCPData
+	var installerpedia []InstallerpediaData
 	var manPages []ManPageData
 	var errors []error
 
 	// Track which channels we've received data from
 	receivedChannels := 0
-	totalChannels := 8
+	totalChannels := 9
 
 	for receivedChannels < totalChannels {
 		select {
@@ -214,6 +230,12 @@ func main() {
 				fmt.Printf("✅ MCP data collected: %d items\n", len(m))
 			}
 			receivedChannels++
+		case ip, ok := <-installerpediaChan:
+			if ok {
+				installerpedia = ip
+				fmt.Printf("✅ Installerpedia data collected: %d items\n", len(ip))
+			}
+			receivedChannels++		
 		case mp, ok := <-manPagesChan:
 			if ok {
 				manPages = mp
@@ -277,6 +299,7 @@ doneWithErrors:
 	if err := saveToJSON("png_icons.json", pngIcons); err != nil {
 		log.Fatalf("Failed to save PNG icons data: %v", err)
 	}
+	
 
 	if err := saveToJSON("cheatsheets.json", cheatsheets); err != nil {
 		log.Fatalf("Failed to save cheatsheets data: %v", err)
@@ -286,6 +309,9 @@ doneWithErrors:
 		log.Fatalf("Failed to save MCP data: %v", err)
 	}
 
+	if err := saveToJSON("installerpedia.json", installerpedia); err != nil {
+		log.Fatalf("Failed to save Installerpedia data: %v", err)
+	}	
 	if err := saveToJSON("man_pages.json", manPages); err != nil {
 		log.Fatalf("Failed to save man pages data: %v", err)
 	}
@@ -300,6 +326,7 @@ doneWithErrors:
 	fmt.Printf("  - PNG Icons: %d items\n", len(pngIcons))
 	fmt.Printf("  - Cheatsheets: %d items\n", len(cheatsheets))
 	fmt.Printf("  - MCP: %d items\n", len(mcp))
+	fmt.Printf("  - Installerpedia: %d items\n", len(installerpedia))	
 	fmt.Printf("  - Man Pages: %d items\n", len(manPages))
 	fmt.Printf("\n💾 All files saved to ./output/ directory\n")
 
@@ -313,6 +340,7 @@ doneWithErrors:
 		log.Printf("❌ Failed to read output directory: %v", err)
 		return
 	}
+	
 
 	for _, file := range files {
 		if strings.HasSuffix(file.Name(), ".json") {
@@ -325,7 +353,7 @@ doneWithErrors:
 			}
 		}
 	}
-
+	
 	fmt.Println("🎉 All stem processing completed!")
 }
 
@@ -366,6 +394,7 @@ func runStemProcessing(stemArgs string) {
 	if err := jargon_stemmer.ProcessJSONFile(filePath); err != nil {
 		log.Fatalf("❌ Stem processing failed: %v", err)
 	}
+	
 
 	elapsed := time.Since(start)
 	fmt.Printf("\n🎉 Stem processing completed in %v\n", elapsed)
@@ -393,6 +422,8 @@ func runSingleCategory(category string) {
 		RunCheatsheetsOnly(ctx, start)
 	case "mcp":
 		RunMCPOnly(ctx, start)
+	case "installerpedia":
+		RunInstallerPediaOnly(ctx, start)
 	case "man_pages":
 		RunManPagesOnly(ctx, start.Unix())
 	default:

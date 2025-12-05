@@ -150,6 +150,80 @@ func ProcessJSONFile(filePath string) error {
 	return nil
 }
 
+func ProcessInstallerpediaJSONFile(filePath string) error {
+	fmt.Printf("🔍 Processing Installerpedia JSON file: %s\n", filePath)
+	start := time.Now()
+
+	// Read JSON file
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("error reading file %s: %v", filePath, err)
+	}
+
+	// Parse as generic array of maps (PRESERVES ALL FIELDS)
+	var objects []map[string]interface{}
+	if err := json.Unmarshal(data, &objects); err != nil {
+		return fmt.Errorf("error parsing JSON: %v", err)
+	}
+
+	fmt.Printf("📊 Found %d Installerpedia entries\n", len(objects))
+
+	// Worker pool
+	numWorkers := runtime.NumCPU() - 1
+	if numWorkers < 1 {
+		numWorkers = 1
+	}
+	fmt.Printf("🚀 Using %d workers\n", numWorkers)
+
+	var wg sync.WaitGroup
+	workChan := make(chan int, numWorkers*2)
+
+	// Workers
+	for w := 0; w < numWorkers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := range workChan {
+				obj := objects[i]
+
+				// --- altName ---
+				if name, ok := obj["name"].(string); ok {
+					obj["altName"] = ProcessText(name)
+				}
+
+				// --- altDescription ---
+				if desc, ok := obj["description"].(string); ok {
+					obj["altDescription"] = ProcessText(desc)
+				}
+			}
+		}()
+	}
+
+	// Queue indices
+	for i := range objects {
+		workChan <- i
+	}
+	close(workChan)
+
+	wg.Wait()
+
+	// Save back
+	outputData, err := json.MarshalIndent(objects, "", "  ")
+	if err != nil {
+		return fmt.Errorf("error marshaling JSON: %v", err)
+	}
+
+	if err := ioutil.WriteFile(filePath, outputData, 0644); err != nil {
+		return fmt.Errorf("error writing file: %v", err)
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("✅ Installerpedia processing completed in %v\n", elapsed)
+
+	return nil
+}
+
+
 func main() {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "Usage: %s <json_file>\n", os.Args[0])

@@ -29,6 +29,9 @@ gen-cheatsheets:
 gen-mcp:
 	go run . category=mcp
 
+gen-installerpedia:
+	go run . category=installerpedia
+
 gen-all:
 	go run .
 
